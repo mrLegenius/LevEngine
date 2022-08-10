@@ -1,0 +1,3 @@
+[submodule "LevCore/external/GLFW"]
+	path = LevCore/external/GLFW
+	url = https://github.com/glfw/glfw.git
