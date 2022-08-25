@@ -231,7 +231,7 @@ namespace LevEngine
 											   ::LevEngine::InstrumentationTimer timer##line(fixedName##line.Data)
 #define LEV_PROFILE_SCOPE_LINE(name, line) LEV_PROFILE_SCOPE_LINE2(name, line)
 #define LEV_PROFILE_SCOPE(name) LEV_PROFILE_SCOPE_LINE(name, __LINE__)
-#define LEV_PROFILE_FUNCTION() LEV_PROFILE_SCOPE(LE_FUNC_SIG)
+#define LEV_PROFILE_FUNCTION() LEV_PROFILE_SCOPE(LEV_FUNC_SIG)
 #else
 #define LEV_PROFILE_BEGIN_SESSION(name, filepath)
 #define LEV_PROFILE_END_SESSION()

@@ -21,7 +21,7 @@ namespace LevEngine
 		void Bind() const override;
 		void Unbind() const override;
 
-		const std::string& GetName() const override { return m_Name; }
+		[[nodiscard]] const std::string& GetName() const override { return m_Name; }
 
 		void SetBool(const std::string& name, bool value) override;
 		void SetInt(const std::string& name, int value) override;

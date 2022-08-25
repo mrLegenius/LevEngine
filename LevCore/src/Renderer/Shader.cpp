@@ -13,7 +13,7 @@ namespace LevEngine
 			LEV_CORE_ASSERT(false, "None for API was chosen");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLShader>(filepath);
+			return CreateRef<OpenGLShader>(filepath);
 		}
 
 		LEV_CORE_ASSERT(false, "Unknown Renderer API");

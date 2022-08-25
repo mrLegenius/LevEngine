@@ -12,7 +12,7 @@ namespace LevEngine
 		if (type == "fragment" || type == "pixel")
 			return GL_FRAGMENT_SHADER;
 
-		LEV_CORE_ASSERT(false, "Unknown shader type '{1}'", type)
+		LEV_CORE_ASSERT(false, "Unknown shader type '{0}'", type)
 		return 0;
 	}
 	
@@ -154,7 +154,7 @@ namespace LevEngine
 			LEV_CORE_ASSERT(eol != std::string::npos, "Syntax error")
 			const size_t begin = pos + typeTokenLength + 1;
 			std::string type = source.substr(begin, eol - begin);
-			LEV_CORE_ASSERT(ShaderTypeFromString(type), "Unkown shader type!")
+			LEV_CORE_ASSERT(ShaderTypeFromString(type), "Unknown shader type!")
 			
 			const size_t nextLinePos = source.find_first_not_of("\r\n", eol);
 			pos = source.find(typeToken, nextLinePos);
@@ -218,7 +218,7 @@ namespace LevEngine
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
 
 			const auto message = static_cast<char*>(nullptr);
-			glGetProgramInfoLog(program, length, &length, message);
+            glGetProgramInfoLog(program, length, &length, message);
 
 			for (auto shader : glShaderIDs)
 			{
