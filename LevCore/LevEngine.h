@@ -10,7 +10,7 @@
 #include "src/Kernel/Asserts.h"
 
 #include "src/Utils/PlatformUtils.h"
-#include "src/Debug/Instrumentor.h"
+#include "src/Debug/Profiler.h"
 
 // -- GUI --------------------------------------------------
 

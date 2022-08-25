@@ -3,7 +3,6 @@
 
 #include "imgui.h"
 #include "Kernel/Application.h"
-#include "Debug/Instrumentor.h"
 
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"

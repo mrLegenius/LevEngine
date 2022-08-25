@@ -1,7 +1,6 @@
 #pragma once
-#include "src/Kernel/Logger.h"
 #include "src/Kernel/Application.h"
-#include "src/Debug/Instrumentor.h"
+
 #define LEV_PLATFORM_WINDOWS 1
 #ifdef LEV_PLATFORM_WINDOWS
 

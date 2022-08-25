@@ -18,7 +18,7 @@
 #include "src/Kernel/PointerUtils.h"
 #include "src/Kernel/Logger.h"
 #include "src/Kernel/Asserts.h"
-#include "src/Debug/Instrumentor.h"
+#include "src/Debug/Profiler.h"
 
 #ifdef LEV_PLATFORM_WINDOWS
 #include <Windows.h>

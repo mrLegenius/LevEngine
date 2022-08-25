@@ -2,7 +2,6 @@
 
 #include "Input/Input.h"
 #include "Kernel/Time.h"
-#include "Debug/Instrumentor.h"
 
 namespace LevEngine
 {

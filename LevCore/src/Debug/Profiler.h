@@ -9,8 +9,6 @@
 #include <mutex>
 #include <sstream>
 
-#include "../Kernel/Logger.h"
-
 namespace LevEngine
 {
 	using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
@@ -24,16 +22,16 @@ namespace LevEngine
 		std::thread::id ThreadID;
 	};
 
-	struct InstrumentationSession
+	struct ProfilerSession
 	{
 		std::string Name;
 	};
 
-	class Instrumentor
+	class Profiler
 	{
 	public:
-		Instrumentor(const Instrumentor&) = delete;
-		Instrumentor(Instrumentor&&) = delete;
+		Profiler(const Profiler&) = delete;
+		Profiler(Profiler&&) = delete;
 
 		void BeginSession(const std::string& name, const std::string& filepath = "results.json")
 		{
@@ -46,7 +44,7 @@ namespace LevEngine
 				// profiling output.
 				//if (Log::GetCoreLogger()) // Edge case: BeginSession() might be before Log::Init()
 				{
-					Log::CoreError("Instrumentor::BeginSession('{0}') when session '{1}' already open.", name, m_CurrentSession->Name);
+					Log::CoreError("[Profiler] BeginSession('{0}') when session '{1}' already open.", name, m_CurrentSession->Name);
 				}
 				InternalEndSession();
 			}
@@ -54,14 +52,14 @@ namespace LevEngine
 
 			if (m_OutputStream.is_open())
 			{
-				m_CurrentSession = new InstrumentationSession({ name });
+				m_CurrentSession = new ProfilerSession({name });
 				WriteHeader();
 			}
 			else
 			{
 				//if (Log::GetCoreLogger()) // Edge case: BeginSession() might be before Log::Init()
 				{
-					Log::CoreError("Instrumentor could not open results file '{0}'.", filepath);
+					Log::CoreError("[Profiler] Could not open results file '{0}'.", filepath);
 				}
 			}
 		}
@@ -95,18 +93,17 @@ namespace LevEngine
 			}
 		}
 
-		static Instrumentor& Get()
+		static Profiler& Get()
 		{
-			static Instrumentor instance;
+			static Profiler instance;
 			return instance;
 		}
 	private:
-		Instrumentor()
-			: m_CurrentSession(nullptr)
+		Profiler() : m_CurrentSession(nullptr)
 		{
 		}
 
-		~Instrumentor()
+		~Profiler()
 		{
 			EndSession();
 		}
@@ -137,20 +134,20 @@ namespace LevEngine
 		}
 
 		std::mutex m_Mutex;
-		InstrumentationSession* m_CurrentSession;
+		ProfilerSession* m_CurrentSession;
 		std::ofstream m_OutputStream;
 	};
 
-	class InstrumentationTimer
+	class ProfilerTimer
 	{
 	public:
-		InstrumentationTimer(const char* name)
+		ProfilerTimer(const char* name)
 			: m_Name(name), m_Stopped(false)
 		{
-			m_StartTimepoint = std::chrono::steady_clock::now();
+            m_StartTimePoint = std::chrono::steady_clock::now();
 		}
 
-		~InstrumentationTimer()
+		~ProfilerTimer()
 		{
 			if (!m_Stopped)
 				Stop();
@@ -158,21 +155,21 @@ namespace LevEngine
 
 		void Stop()
 		{
-			auto endTimepoint = std::chrono::steady_clock::now();
-			auto highResStart = FloatingPointMicroseconds{ m_StartTimepoint.time_since_epoch() };
-			auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch();
+			auto endTimePoint = std::chrono::steady_clock::now();
+			auto highResStart = FloatingPointMicroseconds{m_StartTimePoint.time_since_epoch() };
+			auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimePoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimePoint).time_since_epoch();
 
-			Instrumentor::Get().WriteProfile({ m_Name, highResStart, elapsedTime, std::this_thread::get_id() });
+			Profiler::Get().WriteProfile({m_Name, highResStart, elapsedTime, std::this_thread::get_id() });
 
 			m_Stopped = true;
 		}
 	private:
 		const char* m_Name;
-		std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
+		std::chrono::time_point<std::chrono::steady_clock> m_StartTimePoint;
 		bool m_Stopped;
 	};
 
-	namespace InstrumentorUtils {
+	namespace ProfilerUtils {
 
 		template <size_t N>
 		struct ChangeResult
@@ -222,7 +219,7 @@ namespace LevEngine
 #elif defined(__cplusplus) && (__cplusplus >= 201103)
 #define LEV_FUNC_SIG __func__
 #else
-#define LEV_FUNC_SIG "LE_FUNC_SIG unknown!"
+#define LEV_FUNC_SIG "LEV_FUNC_SIG unknown!"
 #endif
 
 #define LEV_PROFILE_BEGIN_SESSION(name, filepath) ::LevEngine::Instrumentor::Get().BeginSession(name, filepath)
