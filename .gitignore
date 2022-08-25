@@ -1,2 +1,8 @@
 .idea/
 cmake-build-debug/
+cmake-build-release/
+cmake-build-windows-debug/
+*.exe
+*.ilk
+*.pdb
+imgui.ini
