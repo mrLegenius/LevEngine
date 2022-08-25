@@ -10,3 +10,6 @@
 [submodule "LevCore/external/imgui"]
 	path = LevCore/external/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "LevCore/external/ImGuizmo"]
+	path = LevCore/external/ImGuizmo
+	url = https://github.com/mrLegenius/ImGuizmo.git

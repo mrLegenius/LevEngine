@@ -63,6 +63,7 @@ add_subdirectory(external/stb)
 add_subdirectory(external/imgui)
 add_subdirectory(external/entt)
 add_subdirectory(external/yaml-cpp)
+add_subdirectory(external/ImGuizmo)
 
 target_link_libraries(LevEngineCore spdlog::spdlog_header_only)
 target_link_libraries(LevEngineCore glfw)
@@ -72,6 +73,7 @@ target_link_libraries(LevEngineCore stb)
 target_link_libraries(LevEngineCore imgui)
 target_link_libraries(LevEngineCore entt)
 target_link_libraries(LevEngineCore yaml-cpp)
+target_link_libraries(LevEngineCore ImGuizmo)
 
 target_include_directories(LevEngineCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(LevEngineCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -84,6 +86,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/stb/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/imgui)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/entt/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/yaml-cpp/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
