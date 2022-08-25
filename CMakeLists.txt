@@ -1,8 +1,20 @@
 cmake_minimum_required(VERSION 3.23)
 project (LevEngine)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}) #until LevEditor is done
 
-add_executable(LevEngine main.cpp)
+add_executable(${PROJECT_NAME}
+        main.cpp
+        src/LevEditor.cpp
+        src/EditorLayer.cpp
+        src/EditorWindows/SceneHierarchyEditorWindow.cpp)
 
-add_subdirectory(LevCore/external/GLFW)
+add_subdirectory(LevCore)
+#add_subdirectory(LevEditor)
+
+target_link_libraries(${PROJECT_NAME} LevEngineCore)
+#target_link_libraries(${PROJECT_NAME} LevEditor)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/LevCore)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/LevEditor)

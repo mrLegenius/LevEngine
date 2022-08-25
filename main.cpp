@@ -1,7 +1,17 @@
-#include <iostream>
+#include "src/EditorLayer.h"
+#include "EntryPoint.h"
 
-int main()
+class Sandbox : public LevEngine::Application
 {
-    std::cout<<"Hello, World!"<<std::endl;
-    return 0;
+public:
+    Sandbox() : Application("Sandbox")
+    {
+        PushLayer(new LevEngine::EditorLayer);
+    }
+    ~Sandbox() = default;
+};
+
+LevEngine::Application* LevEngine::CreateApplication()
+{
+    return new Sandbox;
 }

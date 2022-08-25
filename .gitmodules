@@ -1,3 +1,12 @@
 [submodule "LevCore/external/GLFW"]
 	path = LevCore/external/GLFW
 	url = https://github.com/glfw/glfw.git
+[submodule "LevCore/external/spdlog"]
+	path = LevCore/external/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "LevCore/external/glm"]
+	path = LevCore/external/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "LevCore/external/imgui"]
+	path = LevCore/external/imgui
+	url = https://github.com/ocornut/imgui.git
