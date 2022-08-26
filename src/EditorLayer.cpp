@@ -5,6 +5,8 @@
 
 namespace LevEngine
 {
+    extern const std::filesystem::path g_AssetsPath;
+
     EditorLayer::EditorLayer() : Layer("EditorLayer") { }
 
     void EditorLayer::OnAttach()
@@ -64,23 +66,29 @@ namespace LevEngine
     	
         m_ActiveScene->OnUpdateEditor(m_EditorCamera);
 
-    	auto[mx, my] = ImGui::GetMousePos();
-		mx -= m_ViewportBounds[0].x;
-		my -= m_ViewportBounds[0].y;
-        const glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-		my = viewportSize.y - my;
-        const int mouseX = static_cast<int>(mx);
-        const int mouseY = static_cast<int>(my);
+        m_HoveredEntity = GetHoveredEntity();
 
-		if (mouseX >= 0 && mouseY >= 0 && mouseX < static_cast<int>(viewportSize.x) && mouseY < static_cast<int>(viewportSize.y))
-		{
-			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-			m_HoveredEntity = pixelData == -1 ? Entity() : Entity(static_cast<entt::entity>(pixelData), m_ActiveScene.get());
-		}
-    	
         //COOL GRADIENT COLOR
         //glm::vec4 c{ (i + 3.0f) / 6.0f, (i + 5.0f) / 10.0f, (i + 10.0f) / 15.0f, 1.0f };
         m_Framebuffer->Unbind();
+    }
+
+    Entity EditorLayer::GetHoveredEntity() {
+        auto[mx, my] = ImGui::GetMousePos();
+        mx -= m_ViewportBounds[0].x;
+        my -= m_ViewportBounds[0].y;
+        const glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+        my = viewportSize.y - my;
+        const int mouseX = static_cast<int>(mx);
+        const int mouseY = static_cast<int>(my);
+
+        if (mouseX >= 0 && mouseY >= 0 && mouseX < static_cast<int>(viewportSize.x) && mouseY < static_cast<int>(viewportSize.y))
+        {
+            int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+            return pixelData == -1 ? Entity() : Entity(static_cast<entt::entity>(pixelData), m_ActiveScene.get());
+        }
+
+        return {};
     }
 
     void EditorLayer::OnEvent(Event& event)
@@ -100,6 +108,7 @@ namespace LevEngine
         DrawViewport();	
         DrawStatistics();
         m_Hierarchy.OnImGuiRender();
+        m_AssetsBrowser.OnImGuiRender();
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
@@ -188,17 +197,22 @@ namespace LevEngine
         const auto filepath = FileDialogs::OpenFile("LevEngine Scene (*.scene)\0*.scene\0");
         if (!filepath.empty())
         {
-            m_ActiveScene = CreateRef<Scene>();
-            m_ActiveScene->OnViewportResized(
+            OpenScene(filepath);
+        }
+    }
+
+    void EditorLayer::OpenScene(const std::filesystem::path& path)
+    {
+        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene->OnViewportResized(
                 static_cast<uint32_t>(m_ViewportSize.x),
                 static_cast<uint32_t>(m_ViewportSize.y));
-            m_Hierarchy.SetContext(m_ActiveScene);
+        m_Hierarchy.SetContext(m_ActiveScene);
 
-            SceneSerializer sceneSerializer(m_ActiveScene);
-            sceneSerializer.Deserialize(filepath);
+        SceneSerializer sceneSerializer(m_ActiveScene);
+        sceneSerializer.Deserialize(path.generic_string());
 
-            m_ActiveScenePath = filepath;
-        }
+        m_ActiveScenePath = path.generic_string();
     }
 
     void EditorLayer::SaveScene()
@@ -254,6 +268,16 @@ namespace LevEngine
             ImVec2(0, 1),
             ImVec2(1, 0)
         );
+
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+            {
+                const wchar_t* path = (const wchar_t*)payload->Data;
+                OpenScene(std::filesystem::path(g_AssetsPath) / path);
+            }
+            ImGui::EndDragDropTarget();
+        }
 
     	//Gizmos
         Entity selectedEntity = m_Hierarchy.GetSelectedEntity();

@@ -16,6 +16,7 @@
 #include <unordered_set>
 
 #include "src/Kernel/PointerUtils.h"
+#include "src/Kernel/Utils.h"
 #include "src/Kernel/Logger.h"
 #include "src/Kernel/Asserts.h"
 #include "src/Debug/Profiler.h"

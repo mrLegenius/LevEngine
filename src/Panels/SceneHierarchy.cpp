@@ -1,4 +1,4 @@
-#include "SceneHierarchyEditorWindow.h"
+#include "SceneHierarchy.h"
 
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui.h"
@@ -6,18 +6,18 @@
 
 namespace LevEngine
 {
-	SceneHierarchyEditorWindow::SceneHierarchyEditorWindow(const Ref<Scene>& scene)
+	SceneHierarchy::SceneHierarchy(const Ref<Scene>& scene)
 	{
 		SetContext(scene);
 	}
 
-	void SceneHierarchyEditorWindow::SetContext(const Ref<Scene>& scene)
+	void SceneHierarchy::SetContext(const Ref<Scene>& scene)
 	{
 		m_Context = scene;
 		m_SelectionContext = { };
 	}
 
-	void SceneHierarchyEditorWindow::OnImGuiRender()
+	void SceneHierarchy::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
 
@@ -30,7 +30,7 @@ namespace LevEngine
 		if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(0))
 			m_SelectionContext = {};
 
-		//Right click on a blank space
+		//Right-click on a blank space
 		if (ImGui::BeginPopupContextWindow(nullptr, 1, false))
 		{
 			if (ImGui::MenuItem("Create New Entity"))
@@ -47,12 +47,11 @@ namespace LevEngine
 		{
 			DrawComponents(m_SelectionContext);
 		}
-			
 
 		ImGui::End();
 	}
 
-	void SceneHierarchyEditorWindow::DrawEntityNode(Entity entity)
+	void SceneHierarchy::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().tag;
 
@@ -217,7 +216,7 @@ namespace LevEngine
 		}
 	}
 	
-	void SceneHierarchyEditorWindow::DrawComponents(Entity entity)
+	void SceneHierarchy::DrawComponents(Entity entity)
 	{
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -273,7 +272,6 @@ namespace LevEngine
 		
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
 			{
-			
 				auto& camera = component.camera;
 				ImGui::Checkbox("Main", &component.isMain);
 				ImGui::Checkbox("Fixed aspect ratio", &component.fixedAspectRatio);

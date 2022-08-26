@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "LevEngine.h"
-#include "EditorWindows/SceneHierarchyEditorWindow.h"
+#include "Panels/SceneHierarchy.h"
+#include "Panels/AssetsBrowser.h"
 #include "src/Events/KeyEvent.h"
 
 namespace LevEngine
@@ -24,6 +25,7 @@ namespace LevEngine
 
 		void CreateNewScene();
 		void OpenScene();
+        void OpenScene(const std::filesystem::path& path);
 		void SaveScene();
 		void SaveSceneAs();
 
@@ -31,6 +33,8 @@ namespace LevEngine
 		void DrawDockSpace();
 		void DrawViewport();
 		void DrawStatistics();
+
+        Entity GetHoveredEntity();
 
 		EditorCamera m_EditorCamera;
 		
@@ -48,6 +52,7 @@ namespace LevEngine
 
 		int m_GizmoType = -1;
 
-		SceneHierarchyEditorWindow m_Hierarchy;
-	};
+        SceneHierarchy m_Hierarchy;
+        AssetsBrowser m_AssetsBrowser;
+    };
 }

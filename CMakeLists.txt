@@ -8,7 +8,9 @@ add_executable(${PROJECT_NAME}
         main.cpp
         src/LevEditor.cpp
         src/EditorLayer.cpp
-        src/EditorWindows/SceneHierarchyEditorWindow.cpp)
+        src/Panels/SceneHierarchy.cpp
+        src/Panels/AssetsBrowser.cpp
+        )
 
 add_subdirectory(LevCore)
 #add_subdirectory(LevEditor)

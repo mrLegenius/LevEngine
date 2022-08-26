@@ -3,11 +3,11 @@
 
 namespace LevEngine
 {
-	class SceneHierarchyEditorWindow
+	class SceneHierarchy
 	{
 	public:
-		SceneHierarchyEditorWindow() = default;
-		SceneHierarchyEditorWindow(const Ref<Scene>& scene);
+		SceneHierarchy() = default;
+		SceneHierarchy(const Ref<Scene>& scene);
 
 		void SetContext(const Ref<Scene>& scene);
 		void DrawEntityNode(Entity entity);
