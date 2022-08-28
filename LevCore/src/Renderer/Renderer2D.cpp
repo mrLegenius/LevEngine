@@ -176,7 +176,7 @@ namespace LevEngine
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& spriteRenderer, const int entityID)
 	{
-        if (spriteRenderer.Texture)
+        if (spriteRenderer.Texture && spriteRenderer.Texture->IsLoaded())
             Draw(transform, spriteRenderer.color, spriteRenderer.Texture, spriteRenderer.TilingFactor, entityID);
         else
             Draw(transform, spriteRenderer.color, s_Data->blankTexture, 1.0f, entityID);
