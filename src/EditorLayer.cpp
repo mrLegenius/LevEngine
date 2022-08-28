@@ -219,16 +219,22 @@ namespace LevEngine
 
     void EditorLayer::OpenScene(const std::filesystem::path& path)
     {
+        if (path.extension().string() != ".scene")
+        {
+            Log::Warning("Could not load {0} - not a scene file", path.filename().string());
+            return;
+        }
+
         m_ActiveScene = CreateRef<Scene>();
-        m_ActiveScene->OnViewportResized(
-                static_cast<uint32_t>(m_ViewportSize.x),
-                static_cast<uint32_t>(m_ViewportSize.y));
-        m_Hierarchy.SetContext(m_ActiveScene);
-
         SceneSerializer sceneSerializer(m_ActiveScene);
-        sceneSerializer.Deserialize(path.generic_string());
-
-        m_ActiveScenePath = path.generic_string();
+        if (sceneSerializer.Deserialize(path.generic_string()))
+        {
+            m_ActiveScene->OnViewportResized(
+                    static_cast<uint32_t>(m_ViewportSize.x),
+                    static_cast<uint32_t>(m_ViewportSize.y));
+            m_Hierarchy.SetContext(m_ActiveScene);
+            m_ActiveScenePath = path.generic_string();
+        }
     }
 
     void EditorLayer::SaveScene()
