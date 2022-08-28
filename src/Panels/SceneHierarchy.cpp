@@ -24,23 +24,26 @@ namespace LevEngine
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		m_Context->m_Registry.each([&](auto entityID)
-			{
-				const Entity entity{ entityID, m_Context.get() };
-				DrawEntityNode(entity);
-			});
+        if (m_Context)
+        {
+            m_Context->m_Registry.each([&](auto entityID)
+                                       {
+                                           const Entity entity{ entityID, m_Context.get() };
+                                           DrawEntityNode(entity);
+                                       });
 
-		if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(0))
-			m_SelectionContext = {};
+            if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(0))
+                m_SelectionContext = {};
 
-		//Right-click on a blank space
-		if (ImGui::BeginPopupContextWindow(nullptr, 1, false))
-		{
-			if (ImGui::MenuItem("Create New Entity"))
-				m_Context->CreateEntity("New Entity");
+            //Right-click on a blank space
+            if (ImGui::BeginPopupContextWindow(nullptr, 1, false))
+            {
+                if (ImGui::MenuItem("Create New Entity"))
+                    m_Context->CreateEntity("New Entity");
 
-			ImGui::EndPopup();
-		}
+                ImGui::EndPopup();
+            }
+        }
 		
 		ImGui::End();
 

@@ -27,8 +27,6 @@ namespace LevEngine
 
         m_EditorCamera = EditorCamera(30.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
 
-        m_Hierarchy.SetContext(m_ActiveScene);
-
         //SceneSerializer sceneSerializer(m_ActiveScene);
         //m_ActiveScenePath = "assets/scenes/BasicScene.scene";
         //sceneSerializer.Deserialize(m_ActiveScenePath);
@@ -159,6 +157,13 @@ namespace LevEngine
             else if (control) { SaveScene(); }
             break;
         }
+        case KeyCode::D:
+        {
+            if (control)
+                OnDuplicateEntity();
+
+            break;
+        }
         case KeyCode::Q:
         {
             m_GizmoType = -1;
@@ -205,7 +210,7 @@ namespace LevEngine
             static_cast<uint32_t>(m_ViewportSize.x),
             static_cast<uint32_t>(m_ViewportSize.y));
         m_Hierarchy.SetContext(m_ActiveScene);
-        m_ActiveScenePath.clear();
+        m_EditorScenePath = std::filesystem::path();
     }
 
     void EditorLayer::OpenScene()
@@ -225,24 +230,29 @@ namespace LevEngine
             return;
         }
 
-        m_ActiveScene = CreateRef<Scene>();
-        SceneSerializer sceneSerializer(m_ActiveScene);
+        if (m_SceneState != SceneState::Edit)
+            OnSceneStop();
+
+        Ref<Scene> newScene = CreateRef<Scene>();
+        SceneSerializer sceneSerializer(newScene);
         if (sceneSerializer.Deserialize(path.generic_string()))
         {
+            m_EditorScene = newScene;
             m_ActiveScene->OnViewportResized(
                     static_cast<uint32_t>(m_ViewportSize.x),
                     static_cast<uint32_t>(m_ViewportSize.y));
-            m_Hierarchy.SetContext(m_ActiveScene);
-            m_ActiveScenePath = path.generic_string();
+            m_Hierarchy.SetContext(m_EditorScene);
+            m_EditorScenePath = path;
+            m_ActiveScene = newScene;
         }
     }
 
     void EditorLayer::SaveScene()
     {
-        if (!m_ActiveScenePath.empty())
+        if (!m_EditorScenePath.empty())
         {
             SceneSerializer sceneSerializer(m_ActiveScene);
-            sceneSerializer.Serialize(m_ActiveScenePath);
+            sceneSerializer.Serialize(m_EditorScenePath.string());
         }
         else
             SaveSceneAs();
@@ -255,8 +265,8 @@ namespace LevEngine
         {
             SceneSerializer sceneSerializer(m_ActiveScene);
             sceneSerializer.Serialize(filepath);
-        	
-            m_ActiveScenePath = filepath;
+
+            m_EditorScenePath = filepath;
         }
     }
 
@@ -489,10 +499,30 @@ namespace LevEngine
     void EditorLayer::OnScenePlay()
     {
         m_SceneState = SceneState::Play;
+
+        m_ActiveScene = Scene::Copy(m_EditorScene);
+        //m_ActiveScene->OnRuntimeStart();
+
+        m_Hierarchy.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneStop()
     {
         m_SceneState = SceneState::Edit;
+
+        //m_ActiveScene->OnRuntimeStop();
+        m_ActiveScene = m_EditorScene;
+
+        m_Hierarchy.SetContext(m_ActiveScene);
+    }
+
+    void EditorLayer::OnDuplicateEntity()
+    {
+        if (m_SceneState != SceneState::Edit)
+            return;
+
+        Entity selectedEntity = m_Hierarchy.GetSelectedEntity();
+        if (selectedEntity)
+            m_EditorScene->DuplicateEntity(selectedEntity);
     }
 }

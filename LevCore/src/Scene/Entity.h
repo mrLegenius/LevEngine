@@ -34,6 +34,14 @@ namespace LevEngine
 			return component;
 		}
 
+        template<typename T, typename... Args>
+        T& AddOrReplaceComponent(Args&&... args)
+        {
+            T& component = m_Scene->m_Registry.emplace_or_replace<T>(m_EntityID, std::forward<Args>(args)...);
+            m_Scene->OnComponentAdded<T>(*this, component);
+            return component;
+        }
+
 		template<typename T>
 		T& GetComponent()
 		{
@@ -56,6 +64,7 @@ namespace LevEngine
 		void AddScript();
 
         UUID GetUUID() { return GetComponent<IDComponent>().ID; }
+        const std::string& GetName() { return GetComponent<TagComponent>().tag; }
 
 		operator bool() const { return m_EntityID != entt::null; }
 		operator uint32_t() const { return static_cast<uint32_t>(m_EntityID); }

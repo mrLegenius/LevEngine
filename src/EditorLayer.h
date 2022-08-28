@@ -30,6 +30,8 @@ namespace LevEngine
 
         void OnScenePlay();
         void OnSceneStop();
+
+        void OnDuplicateEntity();
 		
 		void DrawDockSpace();
 		void DrawViewport();
@@ -43,7 +45,9 @@ namespace LevEngine
 		Ref<Framebuffer> m_Framebuffer = nullptr;
 
 		Ref<Scene> m_ActiveScene = nullptr;
-		std::string m_ActiveScenePath;
+        Ref<Scene> m_EditorScene = nullptr;
+
+        std::filesystem::path m_EditorScenePath;
 
 		Entity m_HoveredEntity;
 

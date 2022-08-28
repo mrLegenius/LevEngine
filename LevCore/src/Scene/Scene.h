@@ -22,6 +22,9 @@ namespace LevEngine
         Entity CreateEntity(LevEngine::UUID uuid, const std::string &name);
 
 		void DestroyEntity(Entity entity);
+
+        static Ref<LevEngine::Scene> Copy(Ref<LevEngine::Scene> other);
+        void DuplicateEntity(Entity entity);
 		
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
