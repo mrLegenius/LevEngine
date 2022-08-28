@@ -106,7 +106,10 @@ namespace LevEngine
 
     void EditorLayer::OnEvent(Event& event)
     {
-        m_EditorCamera.OnEvent(event);
+        if (m_SceneState == SceneState::Edit)
+        {
+            m_EditorCamera.OnEvent(event);
+        }
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(LEV_BIND_EVENT_FN(EditorLayer::OnKeyPressed));

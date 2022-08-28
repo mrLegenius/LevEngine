@@ -10,6 +10,7 @@ void LevEngine::OpenGLRendererAPI::Init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LINE_SMOOTH);
 }
 
 void LevEngine::OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
@@ -29,7 +30,8 @@ void LevEngine::OpenGLRendererAPI::Clear()
 void LevEngine::OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, const uint32_t indexCount)
 {
 	LEV_PROFILE_FUNCTION();
-	
+
+    vertexArray->Bind();
 	const uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 }

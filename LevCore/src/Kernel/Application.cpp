@@ -7,8 +7,6 @@
 
 #include "Time.h"
 
-#include <glfw/glfw3.h> //TODO: Remove it from here after better time framework is implemented
-
 namespace LevEngine
 {
 	Application* Application::s_Instance = nullptr;
@@ -27,6 +25,8 @@ namespace LevEngine
 		
 		m_ImGuiLayer = new ImGuiLayer;
 		PushOverlay(m_ImGuiLayer);
+
+        Time::s_StartupTime = std::chrono::high_resolution_clock::now();
 	}
 
 	Application::~Application()
@@ -42,7 +42,7 @@ namespace LevEngine
 		{
 			LEV_PROFILE_SCOPE("Run loop");
 			
-			const auto time = static_cast<float>(glfwGetTime()); //Platform::GetTime
+			const auto time = Time::GetTimeSinceStartup();
             Time::s_DeltaTime = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
