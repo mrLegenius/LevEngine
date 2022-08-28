@@ -9,6 +9,7 @@
 #include "glm/gtx/quaternion.hpp"
 
 #include "Renderer/Camera/SceneCamera.h"
+#include "Renderer/Texture.h"
 
 namespace LevEngine
 {
@@ -18,7 +19,7 @@ namespace LevEngine
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
-		TagComponent(std::string other)
+		explicit TagComponent(std::string other)
 			: tag(std::move(other)) { }
 	};
 	
@@ -30,10 +31,10 @@ namespace LevEngine
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const glm::vec3& position)
+		explicit TransformComponent(const glm::vec3& position)
 			: position(position) { }
 
-		glm::mat4 GetModel() const
+		[[nodiscard]] glm::mat4 GetModel() const
 		{
 			return glm::translate(glm::mat4(1.0f), position) *
 				glm::toMat4(glm::quat(rotation)) * 
@@ -44,11 +45,12 @@ namespace LevEngine
 	struct SpriteRendererComponent
 	{
 		glm::vec4 color {1.0f};
-		std::string texture;
+        Ref<Texture2D> Texture;
+        float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4& other)
+		explicit SpriteRendererComponent(const glm::vec4& other)
 			: color(other) { }
 
 		operator glm::vec4& () { return color; }

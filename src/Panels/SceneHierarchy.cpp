@@ -1,4 +1,5 @@
 #include "SceneHierarchy.h"
+#include <filesystem>
 
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui.h"
@@ -6,6 +7,8 @@
 
 namespace LevEngine
 {
+    extern const std::filesystem::path g_AssetsPath;
+
 	SceneHierarchy::SceneHierarchy(const Ref<Scene>& scene)
 	{
 		SetContext(scene);
@@ -141,9 +144,9 @@ namespace LevEngine
 		ImGui::SameLine();
 		ImGui::DragFloat("##Y", &values.y, 0.1f);
 		ImGui::PopItemWidth();
-		ImGui::SameLine();
+        ImGui::SameLine();
 
-		// -- Z Component ------------------------------------------------
+        // -- Z Component ------------------------------------------------
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.35f, 0.9f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
@@ -330,6 +333,20 @@ namespace LevEngine
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 			{
 				ImGui::ColorEdit4("Color", value_ptr(component.color));
+
+                ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+                    {
+                        auto path = (const wchar_t*)payload->Data;
+                        std::filesystem::path texturePath = std::filesystem::path(g_AssetsPath) / path;
+                        component.Texture = Texture2D::Create(texturePath.string());
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+
+                ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 			});
 	}
 }

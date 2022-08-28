@@ -176,12 +176,10 @@ namespace LevEngine
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& spriteRenderer, const int entityID)
 	{
-		Draw(
-			transform,
-			spriteRenderer.color,
-			s_Data->blankTexture,
-			1.0f,
-			entityID);
+        if (spriteRenderer.Texture)
+            Draw(transform, spriteRenderer.color, spriteRenderer.Texture, spriteRenderer.TilingFactor, entityID);
+        else
+            Draw(transform, spriteRenderer.color, s_Data->blankTexture, 1.0f, entityID);
 	}
 
 	void Renderer2D::Draw(const glm::mat4& transform, const glm::vec4& color, const Ref<Texture2D>& texture, const float tiling, const int entityID)
