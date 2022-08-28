@@ -11,6 +11,7 @@ add_library(LevEngineCore STATIC
         src/Kernel/LayerStack.cpp
         src/Kernel/Time.cpp
         src/Kernel/Timestep.cpp
+        src/Kernel/UUID.cpp
 
         src/Renderer/Buffer.cpp
         src/Renderer/Framebuffer.cpp

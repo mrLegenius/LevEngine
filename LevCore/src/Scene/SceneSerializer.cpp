@@ -102,10 +102,11 @@ namespace LevEngine
 	
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+        LEV_CORE_ASSERT(entity.HasComponent<IDComponent>());
+
 		out << YAML::BeginMap;
 
-        uint32_t entityId = entity;
-		out << YAML::Key << "Entity" << YAML::Value << entityId;
+		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
 		SerializeComponent<TagComponent>(out, "TagComponent", entity, 
 			[&entity, &out](TagComponent& component)
@@ -203,7 +204,7 @@ namespace LevEngine
 		{
 			for (auto entity : entities)
 			{
-				auto uuid = entity["Entity"].as<uint32_t>();
+				auto uuid = entity["Entity"].as<uint64_t>();
 
 				std::string name;
 				auto tagComponent = entity["TagComponent"];
@@ -212,7 +213,7 @@ namespace LevEngine
 
 				Log::Trace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
 				
-				Entity deserializedEntity = m_Scene->CreateEntity(name);
+				Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
 
 				auto transformComponent = entity["TransformComponent"];
 				if(transformComponent)

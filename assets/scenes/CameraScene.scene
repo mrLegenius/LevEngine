@@ -1,14 +1,14 @@
 Scene: Scene Name
 Entities:
-  - Entity: 1
+  - Entity: 3685228232681645785
     TagComponent:
-      Tag: Sprite
+      Tag: Sprite 2
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [0, 1.5, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.104112931, 0.412878603, 0.749034762, 1]
+      Color: [0.969111979, 0.17960377, 0.17960377, 1]
   - Entity: 0
     TagComponent:
       Tag: Main Camera
@@ -27,3 +27,12 @@ Entities:
         OrthographicFar: 1
       Main: true
       FixedAspectRatio: false
+  - Entity: 1
+    TagComponent:
+      Tag: Sprite
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.104112931, 0.412878603, 0.749034762, 1]

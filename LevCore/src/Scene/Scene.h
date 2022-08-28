@@ -2,6 +2,7 @@
 #include <entt/entt.hpp>
 
 #include "Renderer/Camera/EditorCamera.h"
+#include "Kernel/UUID.h"
 
 namespace LevEngine
 {
@@ -18,6 +19,8 @@ namespace LevEngine
 		void OnViewportResized(uint32_t width, uint32_t height);
 		
 		Entity CreateEntity(const std::string& name = "Entity");
+        Entity CreateEntity(LevEngine::UUID uuid, const std::string &name);
+
 		void DestroyEntity(Entity entity);
 		
 		template<typename T>
@@ -31,5 +34,5 @@ namespace LevEngine
 		friend class Entity;
 		friend class SceneSerializer;
 		friend class SceneHierarchy;
-	};
+    };
 }

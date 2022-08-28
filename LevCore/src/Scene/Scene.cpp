@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "Renderer/Renderer2D.h"
+#include "ScriptableEntity.h"
 #include "Scene/Entity.h"
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -99,12 +100,18 @@ namespace LevEngine
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
-		auto entity = Entity(m_Registry.create(), this);
-		entity.AddComponent<TransformComponent>();
-		entity.AddComponent<TagComponent>(name);
-
-		return entity;
+		return CreateEntity(UUID(), name);
 	}
+
+    Entity Scene::CreateEntity(UUID uuid, const std::string& name)
+    {
+        auto entity = Entity(m_Registry.create(), this);
+        entity.AddComponent<IDComponent>(uuid);
+        entity.AddComponent<TransformComponent>();
+        entity.AddComponent<TagComponent>(name);
+
+        return entity;
+    }
 
 	void Scene::DestroyEntity(const Entity entity)
 	{
@@ -129,6 +136,10 @@ namespace LevEngine
 			
 	}
 
+    template <>
+    void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+    {
+    }
 	template <>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
 	{

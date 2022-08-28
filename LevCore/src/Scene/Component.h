@@ -1,8 +1,6 @@
 #pragma once
 #include <string>
 
-#include "ScriptableEntity.h"
-
 #include "glm/glm.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
@@ -10,9 +8,18 @@
 
 #include "Renderer/Camera/SceneCamera.h"
 #include "Renderer/Texture.h"
+#include "Kernel/UUID.h"
 
 namespace LevEngine
 {
+    struct IDComponent
+    {
+        UUID ID;
+
+        IDComponent() = default;
+        IDComponent(const IDComponent&) = default;
+    };
+
 	struct TagComponent
 	{
 		std::string tag;
@@ -66,6 +73,9 @@ namespace LevEngine
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
 	};
+
+
+    class ScriptableEntity;
 
 	struct NativeScriptComponent
 	{

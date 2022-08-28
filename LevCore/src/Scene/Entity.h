@@ -2,7 +2,8 @@
 #include <entt/entt.hpp>
 
 #include "Scene.h"
-#include "../Kernel/Asserts.h"
+#include "../Kernel/UUID.h"
+#include "Component.h"
 
 namespace LevEngine
 {
@@ -53,6 +54,8 @@ namespace LevEngine
 
 		template <typename T>
 		void AddScript();
+
+        UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 
 		operator bool() const { return m_EntityID != entt::null; }
 		operator uint32_t() const { return static_cast<uint32_t>(m_EntityID); }
