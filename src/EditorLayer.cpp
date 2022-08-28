@@ -13,6 +13,9 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
+        m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
+        m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
+
         FramebufferSpecification fbSpec;
         fbSpec.attachmentSpecification = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RedInteger, FramebufferTextureFormat::Depth };
         fbSpec.width = Application::Get().GetWindow().GetWidth();
@@ -54,8 +57,6 @@ namespace LevEngine
             m_EditorCamera.SetViewportSize(width, height);
         }
     	
-        m_EditorCamera.OnUpdate();
-    	
         m_Framebuffer->Bind();
         const float gray = 0.69f / 5;
         RenderCommand::SetClearColor(glm::vec4(glm::vec3(gray), 1.0f));
@@ -63,8 +64,22 @@ namespace LevEngine
     	
         // Clear entity ID attachment to -1
         m_Framebuffer->ClearAttachment(1, -1);
-    	
-        m_ActiveScene->OnUpdateEditor(m_EditorCamera);
+
+        switch (m_SceneState)
+        {
+            case SceneState::Edit:
+            {
+                m_EditorCamera.OnUpdate();
+
+                m_ActiveScene->OnUpdateEditor(m_EditorCamera);
+                break;
+            }
+            case SceneState::Play:
+            {
+                m_ActiveScene->OnUpdateRuntime();
+                break;
+            }
+        }
 
         m_HoveredEntity = GetHoveredEntity();
 
@@ -105,8 +120,9 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION();
 
         DrawDockSpace();
-        DrawViewport();	
+        DrawViewport();
         DrawStatistics();
+        DrawToolbar();
         m_Hierarchy.OnImGuiRender();
         m_AssetsBrowser.OnImGuiRender();
     }
@@ -347,6 +363,34 @@ namespace LevEngine
         ImGui::End();
     }
 
+    void EditorLayer::DrawToolbar()
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        auto& colors = ImGui::GetStyle().Colors;
+        const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+        const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+        ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+        float size = ImGui::GetWindowHeight() - 4.0f;
+        Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+        if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+        {
+            if (m_SceneState == SceneState::Edit)
+                OnScenePlay();
+            else if (m_SceneState == SceneState::Play)
+                OnSceneStop();
+        }
+        ImGui::PopStyleVar(2);
+        ImGui::PopStyleColor(3);
+        ImGui::End();
+    }
+
     void EditorLayer::DrawDockSpace()
     {
         LEV_PROFILE_FUNCTION();
@@ -434,5 +478,15 @@ namespace LevEngine
         }
 
         ImGui::End();
+    }
+
+    void EditorLayer::OnScenePlay()
+    {
+        m_SceneState = SceneState::Play;
+    }
+
+    void EditorLayer::OnSceneStop()
+    {
+        m_SceneState = SceneState::Edit;
     }
 }

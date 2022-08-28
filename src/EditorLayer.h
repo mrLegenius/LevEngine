@@ -18,7 +18,6 @@ namespace LevEngine
 		void OnEvent(Event& event) override;
 		void OnImGuiRender() override;
 
-
 	private:
 		bool OnKeyPressed(KeyPressedEvent& event);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
@@ -29,10 +28,13 @@ namespace LevEngine
 		void SaveScene();
 		void SaveSceneAs();
 
+        void OnScenePlay();
+        void OnSceneStop();
 		
 		void DrawDockSpace();
 		void DrawViewport();
 		void DrawStatistics();
+        void DrawToolbar();
 
         Entity GetHoveredEntity();
 
@@ -52,7 +54,15 @@ namespace LevEngine
 
 		int m_GizmoType = -1;
 
+        enum class SceneState
+        {
+            Edit = 0, Play = 1
+        };
+        SceneState m_SceneState = SceneState::Edit;
+
         SceneHierarchy m_Hierarchy;
         AssetsBrowser m_AssetsBrowser;
+
+        Ref<Texture2D> m_IconPlay, m_IconStop;
     };
 }

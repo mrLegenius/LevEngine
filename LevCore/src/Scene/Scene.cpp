@@ -60,7 +60,6 @@ namespace LevEngine
 				Renderer2D::DrawSprite(transform.GetModel(), sprite, static_cast<int>(entity));
 			}
 
-
 			Renderer2D::EndScene();
 		}
 	}
@@ -119,7 +118,7 @@ namespace LevEngine
 		{
 			const auto& camera = view.get<CameraComponent>(entity);
 			if (camera.isMain)
-				return Entity(entity, this);
+				return {entity, this};
 		}
 		return { };
 	}
