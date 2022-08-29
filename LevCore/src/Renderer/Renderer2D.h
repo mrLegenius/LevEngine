@@ -3,7 +3,7 @@
 #include "Camera/EditorCamera.h"
 #include "Camera/Camera.h"
 #include "Camera/OrthographicCamera.h"
-#include "Scene/Component.h"
+#include "Scene/Components.h"
 
 namespace LevEngine
 {

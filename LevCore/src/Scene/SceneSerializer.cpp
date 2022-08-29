@@ -5,7 +5,7 @@
 
 #include "Entity.h"
 #include "Kernel/Asserts.h"
-#include "Component.h"
+#include "Components.h"
 
 namespace YAML
 {

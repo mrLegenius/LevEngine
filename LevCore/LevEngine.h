@@ -32,7 +32,7 @@
 #include "src/Scene/Scene.h"
 #include "src/Scene/Entity.h"
 #include "src/Scene/ScriptableEntity.h"
-#include "src/Scene/Component.h"
+#include "src/Scene/Components.h"
 
 #include "src/Scene/Components/CameraControllers/OrthographicCameraController.h"
 

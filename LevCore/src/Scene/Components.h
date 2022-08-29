@@ -91,4 +91,13 @@ namespace LevEngine
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; };
 		}
 	};
+
+    template<typename... Component>
+    struct ComponentGroup { };
+
+    using AllComponents = ComponentGroup<
+            TransformComponent,
+            SpriteRendererComponent,
+            CameraComponent,
+            NativeScriptComponent>;
 }

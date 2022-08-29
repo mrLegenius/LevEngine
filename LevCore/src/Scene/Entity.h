@@ -3,7 +3,7 @@
 
 #include "Scene.h"
 #include "../Kernel/UUID.h"
-#include "Component.h"
+#include "Components.h"
 
 namespace LevEngine
 {
