@@ -147,6 +147,11 @@ namespace LevEngine
 			[&entity, &out](SpriteRendererComponent& component)
 			{
 				out << YAML::Key << "Color" << YAML::Value << component.color;
+                //TODO: serialize texture by uuid
+                if (component.Texture)
+                    out << YAML::Key << "TexturePath" << YAML::Value << component.Texture->GetPath();
+
+                out << YAML::Key << "TilingFactor" << YAML::Value << component.TilingFactor;
 			});
 
 		out << YAML::EndMap;
@@ -252,6 +257,12 @@ namespace LevEngine
 					auto& component = deserializedEntity.AddComponent<SpriteRendererComponent>();
 
 					component.color = spriteRendererComponent["Color"].as<glm::vec4>();
+                    //TODO: deserialize texture by uuid
+                    if (spriteRendererComponent["TexturePath"])
+                        component.Texture = Texture2D::Create(spriteRendererComponent["TexturePath"].as<std::string>());
+
+                    if (spriteRendererComponent["TilingFactor"])
+                        component.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
 				}
 			}
 		}
