@@ -2,43 +2,57 @@
 
 #include <glad/gl.h>
 
-void LevEngine::OpenGLRendererAPI::Init()
+namespace LevEngine
 {
-	LEV_PROFILE_FUNCTION();
-	
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    void OpenGLRendererAPI::Init()
+    {
+        LEV_PROFILE_FUNCTION();
 
-	glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LINE_SMOOTH);
-}
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-void LevEngine::OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
-{
-	LEV_PROFILE_FUNCTION();
-	
-	glClearColor(color.r, color.g, color.b, color.a);
-}
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_LINE_SMOOTH);
+    }
 
-void LevEngine::OpenGLRendererAPI::Clear()
-{
-	LEV_PROFILE_FUNCTION();
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
+    void OpenGLRendererAPI::SetClearColor(const glm::vec4 &color)
+    {
+        LEV_PROFILE_FUNCTION();
 
-void LevEngine::OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, const uint32_t indexCount)
-{
-	LEV_PROFILE_FUNCTION();
+        glClearColor(color.r, color.g, color.b, color.a);
+    }
 
-    vertexArray->Bind();
-	const uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
-	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
-}
+    void OpenGLRendererAPI::Clear()
+    {
+        LEV_PROFILE_FUNCTION();
 
-void LevEngine::OpenGLRendererAPI::SetViewport(const int x, const int y, const uint32_t width, const uint32_t height)
-{
-	LEV_PROFILE_FUNCTION();
-	
-	glViewport(x, y, width, height);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void OpenGLRendererAPI::DrawIndexed(const Ref <VertexArray> &vertexArray, const uint32_t indexCount)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        vertexArray->Bind();
+        const uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+    }
+
+    void OpenGLRendererAPI::DrawLines(const Ref <VertexArray> &vertexArray, uint32_t vertexCount)
+    {
+        vertexArray->Bind();
+        glDrawArrays(GL_LINES, 0, vertexCount);
+    }
+
+    void OpenGLRendererAPI::SetLineWidth(float width)
+    {
+        glLineWidth(width);
+    }
+
+    void OpenGLRendererAPI::SetViewport(const int x, const int y, const uint32_t width, const uint32_t height)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        glViewport(x, y, width, height);
+    }
 }
