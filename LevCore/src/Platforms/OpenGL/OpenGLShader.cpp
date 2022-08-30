@@ -191,12 +191,14 @@ namespace LevEngine
 			{
 				GLint length;
 				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-				
-				const auto message = static_cast<char*>(nullptr);
+
+                auto* message = new GLchar[length];
 				glGetShaderInfoLog(shader, length, &length, message);
 				
 				Log::CoreError("Failed to compile {0}", type == GL_VERTEX_SHADER ? "vertex" : "fragment");
 				Log::CoreError(message);
+                delete [] message;
+
 				LEV_CORE_ASSERT(false)
 				
 				glDeleteShader(shader);
@@ -214,18 +216,20 @@ namespace LevEngine
 
 		if(isLinked == GL_FALSE)
 		{
-			GLint length;
+			GLint length = 0;
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
 
-			const auto message = static_cast<char*>(nullptr);
+            auto* message = new GLchar[length];
             glGetProgramInfoLog(program, length, &length, message);
 
 			for (auto shader : glShaderIDs)
 			{
 				glDeleteShader(shader);
 			}
-			
-			Log::CoreError(message);
+
+            Log::CoreError(message);
+            delete [] message;
+
 			LEV_CORE_ASSERT(false, "Shader link failure!")
 			
 			return;
