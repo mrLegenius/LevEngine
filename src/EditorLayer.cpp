@@ -81,9 +81,37 @@ namespace LevEngine
 
         m_HoveredEntity = GetHoveredEntity();
 
+        OnOverlayRender();
         //COOL GRADIENT COLOR
         //glm::vec4 c{ (i + 3.0f) / 6.0f, (i + 5.0f) / 10.0f, (i + 10.0f) / 15.0f, 1.0f };
         m_Framebuffer->Unbind();
+    }
+
+    void EditorLayer::OnOverlayRender()
+    {
+        if (m_SceneState == SceneState::Play)
+        {
+            Entity camera = m_ActiveScene->GetMainCameraEntity();
+
+            if (!camera) return;
+
+            Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().camera, camera.GetComponent<TransformComponent>().GetModel());
+        }
+        else
+        {
+            Renderer2D::BeginScene(m_EditorCamera);
+        }
+
+        // Draw selected entity outline
+        if (Entity selectedEntity = m_Hierarchy.GetSelectedEntity())
+        {
+            TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
+
+            Renderer2D::SetLineWidth(4.0f);
+            Renderer2D::DrawRect(transform.GetModel(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+        }
+
+        Renderer2D::EndScene();
     }
 
     Entity EditorLayer::GetHoveredEntity() {

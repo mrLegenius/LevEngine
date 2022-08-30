@@ -68,5 +68,7 @@ namespace LevEngine
         AssetsBrowser m_AssetsBrowser;
 
         Ref<Texture2D> m_IconPlay, m_IconStop;
+
+        void OnOverlayRender();
     };
 }

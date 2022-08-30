@@ -40,6 +40,8 @@ namespace LevEngine
 
     void OpenGLRendererAPI::DrawLines(const Ref <VertexArray> &vertexArray, uint32_t vertexCount)
     {
+        LEV_PROFILE_FUNCTION();
+
         vertexArray->Bind();
         glDrawArrays(GL_LINES, 0, vertexCount);
     }
