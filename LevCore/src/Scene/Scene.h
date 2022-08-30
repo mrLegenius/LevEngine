@@ -37,5 +37,7 @@ namespace LevEngine
 		friend class Entity;
 		friend class SceneSerializer;
 		friend class SceneHierarchy;
+
+        void RenderScene(Camera &camera);
     };
 }

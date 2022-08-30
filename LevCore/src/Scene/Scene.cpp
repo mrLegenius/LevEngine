@@ -53,13 +53,26 @@ namespace LevEngine
 		{
 			Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
-			auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+            {
+                auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+                for (auto entity: view)
+                {
+                    auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				Renderer2D::DrawSprite(transform.GetModel(), sprite, static_cast<int>(entity));
-			}
+                    Renderer2D::DrawSprite(transform.GetModel(), sprite, static_cast<int>(entity));
+                }
+            }
+
+            // Draw circles
+            {
+                auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+                for (auto entity : view)
+                {
+                    auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+                    Renderer2D::DrawCircle(transform.GetModel(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+                }
+            }
 
 			Renderer2D::EndScene();
 		}
@@ -69,14 +82,27 @@ namespace LevEngine
 	{
 		Renderer2D::BeginScene(camera);
 
-		auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-		for (auto entity : view)
-		{
-			auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+        {
+            auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+            for (auto entity: view)
+            {
+                auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
 
-			const auto entityID = static_cast<int>(entity);
-			Renderer2D::DrawSprite(transform.GetModel(), sprite, entityID);
-		}
+                const auto entityID = static_cast<int>(entity);
+                Renderer2D::DrawSprite(transform.GetModel(), sprite, entityID);
+            }
+        }
+
+        // Draw circles
+        {
+            auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+            for (auto entity : view)
+            {
+                auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+                Renderer2D::DrawCircle(transform.GetModel(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+            }
+        }
 
 		Renderer2D::EndScene();
 	}
@@ -229,6 +255,10 @@ namespace LevEngine
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
 	{
 	}
+    template<>
+    void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
+    {
+    }
 	template <>
 	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
 	{

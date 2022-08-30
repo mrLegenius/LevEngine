@@ -154,6 +154,14 @@ namespace LevEngine
                 out << YAML::Key << "TilingFactor" << YAML::Value << component.TilingFactor;
 			});
 
+        SerializeComponent<CircleRendererComponent>(out, "CircleRendererComponent", entity,
+            [&entity, &out](CircleRendererComponent& component)
+            {
+                out << YAML::Key << "Color" << YAML::Value << component.Color;
+                out << YAML::Key << "Thickness" << YAML::Value << component.Thickness;
+                out << YAML::Key << "Fade" << YAML::Value << component.Fade;
+            });
+
 		out << YAML::EndMap;
 	}
 	
@@ -264,6 +272,15 @@ namespace LevEngine
                     if (spriteRendererComponent["TilingFactor"])
                         component.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
 				}
+
+                auto circleRendererComponent = entity["CircleRendererComponent"];
+                if (circleRendererComponent)
+                {
+                    auto& crc = deserializedEntity.AddComponent<CircleRendererComponent>();
+                    crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
+                    crc.Thickness = circleRendererComponent["Thickness"].as<float>();
+                    crc.Fade = circleRendererComponent["Fade"].as<float>();
+                }
 			}
 		}
 

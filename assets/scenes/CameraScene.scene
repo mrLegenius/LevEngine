@@ -49,3 +49,14 @@ Entities:
     SpriteRendererComponent:
       Color: [0.104112931, 0.412878603, 0.749034762, 1]
       TilingFactor: 6.5999999
+  - Entity: 15823308089118774912
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Position: [-1.5, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 1]
+      Thickness: 1
+      Fade: 0.00499999989

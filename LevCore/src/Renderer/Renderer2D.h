@@ -21,6 +21,7 @@ namespace LevEngine
 		static void Flush();
 		
 		static void DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& spriteRenderer, int entityID);
+        static void DrawCircle(const glm::mat4 &transform, const glm::vec4 &color, float thickness, float fade, int entityID);
 
 		struct Statistics
 		{
@@ -40,5 +41,5 @@ namespace LevEngine
 		
 		static void Draw(const glm::mat4& transform, const glm::vec4& color, const Ref<Texture2D>& texture, float tiling, int entityID = -1);
 		static void AddQuadToVertexBuffer(const glm::mat4& model, const glm::vec4& color, const Ref<Texture2D>& texture, float tiling, int entityID = -1);
-	};
+    };
 }
