@@ -23,5 +23,8 @@ namespace LevEngine
 		Entity m_SelectionContext;
 
 		friend class Scene;
-	};
+
+        template<typename T>
+        void DrawAddComponent(const std::string &label);
+    };
 }

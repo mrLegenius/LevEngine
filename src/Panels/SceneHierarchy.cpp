@@ -246,32 +246,9 @@ namespace LevEngine
 
 			if(ImGui::BeginPopup("AddComponent"))
 			{
-                if (!m_SelectionContext.HasComponent<CameraComponent>())
-                {
-                    if (ImGui::MenuItem("Camera"))
-                    {
-                        m_SelectionContext.AddComponent<CameraComponent>();
-                        ImGui::CloseCurrentPopup();
-                    }
-                }
-
-                if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
-                {
-                    if (ImGui::MenuItem("Sprite Renderer"))
-                    {
-                        m_SelectionContext.AddComponent<SpriteRendererComponent>();
-                        ImGui::CloseCurrentPopup();
-                    }
-                }
-
-                if (!m_SelectionContext.HasComponent<CircleRendererComponent>())
-                {
-                    if (ImGui::MenuItem("Circle Renderer"))
-                    {
-                        m_SelectionContext.AddComponent<CircleRendererComponent>();
-                        ImGui::CloseCurrentPopup();
-                    }
-                }
+                DrawAddComponent<CameraComponent>("Camera");
+                DrawAddComponent<SpriteRendererComponent>("Sprite Renderer");
+                DrawAddComponent<CircleRendererComponent>("Circle Renderer");
 				
 				ImGui::EndPopup();
 			}
@@ -383,4 +360,17 @@ namespace LevEngine
             ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
         });
 	}
+
+    template<typename T>
+    void SceneHierarchy::DrawAddComponent(const std::string& label)
+    {
+        if (!m_SelectionContext.HasComponent<T>())
+        {
+            if (ImGui::MenuItem(label.c_str()))
+            {
+                m_SelectionContext.AddComponent<T>();
+                ImGui::CloseCurrentPopup();
+            }
+        }
+    }
 }
