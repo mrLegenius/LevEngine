@@ -29,6 +29,8 @@ add_library(LevEngineCore STATIC
         src/Renderer/Camera/OrthographicCamera.cpp
         src/Renderer/Camera/SceneCamera.cpp
 
+        src/Renderer/3D/Mesh.cpp
+
         src/Platforms/OpenGL/OpenGLBuffer.cpp
         src/Platforms/OpenGL/OpenGLContext.cpp
         src/Platforms/OpenGL/OpenGLFramebuffer.cpp

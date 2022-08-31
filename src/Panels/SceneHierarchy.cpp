@@ -249,7 +249,8 @@ namespace LevEngine
                 DrawAddComponent<CameraComponent>("Camera");
                 DrawAddComponent<SpriteRendererComponent>("Sprite Renderer");
                 DrawAddComponent<CircleRendererComponent>("Circle Renderer");
-				
+                DrawAddComponent<MeshRendererComponent>("Mesh Renderer");
+
 				ImGui::EndPopup();
 			}
 		
@@ -358,6 +359,61 @@ namespace LevEngine
             ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
             ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
             ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
+        });
+
+        DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [](auto& component)
+        {
+            ImGui::Button("Shader", ImVec2(100.0f, 0.0f));
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+                {
+                    auto path = (const wchar_t*)payload->Data;
+                    std::filesystem::path shaderPath = std::filesystem::path(g_AssetsPath) / path;
+                    Ref<Shader> shader = Shader::Create(shaderPath.string());
+
+                    component.Shader = shader;
+                }
+                ImGui::EndDragDropTarget();
+            }
+
+            ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+                {
+                    auto path = (const wchar_t*)payload->Data;
+                    std::filesystem::path texturePath = std::filesystem::path(g_AssetsPath) / path;
+                    Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+
+                    if (texture->IsLoaded())
+                    {
+                        component.Texture = texture;
+                    }
+                    else
+                    {
+                        Log::Warning("Could not load texture {0}", texturePath.filename().string());
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
+
+            if (ImGui::Button("Plane", ImVec2(100.0f, 0.0f)))
+            {
+                component.Mesh = Mesh::CreatePlane(2);
+            }
+
+            static int sphereResolution = 3;
+            ImGui::DragInt("Sphere resolution", &sphereResolution, 1, 3, 100);
+            if (ImGui::Button("Sphere", ImVec2(100.0f, 0.0f)))
+            {
+                component.Mesh = Mesh::CreateSphere(sphereResolution);
+            }
+
+            if (ImGui::Button("Cube", ImVec2(100.0f, 0.0f)))
+            {
+                component.Mesh = Mesh::CreateCube();
+            }
         });
 	}
 

@@ -74,6 +74,17 @@ namespace LevEngine
                 }
             }
 
+            // Draw meshes
+            {
+                auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
+                for (auto entity : view)
+                {
+                    auto [transform, mesh] = view.get<TransformComponent, MeshRendererComponent>(entity);
+
+                    Renderer2D::DrawMesh(transform.GetModel(), mesh, (int)entity);
+                }
+            }
+
 			Renderer2D::EndScene();
 		}
 	}
@@ -101,6 +112,17 @@ namespace LevEngine
                 auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
 
                 Renderer2D::DrawCircle(transform.GetModel(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+            }
+        }
+
+        // Draw meshes
+        {
+            auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
+            for (auto entity : view)
+            {
+                auto [transform, mesh] = view.get<TransformComponent, MeshRendererComponent>(entity);
+
+                Renderer2D::DrawMesh(transform.GetModel(), mesh, (int)entity);
             }
         }
 
@@ -263,4 +285,9 @@ namespace LevEngine
 	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
 	{
 	}
+
+    template <>
+    void Scene::OnComponentAdded<MeshRendererComponent>(Entity entity, MeshRendererComponent& component)
+    {
+    }
 }

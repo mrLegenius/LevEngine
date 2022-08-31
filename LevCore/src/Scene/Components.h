@@ -8,6 +8,8 @@
 
 #include "Renderer/Camera/SceneCamera.h"
 #include "Renderer/Texture.h"
+#include "Renderer/3D/Mesh.h"
+#include "Renderer/Shader.h"
 #include "Kernel/UUID.h"
 
 namespace LevEngine
@@ -74,6 +76,16 @@ namespace LevEngine
         CircleRendererComponent(const CircleRendererComponent&) = default;
     };
 
+    struct MeshRendererComponent
+    {
+        Ref<Mesh> Mesh;
+        Ref<Shader> Shader;
+        Ref<Texture> Texture;
+
+        MeshRendererComponent() = default;
+        MeshRendererComponent(const MeshRendererComponent&) = default;
+    };
+
 	struct CameraComponent
 	{
 		SceneCamera camera;
@@ -109,6 +121,7 @@ namespace LevEngine
             TransformComponent,
             SpriteRendererComponent,
             CircleRendererComponent,
+            MeshRendererComponent,
             CameraComponent,
             NativeScriptComponent>;
 }

@@ -7,6 +7,18 @@
 
 namespace LevEngine
 {
+    struct MeshVertex
+    {
+        glm::vec3 Position;
+        glm::vec3 Normal;
+        glm::vec2 TexCoord;
+        float TexIndex;
+        float TexTiling;
+
+        // Editor-only
+        int EntityID;
+    };
+
 	struct QuadVertex
 	{
 		glm::vec3 position;
@@ -16,7 +28,7 @@ namespace LevEngine
 		float texTiling;
 
 		// Editor-only
-		int entityID = 2;
+		int entityID;
 	};
 
     struct CircleVertex
@@ -49,7 +61,7 @@ namespace LevEngine
 		static const uint32_t maxQuads = 20'000;
 		static const uint32_t maxVertices = maxQuads * verticesPerQuad;
 		static const uint32_t maxIndices = maxQuads * indicesPerQuad;
-		
+
 		Ref<VertexArray> quadVertexArray;
 		Ref<VertexBuffer> quadVertexBuffer;
 		Ref<Shader> QuadShader;
@@ -62,6 +74,8 @@ namespace LevEngine
         Ref<VertexArray> LineVertexArray;
         Ref<VertexBuffer> LineVertexBuffer;
         Ref<Shader> LineShader;
+
+        Ref<Shader> MeshShader;
 
 		uint32_t quadIndexCount = 0;
 		QuadVertex* quadVertexBufferBase = nullptr;
@@ -169,6 +183,7 @@ namespace LevEngine
         s_Data.QuadShader = Shader::Create("assets/shaders/Ultimate2D.shader");
         s_Data.CircleShader = Shader::Create("assets/shaders/Circle.shader");
         s_Data.LineShader = Shader::Create("assets/shaders/Line.shader");
+        s_Data.MeshShader = Shader::Create("assets/shaders/Mesh_White.shader");
 
         s_Data.textureSlots[0] = s_Data.blankTexture;
         
@@ -183,6 +198,8 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION()
 
 		delete s_Data.quadVertexBufferBase;
+		delete s_Data.CircleVertexBufferBase;
+		delete s_Data.LineVertexBufferBase;
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
@@ -200,6 +217,10 @@ namespace LevEngine
         s_Data.LineShader->Bind();
         s_Data.LineShader->SetMatrix4("u_Projection", camera.GetProjection());
         s_Data.LineShader->SetMatrix4("u_View", glm::inverse(transform));
+
+        s_Data.MeshShader->Bind();
+        s_Data.MeshShader->SetMatrix4("u_Projection", camera.GetProjection());
+        s_Data.MeshShader->SetMatrix4("u_View", glm::inverse(transform));
 
 		StartBatch();
 	}
@@ -219,6 +240,10 @@ namespace LevEngine
         s_Data.LineShader->Bind();
         s_Data.LineShader->SetMatrix4("u_Projection", camera.GetProjection());
         s_Data.LineShader->SetMatrix4("u_View", camera.GetViewMatrix());
+
+        s_Data.MeshShader->Bind();
+        s_Data.MeshShader->SetMatrix4("u_Projection", camera.GetProjection());
+        s_Data.MeshShader->SetMatrix4("u_View", camera.GetViewMatrix());
 
 		StartBatch();
 	}
@@ -244,7 +269,70 @@ namespace LevEngine
 
 		s_Data.textureSlotIndex = 1;
 	}
-	
+
+    void Renderer2D::DrawMesh(const glm::mat4& transform, const MeshRendererComponent& meshRenderer, int entityID)
+    {
+        auto mesh = meshRenderer.Mesh;
+        if (mesh == nullptr) return;
+
+        auto shader = s_Data.MeshShader;
+        if (shader == nullptr) return;
+
+        auto verticesCount = mesh->GetVerticesCount();
+        Ref<VertexArray> meshVertexArray = VertexArray::Create();
+        auto vertexBufferSize = verticesCount * sizeof(MeshVertex);
+        Ref<VertexBuffer> meshVertexBuffer = VertexBuffer::Create(vertexBufferSize);
+
+        meshVertexBuffer->SetLayout({
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float3, "a_Normal" },
+            { ShaderDataType::Float2, "a_TexCoord" },
+            { ShaderDataType::Float, "a_TexIndex" },
+            { ShaderDataType::Float, "a_TexTiling" },
+            { ShaderDataType::Int, "a_EntityID" },
+            });
+
+        auto trianglesCount = mesh->GetTrianglesCount();
+        auto indicesCount = trianglesCount * 3;
+        const auto indices = new uint32_t[indicesCount];
+        int offset = 0;
+        for(uint32_t i = 0; i < trianglesCount; i++)
+        {
+            auto triangle = mesh->GetTriangle(i);
+            indices[offset + 0] = triangle.x;
+            indices[offset + 1] = triangle.y;
+            indices[offset + 2] = triangle.z;
+
+            offset += 3;
+        }
+
+        const Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indicesCount);
+        meshVertexArray->SetIndexBuffer(indexBuffer);
+        delete[] indices;
+
+        meshVertexArray->AddVertexBuffer(meshVertexBuffer);
+
+        auto* meshVertexBufferBase = new MeshVertex[verticesCount];
+        for (uint32_t i = 0; i < verticesCount; i++)
+        {
+            meshVertexBufferBase[i].Position = transform * glm::vec4(mesh->GetVertex(i), 1.0f);
+            meshVertexBufferBase[i].Normal = mesh->GetNormal(i);
+            meshVertexBufferBase[i].TexCoord = mesh->GetUV(i);
+            meshVertexBufferBase[i].TexIndex = 0;
+            meshVertexBufferBase[i].TexTiling = 1;
+            meshVertexBufferBase[i].EntityID = entityID;
+        }
+
+        meshVertexBuffer->SetData(meshVertexBufferBase, vertexBufferSize);
+
+        if (meshRenderer.Texture)
+            meshRenderer.Texture->Bind();
+
+        shader->Bind();
+        RenderCommand::DrawIndexed(meshVertexArray, indicesCount);
+        s_Data.stats.drawCalls++;
+    }
+
 	void Renderer2D::Flush()
 	{
 		LEV_PROFILE_FUNCTION();
@@ -253,6 +341,7 @@ namespace LevEngine
         {
             const auto dataSize = (uint32_t)((uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase);
             s_Data.quadVertexBuffer->SetData(s_Data.quadVertexBufferBase, dataSize);
+            Log::CoreTrace("Quad data size {0}", dataSize);
 
             for(uint32_t i = 0; i < s_Data.textureSlotIndex; i++)
             {
