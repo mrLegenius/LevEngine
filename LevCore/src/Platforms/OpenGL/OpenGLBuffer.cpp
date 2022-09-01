@@ -7,7 +7,7 @@ namespace LevEngine
 	// -- VertexBuffer ---------------------------------------------------------------------------
 	// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(const uint32_t size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(const uint32_t size) : m_Size(size)
 	{
 		LEV_PROFILE_FUNCTION();
 
@@ -16,7 +16,7 @@ namespace LevEngine
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 	}
 	
-	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, const uint32_t size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, const uint32_t size) : m_Size(size)
 	{
 		LEV_PROFILE_FUNCTION();
 		
@@ -48,8 +48,9 @@ namespace LevEngine
 
 	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
 	{
+        auto actualSize = size ? size : m_Size;
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, actualSize, data);
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////////////////////

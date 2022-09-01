@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Kernel/PointerUtils.h"
 
 namespace LevEngine
 {
@@ -11,12 +10,11 @@ namespace LevEngine
 		[[nodiscard]] virtual uint32_t GetHeight() const = 0;
 		[[nodiscard]] virtual uint32_t GetRendererID() const = 0;
 
-        virtual const std::string& GetPath() const = 0;
 		virtual void SetData(void* data, uint32_t size) = 0;
 		
 		virtual void Bind(uint32_t slot = 0) const = 0;
 
-        virtual bool IsLoaded() const = 0;
+        [[nodiscard]] virtual bool IsLoaded() const = 0;
 
 		virtual bool operator==(const Texture& other) const = 0;
 	};
@@ -26,5 +24,15 @@ namespace LevEngine
 	public:
 		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
 		static Ref<Texture2D> Create(const std::string& path);
+
+        [[nodiscard]] virtual const std::string& GetPath() const = 0;
 	};
+
+    class TextureSkybox : public Texture
+    {
+    public:
+        static Ref<TextureSkybox> Create(std::string paths[6]);
+
+        [[nodiscard]] virtual const std::string& GetPath(int index) const = 0;
+    };
 }

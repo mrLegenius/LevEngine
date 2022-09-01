@@ -250,6 +250,7 @@ namespace LevEngine
                 DrawAddComponent<SpriteRendererComponent>("Sprite Renderer");
                 DrawAddComponent<CircleRendererComponent>("Circle Renderer");
                 DrawAddComponent<MeshRendererComponent>("Mesh Renderer");
+                DrawAddComponent<SkyboxRendererComponent>("Skybox Renderer");
 
 				ImGui::EndPopup();
 			}
@@ -326,30 +327,14 @@ namespace LevEngine
 				}
 			});
 		
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](SpriteRendererComponent& component)
 			{
 				ImGui::ColorEdit4("Color", value_ptr(component.color));
 
-                ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
-                if (ImGui::BeginDragDropTarget())
+                DrawTexture2D("Texture", [&component](const Ref<Texture2D>& texture)
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
-                    {
-                        auto path = (const wchar_t*)payload->Data;
-                        std::filesystem::path texturePath = std::filesystem::path(g_AssetsPath) / path;
-                        Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
-
-                        if (texture->IsLoaded())
-                        {
-                            component.Texture = texture;
-                        }
-                        else
-                        {
-                            Log::Warning("Could not load texture {0}", texturePath.filename().string());
-                        }
-                    }
-                    ImGui::EndDragDropTarget();
-                }
+                    component.Texture = texture;
+                });
 
                 ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 			});
@@ -377,26 +362,10 @@ namespace LevEngine
                 ImGui::EndDragDropTarget();
             }
 
-            ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
-            if (ImGui::BeginDragDropTarget())
+            DrawTexture2D("Texture", [&component](const Ref<Texture2D>& texture)
             {
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
-                {
-                    auto path = (const wchar_t*)payload->Data;
-                    std::filesystem::path texturePath = std::filesystem::path(g_AssetsPath) / path;
-                    Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
-
-                    if (texture->IsLoaded())
-                    {
-                        component.Texture = texture;
-                    }
-                    else
-                    {
-                        Log::Warning("Could not load texture {0}", texturePath.filename().string());
-                    }
-                }
-                ImGui::EndDragDropTarget();
-            }
+                component.Texture = texture;
+            });
 
             if (ImGui::Button("Plane", ImVec2(100.0f, 0.0f)))
             {
@@ -415,8 +384,67 @@ namespace LevEngine
                 component.Mesh = Mesh::CreateCube();
             }
         });
+
+        DrawComponent<SkyboxRendererComponent>("Skybox Renderer", entity, [](auto& component)
+        {
+            ImGui::Button("Skybox textures", ImVec2(100.0f, 0.0f));
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+                {
+                    auto path = (const wchar_t*)payload->Data;
+                    std::filesystem::path skyboxDirectory = std::filesystem::path(g_AssetsPath) / path;
+
+                    std::string paths[6];
+                    int i = 0;
+
+                    for (auto& directoryEntry : std::filesystem::directory_iterator(skyboxDirectory))
+                    {
+                        if (i == 6) break;
+                        if (directoryEntry.is_directory()) continue;
+
+                        const auto& texturePath = directoryEntry.path();
+                        std::string filenameString = texturePath.string();
+
+                        paths[i] = filenameString;
+                        i++;
+                    }
+
+                    Ref<TextureSkybox> texture = TextureSkybox::Create(paths);
+
+                    if (texture->IsLoaded())
+                    {
+                        component.Texture = texture;
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
+        });
 	}
 
+    void SceneHierarchy::DrawTexture2D(const std::string& label, std::function<void(const Ref<Texture2D>&)> onTextureLoaded)
+    {
+        ImGui::Button(label.c_str(), ImVec2(100.0f, 0.0f));
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+            {
+                auto path = (const wchar_t*)payload->Data;
+                std::filesystem::path texturePath = std::filesystem::path(g_AssetsPath) / path;
+                Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+
+                if (texture->IsLoaded())
+                {
+                    onTextureLoaded(texture);
+                }
+                else
+                {
+                    Log::Warning("Could not load texture {0}", texturePath.filename().string());
+                }
+            }
+            ImGui::EndDragDropTarget();
+        }
+    }
     template<typename T>
     void SceneHierarchy::DrawAddComponent(const std::string& label)
     {

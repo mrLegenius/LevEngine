@@ -162,6 +162,15 @@ namespace LevEngine
                 out << YAML::Key << "Fade" << YAML::Value << component.Fade;
             });
 
+        SerializeComponent<SkyboxRendererComponent>(out, "SkyboxRendererComponent", entity,
+                                                    [&entity, &out](SkyboxRendererComponent& component)
+                                                    {
+                                                        for (int i = 0; i < 6; ++i)
+                                                        {
+                                                            out << YAML::Key << "Texture" << i << YAML::Value << component.Texture->GetPath(i);
+                                                        }
+                                                    });
+
 		out << YAML::EndMap;
 	}
 	
@@ -280,6 +289,20 @@ namespace LevEngine
                     crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
                     crc.Thickness = circleRendererComponent["Thickness"].as<float>();
                     crc.Fade = circleRendererComponent["Fade"].as<float>();
+                }
+
+                auto skyboxRendererComponent = entity["SkyboxRendererComponent"];
+                if (skyboxRendererComponent)
+                {
+                    auto& crc = deserializedEntity.AddComponent<SkyboxRendererComponent>();
+                    std::string paths[6];
+                    for (int i = 0; i < 6; ++i)
+                    {
+                        std::string texture = "Texture" + std::to_string(i);
+                        paths[i] = skyboxRendererComponent[texture].as<std::string>();
+                    }
+
+                    crc.Texture = TextureSkybox::Create(paths);
                 }
 			}
 		}

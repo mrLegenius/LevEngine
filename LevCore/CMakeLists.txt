@@ -37,6 +37,7 @@ add_library(LevEngineCore STATIC
         src/Platforms/OpenGL/OpenGLRendererAPI.cpp
         src/Platforms/OpenGL/OpenGLShader.cpp
         src/Platforms/OpenGL/OpenGLTexture.cpp
+        src/Platforms/OpenGL/OpenGLTextureSkybox.cpp
         src/Platforms/OpenGL/OpenGLVertexArray.cpp
 
         src/Platforms/Windows/WindowsWindow.cpp

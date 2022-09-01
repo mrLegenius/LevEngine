@@ -85,6 +85,18 @@ namespace LevEngine
                 }
             }
 
+            // Draw skybox
+            {
+                auto view = m_Registry.view<SkyboxRendererComponent>();
+                for (auto entity : view)
+                {
+                    auto skybox = view.get<SkyboxRendererComponent>(entity);
+
+                    Renderer2D::DrawSkybox(skybox, (int)entity);
+                    break;
+                }
+            }
+
 			Renderer2D::EndScene();
 		}
 	}
@@ -123,6 +135,18 @@ namespace LevEngine
                 auto [transform, mesh] = view.get<TransformComponent, MeshRendererComponent>(entity);
 
                 Renderer2D::DrawMesh(transform.GetModel(), mesh, (int)entity);
+            }
+        }
+
+        // Draw skybox
+        {
+            auto view = m_Registry.view<SkyboxRendererComponent>();
+            for (auto entity : view)
+            {
+                auto skybox = view.get<SkyboxRendererComponent>(entity);
+
+                Renderer2D::DrawSkybox(skybox, (int)entity);
+                break;
             }
         }
 
@@ -285,9 +309,13 @@ namespace LevEngine
 	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
 	{
 	}
-
     template <>
     void Scene::OnComponentAdded<MeshRendererComponent>(Entity entity, MeshRendererComponent& component)
     {
+    }
+    template <>
+    void Scene::OnComponentAdded<SkyboxRendererComponent>(Entity entity, SkyboxRendererComponent& component)
+    {
+        component.Mesh = Mesh::CreateCube();
     }
 }

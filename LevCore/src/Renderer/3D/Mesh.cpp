@@ -199,4 +199,36 @@ namespace LevEngine
 
         return mesh;
     }
+
+    Ref<IndexBuffer> Mesh::CreateIndexBuffer()
+    {
+        auto trianglesCount = GetTrianglesCount();
+        auto indicesCount = trianglesCount * 3;
+        const auto indices = new uint32_t[indicesCount];
+        int offset = 0;
+        for(uint32_t i = 0; i < trianglesCount; i++)
+        {
+            auto triangle = GetTriangle(i);
+            indices[offset + 0] = triangle.x;
+            indices[offset + 1] = triangle.y;
+            indices[offset + 2] = triangle.z;
+
+            offset += 3;
+        }
+
+        Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indicesCount);
+        delete[] indices;
+
+        return indexBuffer;
+    }
+
+    Ref<VertexBuffer> Mesh::CreateVertexBuffer(BufferLayout bufferLayout)
+    {
+        auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
+        Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertexBufferSize);
+
+        vertexBuffer->SetLayout(bufferLayout);
+
+        return vertexBuffer;
+    }
 }

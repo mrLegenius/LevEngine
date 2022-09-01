@@ -26,5 +26,7 @@ namespace LevEngine
 
         template<typename T>
         void DrawAddComponent(const std::string &label);
+
+        static void DrawTexture2D(const std::string& label, std::function<void(const Ref<Texture2D>&)> onTextureLoaded);
     };
 }

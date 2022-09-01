@@ -4,6 +4,31 @@
 
 namespace LevEngine
 {
+    static GLenum ConvertDepthFuncToGl(DepthFunc depthFunc)
+    {
+        switch (depthFunc)
+        {
+            case DepthFunc::Never:
+                return GL_NEVER;
+            case DepthFunc::Less:
+                return GL_LESS;
+            case DepthFunc::LessOrEqual:
+                return GL_LEQUAL;
+            case DepthFunc::Equal:
+                return GL_EQUAL;
+            case DepthFunc::NotEqual:
+                return GL_NOTEQUAL;
+            case DepthFunc::GreaterOrEqual:
+                return GL_GEQUAL;
+            case DepthFunc::Greater:
+                return GL_GREATER;
+            case DepthFunc::Always:
+                return GL_ALWAYS;
+            default:
+            LEV_ASSERT(false, "[OpenGL Renderer API] Unknown depth function");
+        }
+    }
+
     void OpenGLRendererAPI::Init()
     {
         LEV_PROFILE_FUNCTION();
@@ -29,7 +54,7 @@ namespace LevEngine
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void OpenGLRendererAPI::DrawIndexed(const Ref <VertexArray> &vertexArray, const uint32_t indexCount)
+    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray> &vertexArray, const uint32_t indexCount)
     {
         LEV_PROFILE_FUNCTION();
 
@@ -56,5 +81,14 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION();
 
         glViewport(x, y, width, height);
+    }
+
+    void OpenGLRendererAPI::SetDepthFunc(DepthFunc depthFunc)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        auto glDepthFuncValue = ConvertDepthFuncToGl(depthFunc);
+
+        glDepthFunc(glDepthFuncValue);
     }
 }

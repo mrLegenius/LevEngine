@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "VertexArray.h"
+#include "DepthFunc.h"
 
 namespace LevEngine
 {
@@ -27,6 +28,7 @@ namespace LevEngine
 
 		virtual void Init() = 0;
 		virtual void SetViewport(int x, int y, uint32_t width, uint32_t height) = 0;
+		virtual void SetDepthFunc(DepthFunc depthFunc) = 0;
 
 		static API GetAPI() { return s_API; }
 	private:

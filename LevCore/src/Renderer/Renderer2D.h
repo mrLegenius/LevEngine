@@ -21,6 +21,7 @@ namespace LevEngine
 		static void Flush();
 
         static void DrawMesh(const glm::mat4 &transform, const MeshRendererComponent& meshRenderer, int entityID);
+        static void DrawSkybox(const SkyboxRendererComponent &skyboxRenderer, int entityID);
 
 		static void DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& spriteRenderer, int entityID);
         static void DrawCircle(const glm::mat4 &transform, const glm::vec4 &color, float thickness, float fade, int entityID);

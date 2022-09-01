@@ -27,6 +27,7 @@ namespace LevEngine
 
         m_EditorCamera = EditorCamera(30.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
 
+        CreateNewScene();
         //SceneSerializer sceneSerializer(m_ActiveScene);
         //m_ActiveScenePath = "assets/scenes/BasicScene.scene";
         //sceneSerializer.Deserialize(m_ActiveScenePath);

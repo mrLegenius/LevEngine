@@ -59,11 +59,6 @@ namespace LevEngine
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		explicit SpriteRendererComponent(const glm::vec4& other)
-			: color(other) { }
-
-		operator glm::vec4& () { return color; }
-		operator const glm::vec4& () const { return color; }
 	};
 
     struct CircleRendererComponent
@@ -80,10 +75,20 @@ namespace LevEngine
     {
         Ref<Mesh> Mesh;
         Ref<Shader> Shader;
-        Ref<Texture> Texture;
+        Ref<Texture2D> Texture;
 
         MeshRendererComponent() = default;
         MeshRendererComponent(const MeshRendererComponent&) = default;
+    };
+
+    //TODO: Make this asset for camera instead of component
+    struct SkyboxRendererComponent
+    {
+        Ref<TextureSkybox> Texture;
+        Ref<Mesh> Mesh;
+
+        SkyboxRendererComponent() = default;
+        SkyboxRendererComponent(const SkyboxRendererComponent&) = default;
     };
 
 	struct CameraComponent
@@ -121,6 +126,7 @@ namespace LevEngine
             TransformComponent,
             SpriteRendererComponent,
             CircleRendererComponent,
+            SkyboxRendererComponent,
             MeshRendererComponent,
             CameraComponent,
             NativeScriptComponent>;

@@ -1,12 +1,17 @@
 ﻿#include "Renderer2D.h"
 
-#include <glm/ext/matrix_transform.hpp>
-
 #include "Shader.h"
 #include "RenderCommand.h"
 
 namespace LevEngine
 {
+    struct SkyboxVertex
+    {
+        glm::vec3 Position;
+
+        // Editor-only
+        int EntityID;
+    };
     struct MeshVertex
     {
         glm::vec3 Position;
@@ -76,6 +81,7 @@ namespace LevEngine
         Ref<Shader> LineShader;
 
         Ref<Shader> MeshShader;
+        Ref<Shader> SkyboxShader;
 
 		uint32_t quadIndexCount = 0;
 		QuadVertex* quadVertexBufferBase = nullptr;
@@ -171,12 +177,6 @@ namespace LevEngine
 		uint32_t blankTextureData = 0xffffffff;
 		s_Data.blankTexture->SetData(&blankTextureData, sizeof(uint32_t));
         s_Data.textureSlots[0] = s_Data.blankTexture;
-
-		int32_t samplers[Renderer2DData::maxTextureSlots];
-		for(int32_t i = 0; i < Renderer2DData::maxTextureSlots; i++)
-		{
-			samplers[i] = i;
-		}
 		
 		s_Data.quadVertexArray->AddVertexBuffer(s_Data.quadVertexBuffer);
 
@@ -184,6 +184,7 @@ namespace LevEngine
         s_Data.CircleShader = Shader::Create("assets/shaders/Circle.shader");
         s_Data.LineShader = Shader::Create("assets/shaders/Line.shader");
         s_Data.MeshShader = Shader::Create("assets/shaders/Mesh_White.shader");
+        s_Data.SkyboxShader = Shader::Create("assets/shaders/Skybox.shader");
 
         s_Data.textureSlots[0] = s_Data.blankTexture;
         
@@ -222,6 +223,10 @@ namespace LevEngine
         s_Data.MeshShader->SetMatrix4("u_Projection", camera.GetProjection());
         s_Data.MeshShader->SetMatrix4("u_View", glm::inverse(transform));
 
+        s_Data.SkyboxShader->Bind();
+        s_Data.SkyboxShader->SetMatrix4("u_Projection", camera.GetProjection());
+        s_Data.SkyboxShader->SetMatrix4("u_View", glm::mat4(glm::mat3(glm::inverse(transform))));
+
 		StartBatch();
 	}
 
@@ -244,6 +249,10 @@ namespace LevEngine
         s_Data.MeshShader->Bind();
         s_Data.MeshShader->SetMatrix4("u_Projection", camera.GetProjection());
         s_Data.MeshShader->SetMatrix4("u_View", camera.GetViewMatrix());
+
+        s_Data.SkyboxShader->Bind();
+        s_Data.SkyboxShader->SetMatrix4("u_Projection", camera.GetProjection());
+        s_Data.SkyboxShader->SetMatrix4("u_View", glm::mat4(glm::mat3(camera.GetViewMatrix())));
 
 		StartBatch();
 	}
@@ -278,40 +287,23 @@ namespace LevEngine
         auto shader = s_Data.MeshShader;
         if (shader == nullptr) return;
 
-        auto verticesCount = mesh->GetVerticesCount();
+        BufferLayout bufferLayout = {
+                { ShaderDataType::Float3, "a_Position" },
+                { ShaderDataType::Float3, "a_Normal" },
+                { ShaderDataType::Float2, "a_TexCoord" },
+                { ShaderDataType::Float, "a_TexIndex" },
+                { ShaderDataType::Float, "a_TexTiling" },
+                { ShaderDataType::Int, "a_EntityID" },
+        };
+
+        Ref<VertexBuffer> meshVertexBuffer = mesh->CreateVertexBuffer(bufferLayout);
+        const Ref<IndexBuffer> indexBuffer = mesh->CreateIndexBuffer();
+
         Ref<VertexArray> meshVertexArray = VertexArray::Create();
-        auto vertexBufferSize = verticesCount * sizeof(MeshVertex);
-        Ref<VertexBuffer> meshVertexBuffer = VertexBuffer::Create(vertexBufferSize);
-
-        meshVertexBuffer->SetLayout({
-            { ShaderDataType::Float3, "a_Position" },
-            { ShaderDataType::Float3, "a_Normal" },
-            { ShaderDataType::Float2, "a_TexCoord" },
-            { ShaderDataType::Float, "a_TexIndex" },
-            { ShaderDataType::Float, "a_TexTiling" },
-            { ShaderDataType::Int, "a_EntityID" },
-            });
-
-        auto trianglesCount = mesh->GetTrianglesCount();
-        auto indicesCount = trianglesCount * 3;
-        const auto indices = new uint32_t[indicesCount];
-        int offset = 0;
-        for(uint32_t i = 0; i < trianglesCount; i++)
-        {
-            auto triangle = mesh->GetTriangle(i);
-            indices[offset + 0] = triangle.x;
-            indices[offset + 1] = triangle.y;
-            indices[offset + 2] = triangle.z;
-
-            offset += 3;
-        }
-
-        const Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, indicesCount);
         meshVertexArray->SetIndexBuffer(indexBuffer);
-        delete[] indices;
-
         meshVertexArray->AddVertexBuffer(meshVertexBuffer);
 
+        auto verticesCount = mesh->GetVerticesCount();
         auto* meshVertexBufferBase = new MeshVertex[verticesCount];
         for (uint32_t i = 0; i < verticesCount; i++)
         {
@@ -323,13 +315,55 @@ namespace LevEngine
             meshVertexBufferBase[i].EntityID = entityID;
         }
 
-        meshVertexBuffer->SetData(meshVertexBufferBase, vertexBufferSize);
+        meshVertexBuffer->SetData(meshVertexBufferBase);
 
         if (meshRenderer.Texture)
             meshRenderer.Texture->Bind();
 
         shader->Bind();
-        RenderCommand::DrawIndexed(meshVertexArray, indicesCount);
+        RenderCommand::DrawIndexed(meshVertexArray);
+        s_Data.stats.drawCalls++;
+    }
+
+    void Renderer2D::DrawSkybox(const SkyboxRendererComponent& skyboxRenderer, int entityID)
+    {
+        auto mesh = skyboxRenderer.Mesh;
+        if (mesh == nullptr) return;
+
+        auto shader = s_Data.SkyboxShader;
+        if (shader == nullptr) return;
+
+        auto texture = skyboxRenderer.Texture;
+        if (texture == nullptr) return;
+
+        BufferLayout bufferLayout = {
+                { ShaderDataType::Float3, "a_Position", },
+                { ShaderDataType::Int, "a_EntityID", }
+        };
+
+        Ref<VertexBuffer> meshVertexBuffer = mesh->CreateVertexBuffer(bufferLayout);
+        const Ref<IndexBuffer> indexBuffer = mesh->CreateIndexBuffer();
+
+        Ref<VertexArray> vertexArray = VertexArray::Create();
+        vertexArray->SetIndexBuffer(indexBuffer);
+        vertexArray->AddVertexBuffer(meshVertexBuffer);
+
+        auto verticesCount = mesh->GetVerticesCount();
+        auto* meshVertexBufferBase = new SkyboxVertex[verticesCount];
+        for (uint32_t i = 0; i < verticesCount; i++)
+        {
+            meshVertexBufferBase[i].Position = mesh->GetVertex(i);
+            meshVertexBufferBase[i].EntityID = entityID;
+        }
+
+        meshVertexBuffer->SetData(meshVertexBufferBase);
+
+        texture->Bind();
+        shader->Bind();
+        RenderCommand::SetDepthFunc(DepthFunc::LessOrEqual);
+        RenderCommand::DrawIndexed(vertexArray);
+        RenderCommand::SetDepthFunc(DepthFunc::Less);
+
         s_Data.stats.drawCalls++;
     }
 
@@ -341,7 +375,6 @@ namespace LevEngine
         {
             const auto dataSize = (uint32_t)((uint8_t*)s_Data.quadVertexBufferPtr - (uint8_t*)s_Data.quadVertexBufferBase);
             s_Data.quadVertexBuffer->SetData(s_Data.quadVertexBufferBase, dataSize);
-            Log::CoreTrace("Quad data size {0}", dataSize);
 
             for(uint32_t i = 0; i < s_Data.textureSlotIndex; i++)
             {

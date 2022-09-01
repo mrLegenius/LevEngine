@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "RendererAPI.h"
 #include "VertexArray.h"
+#include "DepthFunc.h"
 
 namespace LevEngine
 {
@@ -16,6 +17,11 @@ namespace LevEngine
 		{
 			s_RendererAPI->SetViewport(x, y, width, height);
 		}
+
+        static void SetDepthFunc(DepthFunc depthFunc)
+        {
+            s_RendererAPI->SetDepthFunc(depthFunc);
+        }
 		
 		static void SetClearColor(const glm::vec4& color)
 		{

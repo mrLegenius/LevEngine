@@ -1,4 +1,7 @@
 #pragma once
+
+#include "Renderer/Buffer.h"
+
 namespace LevEngine
 {
     class Mesh
@@ -6,7 +9,11 @@ namespace LevEngine
     public:
         static Ref<Mesh> CreatePlane(int resolution);
         static Ref<Mesh> CreateSphere(const uint32_t numberSlices);
-        static Ref <Mesh> CreateCube();
+        static Ref<Mesh> CreateCube();
+
+        Ref<IndexBuffer> CreateIndexBuffer();
+
+        Ref<VertexBuffer> CreateVertexBuffer(BufferLayout);
 
         void Clear()
         {
