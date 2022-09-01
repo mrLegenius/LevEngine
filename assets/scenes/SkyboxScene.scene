@@ -1,0 +1,16 @@
+Scene: Scene Name
+Entities:
+  - Entity: 5759124866372986137
+    TagComponent:
+      Tag: New Entity
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SkyboxRendererComponent:
+      Texture0: assets\textures\skybox\0_right.jpg
+      Texture1: assets\textures\skybox\1_left.jpg
+      Texture2: assets\textures\skybox\2_top.jpg
+      Texture3: assets\textures\skybox\3_bottom.jpg
+      Texture4: assets\textures\skybox\4_front.jpg
+      Texture5: assets\textures\skybox\5_back.jpg

@@ -164,12 +164,13 @@ namespace LevEngine
 
         SerializeComponent<SkyboxRendererComponent>(out, "SkyboxRendererComponent", entity,
                                                     [&entity, &out](SkyboxRendererComponent& component)
-                                                    {
-                                                        for (int i = 0; i < 6; ++i)
-                                                        {
-                                                            out << YAML::Key << "Texture" << i << YAML::Value << component.Texture->GetPath(i);
-                                                        }
-                                                    });
+        {
+            for (int i = 0; i < 6; ++i)
+            {
+                std::string texture = "Texture" + std::to_string(i);
+                out << YAML::Key << texture << YAML::Value << component.Texture->GetPath(i);
+            }
+        });
 
 		out << YAML::EndMap;
 	}
