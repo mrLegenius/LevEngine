@@ -8,9 +8,10 @@ layout(location = 3) in float a_Thickness;
 layout(location = 4) in float a_Fade;
 layout(location = 5) in int a_EntityID;
 
-uniform mat4 u_View;
-uniform mat4 u_Projection;
-
+layout(std140, binding = 0) uniform Camera
+{
+    mat4 u_ViewProjection;
+};
 struct VertexOutput
 {
     vec3 LocalPosition;
@@ -31,7 +32,7 @@ void main()
 
     v_EntityID = a_EntityID;
 
-    gl_Position = u_Projection * u_View * vec4(a_WorldPosition, 1.0);
+    gl_Position = u_ViewProjection * vec4(a_WorldPosition, 1.0);
 }
 #shader fragment
 #version 460 core

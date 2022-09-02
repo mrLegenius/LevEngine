@@ -19,12 +19,14 @@ layout (location = 0) out VertexOutput Output;
 layout (location = 3) out flat float v_TexIndex;
 layout (location = 4) out flat int v_EntityID;
 
-uniform mat4 u_View;
-uniform mat4 u_Projection;
+layout(std140, binding = 0) uniform Camera
+{
+	mat4 u_ViewProjection;
+};
 
 void main()
 {
-	gl_Position = u_Projection * u_View * vec4(a_Position, 1.0f);
+	gl_Position = u_ViewProjection  * vec4(a_Position, 1.0f);
 
 	Output.Color = a_Color;
 	Output.TexCoord = a_TexCoord;

@@ -15,6 +15,7 @@ add_library(LevEngineCore STATIC
 
         src/Renderer/Buffer.cpp
         src/Renderer/Framebuffer.cpp
+        src/Renderer/UniformBuffer.cpp
         src/Renderer/RenderCommand.cpp
         src/Renderer/Renderer.cpp
         src/Renderer/RendererAPI.cpp
@@ -34,6 +35,7 @@ add_library(LevEngineCore STATIC
         src/Platforms/OpenGL/OpenGLBuffer.cpp
         src/Platforms/OpenGL/OpenGLContext.cpp
         src/Platforms/OpenGL/OpenGLFramebuffer.cpp
+        src/Platforms/OpenGL/OpenGLUniformBuffer.cpp
         src/Platforms/OpenGL/OpenGLRendererAPI.cpp
         src/Platforms/OpenGL/OpenGLShader.cpp
         src/Platforms/OpenGL/OpenGLTexture.cpp

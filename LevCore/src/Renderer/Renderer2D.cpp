@@ -3,6 +3,8 @@
 #include "Shader.h"
 #include "RenderCommand.h"
 
+#include "UniformBuffer.h"
+
 namespace LevEngine
 {
     struct SkyboxVertex
@@ -103,6 +105,13 @@ namespace LevEngine
         glm::vec4 QuadVertexPositions[4];
 
 		Renderer2D::Statistics stats;
+
+        struct CameraData
+        {
+            glm::mat4 ViewProjection;
+        };
+        CameraData CameraBuffer;
+        Ref<UniformBuffer> CameraUniformBuffer;
 	};
 
 	static Renderer2DData s_Data;
@@ -192,6 +201,8 @@ namespace LevEngine
         s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
         s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
         s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+
+        s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
 	}
 
 	void Renderer2D::Shutdown()
@@ -207,21 +218,8 @@ namespace LevEngine
 	{
 		LEV_PROFILE_FUNCTION();
 
-		s_Data.QuadShader->Bind();
-		s_Data.QuadShader->SetMatrix4("u_Projection", camera.GetProjection());
-		s_Data.QuadShader->SetMatrix4("u_View", glm::inverse(transform));
-
-        s_Data.CircleShader->Bind();
-        s_Data.CircleShader->SetMatrix4("u_Projection", camera.GetProjection());
-        s_Data.CircleShader->SetMatrix4("u_View", glm::inverse(transform));
-
-        s_Data.LineShader->Bind();
-        s_Data.LineShader->SetMatrix4("u_Projection", camera.GetProjection());
-        s_Data.LineShader->SetMatrix4("u_View", glm::inverse(transform));
-
-        s_Data.MeshShader->Bind();
-        s_Data.MeshShader->SetMatrix4("u_Projection", camera.GetProjection());
-        s_Data.MeshShader->SetMatrix4("u_View", glm::inverse(transform));
+        s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
         s_Data.SkyboxShader->Bind();
         s_Data.SkyboxShader->SetMatrix4("u_Projection", camera.GetProjection());
@@ -234,21 +232,8 @@ namespace LevEngine
 	{
 		LEV_PROFILE_FUNCTION();
 
-		s_Data.QuadShader->Bind();
-		s_Data.QuadShader->SetMatrix4("u_Projection", camera.GetProjection());
-		s_Data.QuadShader->SetMatrix4("u_View", camera.GetViewMatrix());
-
-        s_Data.CircleShader->Bind();
-        s_Data.CircleShader->SetMatrix4("u_Projection", camera.GetProjection());
-        s_Data.CircleShader->SetMatrix4("u_View", camera.GetViewMatrix());
-
-        s_Data.LineShader->Bind();
-        s_Data.LineShader->SetMatrix4("u_Projection", camera.GetProjection());
-        s_Data.LineShader->SetMatrix4("u_View", camera.GetViewMatrix());
-
-        s_Data.MeshShader->Bind();
-        s_Data.MeshShader->SetMatrix4("u_Projection", camera.GetProjection());
-        s_Data.MeshShader->SetMatrix4("u_View", camera.GetViewMatrix());
+        s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * camera.GetViewMatrix();
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
         s_Data.SkyboxShader->Bind();
         s_Data.SkyboxShader->SetMatrix4("u_Projection", camera.GetProjection());
