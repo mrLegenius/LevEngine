@@ -1,0 +1,20 @@
+Scene: Scene Name
+Entities:
+  - Entity: 13676074060558335669
+    TagComponent:
+      Tag: Dir Light
+    TransformComponent:
+      Position: [-1.6581744, 0.736853004, -2.15509534]
+      Rotation: [-0.217876285, -0.681964338, -2.89999866]
+      Scale: [1.00000024, 1, 1]
+    DirectionalLightComponent:
+      Ambient: [0.0429642908, 0.00098389457, 0.127413154]
+      Diffuse: [1, 0.987790883, 0.548262537]
+      Specular: [1, 1, 1]
+  - Entity: 8465344834262909716
+    TagComponent:
+      Tag: Mesh
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [1.43507409, 0, 0]
+      Scale: [0.999999523, 1, 1]

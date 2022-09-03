@@ -39,5 +39,13 @@ namespace LevEngine
 		friend class SceneHierarchy;
 
         void RenderScene(Camera &camera);
+
+        void SpriteRenderSystem();
+
+        void CircleRenderSystem();
+
+        void MeshRenderSystem();
+
+        void SkyboxRenderSystem();
     };
 }

@@ -172,6 +172,14 @@ namespace LevEngine
             }
         });
 
+        SerializeComponent<DirectionalLightComponent>(out, "DirectionalLightComponent", entity,
+                                                  [&entity, &out](DirectionalLightComponent& component)
+        {
+            out << YAML::Key << "Ambient" << YAML::Value << component.Ambient;
+            out << YAML::Key << "Diffuse" << YAML::Value << component.Diffuse;
+            out << YAML::Key << "Specular" << YAML::Value << component.Specular;
+        });
+
 		out << YAML::EndMap;
 	}
 	
@@ -304,6 +312,15 @@ namespace LevEngine
                     }
 
                     crc.Texture = TextureSkybox::Create(paths);
+                }
+
+                auto directionalLightComponent = entity["DirectionalLightComponent"];
+                if (directionalLightComponent)
+                {
+                    auto& crc = deserializedEntity.AddComponent<DirectionalLightComponent>();
+                    crc.Ambient = directionalLightComponent["Ambient"].as<glm::vec3>();
+                    crc.Diffuse = directionalLightComponent["Diffuse"].as<glm::vec3>();
+                    crc.Specular = directionalLightComponent["Specular"].as<glm::vec3>();
                 }
 			}
 		}

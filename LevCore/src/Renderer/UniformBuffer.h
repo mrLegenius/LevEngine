@@ -10,5 +10,4 @@ namespace LevEngine
 
         static Ref<UniformBuffer> Create(uint32_t size, uint32_t binding);
     };
-
 }

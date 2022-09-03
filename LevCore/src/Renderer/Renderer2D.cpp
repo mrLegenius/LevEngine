@@ -7,25 +7,6 @@
 
 namespace LevEngine
 {
-    struct SkyboxVertex
-    {
-        glm::vec3 Position;
-
-        // Editor-only
-        int EntityID;
-    };
-    struct MeshVertex
-    {
-        glm::vec3 Position;
-        glm::vec3 Normal;
-        glm::vec2 TexCoord;
-        float TexIndex;
-        float TexTiling;
-
-        // Editor-only
-        int EntityID;
-    };
-
 	struct QuadVertex
 	{
 		glm::vec3 position;
@@ -264,93 +245,6 @@ namespace LevEngine
 		s_Data.textureSlotIndex = 1;
 	}
 
-    void Renderer2D::DrawMesh(const glm::mat4& transform, const MeshRendererComponent& meshRenderer, int entityID)
-    {
-        auto mesh = meshRenderer.Mesh;
-        if (mesh == nullptr) return;
-
-        auto shader = s_Data.MeshShader;
-        if (shader == nullptr) return;
-
-        BufferLayout bufferLayout = {
-                { ShaderDataType::Float3, "a_Position" },
-                { ShaderDataType::Float3, "a_Normal" },
-                { ShaderDataType::Float2, "a_TexCoord" },
-                { ShaderDataType::Float, "a_TexIndex" },
-                { ShaderDataType::Float, "a_TexTiling" },
-                { ShaderDataType::Int, "a_EntityID" },
-        };
-
-        Ref<VertexBuffer> meshVertexBuffer = mesh->CreateVertexBuffer(bufferLayout);
-        const Ref<IndexBuffer> indexBuffer = mesh->CreateIndexBuffer();
-
-        Ref<VertexArray> meshVertexArray = VertexArray::Create();
-        meshVertexArray->SetIndexBuffer(indexBuffer);
-        meshVertexArray->AddVertexBuffer(meshVertexBuffer);
-
-        auto verticesCount = mesh->GetVerticesCount();
-        auto* meshVertexBufferBase = new MeshVertex[verticesCount];
-        for (uint32_t i = 0; i < verticesCount; i++)
-        {
-            meshVertexBufferBase[i].Position = transform * glm::vec4(mesh->GetVertex(i), 1.0f);
-            meshVertexBufferBase[i].Normal = mesh->GetNormal(i);
-            meshVertexBufferBase[i].TexCoord = mesh->GetUV(i);
-            meshVertexBufferBase[i].TexIndex = 0;
-            meshVertexBufferBase[i].TexTiling = 1;
-            meshVertexBufferBase[i].EntityID = entityID;
-        }
-
-        meshVertexBuffer->SetData(meshVertexBufferBase);
-
-        if (meshRenderer.Texture)
-            meshRenderer.Texture->Bind();
-
-        shader->Bind();
-        RenderCommand::DrawIndexed(meshVertexArray);
-        s_Data.stats.drawCalls++;
-    }
-
-    void Renderer2D::DrawSkybox(const SkyboxRendererComponent& skyboxRenderer, int entityID)
-    {
-        auto mesh = skyboxRenderer.Mesh;
-        if (mesh == nullptr) return;
-
-        auto shader = s_Data.SkyboxShader;
-        if (shader == nullptr) return;
-
-        auto texture = skyboxRenderer.Texture;
-        if (texture == nullptr) return;
-
-        BufferLayout bufferLayout = {
-                { ShaderDataType::Float3, "a_Position", },
-                { ShaderDataType::Int, "a_EntityID", }
-        };
-
-        Ref<VertexBuffer> meshVertexBuffer = mesh->CreateVertexBuffer(bufferLayout);
-        const Ref<IndexBuffer> indexBuffer = mesh->CreateIndexBuffer();
-
-        Ref<VertexArray> vertexArray = VertexArray::Create();
-        vertexArray->SetIndexBuffer(indexBuffer);
-        vertexArray->AddVertexBuffer(meshVertexBuffer);
-
-        auto verticesCount = mesh->GetVerticesCount();
-        auto* meshVertexBufferBase = new SkyboxVertex[verticesCount];
-        for (uint32_t i = 0; i < verticesCount; i++)
-        {
-            meshVertexBufferBase[i].Position = mesh->GetVertex(i);
-            meshVertexBufferBase[i].EntityID = entityID;
-        }
-
-        meshVertexBuffer->SetData(meshVertexBufferBase);
-
-        texture->Bind();
-        shader->Bind();
-        RenderCommand::SetDepthFunc(DepthFunc::LessOrEqual);
-        RenderCommand::DrawIndexed(vertexArray);
-        RenderCommand::SetDepthFunc(DepthFunc::Less);
-
-        s_Data.stats.drawCalls++;
-    }
 
 	void Renderer2D::Flush()
 	{

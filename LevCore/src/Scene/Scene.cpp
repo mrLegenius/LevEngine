@@ -4,6 +4,7 @@
 #include "Renderer/Renderer2D.h"
 #include "ScriptableEntity.h"
 #include "Scene/Entity.h"
+#include "Renderer/3D/Renderer3D.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace LevEngine
@@ -33,6 +34,7 @@ namespace LevEngine
 		
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
+		glm::vec3 cameraPosition;
 		//Render Scene
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<CameraComponent>);
@@ -44,6 +46,7 @@ namespace LevEngine
 				{
 					mainCamera = &camera.camera;
 					cameraTransform = transform.GetModel();
+                    cameraPosition = transform.position;
 					break;
 				}
 			}
@@ -53,106 +56,91 @@ namespace LevEngine
 		{
 			Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
-            {
-                auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-                for (auto entity: view)
-                {
-                    auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+            SpriteRenderSystem();
 
-                    Renderer2D::DrawSprite(transform.GetModel(), sprite, static_cast<int>(entity));
-                }
-            }
+            CircleRenderSystem();
 
-            // Draw circles
-            {
-                auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-                for (auto entity : view)
-                {
-                    auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+            Renderer2D::EndScene();
 
-                    Renderer2D::DrawCircle(transform.GetModel(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
-                }
-            }
+            Renderer3D::BeginScene(*mainCamera, cameraTransform, cameraPosition);
 
-            // Draw meshes
-            {
-                auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
-                for (auto entity : view)
-                {
-                    auto [transform, mesh] = view.get<TransformComponent, MeshRendererComponent>(entity);
+            MeshRenderSystem();
 
-                    Renderer2D::DrawMesh(transform.GetModel(), mesh, (int)entity);
-                }
-            }
+            SkyboxRenderSystem();
 
-            // Draw skybox
-            {
-                auto view = m_Registry.view<SkyboxRendererComponent>();
-                for (auto entity : view)
-                {
-                    auto skybox = view.get<SkyboxRendererComponent>(entity);
-
-                    Renderer2D::DrawSkybox(skybox, (int)entity);
-                    break;
-                }
-            }
-
-			Renderer2D::EndScene();
+            Renderer3D::EndScene();
 		}
 	}
 
-	void Scene::OnUpdateEditor(EditorCamera& camera)
+    void Scene::OnUpdateEditor(EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
 
-        {
-            auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-            for (auto entity: view)
-            {
-                auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+        SpriteRenderSystem();
+        CircleRenderSystem();
 
-                const auto entityID = static_cast<int>(entity);
-                Renderer2D::DrawSprite(transform.GetModel(), sprite, entityID);
-            }
+        Renderer2D::EndScene();
+
+        Renderer3D::BeginScene(camera);
+
+        auto view = m_Registry.view<TransformComponent, DirectionalLightComponent>();
+        for (auto entity : view)
+        {
+            auto [transform, dirLight] = view.get<TransformComponent, DirectionalLightComponent>(entity);
+
+            Renderer3D::SetLights(transform.rotation, dirLight);
         }
 
-        // Draw circles
-        {
-            auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-            for (auto entity : view)
-            {
-                auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+        MeshRenderSystem();
+        SkyboxRenderSystem();
 
-                Renderer2D::DrawCircle(transform.GetModel(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
-            }
-        }
-
-        // Draw meshes
-        {
-            auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
-            for (auto entity : view)
-            {
-                auto [transform, mesh] = view.get<TransformComponent, MeshRendererComponent>(entity);
-
-                Renderer2D::DrawMesh(transform.GetModel(), mesh, (int)entity);
-            }
-        }
-
-        // Draw skybox
-        {
-            auto view = m_Registry.view<SkyboxRendererComponent>();
-            for (auto entity : view)
-            {
-                auto skybox = view.get<SkyboxRendererComponent>(entity);
-
-                Renderer2D::DrawSkybox(skybox, (int)entity);
-                break;
-            }
-        }
-
-		Renderer2D::EndScene();
+        Renderer3D::EndScene();
 	}
 
+    void Scene::SkyboxRenderSystem()
+    {
+        auto view = m_Registry.view<SkyboxRendererComponent>();
+        for (auto entity : view)
+        {
+            auto skybox = view.get<SkyboxRendererComponent>(entity);
+
+            Renderer3D::DrawSkybox(skybox, (int)entity);
+            break;
+        }
+    }
+
+    void Scene::MeshRenderSystem()
+    {
+        auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
+        for (auto entity : view)
+        {
+            auto [transform, mesh] = view.get<TransformComponent, MeshRendererComponent>(entity);
+
+            Renderer3D::DrawMesh(transform.GetModel(), mesh, (int)entity);
+        }
+    }
+
+    void Scene::CircleRenderSystem()
+    {
+        auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+        for (auto entity : view)
+        {
+            auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+            Renderer2D::DrawCircle(transform.GetModel(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+        }
+    }
+
+    void Scene::SpriteRenderSystem()
+    {
+        auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+        for (auto entity: view)
+        {
+            auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+
+            Renderer2D::DrawSprite(transform.GetModel(), sprite, static_cast<int>(entity));
+        }
+    }
 
 	void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
 	{
@@ -317,5 +305,9 @@ namespace LevEngine
     void Scene::OnComponentAdded<SkyboxRendererComponent>(Entity entity, SkyboxRendererComponent& component)
     {
         component.Mesh = Mesh::CreateCube();
+    }
+    template <>
+    void Scene::OnComponentAdded<DirectionalLightComponent>(Entity entity, DirectionalLightComponent& component)
+    {
     }
 }

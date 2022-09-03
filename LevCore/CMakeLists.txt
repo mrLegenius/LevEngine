@@ -16,10 +16,12 @@ add_library(LevEngineCore STATIC
         src/Renderer/Buffer.cpp
         src/Renderer/Framebuffer.cpp
         src/Renderer/UniformBuffer.cpp
+        src/Renderer/StorageBuffer.cpp
         src/Renderer/RenderCommand.cpp
         src/Renderer/Renderer.cpp
         src/Renderer/RendererAPI.cpp
         src/Renderer/Renderer2D.cpp
+
         src/Renderer/Shader.cpp
         src/Renderer/Texture.cpp
         src/Renderer/Texture.cpp
@@ -31,11 +33,13 @@ add_library(LevEngineCore STATIC
         src/Renderer/Camera/SceneCamera.cpp
 
         src/Renderer/3D/Mesh.cpp
+        src/Renderer/3D/Renderer3D.cpp
 
         src/Platforms/OpenGL/OpenGLBuffer.cpp
         src/Platforms/OpenGL/OpenGLContext.cpp
         src/Platforms/OpenGL/OpenGLFramebuffer.cpp
         src/Platforms/OpenGL/OpenGLUniformBuffer.cpp
+        src/Platforms/OpenGL/OpenGLStorageBuffer.cpp
         src/Platforms/OpenGL/OpenGLRendererAPI.cpp
         src/Platforms/OpenGL/OpenGLShader.cpp
         src/Platforms/OpenGL/OpenGLTexture.cpp

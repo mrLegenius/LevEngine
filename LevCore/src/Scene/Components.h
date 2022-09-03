@@ -91,6 +91,16 @@ namespace LevEngine
         SkyboxRendererComponent(const SkyboxRendererComponent&) = default;
     };
 
+    struct DirectionalLightComponent
+    {
+        glm::vec3 Ambient = glm::vec3(1.0f);
+        glm::vec3 Diffuse = glm::vec3(1.0f);
+        glm::vec3 Specular = glm::vec3(1.0f);
+
+        DirectionalLightComponent() = default;
+        DirectionalLightComponent(const DirectionalLightComponent&) = default;
+    };
+
 	struct CameraComponent
 	{
 		SceneCamera camera;

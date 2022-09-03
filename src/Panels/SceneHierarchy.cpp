@@ -251,6 +251,7 @@ namespace LevEngine
                 DrawAddComponent<CircleRendererComponent>("Circle Renderer");
                 DrawAddComponent<MeshRendererComponent>("Mesh Renderer");
                 DrawAddComponent<SkyboxRendererComponent>("Skybox Renderer");
+                DrawAddComponent<DirectionalLightComponent>("Directional Light");
 
 				ImGui::EndPopup();
 			}
@@ -419,6 +420,13 @@ namespace LevEngine
                 }
                 ImGui::EndDragDropTarget();
             }
+        });
+
+        DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)
+        {
+            ImGui::ColorEdit3("Ambient", glm::value_ptr(component.Ambient));
+            ImGui::ColorEdit3("Diffuse", glm::value_ptr(component.Diffuse));
+            ImGui::ColorEdit3("Specular", glm::value_ptr(component.Specular));
         });
 	}
 
