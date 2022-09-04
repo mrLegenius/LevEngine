@@ -27,13 +27,14 @@ layout(std140, binding = 0) uniform Camera
 };
 
 uniform mat4 u_Model;
+uniform mat3 u_NormalMatrix;
 
 void main()
 {
     gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 1.0f);
 
     Output.Position = vec3(u_Model * vec4(a_Position, 1.0f));
-    Output.Normal = mat3(transpose(inverse(u_Model))) * a_Normal;
+    Output.Normal = u_NormalMatrix * a_Normal;
     Output.TexCoord = a_TexCoord;
     Output.TilingFactor = a_TilingFactor;
     v_TexIndex = a_TexIndex;

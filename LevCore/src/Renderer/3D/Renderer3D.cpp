@@ -160,7 +160,10 @@ namespace LevEngine
             meshRenderer.Texture->Bind();
 
         shader->Bind();
+
+        auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(transform)));
         shader->SetMatrix4("u_Model", transform);
+        shader->SetMatrix3("u_NormalMatrix", normalMatrix);
         RenderCommand::DrawIndexed(meshVertexArray);
         //s_Data.stats.drawCalls++;
     }
