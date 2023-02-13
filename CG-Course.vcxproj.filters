@@ -18,19 +18,19 @@
     <ClCompile Include="src\MySuper3DApp.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\D3D11Shader.cpp">
+    <ClCompile Include="src\Renderer\D3D11Shader.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\D3D11VertexBuffer.cpp">
+    <ClCompile Include="src\Renderer\D3D11VertexBuffer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\D3D11IndexBuffer.cpp">
+    <ClCompile Include="src\Renderer\D3D11IndexBuffer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Application.cpp">
+    <ClCompile Include="src\Kernel\Application.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Window.cpp">
+    <ClCompile Include="src\Kernel\Window.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\D3D11Context.cpp">
@@ -45,10 +45,10 @@
     <ClCompile Include="src\Renderer\RenderCommand.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Layer.cpp">
+    <ClCompile Include="src\Kernel\Layer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\LayerStack.cpp">
+    <ClCompile Include="src\Kernel\LayerStack.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\MySuper3DLayer.cpp">
@@ -56,22 +56,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\D3D11Shader.h">
+    <ClInclude Include="src\Renderer\D3D11Shader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\D3D11VertexBuffer.h">
+    <ClInclude Include="src\Renderer\D3D11VertexBuffer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Buffer.h">
+    <ClInclude Include="src\Renderer\Buffer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\D3D11IndexBuffer.h">
+    <ClInclude Include="src\Renderer\D3D11IndexBuffer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Application.h">
+    <ClInclude Include="src\Kernel\Application.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Window.h">
+    <ClInclude Include="src\Kernel\Window.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\D3D11Context.h">
@@ -86,10 +86,10 @@
     <ClInclude Include="src\Renderer\RenderCommand.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Layer.h">
+    <ClInclude Include="src\Kernel\Layer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\LayerStack.h">
+    <ClInclude Include="src\Kernel\LayerStack.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\MySuper3DLayer.h">

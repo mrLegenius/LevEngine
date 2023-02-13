@@ -1,8 +1,9 @@
 #pragma once
 #include <memory>
 
-#include "D3D11IndexBuffer.h"
-#include "Layer.h"
+#include "Kernel/Layer.h"
+#include "Renderer/D3D11IndexBuffer.h"
+#include "Renderer/D3D11VertexBuffer.h"
 
 class MySuper3DLayer : public Layer
 {
@@ -15,8 +16,8 @@ public:
 
 private:
 
-	std::unique_ptr<D3D11VertexBuffer> m_VertexBuffer;
-	std::unique_ptr<D3D11IndexBuffer> m_IndexBuffer;
+	std::shared_ptr<D3D11VertexBuffer> m_VertexBuffer;
+	std::shared_ptr<D3D11IndexBuffer> m_IndexBuffer;
 	std::unique_ptr<D3D11Shader> m_Shader;
 };
 

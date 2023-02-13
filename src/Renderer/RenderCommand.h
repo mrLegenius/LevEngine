@@ -16,18 +16,36 @@ public:
 		s_RendererAPI->SetViewport(x, y, width, height);
 	}
 
-	static void SetClearColor(const float color[4])
+	static void SetClearColor(float color[4])
 	{
 		s_RendererAPI->SetClearColor(color);
 	}
+
 	static void Clear()
 	{
 		s_RendererAPI->Clear();
 	}
 
+	static void DrawIndexed(
+		const std::shared_ptr<D3D11VertexBuffer>& vertexBuffer,
+		const std::shared_ptr<D3D11IndexBuffer>& indexBuffer)
+	{
+		s_RendererAPI->DrawIndexed(vertexBuffer, indexBuffer);
+	}
+
 	static void SetLineWidth(float width)
 	{
 		s_RendererAPI->SetLineWidth(width);
+	}
+
+	static void Begin()
+	{
+		s_RendererAPI->Begin();
+	}
+
+	static void End()
+	{
+		s_RendererAPI->End();
 	}
 
 private:

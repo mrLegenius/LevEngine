@@ -141,33 +141,33 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\MySuper3DLayer.cpp" />
-    <ClCompile Include="src\Layer.cpp" />
-    <ClCompile Include="src\LayerStack.cpp" />
+    <ClCompile Include="src\Kernel\Layer.cpp" />
+    <ClCompile Include="src\Kernel\LayerStack.cpp" />
     <ClCompile Include="src\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Renderer\D3D11RendererAPI.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Renderer\D3D11Context.cpp" />
-    <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\D3D11IndexBuffer.cpp" />
-    <ClCompile Include="src\D3D11VertexBuffer.cpp" />
-    <ClCompile Include="src\D3D11Shader.cpp" />
+    <ClCompile Include="src\Kernel\Application.cpp" />
+    <ClCompile Include="src\Renderer\D3D11IndexBuffer.cpp" />
+    <ClCompile Include="src\Renderer\D3D11VertexBuffer.cpp" />
+    <ClCompile Include="src\Renderer\D3D11Shader.cpp" />
     <ClCompile Include="src\MySuper3DApp.cpp" />
-    <ClCompile Include="src\Window.cpp" />
+    <ClCompile Include="src\Kernel\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MySuper3DLayer.h" />
-    <ClInclude Include="src\Layer.h" />
-    <ClInclude Include="src\LayerStack.h" />
+    <ClInclude Include="src\Kernel\Layer.h" />
+    <ClInclude Include="src\Kernel\LayerStack.h" />
     <ClInclude Include="src\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Renderer\D3D11RendererAPI.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\D3D11Context.h" />
-    <ClInclude Include="src\Application.h" />
-    <ClInclude Include="src\D3D11IndexBuffer.h" />
-    <ClInclude Include="src\D3D11VertexBuffer.h" />
-    <ClInclude Include="src\Buffer.h" />
-    <ClInclude Include="src\D3D11Shader.h" />
-    <ClInclude Include="src\Window.h" />
+    <ClInclude Include="src\Kernel\Application.h" />
+    <ClInclude Include="src\Renderer\D3D11IndexBuffer.h" />
+    <ClInclude Include="src\Renderer\D3D11VertexBuffer.h" />
+    <ClInclude Include="src\Renderer\Buffer.h" />
+    <ClInclude Include="src\Renderer\D3D11Shader.h" />
+    <ClInclude Include="src\Kernel\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

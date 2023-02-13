@@ -5,9 +5,14 @@
 #include <iostream>
 #include <wrl/client.h>
 
-extern ID3D11DeviceContext* context;
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-extern IDXGISwapChain* swapChain;
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "dxguid.lib")
+
+ID3D11DeviceContext* context;
+Microsoft::WRL::ComPtr<ID3D11Device> device;
+IDXGISwapChain* swapChain;
 
 void D3D11Context::Init(uint32_t width, uint32_t height, HWND window)
 {

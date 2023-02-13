@@ -8,7 +8,7 @@ class D3D11Shader
 {
 public:
 	explicit D3D11Shader(const std::string& filepath);
-
+	~D3D11Shader();
 	void Bind() const;
 
 	void SetLayout(const BufferLayout& layout);

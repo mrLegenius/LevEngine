@@ -42,7 +42,7 @@ D3D11VertexBuffer::D3D11VertexBuffer(float* vertices, const uint32_t size) : m_S
 
 D3D11VertexBuffer::~D3D11VertexBuffer()
 {
-	//TODO: Clear a buffer
+	m_Buffer->Release();
 }
 
 void D3D11VertexBuffer::Bind() const

@@ -47,6 +47,14 @@ D3D11Shader::D3D11Shader(const std::string& filepath)
 	CreatePixelShader(m_PixelShader, wide_filepath);
 }
 
+D3D11Shader::~D3D11Shader()
+{
+	m_PixelShader->Release();
+	m_VertexShader->Release();
+	m_VertexBC->Release();
+	m_InputLayout->Release();
+}
+
 void D3D11Shader::Bind() const
 {
 	context->VSSetShader(m_VertexShader, nullptr, 0);

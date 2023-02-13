@@ -26,7 +26,7 @@ D3D11IndexBuffer::D3D11IndexBuffer(uint32_t* indices, const uint32_t count)
 
 D3D11IndexBuffer::~D3D11IndexBuffer()
 {
-	//TODO: Clear a buffer
+	m_Buffer->Release();
 }
 
 void D3D11IndexBuffer::Bind() const
