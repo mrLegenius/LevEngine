@@ -5,7 +5,6 @@
 #include <wrl/client.h>
 
 extern ID3D11DeviceContext* context;
-extern HWND hWnd;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target);
@@ -80,7 +79,7 @@ bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER
 		// If there was  nothing in the error message then it simply could not find the shader file itself.
 		else
 		{
-			MessageBox(hWnd, shaderFilepath, L"Missing Shader File", MB_OK);
+			std::cout << shaderFilepath << " Missing shader file" << std::endl;
 		}
 
 		return false;
@@ -142,4 +141,6 @@ void D3D11Shader::SetLayout(const BufferLayout& layout)
 		m_VertexBC->GetBufferPointer(),
 		m_VertexBC->GetBufferSize(),
 		&m_InputLayout);
+
+	delete[] input;
 }
