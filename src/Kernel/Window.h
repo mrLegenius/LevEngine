@@ -1,6 +1,8 @@
+#include <functional>
 #include <string>
 
 #include "../Renderer/D3D11Context.h"
+#include "../Events/Event.h"
 #include <memory>
 
 struct WindowAttributes
@@ -20,6 +22,8 @@ struct WindowAttributes
 class Window
 {
 public:
+	using EventCallbackFn = std::function<void(Event&)>;
+
 	explicit Window(const WindowAttributes& attributes);
 	~Window();
 
@@ -27,6 +31,11 @@ public:
 
 	[[nodiscard]] unsigned int GetWidth() const { return m_Data.width; }
 	[[nodiscard]] unsigned int GetHeight() const { return m_Data.height; }
+
+	void SetEventCallback(const EventCallbackFn& callback)
+	{
+		m_Data.eventCallback = callback;
+	}
 
 	void SetWindowTitle(std::string& title);
 	void SetVSync(bool enabled);
@@ -43,6 +52,7 @@ private:
 	HWND m_Window = nullptr;
 	D3D11Context* m_Context = nullptr;
 
+public:
 	struct WindowData
 	{
 		std::string title;
@@ -50,6 +60,8 @@ private:
 		unsigned int height = 0;
 
 		bool vSync = false;
+
+		EventCallbackFn eventCallback;
 	};
 
 	WindowData m_Data;

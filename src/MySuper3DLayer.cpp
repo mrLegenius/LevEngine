@@ -3,6 +3,7 @@
 #include <directxmath.h>
 #include <iostream>
 
+#include "Input/Input.h"
 #include "Kernel/Application.h"
 #include "Renderer/RenderCommand.h"
 

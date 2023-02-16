@@ -1,8 +1,13 @@
 #include "Application.h"
 
 #include <chrono>
-
 #include "../Renderer/Renderer.h"
+#include "../Events/ApplicationEvent.h"
+#include "../Events/KeyEvent.h"
+#include "../Input/Input.h"
+#include "../Events/Event.h"
+
+#define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 Application* Application::s_Instance = nullptr;
 
@@ -11,6 +16,7 @@ Application::Application(const std::string& name, uint32_t width, uint32_t heigh
 	s_Instance = this;
 
 	m_Window = Window::Create(WindowAttributes(name, width, height));
+	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 	Renderer::Init();
 }
@@ -26,7 +32,7 @@ void Application::Run()
 	float totalTime = 0;
 	unsigned int frameCount = 0;
 
-	while (m_Window->GetNativeWindow() != nullptr)
+	while (m_IsRunning)
 	{
 		auto curTime = std::chrono::steady_clock::now();
 		const float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
@@ -67,4 +73,53 @@ void Application::PushLayer(Layer* layer)
 {
 	m_LayerStack.PushLayer(layer);
 	layer->OnAttach();
+}
+
+void Application::OnEvent(Event& e)
+{
+	EventDispatcher dispatcher(e);
+
+	dispatcher.Dispatch<WindowClosedEvent>(BIND_EVENT_FN(Application::OnWindowClosed));
+	dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(Application::OnWindowResized));
+	dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(Application::OnKeyPressed));
+	dispatcher.Dispatch<KeyReleasedEvent>(BIND_EVENT_FN(Application::OnKeyReleased));
+
+	for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+	{
+		(*--it)->OnEvent(e);
+		if (e.handled)
+			break;
+	}
+}
+
+bool Application::OnWindowClosed(WindowClosedEvent& e)
+{
+	Close();
+	return true;
+}
+
+bool Application::OnWindowResized(WindowResizedEvent& e)
+{
+	if (e.GetWidth() == 0 || e.GetHeight() == 0)
+	{
+		m_Minimized = true;
+
+		return false;
+	}
+
+	m_Minimized = false;
+
+	return false;
+}
+
+bool Application::OnKeyPressed(KeyPressedEvent& e)
+{
+	Input::OnKeyPressed(e.GetKeyCode());
+	return true;
+}
+
+bool Application::OnKeyReleased(KeyReleasedEvent& e)
+{
+	Input::OnKeyReleased(e.GetKeyCode());
+	return true;
 }

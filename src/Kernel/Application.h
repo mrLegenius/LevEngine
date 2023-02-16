@@ -5,6 +5,9 @@
 #include "LayerStack.h"
 #include "Window.h"
 
+#include "../Events/ApplicationEvent.h"
+#include "../Events/KeyEvent.h"
+
 class Application
 {
 public:
@@ -15,10 +18,15 @@ public:
 	void Close();
 
 	void PushLayer(Layer* layer);
+	void OnEvent(Event& e);
 
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
 private:
+	bool OnWindowClosed(WindowClosedEvent& e);
+	bool OnWindowResized(WindowResizedEvent& e);
+	bool OnKeyPressed(KeyPressedEvent& e);
+	bool OnKeyReleased(KeyReleasedEvent& e);
 
 	std::unique_ptr<Window> m_Window;
 	bool m_IsRunning = true;

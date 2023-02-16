@@ -1,20 +1,81 @@
 #include "Window.h"
 
 #include <iostream>
-
-static bool is_window_initialized = false;
+#include "../Events/ApplicationEvent.h"
+#include "../Events/KeyEvent.h"
+#include "../Events/MouseEvent.h"
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
+	
 	switch (umessage)
 	{
+	case WM_CLOSE:
+	{
+		auto& data = *reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		WindowClosedEvent event;
+		data.eventCallback(event);
+		return 0;
+	}
+	case WM_SIZE:
+	{
+		auto data = reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		if (data == nullptr)
+			return DefWindowProc(hwnd, umessage, wparam, lparam);
+
+		data->width = LOWORD(lparam);
+		data->height = HIWORD(lparam);
+
+		WindowResizedEvent event(data->width, data->height);
+		data->eventCallback(event);
+		return 0;
+	}
+	case WM_CHAR:
+	{
+		auto& data = *reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		const auto charCode = static_cast<KeyCode>(wparam);
+		KeyTypedEvent event(charCode);
+		data.eventCallback(event);
+		return 0;
+	}
 	case WM_KEYDOWN:
 	{
-		// If a key is pressed send it to the input object so it can record that state.
-		std::cout << "Key: " << static_cast<unsigned int>(wparam) << std::endl;
+		auto& data = *reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		const auto keyCode = static_cast<KeyCode>(wparam);
+
+		std::cout << "Key pressed: " << static_cast<int>(keyCode) << std::endl;
+
+		KeyPressedEvent event(keyCode, 0);
+		data.eventCallback(event);
 
 		if (static_cast<unsigned int>(wparam) == 27) PostQuitMessage(0);
 		return 0;
+	}
+	case WM_KEYUP:
+	{
+		auto& data = *reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		const auto keyCode = static_cast<KeyCode>(wparam);
+
+		KeyReleasedEvent event(keyCode);
+		data.eventCallback(event);
+		return 0;
+	}
+	case WM_MOUSEMOVE:
+	{
+		auto& data = *reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		const int xPos = LOWORD(lparam);
+		const int yPos = HIWORD(lparam);
+		MouseMovedEvent event((xPos), (yPos));
+		data.eventCallback(event);
+		return 0;
+	}
+	case WM_MOUSEWHEEL:
+	{
+		auto& data = *reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		const int xOffset = LOWORD(lparam);
+		const int yOffset = HIWORD(lparam);
+		MouseScrolledEvent event(static_cast<float>(xOffset), static_cast<float>(yOffset));
+		data.eventCallback(event);
 	}
 	default:
 	{
@@ -86,6 +147,8 @@ void Window::Init(const WindowAttributes& attributes)
 	ShowWindow(m_Window, SW_SHOW);
 	SetForegroundWindow(m_Window);
 	SetFocus(m_Window);
+	SetWindowLongPtr(m_Window, GWLP_USERDATA,
+		reinterpret_cast<LONG_PTR>(&m_Data));
 
 	ShowCursor(true);
 

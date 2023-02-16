@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <string>
 
+#include "../Events/Event.h"
+
 class Layer
 {
 public:
@@ -9,6 +11,7 @@ public:
 
 	virtual void OnAttach() { }
 	virtual void OnUpdate() { }
+	virtual void OnEvent(Event& event) { }
 
 	[[nodiscard]] const std::string& GetName() const { return m_Name; }
 protected:
