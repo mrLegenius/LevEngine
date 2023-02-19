@@ -12,6 +12,8 @@ public:
 	void Bind() const;
 
 	void SetLayout(const BufferLayout& layout);
+	[[nodiscard]] const BufferLayout& GetLayout() const { return *m_Layout; }
+
 private:
 	std::string m_FilePath;
 	std::string m_Name;
@@ -21,5 +23,6 @@ private:
 	ID3D11PixelShader* m_PixelShader = nullptr;
 
 	ID3D11InputLayout* m_InputLayout = nullptr;
+	const BufferLayout* m_Layout = nullptr;
 };
 

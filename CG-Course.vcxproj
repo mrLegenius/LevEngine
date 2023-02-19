@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\PongLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
     <ClCompile Include="src\MySuper3DLayer.cpp" />
     <ClCompile Include="src\Kernel\Layer.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="src\Kernel\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\PongLayer.h" />
     <ClInclude Include="src\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Events\Event.h" />
     <ClInclude Include="src\Events\KeyEvent.h" />
