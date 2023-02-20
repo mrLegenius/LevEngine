@@ -157,6 +157,14 @@
     <ClCompile Include="src\Kernel\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AIPad.h" />
+    <ClInclude Include="src\Ball.h" />
+    <ClInclude Include="src\Components\Movement.h" />
+    <ClInclude Include="src\Components\QuadRenderer.h" />
+    <ClInclude Include="src\Components\Transform.h" />
+    <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\Pad.h" />
+    <ClInclude Include="src\PlayerPad.h" />
     <ClInclude Include="src\PongLayer.h" />
     <ClInclude Include="src\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Events\Event.h" />
@@ -179,7 +187,17 @@
     <ClInclude Include="src\Renderer\D3D11Shader.h" />
     <ClInclude Include="src\Kernel\Window.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\directxtk_uwp.2023.2.7.1\build\native\directxtk_uwp.targets" Condition="Exists('packages\directxtk_uwp.2023.2.7.1\build\native\directxtk_uwp.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\directxtk_uwp.2023.2.7.1\build\native\directxtk_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_uwp.2023.2.7.1\build\native\directxtk_uwp.targets'))" />
+  </Target>
 </Project>

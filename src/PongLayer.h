@@ -1,7 +1,9 @@
 #pragma once
 #include "Kernel/Layer.h"
 
-class Square;
+class Pad;
+class Ball;
+
 class PongLayer final : public Layer
 {
 public:
@@ -12,6 +14,8 @@ public:
 	void OnUpdate() override;
 
 private:
-	std::shared_ptr<Square> m_Square;
+	std::shared_ptr<Ball> m_Ball;
+	std::shared_ptr<Pad> m_LeftPad;
+	std::shared_ptr<Pad> m_RightPad;
 };
 
