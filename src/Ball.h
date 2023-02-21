@@ -4,23 +4,41 @@
 #include "Components/Movement.h"
 #include "Components/QuadRenderer.h"
 
+static DirectX::SimpleMath::Vector3 startVelocity = DirectX::SimpleMath::Vector3{0.5f, 0.5f, 0.0f};
 
-class Ball : public GameObject
+class Ball final : public GameObject
 {
 public:
 	explicit Ball(std::shared_ptr<D3D11Shader> shader)
 		: GameObject(std::make_shared<QuadRenderer>(shader)),
 		m_Movement(std::make_shared<Movement>(m_Transform))
 	{
-		m_Transform->scale = DirectX::SimpleMath::Vector3::One * 0.01f;
+		m_Transform->scale = DirectX::SimpleMath::Vector3::One * 0.05f;
 	}
 
-	void Update(const float deltaTime) const
+	void Update(const float deltaTime)
 	{
+		GameObject::Update();
+
 		m_Movement->Update(deltaTime);
 	}
 
-	void SetVelocity(DirectX::SimpleMath::Vector3 value) const { m_Movement->velocity = value; }
+	void Reset() const
+	{
+		auto& velocity = m_Movement->velocity;
+		velocity = startVelocity;
+
+		if (rand() % 2) velocity.x *= -1;
+		if (rand() % 2) velocity.y *= -1;
+
+		m_Transform->position = DirectX::SimpleMath::Vector3::Zero;
+	}
+
+	void AddVelocity(const DirectX::SimpleMath::Vector3 velocity)
+	{
+		m_Movement->velocity += velocity;
+	}
+
 	void AddSpeed(const float value) const
 	{
 		m_Movement->velocity.x += std::signbit(m_Movement->velocity.x) ? -value : value;

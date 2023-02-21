@@ -43,7 +43,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 		auto& data = *reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 		const auto keyCode = static_cast<KeyCode>(wparam);
 
-		std::cout << "Key pressed: " << static_cast<int>(keyCode) << std::endl;
+		//std::cout << "Key pressed: " << static_cast<int>(keyCode) << std::endl;
 
 		KeyPressedEvent event(keyCode, 0);
 		data.eventCallback(event);

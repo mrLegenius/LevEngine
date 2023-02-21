@@ -1,5 +1,6 @@
 #include "PongLayer.h"
 #include <d3d11.h>
+#include <iostream>
 
 #include "AIPad.h"
 #include "SimpleMath.h"
@@ -10,7 +11,6 @@
 #include "Ball.h"
 #include "PlayerPad.h"
 
-static DirectX::SimpleMath::Vector3 s_StartVelocity = { 0.5f, 0.25f, 0.0f };
 static float s_SpeedDelta = 0.01f;
 
 void PongLayer::OnAttach()
@@ -22,7 +22,7 @@ void PongLayer::OnAttach()
 	});
 
 	m_Ball = std::make_shared<Ball>(shader);
-	m_Ball->SetVelocity(s_StartVelocity);
+	m_Ball->Reset();
 
 	m_LeftPad = std::make_shared<PlayerPad>(-0.8f, shader);
 	m_RightPad = std::make_shared<AIPad>(0.8f, shader, m_Ball);
@@ -38,6 +38,9 @@ void PongLayer::OnUpdate()
 	RenderCommand::SetClearColor(color);
 	RenderCommand::Clear();
 
+	static int scoreLeft = 0;
+	static int scoreRight = 0;
+
 	static float maxY = 0.95f;
 	static float minY = -0.95f;
 	static float maxX = 0.95f;
@@ -46,11 +49,18 @@ void PongLayer::OnUpdate()
 	constexpr float deltaTime = 1.0f / 144.0f;
 	m_Ball->Update(deltaTime);
 
-	if (m_Ball->GetTransform()->position.x > maxX && m_Ball->GetVelocity().x > 0
-		|| m_Ball->GetTransform()->position.x < minX && m_Ball->GetVelocity().x < 0)
+	if (m_Ball->GetTransform()->position.x > maxX && m_Ball->GetVelocity().x > 0)
 	{
-		m_Ball->ChangeXDirection();
-		m_Ball->AddSpeed(s_SpeedDelta);
+		scoreLeft++;
+		std::cout << "Score: " << scoreLeft << ":" << scoreRight << std::endl;
+		m_Ball->Reset();
+	}
+
+	if (m_Ball->GetTransform()->position.x < minX && m_Ball->GetVelocity().x < 0)
+	{
+		scoreRight++;
+		std::cout << "Score: " << scoreLeft << ":" << scoreRight << std::endl;
+		m_Ball->Reset();
 	}
 
 	if (m_Ball->GetTransform()->position.y > maxY && m_Ball->GetVelocity().y > 0
@@ -66,6 +76,20 @@ void PongLayer::OnUpdate()
 
 	m_RightPad->Update(deltaTime);
 	m_RightPad->Draw();
+
+	if (m_Ball->GetVelocity().x > 0 && m_Ball->Intersects(*m_RightPad))
+	{
+		m_Ball->ChangeXDirection();
+		m_Ball->AddSpeed(s_SpeedDelta);
+		m_Ball->AddVelocity(m_RightPad->GetVelocity() / 4.0f);
+	}
+
+	if (m_Ball->GetVelocity().x < 0 && m_Ball->Intersects(*m_LeftPad))
+	{
+		m_Ball->ChangeXDirection();
+		m_Ball->AddSpeed(s_SpeedDelta);
+		m_Ball->AddVelocity(m_LeftPad->GetVelocity() / 4.0f);
+	}
 
 	RenderCommand::End();
 }
