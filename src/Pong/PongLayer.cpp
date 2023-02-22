@@ -1,13 +1,10 @@
 #include "PongLayer.h"
-#include <d3d11.h>
 #include <iostream>
 
 #include "AIPad.h"
-#include "SimpleMath.h"
-#include "Components/Transform.h"
-#include "Kernel/Application.h"
-#include "Renderer/D3D11Shader.h"
-#include "Renderer/RenderCommand.h"
+#include "../Kernel/Application.h"
+#include "../Renderer/D3D11Shader.h"
+#include "../Renderer/RenderCommand.h"
 #include "Ball.h"
 #include "PlayerPad.h"
 

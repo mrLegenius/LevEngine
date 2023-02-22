@@ -1,8 +1,8 @@
 #pragma once
 #include "GameObject.h"
-#include "Components/Transform.h"
-#include "Components/Movement.h"
-#include "Components/QuadRenderer.h"
+#include "../Components/Transform.h"
+#include "../Components/Movement.h"
+#include "../Components/QuadRenderer.h"
 
 static DirectX::SimpleMath::Vector3 startVelocity = DirectX::SimpleMath::Vector3{0.5f, 0.5f, 0.0f};
 

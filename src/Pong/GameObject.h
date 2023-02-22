@@ -1,6 +1,6 @@
 #pragma once
-#include "Components/QuadRenderer.h"
-#include "Renderer/RenderCommand.h"
+#include "../Components/QuadRenderer.h"
+#include "../Renderer/RenderCommand.h"
 #include "DirectXCollision.h"
 
 inline void DrawQuad(const std::shared_ptr<Transform>& transform, const std::shared_ptr<QuadRenderer>& quad)

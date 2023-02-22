@@ -1,6 +1,6 @@
 #pragma once
 #include "Pad.h"
-#include "Input/Input.h"
+#include "../Input/Input.h"
 
 class PlayerPad : public Pad
 {

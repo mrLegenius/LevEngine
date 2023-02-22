@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "Components/Movement.h"
+#include "../Components/Movement.h"
 
 class Pad : public GameObject
 {

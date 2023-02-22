@@ -140,7 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\PongLayer.cpp" />
+    <ClCompile Include="src\Pong\PongLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
     <ClCompile Include="src\MySuper3DLayer.cpp" />
     <ClCompile Include="src\Kernel\Layer.cpp" />
@@ -157,15 +157,15 @@
     <ClCompile Include="src\Kernel\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\AIPad.h" />
-    <ClInclude Include="src\Ball.h" />
+    <ClInclude Include="src\Pong\AIPad.h" />
+    <ClInclude Include="src\Pong\Ball.h" />
     <ClInclude Include="src\Components\Movement.h" />
     <ClInclude Include="src\Components\QuadRenderer.h" />
     <ClInclude Include="src\Components\Transform.h" />
-    <ClInclude Include="src\GameObject.h" />
-    <ClInclude Include="src\Pad.h" />
-    <ClInclude Include="src\PlayerPad.h" />
-    <ClInclude Include="src\PongLayer.h" />
+    <ClInclude Include="src\Pong\GameObject.h" />
+    <ClInclude Include="src\Pong\Pad.h" />
+    <ClInclude Include="src\Pong\PlayerPad.h" />
+    <ClInclude Include="src\Pong\PongLayer.h" />
     <ClInclude Include="src\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Events\Event.h" />
     <ClInclude Include="src\Events\KeyEvent.h" />

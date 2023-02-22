@@ -1,5 +1,5 @@
 #include "MySuper3DLayer.h"
-#include "PongLayer.h"
+#include "Pong/PongLayer.h"
 #include "Kernel/Application.h"
 
 int main()

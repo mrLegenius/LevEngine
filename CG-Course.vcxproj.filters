@@ -57,7 +57,7 @@
     <ClCompile Include="src\Input\Input.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\PongLayer.cpp">
+    <ClCompile Include="src\Pong\PongLayer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,7 +122,7 @@
     <ClInclude Include="src\Input\MouseButtonCodes.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\PongLayer.h">
+    <ClInclude Include="src\Pong\PongLayer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Components\Transform.h">
@@ -134,19 +134,19 @@
     <ClInclude Include="src\Components\Movement.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ball.h">
+    <ClInclude Include="src\Pong\Ball.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameObject.h">
+    <ClInclude Include="src\Pong\GameObject.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pad.h">
+    <ClInclude Include="src\Pong\Pad.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\PlayerPad.h">
+    <ClInclude Include="src\Pong\PlayerPad.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\AIPad.h">
+    <ClInclude Include="src\Pong\AIPad.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
