@@ -142,7 +142,7 @@
   <ItemGroup>
     <ClCompile Include="src\Pong\PongLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
-    <ClCompile Include="src\MySuper3DLayer.cpp" />
+    <ClCompile Include="src\FirstSteps\MySuper3DLayer.cpp" />
     <ClCompile Include="src\Kernel\Layer.cpp" />
     <ClCompile Include="src\Kernel\LayerStack.cpp" />
     <ClCompile Include="src\Renderer\RenderCommand.cpp" />
@@ -173,7 +173,7 @@
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Input\KeyCodes.h" />
     <ClInclude Include="src\Input\MouseButtonCodes.h" />
-    <ClInclude Include="src\MySuper3DLayer.h" />
+    <ClInclude Include="src\FirstSteps\MySuper3DLayer.h" />
     <ClInclude Include="src\Kernel\Layer.h" />
     <ClInclude Include="src\Kernel\LayerStack.h" />
     <ClInclude Include="src\Renderer\RenderCommand.h" />

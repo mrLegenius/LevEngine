@@ -51,7 +51,7 @@
     <ClCompile Include="src\Kernel\LayerStack.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\MySuper3DLayer.cpp">
+    <ClCompile Include="src\FirstSteps\MySuper3DLayer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Input\Input.cpp">
@@ -98,7 +98,7 @@
     <ClInclude Include="src\Kernel\LayerStack.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\MySuper3DLayer.h">
+    <ClInclude Include="src\FirstSteps\MySuper3DLayer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Events\ApplicationEvent.h">
