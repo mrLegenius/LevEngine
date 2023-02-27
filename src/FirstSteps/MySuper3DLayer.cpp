@@ -1,11 +1,8 @@
 #include "MySuper3DLayer.h"
 
 #include <directxmath.h>
-#include <iostream>
-
-#include "Input/Input.h"
-#include "Kernel/Application.h"
-#include "Renderer/RenderCommand.h"
+#include "../Kernel/Application.h"
+#include "../Renderer/RenderCommand.h"
 
 struct QuadVertex
 {

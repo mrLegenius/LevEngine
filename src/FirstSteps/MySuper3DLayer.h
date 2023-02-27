@@ -1,9 +1,9 @@
 #pragma once
 #include <memory>
 
-#include "Kernel/Layer.h"
-#include "Renderer/D3D11IndexBuffer.h"
-#include "Renderer/D3D11VertexBuffer.h"
+#include "../Kernel/Layer.h"
+#include "../Renderer/D3D11IndexBuffer.h"
+#include "../Renderer/D3D11VertexBuffer.h"
 
 class MySuper3DLayer : public Layer
 {
