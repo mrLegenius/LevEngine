@@ -13,6 +13,13 @@ inline void DrawQuad(const std::shared_ptr<Transform>& transform, const std::sha
 class GameObject
 {
 public:
+	explicit GameObject(const std::shared_ptr<QuadRenderer> quadRenderer)
+		: m_Transform(std::make_shared<Transform>()),
+		m_QuadRenderer(quadRenderer)
+	{
+		m_BoundingBox = std::make_shared<DirectX::BoundingBox>(m_DefaultBoundingBox.Center, m_DefaultBoundingBox.Extents);
+	}
+
 	virtual ~GameObject() = default;
 	std::shared_ptr<Transform>& GetTransform() { return m_Transform; }
 	std::shared_ptr<QuadRenderer>& GetQuad() { return m_QuadRenderer; }
@@ -29,12 +36,7 @@ public:
 	}
 
 protected:
-	explicit GameObject(const std::shared_ptr<QuadRenderer> quadRenderer)
-		: m_Transform(std::make_shared<Transform>()),
-		m_QuadRenderer(quadRenderer)
-	{
-		m_BoundingBox = std::make_shared<DirectX::BoundingBox>(m_DefaultBoundingBox.Center, m_DefaultBoundingBox.Extents);
-	}
+	
 
 	DirectX::BoundingBox m_DefaultBoundingBox = DirectX::BoundingBox(DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::One / 2.0f);
 

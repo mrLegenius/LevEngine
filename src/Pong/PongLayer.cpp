@@ -18,11 +18,22 @@ void PongLayer::OnAttach()
 	{ ShaderDataType::Float4, "COLOR" },
 	});
 
+
+	auto dotLineShader = std::make_shared<D3D11Shader>("./Shaders/DotLine.hlsl");
+	dotLineShader->SetLayout({
+	{ ShaderDataType::Float4, "POSITION" },
+	{ ShaderDataType::Float4, "COLOR" },
+		});
+
 	m_Ball = std::make_shared<Ball>(shader);
 	m_Ball->Reset();
 
 	m_LeftPad = std::make_shared<PlayerPad>(-0.8f, shader);
 	m_RightPad = std::make_shared<AIPad>(0.8f, shader, m_Ball);
+
+	m_Line = std::make_shared<GameObject>(std::make_shared<QuadRenderer>(dotLineShader));
+	m_Line->GetTransform()->scale.y = 10;
+	m_Line->GetTransform()->scale.x = 0.02;
 }
 
 void PongLayer::OnUpdate()
@@ -87,6 +98,8 @@ void PongLayer::OnUpdate()
 		m_Ball->AddSpeed(s_SpeedDelta);
 		m_Ball->AddVelocity(m_LeftPad->GetVelocity() / 4.0f);
 	}
+
+	m_Line->Draw();
 
 	RenderCommand::End();
 }
