@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\SolarSystem\SolarSystemLayer.cpp" />
     <ClCompile Include="src\Pong\PongLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
     <ClCompile Include="src\FirstSteps\MySuper3DLayer.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="src\Kernel\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SolarSystem\SolarSystemLayer.h" />
     <ClInclude Include="src\Pong\AIPad.h" />
     <ClInclude Include="src\Pong\Ball.h" />
     <ClInclude Include="src\Components\Movement.h" />

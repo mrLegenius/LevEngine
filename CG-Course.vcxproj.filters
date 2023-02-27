@@ -60,6 +60,9 @@
     <ClCompile Include="src\Pong\PongLayer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\SolarSystem\SolarSystemLayer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer\D3D11Shader.h">
@@ -147,6 +150,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Pong\AIPad.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SolarSystem\SolarSystemLayer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
