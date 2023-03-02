@@ -10,7 +10,7 @@ public:
 	virtual ~Layer() = default;
 
 	virtual void OnAttach() { }
-	virtual void OnUpdate() { }
+	virtual void OnUpdate(const float deltaTime) { }
 	virtual void OnEvent(Event& event) { }
 
 	[[nodiscard]] const std::string& GetName() const { return m_Name; }

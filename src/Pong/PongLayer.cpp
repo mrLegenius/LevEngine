@@ -36,7 +36,7 @@ void PongLayer::OnAttach()
 	m_Line->GetTransform()->scale.x = 0.02;
 }
 
-void PongLayer::OnUpdate()
+void PongLayer::OnUpdate(const float deltaTime)
 {
 	RenderCommand::Begin();
 	const auto& window = Application::Get().GetWindow();
@@ -54,7 +54,6 @@ void PongLayer::OnUpdate()
 	static float maxX = 0.95f;
 	static float minX = -0.95f;
 
-	constexpr float deltaTime = 1.0f / 144.0f;
 	m_Ball->Update(deltaTime);
 
 	if (m_Ball->GetTransform()->position.x > maxX && m_Ball->GetVelocity().x > 0)

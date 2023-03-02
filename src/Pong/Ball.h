@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "../Components/Transform.h"
 #include "../Components/Movement.h"
-#include "../Components/QuadRenderer.h"
+#include "../Components/ShapeRenderer.h"
 
 static DirectX::SimpleMath::Vector3 startVelocity = DirectX::SimpleMath::Vector3{0.5f, 0.5f, 0.0f};
 
@@ -10,7 +10,7 @@ class Ball final : public GameObject
 {
 public:
 	explicit Ball(std::shared_ptr<D3D11Shader> shader)
-		: GameObject(std::make_shared<QuadRenderer>(shader)),
+		: GameObject(std::make_shared<ShapeRenderer>(shader, 20)),
 		m_Movement(std::make_shared<Movement>(m_Transform))
 	{
 		m_Transform->scale = DirectX::SimpleMath::Vector3::One * 0.05f;

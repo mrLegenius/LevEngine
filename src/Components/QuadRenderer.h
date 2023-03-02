@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 
+#include "RendererComponent.h"
 #include "Transform.h"
 #include "../Renderer/D3D11VertexBuffer.h"
 #include "../Renderer/D3D11IndexBuffer.h"
@@ -17,10 +18,10 @@ struct QuadVertex
 	}
 };
 
-class QuadRenderer
+class QuadRenderer : public RendererComponent
 {
 public:
-	QuadRenderer(const std::shared_ptr<D3D11Shader> shader) : m_Shader(shader)
+	QuadRenderer(const std::shared_ptr<D3D11Shader> shader) : RendererComponent(shader)
 	{
 		constexpr auto size = 4 * sizeof(QuadVertex);
 		m_VertexBuffer = std::make_shared<D3D11VertexBuffer>(size);
@@ -30,7 +31,7 @@ public:
 		m_IndexBuffer = std::make_shared<D3D11IndexBuffer>(indices, std::size(indices));
 	}
 
-	void ApplyTransform(const std::shared_ptr<Transform>& transform) const
+	void ApplyTransform(const std::shared_ptr<Transform>& transform) override
 	{
 		QuadVertex vertices[4] =
 		{
@@ -45,17 +46,4 @@ public:
 
 		m_VertexBuffer->SetData(vertices, sizeof(vertices));
 	}
-
-	void Bind() const
-	{
-		m_Shader->Bind();
-	}
-
-	std::shared_ptr<D3D11VertexBuffer>& GetVertexBuffer() { return m_VertexBuffer; }
-	std::shared_ptr<D3D11IndexBuffer>& GetIndexBuffer() { return m_IndexBuffer; }
-
-private:
-	std::shared_ptr<D3D11Shader> m_Shader;
-	std::shared_ptr<D3D11VertexBuffer> m_VertexBuffer;
-	std::shared_ptr<D3D11IndexBuffer> m_IndexBuffer;
 };

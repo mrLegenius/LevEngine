@@ -12,7 +12,7 @@ public:
 	~MySuper3DLayer() override { }
 
 	void OnAttach() override;
-	void OnUpdate() override;
+	void OnUpdate(float deltaTime) override;
 
 private:
 

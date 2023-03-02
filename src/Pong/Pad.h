@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "../Components/QuadRenderer.h"
 #include "../Components/Movement.h"
 
 class Pad : public GameObject

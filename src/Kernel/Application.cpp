@@ -3,7 +3,7 @@
 #include <chrono>
 
 #include "Utils.h"
-#include "../Renderer/Renderer.h"
+#include "../Renderer/RendererComponent.h"
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
@@ -19,12 +19,12 @@ Application::Application(const std::string& name, uint32_t width, uint32_t heigh
 	m_Window = Window::Create(WindowAttributes(name, width, height));
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
-	Renderer::Init();
+	RendererComponent::Init();
 }
 
 Application::~Application()
 {
-	Renderer::Shutdown();
+	RendererComponent::Shutdown();
 }
 
 void Application::Run()
@@ -57,10 +57,10 @@ void Application::Run()
 
 		for (Layer* layer : m_LayerStack)
 		{
-			layer->OnUpdate();
+			layer->OnUpdate(deltaTime);
 		}
 
-		Renderer::Render();
+		RendererComponent::Render();
 		m_Window->Update();
 	}
 }

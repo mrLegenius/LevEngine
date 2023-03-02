@@ -12,7 +12,7 @@ public:
 	~PongLayer() override = default;
 
 	void OnAttach() override;
-	void OnUpdate() override;
+	void OnUpdate(float deltaTime) override;
 
 private:
 	std::shared_ptr<Ball> m_Ball;
