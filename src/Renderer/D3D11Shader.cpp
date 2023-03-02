@@ -128,7 +128,7 @@ bool CreatePixelShader(ID3D11PixelShader*& shader, const wchar_t* shaderFilepath
 
 void D3D11Shader::SetLayout(const BufferLayout& layout)
 {
-	m_Layout = &layout;
+	m_Layout = layout;
 	const auto& elements = layout.GetElements();
 	auto* input = new D3D11_INPUT_ELEMENT_DESC[elements.size()];
 

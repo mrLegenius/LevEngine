@@ -39,6 +39,10 @@ public:
 
 	void SetWindowTitle(std::string& title);
 	void SetVSync(bool enabled);
+
+	void EnableCursor();
+	void DisableCursor();
+
 	[[nodiscard]] bool IsVSync() const;
 
 	[[nodiscard]] void* GetNativeWindow() const { return m_Window; }
@@ -46,11 +50,19 @@ public:
 	static std::unique_ptr<Window> Create(const WindowAttributes& attributes = WindowAttributes());
 
 private:
+
+	void ConfineCursor() const;
+	void FreeCursor() const;
+
+	void ShowCursor() const;
+	void HideCursor() const;
+
 	virtual void Init(const WindowAttributes& attributes);
 	virtual void Close();
 
 	HWND m_Window = nullptr;
 	D3D11Context* m_Context = nullptr;
+	bool m_CursorEnabled = true;
 
 public:
 	struct WindowData

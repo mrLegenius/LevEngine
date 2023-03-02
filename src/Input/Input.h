@@ -7,6 +7,7 @@ class Input
 {
 public:
 	friend class Application;
+	friend class Window;
 
 	static bool IsKeyPressed(KeyCode keycode);
 	static bool IsKeyReleased(KeyCode keycode);
@@ -20,6 +21,7 @@ public:
 	static std::pair<float, float> GetMousePosition();
 	static float GetMouseX();
 	static float GetMouseY();
+
 private:
 	enum class State
 	{
@@ -29,8 +31,15 @@ private:
 
 	static std::unordered_map<KeyCode, State> s_CurrentKeyStates;
 	static std::unordered_map<KeyCode, State> s_PreviousKeyStates;
-	static std::unordered_map<MouseButton, bool> s_ButtonStates;
+	static std::unordered_map<MouseButton, State> s_ButtonStates;
+	static std::unordered_map<MouseButton, State> s_PreviousButtonStates;
+
+	static float s_MousePositionX;
+	static float s_MousePositionY;
 
 	static void OnKeyPressed(KeyCode keyCode);
 	static void OnKeyReleased(KeyCode keyCode);
+	static void OnMouseMoved(float x, float y);
+	static void OnMouseButtonPressed(MouseButton mouseButton);
+	static void OnMouseButtonReleased(MouseButton mouseButton);
 };

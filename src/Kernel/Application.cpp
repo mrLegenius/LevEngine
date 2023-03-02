@@ -1,13 +1,14 @@
 #include "Application.h"
 
 #include <chrono>
+
+#include "Utils.h"
 #include "../Renderer/Renderer.h"
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
+#include "../Events/MouseEvent.h"
 #include "../Input/Input.h"
 #include "../Events/Event.h"
-
-#define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 Application* Application::s_Instance = nullptr;
 
@@ -83,6 +84,9 @@ void Application::OnEvent(Event& e)
 	dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(Application::OnWindowResized));
 	dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(Application::OnKeyPressed));
 	dispatcher.Dispatch<KeyReleasedEvent>(BIND_EVENT_FN(Application::OnKeyReleased));
+	dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(Application::OnMouseMoved));
+	dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(Application::OnMouseButtonPressed));
+	dispatcher.Dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(Application::OnMouseButtonReleased));
 
 	for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 	{
@@ -121,5 +125,23 @@ bool Application::OnKeyPressed(KeyPressedEvent& e)
 bool Application::OnKeyReleased(KeyReleasedEvent& e)
 {
 	Input::OnKeyReleased(e.GetKeyCode());
+	return true;
+}
+
+bool Application::OnMouseMoved(MouseMovedEvent& e)
+{
+	Input::OnMouseMoved(e.GetX(), e.GetY());
+	return true;
+}
+
+bool Application::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+{
+	Input::OnMouseButtonPressed(e.GetMouseButton());
+	return true;
+}
+
+bool Application::OnMouseButtonReleased(MouseButtonReleasedEvent& e)
+{
+	Input::OnMouseButtonReleased(e.GetMouseButton());
 	return true;
 }

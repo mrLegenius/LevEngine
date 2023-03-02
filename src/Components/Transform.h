@@ -14,4 +14,54 @@ struct Transform
 				DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(rotation)) *
 			DirectX::SimpleMath::Matrix::CreateTranslation(position);
 	}
+
+	void MoveForward(const float value)
+	{
+		const auto forward = GetForwardDirection();
+		position += forward * value;
+	}
+
+	void MoveBackward(const float value)
+	{
+		const auto forward = GetForwardDirection();
+		position -= forward * value;
+	}
+
+	void MoveLeft(const float value)
+	{
+		const auto forward = GetRightDirection();
+		position -= forward * value;
+	}
+
+	void MoveRight(const float value)
+	{
+		const auto forward = GetRightDirection();
+		position += forward * value;
+	}
+
+	DirectX::SimpleMath::Vector3 GetUpDirection() const
+	{
+		DirectX::SimpleMath::Vector3 dir = XMVector3Rotate(DirectX::SimpleMath::Vector3::Up, GetOrientation());
+		dir.Normalize();
+		return dir;
+	}
+
+	DirectX::SimpleMath::Vector3 GetRightDirection() const
+	{
+		DirectX::SimpleMath::Vector3 dir = XMVector3Rotate(DirectX::SimpleMath::Vector3::Right, GetOrientation());
+		dir.Normalize();
+		return dir;
+	}
+
+	DirectX::SimpleMath::Vector3 GetForwardDirection() const
+	{
+		DirectX::SimpleMath::Vector3 dir = XMVector3Rotate(DirectX::SimpleMath::Vector3::Forward, GetOrientation());
+		dir.Normalize();
+		return dir;
+	}
+
+	DirectX::SimpleMath::Quaternion GetOrientation() const
+	{
+		return DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(rotation.y, rotation.x, rotation.z);
+	}
 };

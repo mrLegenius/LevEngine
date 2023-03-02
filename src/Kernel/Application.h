@@ -7,6 +7,7 @@
 
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
+#include "../Events/MouseEvent.h"
 
 class Application
 {
@@ -27,6 +28,9 @@ private:
 	bool OnWindowResized(WindowResizedEvent& e);
 	bool OnKeyPressed(KeyPressedEvent& e);
 	bool OnKeyReleased(KeyReleasedEvent& e);
+	bool OnMouseMoved(MouseMovedEvent& e);
+	bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+	bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
 
 	std::unique_ptr<Window> m_Window;
 	bool m_IsRunning = true;

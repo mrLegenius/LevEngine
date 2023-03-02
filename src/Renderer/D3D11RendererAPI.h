@@ -4,6 +4,7 @@
 
 #include "D3D11IndexBuffer.h"
 #include "D3D11VertexBuffer.h"
+#include "DepthFunc.h"
 
 class D3D11RendererAPI
 {
@@ -14,6 +15,7 @@ public:
 	void End();
 	void SetClearColor(float color[4]);
 	void Clear();
+	void SetDepthFunc(DepthFunc depthFunc);
 
 	void DrawIndexed(const std::shared_ptr<D3D11VertexBuffer>& vertexBuffer, const std::shared_ptr<D3D11IndexBuffer>& indexBuffer);
 	//void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
