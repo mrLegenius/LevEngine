@@ -34,6 +34,7 @@ protected:
 		}
 
 		m_VertexBuffer->SetData(meshVertexBufferBase, sizeof(SkyboxVertex) * verticesCount);
+		delete[] meshVertexBufferBase;
 	}
 
 	void Bind() const override

@@ -46,6 +46,7 @@ protected:
 		}
 
 		m_VertexBuffer->SetData(meshVertexBufferBase, sizeof(MeshVertex) * verticesCount);
+		delete[] meshVertexBufferBase;
 	}
 	
 private:
