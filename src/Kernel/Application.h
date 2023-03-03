@@ -31,6 +31,7 @@ private:
 	bool OnMouseMoved(MouseMovedEvent& e);
 	bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 	bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
+	bool OnMouseScrolled(MouseScrolledEvent& e);
 
 	std::unique_ptr<Window> m_Window;
 	bool m_IsRunning = true;

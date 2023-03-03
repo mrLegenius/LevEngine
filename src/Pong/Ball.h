@@ -18,7 +18,7 @@ public:
 
 	void Update(const float deltaTime)
 	{
-		GameObject::Update();
+		GameObject::Update(deltaTime);
 
 		m_Movement->Update(deltaTime);
 	}

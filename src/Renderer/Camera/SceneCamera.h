@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Camera.h"
+#include "../../Components/Transform.h";
 #include "directxmath.h"
 
 class SceneCamera : public Camera
@@ -14,11 +15,25 @@ public:
 
 	void SetProjectionType(const ProjectionType type) { m_ProjectionType = type; RecalculateProjection(); }
 	[[nodiscard]] ProjectionType GetProjectionType() const { return m_ProjectionType; }
+	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetViewMatrix() const { return m_ViewMatrix; }
+	[[nodiscard]] DirectX::SimpleMath::Matrix GetViewProjection() const { return m_ViewMatrix * m_Projection; }
+
+	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPosition() const { return m_Transform.position; }
+	void SetPosition(const DirectX::SimpleMath::Vector3& value) { m_Transform.position = value; }
+	[[nodiscard]] float GetPitch() const { return m_Transform.rotation.x; }
+	[[nodiscard]] float GetYaw() const { return m_Transform.rotation.y; }
+
 private:
 	void RecalculateProjection();
 
 	ProjectionType m_ProjectionType = ProjectionType::Perspective;
 	float m_AspectRatio = 1.0f;
+
+protected:
+	Transform m_Transform;
+
+	DirectX::SimpleMath::Matrix m_ViewMatrix;
+	virtual void UpdateView();
 
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// -- Orthographic -------------------------------------------------------------------------------------------

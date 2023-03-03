@@ -41,6 +41,5 @@ private:
 	uint32_t m_Width;
 	uint32_t m_Height;
 
-	DXGI_FORMAT m_InternalFormat;
 	DXGI_FORMAT m_DataFormat;
 };

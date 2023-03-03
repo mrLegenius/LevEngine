@@ -13,12 +13,18 @@ struct CircularMovement
 
 	void Update(const float deltaTime)
 	{
-		const float x = sin(angle + initialOffset) * radius;
-		const float y = cos(angle + initialOffset) * radius;
+		float x = sin(angle + initialOffset) * radius;
+		float z = cos(angle + initialOffset) * radius;
 
 		angle += speed * deltaTime;
 
-		transform->position.x = centerPoint->position.x + x;
-		transform->position.y = centerPoint->position.y + y;
+		if (centerPoint)
+		{
+			x += centerPoint->position.x;
+			z += centerPoint->position.z;
+		}
+
+		transform->position.x = x;
+		transform->position.z = z;
 	}
 };

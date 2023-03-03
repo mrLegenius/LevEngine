@@ -3,6 +3,7 @@
 #include "../Renderer/D3D11Shader.h"
 #include "../Renderer/D3D11ConstantBuffer.h"
 #include "FreeCamera.h"
+#include "OrbitCamera.h"
 
 class Mesh;
 class Body;
@@ -14,15 +15,24 @@ public:
 	~SolarSystemLayer() override = default;
 
 	void OnAttach() override;
-	void OnUpdate() override;
+	void OnUpdate(float deltaTime) override;
 	void OnEvent(Event& event) override;
 
 private:
-
-	std::shared_ptr<D3D11Shader> m_MeshShader;
 	std::shared_ptr<FreeCamera> m_FreeCamera;
+	std::shared_ptr<OrbitCamera> m_OrbitCamera;
 	std::shared_ptr<D3D11ConstantBuffer> m_CameraConstantBuffer;
 
-	std::shared_ptr<Body> m_TestBody;
+	std::shared_ptr<Body> m_Sun;
+	std::shared_ptr<Body> m_Mercury;
+	std::shared_ptr<Body> m_Venus;
+	std::shared_ptr<Body> m_Earth; std::shared_ptr<Body> m_Moon;
+	std::shared_ptr<Body> m_Mars;
+	std::shared_ptr<Body> m_Jupiter;
+	std::shared_ptr<Body> m_Saturn;
+	std::shared_ptr<Body> m_Uranus;
+	std::shared_ptr<Body> m_Neptune;
+
+	bool m_UseFreeCamera = false;
 };
 

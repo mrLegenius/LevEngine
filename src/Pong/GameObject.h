@@ -12,12 +12,17 @@ public:
 		m_BoundingBox = std::make_shared<DirectX::BoundingBox>(m_DefaultBoundingBox.Center, m_DefaultBoundingBox.Extents);
 	}
 
+	explicit GameObject() : m_Transform(std::make_shared<Transform>())
+	{
+		m_BoundingBox = std::make_shared<DirectX::BoundingBox>(m_DefaultBoundingBox.Center, m_DefaultBoundingBox.Extents);
+	}
+
 	virtual ~GameObject() = default;
 	std::shared_ptr<Transform>& GetTransform() { return m_Transform; }
 	std::shared_ptr<RendererComponent>& GetRenderer() { return m_Renderer; }
 	bool Intersects(const GameObject& go) const { return m_BoundingBox->Intersects(*go.m_BoundingBox); }
 
-	virtual void Update()
+	virtual void Update(float deltaTime)
 	{
 		m_DefaultBoundingBox.Transform(*m_BoundingBox, m_Transform->GetModel());
 	}

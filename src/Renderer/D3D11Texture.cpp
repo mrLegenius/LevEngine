@@ -10,7 +10,7 @@ extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 D3D11Texture2D::D3D11Texture2D(const std::string& path)
-	: m_Path(path), m_InternalFormat(DXGI_FORMAT_UNKNOWN), m_DataFormat(DXGI_FORMAT_UNKNOWN)
+	: m_Path(path), m_DataFormat(DXGI_FORMAT_UNKNOWN)
 {
 	// Load image
 
@@ -26,18 +26,16 @@ D3D11Texture2D::D3D11Texture2D(const std::string& path)
 
 	if (channels == 3)
 	{
-		m_InternalFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 		m_DataFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	}
 	else if (channels == 4)
 	{
-		m_InternalFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 		m_DataFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	}
 
 	const int pitch = width * 4;
 
-	assert(m_InternalFormat & m_DataFormat && "Format is not supported!");
+	assert((m_DataFormat & DXGI_FORMAT_UNKNOWN) && "Format is not supported!");
 
 	// Texture
 

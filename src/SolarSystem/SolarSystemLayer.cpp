@@ -1,15 +1,15 @@
 #include "SolarSystemLayer.h"
 
-#include <iostream>
-
 #include "CircularMovement.h"
-#include "../Components/Transform.h"
 #include "../Renderer/3D/Mesh.h"
 #include "../Renderer/RenderCommand.h"
 #include "../Renderer/D3D11Texture.h"
 #include "../Kernel/Application.h"
+#include "../Input/Input.h"
 
 #include "../Pong/GameObject.h"
+#include "Body.h"
+
 void DrawMesh(const DirectX::SimpleMath::Matrix& transform, const Mesh& mesh, const std::shared_ptr<D3D11Shader>& shader, const std::shared_ptr<D3D11Texture2D>& texture);
 
 struct CameraData
@@ -17,43 +17,23 @@ struct CameraData
     DirectX::SimpleMath::Matrix ViewProjection;
 };
 
-class Body
-{
-public:
-	explicit Body(const std::shared_ptr<Body>& pivotBody,
-        const std::shared_ptr<CircularMovement>& movement,
-        const float radius,
-        const std::string& textureFilepath)
-		: m_PivotBody(pivotBody),
-		m_Transform(std::make_shared<Transform>()),
-		m_Movement(movement),
-		m_Texture(std::make_shared<D3D11Texture2D>(textureFilepath))
-	{
-        m_Mesh = Mesh::CreateSphere(45);
-        m_Transform->scale = DirectX::SimpleMath::Vector3{ radius, radius, radius };
-	}
+float orbitRadiusScale = 3;
 
-	void Update(const float deltaTime) const
-	{
-		m_Movement->Update(deltaTime);
-	}
-
-    std::shared_ptr<Transform>& GetTransform() { return m_Transform; }
-    std::shared_ptr<Mesh>& GetMesh() { return m_Mesh; }
-    std::shared_ptr<D3D11Texture2D>& GetTexture() { return m_Texture; }
-
-private:
-	std::shared_ptr<Body> m_PivotBody;
-    std::shared_ptr<Transform> m_Transform;
-    std::shared_ptr<Mesh> m_Mesh;
-	std::shared_ptr<CircularMovement> m_Movement;
-    std::shared_ptr<D3D11Texture2D> m_Texture;
-};
+BodyParameters Sun{ 69.634f, 0, 0, 0, 0.2f,"./resources/Textures/sun.jpg" };
+BodyParameters Mercury{ 2.44f, 35 * orbitRadiusScale, 0.479f, 0,0.0011f,"./resources/Textures/mercury.jpg" };
+BodyParameters Venus{ 6.05f, 67 * orbitRadiusScale, 0.35f, 0,0.0007f,"./resources/Textures/venus.jpg" };
+BodyParameters Earth{ 6.37f, 93 * orbitRadiusScale, 0.298f, 0, .1574f,"./resources/Textures/earth.jpg" };
+BodyParameters Moon{ 1.7f, 38.4f, 1, 0,.1574f,"./resources/Textures/moon.jpg" };
+BodyParameters Mars{ 3.389f, 142 * orbitRadiusScale, 0.241f, 0,0.086f,"./resources/Textures/mars.jpg" };
+BodyParameters Jupiter{ 69.91f, 484 * orbitRadiusScale, .131f, 0,4.5583f,"./resources/Textures/jupiter.jpg" };
+BodyParameters Saturn{ 58.23f, 889 * orbitRadiusScale, 0.097f, 0,3.6840f,"./resources/Textures/saturn.jpg" };
+BodyParameters Uranus{ 25.36f, 1790 * orbitRadiusScale, 0.068f, 0,1.4794f,"./resources/Textures/uranus.jpg" };
+BodyParameters Neptune{ 24.62f, 2880 * orbitRadiusScale, 0.54f, 0,.9719f,"./resources/Textures/neptune.jpg" };
 
 void SolarSystemLayer::OnAttach()
 {
-    m_MeshShader = std::make_shared<D3D11Shader>("./Shaders/Unlit.hlsl");
-    m_MeshShader->SetLayout({
+    auto shader = std::make_shared<D3D11Shader>("./Shaders/Unlit.hlsl");
+    shader->SetLayout({
     { ShaderDataType::Float3, "POSITION" },
         { ShaderDataType::Float3, "NORMAL" },
         { ShaderDataType::Float2, "UV" },
@@ -63,72 +43,99 @@ void SolarSystemLayer::OnAttach()
 
     m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
 
-    m_TestBody = std::make_shared<Body>(nullptr, std::make_shared<CircularMovement>(), 1, "./resources/Textures/earth.jpg");
-    m_TestBody->GetTransform()->position.z = -10;
-    m_FreeCamera = std::make_shared<FreeCamera>(45, 0.01f, 10000);
+    m_Sun = std::make_shared<Body>(nullptr, Sun, shader);
+    m_Mercury = std::make_shared<Body>(m_Sun, Mercury, shader);
+    m_Venus = std::make_shared<Body>(m_Sun, Venus, shader);
+    m_Earth = std::make_shared<Body>(m_Sun, Earth, shader);
+    m_Moon = std::make_shared<Body>(m_Earth, Moon, shader);
+    m_Mars = std::make_shared<Body>(m_Sun, Mars, shader);
+    m_Jupiter = std::make_shared<Body>(m_Sun, Jupiter, shader);
+    m_Saturn = std::make_shared<Body>(m_Sun, Saturn, shader);
+    m_Uranus = std::make_shared<Body>(m_Sun, Uranus, shader);
+    m_Neptune = std::make_shared<Body>(m_Sun, Neptune, shader);
+
+    m_FreeCamera = std::make_shared<FreeCamera>(60, 0.01f, 10000);
+    m_FreeCamera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
+
+    m_OrbitCamera = std::make_shared<OrbitCamera>(60, 0.01f, 10000);
+    m_FreeCamera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
 }
 
-void SolarSystemLayer::OnUpdate()
+void SolarSystemLayer::OnUpdate(const float deltaTime)
 {
+    //Prepare Frame
     RenderCommand::Begin();
     auto& window = Application::Get().GetWindow();
     RenderCommand::SetViewport(0, 0, window.GetWidth(), window.GetHeight());
     m_FreeCamera->SetViewportSize(window.GetWidth(), window.GetHeight());
+    m_OrbitCamera->SetViewportSize(window.GetWidth(), window.GetHeight());
     window.DisableCursor();
 
     float color[] = { 0.1f, 0.1f, 0.1f, 1.0f };
     RenderCommand::SetClearColor(color);
     RenderCommand::Clear();
 
-    constexpr auto deltaTime = 1.f / 144.f;
+    if (m_UseFreeCamera)
+    {
+        const CameraData cameraData{ m_FreeCamera->GetViewProjection() };
+        m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
+    }
+    else
+    {
+        const CameraData cameraData{ m_OrbitCamera->GetViewProjection() };
+        m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
+    }
+
+    //Logic
     m_FreeCamera->Update(deltaTime);
-    static float move = 0;
-    //m_TestBody->GetTransform()->position.z = sin(move);
-    m_TestBody->GetTransform()->rotation.y += deltaTime;
+    m_OrbitCamera->Update(deltaTime);
+    m_Sun->Update(deltaTime);
+    m_Mercury->Update(deltaTime);
+    m_Venus->Update(deltaTime);
+    m_Earth->Update(deltaTime);
+    m_Moon->Update(deltaTime);
+    m_Mars->Update(deltaTime);
+    m_Jupiter->Update(deltaTime);
+    m_Saturn->Update(deltaTime);
+    m_Uranus->Update(deltaTime);
+    m_Neptune->Update(deltaTime);
 
-	const CameraData cameraData{ m_FreeCamera->GetViewProjection()};
-    m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
+    //Drawing
+    m_Sun->Draw();
+    m_Mercury->Draw();
+    m_Venus->Draw();
+    m_Earth->Draw();
+    m_Moon->Draw();
+    m_Mars->Draw();
+    m_Jupiter->Draw();
+    m_Saturn->Draw();
+    m_Uranus->Draw();
+    m_Neptune->Draw();
 
-    move += deltaTime;
+    if (Input::IsKeyPressed(KeyCode::D1))
+        m_OrbitCamera->SetTarget(m_Mercury->GetTransform());
+    if (Input::IsKeyPressed(KeyCode::D2))
+        m_OrbitCamera->SetTarget(m_Venus->GetTransform());
+    if (Input::IsKeyPressed(KeyCode::D3))
+        m_OrbitCamera->SetTarget(m_Earth->GetTransform());
+    if (Input::IsKeyPressed(KeyCode::D4))
+        m_OrbitCamera->SetTarget(m_Mars->GetTransform());
+    if (Input::IsKeyPressed(KeyCode::D5))
+        m_OrbitCamera->SetTarget(m_Jupiter->GetTransform());
+    if (Input::IsKeyPressed(KeyCode::D6))
+        m_OrbitCamera->SetTarget(m_Saturn->GetTransform());
+    if (Input::IsKeyPressed(KeyCode::D7))
+        m_OrbitCamera->SetTarget(m_Uranus->GetTransform());
+    if (Input::IsKeyPressed(KeyCode::D8))
+        m_OrbitCamera->SetTarget(m_Neptune->GetTransform());
 
-    DrawMesh(m_TestBody->GetTransform()->GetModel(), *m_TestBody->GetMesh(), m_MeshShader, m_TestBody->GetTexture());
+    if (Input::IsKeyPressed(KeyCode::Tab))
+        m_UseFreeCamera = !m_UseFreeCamera;
 
+    //End frame
     RenderCommand::End();
 }
 
 void SolarSystemLayer::OnEvent(Event& event)
 {
-}
-
-struct MeshVertex
-{
-    DirectX::SimpleMath::Vector3 Position;
-    DirectX::SimpleMath::Vector3 Normal;
-    DirectX::SimpleMath::Vector2 UV;
-    //float TexIndex;
-    //float TexTiling;
-};
-
-void DrawMesh(const DirectX::SimpleMath::Matrix& transform, const Mesh& mesh, const std::shared_ptr<D3D11Shader>& shader, const std::shared_ptr<D3D11Texture2D>& texture)
-{
-    const std::shared_ptr<D3D11VertexBuffer> vertexBuffer = mesh.CreateVertexBuffer(shader->GetLayout());
-    const std::shared_ptr<D3D11IndexBuffer> indexBuffer = mesh.CreateIndexBuffer();
-
-    const auto verticesCount = mesh.GetVerticesCount();
-    auto* meshVertexBufferBase = new MeshVertex[verticesCount];
-    for (uint32_t i = 0; i < verticesCount; i++)
-    {
-        meshVertexBufferBase[i].Position = DirectX::SimpleMath::Vector3::Transform(mesh.GetVertex(i), transform);
-        meshVertexBufferBase[i].Normal = mesh.GetNormal(i);
-        meshVertexBufferBase[i].UV = mesh.GetUV(i);
-        //meshVertexBufferBase[i].TexIndex = 0;
-        //meshVertexBufferBase[i].TexTiling = 1;
-    }
-
-    vertexBuffer->SetData(meshVertexBufferBase);
-    texture->Bind();
-    
-    shader->Bind();
-
-    RenderCommand::DrawIndexed(vertexBuffer, indexBuffer);
 }

@@ -31,7 +31,7 @@ public:
 		m_IndexBuffer = std::make_shared<D3D11IndexBuffer>(indices, std::size(indices));
 	}
 
-	void ApplyTransform(const std::shared_ptr<Transform>& transform) override
+	void Prepare(const std::shared_ptr<Transform>& transform) override
 	{
 		QuadVertex vertices[4] =
 		{

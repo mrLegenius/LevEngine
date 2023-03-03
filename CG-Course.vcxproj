@@ -146,7 +146,9 @@
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="src\Renderer\D3D11ConstantBuffer.cpp" />
     <ClCompile Include="src\Renderer\D3D11Texture.cpp" />
+    <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\SolarSystem\FreeCamera.cpp" />
+    <ClCompile Include="src\SolarSystem\OrbitCamera.cpp" />
     <ClCompile Include="src\SolarSystem\SolarSystemLayer.cpp" />
     <ClCompile Include="src\Pong\PongLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
@@ -155,7 +157,6 @@
     <ClCompile Include="src\Kernel\LayerStack.cpp" />
     <ClCompile Include="src\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Renderer\D3D11RendererAPI.cpp" />
-    <ClCompile Include="src\Renderer\RendererComponent.cpp" />
     <ClCompile Include="src\Renderer\D3D11Context.cpp" />
     <ClCompile Include="src\Kernel\Application.cpp" />
     <ClCompile Include="src\Renderer\D3D11IndexBuffer.cpp" />
@@ -166,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\stb\include\stb_image.h" />
+    <ClInclude Include="src\Components\MeshRenderer.h" />
     <ClInclude Include="src\Components\RendererComponent.h" />
     <ClInclude Include="src\Components\ShapeRenderer.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
@@ -175,8 +177,11 @@
     <ClInclude Include="src\Renderer\D3D11ConstantBuffer.h" />
     <ClInclude Include="src\Renderer\D3D11Texture.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />
+    <ClInclude Include="src\Renderer\Renderer.h" />
+    <ClInclude Include="src\SolarSystem\Body.h" />
     <ClInclude Include="src\SolarSystem\CircularMovement.h" />
     <ClInclude Include="src\SolarSystem\FreeCamera.h" />
+    <ClInclude Include="src\SolarSystem\OrbitCamera.h" />
     <ClInclude Include="src\SolarSystem\SolarSystemLayer.h" />
     <ClInclude Include="src\Pong\AIPad.h" />
     <ClInclude Include="src\Pong\Ball.h" />
@@ -199,7 +204,6 @@
     <ClInclude Include="src\Kernel\LayerStack.h" />
     <ClInclude Include="src\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Renderer\D3D11RendererAPI.h" />
-    <ClInclude Include="src\Renderer\RendererComponent.h" />
     <ClInclude Include="src\Renderer\D3D11Context.h" />
     <ClInclude Include="src\Kernel\Application.h" />
     <ClInclude Include="src\Renderer\D3D11IndexBuffer.h" />

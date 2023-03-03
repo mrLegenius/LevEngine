@@ -4,6 +4,7 @@
 
 #include "../Input/Input.h"
 #include "../Input/KeyCodes.h"
+#include "../Components/Transform.h"
 
 FreeCamera::FreeCamera(const float fov, const float nearClip, const float farClip)
 {
@@ -11,15 +12,9 @@ FreeCamera::FreeCamera(const float fov, const float nearClip, const float farCli
 	UpdateView();
 }
 
-void FreeCamera::UpdateView()
-{
-	m_ViewMatrix = m_Transform.GetModel();
-	m_ViewMatrix = m_ViewMatrix.Invert();
-}
-
 void FreeCamera::Update(float deltaTime)
 {
-	constexpr auto moveSpeed = 10;
+	constexpr auto moveSpeed = 100;
 	constexpr auto rotationSpeed = 1;
 
 	const DirectX::SimpleMath::Vector2& mouse{ Input::GetMouseX(), Input::GetMouseY() };

@@ -3,7 +3,7 @@
 #include <chrono>
 
 #include "Utils.h"
-#include "../Renderer/RendererComponent.h"
+#include "../Renderer/Renderer.h"
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
@@ -19,12 +19,12 @@ Application::Application(const std::string& name, uint32_t width, uint32_t heigh
 	m_Window = Window::Create(WindowAttributes(name, width, height));
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
-	RendererComponent::Init();
+	Renderer::Init();
 }
 
 Application::~Application()
 {
-	RendererComponent::Shutdown();
+	Renderer::Shutdown();
 }
 
 void Application::Run()
@@ -60,7 +60,8 @@ void Application::Run()
 			layer->OnUpdate(deltaTime);
 		}
 
-		RendererComponent::Render();
+		Renderer::Render();
+		Input::Reset();
 		m_Window->Update();
 	}
 }
@@ -87,6 +88,7 @@ void Application::OnEvent(Event& e)
 	dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(Application::OnMouseMoved));
 	dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(Application::OnMouseButtonPressed));
 	dispatcher.Dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(Application::OnMouseButtonReleased));
+	dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(Application::OnMouseScrolled));
 
 	for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 	{
@@ -143,5 +145,11 @@ bool Application::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 bool Application::OnMouseButtonReleased(MouseButtonReleasedEvent& e)
 {
 	Input::OnMouseButtonReleased(e.GetMouseButton());
+	return true;
+}
+
+bool Application::OnMouseScrolled(MouseScrolledEvent& e)
+{
+	Input::OnMouseScrolled(e.GetYOffset());
 	return true;
 }

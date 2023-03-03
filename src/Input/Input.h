@@ -18,7 +18,9 @@ public:
 	static bool IsMouseButtonDown(MouseButton button);
 	static bool IsMouseButtonUp(MouseButton button);
 
+	static float GetMouseWheelOffset();
 	static std::pair<float, float> GetMousePosition();
+	static std::pair<float, float> GetMouseDelta();
 	static float GetMouseX();
 	static float GetMouseY();
 
@@ -36,10 +38,16 @@ private:
 
 	static float s_MousePositionX;
 	static float s_MousePositionY;
+	static float s_MousePreviousX;
+	static float s_MousePreviousY;
+
+	static float s_MouseWheelOffset;
 
 	static void OnKeyPressed(KeyCode keyCode);
 	static void OnKeyReleased(KeyCode keyCode);
 	static void OnMouseMoved(float x, float y);
 	static void OnMouseButtonPressed(MouseButton mouseButton);
 	static void OnMouseButtonReleased(MouseButton mouseButton);
+	static void OnMouseScrolled(float offset);
+	static void Reset();
 };

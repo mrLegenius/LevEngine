@@ -10,9 +10,9 @@
 class RendererComponent
 {
 public:
-	void Draw(const std::shared_ptr<Transform>& transform)
+	virtual void Draw(const std::shared_ptr<Transform>& transform)
 	{
-		ApplyTransform(transform);
+		Prepare(transform);
 		Bind();
 		RenderCommand::DrawIndexed(m_VertexBuffer, m_IndexBuffer);
 	}
@@ -29,7 +29,7 @@ protected:
 		m_Shader->Bind();
 	}
 
-	virtual void ApplyTransform(const std::shared_ptr<Transform>& transform) = 0;
+	virtual void Prepare(const std::shared_ptr<Transform>& transform) = 0;
 
 	std::shared_ptr<D3D11Shader> m_Shader;
 	std::shared_ptr<D3D11VertexBuffer> m_VertexBuffer;

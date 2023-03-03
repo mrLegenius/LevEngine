@@ -35,12 +35,5 @@ SamplerState my_sampler;
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-	float normalR = (input.normal.r + 1.0f) / 2.0f;
-	float normalG = (input.normal.g + 1.0f) / 2.0f;
-	float normalB = (input.normal.b + 1.0f) / 2.0f;
-
-	float4 col = float4(normalR, normalG, normalB, 1.0f);
-
 	return my_texture.Sample(my_sampler, input.uv);
-	//return col;
 }

@@ -53,7 +53,7 @@ public:
 		delete[] indices;
 	}
 
-	void ApplyTransform(const std::shared_ptr<Transform>& transform) override
+	void Prepare(const std::shared_ptr<Transform>& transform) override
 	{
 		for (int i = 0; i < m_VerticesCount; ++i)
 		{

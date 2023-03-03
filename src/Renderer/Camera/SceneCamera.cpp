@@ -5,6 +5,12 @@ SceneCamera::SceneCamera()
 	RecalculateProjection();
 }
 
+void SceneCamera::UpdateView()
+{
+	m_ViewMatrix = m_Transform.GetModel();
+	m_ViewMatrix = m_ViewMatrix.Invert();
+}
+
 void SceneCamera::SetOrthographic(const float size, const float nearClip, const float farClip)
 {
 	m_OrthographicSize = size;

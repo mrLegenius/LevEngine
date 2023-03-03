@@ -62,6 +62,6 @@ struct Transform
 
 	DirectX::SimpleMath::Quaternion GetOrientation() const
 	{
-		return DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(rotation.y, rotation.x, rotation.z);
+		return DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(rotation);
 	}
 };

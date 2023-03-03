@@ -17,7 +17,7 @@ public:
 	virtual ~Pad() = default;
 	void Update(float deltaTime)
 	{
-		GameObject::Update();
+		GameObject::Update(deltaTime);
 
 		if (ShouldGoDown())
 			m_Movement->velocity = DirectX::SimpleMath::Vector3{ 0.0f, -c_Speed, 0.0f };
