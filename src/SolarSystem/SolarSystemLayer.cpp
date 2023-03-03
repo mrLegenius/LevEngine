@@ -73,11 +73,10 @@ void SolarSystemLayer::OnAttach()
 
     m_FreeCamera = std::make_shared<FreeCamera>(60, 0.01f, 10000);
     m_FreeCamera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
-    m_FreeCamera->SetOrthographic(5, 0.01f, 100.0f);
+    m_FreeCamera->SetOrthographic(10, 0.01f, 100.0f);
 
     m_OrbitCamera = std::make_shared<OrbitCamera>(60, 0.01f, 10000);
-    m_OrbitCamera->SetOrthographic(5, 0.01f, 100.0f);
-    m_OrbitCamera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
+    m_OrbitCamera->SetOrthographic(10, 0.01f, 100.0f);
 }
 
 void SolarSystemLayer::OnUpdate(const float deltaTime)
@@ -118,6 +117,8 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
     m_Saturn->Update(deltaTime);
     m_Uranus->Update(deltaTime);
     m_Neptune->Update(deltaTime);
+    m_FreeCamera->Update(deltaTime);
+    m_OrbitCamera->Update(deltaTime);
 
     //Drawing
     m_Sun->Draw();
@@ -147,6 +148,10 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
         m_OrbitCamera->SetTarget(m_Uranus->GetTransform());
     if (Input::IsKeyPressed(KeyCode::D8))
         m_OrbitCamera->SetTarget(m_Neptune->GetTransform());
+    if (Input::IsKeyPressed(KeyCode::D9))
+        m_OrbitCamera->SetTarget(m_Moon->GetTransform());
+    if (Input::IsKeyPressed(KeyCode::D0))
+        m_OrbitCamera->SetTarget(m_Sun->GetTransform());
 
     if (Input::IsKeyPressed(KeyCode::Tab))
         m_UseFreeCamera = !m_UseFreeCamera;
