@@ -14,8 +14,9 @@ extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 ID3D11RenderTargetView* rtv;
 ID3D11DepthStencilView* dsv;
 ID3D11RasterizerState* rastState;
+ID3D11DepthStencilState* dss;
 
-static D3D11_COMPARISON_FUNC ConvertDepthFuncToGl(DepthFunc depthFunc)
+static D3D11_COMPARISON_FUNC ConvertDepthFuncToD3DComparison(DepthFunc depthFunc)
 {
 	switch (depthFunc)
 	{
@@ -45,9 +46,10 @@ bool CreateRastState(ID3D11RasterizerState*& rastState)
 	CD3D11_RASTERIZER_DESC rastDesc = {};
 	rastDesc.CullMode = D3D11_CULL_NONE;
 	rastDesc.FillMode = D3D11_FILL_SOLID;
+	//rastDesc.FillMode = D3D11_FILL_WIREFRAME;
 
 	auto res = device->CreateRasterizerState(&rastDesc, &rastState);
-
+	
 	return SUCCEEDED(res);
 }
 
@@ -61,7 +63,6 @@ void D3D11RendererAPI::Begin()
 void D3D11RendererAPI::End()
 {
 	context->OMSetRenderTargets(0, nullptr, nullptr);
-
 }
 
 void D3D11RendererAPI::SetClearColor(float color[4])
@@ -75,9 +76,14 @@ void D3D11RendererAPI::Clear()
 	context->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
-void D3D11RendererAPI::SetDepthFunc(DepthFunc depthFunc)
+void D3D11RendererAPI::SetDepthFunc(const DepthFunc depthFunc)
 {
-
+	D3D11_DEPTH_STENCIL_DESC dsDesc{ };
+	dss->GetDesc(&dsDesc);
+	dsDesc.DepthFunc = ConvertDepthFuncToD3DComparison(depthFunc);
+	dss->Release();
+	device->CreateDepthStencilState(&dsDesc, &dss);
+	context->OMSetDepthStencilState(dss, 1u);
 }
 
 void D3D11RendererAPI::DrawIndexed(
@@ -102,13 +108,12 @@ void D3D11RendererAPI::Init()
 	D3D11_DEPTH_STENCIL_DESC dsDesc{ };
 	dsDesc.DepthEnable = true;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	dsDesc.DepthFunc = ConvertDepthFuncToGl(DepthFunc::Less);
+	dsDesc.DepthFunc = ConvertDepthFuncToD3DComparison(DepthFunc::Less);
 	dsDesc.StencilEnable = false;
 
-	ID3D11DepthStencilState* pDSState;
-	device->CreateDepthStencilState(&dsDesc, &pDSState);
+	device->CreateDepthStencilState(&dsDesc, &dss);
 
-	context->OMSetDepthStencilState(pDSState, 1u);
+	context->OMSetDepthStencilState(dss, 1u);
 	
 	ID3D11Texture2D* pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth{};

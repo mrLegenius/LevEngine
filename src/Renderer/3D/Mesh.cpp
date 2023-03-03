@@ -41,114 +41,123 @@ std::shared_ptr<Mesh> Mesh::CreateCube()
 {
 	auto mesh = std::make_shared<Mesh>();
 
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, -0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -1.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
+	const float side = 0.5f;
 
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, -0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -1.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, 0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -1.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, 0.5f, -0.5f));
+	// front
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, -side, -side));
 	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -1.0f));
 	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
 
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, -0.5f, 0.5f));
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, -side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -1.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -1.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -1.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
+
+	// back
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, -side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, -side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, side, side));
 	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f));
 	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
 
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, -0.5f, 0.5f));
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, side, side));
 	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f));
 	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
 
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, 0.5f, 0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, 0.5f, 0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, 0.5f, 0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, 0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, -0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, -0.5f, 0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, 0.5f, 0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(1.0f, 0.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, 0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(1.0f, 0.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, -0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(1.0f, 0.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, -0.5f, 0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(1.0f, 0.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, -0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, -1.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, -0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, -1.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, -0.5f, 0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, -1.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, -0.5f, 0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, -1.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, 0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, 0.5f, -0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0.5f, 0.5f, 0.5f));
-	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
-
-	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-0.5f, 0.5f, 0.5f));
+	//top
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, side, -side));
 	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f));
 	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
 
-	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(0, 2, 1));
-	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(0, 3, 2));
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
+
+	//bottom
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, -side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, -1.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, -side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, -1.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, -side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, -1.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, -side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0.0f, -1.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
+
+	// left
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, -side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(-side, -side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
+
+	// right
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, -side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(1.0f, 0.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 1.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, side, -side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(1.0f, 0.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0.0f, 0.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(1.0f, 0.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 0.0f));
+
+	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(side, -side, side));
+	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(1.0f, 0.0f, 0.0f));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(1.0f, 1.0f));
+
+	//indices
+	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(0, 1, 2));
+	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(0, 2, 3));
 	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(4, 5, 6));
 	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(4, 6, 7));
 	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(8, 9, 10));
 	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(8, 10, 11));
-	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(12, 15, 14));
-	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(12, 14, 13));
+	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(12, 13, 14));
+	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(12, 14, 15));
 	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(16, 17, 18));
 	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(16, 18, 19));
-	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(20, 23, 22));
-	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(20, 22, 21));
+	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(20, 21, 22));
+	mesh->triangles.emplace_back(DirectX::SimpleMath::Vector3(20, 22, 23));
 
 	return mesh;
 }

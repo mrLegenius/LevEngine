@@ -1,10 +1,11 @@
 #pragma once
 #include "../Kernel/Layer.h"
-#include "../Renderer/D3D11Shader.h"
 #include "../Renderer/D3D11ConstantBuffer.h"
+#include "../Components/MeshRenderer.h"
 #include "FreeCamera.h"
 #include "OrbitCamera.h"
 
+class SkyboxRenderer;
 class Mesh;
 class Body;
 
@@ -33,6 +34,8 @@ private:
 	std::shared_ptr<Body> m_Uranus;
 	std::shared_ptr<Body> m_Neptune;
 
-	bool m_UseFreeCamera = false;
+	std::shared_ptr<SkyboxRenderer> m_Skybox;
+
+	bool m_UseFreeCamera = true;
 };
 

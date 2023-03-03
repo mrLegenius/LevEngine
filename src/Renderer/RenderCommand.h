@@ -48,6 +48,11 @@ public:
 		s_RendererAPI->End();
 	}
 
+	static void SetDepthFunc(const DepthFunc depthFunc)
+	{
+		s_RendererAPI->SetDepthFunc(depthFunc);
+	}
+
 private:
 	static D3D11RendererAPI* s_RendererAPI;
 };

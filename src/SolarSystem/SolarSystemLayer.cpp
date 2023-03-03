@@ -4,11 +4,13 @@
 #include "../Renderer/3D/Mesh.h"
 #include "../Renderer/RenderCommand.h"
 #include "../Renderer/D3D11Texture.h"
+#include "../Renderer/D3D11Shader.h"
 #include "../Kernel/Application.h"
 #include "../Input/Input.h"
 
 #include "../Pong/GameObject.h"
 #include "Body.h"
+#include "../Components/SkyboxRenderer.h"
 
 void DrawMesh(const DirectX::SimpleMath::Matrix& transform, const Mesh& mesh, const std::shared_ptr<D3D11Shader>& shader, const std::shared_ptr<D3D11Texture2D>& texture);
 
@@ -28,7 +30,7 @@ BodyParameters Mars{ 3.389f, 142 * orbitRadiusScale, 0.241f, 0,0.086f,"./resourc
 BodyParameters Jupiter{ 69.91f, 484 * orbitRadiusScale, .131f, 0,4.5583f,"./resources/Textures/jupiter.jpg" };
 BodyParameters Saturn{ 58.23f, 889 * orbitRadiusScale, 0.097f, 0,3.6840f,"./resources/Textures/saturn.jpg" };
 BodyParameters Uranus{ 25.36f, 1790 * orbitRadiusScale, 0.068f, 0,1.4794f,"./resources/Textures/uranus.jpg" };
-BodyParameters Neptune{ 24.62f, 2880 * orbitRadiusScale, 0.54f, 0,.9719f,"./resources/Textures/neptune.jpg" };
+BodyParameters Neptune{ 24.62f, 2880 * orbitRadiusScale, 0.054f, 0,.9719f,"./resources/Textures/neptune.jpg" };
 
 void SolarSystemLayer::OnAttach()
 {
@@ -40,6 +42,21 @@ void SolarSystemLayer::OnAttach()
         //{ ShaderDataType::Float, "a_TexIndex" },
         //{ ShaderDataType::Float, "a_TexTiling" },
     });
+
+    auto skyboxShader = std::make_shared<D3D11Shader>("./Shaders/Skybox.hlsl");
+    skyboxShader->SetLayout({
+    {  ShaderDataType::Float3, "POSITION" },
+        });
+
+    std::string textures[6] = {
+    	"./resources/Textures/LightBlueSkybox/left.png", //left
+    	"./resources/Textures/LightBlueSkybox/right.png", //right
+        "./resources/Textures/LightBlueSkybox/top.png", //top
+        "./resources/Textures/LightBlueSkybox/bottom.png", //bottom
+        "./resources/Textures/LightBlueSkybox/back.png", //back
+        "./resources/Textures/LightBlueSkybox/front.png", //front
+    };
+    m_Skybox = std::make_shared<SkyboxRenderer>(skyboxShader, textures);
 
     m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
 
@@ -56,9 +73,11 @@ void SolarSystemLayer::OnAttach()
 
     m_FreeCamera = std::make_shared<FreeCamera>(60, 0.01f, 10000);
     m_FreeCamera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
+    m_FreeCamera->SetOrthographic(5, 0.01f, 100.0f);
 
     m_OrbitCamera = std::make_shared<OrbitCamera>(60, 0.01f, 10000);
-    m_FreeCamera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
+    m_OrbitCamera->SetOrthographic(5, 0.01f, 100.0f);
+    m_OrbitCamera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
 }
 
 void SolarSystemLayer::OnUpdate(const float deltaTime)
@@ -132,6 +151,19 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
     if (Input::IsKeyPressed(KeyCode::Tab))
         m_UseFreeCamera = !m_UseFreeCamera;
 
+    if (Input::IsKeyPressed(KeyCode::Y))
+    {
+        m_FreeCamera->SetProjectionType(SceneCamera::ProjectionType::Orthographic);
+        m_OrbitCamera->SetProjectionType(SceneCamera::ProjectionType::Orthographic);
+    }
+	    
+    if (Input::IsKeyPressed(KeyCode::U))
+    {
+        m_FreeCamera->SetProjectionType(SceneCamera::ProjectionType::Perspective);
+        m_OrbitCamera->SetProjectionType(SceneCamera::ProjectionType::Perspective);
+    }
+
+    m_Skybox->Draw(nullptr);
     //End frame
     RenderCommand::End();
 }

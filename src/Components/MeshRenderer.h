@@ -17,17 +17,17 @@ class MeshRenderer final : public RendererComponent
 public:
 	explicit MeshRenderer(const std::shared_ptr<D3D11Shader>& shader, 
 		const std::shared_ptr<Mesh>& mesh,
-		const std::shared_ptr<D3D11Texture2D>& texture)
+		const std::shared_ptr<Texture>& texture)
 		: RendererComponent(shader), m_Mesh(mesh), m_Texture(texture)
 	{
 		m_VertexBuffer = mesh->CreateVertexBuffer(shader->GetLayout());
 		m_IndexBuffer = mesh->CreateIndexBuffer();
 	}
 
-	void Draw(const std::shared_ptr<Transform>& transform) override
+	void Bind() const override
 	{
 		m_Texture->Bind();
-		RendererComponent::Draw(transform);
+		RendererComponent::Bind();
 	}
 
 protected:
@@ -50,5 +50,5 @@ protected:
 	
 private:
 	std::shared_ptr<Mesh> m_Mesh;
-	std::shared_ptr<D3D11Texture2D> m_Texture;
+	std::shared_ptr<Texture> m_Texture;
 };

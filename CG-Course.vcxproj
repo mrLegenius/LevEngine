@@ -146,6 +146,7 @@
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="src\Renderer\D3D11ConstantBuffer.cpp" />
     <ClCompile Include="src\Renderer\D3D11Texture.cpp" />
+    <ClCompile Include="src\Renderer\D3D11TextureCube.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\SolarSystem\FreeCamera.cpp" />
     <ClCompile Include="src\SolarSystem\OrbitCamera.cpp" />
@@ -170,12 +171,14 @@
     <ClInclude Include="src\Components\MeshRenderer.h" />
     <ClInclude Include="src\Components\RendererComponent.h" />
     <ClInclude Include="src\Components\ShapeRenderer.h" />
+    <ClInclude Include="src\Components\SkyboxRenderer.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
     <ClInclude Include="src\Renderer\Camera\Camera.h" />
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="src\Renderer\D3D11ConstantBuffer.h" />
     <ClInclude Include="src\Renderer\D3D11Texture.h" />
+    <ClInclude Include="src\Renderer\D3D11TextureCube.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\SolarSystem\Body.h" />
