@@ -35,7 +35,7 @@ D3D11Texture2D::D3D11Texture2D(const std::string& path)
 
 	const int pitch = width * 4;
 
-	assert((m_DataFormat & DXGI_FORMAT_UNKNOWN) && "Format is not supported!");
+	assert((m_DataFormat != DXGI_FORMAT_UNKNOWN) && "Format is not supported!");
 
 	// Texture
 
@@ -101,6 +101,8 @@ D3D11Texture2D::D3D11Texture2D(const std::string& path)
 D3D11Texture2D::~D3D11Texture2D()
 {
 	m_Texture->Release();
+	m_ShaderResourceView->Release();
+	m_SamplerState->Release();
 }
 
 void D3D11Texture2D::Bind(const uint32_t slot) const
