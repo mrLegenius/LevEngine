@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\stb\include\stb_image.h" />
+    <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Katamari\KatamariLayer.h" />
     <ClInclude Include="src\Components\MeshRenderer.h" />
     <ClInclude Include="src\Components\RendererComponent.h" />

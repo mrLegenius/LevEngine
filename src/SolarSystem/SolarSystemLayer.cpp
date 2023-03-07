@@ -35,20 +35,9 @@ BodyParameters Neptune{ 24.62f, 2880 * orbitRadiusScale, 0.054f, 0,.9719f,"./res
 
 void SolarSystemLayer::OnAttach()
 {
-    auto shader = std::make_shared<D3D11Shader>("./Shaders/Unlit.hlsl");
-    shader->SetLayout({
-    { ShaderDataType::Float3, "POSITION" },
-        { ShaderDataType::Float3, "NORMAL" },
-        { ShaderDataType::Float2, "UV" },
-        //{ ShaderDataType::Float, "a_TexTiling" },
-    });
+    auto shader = ShaderAssets::Unlit();
 
-    auto skyboxShader = std::make_shared<D3D11Shader>("./Shaders/Skybox.hlsl");
-    skyboxShader->SetLayout({
-    {  ShaderDataType::Float3, "POSITION" },
-        });
-
-    m_Skybox = std::make_shared<SkyboxRenderer>(skyboxShader, TestSkyboxTexture());
+    m_Skybox = std::make_shared<SkyboxRenderer>(ShaderAssets::Skybox(), SkyboxAssets::LightBlue());
 
     m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
 
