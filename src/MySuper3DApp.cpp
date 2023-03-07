@@ -1,6 +1,7 @@
 #include "FirstSteps/MySuper3DLayer.h"
 #include "Pong/PongLayer.h"
 #include "SolarSystem/SolarSystemLayer.h"
+#include "Katamari/KatamariLayer.h"
 #include "Kernel/Application.h"
 
 int main()
@@ -9,6 +10,7 @@ int main()
 	//app.PushLayer(new MySuper3DLayer);
 	//app.PushLayer(new PongLayer);
 	app.PushLayer(new SolarSystemLayer);
+	//app.PushLayer(new KatamariLayer);
 
 	app.Run();
 }

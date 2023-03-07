@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="external\stb\stb.cpp" />
+    <ClCompile Include="src\Katamari\KatamariLayer.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="src\Renderer\D3D11ConstantBuffer.cpp" />
@@ -168,10 +169,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\stb\include\stb_image.h" />
+    <ClInclude Include="src\Katamari\KatamariLayer.h" />
     <ClInclude Include="src\Components\MeshRenderer.h" />
     <ClInclude Include="src\Components\RendererComponent.h" />
     <ClInclude Include="src\Components\ShapeRenderer.h" />
     <ClInclude Include="src\Components\SkyboxRenderer.h" />
+    <ClInclude Include="src\Katamari\ObjLoader.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
     <ClInclude Include="src\Renderer\Camera\Camera.h" />
