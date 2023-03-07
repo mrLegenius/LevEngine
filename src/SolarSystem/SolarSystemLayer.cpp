@@ -73,10 +73,6 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
     float color[] = { 0.1f, 0.1f, 0.1f, 1.0f };
     RenderCommand::SetClearColor(color);
     RenderCommand::Clear();
-    SceneCamera& camera = m_UseFreeCamera ? static_cast<SceneCamera&>(*m_FreeCamera) : static_cast<SceneCamera&>(*m_OrbitCamera);
-
-    const CameraData cameraData{ camera.GetViewProjection() };
-    m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
 
     //Logic
     m_Sun->Update(deltaTime);
@@ -91,8 +87,12 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
     m_Saturn->Update(deltaTime);
     m_Uranus->Update(deltaTime);
     m_Neptune->Update(deltaTime);
+
     m_FreeCamera->Update(deltaTime);
     m_OrbitCamera->Update(deltaTime);
+    SceneCamera& camera = m_UseFreeCamera ? static_cast<SceneCamera&>(*m_FreeCamera) : static_cast<SceneCamera&>(*m_OrbitCamera);
+    const CameraData cameraData{ camera.GetViewProjection() };
+    m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
 
     ////Drawing
     m_Sun->Draw();
