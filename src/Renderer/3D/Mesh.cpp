@@ -174,7 +174,7 @@ std::shared_ptr<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 
 	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0, 1, 0));
 	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0, 1, 0));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0, 0));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0, 1));
 
 	for (int i = 1; i <= stackCount - 1; i++) 
 	{
@@ -193,14 +193,14 @@ std::shared_ptr<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 			pos.Normalize();
 			mesh->normals.emplace_back(pos);
 
-			auto uv = DirectX::SimpleMath::Vector2(static_cast<float>(j) / sliceCount, static_cast<float>(i) / stackCount);
+			auto uv = DirectX::SimpleMath::Vector2(static_cast<float>(j) / sliceCount, 1 - static_cast<float>(i) / stackCount);
 			mesh->uvs.emplace_back(uv);
 		}
 	}
 
 	mesh->vertices.emplace_back(DirectX::SimpleMath::Vector3(0, -1, 0));
 	mesh->normals.emplace_back(DirectX::SimpleMath::Vector3(0, -1, 0));
-	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0, 1));
+	mesh->uvs.emplace_back(DirectX::SimpleMath::Vector2(0, 0));
 
 	for (int i = 1; i <= sliceCount; i++) 
 	{

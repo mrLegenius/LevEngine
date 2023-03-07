@@ -32,8 +32,7 @@ void PongLayer::OnAttach()
 	m_RightPad = std::make_shared<AIPad>(0.8f, shader, m_Ball);
 
 	m_Line = std::make_shared<GameObject>(std::make_shared<QuadRenderer>(dotLineShader));
-	m_Line->GetTransform()->scale.y = 10;
-	m_Line->GetTransform()->scale.x = 0.02;
+	m_Line->GetTransform()->SetScale(DirectX::SimpleMath::Vector3(0.02, 10, 1));
 }
 
 void PongLayer::OnUpdate(const float deltaTime)
@@ -56,22 +55,22 @@ void PongLayer::OnUpdate(const float deltaTime)
 
 	m_Ball->Update(deltaTime);
 
-	if (m_Ball->GetTransform()->position.x > maxX && m_Ball->GetVelocity().x > 0)
+	if (m_Ball->GetTransform()->GetPosition().x > maxX && m_Ball->GetVelocity().x > 0)
 	{
 		scoreLeft++;
 		std::cout << "Score: " << scoreLeft << ":" << scoreRight << std::endl;
 		m_Ball->Reset();
 	}
 
-	if (m_Ball->GetTransform()->position.x < minX && m_Ball->GetVelocity().x < 0)
+	if (m_Ball->GetTransform()->GetPosition().x < minX && m_Ball->GetVelocity().x < 0)
 	{
 		scoreRight++;
 		std::cout << "Score: " << scoreLeft << ":" << scoreRight << std::endl;
 		m_Ball->Reset();
 	}
 
-	if (m_Ball->GetTransform()->position.y > maxY && m_Ball->GetVelocity().y > 0
-		|| m_Ball->GetTransform()->position.y < minY && m_Ball->GetVelocity().y < 0)
+	if (m_Ball->GetTransform()->GetPosition().y > maxY && m_Ball->GetVelocity().y > 0
+		|| m_Ball->GetTransform()->GetPosition().y < minY && m_Ball->GetVelocity().y < 0)
 	{
 		m_Ball->ChangeYDirection();
 	}

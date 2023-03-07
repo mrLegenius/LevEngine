@@ -10,6 +10,11 @@ OrbitCamera::OrbitCamera(float fov, float nearClip, float farClip)
 	UpdateView();
 }
 
+OrbitCamera::OrbitCamera(float fov, float nearClip, float farClip, const std::shared_ptr<Transform>& target) : OrbitCamera(fov, nearClip, farClip)
+{
+	SetTarget(target);
+}
+
 void OrbitCamera::RotateAzimuth(const float radians)
 {
 	m_AzimuthAngle += radians;
@@ -39,8 +44,8 @@ void OrbitCamera::RotatePolar(const float radians)
 void OrbitCamera::Zoom(const float value)
 {
 	m_Distance += value;
-	if (m_Distance < 10) {
-		m_Distance = 10;
+	if (m_Distance < 1) {
+		m_Distance = 1;
 	}
 }
 
@@ -59,9 +64,9 @@ DirectX::SimpleMath::Vector3 OrbitCamera::CalculatePosition() const
 
 	if (m_Target)
 	{
-		x += m_Target->position.x;
-		y += m_Target->position.y;
-		z += m_Target->position.z;
+		x += m_Target->GetPosition().x;
+		y += m_Target->GetPosition().y;
+		z += m_Target->GetPosition().z;
 	}
 
 	return { x, y, z };
@@ -69,16 +74,16 @@ DirectX::SimpleMath::Vector3 OrbitCamera::CalculatePosition() const
 
 void OrbitCamera::UpdateView()
 {
-	const auto targetPosition = m_Target ? m_Target->position : DirectX::SimpleMath::Vector3::Zero;
+	const auto targetPosition = m_Target ? m_Target->GetPosition() : DirectX::SimpleMath::Vector3::Zero;
 		
-	if (m_Transform.position == targetPosition) return;
+	if (m_Transform.GetPosition() == targetPosition) return;
 
-	m_ViewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_Transform.position, targetPosition, DirectX::SimpleMath::Vector3::Up);
+	m_ViewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_Transform.GetPosition(), targetPosition, DirectX::SimpleMath::Vector3::Up);
 }
 
 void OrbitCamera::Update(const float deltaTime)
 {
-	constexpr auto ZoomSensitivity = 10;
+	constexpr auto ZoomSensitivity = 0.5f;
 	constexpr auto rotationSpeed = 1;
 
 	const auto [mouseDeltaX, mouseDeltaY] = Input::GetMouseDelta();
@@ -91,7 +96,7 @@ void OrbitCamera::Update(const float deltaTime)
 	RotatePolar(deltaY);
 	RotateAzimuth(deltaX);
 
-	m_Transform.position = CalculatePosition();
+	m_Transform.SetPosition(CalculatePosition());
 
 	UpdateView();
 }

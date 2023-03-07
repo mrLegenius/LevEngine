@@ -17,14 +17,16 @@ struct CircularMovement
 		float z = cos(angle + initialOffset) * radius;
 
 		angle += speed * deltaTime;
-
+		
 		if (centerPoint)
 		{
-			x += centerPoint->position.x;
-			z += centerPoint->position.z;
+			x += centerPoint->GetPosition().x;
+			z += centerPoint->GetPosition().z;
 		}
 
-		transform->position.x = x;
-		transform->position.z = z;
+		auto position = transform->GetPosition();
+		position.x = x;
+		position.z = z;
+		transform->SetPosition(position);
 	}
 };

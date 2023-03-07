@@ -7,10 +7,11 @@ class OrbitCamera final : public SceneCamera
 {
 public:
 	OrbitCamera(float fov, float nearClip, float farClip);
+	OrbitCamera(float fov, float nearClip, float farClip, const std::shared_ptr<Transform>& target);
 	
 	void SetTarget(const std::shared_ptr<Transform>& target) { m_Target = target; }
 
-	void Update(float deltaTime);
+	void Update(float deltaTime) override;
 private:
 	std::shared_ptr<Transform> m_Target;
 	DirectX::SimpleMath::Vector2 m_InitialMousePosition = { 0.0f, 0.0f };

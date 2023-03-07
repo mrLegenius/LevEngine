@@ -9,7 +9,7 @@
 FreeCamera::FreeCamera(const float fov, const float nearClip, const float farClip)
 {
 	SetPerspective(fov, nearClip, farClip);
-	UpdateView();
+	SceneCamera::UpdateView();
 }
 
 void FreeCamera::Update(float deltaTime)
@@ -34,13 +34,17 @@ void FreeCamera::Update(float deltaTime)
 	else if (Input::IsKeyDown(KeyCode::S))
 		m_Transform.MoveBackward(deltaTime * moveSpeed);
 
-	if (Input::IsKeyDown(KeyCode::Q))
-		m_Transform.rotation.z += (deltaTime * rotationSpeed);
-	else if (Input::IsKeyDown(KeyCode::E))
-		m_Transform.rotation.z -= (deltaTime * rotationSpeed);
+	auto rotation = m_Transform.GetRotation();
 
-	m_Transform.rotation.y -= delta.x;
-	m_Transform.rotation.x -= delta.y;
+	if (Input::IsKeyDown(KeyCode::Q))
+		rotation.z += (deltaTime * rotationSpeed);
+	else if (Input::IsKeyDown(KeyCode::E))
+		rotation.z -= (deltaTime * rotationSpeed);
+
+	rotation.y -= delta.x;
+	rotation.x -= delta.y;
+
+	m_Transform.SetRotation(rotation);
 
 	UpdateView();
 }

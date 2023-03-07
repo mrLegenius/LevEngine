@@ -1,7 +1,6 @@
 #pragma once
 #include "../Kernel/Layer.h"
 #include "../Renderer/D3D11ConstantBuffer.h"
-#include "../Components/MeshRenderer.h"
 #include "FreeCamera.h"
 #include "OrbitCamera.h"
 

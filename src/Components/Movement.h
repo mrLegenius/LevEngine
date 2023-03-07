@@ -14,9 +14,13 @@ struct Movement
 
 	void Update(const float deltaTime) const
 	{
-		m_Transform->position.x += velocity.x * deltaTime;
-		m_Transform->position.y += velocity.y * deltaTime;
-		m_Transform->position.z += velocity.z * deltaTime;
+		auto position = m_Transform->GetPosition();
+
+		position.x += velocity.x * deltaTime;
+		position.y += velocity.y * deltaTime;
+		position.z += velocity.z * deltaTime;
+
+		m_Transform->SetPosition(position);
 	}
 
 	std::shared_ptr<Transform> m_Transform;

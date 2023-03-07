@@ -17,7 +17,7 @@ void MySuper3DLayer::OnAttach()
 	};
 
 	Transform transform;
-	transform.position.x = 0.1f;
+	transform.SetPositionX(0.1f);
 
 	for (auto& vertex : vertices)
 		vertex.ApplyModel(transform.GetModel());
