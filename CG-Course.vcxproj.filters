@@ -246,4 +246,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\DotLine.hlsl" />
+  </ItemGroup>
 </Project>

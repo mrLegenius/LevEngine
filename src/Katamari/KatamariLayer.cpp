@@ -22,7 +22,7 @@ std::shared_ptr<GameObject> CreateGameObject(
     const std::shared_ptr<D3D11Texture2D>& texture,
     std::shared_ptr<D3D11Shader> shader)
 {
-    auto renderer = std::make_shared<MeshRenderer>(shader, mesh, texture, true);
+    auto renderer = std::make_shared<MeshRenderer>(shader, mesh, texture);
     return std::make_shared<GameObject>(renderer);
 }
 
@@ -30,8 +30,8 @@ void KatamariLayer::OnAttach()
 {
     auto shader = ShaderAssets::Unlit();
 
-    //auto gear = CreateGameObject(MeshAssets::Gear(), TextureAssets::Gear(), shader);
-    //objects.emplace_back(gear);
+    auto gear = CreateGameObject(MeshAssets::Gear(), TextureAssets::Gear(), shader);
+    objects.emplace_back(gear);
 
     auto log = CreateGameObject(MeshAssets::Log(), TextureAssets::Log(), shader);
     objects.emplace_back(log);

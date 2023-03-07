@@ -13,7 +13,7 @@ public:
 		: GameObject(std::make_shared<ShapeRenderer>(shader, 20)),
 		m_Movement(std::make_shared<Movement>(m_Transform))
 	{
-		m_Transform->SetScale(DirectX::SimpleMath::Vector3::One * 0.05f);
+		m_Transform->SetScale(DirectX::SimpleMath::Vector3::One * 0.02f);
 	}
 
 	void Update(const float deltaTime) override

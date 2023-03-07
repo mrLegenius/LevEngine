@@ -7,7 +7,7 @@
 
 void MySuper3DLayer::OnAttach()
 {
-	m_Shader = std::make_unique<D3D11Shader>("./Shaders/MyVeryFirstShader.hlsl");
+	m_Shader = std::make_unique<D3D11Shader>("./resources/Shaders/MyVeryFirstShader.hlsl");
 
 	QuadVertex vertices[4] = {
 		{{0.5f, 0.5f, 0.5f, 1.0f}, { 1.0f, 0.0f, 0.0f, 1.0f}},

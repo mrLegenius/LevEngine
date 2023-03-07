@@ -5,7 +5,8 @@
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
-D3D11ConstantBuffer::D3D11ConstantBuffer(uint32_t size, uint32_t slot) : m_Size(size), m_Slot(slot)
+D3D11ConstantBuffer::D3D11ConstantBuffer(const uint32_t size, const uint32_t slot)
+	: m_Size(size), m_Slot(slot)
 {
 	D3D11_BUFFER_DESC bufferDesc;
 
@@ -24,7 +25,7 @@ D3D11ConstantBuffer::~D3D11ConstantBuffer()
 	m_Buffer->Release();
 }
 
-void D3D11ConstantBuffer::SetData(const void* data, uint32_t size, uint32_t offset) const
+void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size, uint32_t offset) const
 {
 	const auto actualSize = size ? size : m_Size;
 	D3D11_MAPPED_SUBRESOURCE resource;

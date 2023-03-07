@@ -12,14 +12,14 @@ static float s_SpeedDelta = 0.01f;
 
 void PongLayer::OnAttach()
 {
-	auto shader = std::make_shared<D3D11Shader>("./Shaders/MyVeryFirstShader.hlsl");
+	auto shader = std::make_shared<D3D11Shader>("./resources/Shaders/MyVeryFirstShader.hlsl");
 	shader->SetLayout({
 	{ ShaderDataType::Float4, "POSITION" },
 	{ ShaderDataType::Float4, "COLOR" },
 	});
 
 
-	auto dotLineShader = std::make_shared<D3D11Shader>("./Shaders/DotLine.hlsl");
+	auto dotLineShader = std::make_shared<D3D11Shader>("./resources/Shaders/DotLine.hlsl");
 	dotLineShader->SetLayout({
 	{ ShaderDataType::Float4, "POSITION" },
 	{ ShaderDataType::Float4, "COLOR" },

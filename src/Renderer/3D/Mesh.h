@@ -16,6 +16,7 @@ public:
 	std::shared_ptr<D3D11IndexBuffer> CreateIndexBuffer() const;
 
 	[[nodiscard]] std::shared_ptr<D3D11VertexBuffer> CreateVertexBuffer(const BufferLayout&) const;
+	std::shared_ptr<D3D11VertexBuffer> CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const;
 
 	void Clear()
 	{

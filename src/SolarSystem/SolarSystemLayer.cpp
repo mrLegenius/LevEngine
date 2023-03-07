@@ -22,16 +22,16 @@ struct CameraData
 
 float orbitRadiusScale = 3;
 
-BodyParameters Sun{ 69.634f, 0, 0, 0, 0.2f,"./resources/Textures/sun.jpg" };
-BodyParameters Mercury{ 2.44f, 35 * orbitRadiusScale, 0.479f, 0,0.0011f,"./resources/Textures/mercury.jpg" };
-BodyParameters Venus{ 6.05f, 67 * orbitRadiusScale, 0.35f, 0,0.0007f,"./resources/Textures/venus.jpg" };
-BodyParameters Earth{ 6.37f, 93 * orbitRadiusScale, 0.298f, 0, .1574f,"./resources/Textures/earth.jpg" };
-BodyParameters Moon{ 1.7f, 38.4f, 1, 0,.1574f,"./resources/Textures/moon.jpg" };
-BodyParameters Mars{ 3.389f, 142 * orbitRadiusScale, 0.241f, 0,0.086f,"./resources/Textures/mars.jpg" };
-BodyParameters Jupiter{ 69.91f, 484 * orbitRadiusScale, .131f, 0,4.5583f,"./resources/Textures/jupiter.jpg" };
-BodyParameters Saturn{ 58.23f, 889 * orbitRadiusScale, 0.097f, 0,3.6840f,"./resources/Textures/saturn.jpg" };
-BodyParameters Uranus{ 25.36f, 1790 * orbitRadiusScale, 0.068f, 0,1.4794f,"./resources/Textures/uranus.jpg" };
-BodyParameters Neptune{ 24.62f, 2880 * orbitRadiusScale, 0.054f, 0,.9719f,"./resources/Textures/neptune.jpg" };
+BodyParameters Sun{ 69.634f, 0, 0, 0, 20.0f,"./resources/Textures/sun.jpg" };
+BodyParameters Mercury{ 2.44f, 35 * orbitRadiusScale, 0.479f, 0,0.11f,"./resources/Textures/mercury.jpg" };
+BodyParameters Venus{ 6.05f, 67 * orbitRadiusScale, 0.35f, 0,0.07f,"./resources/Textures/venus.jpg" };
+BodyParameters Earth{ 6.37f, 93 * orbitRadiusScale, 29.8f / 5, 0, 15.74f,"./resources/Textures/earth.jpg" };
+BodyParameters Moon{ 1.7f, 38.4f, 1, 0,15.74f,"./resources/Textures/moon.jpg" };
+BodyParameters Mars{ 3.389f, 142 * orbitRadiusScale, 0.241f, 0,8.6f,"./resources/Textures/mars.jpg" };
+BodyParameters Jupiter{ 69.91f, 484 * orbitRadiusScale, .131f, 0,455.83f,"./resources/Textures/jupiter.jpg" };
+BodyParameters Saturn{ 58.23f, 889 * orbitRadiusScale, 0.097f, 0,36.840f,"./resources/Textures/saturn.jpg" };
+BodyParameters Uranus{ 25.36f, 1790 * orbitRadiusScale, 0.068f, 0,147.94f,"./resources/Textures/uranus.jpg" };
+BodyParameters Neptune{ 24.62f, 2880 * orbitRadiusScale, 0.054f, 0,97.19f,"./resources/Textures/neptune.jpg" };
 
 void SolarSystemLayer::OnAttach()
 {
@@ -79,9 +79,9 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
     m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
 
     //Logic
-    m_FreeCamera->Update(deltaTime);
-    m_OrbitCamera->Update(deltaTime);
     m_Sun->Update(deltaTime);
+    m_Sun->Draw();
+
     m_Mercury->Update(deltaTime);
     m_Venus->Update(deltaTime);
     m_Earth->Update(deltaTime);
@@ -94,7 +94,7 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
     m_FreeCamera->Update(deltaTime);
     m_OrbitCamera->Update(deltaTime);
 
-    //Drawing
+    ////Drawing
     m_Sun->Draw();
     m_Mercury->Draw();
     m_Venus->Draw();
@@ -141,7 +141,6 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
         m_FreeCamera->SetProjectionType(SceneCamera::ProjectionType::Perspective);
         m_OrbitCamera->SetProjectionType(SceneCamera::ProjectionType::Perspective);
     }
-
    
     auto isOrtho = camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic;
 

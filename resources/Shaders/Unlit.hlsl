@@ -3,6 +3,11 @@ cbuffer CameraConstantBuffer : register(b0)
 	row_major matrix viewProjection;
 };
 
+cbuffer ModelConstantBuffer : register(b1)
+{
+	row_major matrix model;
+};
+
 struct VS_IN
 {
 	float3 pos : POSITION;
@@ -22,8 +27,8 @@ PS_IN VSMain(VS_IN input)
 	PS_IN output;
 
 	float4 pos = float4(input.pos, 1.0f);
-
-	output.pos = mul(pos, viewProjection);
+	matrix mvp = mul(model, viewProjection);
+	output.pos = mul(pos, mvp);
 	output.normal = input.normal;
 	output.uv = input.uv;
 

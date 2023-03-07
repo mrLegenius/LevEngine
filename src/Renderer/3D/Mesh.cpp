@@ -1,5 +1,7 @@
 #include "Mesh.h"
 
+#include <iostream>
+
 std::shared_ptr<Mesh> Mesh::CreatePlane(int resolution)
 {
 	auto mesh = std::make_shared<Mesh>();
@@ -252,7 +254,17 @@ std::shared_ptr<D3D11IndexBuffer> Mesh::CreateIndexBuffer() const
 std::shared_ptr<D3D11VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout) const
 {
 	auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
-	std::shared_ptr<D3D11VertexBuffer> vertexBuffer = std::make_shared<D3D11VertexBuffer>(vertexBufferSize);
+	auto vertexBuffer = std::make_shared<D3D11VertexBuffer>(vertexBufferSize);
+
+	vertexBuffer->SetLayout(bufferLayout);
+
+	return vertexBuffer;
+}
+
+std::shared_ptr<D3D11VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const
+{
+	auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
+	auto vertexBuffer = std::make_shared<D3D11VertexBuffer>(data, vertexBufferSize);
 
 	vertexBuffer->SetLayout(bufferLayout);
 
