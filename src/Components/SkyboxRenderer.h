@@ -14,8 +14,13 @@ class SkyboxRenderer final : public RendererComponent
 {
 public:
 	explicit SkyboxRenderer(const std::shared_ptr<D3D11Shader>& shader, const std::string paths[6])
+		: SkyboxRenderer(shader, std::make_shared<D3D11TextureCube>(paths))
+	{
+	}
+
+	explicit SkyboxRenderer(const std::shared_ptr<D3D11Shader>& shader, const std::shared_ptr<D3D11TextureCube>& texture)
 		: RendererComponent(shader),
-		m_Texture(std::make_shared<D3D11TextureCube>(paths)),
+		m_Texture(texture),
 		m_Mesh(Mesh::CreateCube())
 	{
 		m_VertexBuffer = m_Mesh->CreateVertexBuffer(shader->GetLayout());

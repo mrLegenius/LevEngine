@@ -26,7 +26,7 @@ void FreeCamera::Zoom(const float value)
 void FreeCamera::Update(float deltaTime)
 {
 	constexpr auto moveSpeed = 100;
-	constexpr auto rotationSpeed = 1;
+	constexpr auto rotationSpeed = 10;
 
 	const DirectX::SimpleMath::Vector2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 	if (m_InitialMousePosition.x == 0 && m_InitialMousePosition.y == 0)
@@ -45,7 +45,7 @@ void FreeCamera::Update(float deltaTime)
 	else if (Input::IsKeyDown(KeyCode::S))
 		m_Transform.MoveBackward(deltaTime * moveSpeed);
 
-	auto rotation = m_Transform.GetRotation();
+	auto rotation = m_Transform.GetRotationDegrees();
 
 	if (Input::IsKeyDown(KeyCode::Q))
 		rotation.z += (deltaTime * rotationSpeed);

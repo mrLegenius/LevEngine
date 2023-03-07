@@ -20,8 +20,6 @@ public:
 
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPosition() const { return m_Transform.GetPosition(); }
 	void SetPosition(const DirectX::SimpleMath::Vector3& value) { m_Transform.SetPosition(value); }
-	[[nodiscard]] float GetPitch() const { return m_Transform.GetRotation().x; }
-	[[nodiscard]] float GetYaw() const { return m_Transform.GetRotation().y; }
 	virtual void Update(float deltaTime) = 0;
 
 private:

@@ -46,7 +46,7 @@ public:
         m_Movement->Update(deltaTime);
 
         GameObject::Update(deltaTime);
-        auto rotation = m_Transform->GetRotation();
+        auto rotation = m_Transform->GetRotationDegrees();
         rotation.y += m_AxisRotationSpeed * deltaTime;
         m_Transform->SetRotation(rotation);
     }

@@ -6,6 +6,7 @@
 #include "../Components/MeshRenderer.h"
 #include "../SolarSystem/OrbitCamera.h"
 #include "../Components/SkyboxRenderer.h"
+#include "../Assets.h"
 
 struct CameraData
 {
@@ -55,6 +56,7 @@ void KatamariLayer::OnAttach()
     auto rock = CreateGameObjectFromObj(
         "./resources/Models/rock.obj",
         "./resources/Textures/rock.tga", shader);
+    rock->GetTransform()->SetScale(DirectX::SimpleMath::Vector3::One * 0.5f);
     objects.emplace_back(rock);
 
     //auto coin = CreateGameObjectFromObj(
@@ -62,27 +64,18 @@ void KatamariLayer::OnAttach()
     //    "./resources/Textures/coin.png", shader);
     //objects.emplace_back(coin);
 
-    auto mesh = Mesh::CreateCube();
-    auto texture = std::make_shared<D3D11Texture2D>("./resources/Textures/gear.png");
+    auto mesh = Mesh::CreatePlane(3);
+    auto texture = std::make_shared<D3D11Texture2D>("./resources/Textures/bricks.jpg");
     auto renderer = std::make_shared<MeshRenderer>(shader, mesh, texture);
 	auto floor = std::make_shared<GameObject>(renderer);
-    floor->GetTransform()->SetScale(DirectX::SimpleMath::Vector3(100, 0.1f, 100));
+    floor->GetTransform()->SetScale(DirectX::SimpleMath::Vector3(1000, 1000, 1));
+    floor->GetTransform()->SetRotation(DirectX::SimpleMath::Vector3(90, 0, 0));
     objects.emplace_back(floor);
 
-    std::string textures[6] = {
-        "./resources/Textures/LightBlueSkybox/left.png", //left
-        "./resources/Textures/LightBlueSkybox/right.png", //right
-        "./resources/Textures/LightBlueSkybox/top.png", //top
-        "./resources/Textures/LightBlueSkybox/bottom.png", //bottom
-        "./resources/Textures/LightBlueSkybox/back.png", //back
-        "./resources/Textures/LightBlueSkybox/front.png", //front
-    };
-    m_Skybox = std::make_shared<SkyboxRenderer>(skyboxShader, textures);
+    m_Skybox = std::make_shared<SkyboxRenderer>(skyboxShader, TestSkyboxTexture());
 
     m_Camera = std::make_shared<FreeCamera>(45, 0.01f, 10000);
     m_Camera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
-    m_Camera->SetOrthographic(10, 0.01f, 1000.0f);
-    m_Camera->SetProjectionType(SceneCamera::ProjectionType::Orthographic);
 
     m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
 }

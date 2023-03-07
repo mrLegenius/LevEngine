@@ -11,6 +11,7 @@
 #include "../Pong/GameObject.h"
 #include "Body.h"
 #include "../Components/SkyboxRenderer.h"
+#include "../Assets.h"
 
 void DrawMesh(const DirectX::SimpleMath::Matrix& transform, const Mesh& mesh, const std::shared_ptr<D3D11Shader>& shader, const std::shared_ptr<D3D11Texture2D>& texture);
 
@@ -39,7 +40,6 @@ void SolarSystemLayer::OnAttach()
     { ShaderDataType::Float3, "POSITION" },
         { ShaderDataType::Float3, "NORMAL" },
         { ShaderDataType::Float2, "UV" },
-        //{ ShaderDataType::Float, "a_TexIndex" },
         //{ ShaderDataType::Float, "a_TexTiling" },
     });
 
@@ -48,15 +48,7 @@ void SolarSystemLayer::OnAttach()
     {  ShaderDataType::Float3, "POSITION" },
         });
 
-    std::string textures[6] = {
-    	"./resources/Textures/LightBlueSkybox/left.png", //left
-    	"./resources/Textures/LightBlueSkybox/right.png", //right
-        "./resources/Textures/LightBlueSkybox/top.png", //top
-        "./resources/Textures/LightBlueSkybox/bottom.png", //bottom
-        "./resources/Textures/LightBlueSkybox/back.png", //back
-        "./resources/Textures/LightBlueSkybox/front.png", //front
-    };
-    m_Skybox = std::make_shared<SkyboxRenderer>(skyboxShader, textures);
+    m_Skybox = std::make_shared<SkyboxRenderer>(skyboxShader, TestSkyboxTexture());
 
     m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
 
