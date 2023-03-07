@@ -1,5 +1,5 @@
 #pragma once
-#include "../Components/RendererComponent.h"
+#include "Components/RendererComponent.h"
 #include "DirectXCollision.h"
 
 class GameObject

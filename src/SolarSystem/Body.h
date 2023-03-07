@@ -5,7 +5,7 @@
 #include "../Renderer/3D/Mesh.h"
 #include "../Renderer/D3D11Texture.h"
 #include "../Components/MeshRenderer.h"
-#include "../Pong/GameObject.h"
+#include "../GameObject.h"
 
 struct BodyParameters
 {

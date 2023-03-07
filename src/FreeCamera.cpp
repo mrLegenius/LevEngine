@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include "../Input/Input.h"
-#include "../Input/KeyCodes.h"
-#include "../Components/Transform.h"
+#include "Input/Input.h"
+#include "Input/KeyCodes.h"
+#include "Components/Transform.h"
 
 FreeCamera::FreeCamera(const float fov, const float nearClip, const float farClip)
 {

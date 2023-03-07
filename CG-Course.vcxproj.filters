@@ -63,7 +63,7 @@
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\SolarSystem\FreeCamera.cpp">
+    <ClCompile Include="src\FreeCamera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\3D\Mesh.cpp">
@@ -81,7 +81,7 @@
     <ClCompile Include="src\Renderer\Renderer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\SolarSystem\OrbitCamera.cpp">
+    <ClCompile Include="src\OrbitCamera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\D3D11TextureCube.cpp">
@@ -164,7 +164,7 @@
     <ClInclude Include="src\Pong\Ball.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pong\GameObject.h">
+    <ClInclude Include="src\GameObject.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Pong\Pad.h">
@@ -185,7 +185,7 @@
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\SolarSystem\FreeCamera.h">
+    <ClInclude Include="src\FreeCamera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Kernel\Utils.h">
@@ -221,7 +221,7 @@
     <ClInclude Include="src\Renderer\Renderer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\SolarSystem\OrbitCamera.h">
+    <ClInclude Include="src\OrbitCamera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\SolarSystem\Body.h">

@@ -1,6 +1,6 @@
 #pragma once
 #include "../Kernel/Layer.h"
-#include "../SolarSystem/FreeCamera.h"
+#include "../FreeCamera.h"
 #include "../Renderer/D3D11ConstantBuffer.h"
 
 class KatamariLayer final : public Layer

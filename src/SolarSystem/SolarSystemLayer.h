@@ -1,8 +1,8 @@
 #pragma once
 #include "../Kernel/Layer.h"
 #include "../Renderer/D3D11ConstantBuffer.h"
-#include "FreeCamera.h"
-#include "OrbitCamera.h"
+#include "../FreeCamera.h"
+#include "../OrbitCamera.h"
 
 class SkyboxRenderer;
 class Mesh;

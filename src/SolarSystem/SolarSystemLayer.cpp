@@ -8,7 +8,7 @@
 #include "../Kernel/Application.h"
 #include "../Input/Input.h"
 
-#include "../Pong/GameObject.h"
+#include "../GameObject.h"
 #include "Body.h"
 #include "../Components/SkyboxRenderer.h"
 #include "../Assets.h"

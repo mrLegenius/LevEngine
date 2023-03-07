@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject.h"
+#include "../GameObject.h"
 #include "../Components/Transform.h"
 #include "../Components/Movement.h"
 #include "../Components/ShapeRenderer.h"

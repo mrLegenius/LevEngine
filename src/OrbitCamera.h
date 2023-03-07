@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "../Renderer/Camera/SceneCamera.h"
+#include "Renderer/Camera/SceneCamera.h"
 
 class OrbitCamera final : public SceneCamera
 {

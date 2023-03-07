@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../Input/Input.h"
+#include "Input/Input.h"
 
 OrbitCamera::OrbitCamera(float fov, float nearClip, float farClip)
 {

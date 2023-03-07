@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Renderer/Camera/SceneCamera.h"
+#include "Renderer/Camera/SceneCamera.h"
 
 
 #include <SimpleMath.h>

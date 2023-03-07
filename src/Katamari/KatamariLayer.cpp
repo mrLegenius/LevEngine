@@ -2,9 +2,9 @@
 
 #include "ObjLoader.h"
 #include "../Kernel/Application.h"
-#include "../Pong/GameObject.h"
+#include "../GameObject.h"
 #include "../Components/MeshRenderer.h"
-#include "../SolarSystem/OrbitCamera.h"
+#include "../OrbitCamera.h"
 #include "../Components/SkyboxRenderer.h"
 #include "../Assets.h"
 
