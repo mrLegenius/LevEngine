@@ -9,8 +9,8 @@ int main()
 	Application app("My3DApp", 800, 800);
 	//app.PushLayer(new MySuper3DLayer);
 	//app.PushLayer(new PongLayer);
-	app.PushLayer(new SolarSystemLayer);
-	//app.PushLayer(new KatamariLayer);
+	//app.PushLayer(new SolarSystemLayer);
+	app.PushLayer(new KatamariLayer);
 
 	app.Run();
 }

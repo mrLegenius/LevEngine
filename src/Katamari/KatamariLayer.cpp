@@ -53,6 +53,11 @@ void KatamariLayer::OnAttach()
         "./resources/Textures/log.jpg", shader);
     objects.emplace_back(log);
 
+    auto rock = CreateGameObjectFromObj(
+        "./resources/Models/rock.obj",
+        "./resources/Textures/rock.tga", shader);
+    objects.emplace_back(rock);
+
     auto mesh = Mesh::CreateCube();
     auto texture = std::make_shared<D3D11Texture2D>("./resources/Textures/gear.png");
     auto renderer = std::make_shared<MeshRenderer>(shader, mesh, texture);
