@@ -47,6 +47,14 @@ void OrbitCamera::Zoom(const float value)
 	if (m_Distance < 1) {
 		m_Distance = 1;
 	}
+
+	auto orthoSize = GetOrthographicSize();
+	orthoSize += value;
+
+	if (orthoSize < 0.1f)
+		orthoSize = 0.1f;
+
+	SetOrthographicSize(orthoSize);
 }
 
 DirectX::SimpleMath::Vector3 OrbitCamera::CalculatePosition() const

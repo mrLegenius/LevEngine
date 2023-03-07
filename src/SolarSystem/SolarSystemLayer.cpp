@@ -73,10 +73,10 @@ void SolarSystemLayer::OnAttach()
 
     m_FreeCamera = std::make_shared<FreeCamera>(60, 0.01f, 10000);
     m_FreeCamera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
-    m_FreeCamera->SetOrthographic(10, 0.01f, 100.0f);
+    m_FreeCamera->SetOrthographic(10, -1000.0f, 10000.0f);
 
     m_OrbitCamera = std::make_shared<OrbitCamera>(60, 0.01f, 10000);
-    m_OrbitCamera->SetOrthographic(10, 0.01f, 100.0f);
+    m_OrbitCamera->SetOrthographic(10, -1000.0f, 10000.0f);
 }
 
 void SolarSystemLayer::OnUpdate(const float deltaTime)
@@ -92,17 +92,10 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
     float color[] = { 0.1f, 0.1f, 0.1f, 1.0f };
     RenderCommand::SetClearColor(color);
     RenderCommand::Clear();
+    SceneCamera& camera = m_UseFreeCamera ? static_cast<SceneCamera&>(*m_FreeCamera) : static_cast<SceneCamera&>(*m_OrbitCamera);
 
-    if (m_UseFreeCamera)
-    {
-        const CameraData cameraData{ m_FreeCamera->GetViewProjection() };
-        m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
-    }
-    else
-    {
-        const CameraData cameraData{ m_OrbitCamera->GetViewProjection() };
-        m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
-    }
+    const CameraData cameraData{ camera.GetViewProjection() };
+    m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
 
     //Logic
     m_FreeCamera->Update(deltaTime);
@@ -168,7 +161,20 @@ void SolarSystemLayer::OnUpdate(const float deltaTime)
         m_OrbitCamera->SetProjectionType(SceneCamera::ProjectionType::Perspective);
     }
 
+   
+    auto isOrtho = camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic;
+
+    if (isOrtho)
+    {
+        camera.SetProjectionType(SceneCamera::ProjectionType::Perspective);
+        const CameraData skyboxCameraData{ camera.GetViewProjection() };
+        m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
+        camera.SetProjectionType(SceneCamera::ProjectionType::Orthographic);
+    }
+
     m_Skybox->Draw(nullptr);
+
+
     //End frame
     RenderCommand::End();
 }

@@ -39,7 +39,6 @@ void KatamariLayer::OnAttach()
     { ShaderDataType::Float3, "POSITION" },
         { ShaderDataType::Float3, "NORMAL" },
         { ShaderDataType::Float2, "UV" },
-        //{ ShaderDataType::Float, "a_TexIndex" },
         //{ ShaderDataType::Float, "a_TexTiling" },
         });
 
@@ -57,6 +56,11 @@ void KatamariLayer::OnAttach()
         "./resources/Models/rock.obj",
         "./resources/Textures/rock.tga", shader);
     objects.emplace_back(rock);
+
+    //auto coin = CreateGameObjectFromObj(
+    //    "./resources/Models/coin.obj",
+    //    "./resources/Textures/coin.png", shader);
+    //objects.emplace_back(coin);
 
     auto mesh = Mesh::CreateCube();
     auto texture = std::make_shared<D3D11Texture2D>("./resources/Textures/gear.png");
@@ -77,7 +81,8 @@ void KatamariLayer::OnAttach()
 
     m_Camera = std::make_shared<FreeCamera>(45, 0.01f, 10000);
     m_Camera->SetPosition(DirectX::SimpleMath::Vector3(0, 100, 500));
-    m_Camera->SetProjectionType(SceneCamera::ProjectionType::Perspective);
+    m_Camera->SetOrthographic(10, 0.01f, 1000.0f);
+    m_Camera->SetProjectionType(SceneCamera::ProjectionType::Orthographic);
 
     m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
 }
@@ -105,6 +110,15 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     for (const auto gameObject : objects)
 	    gameObject->Draw(); 
 
+    auto isOrtho = m_Camera->GetProjectionType() == SceneCamera::ProjectionType::Orthographic;
+
+    if (isOrtho)
+    {
+        m_Camera->SetProjectionType(SceneCamera::ProjectionType::Perspective);
+        const CameraData skyboxCameraData{ m_Camera->GetViewProjection() };
+        m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
+        m_Camera->SetProjectionType(SceneCamera::ProjectionType::Orthographic);
+    }
     m_Skybox->Draw(nullptr);
 
     //End frame

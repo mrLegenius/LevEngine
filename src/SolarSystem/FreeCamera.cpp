@@ -12,6 +12,17 @@ FreeCamera::FreeCamera(const float fov, const float nearClip, const float farCli
 	SceneCamera::UpdateView();
 }
 
+void FreeCamera::Zoom(const float value)
+{
+	auto orthoSize = GetOrthographicSize();
+	orthoSize += value;
+
+	if (orthoSize < 0.1f)
+		orthoSize = 0.1f;
+
+	SetOrthographicSize(orthoSize);
+}
+
 void FreeCamera::Update(float deltaTime)
 {
 	constexpr auto moveSpeed = 100;
@@ -45,6 +56,9 @@ void FreeCamera::Update(float deltaTime)
 	rotation.x -= delta.y;
 
 	m_Transform.SetRotation(rotation);
+
+	constexpr auto ZoomSensitivity = 0.5f;
+	Zoom(deltaTime * ZoomSensitivity * -Input::GetMouseWheelOffset());
 
 	UpdateView();
 }

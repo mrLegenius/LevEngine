@@ -9,9 +9,11 @@ class FreeCamera : public SceneCamera
 public:
 	FreeCamera() = default;
 	FreeCamera(float fov, float nearClip, float farClip);
+	
 
 	void Update(float deltaTime) override;
 private:
+	void Zoom(float value);
 
 	DirectX::SimpleMath::Vector2 m_InitialMousePosition = { 0.0f, 0.0f };
 };

@@ -40,12 +40,11 @@ void SceneCamera::RecalculateProjection()
 {
 	if (m_ProjectionType == ProjectionType::Orthographic)
 	{
-		const float vertical = m_AspectRatio * m_OrthographicSize * 0.5f;
-		const float horizontal = m_OrthographicSize * 0.5f;
+		const float horizontal = m_OrthographicSize * 800;
+		const float vertical = m_AspectRatio * horizontal;
 
-		m_Projection = DirectX::SimpleMath::Matrix::CreateOrthographicOffCenter(-vertical, vertical,
-			-horizontal, horizontal,
-			m_OrthographicNear, m_OrthographicFar);
+		m_Projection = DirectX::SimpleMath::Matrix::CreateOrthographic(vertical, horizontal,
+		                                                               m_OrthographicNear, m_OrthographicFar);
 	}
 	else
 	{

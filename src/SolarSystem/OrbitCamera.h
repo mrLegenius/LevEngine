@@ -14,7 +14,6 @@ public:
 	void Update(float deltaTime) override;
 private:
 	std::shared_ptr<Transform> m_Target;
-	DirectX::SimpleMath::Vector2 m_InitialMousePosition = { 0.0f, 0.0f };
 
 	float m_Distance = 10;
 
