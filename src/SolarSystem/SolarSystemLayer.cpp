@@ -17,7 +17,7 @@ void DrawMesh(const DirectX::SimpleMath::Matrix& transform, const Mesh& mesh, co
 
 struct CameraData
 {
-    DirectX::SimpleMath::Matrix ViewProjection;
+    Matrix ViewProjection;
 };
 
 float orbitRadiusScale = 3;

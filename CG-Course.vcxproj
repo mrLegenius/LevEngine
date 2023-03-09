@@ -151,6 +151,7 @@
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\FreeCamera.cpp" />
     <ClCompile Include="src\OrbitCamera.cpp" />
+    <ClCompile Include="src\Rigidbody.cpp" />
     <ClCompile Include="src\SolarSystem\SolarSystemLayer.cpp" />
     <ClCompile Include="src\Pong\PongLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
@@ -170,6 +171,7 @@
   <ItemGroup>
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="src\Assets.h" />
+    <ClInclude Include="src\Components\Collider.h" />
     <ClInclude Include="src\Katamari\KatamariLayer.h" />
     <ClInclude Include="src\Components\MeshRenderer.h" />
     <ClInclude Include="src\Components\RendererComponent.h" />
@@ -177,6 +179,7 @@
     <ClInclude Include="src\Components\SkyboxRenderer.h" />
     <ClInclude Include="src\Katamari\ObjLoader.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
+    <ClInclude Include="src\Physics.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
     <ClInclude Include="src\Renderer\Camera\Camera.h" />
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
@@ -185,6 +188,7 @@
     <ClInclude Include="src\Renderer\D3D11TextureCube.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
+    <ClInclude Include="src\Rigidbody.h" />
     <ClInclude Include="src\SolarSystem\Body.h" />
     <ClInclude Include="src\SolarSystem\CircularMovement.h" />
     <ClInclude Include="src\FreeCamera.h" />

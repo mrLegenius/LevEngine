@@ -55,6 +55,9 @@ void Application::Run()
 			frameCount = 0;
 		}
 
+		if (deltaTime > 1.0f) // Maybe breakpoint is hit
+			continue;
+
 		for (Layer* layer : m_LayerStack)
 		{
 			layer->OnUpdate(deltaTime);

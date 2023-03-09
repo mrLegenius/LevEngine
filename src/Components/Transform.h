@@ -22,13 +22,22 @@ struct Transform
 	const DirectX::SimpleMath::Vector3& GetPosition() const { return position; }
 	const DirectX::SimpleMath::Vector3& GetScale() const { return scale; }
 	const DirectX::SimpleMath::Vector3& GetRotation() const { return rotation; }
-	const DirectX::SimpleMath::Vector3& GetRotationDegrees() const
+
+	DirectX::SimpleMath::Vector3 GetRotationDegrees() const
 	{
 		auto rot = rotation;
 		rot.x = DirectX::XMConvertToDegrees(rot.x);
 		rot.y = DirectX::XMConvertToDegrees(rot.y);
 		rot.z = DirectX::XMConvertToDegrees(rot.z);
 		return rot;
+	}
+
+	void Move(const DirectX::SimpleMath::Vector3 value)
+	{
+		if (value == DirectX::SimpleMath::Vector3::Zero) return;
+
+		position += value;
+		RecalculateModel();
 	}
 
 	void SetPosition(const DirectX::SimpleMath::Vector3 value)
@@ -46,6 +55,15 @@ struct Transform
 		newRotation.y = DirectX::XMConvertToRadians(newRotation.y);
 		newRotation.z = DirectX::XMConvertToRadians(newRotation.z);
 
+		if (rotation == newRotation) return;
+
+		rotation = newRotation;
+		RecalculateModel();
+	}
+
+	void SetRotation(const DirectX::SimpleMath::Quaternion value)
+	{
+		const auto newRotation = value.ToEuler();
 		if (rotation == newRotation) return;
 
 		rotation = newRotation;

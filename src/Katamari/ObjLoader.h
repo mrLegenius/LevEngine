@@ -25,7 +25,6 @@ public:
 		std::string prefix;
 
 		float tempX, tempY, tempZ;
-		uint32_t tempInt;
 		std::string tempString1, tempString2, tempString3;
 
 		if (!file.is_open())
@@ -138,7 +137,7 @@ public:
 			}
 		}
 
-		for (int i = 0; i < position_indices.size(); ++i)
+		for (uint32_t i = 0; i < position_indices.size(); ++i)
 		{
 			mesh->AddVertex(positions[position_indices[i] - 1]);
 			mesh->AddUV(uvs[uv_indices[i] - 1]);

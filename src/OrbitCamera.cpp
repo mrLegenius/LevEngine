@@ -107,5 +107,9 @@ void OrbitCamera::Update(const float deltaTime)
 	m_Transform.SetPosition(CalculatePosition());
 
 	UpdateView();
+
+	auto rotationMatrix = m_ViewMatrix.Invert();
+	const auto rotation = DirectX::SimpleMath::Quaternion::CreateFromRotationMatrix(rotationMatrix);
+	m_Transform.SetRotation(rotation);
 }
 

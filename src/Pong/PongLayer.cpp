@@ -32,7 +32,7 @@ void PongLayer::OnAttach()
 	m_RightPad = std::make_shared<AIPad>(0.8f, shader, m_Ball);
 
 	m_Line = std::make_shared<GameObject>(std::make_shared<QuadRenderer>(dotLineShader));
-	m_Line->GetTransform()->SetScale(DirectX::SimpleMath::Vector3(0.02, 10, 1));
+	m_Line->GetTransform()->SetScale(Vector3(0.02f, 10.0f, 1.0f));
 }
 
 void PongLayer::OnUpdate(const float deltaTime)

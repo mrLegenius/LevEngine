@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Camera.h"
-#include "../../Components/Transform.h";
+#include "../../Components/Transform.h"
 #include "directxmath.h"
 
 class SceneCamera : public Camera
@@ -19,6 +19,7 @@ public:
 	[[nodiscard]] DirectX::SimpleMath::Matrix GetViewProjection() const { return m_ViewMatrix * m_Projection; }
 
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPosition() const { return m_Transform.GetPosition(); }
+	[[nodiscard]] const Transform& GetTransform() const { return m_Transform; }
 	void SetPosition(const DirectX::SimpleMath::Vector3& value) { m_Transform.SetPosition(value); }
 	virtual void Update(float deltaTime) = 0;
 
