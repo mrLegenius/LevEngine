@@ -31,7 +31,7 @@ public:
         m_AxisRotationSpeed(parameters.axisRotationSpeed)
     {
         m_Renderer = std::make_shared<MeshRenderer>(shader, m_Mesh, m_Texture);
-        m_Transform->SetScale(DirectX::SimpleMath::Vector3{ parameters.radius, parameters.radius, parameters.radius });
+        m_Transform->SetLocalScale(DirectX::SimpleMath::Vector3{ parameters.radius, parameters.radius, parameters.radius });
         if (pivotBody)
             m_Movement->centerPoint = pivotBody->GetTransform();
 
@@ -48,7 +48,7 @@ public:
         GameObject::Update(deltaTime);
         auto rotation = m_Transform->GetRotationDegrees();
         rotation.y += m_AxisRotationSpeed * deltaTime;
-        m_Transform->SetRotation(rotation);
+        m_Transform->SetWorldRotation(rotation);
     }
 
     std::shared_ptr<Mesh>& GetMesh() { return m_Mesh; }

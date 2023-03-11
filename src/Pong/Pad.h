@@ -10,7 +10,7 @@ public:
 		: GameObject(std::make_shared<QuadRenderer>(shader)),
 		m_Movement(std::make_shared<Movement>(m_Transform))
 	{
-		m_Transform->SetScale(DirectX::SimpleMath::Vector3{ 0.01f, 0.2f, 1.0f });
+		m_Transform->SetLocalScale(DirectX::SimpleMath::Vector3{ 0.01f, 0.2f, 1.0f });
 		m_Transform->SetPositionX(xPosition);
 	}
 

@@ -3,6 +3,7 @@
 #include "DirectXCollision.h"
 #include "Rigidbody.h"
 #include "Components/Collider.h"
+#include "Components/Constraint.h"
 
 class GameObject
 {
@@ -35,6 +36,8 @@ public:
 	std::shared_ptr<RendererComponent>& GetRenderer() { return m_Renderer; }
 	std::shared_ptr<Rigidbody>& GetRigidbody() { return m_Rigidbody; }
 	std::shared_ptr<Collider>& GetCollider() { return m_Collider; }
+	std::vector<std::shared_ptr<Constraint>>& GetConstraints() { return m_Constraints; }
+	void AddConstraint(std::shared_ptr<Constraint> constraint) { m_Constraints.emplace_back(constraint); }
 
 	bool Intersects(const GameObject& go) const { return m_BoundingBox->Intersects(*go.m_BoundingBox); }
 
@@ -51,13 +54,15 @@ public:
 	virtual void OnCollisionBegin(GameObject* gameObject) { }
 	virtual void OnCollisionEnd(GameObject* gameObject) { }
 
+
 protected:
 
-	DirectX::BoundingBox m_DefaultBoundingBox = DirectX::BoundingBox(DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::One / 2.0f);
+	DirectX::BoundingBox m_DefaultBoundingBox = DirectX::BoundingBox(Vector3::Zero, DirectX::SimpleMath::Vector3::One / 2.0f);
 
 	std::shared_ptr<Transform> m_Transform;
 	std::shared_ptr<RendererComponent> m_Renderer;
 	std::shared_ptr<DirectX::BoundingBox> m_BoundingBox;
 	std::shared_ptr<Rigidbody> m_Rigidbody;
 	std::shared_ptr<Collider> m_Collider;
+	std::vector<std::shared_ptr<Constraint>> m_Constraints;
 };

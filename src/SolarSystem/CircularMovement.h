@@ -20,13 +20,13 @@ struct CircularMovement
 		
 		if (centerPoint)
 		{
-			x += centerPoint->GetPosition().x;
-			z += centerPoint->GetPosition().z;
+			x += centerPoint->GetLocalPosition().x;
+			z += centerPoint->GetLocalPosition().z;
 		}
 
-		auto position = transform->GetPosition();
+		auto position = transform->GetLocalPosition();
 		position.x = x;
 		position.z = z;
-		transform->SetPosition(position);
+		transform->SetLocalPosition(position);
 	}
 };

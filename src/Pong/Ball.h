@@ -13,7 +13,7 @@ public:
 		: GameObject(std::make_shared<ShapeRenderer>(shader, 20)),
 		m_Movement(std::make_shared<Movement>(m_Transform))
 	{
-		m_Transform->SetScale(DirectX::SimpleMath::Vector3::One * 0.02f);
+		m_Transform->SetLocalScale(DirectX::SimpleMath::Vector3::One * 0.02f);
 	}
 
 	void Update(const float deltaTime) override
@@ -31,7 +31,7 @@ public:
 		if (rand() % 2) velocity.x *= -1;
 		if (rand() % 2) velocity.y *= -1;
 
-		m_Transform->SetPosition(DirectX::SimpleMath::Vector3::Zero);
+		m_Transform->SetLocalPosition(DirectX::SimpleMath::Vector3::Zero);
 	}
 
 	void AddVelocity(const DirectX::SimpleMath::Vector3 velocity)

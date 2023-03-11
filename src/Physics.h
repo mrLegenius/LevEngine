@@ -58,8 +58,8 @@ inline bool AABBTest(
 
 inline bool HasAABBIntersection(const BoxCollider& colliderA, const Transform& transformA, const BoxCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo)
 {
-	const Vector3 boxAPos = transformA.GetPosition();
-	const Vector3 boxBPos = transformB.GetPosition();
+	const Vector3 boxAPos = transformA.GetWorldPosition();
+	const Vector3 boxBPos = transformB.GetWorldPosition();
 	const Vector3 boxASize = colliderA.extents;
 	const Vector3 boxBSize = colliderB.extents;
 
@@ -105,7 +105,7 @@ inline bool HasAABBIntersection(const BoxCollider& colliderA, const Transform& t
 inline bool HasSphereIntersection(const SphereCollider& colliderA, const Transform& transformA, const SphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo)
 {
 	const float radiiSum = colliderA.radius + colliderB.radius;
-	Vector3 delta = transformB.GetPosition() - transformA.GetPosition();
+	Vector3 delta = transformB.GetWorldPosition() - transformA.GetWorldPosition();
 
 	const float deltaLength = delta.Length();
     
@@ -124,7 +124,7 @@ inline bool HasSphereIntersection(const SphereCollider& colliderA, const Transfo
 inline bool HasAABBSphereIntersection(const BoxCollider& colliderA, const Transform& transformA, const SphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo)
 {
     const Vector3 boxSize = colliderA.extents;
-    const Vector3 delta = transformB.GetPosition() - transformA.GetPosition();
+    const Vector3 delta = transformB.GetWorldPosition() - transformA.GetWorldPosition();
 
     const auto closestPointOnBox = Vector3(
         std::clamp(delta.x, -boxSize.x, boxSize.x),
@@ -196,12 +196,12 @@ void HandleCollision(const CollisionInfo& collisionInfo)
     float totalMass = rigidbodyA->GetInverseMass() + rigidbodyB->GetInverseMass();
 
     // Separate them out using projection
-    transformA->SetPosition(transformA->GetPosition() 
+    transformA->SetWorldPosition(transformA->GetWorldPosition()
         - p.normal 
           * p.penetration
           * (rigidbodyA->GetInverseMass() / totalMass));
 
-    transformB->SetPosition(transformB->GetPosition() 
+    transformB->SetWorldPosition(transformB->GetWorldPosition()
         + p.normal 
           * p.penetration 
           * (rigidbodyB->GetInverseMass() / totalMass));
@@ -240,8 +240,6 @@ void HandleCollision(const CollisionInfo& collisionInfo)
     rigidbodyB->AddAngularImpulse(relativeB.Cross(fullImpulse));
 }
 
-
-
 void BasicCollisionDetection()
 {
     const auto first = objects.begin();
@@ -249,11 +247,11 @@ void BasicCollisionDetection()
 
     for (auto i = first; i != last; ++i)
     {
-	    if ((*i)->GetRigidbody() == nullptr) continue;
+	    if ((*i)->GetRigidbody() == nullptr || !(*i)->GetRigidbody()->enabled) continue;
 
         for (auto j = i + 1; j != last; ++j)
         {
-	        if ((*j)->GetRigidbody() == nullptr) continue;
+	        if ((*j)->GetRigidbody() == nullptr || !(*j)->GetRigidbody()->enabled) continue;
 
             if (CollisionInfo info; HasIntersection(*i, *j, info))
             {
@@ -285,13 +283,21 @@ inline void UpdatePositions(const float deltaTime)
         gameObject->GetRigidbody()->UpdatePosition(deltaTime);
 }
 
+inline void UpdateConstraints(const float deltaTime)
+{
+    for (const auto gameObject : objects)
+        for (const auto& constraint : gameObject->GetConstraints())
+            constraint->Update(deltaTime);
+}
+
 inline void ClearForces()
 {
     for (const auto gameObject : objects)
         gameObject->GetRigidbody()->ClearForces();
 }
 
-inline void UpdateCollisionList() {
+inline void UpdateCollisionList()
+{
     for (auto i = allCollisions.begin(); i != allCollisions.end(); )
     {
         if ((*i).framesLeft == numCollisionFrames)
@@ -346,7 +352,7 @@ inline void UpdatePhysics(const float deltaTime, const std::vector<std::shared_p
         const float constraintDt = subDt / static_cast<float>(constraintIterationCount);
 
         for (int j = 0; j < constraintIterationCount; ++j) {
-            //UpdateConstraints(constraintDt); //TODO: Add constraints
+            UpdateConstraints(constraintDt);
             UpdatePositions(constraintDt);
         }
         dTOffset -= iterationDt;

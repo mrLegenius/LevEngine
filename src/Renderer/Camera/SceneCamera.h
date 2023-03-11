@@ -18,9 +18,8 @@ public:
 	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetViewMatrix() const { return m_ViewMatrix; }
 	[[nodiscard]] DirectX::SimpleMath::Matrix GetViewProjection() const { return m_ViewMatrix * m_Projection; }
 
-	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPosition() const { return m_Transform.GetPosition(); }
 	[[nodiscard]] const Transform& GetTransform() const { return m_Transform; }
-	void SetPosition(const DirectX::SimpleMath::Vector3& value) { m_Transform.SetPosition(value); }
+	void SetPosition(const DirectX::SimpleMath::Vector3& value) { m_Transform.SetWorldPosition(value); }
 	virtual void Update(float deltaTime) = 0;
 
 private:

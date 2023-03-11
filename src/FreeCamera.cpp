@@ -55,7 +55,7 @@ void FreeCamera::Update(float deltaTime)
 	rotation.y -= delta.x;
 	rotation.x -= delta.y;
 
-	m_Transform.SetRotation(rotation);
+	m_Transform.SetWorldRotation(rotation);
 
 	constexpr auto ZoomSensitivity = 0.5f;
 	Zoom(deltaTime * ZoomSensitivity * -Input::GetMouseWheelOffset());

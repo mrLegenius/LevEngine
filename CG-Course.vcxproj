@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,6 +143,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="external\stb\stb.cpp" />
+    <ClCompile Include="src\Components\Constraint.cpp" />
+    <ClCompile Include="src\Components\Transform.cpp" />
     <ClCompile Include="src\Katamari\KatamariLayer.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
@@ -172,11 +175,13 @@
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Components\Collider.h" />
+    <ClInclude Include="src\Components\Constraint.h" />
     <ClInclude Include="src\Katamari\KatamariLayer.h" />
     <ClInclude Include="src\Components\MeshRenderer.h" />
     <ClInclude Include="src\Components\RendererComponent.h" />
     <ClInclude Include="src\Components\ShapeRenderer.h" />
     <ClInclude Include="src\Components\SkyboxRenderer.h" />
+    <ClInclude Include="src\Katamari\KatamariPlayer.h" />
     <ClInclude Include="src\Katamari\ObjLoader.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
     <ClInclude Include="src\Physics.h" />

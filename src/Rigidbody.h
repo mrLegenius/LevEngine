@@ -41,6 +41,7 @@ public:
 	Vector3 angularVelocity;
 	Vector3 inverseInertia;
 	Matrix inverseInteriaTensor;
+	bool enabled = true;
 
 	void AddImpulse(const Vector3 value)
 	{
@@ -64,14 +65,14 @@ public:
 
 	void AddForceAtPosition(const Vector3& addedForce, const Vector3& position)
 	{
-		const Vector3 localPos = position - m_Transform->GetPosition();
+		const Vector3 localPos = position - m_Transform->GetWorldPosition();
 		force += addedForce;
 		torque += localPos.Cross(addedForce);
 	}
 
 	void UpdateVelocity(const float deltaTime)
 	{
-		if (bodyType != BodyType::Dynamic) return;
+		if (bodyType != BodyType::Dynamic || !enabled) return;
 
 		const auto inverseMass = GetInverseMass();
 		Vector3 acceleration = force * inverseMass;
@@ -91,10 +92,12 @@ public:
 
 	void UpdatePosition(const float deltaTime)
 	{
+		if (bodyType != BodyType::Dynamic || !enabled) return;
+
 		//Linear movement
-		Vector3 position = m_Transform->GetPosition();
+		Vector3 position = m_Transform->GetLocalPosition();
 		position += velocity * deltaTime;
-		m_Transform->SetPosition(position);
+		m_Transform->SetLocalPosition(position);
 
 		// Linear Damping
 		const float dampingFactor = 1.0f - damping;
@@ -102,7 +105,7 @@ public:
 		velocity *= frameDamping;
 
 		//Angular movement
-		Quaternion orientation = m_Transform->GetOrientation();
+		Quaternion orientation = m_Transform->GetWorldOrientation();
 
 		const auto radianAngularVelocity = Vector3(
 			DirectX::XMConvertToRadians(angularVelocity.x),
@@ -111,7 +114,7 @@ public:
 		orientation += orientation * Quaternion(angularVelocity * deltaTime * 0.5f, 0.0f);
 		orientation.Normalize();
 
-		m_Transform->SetRotation(orientation);
+		m_Transform->SetWorldRotation(orientation);
 
 		// Angular Damping
 		const float angularDampingFactor = 1.0f - angularDamping;

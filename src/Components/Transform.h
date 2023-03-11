@@ -1,29 +1,43 @@
 #pragma once
+#include <set>
 #include <SimpleMath.h>
 
+using namespace DirectX::SimpleMath;
 struct Transform
 {
 	Transform()
 	{
-		RecalculateModel();
+		ForceRecalculateModel();
 	}
 
+	[[nodiscard]] const Matrix& GetModel() const { return model; }
 
-	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetModel() const { return model; }
+	[[nodiscard]] Vector3 GetLocalPosition() const { return position; }
+	[[nodiscard]] Vector3 GetLocalScale() const { return scale; }
+	[[nodiscard]] Vector3 GetLocalRotation() const { return rotation; }
 
-	void SetScale(const DirectX::SimpleMath::Vector3 value)
+	[[nodiscard]] Vector3 GetWorldPosition() const
 	{
-		if (scale == value) return;
-
-		scale = value;
-		RecalculateModel();
+		Vector3 localPos = position;
+		if (parent)
+		{
+			localPos *= parent->GetWorldScale();
+			localPos = Vector3::Transform(localPos, parent->GetWorldOrientation());
+			localPos += parent->GetWorldPosition();
+		}
+		return localPos;
 	}
 
-	const DirectX::SimpleMath::Vector3& GetPosition() const { return position; }
-	const DirectX::SimpleMath::Vector3& GetScale() const { return scale; }
-	const DirectX::SimpleMath::Vector3& GetRotation() const { return rotation; }
+	[[nodiscard]] Vector3 GetWorldScale() const
+	{
+		return parent ? parent->GetWorldScale() * scale : scale;
+	}
+	[[nodiscard]] Vector3 GetWorldRotation() const
+	{
+		return parent ? (GetLocalOrientation() * parent->GetWorldOrientation()).ToEuler() : rotation;
+	}
 
-	DirectX::SimpleMath::Vector3 GetRotationDegrees() const
+	[[nodiscard]] Vector3 GetRotationDegrees() const
 	{
 		auto rot = rotation;
 		rot.x = DirectX::XMConvertToDegrees(rot.x);
@@ -32,131 +46,177 @@ struct Transform
 		return rot;
 	}
 
-	void Move(const DirectX::SimpleMath::Vector3 value)
+	const std::set<Transform*> GetChildren() const { return children; }
+	uint32_t GetChildrenCount() const { return children.size(); }
+
+	void SetParent(Transform* value, bool keepWorldTransform = true);
+	void SetLocalPosition(const Vector3 value) { position = value; }
+	void SetWorldPosition(const Vector3 value)
 	{
-		if (value == DirectX::SimpleMath::Vector3::Zero) return;
-
-		position += value;
-		RecalculateModel();
-	}
-
-	void SetPosition(const DirectX::SimpleMath::Vector3 value)
-	{
-		if (position == value) return;
-
 		position = value;
-		RecalculateModel();
+
+		if (parent)
+		{
+			position -= parent->GetWorldPosition();
+			auto rot = parent->GetWorldOrientation();
+			rot.Conjugate();
+			position = Vector3::Transform(position, rot);
+		}
 	}
 
-	void SetRotation(const DirectX::SimpleMath::Vector3 value)
+	void SetWorldRotation(const Vector3 value)
 	{
 		auto newRotation = value;
 		newRotation.x = DirectX::XMConvertToRadians(newRotation.x);
 		newRotation.y = DirectX::XMConvertToRadians(newRotation.y);
 		newRotation.z = DirectX::XMConvertToRadians(newRotation.z);
 
-		if (rotation == newRotation) return;
-
 		rotation = newRotation;
-		RecalculateModel();
+
+		if (parent)
+			rotation -= parent->GetWorldRotation();
 	}
 
-	void SetRotation(const DirectX::SimpleMath::Quaternion value)
+	void SetWorldRotation(const Quaternion value)
 	{
-		const auto newRotation = value.ToEuler();
-		if (rotation == newRotation) return;
+		rotation = value.ToEuler();
+
+		if (parent)
+			rotation -= parent->GetWorldRotation();
+	}
+
+	void SetLocalRotation(const Vector3 value)
+	{
+		auto newRotation = value;
+		newRotation.x = DirectX::XMConvertToRadians(newRotation.x);
+		newRotation.y = DirectX::XMConvertToRadians(newRotation.y);
+		newRotation.z = DirectX::XMConvertToRadians(newRotation.z);
 
 		rotation = newRotation;
-		RecalculateModel();
 	}
+
+	void SetLocalRotation(const Quaternion value)
+	{
+		rotation = value.ToEuler();
+	}
+
+	void SetLocalScale(const Vector3 value)
+	{
+		scale = value;
+	}
+
+	void SetWorldScale(const Vector3 value)
+	{
+		if (parent)
+		{
+			const auto parentScale = parent->GetWorldScale();
+			scale.x = DirectX::XMScalarNearEqual(parentScale.x, 0, 0.0001f) ? 0 : value.x / parentScale.x;
+			scale.y = DirectX::XMScalarNearEqual(parentScale.y, 0, 0.0001f) ? 0 : value.y / parentScale.y;
+			scale.z = DirectX::XMScalarNearEqual(parentScale.z, 0, 0.0001f) ? 0 : value.z / parentScale.z;
+		}
+		else
+		{
+			scale = value;
+		}
+	}
+
+
+	void Move(const Vector3 value) { position += value; }
 
 	void MoveForward(const float value)
 	{
 		const auto dir = GetForwardDirection();
-		SetPosition(position + dir * value);
+		SetLocalPosition(position + dir * value);
 	}
-
 	void MoveBackward(const float value)
 	{
 		const auto dir = GetForwardDirection();
-		SetPosition(position - dir * value);
+		SetLocalPosition(position - dir * value);
 	}
 
 	void MoveLeft(const float value)
 	{
 		const auto dir = GetRightDirection();
-		SetPosition(position - dir * value);
+		SetLocalPosition(position - dir * value);
 	}
-
 	void MoveRight(const float value)
 	{
 		const auto dir = GetRightDirection();
-		SetPosition(position + dir * value);
+		SetLocalPosition(position + dir * value);
 	}
 
-	DirectX::SimpleMath::Vector3 GetUpDirection() const
+	Vector3 GetUpDirection() const
 	{
-		DirectX::SimpleMath::Vector3 dir = XMVector3Rotate(DirectX::SimpleMath::Vector3::Up, GetOrientation());
+		Vector3 dir = XMVector3Rotate(Vector3::Up, GetWorldOrientation());
 		dir.Normalize();
 		return dir;
 	}
 
-	DirectX::SimpleMath::Vector3 GetRightDirection() const
+	Vector3 GetRightDirection() const
 	{
-		DirectX::SimpleMath::Vector3 dir = XMVector3Rotate(DirectX::SimpleMath::Vector3::Right, GetOrientation());
+		Vector3 dir = XMVector3Rotate(Vector3::Right, GetWorldOrientation());
 		dir.Normalize();
 		return dir;
 	}
 
-	DirectX::SimpleMath::Vector3 GetForwardDirection() const
+	Vector3 GetForwardDirection() const
 	{
-		DirectX::SimpleMath::Vector3 dir = XMVector3Rotate(DirectX::SimpleMath::Vector3::Forward, GetOrientation());
+		Vector3 dir = XMVector3Rotate(Vector3::Forward, GetWorldOrientation());
 		dir.Normalize();
 		return dir;
 	}
 
-	DirectX::SimpleMath::Quaternion GetOrientation() const
+	Quaternion GetWorldOrientation() const
 	{
-		return DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(rotation);
+		return Quaternion::CreateFromYawPitchRoll(GetWorldRotation());
 	}
 
-	void SetPositionX(const float x)
+	Quaternion GetLocalOrientation() const
 	{
-		if ( abs(x - position.x) < 0.00001f) return;
-
-		position.x = x;
-		RecalculateModel();
+		return Quaternion::CreateFromYawPitchRoll(rotation);
 	}
 
-	void SetPositionY(const float y)
+	void SetPositionX(const float x) { position.x = x; }
+	void SetPositionY(const float y) { position.y = y; }
+	void SetPositionZ(const float z) { position.z = z; }
+
+	void RecalculateModel()
 	{
-		if (abs(y - position.y) < 0.00001f) return;
+		const auto worldPosition = GetWorldPosition();
+		const auto worldRotation = GetWorldPosition();
+		const auto worldScale = GetWorldPosition();
 
-		position.y = y;
-		RecalculateModel();
-	}
+		if (worldPosition == prevPosition && worldRotation == prevRotation && worldScale == prevScale && parent != prevParent) return;
 
-	void SetPositionZ(const float z)
-	{
-		if (abs(z - position.z) < 0.00001f) return;
+		prevPosition = worldPosition;
+		prevRotation = worldRotation;
+		prevScale = worldScale;
+		prevParent = parent;
 
-		position.z = z;
-		RecalculateModel();
+		ForceRecalculateModel();
 	}
 
 private:
 
-	DirectX::SimpleMath::Matrix model;
+	std::set<Transform*> children;
 
-	DirectX::SimpleMath::Vector3 position = DirectX::SimpleMath::Vector3::Zero;
-	DirectX::SimpleMath::Vector3 rotation = DirectX::SimpleMath::Vector3::Zero;
-	DirectX::SimpleMath::Vector3 scale = DirectX::SimpleMath::Vector3::One;
+	Transform* parent = nullptr;
 
-	void RecalculateModel()
+	Matrix model = Matrix::Identity;
+
+	Vector3 position = Vector3::Zero;
+	Vector3 rotation = Vector3::Zero;
+	Vector3 scale = Vector3::One;
+
+	Vector3 prevPosition = Vector3::Zero;
+	Vector3 prevRotation = Vector3::Zero;
+	Vector3 prevScale = Vector3::One;
+	Transform* prevParent;
+
+	void ForceRecalculateModel()
 	{
-		model = DirectX::SimpleMath::Matrix::CreateScale(scale) *
-			DirectX::SimpleMath::Matrix::CreateFromQuaternion(
-				DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(rotation)) *
-			DirectX::SimpleMath::Matrix::CreateTranslation(position);
+		model = Matrix::CreateScale(GetWorldScale()) *
+			Matrix::CreateFromQuaternion(GetWorldOrientation()) *
+			Matrix::CreateTranslation(GetWorldPosition());
 	}
 };

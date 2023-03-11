@@ -72,9 +72,9 @@ DirectX::SimpleMath::Vector3 OrbitCamera::CalculatePosition() const
 
 	if (m_Target)
 	{
-		x += m_Target->GetPosition().x;
-		y += m_Target->GetPosition().y;
-		z += m_Target->GetPosition().z;
+		x += m_Target->GetWorldPosition().x;
+		y += m_Target->GetWorldPosition().y;
+		z += m_Target->GetWorldPosition().z;
 	}
 
 	return { x, y, z };
@@ -82,11 +82,11 @@ DirectX::SimpleMath::Vector3 OrbitCamera::CalculatePosition() const
 
 void OrbitCamera::UpdateView()
 {
-	const auto targetPosition = m_Target ? m_Target->GetPosition() : DirectX::SimpleMath::Vector3::Zero;
+	const auto targetPosition = m_Target ? m_Target->GetWorldPosition() : DirectX::SimpleMath::Vector3::Zero;
 		
-	if (m_Transform.GetPosition() == targetPosition) return;
+	if (m_Transform.GetWorldPosition() == targetPosition) return;
 
-	m_ViewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_Transform.GetPosition(), targetPosition, DirectX::SimpleMath::Vector3::Up);
+	m_ViewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_Transform.GetWorldPosition(), targetPosition, DirectX::SimpleMath::Vector3::Up);
 }
 
 void OrbitCamera::Update(const float deltaTime)
@@ -104,12 +104,12 @@ void OrbitCamera::Update(const float deltaTime)
 	RotatePolar(deltaY);
 	RotateAzimuth(deltaX);
 
-	m_Transform.SetPosition(CalculatePosition());
+	m_Transform.SetWorldPosition(CalculatePosition());
 
 	UpdateView();
 
 	auto rotationMatrix = m_ViewMatrix.Invert();
 	const auto rotation = DirectX::SimpleMath::Quaternion::CreateFromRotationMatrix(rotationMatrix);
-	m_Transform.SetRotation(rotation);
+	m_Transform.SetWorldRotation(rotation);
 }
 

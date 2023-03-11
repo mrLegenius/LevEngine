@@ -13,11 +13,11 @@ public:
 
 	bool ShouldGoDown() override
 	{
-		return m_Ball->GetTransform()->GetPosition().y < GetTransform()->GetPosition().y;
+		return m_Ball->GetTransform()->GetLocalPosition().y < GetTransform()->GetLocalPosition().y;
 	}
 	bool ShouldGoUp() override
 	{
-		return m_Ball->GetTransform()->GetPosition().y > GetTransform()->GetPosition().y;
+		return m_Ball->GetTransform()->GetLocalPosition().y > GetTransform()->GetLocalPosition().y;
 	}
 
 private:
