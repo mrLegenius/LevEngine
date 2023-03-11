@@ -46,8 +46,8 @@ struct Transform
 		return rot;
 	}
 
-	const std::set<Transform*> GetChildren() const { return children; }
-	uint32_t GetChildrenCount() const { return children.size(); }
+	const std::set<Transform*>& GetChildren() const { return children; }
+	[[nodiscard]] uint32_t GetChildrenCount() const { return children.size(); }
 
 	void SetParent(Transform* value, bool keepWorldTransform = true);
 	void SetLocalPosition(const Vector3 value) { position = value; }

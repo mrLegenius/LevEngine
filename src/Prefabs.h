@@ -1,0 +1,51 @@
+#pragma once
+#include "GameObject.h"
+#include "Assets.h"
+#include "Components/MeshRenderer.h"
+
+namespace Prefabs
+{
+	inline std::shared_ptr<GameObject> Log(std::vector<std::shared_ptr<GameObject>>& allObjects)
+	{
+        auto collider = std::make_shared<BoxCollider>(Vector3(1, 2, 1));
+        auto logGo = std::make_shared<GameObject>(nullptr, collider);
+        auto logMesh = std::make_shared<GameObject>(std::make_shared<MeshRenderer>(ShaderAssets::Unlit(), MeshAssets::Log(), TextureAssets::Log()));
+        logMesh->GetTransform()->SetParent(logGo->GetTransform().get());
+        logMesh->GetRigidbody()->enabled = false;
+        logMesh->GetTransform()->SetPositionY(-0.5f);
+
+        allObjects.emplace_back(logGo);
+        allObjects.emplace_back(logMesh);
+
+        logGo->GetTransform()->SetLocalScale(Vector3::One * 5.0f);
+        logGo->GetRigidbody()->gravityScale = 10;
+        logGo->GetRigidbody()->mass = 0.5f;
+        return logGo;
+	}
+
+    inline std::shared_ptr<GameObject> Gear(std::vector<std::shared_ptr<GameObject>>& allObjects)
+    {
+        auto collider = std::make_shared<BoxCollider>(Vector3(0.9f, 0.1f, 0.9f));
+        auto gameObject = std::make_shared<GameObject>(std::make_shared<MeshRenderer>(ShaderAssets::Unlit(), MeshAssets::Gear(), TextureAssets::Gear()), collider);
+
+        allObjects.emplace_back(gameObject);
+
+        gameObject->GetTransform()->SetLocalScale(Vector3::One * 0.1f);
+        gameObject->GetRigidbody()->gravityScale = 10;
+        gameObject->GetRigidbody()->mass = 5.0f;
+        return gameObject;
+    }
+
+    inline std::shared_ptr<GameObject> Rock(std::vector<std::shared_ptr<GameObject>>& allObjects)
+    {
+        auto collider = std::make_shared<BoxCollider>(Vector3(6.5f, 6.5f, 6.5f));
+        auto gameObject = std::make_shared<GameObject>(std::make_shared<MeshRenderer>(ShaderAssets::Unlit(), MeshAssets::Rock(), TextureAssets::Rock()), collider);
+
+        allObjects.emplace_back(gameObject);
+
+        gameObject->GetTransform()->SetLocalScale(Vector3::One * 0.1f);
+        gameObject->GetRigidbody()->gravityScale = 10;
+        gameObject->GetRigidbody()->mass = 10.0f;
+        return gameObject;
+    }
+}

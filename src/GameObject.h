@@ -48,7 +48,8 @@ public:
 
 	void Draw() const
 	{
-		m_Renderer->Draw(m_Transform);
+		if (m_Renderer)
+			m_Renderer->Draw(m_Transform);
 	}
 
 	virtual void OnCollisionBegin(GameObject* gameObject) { }

@@ -107,10 +107,6 @@ public:
 		//Angular movement
 		Quaternion orientation = m_Transform->GetWorldOrientation();
 
-		const auto radianAngularVelocity = Vector3(
-			DirectX::XMConvertToRadians(angularVelocity.x),
-			DirectX::XMConvertToRadians(angularVelocity.y),
-			DirectX::XMConvertToRadians(angularVelocity.z));
 		orientation += orientation * Quaternion(angularVelocity * deltaTime * 0.5f, 0.0f);
 		orientation.Normalize();
 

@@ -58,8 +58,8 @@ inline bool AABBTest(
 
 inline bool HasAABBIntersection(const BoxCollider& colliderA, const Transform& transformA, const BoxCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo)
 {
-	const Vector3 boxAPos = transformA.GetWorldPosition();
-	const Vector3 boxBPos = transformB.GetWorldPosition();
+	const Vector3 boxAPos = transformA.GetWorldPosition() + colliderA.offset;
+	const Vector3 boxBPos = transformB.GetWorldPosition() + colliderB.offset;
 	const Vector3 boxASize = colliderA.extents;
 	const Vector3 boxBSize = colliderB.extents;
 
@@ -104,8 +104,11 @@ inline bool HasAABBIntersection(const BoxCollider& colliderA, const Transform& t
 
 inline bool HasSphereIntersection(const SphereCollider& colliderA, const Transform& transformA, const SphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo)
 {
+    const Vector3 posA = transformA.GetWorldPosition() + colliderA.offset;
+    const Vector3 posB = transformB.GetWorldPosition() + colliderB.offset;
+
 	const float radiiSum = colliderA.radius + colliderB.radius;
-	Vector3 delta = transformB.GetWorldPosition() - transformA.GetWorldPosition();
+	Vector3 delta = posB - posA;
 
 	const float deltaLength = delta.Length();
     
@@ -123,8 +126,11 @@ inline bool HasSphereIntersection(const SphereCollider& colliderA, const Transfo
 
 inline bool HasAABBSphereIntersection(const BoxCollider& colliderA, const Transform& transformA, const SphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo)
 {
+    const Vector3 posA = transformA.GetWorldPosition() + colliderA.offset;
+    const Vector3 posB = transformB.GetWorldPosition() + colliderB.offset;
+    const Vector3 delta = posB - posA;
+
     const Vector3 boxSize = colliderA.extents;
-    const Vector3 delta = transformB.GetWorldPosition() - transformA.GetWorldPosition();
 
     const auto closestPointOnBox = Vector3(
         std::clamp(delta.x, -boxSize.x, boxSize.x),
@@ -183,7 +189,7 @@ inline bool HasIntersection(const std::shared_ptr<GameObject>& a, const std::sha
     return false;
 }
 
-void HandleCollision(const CollisionInfo& collisionInfo)
+inline void HandleCollision(const CollisionInfo& collisionInfo)
 {
     auto& p = collisionInfo.point;
 
@@ -240,7 +246,7 @@ void HandleCollision(const CollisionInfo& collisionInfo)
     rigidbodyB->AddAngularImpulse(relativeB.Cross(fullImpulse));
 }
 
-void BasicCollisionDetection()
+inline void BasicCollisionDetection()
 {
     const auto first = objects.begin();
     const auto last = objects.end();

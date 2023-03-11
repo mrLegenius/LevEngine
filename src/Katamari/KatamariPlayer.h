@@ -53,7 +53,10 @@ public:
     {
         if (gameObject->GetRigidbody()->bodyType == BodyType::Static) return;
 
-        m_SphereCollider->radius += 1;
+        auto radius = gameObject->GetCollider()->GetRadius();
+        if (radius > m_SphereCollider->radius) return;
+
+        m_SphereCollider->radius += 0.1f;
 
         gameObject->GetRigidbody()->enabled = false;
         gameObject->GetTransform()->SetParent(m_Transform.get());
