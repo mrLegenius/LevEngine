@@ -82,10 +82,10 @@ public:
 
 		velocity += acceleration * deltaTime;
 
-		//UpdateInertiaTensor();
+		UpdateInertiaTensor();
 
-		//const Vector3 angularAcceleration = Vector3::Transform(torque, GetInertiaTensor());
-		const Vector3 angularAcceleration = torque;
+		const Vector3 angularAcceleration = Vector3::Transform(torque, GetInertiaTensor());
+		//const Vector3 angularAcceleration = torque;
 
 		angularVelocity += angularAcceleration * deltaTime;
 	}
@@ -105,12 +105,12 @@ public:
 		velocity *= frameDamping;
 
 		//Angular movement
-		Quaternion orientation = m_Transform->GetWorldOrientation();
+		Quaternion orientation = m_Transform->GetLocalOrientation();
 
 		orientation += orientation * Quaternion(angularVelocity * deltaTime * 0.5f, 0.0f);
 		orientation.Normalize();
 
-		m_Transform->SetWorldRotation(orientation);
+		m_Transform->SetLocalRotation(orientation);
 
 		// Angular Damping
 		const float angularDampingFactor = 1.0f - angularDamping;
@@ -133,11 +133,11 @@ public:
 
 	Vector3& GetAngularVelocity() { return angularVelocity; }
 	Vector3& GetLinearVelocity() { return velocity; }
-	//Matrix GetInertiaTensor() const { return inverseInteriaTensor; }
+	Matrix GetInertiaTensor() const { return inverseInteriaTensor; }
 
-	/*void InitCubeInertia()
+	void InitCubeInertia()
 	{
-		const Vector3 dimensions = m_Transform->GetScale();
+		const Vector3 dimensions = m_Transform->GetLocalScale();
 		const Vector3 dimsSqr = dimensions * dimensions;
 		const auto inverseMass = GetInverseMass();
 		inverseInertia.x = (12.0f * inverseMass) / (dimsSqr.y + dimsSqr.z);
@@ -147,26 +147,27 @@ public:
 
 	void InitSphereInertia()
 	{
-		const auto maxElement = max(max(m_Transform->GetScale().x, m_Transform->GetScale().y), m_Transform->GetScale().z);
+		auto scale = m_Transform->GetLocalScale();
+		const auto maxElement = max(max(scale.x, scale.y), scale.z);
 		const float radius = maxElement;
 		const float i = 2.5f * GetInverseMass() / (radius * radius);
 
 		inverseInertia = Vector3(i, i, i);
-	}*/
+	}
 private:
 	std::shared_ptr<Transform> m_Transform;
 
-	/*void UpdateInertiaTensor()
+	void UpdateInertiaTensor()
 	{
-		Quaternion q = m_Transform->GetOrientation();
+		Quaternion q = m_Transform->GetLocalOrientation();
 
 		const Matrix orientation = Matrix::CreateFromQuaternion(q);
 
 		q.Conjugate();
 		const Matrix invOrientation = Matrix::CreateFromQuaternion(q);
 
-		inverseInteriaTensor = orientation * Matrix::CreateScale(inverseInertia) * invOrientation;
-	}*/
+		inverseInteriaTensor = invOrientation * Matrix::CreateScale(inverseInertia) * orientation;
+	}
 };
 
 

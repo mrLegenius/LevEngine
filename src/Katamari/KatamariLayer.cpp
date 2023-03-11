@@ -43,13 +43,13 @@ void KatamariLayer::OnAttach()
         go->GetTransform()->SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
-    auto floorCollider = std::make_shared<BoxCollider>(Vector3(500, 0.5f, 500));
+    auto floorCollider = std::make_shared<BoxCollider>(Vector3(150, 0.5f, 150));
     floorCollider->offset = Vector3::Down * 0.5f;
 	auto floorGo = std::make_shared<GameObject>(
-        std::make_shared<MeshRenderer>(ShaderAssets::Unlit(), Mesh::CreatePlane(3), TextureAssets::Bricks()),
+        std::make_shared<MeshRenderer>(ShaderAssets::Unlit(), Mesh::CreatePlane(3), TextureAssets::Bricks(), 50),
         floorCollider);
 
-    floorGo->GetTransform()->SetLocalScale(Vector3(1000, 1000, 1));
+    floorGo->GetTransform()->SetLocalScale(Vector3(300, 300, 1));
     floorGo->GetTransform()->SetWorldRotation(Vector3(90, 0, 0));
     floorGo->GetRigidbody()->bodyType = BodyType::Static;
     gameObjects.emplace_back(floorGo);
@@ -61,6 +61,7 @@ void KatamariLayer::OnAttach()
     player->GetTransform()->SetLocalPosition(Vector3::Up * 100);
     player->GetRigidbody()->gravityScale = 10;
     player->GetRigidbody()->angularDamping = 0.9f;
+    player->GetRigidbody()->InitSphereInertia();
     gameObjects.emplace_back(player);
 
     m_Camera->SetTarget(player->GetTransform());
@@ -82,7 +83,7 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     RenderCommand::Clear();
 
     //Logic
-    for (auto gameObject : gameObjects)
+    for (const auto& gameObject : gameObjects)
         gameObject->Update(deltaTime);
 
     UpdatePhysics(deltaTime, gameObjects);
@@ -90,13 +91,13 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     m_Camera->Update(deltaTime);
 
     //Draw
-    for (auto gameObject : gameObjects)
+    for (const auto& gameObject : gameObjects)
         gameObject->GetTransform()->RecalculateModel();
 
     const CameraData cameraData{ m_Camera->GetViewProjection() };
     m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
 
-    for (const auto gameObject : gameObjects)
+    for (const auto& gameObject : gameObjects)
 	    gameObject->Draw();
 
     auto isOrtho = m_Camera->GetProjectionType() == SceneCamera::ProjectionType::Orthographic;

@@ -56,9 +56,11 @@ public:
         auto radius = gameObject->GetCollider()->GetRadius();
         if (radius > m_SphereCollider->radius) return;
 
+		//GetRigidbody()->mass += gameObject->GetRigidbody()->mass;
         m_SphereCollider->radius += 0.1f;
 
         gameObject->GetRigidbody()->enabled = false;
+       
         gameObject->GetTransform()->SetParent(m_Transform.get());
     }
 

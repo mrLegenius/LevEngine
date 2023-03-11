@@ -19,7 +19,8 @@ namespace Prefabs
 
         logGo->GetTransform()->SetLocalScale(Vector3::One * 5.0f);
         logGo->GetRigidbody()->gravityScale = 10;
-        logGo->GetRigidbody()->mass = 0.5f;
+        logGo->GetRigidbody()->mass = 1.0f;
+        logGo->GetRigidbody()->InitCubeInertia();
         return logGo;
 	}
 
@@ -33,19 +34,22 @@ namespace Prefabs
         gameObject->GetTransform()->SetLocalScale(Vector3::One * 0.1f);
         gameObject->GetRigidbody()->gravityScale = 10;
         gameObject->GetRigidbody()->mass = 5.0f;
+        gameObject->GetRigidbody()->InitCubeInertia();
+
         return gameObject;
     }
 
     inline std::shared_ptr<GameObject> Rock(std::vector<std::shared_ptr<GameObject>>& allObjects)
     {
-        auto collider = std::make_shared<BoxCollider>(Vector3(6.5f, 6.5f, 6.5f));
+        auto collider = std::make_shared<BoxCollider>(Vector3(3.25f, 3.25f, 3.25f));
         auto gameObject = std::make_shared<GameObject>(std::make_shared<MeshRenderer>(ShaderAssets::Unlit(), MeshAssets::Rock(), TextureAssets::Rock()), collider);
 
         allObjects.emplace_back(gameObject);
 
-        gameObject->GetTransform()->SetLocalScale(Vector3::One * 0.1f);
+        gameObject->GetTransform()->SetLocalScale(Vector3::One * 0.05f);
         gameObject->GetRigidbody()->gravityScale = 10;
-        gameObject->GetRigidbody()->mass = 10.0f;
+        gameObject->GetRigidbody()->mass = 100.0f;
+        gameObject->GetRigidbody()->InitCubeInertia();
         return gameObject;
     }
 }

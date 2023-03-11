@@ -21,7 +21,8 @@ class MeshRenderer final : public RendererComponent
 public:
 	explicit MeshRenderer(const std::shared_ptr<D3D11Shader>& shader, 
 		const std::shared_ptr<Mesh>& mesh,
-		const std::shared_ptr<Texture>& texture)
+		const std::shared_ptr<Texture>& texture,
+		float textureTiling = 1)
 		: RendererComponent(shader), m_Mesh(mesh), m_Texture(texture)
 	{
 		m_IndexBuffer = mesh->CreateIndexBuffer();
@@ -34,7 +35,7 @@ public:
 		{
 			meshVertexBuffer[i].Position = m_Mesh->GetVertex(i);
 			meshVertexBuffer[i].Normal = m_Mesh->GetNormal(i);
-			meshVertexBuffer[i].UV = m_Mesh->GetUV(i);
+			meshVertexBuffer[i].UV = m_Mesh->GetUV(i) * textureTiling;
 			//meshVertexBufferBase[i].TexTiling = 1;
 		}
 
