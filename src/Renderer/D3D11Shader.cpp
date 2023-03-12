@@ -1,5 +1,6 @@
 #include "D3D11Shader.h"
 
+#include <cassert>
 #include <d3dcompiler.h>
 #include <iostream>
 #include <wrl/client.h>
@@ -43,8 +44,10 @@ D3D11Shader::D3D11Shader(const std::string& filepath)
 	const std::wstring widestr = std::wstring(filepath.begin(), filepath.end());
 	const wchar_t* wide_filepath = widestr.c_str();
 
-	CreateVertexShader(m_VertexShader, m_VertexBC, wide_filepath);
-	CreatePixelShader(m_PixelShader, wide_filepath);
+	auto result = CreateVertexShader(m_VertexShader, m_VertexBC, wide_filepath);
+	assert(result);
+	result = CreatePixelShader(m_PixelShader, wide_filepath);
+	assert(result);
 }
 
 D3D11Shader::~D3D11Shader()

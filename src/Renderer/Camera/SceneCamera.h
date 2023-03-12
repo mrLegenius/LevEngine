@@ -15,11 +15,12 @@ public:
 
 	void SetProjectionType(const ProjectionType type) { m_ProjectionType = type; RecalculateProjection(); }
 	[[nodiscard]] ProjectionType GetProjectionType() const { return m_ProjectionType; }
-	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetViewMatrix() const { return m_ViewMatrix; }
-	[[nodiscard]] DirectX::SimpleMath::Matrix GetViewProjection() const { return m_ViewMatrix * m_Projection; }
+	[[nodiscard]] const Matrix& GetViewMatrix() const { return m_ViewMatrix; }
+	[[nodiscard]] Matrix GetViewProjection() const { return m_ViewMatrix * m_Projection; }
 
 	[[nodiscard]] const Transform& GetTransform() const { return m_Transform; }
-	void SetPosition(const DirectX::SimpleMath::Vector3& value) { m_Transform.SetWorldPosition(value); }
+	void SetPosition(const Vector3& value) { m_Transform.SetWorldPosition(value); }
+	[[nodiscard]] Vector3 GetPosition() const { return m_Transform.GetWorldPosition(); }
 	virtual void Update(float deltaTime) = 0;
 
 private:
@@ -31,7 +32,7 @@ private:
 protected:
 	Transform m_Transform;
 
-	DirectX::SimpleMath::Matrix m_ViewMatrix;
+	Matrix m_ViewMatrix;
 	virtual void UpdateView();
 
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////

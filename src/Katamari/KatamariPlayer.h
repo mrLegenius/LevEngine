@@ -11,7 +11,7 @@ public:
     KatamariPlayer(const Transform& cameraTransform)
         : GameObject(
             std::make_shared<MeshRenderer>(
-                ShaderAssets::Unlit(),
+                ShaderAssets::Lit(),
                 Mesh::CreateSphere(45),
                 TextureAssets::Rock())),
         m_CameraTransform(cameraTransform)

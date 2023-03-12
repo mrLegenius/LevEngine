@@ -11,6 +11,18 @@ static std::string GetModelPath(const std::string& name) { return (resources / "
 
 namespace ShaderAssets
 {
+    inline auto Lit()
+    {
+        static auto shader = std::make_shared<D3D11Shader>(GetShaderPath("Lit.hlsl"));
+        shader->SetLayout({
+        { ShaderDataType::Float3, "POSITION" },
+        { ShaderDataType::Float3, "NORMAL" },
+        { ShaderDataType::Float2, "UV" },
+            });
+
+        return shader;
+    }
+
 	inline auto Unlit()
 	{
         static auto shader = std::make_shared<D3D11Shader>(GetShaderPath("Unlit.hlsl"));

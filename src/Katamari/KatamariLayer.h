@@ -8,10 +8,10 @@ class KatamariLayer final : public Layer
 public:
 	void OnAttach() override;
 	void OnUpdate(float deltaTime) override;
-	void OnEvent(Event& event) override;
 
 private:
 	std::shared_ptr<OrbitCamera> m_Camera;
 	std::shared_ptr<D3D11ConstantBuffer> m_CameraConstantBuffer;
+	std::shared_ptr<D3D11ConstantBuffer> m_DirLightConstantBuffer;
 };
 

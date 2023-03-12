@@ -12,6 +12,7 @@ public:
 	void SetTarget(const std::shared_ptr<Transform>& target) { m_Target = target; }
 
 	void Update(float deltaTime) override;
+
 private:
 	std::shared_ptr<Transform> m_Target;
 
@@ -23,7 +24,7 @@ private:
 	void RotateAzimuth(float radians);
 	void RotatePolar(float radians);
 	void Zoom(float value);
-	DirectX::SimpleMath::Vector3 CalculatePosition() const;
+	Vector3 CalculatePosition() const;
 
 	void UpdateView() override;
 };

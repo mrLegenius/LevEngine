@@ -13,11 +13,19 @@
 #include "../Prefabs.h"
 #include "../Random.h"
 
-struct CameraData
+struct alignas(16) CameraData
 {
     Matrix ViewProjection;
+    Vector3 Position;
 };
 
+struct alignas(16) DirLightData
+{
+    Vector4 Direction{Vector3(-DirectX::XM_PIDIV4 / 2, -DirectX::XM_PIDIV4, 0)};
+    Vector4 Ambient{Vector3(0.3f, 0.3f, 0.3f)};
+    Vector4 Diffuse{Vector3(0.7f, 0.6f, 0.1f)};
+    Vector4 Specular{Vector3(1.0f, 1.0f, 1.0f)};
+};
 
 static std::vector<std::shared_ptr<GameObject>> gameObjects;
 
@@ -33,7 +41,7 @@ void KatamariLayer::OnAttach()
 
     for (int i = 0; i < 10; i++)
     {
-        auto go = Prefabs::Log(gameObjects);
+	   	auto go = Prefabs::Log(gameObjects);
         go->GetTransform()->SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
@@ -46,7 +54,7 @@ void KatamariLayer::OnAttach()
     auto floorCollider = std::make_shared<BoxCollider>(Vector3(150, 0.5f, 150));
     floorCollider->offset = Vector3::Down * 0.5f;
 	auto floorGo = std::make_shared<GameObject>(
-        std::make_shared<MeshRenderer>(ShaderAssets::Unlit(), Mesh::CreatePlane(3), TextureAssets::Bricks(), 50),
+        std::make_shared<MeshRenderer>(ShaderAssets::Lit(), Mesh::CreatePlane(3), TextureAssets::Bricks(), 50),
         floorCollider);
 
     floorGo->GetTransform()->SetLocalScale(Vector3(300, 300, 1));
@@ -67,6 +75,7 @@ void KatamariLayer::OnAttach()
     m_Camera->SetTarget(player->GetTransform());
 
     m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
+    m_DirLightConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof DirLightData, 2);
 }
 
 void KatamariLayer::OnUpdate(const float deltaTime)
@@ -94,8 +103,11 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     for (const auto& gameObject : gameObjects)
         gameObject->GetTransform()->RecalculateModel();
 
-    const CameraData cameraData{ m_Camera->GetViewProjection() };
+    const CameraData cameraData{ m_Camera->GetViewProjection(), m_Camera->GetPosition() };
     m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
+
+    const DirLightData dirLightData { };
+    m_DirLightConstantBuffer->SetData(&dirLightData, sizeof DirLightData);
 
     for (const auto& gameObject : gameObjects)
 	    gameObject->Draw();
@@ -105,7 +117,7 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     if (isOrtho)
     {
         m_Camera->SetProjectionType(SceneCamera::ProjectionType::Perspective);
-        const CameraData skyboxCameraData{ m_Camera->GetViewProjection() };
+        const CameraData skyboxCameraData{ m_Camera->GetViewProjection(), Vector3::Zero };
         m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
         m_Camera->SetProjectionType(SceneCamera::ProjectionType::Orthographic);
     }
@@ -115,9 +127,4 @@ void KatamariLayer::OnUpdate(const float deltaTime)
 
     //End frame
     RenderCommand::End();
-}
-
-void KatamariLayer::OnEvent(Event& event)
-{
-	
 }

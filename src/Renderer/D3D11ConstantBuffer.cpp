@@ -1,5 +1,7 @@
 #include "D3D11ConstantBuffer.h"
 
+#include <cassert>
+#include <iostream>
 #include <wrl/client.h>
 
 extern ID3D11DeviceContext* context;
@@ -17,7 +19,12 @@ D3D11ConstantBuffer::D3D11ConstantBuffer(const uint32_t size, const uint32_t slo
 	bufferDesc.StructureByteStride = 0;
 	bufferDesc.ByteWidth = size;
 
-	device->CreateBuffer(&bufferDesc, nullptr, &m_Buffer);
+	const auto result = device->CreateBuffer(&bufferDesc, nullptr, &m_Buffer);
+
+	if (FAILED(result))
+	{
+		std::cout << "Unable to create constant buffer with size " << size << " and slot " << slot << std::endl;
+	}
 }
 
 D3D11ConstantBuffer::~D3D11ConstantBuffer()
@@ -27,6 +34,8 @@ D3D11ConstantBuffer::~D3D11ConstantBuffer()
 
 void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size, uint32_t offset) const
 {
+	assert(m_Buffer && "Trying to SetData with null buffer");
+		
 	const auto actualSize = size ? size : m_Size;
 	D3D11_MAPPED_SUBRESOURCE resource;
 	context->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
