@@ -115,7 +115,7 @@ bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const 
 bool CreatePixelShader(ID3D11PixelShader*& shader, const wchar_t* shaderFilepath)
 {
 	ID3DBlob* pixelBC;
-	D3D_SHADER_MACRO defines[] = { "TEST", "1", "TCOLOR", "float4(0.0f, 1.0f, 0.0f, 1.0f)", nullptr, nullptr };
+	D3D_SHADER_MACRO defines[] = { "TEST", "1", "TCOLOR", "float4(0.0f, 1.0f, 0.0f, 1.0f)", nullptr, nullptr};
 
 	if (!CreateShader(pixelBC, shaderFilepath, defines, nullptr, "PSMain", "ps_5_0"))
 		return false;

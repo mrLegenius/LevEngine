@@ -12,6 +12,7 @@
 #include "KatamariPlayer.h"
 #include "../Prefabs.h"
 #include "../Random.h"
+#define MAX_POINT_LIGHTS 10
 
 struct alignas(16) CameraData
 {
@@ -19,12 +20,33 @@ struct alignas(16) CameraData
     Vector3 Position;
 };
 
-struct alignas(16) DirLightData
+struct DirLightData
 {
     Vector4 Direction{Vector3(-DirectX::XM_PIDIV4 / 2, -DirectX::XM_PIDIV4, 0)};
     Vector4 Ambient{Vector3(0.3f, 0.3f, 0.3f)};
     Vector4 Diffuse{Vector3(0.7f, 0.6f, 0.1f)};
     Vector4 Specular{Vector3(1.0f, 1.0f, 1.0f)};
+};
+
+struct PointLightData
+{
+    Vector4 Position; 
+
+    float Constant = 1.0f;
+    float Linear = 0.09f;
+    float Quadratic = 0.032f;
+    float _pad = 0;
+
+    Vector4 Ambient{ Vector3(0.1f, 0.1f, 0.1f) };
+    Vector4 Diffuse{ Vector3(1.0f, 0.0f, 0.0f) };
+    Vector4 Specular{ Vector3(1.0f, 0.0f, 0.0f) };
+};
+
+struct alignas(16) LightningData
+{
+    DirLightData DirLight;
+    PointLightData PointLightsData[MAX_POINT_LIGHTS];
+    int PointLightsCount = 0;
 };
 
 static std::vector<std::shared_ptr<GameObject>> gameObjects;
@@ -75,7 +97,7 @@ void KatamariLayer::OnAttach()
     m_Camera->SetTarget(player->GetTransform());
 
     m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
-    m_DirLightConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof DirLightData, 2);
+    m_DirLightConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof LightningData, 2);
 }
 
 void KatamariLayer::OnUpdate(const float deltaTime)
@@ -106,8 +128,15 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     const CameraData cameraData{ m_Camera->GetViewProjection(), m_Camera->GetPosition() };
     m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
 
-    const DirLightData dirLightData { };
-    m_DirLightConstantBuffer->SetData(&dirLightData, sizeof DirLightData);
+    auto playerLight = PointLightData{};
+    playerLight.Position = static_cast<Vector4>(player->GetTransform()->GetWorldPosition());
+    const LightningData lightningData
+    {
+        DirLightData{},
+        {playerLight},
+    	1,
+    };
+    m_DirLightConstantBuffer->SetData(&lightningData, sizeof LightningData);
 
     for (const auto& gameObject : gameObjects)
 	    gameObject->Draw();

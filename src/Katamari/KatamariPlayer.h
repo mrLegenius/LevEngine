@@ -42,10 +42,10 @@ public:
 
         if (Input::IsKeyPressed(KeyCode::Tab))
         {
-	        for (auto child : m_Transform->GetChildren())
-	        {
-                child->SetParent(nullptr);
-	        }
+            while(m_Transform->GetChildrenCount())
+            {
+                (*m_Transform->GetChildren().begin())->SetParent(nullptr);
+            }
         }
     }
 
