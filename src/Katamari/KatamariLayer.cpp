@@ -30,16 +30,16 @@ struct DirLightData
 
 struct PointLightData
 {
-    Vector4 Position; 
+    alignas(16) Vector3 Position;
 
     float Constant = 1.0f;
     float Linear = 0.09f;
     float Quadratic = 0.032f;
     float _pad = 0;
 
-    Vector4 Ambient{ Vector3(0.1f, 0.1f, 0.1f) };
-    Vector4 Diffuse{ Vector3(1.0f, 0.0f, 0.0f) };
-    Vector4 Specular{ Vector3(1.0f, 0.0f, 0.0f) };
+    alignas(16) Vector3 Ambient{ 0.1f, 0.1f, 0.1f };
+    alignas(16) Vector3 Diffuse{ 1.0f, 0.0f, 0.0f };
+    alignas(16) Vector3 Specular{ 1.0f, 0.0f, 0.0f };
 };
 
 struct alignas(16) LightningData
@@ -129,7 +129,8 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
 
     auto playerLight = PointLightData{};
-    playerLight.Position = static_cast<Vector4>(player->GetTransform()->GetWorldPosition());
+    playerLight.Position = player->GetTransform()->GetWorldPosition();
+
     const LightningData lightningData
     {
         DirLightData{},
