@@ -18,8 +18,8 @@ private:
 
 	float m_Distance = 10;
 
-	float m_AzimuthAngle;
-	float m_PolarAngle;
+	float m_AzimuthAngle = 0;
+	float m_PolarAngle = DirectX::XM_PIDIV2;
 
 	void RotateAzimuth(float radians);
 	void RotatePolar(float radians);
