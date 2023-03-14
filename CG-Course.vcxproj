@@ -89,7 +89,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalUsingDirectories>C:\Projects\C++\CG-Course\external\stb;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalIncludeDirectories>C:\Projects\C++\CG-Course\src;C:\Projects\C++\CG-Course\external\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,6 +173,7 @@
     <ClCompile Include="src\Kernel\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="external\entt\entt.hpp" />
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Components\Collider.h" />
