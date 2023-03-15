@@ -33,7 +33,7 @@ struct PointLight
 	float3 specular;
 };
 
-cbuffer ModelConstantBuffer : register(b2)
+cbuffer LightningConstantBuffer : register(b2)
 {
 	DirLight dirLight;
 	PointLight pointLights[MAX_POINT_LIGHTS];
@@ -120,7 +120,7 @@ float3 CalcPointLight(PointLight light, float3 normal, float3 fragPos, float3 vi
 		light.quadratic * (distance * distance));
 	// combine results
 	float3 ambient = light.ambient * my_texture.Sample(my_sampler, uv).rgb;
-	float3 diffuse = light.diffuse * diff* my_texture.Sample(my_sampler, uv).rgb;
+	float3 diffuse = light.diffuse * diff * my_texture.Sample(my_sampler, uv).rgb;
 	float3 specular = light.specular * spec* my_texture.Sample(my_sampler, uv).rgb;
 
 	ambient *= attenuation;

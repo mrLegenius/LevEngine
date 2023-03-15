@@ -10,7 +10,7 @@
 class RendererComponent
 {
 public:
-	virtual void Draw(const std::shared_ptr<Transform>& transform)
+	virtual void Draw(const Transform& transform)
 	{
 		Prepare(transform);
 		Bind();
@@ -29,7 +29,7 @@ protected:
 		m_Shader->Bind();
 	}
 
-	virtual void Prepare(const std::shared_ptr<Transform>& transform) = 0;
+	virtual void Prepare(const Transform& transform) = 0;
 
 	std::shared_ptr<D3D11Shader> m_Shader;
 	std::shared_ptr<D3D11VertexBuffer> m_VertexBuffer;

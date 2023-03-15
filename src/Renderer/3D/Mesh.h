@@ -5,9 +5,19 @@
 
 #include "../D3D11IndexBuffer.h"
 #include "../D3D11VertexBuffer.h"
+#include "Kernel/PointerUtils.h"
 
+using namespace DirectX::SimpleMath;
 class Mesh
 {
+	struct MeshVertex
+	{
+		Vector3 Position;
+		Vector3 Normal;
+		Vector2 UV;
+		//float TexTiling;
+	};
+
 public:
 	static std::shared_ptr<Mesh> CreatePlane(int resolution);
 	static std::shared_ptr<Mesh> CreateSphere(const uint32_t sliceCount);
@@ -27,12 +37,12 @@ public:
 	}
 
 	[[nodiscard]] uint32_t GetVerticesCount() const { return vertices.size(); }
-	[[nodiscard]] DirectX::SimpleMath::Vector3 GetVertex(uint32_t index) const { return vertices[index]; }
-	void AddVertex(const DirectX::SimpleMath::Vector3& value) { vertices.emplace_back(value); }
+	[[nodiscard]] Vector3 GetVertex(uint32_t index) const { return vertices[index]; }
+	void AddVertex(const Vector3& value) { vertices.emplace_back(value); }
 
 	[[nodiscard]] uint32_t GetIndicesCount() const { return indices.size(); }
 	[[nodiscard]] uint32_t GetIndex(uint32_t index) const { return indices[index]; }
-	void AddTriangle(const DirectX::SimpleMath::Vector3& value)
+	void AddTriangle(const Vector3& value)
 	{
 		indices.emplace_back(value.x);
 		indices.emplace_back(value.y);
@@ -41,17 +51,37 @@ public:
 
 	void AddIndex(const uint32_t& value) { indices.emplace_back(value); }
 
-	[[nodiscard]] DirectX::SimpleMath::Vector2 GetUV(uint32_t index) const { return uvs[index]; }
-	void AddUV(const DirectX::SimpleMath::Vector2& value) { uvs.emplace_back(value); }
+	[[nodiscard]] Vector2 GetUV(uint32_t index) const { return uvs[index]; }
+	void AddUV(const Vector2& value) { uvs.emplace_back(value); }
 
-	[[nodiscard]] DirectX::SimpleMath::Vector3 GetNormal(uint32_t index) const { return normals[index]; }
-	void AddNormal(const DirectX::SimpleMath::Vector3& value) { normals.emplace_back(value); }
+	[[nodiscard]] Vector3 GetNormal(uint32_t index) const { return normals[index]; }
+	void AddNormal(const Vector3& value) { normals.emplace_back(value); }
+	void Init(const BufferLayout& layout)
+	{
+		IndexBuffer = CreateIndexBuffer();
+
+		const auto verticesCount = GetVerticesCount();
+		const auto meshVertexBuffer = new MeshVertex[verticesCount];
+
+		for (uint32_t i = 0; i < verticesCount; i++)
+		{
+			meshVertexBuffer[i].Position = GetVertex(i);
+			meshVertexBuffer[i].Normal = GetNormal(i);
+			meshVertexBuffer[i].UV = GetUV(i);
+		}
+
+		VertexBuffer = CreateVertexBuffer(layout, reinterpret_cast<float*>(meshVertexBuffer));
+
+		delete[] meshVertexBuffer;
+	}
+
+	Ref<D3D11IndexBuffer> IndexBuffer;
+	Ref<D3D11VertexBuffer> VertexBuffer;
 
 private:
-	std::vector<DirectX::SimpleMath::Vector3> vertices;
-	std::vector<DirectX::SimpleMath::Vector2> uvs;
+	std::vector<Vector3> vertices;
+	std::vector<Vector2> uvs;
 	std::vector<uint32_t> indices;
-	std::vector<DirectX::SimpleMath::Vector3> normals;
-
+	std::vector<Vector3> normals;
 };
 

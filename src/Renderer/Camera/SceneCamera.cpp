@@ -5,12 +5,6 @@ SceneCamera::SceneCamera()
 	RecalculateProjection();
 }
 
-void SceneCamera::UpdateView()
-{
-	m_ViewMatrix = m_Transform.GetModel();
-	m_ViewMatrix = m_ViewMatrix.Invert();
-}
-
 void SceneCamera::SetOrthographic(const float size, const float nearClip, const float farClip)
 {
 	m_OrthographicSize = size;
@@ -38,16 +32,10 @@ void SceneCamera::SetViewportSize(const uint32_t width, const uint32_t height)
 
 void SceneCamera::RecalculateProjection()
 {
-	if (m_ProjectionType == ProjectionType::Orthographic)
-	{
-		const float horizontal = m_OrthographicSize * 800;
-		const float vertical = m_AspectRatio * horizontal;
+	const float horizontal = m_OrthographicSize * 800;
+	const float vertical = m_AspectRatio * horizontal;
 
-		m_Projection = DirectX::SimpleMath::Matrix::CreateOrthographic(vertical, horizontal,
-		                                                               m_OrthographicNear, m_OrthographicFar);
-	}
-	else
-	{
-		m_Projection = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(m_FieldOfView, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
-	}
+	m_OrthographicProjection = Matrix::CreateOrthographic(vertical, horizontal, m_OrthographicNear, m_OrthographicFar);
+
+	m_PerspectiveProjection = Matrix::CreatePerspectiveFieldOfView(m_FieldOfView, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
 }

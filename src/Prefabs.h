@@ -1,15 +1,14 @@
 #pragma once
 #include "GameObject.h"
 #include "Assets.h"
-#include "Components/MeshRenderer.h"
-
+/*
 namespace Prefabs
 {
 	inline std::shared_ptr<GameObject> Log(std::vector<std::shared_ptr<GameObject>>& allObjects)
 	{
         auto collider = std::make_shared<BoxCollider>(Vector3(1, 2, 1));
         auto logGo = std::make_shared<GameObject>(nullptr, collider);
-        auto logMesh = std::make_shared<GameObject>(std::make_shared<MeshRenderer>(ShaderAssets::Lit(), MeshAssets::Log(), TextureAssets::Log()));
+        //auto logMesh = std::make_shared<GameObject>(std::make_shared<MeshRenderer>(ShaderAssets::Lit(), MeshAssets::Log(), TextureAssets::Log()));
         logMesh->GetTransform()->SetParent(logGo->GetTransform().get());
         logMesh->GetRigidbody()->enabled = false;
         logMesh->GetTransform()->SetPositionY(-0.5f);
@@ -53,3 +52,4 @@ namespace Prefabs
         return gameObject;
     }
 }
+*/

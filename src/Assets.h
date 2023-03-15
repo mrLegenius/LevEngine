@@ -2,6 +2,8 @@
 #include <string>
 #include <filesystem>
 #include "Katamari/ObjLoader.h"
+#include "Renderer/D3D11Texture.h"
+#include "Renderer/D3D11TextureCube.h"
 
 static std::filesystem::path resources = "./resources";
 
@@ -125,4 +127,10 @@ namespace MeshAssets
         static auto mesh = ObjLoader().LoadMesh(GetModelPath("rock.obj"));
         return mesh;
     }
+
+    inline auto Cube()
+	{
+        static auto mesh = Mesh::CreateCube();
+        return mesh;
+	}
 }
