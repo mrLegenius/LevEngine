@@ -1,6 +1,7 @@
 #pragma once
 #include <entt/entt.hpp>
 
+#include "System.h"
 #include "Components/Components.h"
 #include "Kernel/PointerUtils.h"
 #include "Kernel/UUID.h"
@@ -15,6 +16,7 @@ public:
 
 	void OnUpdate(float deltaTime);
 	void OnPhysics(float deltaTime);
+	void OnLateUpdate(float deltaTime);
 	void CollisionDetectionSystem();
 	void UpdateVelocitySystem(float deltaTime);
 	void UpdatePositionSystem(float deltaTime);
@@ -35,6 +37,16 @@ public:
 
 	void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 	Entity GetMainCameraEntity();
+
+	void RegisterUpdateSystem(Ref<System> system)
+	{
+		m_UpdateSystems.emplace_back(system);
+	}
+
+	void RegisterLateUpdateSystem(Ref<System> system)
+	{
+		m_LateUpdateSystems.emplace_back(system);
+	}
 private:
 	entt::registry m_Registry;
 	uint32_t m_ViewportWidth = 0;
@@ -43,7 +55,8 @@ private:
 	friend class Entity;
 
 	void MeshRenderSystem();
-	void OrbitCameraSystem(float deltaTime);
-
 	void SkyboxRenderSystem();
+
+	std::vector<Ref<System>> m_UpdateSystems;
+	std::vector<Ref<System>> m_LateUpdateSystems;
 };

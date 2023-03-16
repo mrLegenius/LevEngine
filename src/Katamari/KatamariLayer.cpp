@@ -52,14 +52,12 @@ void KatamariLayer::OnAttach()
     playerRb.angularDamping = 0.9f;
     playerRb.InitSphereInertia(playerTransform);
     player.AddComponent<SphereCollider>();
+    auto& p = player.AddComponent<KatamariPlayerComponent>();
 
     auto camera = m_Scene->CreateEntity("Camera");
     camera.AddComponent<OrbitCamera>().SetTarget(playerTransform);
     camera.AddComponent<CameraComponent>();
 
-    //m_Camera->SetTarget(&player.GetComponent<Transform>());
-    //m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
-    //m_DirLightConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof LightningData, 2);
     auto skybox = m_Scene->CreateEntity("Skybox");
     skybox.AddComponent<SkyboxRendererComponent>(SkyboxAssets::Test());
 
@@ -70,6 +68,9 @@ void KatamariLayer::OnAttach()
     dirLightComponent.Ambient = Vector3{ 0.3f, 0.3f, 0.3f };
     dirLightComponent.Diffuse = Vector3{ 1.0f, 1.0f, 1.0f };
     dirLightComponent.Specular = Vector3{ 1.0f, 1.0f, 1.0f };
+
+    m_Scene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
+    m_Scene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
 }
 
 void KatamariLayer::OnEvent(Event& e)
@@ -87,5 +88,6 @@ void KatamariLayer::OnUpdate(const float deltaTime)
 
     m_Scene->OnUpdate(deltaTime);
     m_Scene->OnPhysics(deltaTime);
+    m_Scene->OnLateUpdate(deltaTime);
     m_Scene->OnRender();
 }

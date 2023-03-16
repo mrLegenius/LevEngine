@@ -1,8 +1,7 @@
 #pragma once
-#include <memory>
-
-#include "Kernel/PointerUtils.h"
+#include "entt/entt.hpp"
 #include "Renderer/Camera/SceneCamera.h"
+#include "Scene/System.h"
 
 class OrbitCamera final
 {
@@ -31,4 +30,21 @@ private:
 	void Zoom(float value);
 	Vector3 CalculatePosition() const;
 	Matrix CalculateViewMatrix() const;
+};
+
+class OrbitCameraSystem : public System
+{
+	void Update(const float deltaTime, entt::registry& registry) override
+	{
+		const auto view = registry.view<Transform, OrbitCamera>();
+		for (const auto entity : view)
+		{
+			auto [transform, camera] = view.get<Transform, OrbitCamera>(entity);
+
+			camera.Update(deltaTime);
+
+			transform.SetWorldPosition(camera.position);
+			transform.SetWorldRotation(camera.rotation);
+		}
+	}
 };

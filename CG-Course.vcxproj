@@ -220,6 +220,7 @@
     <ClInclude Include="src\Renderer\Buffer.h" />
     <ClInclude Include="src\Renderer\D3D11Shader.h" />
     <ClInclude Include="src\Kernel\Window.h" />
+    <ClInclude Include="src\Scene\System.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

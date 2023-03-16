@@ -21,7 +21,10 @@ Scene::~Scene()
 
 void Scene::OnUpdate(const float deltaTime)
 {
-    OrbitCameraSystem(deltaTime);
+	for (const auto system : m_UpdateSystems)
+	{
+        system->Update(deltaTime, m_Registry);
+	}
 }
 
 static float dTOffset = 0;
@@ -63,6 +66,14 @@ void Scene::OnPhysics(const float deltaTime)
     ClearForcesSystem();	//Once we've finished with the forces, reset them to zero
 
     //UpdateCollisionList(); //Remove any old collisions
+}
+
+void Scene::OnLateUpdate(const float deltaTime)
+{
+    for (const auto system : m_LateUpdateSystems)
+    {
+        system->Update(deltaTime, m_Registry);
+    }
 }
 
 void Scene::CollisionDetectionSystem()
@@ -196,6 +207,8 @@ void Scene::OnRender()
 
             if (camera.isMain)
             {
+                using namespace entt::literals;
+                m_Registry.ctx().emplace_as<Entity>("mainCameraEntity"_hs, Entity(entt::handle(m_Registry, entity)));
                 mainCamera = &camera.camera;
                 cameraTransform = transform.GetModel().Invert();
                 cameraPosition = transform.GetWorldPosition();
@@ -260,20 +273,6 @@ void Scene::MeshRenderSystem()
     {
         auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
         Renderer3D::DrawMesh(transform.GetModel(), mesh);
-    }
-}
-
-void Scene::OrbitCameraSystem(const float deltaTime)
-{
-    auto view = m_Registry.view<Transform, OrbitCamera>();
-    for (const auto entity : view)
-    {
-        auto [transform, camera] = view.get<Transform, OrbitCamera>(entity);
-
-        camera.Update(deltaTime);
-
-		transform.SetWorldPosition(camera.position);
-		transform.SetWorldRotation(camera.rotation);
     }
 }
 

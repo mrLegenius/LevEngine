@@ -13,15 +13,15 @@ public:
 	template<typename T>
 	bool HasComponent()
 	{
-		//LEV_CORE_ASSERT(m_Scene->m_Registry.valid(m_EntityID), "Entity is not valid!");
+		assert(m_Handle.valid(), "Entity is not valid!");
 		return m_Handle.any_of<T>();
 	}
 
 	template<typename T, typename ... Args>
 	T& AddComponent(Args&& ... args)
 	{
-		//LEV_CORE_ASSERT(m_Scene->m_Registry.valid(m_EntityID), "Entity is not valid!");
-		//LEV_CORE_ASSERT(!HasComponent<T>(), "Entity already has this component!");
+		assert(m_Handle.valid(), "Entity is not valid!");
+		assert(!HasComponent<T>(), "Entity already has this component!");
 
 		T& component = m_Handle.emplace<T>(std::forward<Args>(args)...);
 		return component;
@@ -37,8 +37,8 @@ public:
 	template<typename T>
 	T& GetComponent()
 	{
-		//LEV_CORE_ASSERT(m_Scene->m_Registry.valid(m_EntityID), "Entity is not valid!");
-		//LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component!");
+		assert(m_Handle.valid(), "Entity is not valid!");
+		assert(HasComponent<T>(), "Entity does not have this component!");
 
 		return m_Handle.get<T>();
 	}
@@ -46,8 +46,8 @@ public:
 	template<typename T>
 	void RemoveComponent()
 	{
-		//LEV_CORE_ASSERT(m_Scene->m_Registry.valid(m_EntityID), "Entity is not valid!");
-		//LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component!");
+		assert(m_Handle.valid(), "Entity is not valid!");
+		assert(HasComponent<T>(), "Entity does not have this component!");
 
 		m_Handle.remove<T>();
 	}
