@@ -9,9 +9,9 @@ class OrbitCamera final
 public:
 	OrbitCamera() = default;
 	OrbitCamera(const OrbitCamera&) = default;
-	OrbitCamera(const Ref<Transform>& target);
+	OrbitCamera(Transform& target);
 	
-	void SetTarget(const Ref<Transform>& target) { m_Target = target; }
+	void SetTarget(Transform& target) { m_Target = &target; }
 
 	void Update(float deltaTime);
 
@@ -19,7 +19,7 @@ public:
 	Quaternion rotation;
 
 private:
-	Ref<Transform> m_Target;
+	Transform* m_Target;
 
 	float m_Distance = 10;
 

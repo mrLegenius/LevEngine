@@ -4,7 +4,7 @@
 
 #include "Input/Input.h"
 
-OrbitCamera::OrbitCamera(const Ref<Transform>& target)
+OrbitCamera::OrbitCamera(Transform& target)
 {
 	SetTarget(target);
 }

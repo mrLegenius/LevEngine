@@ -2,17 +2,14 @@
 
 #include "ObjLoader.h"
 #include "../Kernel/Application.h"
-#include "../GameObject.h"
 #include "../OrbitCamera.h"
 #include "../Assets.h"
-#include "../Rigidbody.h"
-#include "../Physics.h"
+#include "Physics/Physics.h"
 #include "KatamariPlayer.h"
 #include "../Prefabs.h"
 #include "../Random.h"
+#include "Renderer/RenderCommand.h"
 #include "Scene/Entity.h"
-
-static std::vector<std::shared_ptr<GameObject>> gameObjects;
 
 void KatamariLayer::OnAttach()
 {
@@ -40,42 +37,33 @@ void KatamariLayer::OnAttach()
     floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreatePlane(3), TextureAssets::Bricks());
 	floor.GetComponent<Transform>().SetLocalScale(Vector3(300, 300, 1));
     floor.GetComponent<Transform>().SetWorldRotation(Vector3(90, 0, 0));
+    auto& floorRigibody = floor.AddComponent<Rigidbody>();
+    floorRigibody.bodyType = BodyType::Static;
+    auto& floorCollider = floor.AddComponent<BoxCollider>();
+    floorCollider.extents = Vector3(150, 0.5f, 150);
+    floorCollider.offset = Vector3::Down * 0.5f;
 
-  /*  auto player = m_Scene->CreateEntity("Player");
-    player.AddComponent<MeshRenderer>(ShaderAssets::Lit(), Mesh::CreateSphere(45), TextureAssets::Rock());
-    player.GetComponent<Transform>().SetLocalPosition(Vector3::Up * 100);*/
-
- //   auto floorCollider = std::make_shared<BoxCollider>(Vector3(150, 0.5f, 150));
- //   floorCollider->offset = Vector3::Down * 0.5f;
-	//auto floorGo = std::make_shared<GameObject>(
- //       std::make_shared<MeshRenderer>(ShaderAssets::Lit(), Mesh::CreatePlane(3), TextureAssets::Bricks(), 50),
- //       floorCollider);
-
- //   floorGo->GetTransform()->SetLocalScale(Vector3(300, 300, 1));
- //   floorGo->GetTransform()->SetWorldRotation(Vector3(90, 0, 0));
- //   floorGo->GetRigidbody()->bodyType = BodyType::Static;
- //   gameObjects.emplace_back(floorGo);
+    auto player = m_Scene->CreateEntity("Player");
+    player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45), TextureAssets::Rock());
+    auto& playerTransform = player.GetComponent<Transform>();
+    playerTransform.SetLocalPosition(Vector3::Up * 100);
+    auto& playerRb = player.AddComponent<Rigidbody>();
+    playerRb.gravityScale = 10;
+    playerRb.angularDamping = 0.9f;
+    playerRb.InitSphereInertia(playerTransform);
+    player.AddComponent<SphereCollider>();
 
     auto camera = m_Scene->CreateEntity("Camera");
-    camera.AddComponent<OrbitCamera>();
+    camera.AddComponent<OrbitCamera>().SetTarget(playerTransform);
     camera.AddComponent<CameraComponent>();
 
-    /*player = std::make_shared<KatamariPlayer>(m_Camera->GetTransform());
-    player->GetTransform()->SetLocalPosition(Vector3::Up * 100);
-    player->GetRigidbody()->gravityScale = 10;
-    player->GetRigidbody()->angularDamping = 0.9f;
-    player->GetRigidbody()->InitSphereInertia();
-    gameObjects.emplace_back(player);*/
-
     //m_Camera->SetTarget(&player.GetComponent<Transform>());
-
     //m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
     //m_DirLightConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof LightningData, 2);
     auto skybox = m_Scene->CreateEntity("Skybox");
     skybox.AddComponent<SkyboxRendererComponent>(SkyboxAssets::Test());
 
     auto dirLight = m_Scene->CreateEntity("DirLight");
-
     auto& dirLightTransform = dirLight.GetComponent<Transform>();
     dirLightTransform.SetLocalRotation(Vector3(45, -90, 0));
     auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
@@ -84,22 +72,20 @@ void KatamariLayer::OnAttach()
     dirLightComponent.Specular = Vector3{ 1.0f, 1.0f, 1.0f };
 }
 
+void KatamariLayer::OnEvent(Event& e)
+{
+	
+}
+
 void KatamariLayer::OnUpdate(const float deltaTime)
 {
-    for (const auto& gameObject : gameObjects)
-        gameObject->Update(deltaTime);
-
-    UpdatePhysics(deltaTime, gameObjects);
-
     //window.DisableCursor();
     
     float color[] = { 0.1f, 0.1f, 0.1f, 1.0f };
     RenderCommand::SetClearColor(color);
     RenderCommand::Clear();
 
-    //Draw
-    m_Scene->OnUpdateRuntime(deltaTime);
-    m_Scene->OnRenderRuntime();
-
-    //End frame
+    m_Scene->OnUpdate(deltaTime);
+    m_Scene->OnPhysics(deltaTime);
+    m_Scene->OnRender();
 }

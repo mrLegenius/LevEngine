@@ -59,7 +59,7 @@ public:
 	template <typename T>
 	void AddScript();
 
-	UUID GetUUID() { return GetComponent<IDComponent>().ID; }
+	LevEngine::UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 	const std::string& GetName() { return GetComponent<TagComponent>().tag; }
 
 	operator bool() const { return m_EntityID != entt::null; }

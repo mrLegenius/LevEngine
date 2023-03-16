@@ -4,17 +4,18 @@
 #include <string>
 
 #include "OrbitCamera.h"
-//#include "Transform.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Renderer/D3D11Texture.h"
 #include "Renderer/3D/Mesh.h"
 #include "Renderer/D3d11Shader.h"
 #include "Kernel/UUID.h"
+#include "Physics/Components/Collider.h"
+#include "Physics/Components/Rigidbody.h"
 #include "Renderer/D3D11TextureCube.h"
 
 struct IDComponent
 {
-	UUID ID;
+	LevEngine::UUID ID;
 
 	IDComponent() = default;
 	IDComponent(const IDComponent&) = default;
@@ -92,6 +93,10 @@ struct ComponentGroup { };
 
 using AllComponents = ComponentGroup<
 	Transform,
+	Rigidbody,
+	BoxCollider,
+	SphereCollider,
+	MeshRendererComponent,
 	SkyboxRendererComponent,
 	OrbitCamera,
 	CameraComponent,

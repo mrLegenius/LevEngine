@@ -1,6 +1,6 @@
 #include "Scene.h"
 
-#include <GameObject.h>
+#include <Physics/Physics.h>
 
 #include "Assets.h"
 #include "Components/Components.h"
@@ -8,10 +8,10 @@
 #include "OrbitCamera.h"
 #include "Components/SkyboxRenderer.h"
 #include "Kernel/Application.h"
+#include "Physics/Components/Rigidbody.h"
 #include "Renderer/Renderer3D.h"
 
-std::shared_ptr<D3D11ConstantBuffer> m_DirLightConstantBuffer;
-
+struct CollisionInfo;
 using namespace DirectX::SimpleMath;
 
 Scene::~Scene()
@@ -19,68 +19,159 @@ Scene::~Scene()
     m_Registry.clear();
 }
 
-void Scene::OnUpdateRuntime(const float deltaTime)
+void Scene::OnUpdate(const float deltaTime)
 {
     OrbitCameraSystem(deltaTime);
 }
 
-void Scene::Render()
+static float dTOffset = 0;
+int numCollisionFrames = 10;
+void Scene::OnPhysics(const float deltaTime)
 {
-    SceneCamera* mainCamera = nullptr;
-    Matrix viewMatrix;
-    Vector3 cameraPosition;
+    constexpr float iterationDt = 1.0f / 120.0f; //Ideally we'll have 120 physics updates a second 
+    dTOffset += deltaTime; //We accumulate time delta here - there might be remainders from previous frame!
 
+    const int iterationCount = static_cast<int>(dTOffset / iterationDt); //And split it up here
+
+    const float subDt = deltaTime / static_cast<float>(iterationCount);	//How many seconds per iteration do we get?
+
+    UpdateVelocitySystem(deltaTime);
+
+    for (int i = 0; i < iterationCount; ++i) 
     {
-        auto view = m_Registry.view<Transform>();
-        for (auto entity : view)
-        {
-            auto& transform = view.get<Transform>(entity);
-            transform.RecalculateModel();
+        /*if (useBroadPhase) { //TODO: Add optimization
+            BroadPhase();
+            NarrowPhase();
         }
+        else {*/
+        CollisionDetectionSystem();
+        //}
+
+        //This is our simple iterative solver - 
+        //we just run things multiple times, slowly moving things forward
+        //and then rechecking that the constraints have been met
+
+        constexpr int constraintIterationCount = 10;
+        const float constraintDt = subDt / static_cast<float>(constraintIterationCount);
+
+        for (int j = 0; j < constraintIterationCount; ++j) {
+            //UpdateConstraints(constraintDt);
+            UpdatePositionSystem(constraintDt);
+        }
+        dTOffset -= iterationDt;
     }
+    ClearForcesSystem();	//Once we've finished with the forces, reset them to zero
 
-    //Render Scene
+    //UpdateCollisionList(); //Remove any old collisions
+}
+
+void Scene::CollisionDetectionSystem()
+{
+    auto view = m_Registry.view<Rigidbody>();
+    const auto first = view.begin();
+    const auto last = view.end();
+
+    for (auto i = first; i != last; ++i)
     {
-        const auto group = m_Registry.view<Transform, CameraComponent>();
-        for (auto entity : group)
+        for (auto j = first; j != last; ++j)
         {
-            auto [transform, camera] = group.get<Transform, CameraComponent>(entity);
+            if (i == j) continue;
 
-            if (camera.isMain)
+            auto& rigidbody1 = view.get<Rigidbody>(*i);
+            auto& rigidbody2 = view.get<Rigidbody>(*j);
+
+            if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
+
+            if (CollisionInfo info; Physics::HasIntersection(Entity(*i, this), Entity(*j, this), info))
             {
-                mainCamera = &camera.camera;
-                viewMatrix = transform.GetModel().Invert();
-                cameraPosition = transform.GetWorldPosition();
-                break;
+                Physics::HandleCollision(info);
+
+                if (auto exist = allCollisions.find(info); exist == allCollisions.end())
+                {
+                    info.framesLeft = numCollisionFrames;
+                    allCollisions.insert(info);
+                }
+                else
+                {
+                    exist->framesLeft = numCollisionFrames - 1;
+                }
             }
         }
     }
-
-    if (!mainCamera) return;
-
-    Renderer3D::BeginScene(*mainCamera, viewMatrix, cameraPosition);
-
-    //m_DirLightConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof LightningData, 2);
-
-    //auto& window = Application::Get().GetWindow();
-    //mainCamera->SetViewportSize(window.GetWidth(), window.GetHeight());
-
-    //const LightningData lightningData
-    //{
-    //    DirLightData{},
-    //    {},
-    //    0,
-    //};
-    //m_DirLightConstantBuffer->SetData(&lightningData, sizeof LightningData);
-
-    MeshRenderSystem();
-
-    SkyboxRenderSystem();
-
-    Renderer3D::EndScene();
 }
 
-void Scene::OnRenderRuntime()
+void Scene::UpdateVelocitySystem(const float deltaTime)
+{
+    auto view = m_Registry.view<Transform, Rigidbody>();
+    for (auto entity : view)
+    {
+        auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
+
+        if (rigidbody.bodyType != BodyType::Dynamic || !rigidbody.enabled) continue;
+
+        const auto inverseMass = rigidbody.GetInverseMass();
+        Vector3 acceleration = rigidbody.force * inverseMass;
+
+        if (inverseMass > 0)
+            acceleration += gravity * rigidbody.gravityScale;
+
+        rigidbody.velocity += acceleration * deltaTime;
+
+        rigidbody.UpdateInertiaTensor(transform);
+
+        const Vector3 angularAcceleration = Vector3::Transform(rigidbody.torque, rigidbody.GetInertiaTensor());
+        //const Vector3 angularAcceleration = torque;
+
+        rigidbody.angularVelocity += angularAcceleration * deltaTime;
+    }
+}
+
+void Scene::UpdatePositionSystem(const float deltaTime)
+{
+	const auto view = m_Registry.view<Transform, Rigidbody>();
+    for (const auto entity : view)
+    {
+        auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
+
+        if (rigidbody.bodyType != BodyType::Dynamic || !rigidbody.enabled) return;
+
+        //Linear movement
+        Vector3 position = transform.GetLocalPosition();
+        position += rigidbody.velocity * deltaTime;
+        transform.SetLocalPosition(position);
+
+        // Linear Damping
+        const float dampingFactor = 1.0f - rigidbody.damping;
+        const float frameDamping = powf(dampingFactor, deltaTime);
+        rigidbody.velocity *= frameDamping;
+
+        //Angular movement
+        Quaternion orientation = transform.GetLocalOrientation();
+
+        orientation += orientation * Quaternion(rigidbody.angularVelocity * deltaTime * 0.5f, 0.0f);
+        orientation.Normalize();
+
+        transform.SetLocalRotation(orientation);
+
+        // Angular Damping
+        const float angularDampingFactor = 1.0f - rigidbody.angularDamping;
+        const float angularFrameDamping = powf(angularDampingFactor, deltaTime);
+        rigidbody.angularVelocity *= angularFrameDamping;
+    }
+}
+
+void Scene::ClearForcesSystem()
+{
+    const auto view = m_Registry.view<Rigidbody>();
+    for (const auto entity : view)
+    {
+        auto& rigidbody = view.get<Rigidbody>(entity);
+
+        rigidbody.ClearForces();
+    }
+}
+
+void Scene::OnRender()
 {
     SceneCamera* mainCamera = nullptr;
     Matrix cameraTransform;
@@ -186,29 +277,28 @@ void Scene::OrbitCameraSystem(const float deltaTime)
     }
 }
 
-
 void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
 {
     m_ViewportWidth = width;
     m_ViewportHeight = height;
 
-    auto view = m_Registry.view<CameraComponent>();
+    const auto view = m_Registry.view<CameraComponent>();
     for (auto entity : view)
     {
         auto& camera = view.get<CameraComponent>(entity);
 
         if (camera.fixedAspectRatio) continue;
 
-        //camera.camera.SetViewportSize(width, height);
+        camera.camera.SetViewportSize(width, height);
     }
 }
 
 Entity Scene::CreateEntity(const std::string& name)
 {
-    return CreateEntity(UUID(), name);
+    return CreateEntity(LevEngine::UUID(), name);
 }
 
-Entity Scene::CreateEntity(UUID uuid, const std::string& name)
+Entity Scene::CreateEntity(LevEngine::UUID uuid, const std::string& name)
 {
     auto entity = Entity(m_Registry.create(), this);
     entity.AddComponent<IDComponent>(uuid);
@@ -355,5 +445,20 @@ void Scene::OnComponentAdded<OrbitCamera>(Entity entity, OrbitCamera& component)
 
 template <>
 void Scene::OnComponentAdded<SkyboxRenderer>(Entity entity, SkyboxRenderer& component)
+{
+}
+
+template <>
+void Scene::OnComponentAdded<Rigidbody>(Entity entity, Rigidbody& component)
+{
+}
+
+template <>
+void Scene::OnComponentAdded<BoxCollider>(Entity entity, BoxCollider& component)
+{
+}
+
+template <>
+void Scene::OnComponentAdded<SphereCollider>(Entity entity, SphereCollider& component)
 {
 }
