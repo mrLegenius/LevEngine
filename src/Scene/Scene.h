@@ -33,8 +33,6 @@ public:
 	//static Ref<Scene> Copy(Ref<Scene> other);
 	void DuplicateEntity(Entity entity);
 
-	template<typename T>
-	void OnComponentAdded(Entity entity, T& component);
 	void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 	Entity GetMainCameraEntity();
 private:

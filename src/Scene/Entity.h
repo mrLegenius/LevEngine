@@ -1,13 +1,12 @@
 #pragma once
 #include "entt/entt.hpp"
-#include "Scene.h"
 #include "Components/Components.h"
 
 class Entity
 {
 public:
 	Entity() = default;
-	Entity(entt::entity id, Scene* scene);
+	Entity(entt::handle handle) : m_Handle(handle) { }
 
 	~Entity() = default;
 
@@ -15,7 +14,7 @@ public:
 	bool HasComponent()
 	{
 		//LEV_CORE_ASSERT(m_Scene->m_Registry.valid(m_EntityID), "Entity is not valid!");
-		return m_Scene->m_Registry.any_of<T>(m_EntityID);
+		return m_Handle.any_of<T>();
 	}
 
 	template<typename T, typename ... Args>
@@ -24,17 +23,14 @@ public:
 		//LEV_CORE_ASSERT(m_Scene->m_Registry.valid(m_EntityID), "Entity is not valid!");
 		//LEV_CORE_ASSERT(!HasComponent<T>(), "Entity already has this component!");
 
-		T& component = m_Scene->m_Registry.emplace<T>(m_EntityID, std::forward<Args>(args)...);
-		m_Scene->OnComponentAdded(*this, component);
-
+		T& component = m_Handle.emplace<T>(std::forward<Args>(args)...);
 		return component;
 	}
 
 	template<typename T, typename... Args>
 	T& AddOrReplaceComponent(Args&&... args)
 	{
-		T& component = m_Scene->m_Registry.emplace_or_replace<T>(m_EntityID, std::forward<Args>(args)...);
-		m_Scene->OnComponentAdded<T>(*this, component);
+		T& component = m_Handle.emplace_or_replace<T>(std::forward<Args>(args)...);
 		return component;
 	}
 
@@ -44,7 +40,7 @@ public:
 		//LEV_CORE_ASSERT(m_Scene->m_Registry.valid(m_EntityID), "Entity is not valid!");
 		//LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component!");
 
-		return m_Scene->m_Registry.get<T>(m_EntityID);
+		return m_Handle.get<T>();
 	}
 
 	template<typename T>
@@ -53,7 +49,7 @@ public:
 		//LEV_CORE_ASSERT(m_Scene->m_Registry.valid(m_EntityID), "Entity is not valid!");
 		//LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component!");
 
-		m_Scene->m_Registry.remove<T>(m_EntityID);
+		m_Handle.remove<T>();
 	}
 
 	template <typename T>
@@ -62,20 +58,18 @@ public:
 	LevEngine::UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 	const std::string& GetName() { return GetComponent<TagComponent>().tag; }
 
-	operator bool() const { return m_EntityID != entt::null; }
-	operator uint32_t() const { return static_cast<uint32_t>(m_EntityID); }
-	operator entt::entity() const { return m_EntityID; }
+	operator bool() const { return m_Handle.entity() != entt::null; }
+	operator uint32_t() const { return static_cast<uint32_t>(m_Handle.entity()); }
+	operator entt::entity() const { return m_Handle.entity(); }
 
 	bool operator ==(const Entity& other) const
 	{
-		return m_EntityID == other.m_EntityID &&
-			m_Scene == other.m_Scene;
+		return m_Handle.registry() == other.m_Handle.registry() && m_Handle.entity() == other.m_Handle.entity();
 	}
 	bool operator !=(const Entity& other) const
 	{
 		return !(*this == other);
 	}
 private:
-	entt::entity m_EntityID{ entt::null };
-	Scene* m_Scene = nullptr;
+	entt::handle m_Handle;
 };

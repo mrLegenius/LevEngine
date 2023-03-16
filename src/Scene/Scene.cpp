@@ -82,7 +82,7 @@ void Scene::CollisionDetectionSystem()
 
             if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
 
-            if (CollisionInfo info; Physics::HasIntersection(Entity(*i, this), Entity(*j, this), info))
+            if (CollisionInfo info; Physics::HasIntersection(Entity(entt::handle(m_Registry, *i)), Entity(entt::handle(m_Registry, *j)), info))
             {
                 Physics::HandleCollision(info);
 
@@ -300,7 +300,7 @@ Entity Scene::CreateEntity(const std::string& name)
 
 Entity Scene::CreateEntity(LevEngine::UUID uuid, const std::string& name)
 {
-    auto entity = Entity(m_Registry.create(), this);
+    auto entity = Entity(entt::handle{ m_Registry, m_Registry.create() });
     entity.AddComponent<IDComponent>(uuid);
     entity.AddComponent<Transform>();
     entity.AddComponent<TagComponent>(name);
@@ -392,73 +392,7 @@ Entity Scene::GetMainCameraEntity()
     {
         const auto& camera = view.get<CameraComponent>(entity);
         if (camera.isMain)
-            return { entity, this };
+            return Entity(entt::handle(m_Registry, entity));
     }
     return { };
-}
-
-template <typename T>
-void Scene::OnComponentAdded(Entity entity, T& component)
-{
-
-}
-
-template <>
-void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
-{
-}
-template <>
-void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
-{
-}
-template <>
-void Scene::OnComponentAdded<Transform>(Entity entity, Transform& component)
-{
-}
-template <>
-void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
-{
-    //component.camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
-}
-template <>
-void Scene::OnComponentAdded<MeshRendererComponent>(Entity entity, MeshRendererComponent& component)
-{
-}
-template <>
-void Scene::OnComponentAdded<SkyboxRendererComponent>(Entity entity, SkyboxRendererComponent& component)
-{
-    
-}
-template <>
-void Scene::OnComponentAdded<DirectionalLightComponent>(Entity entity, DirectionalLightComponent& component)
-{
-}
-template <>
-void Scene::OnComponentAdded<PointLightComponent>(Entity entity, PointLightComponent& component)
-{
-}
-template <>
-void Scene::OnComponentAdded<OrbitCamera>(Entity entity, OrbitCamera& component)
-{
-    //component.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
-}
-
-template <>
-void Scene::OnComponentAdded<SkyboxRenderer>(Entity entity, SkyboxRenderer& component)
-{
-}
-
-template <>
-void Scene::OnComponentAdded<Rigidbody>(Entity entity, Rigidbody& component)
-{
-}
-
-template <>
-void Scene::OnComponentAdded<BoxCollider>(Entity entity, BoxCollider& component)
-{
-}
-
-template <>
-void Scene::OnComponentAdded<SphereCollider>(Entity entity, SphereCollider& component)
-{
 }

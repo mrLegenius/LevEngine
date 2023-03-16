@@ -1,7 +1,5 @@
 #include "Entity.h"
 
-Entity::Entity(const entt::entity id, Scene* scene)
-    : m_EntityID(id), m_Scene(scene) { }
 
 template <typename T>
 void Entity::AddScript()
