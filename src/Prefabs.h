@@ -1,54 +1,56 @@
 #pragma once
 #include "Assets.h"
-/*
+#include "Scene/Entity.h"
 namespace Prefabs
 {
-	inline std::shared_ptr<GameObject> Log(std::vector<std::shared_ptr<GameObject>>& allObjects)
+	inline Entity& Log(const Ref<Scene> scene)
 	{
-        auto collider = std::make_shared<BoxCollider>(Vector3(1, 2, 1));
-        auto logGo = std::make_shared<GameObject>(nullptr, collider);
-        //auto logMesh = std::make_shared<GameObject>(std::make_shared<MeshRenderer>(ShaderAssets::Lit(), MeshAssets::Log(), TextureAssets::Log()));
-        logMesh->GetTransform()->SetParent(logGo->GetTransform().get());
-        logMesh->GetRigidbody()->enabled = false;
-        logMesh->GetTransform()->SetPositionY(-0.5f);
+        auto entity = scene->CreateEntity("Log");
+        auto mesh = scene->CreateEntity("LogMesh");
 
-        allObjects.emplace_back(logGo);
-        allObjects.emplace_back(logMesh);
+        mesh.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>());
+        mesh.GetComponent<Transform>().SetPositionY(-0.5f);
+        mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), MeshAssets::Log(), TextureAssets::Log());
 
-        logGo->GetTransform()->SetLocalScale(Vector3::One * 5.0f);
-        logGo->GetRigidbody()->gravityScale = 10;
-        logGo->GetRigidbody()->mass = 1.0f;
-        logGo->GetRigidbody()->InitCubeInertia();
-        return logGo;
+        entity.AddComponent<BoxCollider>(Vector3(1, 2, 1));
+        auto& transform = entity.GetComponent<Transform>();
+        auto& rigidbody = entity.AddComponent<Rigidbody>();
+
+        transform.SetLocalScale(Vector3::One * 5.0f);
+        rigidbody.gravityScale = 10;
+        rigidbody.mass = 1.0f;
+        rigidbody.InitCubeInertia(transform);
+        return entity;
 	}
 
-    inline std::shared_ptr<GameObject> Gear(std::vector<std::shared_ptr<GameObject>>& allObjects)
+    inline Entity& Gear(const Ref<Scene> scene)
     {
-        auto collider = std::make_shared<BoxCollider>(Vector3(0.9f, 0.1f, 0.9f));
-        auto gameObject = std::make_shared<GameObject>(std::make_shared<MeshRenderer>(ShaderAssets::Lit(), MeshAssets::Gear(), TextureAssets::Gear()), collider);
+        auto entity = scene->CreateEntity("Gear");
+        entity.AddComponent<BoxCollider>(Vector3(0.9f, 0.1f, 0.9f));
+        entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), MeshAssets::Gear(), TextureAssets::Gear());
+        auto& rb = entity.AddComponent<Rigidbody>();
+        auto& transform = entity.GetComponent<Transform>();
 
-        allObjects.emplace_back(gameObject);
+        transform.SetLocalScale(Vector3::One * 0.1f);
+        rb.gravityScale = 10;
+        rb.mass = 5.0f;
+        rb.InitCubeInertia(transform);
 
-        gameObject->GetTransform()->SetLocalScale(Vector3::One * 0.1f);
-        gameObject->GetRigidbody()->gravityScale = 10;
-        gameObject->GetRigidbody()->mass = 5.0f;
-        gameObject->GetRigidbody()->InitCubeInertia();
-
-        return gameObject;
+        return entity;
     }
 
-    inline std::shared_ptr<GameObject> Rock(std::vector<std::shared_ptr<GameObject>>& allObjects)
+    inline Entity& Rock(const Ref<Scene> scene)
     {
-        auto collider = std::make_shared<BoxCollider>(Vector3(3.25f, 3.25f, 3.25f));
-        auto gameObject = std::make_shared<GameObject>(std::make_shared<MeshRenderer>(ShaderAssets::Lit(), MeshAssets::Rock(), TextureAssets::Rock()), collider);
+        auto entity = scene->CreateEntity("Gear");
+        entity.AddComponent<BoxCollider>(Vector3(3.25f, 3.25f, 3.25f));
+        entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), MeshAssets::Rock(), TextureAssets::Rock());
+        auto& rb = entity.AddComponent<Rigidbody>();
+        auto& transform = entity.GetComponent<Transform>();
 
-        allObjects.emplace_back(gameObject);
-
-        gameObject->GetTransform()->SetLocalScale(Vector3::One * 0.05f);
-        gameObject->GetRigidbody()->gravityScale = 10;
-        gameObject->GetRigidbody()->mass = 100.0f;
-        gameObject->GetRigidbody()->InitCubeInertia();
-        return gameObject;
+        transform.SetLocalScale(Vector3::One * 0.05f);
+        rb.gravityScale = 10;
+        rb.mass = 100.0f;
+        rb.InitCubeInertia(transform);
+        return entity;
     }
 }
-*/

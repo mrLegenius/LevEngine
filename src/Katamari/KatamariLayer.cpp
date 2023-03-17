@@ -15,23 +15,23 @@ void KatamariLayer::OnAttach()
 {
     m_Scene = CreateRef<Scene>();
 
-    /*for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 20; i++)
     {
-        auto go = Prefabs::Gear(gameObjects);
-        go->GetTransform()->SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
+        auto& go = Prefabs::Gear(m_Scene);
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
     }
 
     for (int i = 0; i < 10; i++)
     {
-	   	auto go = Prefabs::Log(gameObjects);
-        go->GetTransform()->SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
+	   	auto& go = Prefabs::Log(m_Scene);
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
     for (int i = 0; i < 10; i++)
     {
-        auto go = Prefabs::Rock(gameObjects);
-        go->GetTransform()->SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
-    }*/
+        auto& go = Prefabs::Rock(m_Scene);
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
+    }
 
     auto floor = m_Scene->CreateEntity("Floor");
     floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreatePlane(3), TextureAssets::Bricks());
