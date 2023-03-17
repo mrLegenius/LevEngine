@@ -31,7 +31,7 @@ static float dTOffset = 0;
 int numCollisionFrames = 10;
 void Scene::OnPhysics(const float deltaTime)
 {
-    constexpr float iterationDt = 1.0f / 120.0f; //Ideally we'll have 120 physics updates a second 
+    constexpr float iterationDt = 1.0f / 60.0f; //Ideally we'll have 120 physics updates a second 
     dTOffset += deltaTime; //We accumulate time delta here - there might be remainders from previous frame!
 
     const int iterationCount = static_cast<int>(dTOffset / iterationDt); //And split it up here
@@ -59,8 +59,8 @@ void Scene::OnPhysics(const float deltaTime)
 
         for (int j = 0; j < constraintIterationCount; ++j) {
             //UpdateConstraints(constraintDt);
-            UpdatePositionSystem(constraintDt);
         }
+        UpdatePositionSystem(subDt);
         dTOffset -= iterationDt;
     }
     ClearForcesSystem();	//Once we've finished with the forces, reset them to zero
@@ -78,37 +78,185 @@ void Scene::OnLateUpdate(const float deltaTime)
 
 void Scene::CollisionDetectionSystem()
 {
-    auto view = m_Registry.view<Rigidbody>();
+    AABBCollisionResolveSystem();
+    SphereCollisionSystem();
+    AABBSphereCollisionSystem();
+}
+
+void Scene::HandleCollision(const CollisionInfo& info)
+{
+    Physics::HandleCollision(info);
+
+    if (auto exist = allCollisions.find(info); exist == allCollisions.end())
+    {
+        info.framesLeft = numCollisionFrames;
+        allCollisions.insert(info);
+    }
+    else
+    {
+        exist->framesLeft = numCollisionFrames - 1;
+    }
+}
+
+void Scene::SphereCollisionSystem()
+{
+    const auto view = m_Registry.view<Transform, Rigidbody, SphereCollider>();
     const auto first = view.begin();
     const auto last = view.end();
 
     for (auto i = first; i != last; ++i)
     {
+        auto [transform1, rigidbody1, colliderA] = view.get<Transform, Rigidbody, SphereCollider>(*i);
         for (auto j = first; j != last; ++j)
         {
             if (i == j) continue;
 
-            auto& rigidbody1 = view.get<Rigidbody>(*i);
-            auto& rigidbody2 = view.get<Rigidbody>(*j);
+            auto [transform2, rigidbody2, colliderB] = view.get<Transform, Rigidbody, SphereCollider>(*j);
 
             if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
+            CollisionInfo info;
 
-            if (CollisionInfo info; Physics::HasIntersection(Entity(entt::handle(m_Registry, *i)), Entity(entt::handle(m_Registry, *j)), info))
+            info.transformA = &transform1;
+            info.transformB = &transform2;
+
+            info.rigidbodyA = &rigidbody1;
+            info.rigidbodyB = &rigidbody2;
+
+            if (Physics::HasSphereIntersection(
+                colliderA,
+                transform1,
+                colliderB,
+                transform2,
+                info))
             {
-                Physics::HandleCollision(info);
-
-                if (auto exist = allCollisions.find(info); exist == allCollisions.end())
-                {
-                    info.framesLeft = numCollisionFrames;
-                    allCollisions.insert(info);
-                }
-                else
-                {
-                    exist->framesLeft = numCollisionFrames - 1;
-                }
+                HandleCollision(info);
             }
         }
     }
+}
+
+void Scene::AABBSphereCollisionSystem()
+{
+    const auto view = m_Registry.view<Transform, Rigidbody, BoxCollider>();
+    const auto first = view.begin();
+    const auto last = view.end();
+
+    const auto viewB = m_Registry.view<Transform, Rigidbody, SphereCollider>();
+    const auto firstB = viewB.begin();
+    const auto lastB = viewB.end();
+
+    for (auto i = first; i != last; ++i)
+    {
+        auto [transform1, rigidbody1, colliderA] = view.get<Transform, Rigidbody, BoxCollider>(*i);
+        for (auto j = firstB; j != lastB; ++j)
+        {
+            if (i == j) continue;
+
+            auto [transform2, rigidbody2, colliderB] = viewB.get<Transform, Rigidbody, SphereCollider>(*j);
+
+            if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
+            CollisionInfo info;
+
+            info.transformA = &transform1;
+            info.transformB = &transform2;
+
+            info.rigidbodyA = &rigidbody1;
+            info.rigidbodyB = &rigidbody2;
+
+            if (Physics::HasAABBSphereIntersection(
+                colliderA,
+                transform1,
+                colliderB,
+                transform2,
+                info))
+            {
+                HandleCollision(info);
+            }
+        }
+    }
+}
+
+void Scene::AABBCollisionResolveSystem()
+{
+    const auto view = m_Registry.view<Transform, Rigidbody, BoxCollider>();
+    const auto first = view.begin();
+    const auto last = view.end();
+
+    for (auto i = first; i != last; ++i)
+    {
+        auto [transform1, rigidbody1, boxCollider1] = view.get<Transform, Rigidbody, BoxCollider>(*i);
+        for (auto j = first; j != last; ++j)
+        {
+            if (i == j) continue;
+
+            auto [transform2, rigidbody2, boxCollider2] = view.get<Transform, Rigidbody, BoxCollider>(*j);
+
+            if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
+            CollisionInfo info;
+
+            info.transformA = &transform1;
+            info.transformB = &transform2;
+
+            info.rigidbodyA = &rigidbody1;
+            info.rigidbodyB = &rigidbody2;
+
+            if (Physics::HasAABBIntersection(
+	            boxCollider1,
+	            transform1,
+	            boxCollider2,
+	            transform2, 
+                info))
+            {
+                HandleCollision(info);
+            }
+        }
+    }
+}
+
+bool Scene::HasIntersection(const entt::entity& a, Transform& transformA, Rigidbody& rbA, const entt::entity& b, Transform& transformB, Rigidbody& rbB, CollisionInfo& collisionInfo)
+{
+    collisionInfo.transformA = &transformA;
+    collisionInfo.transformB = &transformB;
+
+    collisionInfo.rigidbodyA = &rbA;
+    collisionInfo.rigidbodyB = &rbB;
+
+    if (m_Registry.any_of<BoxCollider>(a) && m_Registry.any_of<BoxCollider>(b))
+    {
+        return Physics::HasAABBIntersection(
+            m_Registry.get<BoxCollider>(a), 
+            *collisionInfo.transformA, 
+            m_Registry.get<BoxCollider>(b), 
+            *collisionInfo.transformB, collisionInfo);
+    }
+    if (m_Registry.any_of<SphereCollider>(a) && m_Registry.any_of<SphereCollider>(b))
+    {
+        return Physics::HasSphereIntersection(
+            m_Registry.get<SphereCollider>(a),
+            *collisionInfo.transformA, 
+            m_Registry.get<SphereCollider>(b),
+            *collisionInfo.transformB, collisionInfo);
+    }
+    if (m_Registry.any_of<BoxCollider>(a) && m_Registry.any_of<SphereCollider>(b))
+    {
+        return Physics::HasAABBSphereIntersection(
+            m_Registry.get<BoxCollider>(a), 
+            *collisionInfo.transformA, 
+            m_Registry.get<SphereCollider>(b),
+            *collisionInfo.transformB, collisionInfo);
+    }
+    if (m_Registry.any_of<SphereCollider>(a) && m_Registry.any_of<BoxCollider>(b))
+    {
+        std::swap(collisionInfo.transformA, collisionInfo.transformB);
+        std::swap(collisionInfo.rigidbodyA, collisionInfo.rigidbodyB);
+        return Physics::HasAABBSphereIntersection(
+            m_Registry.get<BoxCollider>(b), 
+            *collisionInfo.transformB, 
+            m_Registry.get<SphereCollider>(a), 
+            *collisionInfo.transformA, collisionInfo);
+    }
+
+    return false;
 }
 
 void Scene::UpdateVelocitySystem(const float deltaTime)

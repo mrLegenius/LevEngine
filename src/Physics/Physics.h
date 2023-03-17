@@ -54,7 +54,6 @@ class Physics
 public:
     static bool HasIntersection(Entity a, Entity b, CollisionInfo& collisionInfo);
     static void HandleCollision(const CollisionInfo& collisionInfo);
-private:
 
     static bool AABBTest(
         const Vector3& posA, const Vector3& posB,

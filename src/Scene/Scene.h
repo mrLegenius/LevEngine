@@ -5,6 +5,7 @@
 #include "Components/Components.h"
 #include "Kernel/PointerUtils.h"
 #include "Kernel/UUID.h"
+#include "Physics/Physics.h"
 #include "Renderer/Camera/SceneCamera.h"
 
 class Entity;
@@ -18,6 +19,12 @@ public:
 	void OnPhysics(float deltaTime);
 	void OnLateUpdate(float deltaTime);
 	void CollisionDetectionSystem();
+	void HandleCollision(const CollisionInfo& info);
+	void SphereCollisionSystem();
+	void AABBSphereCollisionSystem();
+	void AABBCollisionResolveSystem();
+	bool HasIntersection(const entt::entity& a, Transform& transformA, Rigidbody& rbA, const entt::entity& b, Transform& transformB, Rigidbody&
+	                     rbB, CollisionInfo& collisionInfo);
 	void UpdateVelocitySystem(float deltaTime);
 	void UpdatePositionSystem(float deltaTime);
 	void ClearForcesSystem();
