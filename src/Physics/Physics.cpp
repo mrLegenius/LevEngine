@@ -114,49 +114,8 @@ bool Physics::HasAABBSphereIntersection(const BoxCollider& colliderA, const Tran
 	return true;
 }
 
-bool Physics::HasIntersection(Entity a, Entity b, CollisionInfo& collisionInfo)
+void Physics::HandleCollision(Transform& transformA, Rigidbody& rigidbodyA, Transform& transformB, Rigidbody& rigidbodyB, ContactPoint p)
 {
-	const auto& transformA = a.GetComponent<Transform>();
-	const auto& transformB = b.GetComponent<Transform>();
-
-	collisionInfo.transformA = &a.GetComponent<Transform>();
-	collisionInfo.transformB = &b.GetComponent<Transform>();
-
-	collisionInfo.rigidbodyA = &a.GetComponent<Rigidbody>();
-	collisionInfo.rigidbodyB = &b.GetComponent<Rigidbody>();
-
-	if (a.HasComponent<BoxCollider>() && b.HasComponent<BoxCollider>())
-	{
-		return HasAABBIntersection(a.GetComponent<BoxCollider>(), transformA, b.GetComponent<BoxCollider>(), transformB, collisionInfo);
-	}
-	if (a.HasComponent<SphereCollider>() && b.HasComponent<SphereCollider>())
-	{
-		return HasSphereIntersection(a.GetComponent<SphereCollider>(), transformA, b.GetComponent<SphereCollider>(), transformB, collisionInfo);
-	}
-	if (a.HasComponent<BoxCollider>() && b.HasComponent<SphereCollider>())
-	{
-		return HasAABBSphereIntersection(a.GetComponent<BoxCollider>(), transformA, b.GetComponent<SphereCollider>(), transformB, collisionInfo);
-	}
-	if (a.HasComponent<SphereCollider>() && b.HasComponent<BoxCollider>())
-	{
-		std::swap(collisionInfo.transformA, collisionInfo.transformB);
-		std::swap(collisionInfo.rigidbodyA, collisionInfo.rigidbodyB);
-		return HasAABBSphereIntersection(b.GetComponent<BoxCollider>(), transformB, a.GetComponent<SphereCollider>(), transformA, collisionInfo);
-	}
-
-	return false;
-}
-
-void Physics::HandleCollision(const CollisionInfo& collisionInfo)
-{
-	auto& p = collisionInfo.point;
-
-	auto& transformA = *collisionInfo.transformA;
-	auto& transformB = *collisionInfo.transformB;
-
-	auto& rigidbodyA = *collisionInfo.rigidbodyA;
-	auto& rigidbodyB = *collisionInfo.rigidbodyB;
-
 	float totalMass = rigidbodyA.GetInverseMass() + rigidbodyB.GetInverseMass();
 
 	// Separate them out using projection

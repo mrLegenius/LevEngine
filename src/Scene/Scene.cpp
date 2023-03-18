@@ -9,6 +9,12 @@
 #include "Components/SkyboxRenderer.h"
 #include "Kernel/Application.h"
 #include "Physics/Components/Rigidbody.h"
+#include "Physics/Systems/VelocityUpdateSystem.h"
+#include "Physics/Events/CollisionBeginEvent.h"
+#include "Physics/Events/CollisionEndEvent.h"
+#include "Physics/Events/CollisionEvent.h"
+#include "Physics/Systems/ForcesClearSystem.h"
+#include "Physics/Systems/PositionUpdateSystem.h"
 #include "Renderer/Renderer3D.h"
 
 struct CollisionInfo;
@@ -38,9 +44,9 @@ void Scene::OnPhysics(const float deltaTime)
 
     const float subDt = deltaTime / static_cast<float>(iterationCount);	//How many seconds per iteration do we get?
 
-    UpdateVelocitySystem(deltaTime);
+    VelocityUpdateSystem(deltaTime, m_Registry);
 
-    for (int i = 0; i < iterationCount; ++i) 
+    for (int i = 0; i < iterationCount; ++i)
     {
         /*if (useBroadPhase) { //TODO: Add optimization
             BroadPhase();
@@ -60,12 +66,14 @@ void Scene::OnPhysics(const float deltaTime)
         for (int j = 0; j < constraintIterationCount; ++j) {
             //UpdateConstraints(constraintDt);
         }
-        UpdatePositionSystem(subDt);
+
+        UpdatePositionSystem(subDt, m_Registry);
+        
         dTOffset -= iterationDt;
     }
-    ClearForcesSystem();	//Once we've finished with the forces, reset them to zero
+    ForcesClearSystem(deltaTime, m_Registry);//Once we've finished with the forces, reset them to zero
 
-    //UpdateCollisionList(); //Remove any old collisions
+    UpdateCollisionList(); //Remove any old collisions
 }
 
 void Scene::OnLateUpdate(const float deltaTime)
@@ -83,24 +91,38 @@ void Scene::CollisionDetectionSystem()
     AABBSphereCollisionSystem();
 }
 
-void Scene::HandleCollision(const CollisionInfo& info)
+void Scene::UpdateCollisionList()
 {
-    Physics::HandleCollision(info);
+    for (auto i = allCollisions.begin(); i != allCollisions.end(); )
+    {
+        if ((*i).framesLeft == numCollisionFrames)
+        {
+           /*const auto entityA = to_entity(m_Registry, &i->transformA);
+            const auto entityB = to_entity(m_Registry, &i->transformB);
+            ConvertEntity(entityA).AddComponent<CollisionBeginEvent>(entityB);
+            ConvertEntity(entityB).AddComponent<CollisionBeginEvent>(entityA);*/
+        }
 
-    if (auto exist = allCollisions.find(info); exist == allCollisions.end())
-    {
-        info.framesLeft = numCollisionFrames;
-        allCollisions.insert(info);
-    }
-    else
-    {
-        exist->framesLeft = numCollisionFrames - 1;
+        (*i).framesLeft = (*i).framesLeft - 1;
+
+        if ((*i).framesLeft < 0)
+        {
+            /*const auto entityA = to_entity(m_Registry, &i->transformA);
+            const auto entityB = to_entity(m_Registry, &i->transformB);
+            ConvertEntity(entityA).AddComponent<CollisionEndEvent>(entityB);
+            ConvertEntity(entityB).AddComponent<CollisionEndEvent>(entityA);*/
+            i = allCollisions.erase(i);
+        }
+        else
+        {
+            ++i;
+        }
     }
 }
 
 void Scene::SphereCollisionSystem()
 {
-    const auto view = m_Registry.view<Transform, Rigidbody, SphereCollider>();
+    const auto view = m_Registry.group<>(entt::get<Transform, Rigidbody, SphereCollider>);
     const auto first = view.begin();
     const auto last = view.end();
 
@@ -129,7 +151,7 @@ void Scene::SphereCollisionSystem()
                 transform2,
                 info))
             {
-                HandleCollision(info);
+                Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
             }
         }
     }
@@ -137,11 +159,11 @@ void Scene::SphereCollisionSystem()
 
 void Scene::AABBSphereCollisionSystem()
 {
-    const auto view = m_Registry.view<Transform, Rigidbody, BoxCollider>();
+    const auto view = m_Registry.group<>(entt::get<Transform, Rigidbody, BoxCollider>);
     const auto first = view.begin();
     const auto last = view.end();
 
-    const auto viewB = m_Registry.view<Transform, Rigidbody, SphereCollider>();
+    const auto viewB = m_Registry.group<>(entt::get<Transform, Rigidbody, SphereCollider>);
     const auto firstB = viewB.begin();
     const auto lastB = viewB.end();
 
@@ -150,7 +172,7 @@ void Scene::AABBSphereCollisionSystem()
         auto [transform1, rigidbody1, colliderA] = view.get<Transform, Rigidbody, BoxCollider>(*i);
         for (auto j = firstB; j != lastB; ++j)
         {
-            if (i == j) continue;
+            if (*i == *j) continue;
 
             auto [transform2, rigidbody2, colliderB] = viewB.get<Transform, Rigidbody, SphereCollider>(*j);
 
@@ -170,7 +192,7 @@ void Scene::AABBSphereCollisionSystem()
                 transform2,
                 info))
             {
-                HandleCollision(info);
+                Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
             }
         }
     }
@@ -178,18 +200,18 @@ void Scene::AABBSphereCollisionSystem()
 
 void Scene::AABBCollisionResolveSystem()
 {
-    const auto view = m_Registry.view<Transform, Rigidbody, BoxCollider>();
-    const auto first = view.begin();
-    const auto last = view.end();
+    const auto group = m_Registry.group<>(entt::get<Transform, Rigidbody, BoxCollider>);
+    const auto first = group.begin();
+    const auto last = group.end();
 
     for (auto i = first; i != last; ++i)
     {
-        auto [transform1, rigidbody1, boxCollider1] = view.get<Transform, Rigidbody, BoxCollider>(*i);
+        auto [transform1, rigidbody1, boxCollider1] = group.get<Transform, Rigidbody, BoxCollider>(*i);
         for (auto j = first; j != last; ++j)
         {
             if (i == j) continue;
 
-            auto [transform2, rigidbody2, boxCollider2] = view.get<Transform, Rigidbody, BoxCollider>(*j);
+            auto [transform2, rigidbody2, boxCollider2] = group.get<Transform, Rigidbody, BoxCollider>(*j);
 
             if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
             CollisionInfo info;
@@ -207,126 +229,9 @@ void Scene::AABBCollisionResolveSystem()
 	            transform2, 
                 info))
             {
-                HandleCollision(info);
+                Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
             }
         }
-    }
-}
-
-bool Scene::HasIntersection(const entt::entity& a, Transform& transformA, Rigidbody& rbA, const entt::entity& b, Transform& transformB, Rigidbody& rbB, CollisionInfo& collisionInfo)
-{
-    collisionInfo.transformA = &transformA;
-    collisionInfo.transformB = &transformB;
-
-    collisionInfo.rigidbodyA = &rbA;
-    collisionInfo.rigidbodyB = &rbB;
-
-    if (m_Registry.any_of<BoxCollider>(a) && m_Registry.any_of<BoxCollider>(b))
-    {
-        return Physics::HasAABBIntersection(
-            m_Registry.get<BoxCollider>(a), 
-            *collisionInfo.transformA, 
-            m_Registry.get<BoxCollider>(b), 
-            *collisionInfo.transformB, collisionInfo);
-    }
-    if (m_Registry.any_of<SphereCollider>(a) && m_Registry.any_of<SphereCollider>(b))
-    {
-        return Physics::HasSphereIntersection(
-            m_Registry.get<SphereCollider>(a),
-            *collisionInfo.transformA, 
-            m_Registry.get<SphereCollider>(b),
-            *collisionInfo.transformB, collisionInfo);
-    }
-    if (m_Registry.any_of<BoxCollider>(a) && m_Registry.any_of<SphereCollider>(b))
-    {
-        return Physics::HasAABBSphereIntersection(
-            m_Registry.get<BoxCollider>(a), 
-            *collisionInfo.transformA, 
-            m_Registry.get<SphereCollider>(b),
-            *collisionInfo.transformB, collisionInfo);
-    }
-    if (m_Registry.any_of<SphereCollider>(a) && m_Registry.any_of<BoxCollider>(b))
-    {
-        std::swap(collisionInfo.transformA, collisionInfo.transformB);
-        std::swap(collisionInfo.rigidbodyA, collisionInfo.rigidbodyB);
-        return Physics::HasAABBSphereIntersection(
-            m_Registry.get<BoxCollider>(b), 
-            *collisionInfo.transformB, 
-            m_Registry.get<SphereCollider>(a), 
-            *collisionInfo.transformA, collisionInfo);
-    }
-
-    return false;
-}
-
-void Scene::UpdateVelocitySystem(const float deltaTime)
-{
-    auto view = m_Registry.view<Transform, Rigidbody>();
-    for (auto entity : view)
-    {
-        auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
-
-        if (rigidbody.bodyType != BodyType::Dynamic || !rigidbody.enabled) continue;
-
-        const auto inverseMass = rigidbody.GetInverseMass();
-        Vector3 acceleration = rigidbody.force * inverseMass;
-
-        if (inverseMass > 0)
-            acceleration += gravity * rigidbody.gravityScale;
-
-        rigidbody.velocity += acceleration * deltaTime;
-
-        rigidbody.UpdateInertiaTensor(transform);
-
-        const Vector3 angularAcceleration = Vector3::Transform(rigidbody.torque, rigidbody.GetInertiaTensor());
-        //const Vector3 angularAcceleration = torque;
-
-        rigidbody.angularVelocity += angularAcceleration * deltaTime;
-    }
-}
-
-void Scene::UpdatePositionSystem(const float deltaTime)
-{
-	const auto view = m_Registry.view<Transform, Rigidbody>();
-    for (const auto entity : view)
-    {
-        auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
-
-        if (rigidbody.bodyType != BodyType::Dynamic || !rigidbody.enabled) return;
-
-        //Linear movement
-        Vector3 position = transform.GetLocalPosition();
-        position += rigidbody.velocity * deltaTime;
-        transform.SetLocalPosition(position);
-
-        // Linear Damping
-        const float dampingFactor = 1.0f - rigidbody.damping;
-        const float frameDamping = powf(dampingFactor, deltaTime);
-        rigidbody.velocity *= frameDamping;
-
-        //Angular movement
-        Quaternion orientation = transform.GetLocalOrientation();
-
-        orientation += orientation * Quaternion(rigidbody.angularVelocity * deltaTime * 0.5f, 0.0f);
-        orientation.Normalize();
-
-        transform.SetLocalRotation(orientation);
-
-        // Angular Damping
-        const float angularDampingFactor = 1.0f - rigidbody.angularDamping;
-        const float angularFrameDamping = powf(angularDampingFactor, deltaTime);
-        rigidbody.angularVelocity *= angularFrameDamping;
-    }
-}
-
-void Scene::ClearForcesSystem()
-{
-    const auto view = m_Registry.view<Rigidbody>();
-    for (const auto entity : view)
-    {
-        auto& rigidbody = view.get<Rigidbody>(entity);
-
-        rigidbody.ClearForces();
     }
 }
 
@@ -348,7 +253,7 @@ void Scene::OnRender()
 
     //Render Scene
     {
-	    const auto group = m_Registry.view<Transform, CameraComponent>();
+	    const auto group = m_Registry.group<>(entt::get<Transform, CameraComponent>);
         for (auto entity : group)
         {
             auto [transform, camera] = group.get<Transform, CameraComponent>(entity);
@@ -383,7 +288,7 @@ void Scene::OnRender()
 
 void Scene::DirectionalLightSystem()
 {
-    auto view = m_Registry.view<Transform, DirectionalLightComponent>();
+    auto view = m_Registry.group<>(entt::get<Transform, DirectionalLightComponent>);
     for (auto entity : view)
     {
         auto [transform, light] = view.get<Transform, DirectionalLightComponent>(entity);
@@ -394,7 +299,7 @@ void Scene::DirectionalLightSystem()
 
 void Scene::PointLightsSystem()
 {
-    auto view = m_Registry.view<Transform, PointLightComponent>();
+    auto view = m_Registry.group<>(entt::get<Transform, PointLightComponent>);
     for (auto entity : view)
     {
         auto [transform, light] = view.get<Transform, PointLightComponent>(entity);
@@ -405,7 +310,7 @@ void Scene::PointLightsSystem()
 
 void Scene::SkyboxRenderSystem()
 {
-    auto view = m_Registry.view<Transform, SkyboxRendererComponent>();
+    auto view = m_Registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
     for (auto entity : view)
     {
     	auto [transform, skybox] = view.get<Transform, SkyboxRendererComponent>(entity);
@@ -416,7 +321,7 @@ void Scene::SkyboxRenderSystem()
 
 void Scene::MeshRenderSystem()
 {
-    auto view = m_Registry.view<Transform, MeshRendererComponent>();
+    auto view = m_Registry.group<>(entt::get<Transform, MeshRendererComponent>);
     for (auto entity : view)
     {
         auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
@@ -453,6 +358,11 @@ Entity Scene::CreateEntity(LevEngine::UUID uuid, const std::string& name)
     entity.AddComponent<TagComponent>(name);
 
     return entity;
+}
+
+Entity Scene::ConvertEntity(const entt::entity entity)
+{
+    return Entity(entt::handle(m_Registry, entity));
 }
 
 void Scene::DestroyEntity(const Entity entity)

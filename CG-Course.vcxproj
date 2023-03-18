@@ -148,6 +148,7 @@
     <ClCompile Include="src\Components\Transform.cpp" />
     <ClCompile Include="src\Katamari\KatamariLayer.cpp" />
     <ClCompile Include="src\Kernel\UUID.cpp" />
+    <ClCompile Include="src\Physics\Events\CollisionEvent.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="external\entt\entt.hpp" />
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="src\Assets.h" />
+    <ClInclude Include="src\Katamari\KatamariPlayer.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Components\RendererComponent.h" />
     <ClInclude Include="src\Components\SkyboxRenderer.h" />
@@ -186,7 +188,13 @@
     <ClInclude Include="src\Kernel\PointerUtils.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
     <ClInclude Include="src\Kernel\UUID.h" />
+    <ClInclude Include="src\Physics\Events\CollisionEndEvent.h" />
+    <ClInclude Include="src\Physics\Events\CollisionBeginEvent.h" />
+    <ClInclude Include="src\Physics\Events\CollisionEvent.h" />
     <ClInclude Include="src\Physics\Physics.h" />
+    <ClInclude Include="src\Physics\Systems\ForcesClearSystem.h" />
+    <ClInclude Include="src\Physics\Systems\PositionUpdateSystem.h" />
+    <ClInclude Include="src\Physics\Systems\VelocityUpdateSystem.h" />
     <ClInclude Include="src\Prefabs.h" />
     <ClInclude Include="src\Random.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />

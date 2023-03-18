@@ -19,15 +19,10 @@ public:
 	void OnPhysics(float deltaTime);
 	void OnLateUpdate(float deltaTime);
 	void CollisionDetectionSystem();
-	void HandleCollision(const CollisionInfo& info);
+	void UpdateCollisionList();
 	void SphereCollisionSystem();
 	void AABBSphereCollisionSystem();
 	void AABBCollisionResolveSystem();
-	bool HasIntersection(const entt::entity& a, Transform& transformA, Rigidbody& rbA, const entt::entity& b, Transform& transformB, Rigidbody&
-	                     rbB, CollisionInfo& collisionInfo);
-	void UpdateVelocitySystem(float deltaTime);
-	void UpdatePositionSystem(float deltaTime);
-	void ClearForcesSystem();
 	void OnRender();
 	void DirectionalLightSystem();
 	void PointLightsSystem();
@@ -63,6 +58,8 @@ private:
 
 	void MeshRenderSystem();
 	void SkyboxRenderSystem();
+
+	Entity ConvertEntity(entt::entity entity);
 
 	std::vector<Ref<System>> m_UpdateSystems;
 	std::vector<Ref<System>> m_LateUpdateSystems;

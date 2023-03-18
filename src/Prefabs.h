@@ -17,7 +17,7 @@ namespace Prefabs
         auto& rigidbody = entity.AddComponent<Rigidbody>();
 
         transform.SetLocalScale(Vector3::One * 5.0f);
-        rigidbody.gravityScale = 10;
+        rigidbody.gravityScale = 1;
         rigidbody.mass = 1.0f;
         rigidbody.InitCubeInertia(transform);
         return entity;
@@ -32,7 +32,7 @@ namespace Prefabs
         auto& transform = entity.GetComponent<Transform>();
 
         transform.SetLocalScale(Vector3::One * 0.1f);
-        rb.gravityScale = 10;
+        rb.gravityScale = 1;
         rb.mass = 5.0f;
         rb.InitCubeInertia(transform);
 
@@ -48,7 +48,7 @@ namespace Prefabs
         auto& transform = entity.GetComponent<Transform>();
 
         transform.SetLocalScale(Vector3::One * 0.05f);
-        rb.gravityScale = 10;
+        rb.gravityScale = 1;
         rb.mass = 100.0f;
         rb.InitCubeInertia(transform);
         return entity;

@@ -52,8 +52,7 @@ struct CollisionInfo
 class Physics
 {
 public:
-    static bool HasIntersection(Entity a, Entity b, CollisionInfo& collisionInfo);
-    static void HandleCollision(const CollisionInfo& collisionInfo);
+    static void HandleCollision(Transform& transformA, Rigidbody& rigidbodyA, Transform& transformB, Rigidbody& rigidbodyB, ContactPoint p);
 
     static bool AABBTest(
         const Vector3& posA, const Vector3& posB,
@@ -70,30 +69,5 @@ public:
         /*for (const auto gameObject : objects)
             for (const auto& constraint : gameObject->GetConstraints())
                 constraint->Update(deltaTime);*/
-    }
-
-    static void UpdateCollisionList()
-    {
-        /*for (auto i = allCollisions.begin(); i != allCollisions.end(); )
-        {
-            if ((*i).framesLeft == numCollisionFrames)
-            {
-                i->a->OnCollisionBegin(i->b);
-                i->b->OnCollisionBegin(i->a);
-            }
-
-            (*i).framesLeft = (*i).framesLeft - 1;
-
-            if ((*i).framesLeft < 0)
-            {
-                i->a->OnCollisionEnd(i->b);
-                i->b->OnCollisionEnd(i->a);
-                i = allCollisions.erase(i);
-            }
-            else
-            {
-                ++i;
-            }
-        }*/
     }
 };
