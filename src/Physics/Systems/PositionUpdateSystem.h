@@ -5,6 +5,8 @@
 
 inline void UpdatePositionSystem(const float deltaTime, entt::registry& registry)
 {
+    LEV_PROFILE_FUNCTION();
+
     const auto group = registry.group<>(entt::get<Transform, Rigidbody>);
     for (const auto entity : group)
     {

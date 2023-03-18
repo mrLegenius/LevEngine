@@ -4,6 +4,8 @@
 
 inline void VelocityUpdateSystem(const float deltaTime, entt::registry& registry)
 {
+	LEV_PROFILE_FUNCTION();
+
 	auto group = registry.group<>(entt::get<Transform, Rigidbody>);
 	for (auto entity : group)
 	{

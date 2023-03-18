@@ -1,6 +1,7 @@
 #include "Renderer3D.h"
 #include "RenderCommand.h"
 #include "Assets.h"
+#include "Debug/Profiler.h"
 #include "Kernel/Application.h"
 
 #define MAX_POINT_LIGHTS 10
@@ -31,6 +32,8 @@ struct alignas(16) LightningData
 };
 void Renderer3D::Init()
 {
+    LEV_PROFILE_FUNCTION();
+
 	m_CameraConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof CameraData);
 	m_ModelConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof MeshModelBufferData, 1);
 	m_DirLightConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof LightningData, 2);
@@ -39,9 +42,15 @@ void Renderer3D::Init()
 }
 
 void Renderer3D::Shutdown() { }
+void Renderer3D::Shutdown()
+{
+    LEV_PROFILE_FUNCTION();
+}
 
 void Renderer3D::BeginScene(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position)
 {
+    LEV_PROFILE_FUNCTION();
+
     RenderCommand::Begin();
     const auto& window = Application::Get().GetWindow();
     RenderCommand::SetViewport(0, 0, window.GetWidth(), window.GetHeight());
@@ -55,11 +64,15 @@ void Renderer3D::BeginScene(const SceneCamera& camera, const Matrix& viewMatrix,
 
 void Renderer3D::EndScene()
 {
+    LEV_PROFILE_FUNCTION();
+
     RenderCommand::End();
 }
 
 void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer)
 {
+    LEV_PROFILE_FUNCTION();
+
     if (!meshRenderer.mesh->VertexBuffer)
 	    meshRenderer.mesh->Init(meshRenderer.shader->GetLayout());
 
@@ -74,6 +87,8 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
 
 void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer)
 {
+    LEV_PROFILE_FUNCTION();
+
     renderer.texture->Bind();
     ShaderAssets::Skybox()->Bind();
 
@@ -87,6 +102,8 @@ void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer)
 
 void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)
 {
+    LEV_PROFILE_FUNCTION();
+
     s_DirLight.Direction = dirLightDirection;
 
     s_DirLight.Ambient = dirLight.Ambient;
@@ -96,6 +113,8 @@ void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const Directional
 
 void Renderer3D::AddPointLights(const Vector3& position, const PointLightComponent& pointLight)
 {
+    LEV_PROFILE_FUNCTION();
+
     if (s_PointLights.size() >= MAX_POINT_LIGHTS)
     {
         std::cout << "Trying to add point light beyond maximum" << std::endl;
@@ -119,6 +138,8 @@ void Renderer3D::AddPointLights(const Vector3& position, const PointLightCompone
 
 void Renderer3D::UpdateLights()
 {
+    LEV_PROFILE_FUNCTION();
+
     const LightningData lightningData
     {
         s_DirLight,

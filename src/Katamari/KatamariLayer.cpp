@@ -8,11 +8,14 @@
 #include "KatamariPlayer.h"
 #include "../Prefabs.h"
 #include "../Random.h"
+#include "Debug/Profiler.h"
 #include "Renderer/RenderCommand.h"
 #include "Scene/Entity.h"
 
 void KatamariLayer::OnAttach()
 {
+    LEV_PROFILE_FUNCTION();
+
     m_Scene = CreateRef<Scene>();
 
     for (int i = 0; i < 20; i++)
@@ -80,6 +83,8 @@ void KatamariLayer::OnEvent(Event& e)
 
 void KatamariLayer::OnUpdate(const float deltaTime)
 {
+    LEV_PROFILE_FUNCTION();
+
     //window.DisableCursor();
     
     float color[] = { 0.1f, 0.1f, 0.1f, 1.0f };

@@ -7,6 +7,7 @@
 #include "Entity.h"
 #include "OrbitCamera.h"
 #include "Components/SkyboxRenderer.h"
+#include "Debug/Profiler.h"
 #include "Kernel/Application.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Physics/Systems/VelocityUpdateSystem.h"
@@ -22,11 +23,15 @@ using namespace DirectX::SimpleMath;
 
 Scene::~Scene()
 {
+    LEV_PROFILE_FUNCTION();
+
     m_Registry.clear();
 }
 
 void Scene::OnUpdate(const float deltaTime)
 {
+    LEV_PROFILE_FUNCTION();
+
 	for (const auto system : m_UpdateSystems)
 	{
         system->Update(deltaTime, m_Registry);
@@ -37,6 +42,8 @@ static float dTOffset = 0;
 int numCollisionFrames = 10;
 void Scene::OnPhysics(const float deltaTime)
 {
+    LEV_PROFILE_FUNCTION();
+
     constexpr float iterationDt = 1.0f / 60.0f; //Ideally we'll have 120 physics updates a second 
     dTOffset += deltaTime; //We accumulate time delta here - there might be remainders from previous frame!
 
@@ -78,6 +85,8 @@ void Scene::OnPhysics(const float deltaTime)
 
 void Scene::OnLateUpdate(const float deltaTime)
 {
+    LEV_PROFILE_FUNCTION();
+
     for (const auto system : m_LateUpdateSystems)
     {
         system->Update(deltaTime, m_Registry);
@@ -86,6 +95,8 @@ void Scene::OnLateUpdate(const float deltaTime)
 
 void Scene::CollisionDetectionSystem()
 {
+    LEV_PROFILE_FUNCTION();
+
     AABBCollisionResolveSystem();
     SphereCollisionSystem();
     AABBSphereCollisionSystem();
@@ -93,6 +104,8 @@ void Scene::CollisionDetectionSystem()
 
 void Scene::UpdateCollisionList()
 {
+    LEV_PROFILE_FUNCTION();
+
     for (auto i = allCollisions.begin(); i != allCollisions.end(); )
     {
         if ((*i).framesLeft == numCollisionFrames)
@@ -122,6 +135,8 @@ void Scene::UpdateCollisionList()
 
 void Scene::SphereCollisionSystem()
 {
+    LEV_PROFILE_FUNCTION();
+
     const auto view = m_Registry.group<>(entt::get<Transform, Rigidbody, SphereCollider>);
     const auto first = view.begin();
     const auto last = view.end();
@@ -159,6 +174,8 @@ void Scene::SphereCollisionSystem()
 
 void Scene::AABBSphereCollisionSystem()
 {
+    LEV_PROFILE_FUNCTION();
+
     const auto view = m_Registry.group<>(entt::get<Transform, Rigidbody, BoxCollider>);
     const auto first = view.begin();
     const auto last = view.end();
@@ -200,20 +217,27 @@ void Scene::AABBSphereCollisionSystem()
 
 void Scene::AABBCollisionResolveSystem()
 {
-    const auto group = m_Registry.group<>(entt::get<Transform, Rigidbody, BoxCollider>);
+    LEV_PROFILE_FUNCTION();
+
+    const auto group = m_Registry.group<Transform>(entt::get<Rigidbody, BoxCollider>);
     const auto first = group.begin();
     const auto last = group.end();
+
+    const auto groupB = m_Registry.group<Transform>(entt::get<Rigidbody, BoxCollider>);
+    const auto firstB = group.begin();
+    const auto lastB = group.end();
 
     for (auto i = first; i != last; ++i)
     {
         auto [transform1, rigidbody1, boxCollider1] = group.get<Transform, Rigidbody, BoxCollider>(*i);
-        for (auto j = first; j != last; ++j)
+        for (auto j = firstB; j != lastB; ++j)
         {
             if (i == j) continue;
 
-            auto [transform2, rigidbody2, boxCollider2] = group.get<Transform, Rigidbody, BoxCollider>(*j);
+            auto [transform2, rigidbody2, boxCollider2] = groupB.get<Transform, Rigidbody, BoxCollider>(*j);
 
             if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
+
             CollisionInfo info;
 
             info.transformA = &transform1;
@@ -237,6 +261,8 @@ void Scene::AABBCollisionResolveSystem()
 
 void Scene::OnRender()
 {
+    LEV_PROFILE_FUNCTION();
+
     SceneCamera* mainCamera = nullptr;
     Matrix cameraTransform;
     Vector3 cameraPosition;
@@ -288,6 +314,8 @@ void Scene::OnRender()
 
 void Scene::DirectionalLightSystem()
 {
+    LEV_PROFILE_FUNCTION();
+
     auto view = m_Registry.group<>(entt::get<Transform, DirectionalLightComponent>);
     for (auto entity : view)
     {
@@ -299,6 +327,8 @@ void Scene::DirectionalLightSystem()
 
 void Scene::PointLightsSystem()
 {
+    LEV_PROFILE_FUNCTION();
+
     auto view = m_Registry.group<>(entt::get<Transform, PointLightComponent>);
     for (auto entity : view)
     {
@@ -310,6 +340,8 @@ void Scene::PointLightsSystem()
 
 void Scene::SkyboxRenderSystem()
 {
+    LEV_PROFILE_FUNCTION();
+
     auto view = m_Registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
     for (auto entity : view)
     {
@@ -321,6 +353,8 @@ void Scene::SkyboxRenderSystem()
 
 void Scene::MeshRenderSystem()
 {
+    LEV_PROFILE_FUNCTION();
+
     auto view = m_Registry.group<>(entt::get<Transform, MeshRendererComponent>);
     for (auto entity : view)
     {
@@ -331,6 +365,8 @@ void Scene::MeshRenderSystem()
 
 void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
 {
+    LEV_PROFILE_FUNCTION();
+
     m_ViewportWidth = width;
     m_ViewportHeight = height;
 
@@ -347,11 +383,15 @@ void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
 
 Entity Scene::CreateEntity(const std::string& name)
 {
+    LEV_PROFILE_FUNCTION();
+
     return CreateEntity(LevEngine::UUID(), name);
 }
 
 Entity Scene::CreateEntity(LevEngine::UUID uuid, const std::string& name)
 {
+    LEV_PROFILE_FUNCTION();
+
     auto entity = Entity(entt::handle{ m_Registry, m_Registry.create() });
     entity.AddComponent<IDComponent>(uuid);
     entity.AddComponent<Transform>();
@@ -362,11 +402,15 @@ Entity Scene::CreateEntity(LevEngine::UUID uuid, const std::string& name)
 
 Entity Scene::ConvertEntity(const entt::entity entity)
 {
+    LEV_PROFILE_FUNCTION();
+
     return Entity(entt::handle(m_Registry, entity));
 }
 
 void Scene::DestroyEntity(const Entity entity)
 {
+    LEV_PROFILE_FUNCTION();
+
     m_Registry.destroy(entity);
 }
 
@@ -438,12 +482,16 @@ static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Enti
 
 void Scene::DuplicateEntity(Entity entity)
 {
+    LEV_PROFILE_FUNCTION();
+
     Entity newEntity = CreateEntity(entity.GetName());
     CopyComponentIfExists(AllComponents{}, newEntity, entity);
 }
 
 Entity Scene::GetMainCameraEntity()
 {
+    LEV_PROFILE_FUNCTION();
+
     auto view = m_Registry.view<CameraComponent>();
     for (auto entity : view)
     {
