@@ -155,6 +155,7 @@
     <ClCompile Include="src\Renderer\D3D11ConstantBuffer.cpp" />
     <ClCompile Include="src\Renderer\D3D11Texture.cpp" />
     <ClCompile Include="src\Renderer\D3D11TextureCube.cpp" />
+    <ClCompile Include="src\Renderer\D3D11DepthBuffer.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\OrbitCamera.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
@@ -177,6 +178,8 @@
     <ClInclude Include="external\entt\entt.hpp" />
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="src\Assets.h" />
+    <ClInclude Include="src\Debugging\Profiler.h" />
+    <ClInclude Include="src\Debug\Profiler.h" />
     <ClInclude Include="src\Katamari\KatamariPlayer.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Components\RendererComponent.h" />
@@ -201,6 +204,7 @@
     <ClInclude Include="src\Renderer\3D\SkyboxMesh.h" />
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="src\Renderer\D3D11ConstantBuffer.h" />
+    <ClInclude Include="src\Renderer\D3D11DepthBuffer.h" />
     <ClInclude Include="src\Renderer\D3D11Texture.h" />
     <ClInclude Include="src\Renderer\D3D11TextureCube.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />

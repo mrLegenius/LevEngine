@@ -15,7 +15,10 @@ namespace ShaderAssets
 {
     inline auto Lit()
     {
-        static auto shader = std::make_shared<D3D11Shader>(GetShaderPath("Lit.hlsl"));
+        static Ref<D3D11Shader> shader;
+        if (shader) return shader;
+
+        shader = CreateRef<D3D11Shader>(GetShaderPath("Lit.hlsl"));
         shader->SetLayout({
         { ShaderDataType::Float3, "POSITION" },
         { ShaderDataType::Float3, "NORMAL" },
@@ -27,7 +30,10 @@ namespace ShaderAssets
 
 	inline auto Unlit()
 	{
-        static auto shader = std::make_shared<D3D11Shader>(GetShaderPath("Unlit.hlsl"));
+        static Ref<D3D11Shader> shader;
+        if (shader) return shader;
+
+        shader = CreateRef<D3D11Shader>(GetShaderPath("Unlit.hlsl"));
         shader->SetLayout({
         { ShaderDataType::Float3, "POSITION" },
 		{ ShaderDataType::Float3, "NORMAL" },
@@ -39,8 +45,41 @@ namespace ShaderAssets
 
 	inline auto Skybox()
     {
-        static auto shader = std::make_shared<D3D11Shader>(GetShaderPath("Skybox.hlsl"));
+	    static Ref<D3D11Shader> shader;
+	    if (shader) return shader;
+
+	    shader = CreateRef<D3D11Shader>(GetShaderPath("Skybox.hlsl"));
         shader->SetLayout({{ ShaderDataType::Float3, "POSITION" }});
+
+        return shader;
+    }
+
+    inline auto ShadowMapPass()
+    {
+        static Ref<D3D11Shader> shader;
+        if (shader) return shader;
+
+        shader = CreateRef<D3D11Shader>(GetShaderPath("ShadowMapPass.hlsl"));
+        shader->SetLayout({
+        { ShaderDataType::Float3, "POSITION" },
+        { ShaderDataType::Float3, "NORMAL" },
+        { ShaderDataType::Float2, "UV" },
+        });
+
+        return shader;
+    }
+
+    inline auto ShadowMapTest()
+    {
+        static Ref<D3D11Shader> shader;
+        if (shader) return shader;
+
+        shader = CreateRef<D3D11Shader>(GetShaderPath("ShadowMapVisual.hlsl"));
+        shader->SetLayout({
+        { ShaderDataType::Float3, "POSITION" },
+        { ShaderDataType::Float3, "NORMAL" },
+        { ShaderDataType::Float2, "UV" },
+            });
 
         return shader;
     }
@@ -50,25 +89,25 @@ namespace TextureAssets
 {
     inline std::shared_ptr<D3D11Texture2D> Bricks()
     {
-        static auto texture = std::make_shared<D3D11Texture2D>(GetTexturePath("bricks.jpg"));
+        static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("bricks.jpg"));
         return texture;
     }
 
     inline std::shared_ptr<D3D11Texture2D> Log()
     {
-        static auto texture = std::make_shared<D3D11Texture2D>(GetTexturePath("log.jpg"));
+        static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("log.jpg"));
         return texture;
     }
 
     inline std::shared_ptr<D3D11Texture2D> Gear()
     {
-        static auto texture = std::make_shared<D3D11Texture2D>(GetTexturePath("gear.png"));
+        static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("gear.png"));
         return texture;
     }
 
     inline std::shared_ptr<D3D11Texture2D> Rock()
     {
-        static auto texture = std::make_shared<D3D11Texture2D>(GetTexturePath("rock.tga"));
+        static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("rock.tga"));
         return texture;
     }
 };
@@ -86,7 +125,7 @@ namespace SkyboxAssets
             GetTexturePath("TestSkybox/front.png"), //front
         };
 
-        static auto texture = std::make_shared<D3D11TextureCube>(paths);
+        static auto texture = CreateRef<D3D11TextureCube>(paths);
 
         return texture;
     }
@@ -102,7 +141,7 @@ namespace SkyboxAssets
             GetTexturePath("LightBlueSkybox/front.png"), //front
         };
 
-        static auto texture = std::make_shared<D3D11TextureCube>(paths);
+        static auto texture = CreateRef<D3D11TextureCube>(paths);
 
         return texture;
     }

@@ -138,7 +138,7 @@ void D3D11RendererAPI::Init()
 
 void D3D11RendererAPI::SetViewport(int x, int y, uint32_t width, uint32_t height)
 {
-	D3D11_VIEWPORT viewport = {};
+	D3D11_VIEWPORT viewport;
 	viewport.Width = static_cast<float>(width);
 	viewport.Height = static_cast<float>(height);
 	viewport.TopLeftX = x;

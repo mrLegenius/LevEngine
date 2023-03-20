@@ -1,4 +1,4 @@
-#include "Debug/Profiler.h"
+#include "Debugging/Profiler.h"
 #include "FirstSteps/MySuper3DLayer.h"
 #include "Pong/PongLayer.h"
 #include "SolarSystem/SolarSystemLayer.h"

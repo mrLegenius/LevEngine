@@ -34,6 +34,7 @@ struct MeshRendererComponent
 	Ref<Mesh> mesh;
 	Ref<D3D11Shader> shader;
 	Ref<Texture> texture;
+	bool castShadow = true;
 
 	MeshRendererComponent() = default;
 	MeshRendererComponent(const Ref<D3D11Shader>& shader,

@@ -4,6 +4,7 @@
 #include "../Input/Input.h"
 #include "Scene/Components/Components.h"
 #include "Scene/Entity.h"
+#include "Physics/Events/CollisionBeginEvent.h"
 
 struct KatamariPlayerComponent
 {
@@ -46,20 +47,32 @@ public:
             rigidbody.AddForceAtPosition(movementDir * 100, Vector3::Up);
         }
     }
+};
 
-  //  void OnCollisionBegin(GameObject* gameObject) override
-  //  {
-  //      if (gameObject->GetRigidbody()->bodyType == BodyType::Static) return;
+class KatamariCollisionSystem : public System
+{
+public:
+    void Update(float deltaTime, entt::registry& registry) override
+    {
+        auto view = registry.view<KatamariPlayerComponent, CollisionBeginEvent, Rigidbody, SphereCollider>();
+        for (auto entity : view)
+        {
+            auto [transform, collision, rigidbody, collider] = registry.get<Transform, CollisionBeginEvent, Rigidbody, SphereCollider>(entity);
 
-  //      auto radius = gameObject->GetCollider()->GetRadius();
-  //      if (radius > m_SphereCollider->radius) return;
+            auto& otherRigidbody = collision.other.GetComponent<Rigidbody>();
+            auto& otherTransform = collision.other.GetComponent<Transform>();
+            if (otherRigidbody.bodyType == BodyType::Static) return;
 
-		////GetRigidbody()->mass += gameObject->GetRigidbody()->mass;
-  //      m_SphereCollider->radius += 0.1f;
+            auto size = collider.radius;
+            auto otherSize = LevEngine::Math::MaxElement(otherTransform.GetWorldScale());
+            
+            if (size > otherSize) return;
 
-  //      gameObject->GetRigidbody()->enabled = false;
-  //     
-  //      gameObject->GetTransform()->SetParent(m_Transform.get());
-  //  }
+            collider.radius += 0.1f;
 
+            otherRigidbody.enabled = false;
+            
+            otherTransform.SetParent(&transform);
+        }
+    }
 };

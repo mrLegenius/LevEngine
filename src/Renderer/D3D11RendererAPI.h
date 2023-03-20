@@ -24,7 +24,6 @@ public:
 
 	void Init();
 	void SetViewport(int x, int y, uint32_t width, uint32_t height);
-	//void SetDepthFunc(DepthFunc depthFunc) = 0;
 private:
 	float* m_Color;
 };

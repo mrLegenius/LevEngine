@@ -58,6 +58,7 @@ private:
 
 	void MeshRenderSystem();
 	void SkyboxRenderSystem();
+	void MeshShadowSystem();
 
 	Entity ConvertEntity(entt::entity entity);
 

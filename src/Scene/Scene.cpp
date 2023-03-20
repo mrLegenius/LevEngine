@@ -7,7 +7,7 @@
 #include "Entity.h"
 #include "OrbitCamera.h"
 #include "Components/SkyboxRenderer.h"
-#include "Debug/Profiler.h"
+#include "Debugging/Profiler.h"
 #include "Kernel/Application.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Physics/Systems/VelocityUpdateSystem.h"
@@ -250,7 +250,7 @@ void Scene::AABBCollisionResolveSystem()
 	            boxCollider1,
 	            transform1,
 	            boxCollider2,
-	            transform2, 
+	            transform2,
                 info))
             {
                 Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
@@ -266,6 +266,7 @@ void Scene::OnRender()
     SceneCamera* mainCamera = nullptr;
     Matrix cameraTransform;
     Vector3 cameraPosition;
+    Matrix dirLightView;
 
     //Reset
     {
@@ -296,19 +297,47 @@ void Scene::OnRender()
         }
     }
 
+    //Render Scene
+
     if (mainCamera)
     {
-        Renderer3D::BeginScene(*mainCamera, cameraTransform, cameraPosition);
-
         DirectionalLightSystem();
-        PointLightsSystem();
-        Renderer3D::UpdateLights();
 
-        MeshRenderSystem();
+        {
+            LEV_PROFILE_SCOPE("ShadowPass");
 
-        SkyboxRenderSystem();
+            SceneCamera* lightCamera = nullptr;
+            auto view = m_Registry.group<>(entt::get<Transform, DirectionalLightComponent, CameraComponent>);
+            for (auto entity : view)
+            {
+                auto& camera = view.get<CameraComponent>(entity);
+                lightCamera = &camera.camera;
+            }
 
-        Renderer3D::EndScene();
+            if (lightCamera)
+            {
+                Renderer3D::BeginShadowPass(*lightCamera);
+
+                MeshShadowSystem();
+
+                Renderer3D::EndShadowPass();
+            }
+        }
+
+        {
+            LEV_PROFILE_SCOPE("RenderPass");
+            Renderer3D::BeginScene(*mainCamera, cameraTransform, cameraPosition);
+
+            
+            PointLightsSystem();
+            Renderer3D::UpdateLights();
+
+            MeshRenderSystem();
+
+            SkyboxRenderSystem();
+
+            Renderer3D::EndScene();
+        }
     }
 }
 
@@ -321,7 +350,8 @@ void Scene::DirectionalLightSystem()
     {
         auto [transform, light] = view.get<Transform, DirectionalLightComponent>(entity);
 
-        Renderer3D::SetDirLight(transform.GetWorldRotation(), light);
+        //auto view = Matrix::CreateLookAt(transform.GetWorldPosition(), transform.GetWorldPosition() + transform.GetForwardDirection(), Vector3::Up);
+        Renderer3D::SetDirLight(transform.GetForwardDirection(), transform.GetModel().Invert(), light);
     }
 }
 
@@ -348,6 +378,19 @@ void Scene::SkyboxRenderSystem()
     	auto [transform, skybox] = view.get<Transform, SkyboxRendererComponent>(entity);
         Renderer3D::DrawSkybox(skybox);
         break;
+    }
+}
+
+void Scene::MeshShadowSystem()
+{
+    LEV_PROFILE_FUNCTION();
+
+    auto view = m_Registry.group<>(entt::get<Transform, MeshRendererComponent>);
+    for (auto entity : view)
+    {
+        auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
+        if (mesh.castShadow)
+			Renderer3D::DrawMeshShadow(transform.GetModel(), mesh);
     }
 }
 

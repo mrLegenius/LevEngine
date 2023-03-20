@@ -32,7 +32,8 @@ static DXGI_FORMAT ParseShaderDataTypeToD3D11DataType(const ShaderDataType type)
 	}
 }
 
-D3D11Shader::D3D11Shader(const std::string& filepath)
+D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, static_cast<ShaderType>(Vertex | Pixel)) { }
+D3D11Shader::D3D11Shader(const std::string& filepath, ShaderType shaderTypes)
 {
 	auto lastSlash = filepath.find_last_of("/\\");
 	lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
@@ -44,24 +45,36 @@ D3D11Shader::D3D11Shader(const std::string& filepath)
 	const std::wstring widestr = std::wstring(filepath.begin(), filepath.end());
 	const wchar_t* wide_filepath = widestr.c_str();
 
-	auto result = CreateVertexShader(m_VertexShader, m_VertexBC, wide_filepath);
-	assert(result);
-	result = CreatePixelShader(m_PixelShader, wide_filepath);
-	assert(result);
+	if (shaderTypes & ShaderType::Vertex)
+	{
+		auto result = CreateVertexShader(m_VertexShader, m_VertexBC, wide_filepath);
+		assert(result);
+	}
+
+	if (shaderTypes & ShaderType::Pixel)
+	{
+		auto result = CreatePixelShader(m_PixelShader, wide_filepath);
+		assert(result);
+	}
 }
 
 D3D11Shader::~D3D11Shader()
 {
-	m_PixelShader->Release();
-	m_VertexShader->Release();
+	if (m_PixelShader)
+		m_PixelShader->Release();
+	if (m_VertexShader)
+		m_VertexShader->Release();
+
 	m_VertexBC->Release();
 	m_InputLayout->Release();
 }
 
 void D3D11Shader::Bind() const
 {
-	context->VSSetShader(m_VertexShader, nullptr, 0);
-	context->PSSetShader(m_PixelShader, nullptr, 0);
+	if (m_VertexShader)
+		context->VSSetShader(m_VertexShader, nullptr, 0);
+	if (m_PixelShader)
+		context->PSSetShader(m_PixelShader, nullptr, 0);
 	context->IASetInputLayout(m_InputLayout);
 }
 

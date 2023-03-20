@@ -1,5 +1,6 @@
 #pragma once
 #include "Components/Transform.h"
+#include "Debugging/Profiler.h"
 #include "Physics/Components/Rigidbody.h"
 
 inline void VelocityUpdateSystem(const float deltaTime, entt::registry& registry)

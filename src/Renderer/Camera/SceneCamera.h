@@ -27,6 +27,7 @@ private:
 
 	ProjectionType m_ProjectionType = ProjectionType::Perspective;
 	float m_AspectRatio = 1.0f;
+	uint32_t m_ViewportHeight = 0;
 
 protected:
 

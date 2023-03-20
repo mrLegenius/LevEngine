@@ -25,6 +25,7 @@ void SceneCamera::SetPerspective(const float fov, const float nearClip, const fl
 
 void SceneCamera::SetViewportSize(const uint32_t width, const uint32_t height)
 {
+	m_ViewportHeight = height;
 	m_AspectRatio = height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
 
 	RecalculateProjection();
@@ -32,10 +33,13 @@ void SceneCamera::SetViewportSize(const uint32_t width, const uint32_t height)
 
 void SceneCamera::RecalculateProjection()
 {
-	const float horizontal = m_OrthographicSize * 800;
-	const float vertical = m_AspectRatio * horizontal;
+	if (m_ViewportHeight != 0)
+	{
+		const float height = m_OrthographicSize * m_ViewportHeight;
+		const float width = m_AspectRatio * height;
 
-	m_OrthographicProjection = Matrix::CreateOrthographic(vertical, horizontal, m_OrthographicNear, m_OrthographicFar);
+		m_OrthographicProjection = Matrix::CreateOrthographic(width, height, m_OrthographicNear, m_OrthographicFar);
+	}
 
 	m_PerspectiveProjection = Matrix::CreatePerspectiveFieldOfView(m_FieldOfView, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
 }

@@ -95,6 +95,11 @@ struct Transform
 		rotation = newRotation;
 	}
 
+	void SetLocalRotationRadians(const Vector3 value)
+	{
+		rotation = value;
+	}
+
 	void SetLocalRotation(const Quaternion value)
 	{
 		rotation = value.ToEuler();
