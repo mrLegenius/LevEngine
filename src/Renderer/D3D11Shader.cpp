@@ -9,8 +9,9 @@ extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target);
-bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const wchar_t* shaderFilepath);
-bool CreatePixelShader(ID3D11PixelShader*& shader, const wchar_t* shaderFilepath);
+bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const std::string& filepath);
+bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath);
+bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath);
 
 static DXGI_FORMAT ParseShaderDataTypeToD3D11DataType(const ShaderDataType type)
 {
@@ -42,18 +43,21 @@ D3D11Shader::D3D11Shader(const std::string& filepath, ShaderType shaderTypes)
 	const auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
 	m_Name = filepath.substr(lastSlash, count);
 
-	const std::wstring widestr = std::wstring(filepath.begin(), filepath.end());
-	const wchar_t* wide_filepath = widestr.c_str();
-
 	if (shaderTypes & ShaderType::Vertex)
 	{
-		auto result = CreateVertexShader(m_VertexShader, m_VertexBC, wide_filepath);
+		auto result = CreateVertexShader(m_VertexShader, m_VertexBC, filepath);
 		assert(result);
 	}
 
 	if (shaderTypes & ShaderType::Pixel)
 	{
-		auto result = CreatePixelShader(m_PixelShader, wide_filepath);
+		auto result = CreatePixelShader(m_PixelShader, filepath);
+		assert(result);
+	}
+
+	if (shaderTypes & ShaderType::Geometry)
+	{
+		auto result = CreateGeometryShader(m_GeometryShader, filepath);
 		assert(result);
 	}
 }
@@ -64,6 +68,8 @@ D3D11Shader::~D3D11Shader()
 		m_PixelShader->Release();
 	if (m_VertexShader)
 		m_VertexShader->Release();
+	if (m_GeometryShader)
+		m_GeometryShader->Release();
 
 	m_VertexBC->Release();
 	m_InputLayout->Release();
@@ -75,13 +81,18 @@ void D3D11Shader::Bind() const
 		context->VSSetShader(m_VertexShader, nullptr, 0);
 	if (m_PixelShader)
 		context->PSSetShader(m_PixelShader, nullptr, 0);
+	if (m_GeometryShader)
+		context->GSSetShader(m_GeometryShader, nullptr, 0);
 	context->IASetInputLayout(m_InputLayout);
 }
 
-bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target)
+bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target)
 {
+	const std::wstring widestr = std::wstring(shaderFilepath.begin(), shaderFilepath.end());
+	const wchar_t* wide_filepath = widestr.c_str();
+
 	ID3DBlob* errorCode = nullptr;
-	const auto res = D3DCompileFromFile(shaderFilepath,
+	const auto res = D3DCompileFromFile(wide_filepath,
 		defines /*macros*/,
 		includes /*include*/,
 		entrypoint,
@@ -112,9 +123,9 @@ bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER
 	return true;
 }
 
-bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const wchar_t* shaderFilepath)
+bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const std::string& filepath)
 {
-	if (!CreateShader(vertexBC, shaderFilepath, nullptr, nullptr, "VSMain", "vs_5_0"))
+	if (!CreateShader(vertexBC, filepath, nullptr, nullptr, "VSMain", "vs_5_0"))
 		return false;
 
 	device->CreateVertexShader(
@@ -125,12 +136,12 @@ bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const 
 	return true;
 }
 
-bool CreatePixelShader(ID3D11PixelShader*& shader, const wchar_t* shaderFilepath)
+bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath)
 {
 	ID3DBlob* pixelBC;
 	D3D_SHADER_MACRO defines[] = { "TEST", "1", "TCOLOR", "float4(0.0f, 1.0f, 0.0f, 1.0f)", nullptr, nullptr};
 
-	if (!CreateShader(pixelBC, shaderFilepath, defines, nullptr, "PSMain", "ps_5_0"))
+	if (!CreateShader(pixelBC, filepath, defines, nullptr, "PSMain", "ps_5_0"))
 		return false;
 
 	device->CreatePixelShader(
@@ -141,6 +152,21 @@ bool CreatePixelShader(ID3D11PixelShader*& shader, const wchar_t* shaderFilepath
 	return true;
 }
 
+bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath)
+{
+	ID3DBlob* geometryBC;
+	D3D_SHADER_MACRO defines[] = { nullptr, nullptr };
+
+	if (!CreateShader(geometryBC, filepath, defines, nullptr, "GSMain", "gs_5_0"))
+		return false;
+
+	device->CreateGeometryShader(
+		geometryBC->GetBufferPointer(),
+		geometryBC->GetBufferSize(),
+		nullptr, &shader);
+
+	return true;
+}
 
 void D3D11Shader::SetLayout(const BufferLayout& layout)
 {

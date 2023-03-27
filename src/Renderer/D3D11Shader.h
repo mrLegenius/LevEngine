@@ -31,8 +31,13 @@ private:
 	ID3D11VertexShader* m_VertexShader = nullptr;
 	ID3DBlob* m_VertexBC = nullptr;
 	ID3D11PixelShader* m_PixelShader = nullptr;
+	ID3D11GeometryShader* m_GeometryShader = nullptr;
 
 	ID3D11InputLayout* m_InputLayout = nullptr;
 	BufferLayout m_Layout;
 };
 
+inline D3D11Shader::ShaderType operator|(const D3D11Shader::ShaderType a, const D3D11Shader::ShaderType b)
+{
+	return static_cast<D3D11Shader::ShaderType>(static_cast<int>(a) | static_cast<int>(b));
+}

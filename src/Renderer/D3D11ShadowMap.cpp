@@ -1,12 +1,12 @@
 #include <cassert>
 #include <wrl/client.h>
 
-#include "D3D11DepthBuffer.h"
+#include "D3D11ShadowMap.h"
 
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
-D3D11DepthBuffer::D3D11DepthBuffer(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
+D3D11ShadowMap::D3D11ShadowMap(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
 {
     D3D11_TEXTURE2D_DESC desc;
     ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -72,9 +72,7 @@ D3D11DepthBuffer::D3D11DepthBuffer(uint32_t width, uint32_t height) : m_Width(wi
     comparisonSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
 
     // Point filtered shadows can be faster, and may be a good choice when
-	// rendering on hardware with lower feature levels. This sample has a
-	// UI option to enable/disable filtering so you can see the difference
-	// in quality and speed.
+    // rendering on hardware with lower feature levels.
 
     hr = device->CreateSamplerState(
         &comparisonSamplerDesc,
@@ -83,7 +81,7 @@ D3D11DepthBuffer::D3D11DepthBuffer(uint32_t width, uint32_t height) : m_Width(wi
     assert(SUCCEEDED(hr) && "Can't create a SamplerState for DepthBuffer");
 
     CD3D11_RASTERIZER_DESC rastDesc = {};
-    rastDesc.CullMode = D3D11_CULL_NONE;   
+    rastDesc.CullMode = D3D11_CULL_NONE;
     rastDesc.FillMode = D3D11_FILL_SOLID;
     //rastDesc.FillMode = D3D11_FILL_WIREFRAME;
 
@@ -92,7 +90,7 @@ D3D11DepthBuffer::D3D11DepthBuffer(uint32_t width, uint32_t height) : m_Width(wi
     assert(SUCCEEDED(hr) && "Can't create a RasterizerState for DepthBuffer");
 }
 
-D3D11DepthBuffer::~D3D11DepthBuffer()
+D3D11ShadowMap::~D3D11ShadowMap()
 {
     m_Texture->Release();
     m_ShaderResourceView->Release();
@@ -100,13 +98,13 @@ D3D11DepthBuffer::~D3D11DepthBuffer()
     m_SamplerState->Release();
 }
 
-void D3D11DepthBuffer::Bind(uint32_t slot) const
+void D3D11ShadowMap::Bind(uint32_t slot) const
 {
     context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
     context->PSSetSamplers(slot, 1, &m_SamplerState);
 }
 
-void D3D11DepthBuffer::SetRenderTarget() const
+void D3D11ShadowMap::SetRenderTarget() const
 {
     context->RSSetState(m_RastState);
     context->OMSetRenderTargets(
@@ -115,13 +113,4 @@ void D3D11DepthBuffer::SetRenderTarget() const
         m_DepthStencilView
     );
     context->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
-}
-
-void D3D11DepthBuffer::ClearRenderTarget() const
-{
-    context->OMSetRenderTargets(
-        0,
-        nullptr,
-        nullptr
-    );
 }

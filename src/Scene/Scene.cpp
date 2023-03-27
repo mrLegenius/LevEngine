@@ -316,18 +316,22 @@ void Scene::OnRender()
 
             if (lightCamera)
             {
-                Renderer3D::BeginShadowPass(*lightCamera);
+                const auto cameraCascadeProjections = mainCamera->GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
 
-                MeshShadowSystem();
+                for (int i = 0; i < RenderSettings::CascadeCount; ++i)
+                {
+                    Renderer3D::BeginShadowPass(*lightCamera, cameraCascadeProjections[i], cameraTransform, i);
 
-                Renderer3D::EndShadowPass();
+                    MeshShadowSystem();
+
+                    Renderer3D::EndShadowPass();
+                }
             }
         }
 
         {
             LEV_PROFILE_SCOPE("RenderPass");
             Renderer3D::BeginScene(*mainCamera, cameraTransform, cameraPosition);
-
             
             PointLightsSystem();
             Renderer3D::UpdateLights();
@@ -350,8 +354,7 @@ void Scene::DirectionalLightSystem()
     {
         auto [transform, light] = view.get<Transform, DirectionalLightComponent>(entity);
 
-        //auto view = Matrix::CreateLookAt(transform.GetWorldPosition(), transform.GetWorldPosition() + transform.GetForwardDirection(), Vector3::Up);
-        Renderer3D::SetDirLight(transform.GetForwardDirection(), transform.GetModel().Invert(), light);
+        Renderer3D::SetDirLight(transform.GetForwardDirection(), light);
     }
 }
 

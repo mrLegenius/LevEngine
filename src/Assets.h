@@ -5,7 +5,7 @@
 #include "Renderer/D3D11Texture.h"
 #include "Renderer/D3D11TextureCube.h"
 
-static std::filesystem::path resources = "./resources";
+static std::filesystem::path resources = std::filesystem::path("resources");
 
 static std::string GetShaderPath(const std::string& name) { return (resources / "Shaders" / name).string(); }
 static std::string GetTexturePath(const std::string& name) { return (resources / "Textures" / name).string(); }
@@ -48,23 +48,39 @@ namespace ShaderAssets
 	    static Ref<D3D11Shader> shader;
 	    if (shader) return shader;
 
+        (resources / "Shaders").relative_path();
 	    shader = CreateRef<D3D11Shader>(GetShaderPath("Skybox.hlsl"));
         shader->SetLayout({{ ShaderDataType::Float3, "POSITION" }});
 
         return shader;
     }
 
-    inline auto ShadowMapPass()
+    inline auto ShadowPass()
     {
         static Ref<D3D11Shader> shader;
         if (shader) return shader;
 
-        shader = CreateRef<D3D11Shader>(GetShaderPath("ShadowMapPass.hlsl"));
+        shader = CreateRef<D3D11Shader>(GetShaderPath("ShadowPass.hlsl"));
         shader->SetLayout({
         { ShaderDataType::Float3, "POSITION" },
         { ShaderDataType::Float3, "NORMAL" },
         { ShaderDataType::Float2, "UV" },
         });
+
+        return shader;
+    }
+
+    inline auto CascadeShadowPass()
+    {
+        static Ref<D3D11Shader> shader;
+        if (shader) return shader;
+
+        shader = CreateRef<D3D11Shader>(GetShaderPath("CascadeShadowPass.hlsl"), D3D11Shader::Vertex | D3D11Shader::Geometry);
+        shader->SetLayout({
+        { ShaderDataType::Float3, "POSITION" },
+        { ShaderDataType::Float3, "NORMAL" },
+        { ShaderDataType::Float2, "UV" },
+            });
 
         return shader;
     }

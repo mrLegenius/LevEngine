@@ -18,7 +18,7 @@ public:
 	Quaternion rotation;
 
 private:
-	Transform* m_Target;
+	Transform* m_Target = nullptr;
 
 	float m_Distance = 10;
 

@@ -4,14 +4,14 @@
 #include "Debugging/Profiler.h"
 #include "Kernel/Application.h"
 
-#define MAX_POINT_LIGHTS 10
-
 Ref<D3D11ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_DirLightConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_ShadowMapConstantBuffer;
+Ref<D3D11ConstantBuffer> Renderer3D::m_ShadowPassConstantBuffer;
 
-Ref<D3D11DepthBuffer> Renderer3D::m_ShadowMapBuffer;
+Ref<D3D11ShadowMap> Renderer3D::m_ShadowMap;
+Ref<D3D11CascadeShadowMap> Renderer3D::m_CascadeShadowMap;
 
 Matrix Renderer3D::m_PerspectiveViewProjection;
 Matrix Renderer3D::m_ViewProjection;
@@ -19,11 +19,13 @@ Ref<SkyboxMesh> Renderer3D::s_SkyboxMesh;
 
 std::vector<PointLightData> Renderer3D::s_PointLights;
 DirLightData Renderer3D::s_DirLight;
+ShadowData Renderer3D::s_ShadowData;
+ShadowPassData Renderer3D::s_ShadowPassData;
 
-static float ShadowMapResolution = 2048;
 
 struct alignas(16) CameraData
 {
+    Matrix View;
     Matrix ViewProjection;
     Vector3 Position;
 };
@@ -36,14 +38,57 @@ struct alignas(16) LightningData
     uint32_t PointLightsCount = 0;
 };
 
-struct ShadowMapData
+std::vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj)
 {
-    Matrix ViewProjection;
-    alignas(16) float shadowMapDimensions;
-};
+    const auto viewProj = view * proj;
+    const auto inv = viewProj.Invert();
 
-static Matrix DirLightViewProjection;
-static Matrix DirLightView;
+    std::vector<Vector4> corners;
+    corners.reserve(8);
+    for (uint32_t x = 0; x < 2; ++x)
+        for (uint32_t y = 0; y < 2; ++y)
+            for (uint32_t z = 0; z < 2; ++z)
+            {
+                const Vector4 pt = Vector4::Transform(Vector4(
+                    2.0f * x - 1.0f,
+                    2.0f * y - 1.0f,
+                    z,
+                    1.0f), inv);
+
+                corners.push_back(pt / pt.w);
+            }
+
+    return corners;
+}
+
+Matrix GetCascadeProjection(const Matrix& lightView, std::vector<Vector4> frustrumCorners)
+{
+    float minX = std::numeric_limits<float>::max();
+    float maxX = std::numeric_limits<float>::lowest();
+    float minY = std::numeric_limits<float>::max();
+    float maxY = std::numeric_limits<float>::lowest();
+    float minZ = std::numeric_limits<float>::max();
+    float maxZ = std::numeric_limits<float>::lowest();
+
+    for (const auto& corner : frustrumCorners)
+    {
+        const auto trf = Vector4::Transform(corner, lightView);
+
+        minX = LevEngine::Math::Min(minX, trf.x);
+        maxX = LevEngine::Math::Max(maxX, trf.x);
+        minY = LevEngine::Math::Min(minY, trf.y);
+        maxY = LevEngine::Math::Max(maxY, trf.y);
+        minZ = LevEngine::Math::Min(minZ, trf.z);
+        maxZ = LevEngine::Math::Max(maxZ, trf.z);
+    }
+
+    constexpr float zMult = 10.0f;
+
+    minZ = (minZ < 0) ? minZ * zMult : minZ / zMult;
+    maxZ = (maxZ < 0) ? maxZ / zMult : maxZ * zMult;
+
+    return Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ);
+}
 
 void Renderer3D::Init()
 {
@@ -52,8 +97,11 @@ void Renderer3D::Init()
 	m_CameraConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof CameraData);
 	m_ModelConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof MeshModelBufferData, 1);
 	m_DirLightConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof LightningData, 2);
-	m_ShadowMapConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof ShadowMapData, 3);
-    m_ShadowMapBuffer = CreateRef<D3D11DepthBuffer>(ShadowMapResolution, ShadowMapResolution);
+	m_ShadowMapConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof ShadowData, 3);
+    m_ShadowPassConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof ShadowPassData, 3);
+
+    m_ShadowMap = CreateRef<D3D11ShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
+    m_CascadeShadowMap = CreateRef<D3D11CascadeShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
 
     s_SkyboxMesh = CreateRef<SkyboxMesh>(ShaderAssets::Skybox());
 }
@@ -63,26 +111,42 @@ void Renderer3D::Shutdown()
     LEV_PROFILE_FUNCTION();
 }
 
-void Renderer3D::BeginShadowPass(SceneCamera& camera)
+void Renderer3D::BeginShadowPass(SceneCamera& camera, const Matrix& mainCameraProjection, const Matrix& mainCameraView, int cascadeIndex)
 {
     LEV_PROFILE_FUNCTION();
 
-    m_ShadowMapBuffer->SetRenderTarget();
-    ShaderAssets::ShadowMapPass()->Bind();
+    auto frustrumCorners = GetFrustumWorldCorners(mainCameraView, mainCameraProjection);
 
-    camera.SetViewportSize(ShadowMapResolution, ShadowMapResolution);
-    RenderCommand::SetViewport(0, 0, ShadowMapResolution, ShadowMapResolution);
+    Vector4 center = Vector4::Zero;
 
-    DirLightViewProjection = DirLightView * camera.GetProjection();
-    const auto data = ShadowMapData{ DirLightViewProjection, ShadowMapResolution };
-    m_ShadowMapConstantBuffer->SetData(&data, sizeof ShadowMapData);
+    for (const auto& corner : frustrumCorners)
+        center += corner;
+
+    center /= frustrumCorners.size();
+
+    const auto view = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + s_DirLight.Direction, Vector3::Up);
+
+    s_ShadowData.ViewProjection[cascadeIndex] = view * GetCascadeProjection(view, frustrumCorners);
+    s_ShadowData.distances[cascadeIndex] = camera.GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
+
+    s_ShadowData.shadowMapDimensions = RenderSettings::ShadowMapResolution;
+
+    m_CascadeShadowMap->SetRenderTarget(cascadeIndex);
+    ShaderAssets::ShadowPass()->Bind();
+
+    camera.SetViewportSize(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
+    RenderCommand::SetViewport(0, 0, RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
+
+    //m_ShadowMapConstantBuffer->SetData(&s_ShadowData, sizeof ShadowData);
+    s_ShadowPassData = { s_ShadowData.ViewProjection[cascadeIndex] };
+    m_ShadowPassConstantBuffer->SetData(&s_ShadowPassData, sizeof ShadowPassData);
 }
 
 void Renderer3D::EndShadowPass()
 {
     LEV_PROFILE_FUNCTION();
 
-    m_ShadowMapBuffer->ClearRenderTarget();
+    RenderCommand::End();
 }
 
 void Renderer3D::BeginScene(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position)
@@ -96,11 +160,9 @@ void Renderer3D::BeginScene(const SceneCamera& camera, const Matrix& viewMatrix,
     m_ViewProjection = viewMatrix * camera.GetProjection();
     m_PerspectiveViewProjection = viewMatrix * camera.GetPerspectiveProjection();
 
-    const CameraData cameraData{ m_ViewProjection, position };
+    const CameraData cameraData{  viewMatrix, m_ViewProjection, position };
     m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
-
-    const auto data = ShadowMapData{ DirLightViewProjection , ShadowMapResolution };
-    m_ShadowMapConstantBuffer->SetData(&data, sizeof ShadowMapData);
+    m_ShadowMapConstantBuffer->SetData(&s_ShadowData, sizeof ShadowData);
 }
 
 void Renderer3D::EndScene()
@@ -133,7 +195,7 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
 
-    m_ShadowMapBuffer->Bind(1);
+    m_CascadeShadowMap->Bind(1);
     meshRenderer.texture->Bind();
     meshRenderer.shader->Bind();
     
@@ -147,7 +209,7 @@ void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer)
     renderer.texture->Bind();
     ShaderAssets::Skybox()->Bind();
 
-    const CameraData skyboxCameraData{ m_PerspectiveViewProjection, Vector3::Zero };
+    const CameraData skyboxCameraData{  Matrix::Identity, m_PerspectiveViewProjection, Vector3::Zero };
     m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
 
     RenderCommand::SetDepthFunc(DepthFunc::LessOrEqual);
@@ -155,11 +217,9 @@ void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer)
     RenderCommand::SetDepthFunc(DepthFunc::Less);
 }
 
-void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const Matrix& dirLightViewMatrix, const DirectionalLightComponent& dirLight)
+void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)
 {
     LEV_PROFILE_FUNCTION();
-
-    DirLightView = dirLightViewMatrix;
 
     s_DirLight.Direction = dirLightDirection;
 
@@ -172,7 +232,7 @@ void Renderer3D::AddPointLights(const Vector3& position, const PointLightCompone
 {
     LEV_PROFILE_FUNCTION();
 
-    if (s_PointLights.size() >= MAX_POINT_LIGHTS)
+    if (s_PointLights.size() >= RenderSettings::MaxPointLights)
     {
         std::cout << "Trying to add point light beyond maximum" << std::endl;
         return;

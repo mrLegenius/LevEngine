@@ -1,3 +1,5 @@
+#define CASCADE_COUNT 4
+
 cbuffer CameraConstantBuffer : register(b0)
 {
     row_major matrix viewProjection;
@@ -12,7 +14,6 @@ cbuffer ModelConstantBuffer : register(b1)
 cbuffer lightSpaceConstantBuffer : register(b3)
 {
     row_major matrix lightViewProjection;
-    float shadowMapDimensions;
 };
 
 struct VS_IN

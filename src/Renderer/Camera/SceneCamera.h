@@ -21,6 +21,7 @@ public:
 	[[nodiscard]] const Matrix& GetViewMatrix() const { return m_ViewMatrix; }
 	[[nodiscard]] Matrix GetViewProjection() const { return m_ViewMatrix * GetProjection(); }
 	[[nodiscard]] Matrix GetPerspectiveProjection() const { return m_PerspectiveProjection; }
+	float GetPerspectiveProjectionSliceDistance(float cascadeDistance) const;
 
 private:
 	void RecalculateProjection();
@@ -70,6 +71,8 @@ public:
 
 	void SetPerspectiveFar(const float farClip) { m_PerspectiveFar = farClip; RecalculateProjection(); }
 	[[nodiscard]] float GetPerspectiveFar() const { return m_PerspectiveFar; }
+
+	[[nodiscard]] std::vector<Matrix> GetSplitPerspectiveProjections(const float* distances, int count) const;
 
 private:
 	float m_FieldOfView = DirectX::XMConvertToRadians(45.0f);

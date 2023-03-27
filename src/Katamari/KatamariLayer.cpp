@@ -61,7 +61,7 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }*/
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 5; i++)
     {
         auto& go = Prefabs::Rock(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
@@ -100,7 +100,7 @@ void KatamariLayer::OnAttach()
     dirLight.AddComponent<MeshRendererComponent>(ShaderAssets::Unlit(), Mesh::CreateSphere(10), TextureAssets::Bricks());
     auto& dirLightTransform = dirLight.GetComponent<Transform>();
     dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
-    dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150));
+    dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150)); 
     auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
     dirLightComponent.Ambient = Vector3{ 0.3f, 0.3f, 0.3f };
     dirLightComponent.Diffuse = Vector3{ 1.0f, 1.0f, 1.0f };

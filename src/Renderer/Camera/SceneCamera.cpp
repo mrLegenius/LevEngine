@@ -1,5 +1,7 @@
 ﻿#include "SceneCamera.h"
 
+#include "Kernel/Math.h"
+
 SceneCamera::SceneCamera()
 {
 	RecalculateProjection();
@@ -21,6 +23,29 @@ void SceneCamera::SetPerspective(const float fov, const float nearClip, const fl
 	m_PerspectiveFar = farClip;
 
 	RecalculateProjection();
+}
+
+std::vector<Matrix> SceneCamera::GetSplitPerspectiveProjections(const float* distances, const int count) const
+{
+	std::vector<Matrix> projections;
+
+	float min = m_PerspectiveNear;
+
+	for (int i = 0; i < count; ++i)
+	{
+		const float max = LevEngine::Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distances[i]);
+		auto projection = Matrix::CreatePerspectiveFieldOfView(m_FieldOfView, m_AspectRatio, min, max);
+
+		projections.emplace_back(projection);
+
+		min = max;
+	}
+	return projections;
+}
+
+float SceneCamera::GetPerspectiveProjectionSliceDistance(const float distance) const
+{
+	return LevEngine::Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distance);
 }
 
 void SceneCamera::SetViewportSize(const uint32_t width, const uint32_t height)

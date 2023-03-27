@@ -1,6 +1,8 @@
 cbuffer CameraConstantBuffer : register(b0)
 {
+	row_major matrix view;
 	row_major matrix viewProjection;
+	float3 cameraPosition;
 };
 
 struct VS_IN
