@@ -45,7 +45,7 @@ std::vector<Matrix> SceneCamera::GetSplitPerspectiveProjections(const float* dis
 
 float SceneCamera::GetPerspectiveProjectionSliceDistance(const float distance) const
 {
-	return LevEngine::Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distance);
+	return m_PerspectiveNear + LevEngine::Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distance);
 }
 
 void SceneCamera::SetViewportSize(const uint32_t width, const uint32_t height)

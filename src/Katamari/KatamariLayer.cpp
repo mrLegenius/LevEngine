@@ -81,7 +81,7 @@ void KatamariLayer::OnAttach()
     auto player = m_Scene->CreateEntity("Player");
     player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45), TextureAssets::Rock());
     auto& playerTransform = player.GetComponent<Transform>();
-    playerTransform.SetLocalPosition(Vector3::Up * 100);
+    playerTransform.SetLocalPosition(Vector3::Up * 10);
     auto& playerRb = player.AddComponent<Rigidbody>();
     playerRb.gravityScale = 10;
     playerRb.angularDamping = 0.9f;

@@ -44,4 +44,5 @@ void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size, uint32_
 
 	context->VSSetConstantBuffers(m_Slot, 1, &m_Buffer);
 	context->PSSetConstantBuffers(m_Slot, 1, &m_Buffer);
+	context->GSSetConstantBuffers(m_Slot, 1, &m_Buffer);
 }

@@ -185,15 +185,28 @@ float3 CalcDirLight(DirLight light, float3 normal, float3 viewDir, float2 uv, fl
 	float3 tex = my_texture.Sample(my_sampler, uv).rgb;
 #if DEBUG_CASCADES 
 	if (cascadeIndex == 0)
+	{
 		tex.r = 1;
+		tex.g = 0;
+		tex.b = 0;
+	}
 	else if (cascadeIndex == 1)
+	{
+		tex.r = 0;
 		tex.g = 1;
+		tex.b = 0;
+	}
 	else if (cascadeIndex == 2)
+	{
+		tex.r = 0;
+		tex.g = 0;
 		tex.b = 1;
+	}
 	else if (cascadeIndex == 3)
 	{
 		tex.r = 1;
 		tex.g = 1;
+		tex.b = 0;
 	}
 #endif
 	// combine results

@@ -88,9 +88,7 @@ void Scene::OnLateUpdate(const float deltaTime)
     LEV_PROFILE_FUNCTION();
 
     for (const auto system : m_LateUpdateSystems)
-    {
-        system->Update(deltaTime, m_Registry);
-    }
+	    system->Update(deltaTime, m_Registry);
 }
 
 void Scene::CollisionDetectionSystem()
@@ -318,14 +316,11 @@ void Scene::OnRender()
             {
                 const auto cameraCascadeProjections = mainCamera->GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
 
-                for (int i = 0; i < RenderSettings::CascadeCount; ++i)
-                {
-                    Renderer3D::BeginShadowPass(*lightCamera, cameraCascadeProjections[i], cameraTransform, i);
+                Renderer3D::BeginShadowPass(*lightCamera, cameraCascadeProjections, cameraTransform);
 
-                    MeshShadowSystem();
+                MeshShadowSystem();
 
-                    Renderer3D::EndShadowPass();
-                }
+                Renderer3D::EndShadowPass();
             }
         }
 

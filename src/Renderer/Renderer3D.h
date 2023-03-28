@@ -52,7 +52,7 @@ class Renderer3D
 public:
 	static void Init();
 	static void Shutdown();
-	static void BeginShadowPass(SceneCamera& camera, const Matrix& mainCameraProjection, const Matrix& mainCameraView, int cascadeIndex);
+	static void BeginShadowPass(SceneCamera& camera, const std::vector<Matrix> mainCameraProjections, const Matrix& mainCameraView);
 	static void EndShadowPass();
 
 	static void BeginScene(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);

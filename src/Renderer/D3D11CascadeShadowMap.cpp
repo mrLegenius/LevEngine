@@ -46,18 +46,14 @@ D3D11CascadeShadowMap::D3D11CascadeShadowMap(uint32_t width, uint32_t height) : 
     ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
     depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
     depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
-    depthStencilViewDesc.Texture2DArray = { 0, 0, 1 };
+    depthStencilViewDesc.Texture2DArray = { 0, 0, RenderSettings::CascadeCount };
 
-    for (int i = 0; i < RenderSettings::CascadeCount; i++)
-    {
-        depthStencilViewDesc.Texture2DArray.FirstArraySlice = D3D11CalcSubresource(0, i, 1);
+    hr = device->CreateDepthStencilView(
+        m_Texture,
+        &depthStencilViewDesc,
+        &m_DepthStencilView
+    );
 
-        hr = device->CreateDepthStencilView(
-            m_Texture,
-            &depthStencilViewDesc,
-            &m_DepthStencilView[i]
-        );
-    }
     assert(SUCCEEDED(hr) && "Can't create a DepthStencilView for DepthBuffer");
 
     D3D11_SAMPLER_DESC comparisonSamplerDesc;
@@ -99,8 +95,7 @@ D3D11CascadeShadowMap::~D3D11CascadeShadowMap()
 {
     m_Texture->Release();
     m_ShaderResourceView->Release();
-    for (auto& dsv : m_DepthStencilView)
-	    dsv->Release();
+	m_DepthStencilView->Release();
 
     m_SamplerState->Release();
 }
@@ -111,13 +106,13 @@ void D3D11CascadeShadowMap::Bind(uint32_t slot) const
     context->PSSetSamplers(slot, 1, &m_SamplerState);
 }
 
-void D3D11CascadeShadowMap::SetRenderTarget(const int cascadeIndex) const
+void D3D11CascadeShadowMap::SetRenderTarget() const
 {
     context->RSSetState(m_RastState);
     context->OMSetRenderTargets(
         0,
         nullptr,
-        m_DepthStencilView[cascadeIndex]
+        m_DepthStencilView
     );
-    context->ClearDepthStencilView(m_DepthStencilView[cascadeIndex], D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+    context->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 }

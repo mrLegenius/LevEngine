@@ -111,35 +111,37 @@ void Renderer3D::Shutdown()
     LEV_PROFILE_FUNCTION();
 }
 
-void Renderer3D::BeginShadowPass(SceneCamera& camera, const Matrix& mainCameraProjection, const Matrix& mainCameraView, int cascadeIndex)
+void Renderer3D::BeginShadowPass(SceneCamera& camera, const std::vector<Matrix> mainCameraProjections, const Matrix& mainCameraView)
 {
     LEV_PROFILE_FUNCTION();
 
-    auto frustrumCorners = GetFrustumWorldCorners(mainCameraView, mainCameraProjection);
+    for (int cascadeIndex = 0; cascadeIndex < RenderSettings::CascadeCount; ++cascadeIndex)
+    {
+        auto frustrumCorners = GetFrustumWorldCorners(mainCameraView, mainCameraProjections[cascadeIndex]);
 
-    Vector4 center = Vector4::Zero;
+        Vector4 center = Vector4::Zero;
 
-    for (const auto& corner : frustrumCorners)
-        center += corner;
+        for (const auto& corner : frustrumCorners)
+            center += corner;
 
-    center /= frustrumCorners.size();
+        center /= frustrumCorners.size();
 
-    const auto view = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + s_DirLight.Direction, Vector3::Up);
+        const auto view = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + s_DirLight.Direction, Vector3::Up);
 
-    s_ShadowData.ViewProjection[cascadeIndex] = view * GetCascadeProjection(view, frustrumCorners);
-    s_ShadowData.distances[cascadeIndex] = camera.GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
+        s_ShadowData.ViewProjection[cascadeIndex] = view * GetCascadeProjection(view, frustrumCorners);
+        s_ShadowData.distances[cascadeIndex] = camera.GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
 
-    s_ShadowData.shadowMapDimensions = RenderSettings::ShadowMapResolution;
-
-    m_CascadeShadowMap->SetRenderTarget(cascadeIndex);
-    ShaderAssets::ShadowPass()->Bind();
+        s_ShadowData.shadowMapDimensions = RenderSettings::ShadowMapResolution;
+    }
+    m_CascadeShadowMap->SetRenderTarget();
+    ShaderAssets::CascadeShadowPass()->Bind();
 
     camera.SetViewportSize(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
     RenderCommand::SetViewport(0, 0, RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
 
-    //m_ShadowMapConstantBuffer->SetData(&s_ShadowData, sizeof ShadowData);
-    s_ShadowPassData = { s_ShadowData.ViewProjection[cascadeIndex] };
-    m_ShadowPassConstantBuffer->SetData(&s_ShadowPassData, sizeof ShadowPassData);
+    m_ShadowMapConstantBuffer->SetData(&s_ShadowData, sizeof ShadowData);
+    //s_ShadowPassData = { s_ShadowData.ViewProjection[cascadeIndex] };
+    //m_ShadowPassConstantBuffer->SetData(&s_ShadowPassData, sizeof ShadowPassData);
 }
 
 void Renderer3D::EndShadowPass()

@@ -8,7 +8,7 @@ cbuffer ModelConstantBuffer : register(b1)
 cbuffer lightSpaceConstantBuffer : register(b3)
 {
     row_major matrix lightViewProjection[CASCADE_COUNT];
-    float distances[CASCADE_COUNT];
+    float4 distances;
 };
 
 struct VS_IN

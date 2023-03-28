@@ -14,12 +14,12 @@ public:
 	[[nodiscard]] uint32_t GetHeight() const { return m_Height; }
 
 	void Bind(uint32_t slot = 0) const;
-	void SetRenderTarget(int cascadeIndex) const;
+	void SetRenderTarget() const;
 
 private:
 	ID3D11Texture2D* m_Texture{};
 	ID3D11ShaderResourceView* m_ShaderResourceView{};
-	ID3D11DepthStencilView* m_DepthStencilView[RenderSettings::CascadeCount];
+	ID3D11DepthStencilView* m_DepthStencilView{};
 	ID3D11SamplerState* m_SamplerState{};
 	ID3D11RasterizerState* m_RastState{};
 
