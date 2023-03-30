@@ -48,7 +48,6 @@ namespace ShaderAssets
 	    static Ref<D3D11Shader> shader;
 	    if (shader) return shader;
 
-        (resources / "Shaders").relative_path();
 	    shader = CreateRef<D3D11Shader>(GetShaderPath("Skybox.hlsl"));
         shader->SetLayout({{ ShaderDataType::Float3, "POSITION" }});
 

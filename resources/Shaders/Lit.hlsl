@@ -47,7 +47,7 @@ cbuffer LightningConstantBuffer : register(b2)
 {
 	DirLight dirLight;
 	PointLight pointLights[MAX_POINT_LIGHTS];
-	int pad_;
+	float pad_;
 	int pointLightsCount;
 };
 

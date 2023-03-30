@@ -9,7 +9,30 @@
 #include "../Prefabs.h"
 #include "../Random.h"
 #include "Debugging/Profiler.h"
+#include "Physics/Components/CollisionEvent.h"
+#include "Physics/Events/CollisionEndEvent.h"
 #include "Renderer/RenderCommand.h"
+
+void OnKatamariCollided(Entity me, Entity other)
+{
+    auto& myCollider = me.GetComponent<SphereCollider>();
+    auto& myTransform = me.GetComponent<Transform>();
+
+    auto& otherRigidbody = other.GetComponent<Rigidbody>();
+    auto& otherTransform = other.GetComponent<Transform>();
+    if (otherRigidbody.bodyType == BodyType::Static) return;
+
+    const auto size = myCollider.radius;
+    const auto otherSize = LevEngine::Math::MaxElement(otherTransform.GetWorldScale());
+
+    if (size <= otherSize) return;
+
+    myCollider.radius += otherSize;
+
+    otherRigidbody.enabled = false;
+
+    otherTransform.SetParent(&myTransform);
+}
 
 class TestSystem : public System
 {
@@ -49,19 +72,19 @@ void KatamariLayer::OnAttach()
 
     m_Scene = CreateRef<Scene>();
 
-    /*for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 0; i++)
     {
         auto& go = Prefabs::Gear(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
     }
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 0; i++)
     {
 	   	auto& go = Prefabs::Log(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
-    }*/
+    }
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 0; i++)
     {
         auto& go = Prefabs::Rock(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
@@ -76,18 +99,23 @@ void KatamariLayer::OnAttach()
     floorRigibody.bodyType = BodyType::Static;
     auto& floorCollider = floor.AddComponent<BoxCollider>();
     floorCollider.extents = Vector3(150, 0.5f, 150);
-    //floorCollider.offset = Vector3::Down * 0.5f;
 
     auto player = m_Scene->CreateEntity("Player");
     player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45), TextureAssets::Rock());
     auto& playerTransform = player.GetComponent<Transform>();
-    playerTransform.SetLocalPosition(Vector3::Up * 10);
+    playerTransform.SetLocalPosition(Vector3::One * 10);
     auto& playerRb = player.AddComponent<Rigidbody>();
     playerRb.gravityScale = 10;
     playerRb.angularDamping = 0.9f;
     playerRb.InitSphereInertia(playerTransform);
     player.AddComponent<SphereCollider>();
     auto& p = player.AddComponent<KatamariPlayerComponent>();
+    auto& events = player.AddComponent<CollisionEvents>();
+    events.onCollisionBegin.connect<&OnKatamariCollided>();
+    auto& playerLight = player.AddComponent<PointLightComponent>();
+    playerLight.Diffuse = Vector3(1.0f, 0.0f, 0.0f);
+    playerLight.Ambient = Vector3(1.0f, 0.0f, 0.0f);
+    playerLight.Specular = Vector3(1.0f, 0.0f, 0.0f);
 
     auto camera = m_Scene->CreateEntity("Camera");
     camera.AddComponent<OrbitCamera>().SetTarget(playerTransform);
@@ -102,9 +130,9 @@ void KatamariLayer::OnAttach()
     dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
     dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150)); 
     auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
-    dirLightComponent.Ambient = Vector3{ 0.3f, 0.3f, 0.3f };
-    dirLightComponent.Diffuse = Vector3{ 1.0f, 1.0f, 1.0f };
-    dirLightComponent.Specular = Vector3{ 1.0f, 1.0f, 1.0f };
+    dirLightComponent.Ambient = Vector3{ 0.1f, 0.1f, 0.1f };
+    dirLightComponent.Diffuse = Vector3{ 0.1f, 0.1f, 0.1f };
+    dirLightComponent.Specular = Vector3{ 0.5f, 0.5f, 0.5f};
 
     //dirLight.AddComponent<OrbitCamera>();
     auto& lightCamera = dirLight.AddComponent<CameraComponent>();
@@ -128,6 +156,8 @@ void KatamariLayer::OnAttach()
     m_Scene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
     m_Scene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
     m_Scene->RegisterUpdateSystem(CreateRef<TestSystem>());
+    m_Scene->RegisterOneFrame<CollisionBeginEvent>();
+    m_Scene->RegisterOneFrame<CollisionEndEvent>();
 }
 
 void KatamariLayer::OnEvent(Event& e)

@@ -6,9 +6,8 @@
 
 Ref<D3D11ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
-Ref<D3D11ConstantBuffer> Renderer3D::m_DirLightConstantBuffer;
+Ref<D3D11ConstantBuffer> Renderer3D::m_LightningConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_ShadowMapConstantBuffer;
-Ref<D3D11ConstantBuffer> Renderer3D::m_ShadowPassConstantBuffer;
 
 Ref<D3D11ShadowMap> Renderer3D::m_ShadowMap;
 Ref<D3D11CascadeShadowMap> Renderer3D::m_CascadeShadowMap;
@@ -17,10 +16,9 @@ Matrix Renderer3D::m_PerspectiveViewProjection;
 Matrix Renderer3D::m_ViewProjection;
 Ref<SkyboxMesh> Renderer3D::s_SkyboxMesh;
 
-std::vector<PointLightData> Renderer3D::s_PointLights;
-DirLightData Renderer3D::s_DirLight;
+PointLightData Renderer3D::s_PointLights[RenderSettings::MaxPointLights];
+LightningData Renderer3D::s_LightningData;
 ShadowData Renderer3D::s_ShadowData;
-ShadowPassData Renderer3D::s_ShadowPassData;
 
 
 struct alignas(16) CameraData
@@ -30,13 +28,6 @@ struct alignas(16) CameraData
     Vector3 Position;
 };
 
-struct alignas(16) LightningData
-{
-    DirLightData DirLight;
-    PointLightData* PointLightsData;
-
-    uint32_t PointLightsCount = 0;
-};
 
 std::vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj)
 {
@@ -94,11 +85,10 @@ void Renderer3D::Init()
 {
     LEV_PROFILE_FUNCTION();
 
-	m_CameraConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof CameraData);
+	m_CameraConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof CameraData, 0);
 	m_ModelConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof MeshModelBufferData, 1);
-	m_DirLightConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof LightningData, 2);
+	m_LightningConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof LightningData, 2);
 	m_ShadowMapConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof ShadowData, 3);
-    m_ShadowPassConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof ShadowPassData, 3);
 
     m_ShadowMap = CreateRef<D3D11ShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
     m_CascadeShadowMap = CreateRef<D3D11CascadeShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
@@ -126,7 +116,7 @@ void Renderer3D::BeginShadowPass(SceneCamera& camera, const std::vector<Matrix> 
 
         center /= frustrumCorners.size();
 
-        const auto view = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + s_DirLight.Direction, Vector3::Up);
+        const auto view = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + s_LightningData.DirLight.Direction, Vector3::Up);
 
         s_ShadowData.ViewProjection[cascadeIndex] = view * GetCascadeProjection(view, frustrumCorners);
         s_ShadowData.distances[cascadeIndex] = camera.GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
@@ -223,24 +213,25 @@ void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const Directional
 {
     LEV_PROFILE_FUNCTION();
 
-    s_DirLight.Direction = dirLightDirection;
+    auto& data = s_LightningData.DirLight;
+    data.Direction = dirLightDirection;
 
-    s_DirLight.Ambient = dirLight.Ambient;
-    s_DirLight.Diffuse = dirLight.Diffuse;
-    s_DirLight.Specular = dirLight.Specular;
+    data.Ambient = dirLight.Ambient;
+    data.Diffuse = dirLight.Diffuse;
+    data.Specular = dirLight.Specular;
 }
 
 void Renderer3D::AddPointLights(const Vector3& position, const PointLightComponent& pointLight)
 {
     LEV_PROFILE_FUNCTION();
 
-    if (s_PointLights.size() >= RenderSettings::MaxPointLights)
+    if (s_LightningData.PointLightsCount >= RenderSettings::MaxPointLights)
     {
         std::cout << "Trying to add point light beyond maximum" << std::endl;
         return;
     }
 
-    PointLightData pointLightData{};
+    PointLightData& pointLightData = s_LightningData.PointLightsData[s_LightningData.PointLightsCount];
 
     pointLightData.Position = position;
 
@@ -252,18 +243,13 @@ void Renderer3D::AddPointLights(const Vector3& position, const PointLightCompone
     pointLightData.Diffuse = pointLight.Diffuse;
     pointLightData.Specular = pointLight.Specular;
 
-    s_PointLights.emplace_back(std::move(pointLightData));
+    s_LightningData.PointLightsCount++;
 }
 
 void Renderer3D::UpdateLights()
 {
     LEV_PROFILE_FUNCTION();
 
-    const LightningData lightningData
-    {
-        s_DirLight,
-        {s_PointLights.data()},
-        s_PointLights.size(),
-    };
-    m_DirLightConstantBuffer->SetData(&lightningData, sizeof LightningData);
+    m_LightningConstantBuffer->SetData(&s_LightningData);
+    s_LightningData.PointLightsCount = 0;
 }

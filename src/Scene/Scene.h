@@ -7,6 +7,7 @@
 #include "Kernel/UUID.h"
 #include "Physics/Physics.h"
 #include "Renderer/Camera/SceneCamera.h"
+#include "Systems/EventSystem.h"
 
 class Entity;
 class Scene
@@ -23,6 +24,7 @@ public:
 	void SphereCollisionSystem();
 	void AABBSphereCollisionSystem();
 	void AABBCollisionResolveSystem();
+	static void RegisterCollision(entt::entity i, entt::entity j);
 	void OnRender();
 	void DirectionalLightSystem();
 	void PointLightsSystem();
@@ -49,6 +51,12 @@ public:
 	{
 		m_LateUpdateSystems.emplace_back(system);
 	}
+
+	template<typename T>
+	void RegisterOneFrame()
+	{
+		m_EventSystems.emplace_back(new EventSystem<T>);
+	}
 private:
 	entt::registry m_Registry;
 	uint32_t m_ViewportWidth = 0;
@@ -64,4 +72,5 @@ private:
 
 	std::vector<Ref<System>> m_UpdateSystems;
 	std::vector<Ref<System>> m_LateUpdateSystems;
+	std::vector<Ref<System>> m_EventSystems;
 };

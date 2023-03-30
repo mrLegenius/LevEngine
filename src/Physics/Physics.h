@@ -1,17 +1,15 @@
 #pragma once
-#include <set>
 #include <SimpleMath.h>
 
 #include "Components/Rigidbody.h"
 #include "Components/Collider.h"
 #include "Components/Transform.h"
 
+struct CollisionInfo;
 class Entity;
 using DirectX::SimpleMath::Vector3;
-struct CollisionInfo;
 
-static std::set<CollisionInfo> allCollisions;
-
+inline constexpr int NumCollisionFrames = 10;
 
 struct ContactPoint
 {
@@ -23,14 +21,7 @@ struct ContactPoint
 
 struct CollisionInfo
 {
-    Transform* transformA;
-    Transform* transformB;
-
-    Rigidbody* rigidbodyA;
-    Rigidbody* rigidbodyB;
-
     ContactPoint point;
-    mutable int framesLeft = 0;
 
     void SetContactPoint(const Vector3& localA, const Vector3& localB, const Vector3& normal, float p)
     {
@@ -38,14 +29,6 @@ struct CollisionInfo
         point.localB = localB;
         point.normal = normal;
         point.penetration = p;
-    }
-
-    bool operator<(const CollisionInfo& other) const
-	{
-		const size_t otherHash = (size_t)other.transformA + (size_t)other.transformB;
-		const size_t thisHash = (size_t)transformA + (size_t)transformB;
-
-        return thisHash < otherHash;
     }
 };
 

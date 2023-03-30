@@ -148,7 +148,6 @@
     <ClCompile Include="src\Components\Transform.cpp" />
     <ClCompile Include="src\Katamari\KatamariLayer.cpp" />
     <ClCompile Include="src\Kernel\UUID.cpp" />
-    <ClCompile Include="src\Physics\Events\CollisionEvent.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
@@ -194,7 +193,7 @@
     <ClInclude Include="src\Kernel\UUID.h" />
     <ClInclude Include="src\Physics\Events\CollisionEndEvent.h" />
     <ClInclude Include="src\Physics\Events\CollisionBeginEvent.h" />
-    <ClInclude Include="src\Physics\Events\CollisionEvent.h" />
+    <ClInclude Include="src\Physics\Components\CollisionEvent.h" />
     <ClInclude Include="src\Physics\Physics.h" />
     <ClInclude Include="src\Physics\Systems\ForcesClearSystem.h" />
     <ClInclude Include="src\Physics\Systems\PositionUpdateSystem.h" />
@@ -237,6 +236,7 @@
     <ClInclude Include="src\Renderer\D3D11Shader.h" />
     <ClInclude Include="src\Kernel\Window.h" />
     <ClInclude Include="src\Scene\System.h" />
+    <ClInclude Include="src\Scene\Systems\EventSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

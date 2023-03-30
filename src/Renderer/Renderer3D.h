@@ -35,16 +35,19 @@ struct PointLightData
 	alignas(16) Vector3 Specular{};
 };
 
+struct LightningData
+{
+	DirLightData DirLight;
+	PointLightData PointLightsData[RenderSettings::MaxPointLights];
+	uint32_t PointLightsCount = 0;
+};
+
+
 struct ShadowData
 {
 	alignas(16) Matrix ViewProjection[RenderSettings::CascadeCount];
 	alignas(16) float distances[RenderSettings::CascadeCount];
 	alignas(16) float shadowMapDimensions;
-};
-
-struct ShadowPassData
-{
-	Matrix ViewProjection;
 };
 
 class Renderer3D
@@ -69,9 +72,8 @@ public:
 private:
 	static Ref<D3D11ConstantBuffer> m_ModelConstantBuffer;
 	static Ref<D3D11ConstantBuffer> m_CameraConstantBuffer;
-	static Ref<D3D11ConstantBuffer> m_DirLightConstantBuffer;
+	static Ref<D3D11ConstantBuffer> m_LightningConstantBuffer;
 	static Ref<D3D11ConstantBuffer> m_ShadowMapConstantBuffer;
-	static Ref<D3D11ConstantBuffer> m_ShadowPassConstantBuffer;
 
 	static Ref<D3D11ShadowMap> m_ShadowMap;
 	static Ref<D3D11CascadeShadowMap> m_CascadeShadowMap;
@@ -81,8 +83,7 @@ private:
 
 	static Ref<SkyboxMesh> s_SkyboxMesh;
 
-	static std::vector<PointLightData> s_PointLights;
-	static DirLightData s_DirLight;
+	static PointLightData s_PointLights[RenderSettings::MaxPointLights];
+	static LightningData s_LightningData;
 	static ShadowData s_ShadowData;
-	static ShadowPassData s_ShadowPassData;
 };

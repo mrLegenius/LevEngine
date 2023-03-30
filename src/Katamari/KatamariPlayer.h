@@ -55,8 +55,10 @@ public:
     void Update(float deltaTime, entt::registry& registry) override
     {
         auto view = registry.view<KatamariPlayerComponent, CollisionBeginEvent, Rigidbody, SphereCollider>();
+        int count = 0;
         for (auto entity : view)
         {
+            count++;
             auto [transform, collision, rigidbody, collider] = registry.get<Transform, CollisionBeginEvent, Rigidbody, SphereCollider>(entity);
 
             auto& otherRigidbody = collision.other.GetComponent<Rigidbody>();
@@ -66,13 +68,15 @@ public:
             auto size = collider.radius;
             auto otherSize = LevEngine::Math::MaxElement(otherTransform.GetWorldScale());
             
-            if (size > otherSize) return;
+            if (size <= otherSize) return;
 
-            collider.radius += 0.1f;
+            collider.radius += otherSize;
 
             otherRigidbody.enabled = false;
             
             otherTransform.SetParent(&transform);
         }
+
+        //std::cout << count << " collisions" << std::endl;
     }
 };

@@ -13,7 +13,7 @@
 #include "Physics/Systems/VelocityUpdateSystem.h"
 #include "Physics/Events/CollisionBeginEvent.h"
 #include "Physics/Events/CollisionEndEvent.h"
-#include "Physics/Events/CollisionEvent.h"
+#include "Physics/Components/CollisionEvent.h"
 #include "Physics/Systems/ForcesClearSystem.h"
 #include "Physics/Systems/PositionUpdateSystem.h"
 #include "Renderer/Renderer3D.h"
@@ -39,7 +39,7 @@ void Scene::OnUpdate(const float deltaTime)
 }
 
 static float dTOffset = 0;
-int numCollisionFrames = 10;
+
 void Scene::OnPhysics(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
@@ -88,7 +88,10 @@ void Scene::OnLateUpdate(const float deltaTime)
     LEV_PROFILE_FUNCTION();
 
     for (const auto system : m_LateUpdateSystems)
-	    system->Update(deltaTime, m_Registry);
+        system->Update(deltaTime, m_Registry);
+
+    for (const auto system : m_EventSystems)
+        system->Update(deltaTime, m_Registry);
 }
 
 void Scene::CollisionDetectionSystem()
@@ -100,35 +103,69 @@ void Scene::CollisionDetectionSystem()
     AABBSphereCollisionSystem();
 }
 
+using entity_pair = std::pair<entt::entity, entt::entity>;
+std::map<entity_pair, int> collisions;
+
+void Scene::RegisterCollision(entt::entity i, entt::entity j)
+{
+    auto exist = collisions.find(entity_pair(i, j));
+    if (exist == collisions.end())
+        exist = collisions.find(entity_pair(j, i));
+
+    if (exist == collisions.end())
+        collisions.emplace(entity_pair(i, j), NumCollisionFrames);
+    else
+        exist->second = NumCollisionFrames - 1;
+}
+
 void Scene::UpdateCollisionList()
 {
     LEV_PROFILE_FUNCTION();
 
-    for (auto i = allCollisions.begin(); i != allCollisions.end(); )
+    std::vector<entity_pair> pairsToDelete;
+
+    for (auto [pair, frames] : collisions)
     {
-        if ((*i).framesLeft == numCollisionFrames)
+        auto a = pair.first;
+        auto b = pair.second;
+        if (frames == NumCollisionFrames)
         {
-           /*const auto entityA = to_entity(m_Registry, &i->transformA);
-            const auto entityB = to_entity(m_Registry, &i->transformB);
-            ConvertEntity(entityA).AddComponent<CollisionBeginEvent>(entityB);
-            ConvertEntity(entityB).AddComponent<CollisionBeginEvent>(entityA);*/
+	        if (const CollisionEvents* eventA = m_Registry.try_get<CollisionEvents>(a))
+	        {
+                if (eventA->onCollisionBegin)
+                    eventA->onCollisionBegin(ConvertEntity(a), ConvertEntity(b));
+	        }
+
+            if (const CollisionEvents* eventB = m_Registry.try_get<CollisionEvents>(b))
+            {
+                if (eventB->onCollisionBegin)
+                    eventB->onCollisionBegin(ConvertEntity(b), ConvertEntity(a));
+            }
         }
 
-        (*i).framesLeft = (*i).framesLeft - 1;
+        collisions[pair]--;
 
-        if ((*i).framesLeft < 0)
+        if (frames < 0)
         {
-            /*const auto entityA = to_entity(m_Registry, &i->transformA);
-            const auto entityB = to_entity(m_Registry, &i->transformB);
-            ConvertEntity(entityA).AddComponent<CollisionEndEvent>(entityB);
-            ConvertEntity(entityB).AddComponent<CollisionEndEvent>(entityA);*/
-            i = allCollisions.erase(i);
-        }
-        else
-        {
-            ++i;
+            if (const CollisionEvents* eventA = m_Registry.try_get<CollisionEvents>(a))
+            {
+                if (eventA->onCollisionEnd)
+                    eventA->onCollisionEnd(ConvertEntity(a), ConvertEntity(b));
+            }
+
+
+            if (const CollisionEvents* eventB = m_Registry.try_get<CollisionEvents>(b))
+            {
+                if (eventB->onCollisionEnd)
+                    eventB->onCollisionEnd(ConvertEntity(b), ConvertEntity(a));
+            }
+
+            pairsToDelete.emplace_back(pair);
         }
     }
+
+    for (auto pair : pairsToDelete)
+	    collisions.erase(pair);
 }
 
 void Scene::SphereCollisionSystem()
@@ -142,20 +179,12 @@ void Scene::SphereCollisionSystem()
     for (auto i = first; i != last; ++i)
     {
         auto [transform1, rigidbody1, colliderA] = view.get<Transform, Rigidbody, SphereCollider>(*i);
-        for (auto j = first; j != last; ++j)
+        for (auto j = i+1; j != last; ++j)
         {
-            if (i == j) continue;
-
             auto [transform2, rigidbody2, colliderB] = view.get<Transform, Rigidbody, SphereCollider>(*j);
 
             if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
             CollisionInfo info;
-
-            info.transformA = &transform1;
-            info.transformB = &transform2;
-
-            info.rigidbodyA = &rigidbody1;
-            info.rigidbodyB = &rigidbody2;
 
             if (Physics::HasSphereIntersection(
                 colliderA,
@@ -165,6 +194,7 @@ void Scene::SphereCollisionSystem()
                 info))
             {
                 Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
+                RegisterCollision(*i, *j);
             }
         }
     }
@@ -194,12 +224,6 @@ void Scene::AABBSphereCollisionSystem()
             if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
             CollisionInfo info;
 
-            info.transformA = &transform1;
-            info.transformB = &transform2;
-
-            info.rigidbodyA = &rigidbody1;
-            info.rigidbodyB = &rigidbody2;
-
             if (Physics::HasAABBSphereIntersection(
                 colliderA,
                 transform1,
@@ -208,6 +232,7 @@ void Scene::AABBSphereCollisionSystem()
                 info))
             {
                 Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
+                RegisterCollision(*i, *j);
             }
         }
     }
@@ -221,28 +246,16 @@ void Scene::AABBCollisionResolveSystem()
     const auto first = group.begin();
     const auto last = group.end();
 
-    const auto groupB = m_Registry.group<Transform>(entt::get<Rigidbody, BoxCollider>);
-    const auto firstB = group.begin();
-    const auto lastB = group.end();
-
     for (auto i = first; i != last; ++i)
     {
         auto [transform1, rigidbody1, boxCollider1] = group.get<Transform, Rigidbody, BoxCollider>(*i);
-        for (auto j = firstB; j != lastB; ++j)
+        for (auto j = i + 1; j != last; ++j)
         {
-            if (i == j) continue;
-
-            auto [transform2, rigidbody2, boxCollider2] = groupB.get<Transform, Rigidbody, BoxCollider>(*j);
+            auto [transform2, rigidbody2, boxCollider2] = group.get<Transform, Rigidbody, BoxCollider>(*j);
 
             if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
 
             CollisionInfo info;
-
-            info.transformA = &transform1;
-            info.transformB = &transform2;
-
-            info.rigidbodyA = &rigidbody1;
-            info.rigidbodyB = &rigidbody2;
 
             if (Physics::HasAABBIntersection(
 	            boxCollider1,
@@ -252,6 +265,7 @@ void Scene::AABBCollisionResolveSystem()
                 info))
             {
                 Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
+                RegisterCollision(*i, *j);
             }
         }
     }
@@ -264,7 +278,6 @@ void Scene::OnRender()
     SceneCamera* mainCamera = nullptr;
     Matrix cameraTransform;
     Vector3 cameraPosition;
-    Matrix dirLightView;
 
     //Reset
     {
@@ -299,7 +312,9 @@ void Scene::OnRender()
 
     if (mainCamera)
     {
+
         DirectionalLightSystem();
+        PointLightsSystem();
 
         {
             LEV_PROFILE_SCOPE("ShadowPass");
@@ -327,8 +342,7 @@ void Scene::OnRender()
         {
             LEV_PROFILE_SCOPE("RenderPass");
             Renderer3D::BeginScene(*mainCamera, cameraTransform, cameraPosition);
-            
-            PointLightsSystem();
+
             Renderer3D::UpdateLights();
 
             MeshRenderSystem();
@@ -514,8 +528,13 @@ static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Enti
 //        enttMap[uuid] = static_cast<entt::entity>(newEntity);
 //    }
 //
+//    for(auto &&curr: registry.storage()) {
+//        if(auto &storage = curr.second; storage.contains(src)) {
+//            storage.push(dst, storage.value(src));
+//        }
+//    }
 //    // Copy components (except IDComponent and TagComponent)
-//    CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
+//    //CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
 //
 //    return newScene;
 //}

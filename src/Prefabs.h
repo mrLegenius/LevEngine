@@ -41,13 +41,19 @@ namespace Prefabs
 
     inline Entity& Rock(const Ref<Scene> scene)
     {
-        auto entity = scene->CreateEntity("Gear");
-        entity.AddComponent<BoxCollider>(Vector3(3.25f, 3.25f, 3.25f));
-        entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), MeshAssets::Rock(), TextureAssets::Rock());
+        auto entity = scene->CreateEntity("Rock");
+        auto mesh = scene->CreateEntity("RockMesh");
+
+        mesh.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>());
+		mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.075f / 1.5f);
+        mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), MeshAssets::Rock(), TextureAssets::Rock());
+
+        constexpr auto colliderScale = 3.25f * 1.5f;
+        entity.AddComponent<BoxCollider>(Vector3(colliderScale, colliderScale, colliderScale));
         auto& rb = entity.AddComponent<Rigidbody>();
         auto& transform = entity.GetComponent<Transform>();
 
-        transform.SetLocalScale(Vector3::One * 0.05f);
+        transform.SetLocalScale(Vector3::One * 1.5f);
         rb.gravityScale = 1;
         rb.mass = 100.0f;
         rb.InitCubeInertia(transform);

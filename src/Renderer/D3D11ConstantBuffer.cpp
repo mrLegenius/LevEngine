@@ -32,7 +32,7 @@ D3D11ConstantBuffer::~D3D11ConstantBuffer()
 	m_Buffer->Release();
 }
 
-void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size, uint32_t offset) const
+void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size) const
 {
 	assert(m_Buffer && "Trying to SetData with null buffer");
 		

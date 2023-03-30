@@ -93,9 +93,6 @@
     <ClCompile Include="src\Components\Transform.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Physics\Events\CollisionEvent.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="src\Physics\Physics.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -288,6 +285,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\RenderSettings.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Systems\EventSystem.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
