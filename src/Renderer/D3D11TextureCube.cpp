@@ -3,7 +3,7 @@
 #include <cassert>
 #include <wrl/client.h>
 
-#include "../../external/stb/include/stb_image.h"
+#include "stb/include/stb_image.h"
 
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;

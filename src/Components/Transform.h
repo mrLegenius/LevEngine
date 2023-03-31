@@ -95,6 +95,11 @@ struct Transform
 		rotation = newRotation;
 	}
 
+	void SetLocalRotationRadians(const Vector3 value)
+	{
+		rotation = value;
+	}
+
 	void SetLocalRotation(const Quaternion value)
 	{
 		rotation = value.ToEuler();
@@ -196,6 +201,13 @@ struct Transform
 		ForceRecalculateModel();
 	}
 
+	void ForceRecalculateModel()
+	{
+		model = Matrix::CreateScale(GetWorldScale()) *
+			Matrix::CreateFromQuaternion(GetWorldOrientation()) *
+			Matrix::CreateTranslation(GetWorldPosition());
+	}
+
 private:
 
 	std::set<Transform*> children;
@@ -213,10 +225,5 @@ private:
 	Vector3 prevScale = Vector3::One;
 	Transform* prevParent;
 
-	void ForceRecalculateModel()
-	{
-		model = Matrix::CreateScale(GetWorldScale()) *
-			Matrix::CreateFromQuaternion(GetWorldOrientation()) *
-			Matrix::CreateTranslation(GetWorldPosition());
-	}
+	
 };

@@ -1,20 +1,24 @@
 #pragma once
-#include <memory>
-
+#include "entt/entt.hpp"
 #include "Renderer/Camera/SceneCamera.h"
+#include "Scene/System.h"
 
-class OrbitCamera final : public SceneCamera
+class OrbitCamera final
 {
 public:
-	OrbitCamera(float fov, float nearClip, float farClip);
-	OrbitCamera(float fov, float nearClip, float farClip, const std::shared_ptr<Transform>& target);
+	OrbitCamera() = default;
+	OrbitCamera(const OrbitCamera&) = default;
+	OrbitCamera(Transform& target);
 	
-	void SetTarget(const std::shared_ptr<Transform>& target) { m_Target = target; }
+	void SetTarget(Transform& target) { m_Target = &target; }
 
-	void Update(float deltaTime) override;
+	void Update(float deltaTime);
+
+	Vector3 position;
+	Quaternion rotation;
 
 private:
-	std::shared_ptr<Transform> m_Target;
+	Transform* m_Target = nullptr;
 
 	float m_Distance = 10;
 
@@ -25,6 +29,22 @@ private:
 	void RotatePolar(float radians);
 	void Zoom(float value);
 	Vector3 CalculatePosition() const;
+	Matrix CalculateViewMatrix() const;
+};
 
-	void UpdateView() override;
+class OrbitCameraSystem : public System
+{
+	void Update(const float deltaTime, entt::registry& registry) override
+	{
+		const auto view = registry.view<Transform, OrbitCamera>();
+		for (const auto entity : view)
+		{
+			auto [transform, camera] = view.get<Transform, OrbitCamera>(entity);
+
+			camera.Update(deltaTime);
+
+			transform.SetWorldPosition(camera.position);
+			transform.SetWorldRotation(camera.rotation);
+		}
+	}
 };

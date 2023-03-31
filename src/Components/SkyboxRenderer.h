@@ -28,7 +28,7 @@ public:
 	}
 
 protected:
-	void Prepare(const std::shared_ptr<Transform>&) override
+	void Prepare(const Transform&) override
 	{
 		const auto verticesCount = m_Mesh->GetVerticesCount();
 		auto* meshVertexBufferBase = new SkyboxVertex[verticesCount];
@@ -49,7 +49,7 @@ protected:
 	}
 
 public:
-	void Draw(const std::shared_ptr<Transform>& transform) override
+	void Draw(const Transform& transform) override
 	{
 		RenderCommand::SetDepthFunc(DepthFunc::LessOrEqual);
 		RendererComponent::Draw(transform);

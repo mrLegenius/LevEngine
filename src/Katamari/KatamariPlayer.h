@@ -1,70 +1,82 @@
 #pragma once
-#include "../GameObject.h"
-#include "../Components/MeshRenderer.h"
+#include "Scene/System.h"
 #include "../Assets.h"
 #include "../Input/Input.h"
+#include "Scene/Components/Components.h"
+#include "Scene/Entity.h"
+#include "Physics/Events/CollisionBeginEvent.h"
 
+struct KatamariPlayerComponent
+{
+    int s;
+    KatamariPlayerComponent() = default;
+    KatamariPlayerComponent(const KatamariPlayerComponent&) = default;
+};
 
-class KatamariPlayer : public GameObject
+class KatamariPlayerSystem : public System
 {
 public:
-    KatamariPlayer(const Transform& cameraTransform)
-        : GameObject(
-            std::make_shared<MeshRenderer>(
-                ShaderAssets::Lit(),
-                Mesh::CreateSphere(45),
-                TextureAssets::Rock())),
-        m_CameraTransform(cameraTransform)
+    void Update(float deltaTime, entt::registry& registry) override
     {
-        m_SphereCollider = std::make_shared<SphereCollider>();
-        m_Collider = m_SphereCollider;
-    }
+        auto mainCameraEntity = registry.ctx().find<Entity>("mainCameraEntity"_hs);
 
-    void Update(float deltaTime) override
-    {
-        if (Input::IsKeyPressed(KeyCode::Space))
-            GetRigidbody()->AddImpulse(Vector3::Up * 100);
+        if (!mainCameraEntity) return;
 
-        Vector3 movementDir = Vector3::Zero;
-
-        if (Input::IsKeyDown(KeyCode::W))
-            movementDir = m_CameraTransform.GetForwardDirection();
-        if (Input::IsKeyDown(KeyCode::A))
-            movementDir = -m_CameraTransform.GetRightDirection();
-        if (Input::IsKeyDown(KeyCode::S))
-            movementDir = -m_CameraTransform.GetForwardDirection();
-        if (Input::IsKeyDown(KeyCode::D))
-            movementDir = m_CameraTransform.GetRightDirection();
-
-        movementDir.y = 0.0f;
-        movementDir.Normalize();
-        GetRigidbody()->AddForceAtPosition(movementDir * 100, GetTransform()->GetWorldPosition() + Vector3::Up);
-
-        if (Input::IsKeyPressed(KeyCode::Tab))
+        auto view = registry.view<KatamariPlayerComponent, Transform, Rigidbody>();
+        for(auto entity : view)
         {
-            while(m_Transform->GetChildrenCount())
-            {
-                (*m_Transform->GetChildren().begin())->SetParent(nullptr);
-            }
+            auto [transform, rigidbody] = registry.get<Transform, Rigidbody>(entity);
+            
+            auto& cameraTransform = mainCameraEntity->GetComponent<Transform>();
+            if (Input::IsKeyPressed(KeyCode::Space))
+                rigidbody.AddImpulse(Vector3::Up * 100);
+
+            Vector3 movementDir = Vector3::Zero;
+
+            if (Input::IsKeyDown(KeyCode::W))
+                movementDir = cameraTransform.GetForwardDirection();
+            if (Input::IsKeyDown(KeyCode::A))
+                movementDir = -cameraTransform.GetRightDirection();
+            if (Input::IsKeyDown(KeyCode::S))
+                movementDir = -cameraTransform.GetForwardDirection();
+            if (Input::IsKeyDown(KeyCode::D))
+                movementDir = cameraTransform.GetRightDirection();
+
+            movementDir.y = 0.0f;
+            movementDir.Normalize();
+            rigidbody.AddForceAtPosition(movementDir * 100, Vector3::Up);
         }
     }
+};
 
-    void OnCollisionBegin(GameObject* gameObject) override
+class KatamariCollisionSystem : public System
+{
+public:
+    void Update(float deltaTime, entt::registry& registry) override
     {
-        if (gameObject->GetRigidbody()->bodyType == BodyType::Static) return;
+        auto view = registry.view<KatamariPlayerComponent, CollisionBeginEvent, Rigidbody, SphereCollider>();
+        int count = 0;
+        for (auto entity : view)
+        {
+            count++;
+            auto [transform, collision, rigidbody, collider] = registry.get<Transform, CollisionBeginEvent, Rigidbody, SphereCollider>(entity);
 
-        auto radius = gameObject->GetCollider()->GetRadius();
-        if (radius > m_SphereCollider->radius) return;
+            auto& otherRigidbody = collision.other.GetComponent<Rigidbody>();
+            auto& otherTransform = collision.other.GetComponent<Transform>();
+            if (otherRigidbody.bodyType == BodyType::Static) return;
 
-		//GetRigidbody()->mass += gameObject->GetRigidbody()->mass;
-        m_SphereCollider->radius += 0.1f;
+            auto size = collider.radius;
+            auto otherSize = LevEngine::Math::MaxElement(otherTransform.GetWorldScale());
+            
+            if (size <= otherSize) return;
 
-        gameObject->GetRigidbody()->enabled = false;
-       
-        gameObject->GetTransform()->SetParent(m_Transform.get());
+            collider.radius += otherSize;
+
+            otherRigidbody.enabled = false;
+            
+            otherTransform.SetParent(&transform);
+        }
+
+        //std::cout << count << " collisions" << std::endl;
     }
-
-private:
-    std::shared_ptr<SphereCollider> m_SphereCollider;
-    const Transform& m_CameraTransform;
 };

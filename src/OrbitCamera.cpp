@@ -4,13 +4,7 @@
 
 #include "Input/Input.h"
 
-OrbitCamera::OrbitCamera(float fov, float nearClip, float farClip)
-{
-	SetPerspective(fov, nearClip, farClip);
-	UpdateView();
-}
-
-OrbitCamera::OrbitCamera(float fov, float nearClip, float farClip, const std::shared_ptr<Transform>& target) : OrbitCamera(fov, nearClip, farClip)
+OrbitCamera::OrbitCamera(Transform& target)
 {
 	SetTarget(target);
 }
@@ -48,16 +42,16 @@ void OrbitCamera::Zoom(const float value)
 		m_Distance = 1;
 	}
 
-	auto orthoSize = GetOrthographicSize();
-	orthoSize += value;
+	//auto orthoSize = GetOrthographicSize();
+	//orthoSize += value;
 
-	if (orthoSize < 0.1f)
-		orthoSize = 0.1f;
+	//if (orthoSize < 0.1f)
+	//	orthoSize = 0.1f;
 
-	SetOrthographicSize(orthoSize);
+	//SetOrthographicSize(orthoSize);
 }
 
-DirectX::SimpleMath::Vector3 OrbitCamera::CalculatePosition() const
+Vector3 OrbitCamera::CalculatePosition() const
 {
 	// Calculate sines / cosines of angles
 	const auto sineAzimuth = sin(m_AzimuthAngle);
@@ -80,13 +74,13 @@ DirectX::SimpleMath::Vector3 OrbitCamera::CalculatePosition() const
 	return { x, y, z };
 }
 
-void OrbitCamera::UpdateView()
+Matrix OrbitCamera::CalculateViewMatrix() const
 {
-	const auto targetPosition = m_Target ? m_Target->GetWorldPosition() : DirectX::SimpleMath::Vector3::Zero;
-		
-	if (m_Transform.GetWorldPosition() == targetPosition) return;
+	const auto targetPosition = m_Target ? m_Target->GetWorldPosition() : Vector3::Zero;
 
-	m_ViewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_Transform.GetWorldPosition(), targetPosition, DirectX::SimpleMath::Vector3::Up);
+	if (position == targetPosition) return Matrix::Identity;
+
+	return Matrix::CreateLookAt(position, targetPosition, Vector3::Up);
 }
 
 void OrbitCamera::Update(const float deltaTime)
@@ -104,12 +98,8 @@ void OrbitCamera::Update(const float deltaTime)
 	RotatePolar(deltaY);
 	RotateAzimuth(deltaX);
 
-	m_Transform.SetWorldPosition(CalculatePosition());
-
-	UpdateView();
-
-	auto rotationMatrix = m_ViewMatrix.Invert();
-	const auto rotation = DirectX::SimpleMath::Quaternion::CreateFromRotationMatrix(rotationMatrix);
-	m_Transform.SetWorldRotation(rotation);
+	position = CalculatePosition();
+	const auto rotationMatrix = CalculateViewMatrix().Invert();
+	rotation = Quaternion::CreateFromRotationMatrix(rotationMatrix);
 }
 

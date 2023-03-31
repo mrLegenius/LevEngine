@@ -2,159 +2,181 @@
 
 #include "ObjLoader.h"
 #include "../Kernel/Application.h"
-#include "../GameObject.h"
-#include "../Components/MeshRenderer.h"
 #include "../OrbitCamera.h"
-#include "../Components/SkyboxRenderer.h"
 #include "../Assets.h"
-#include "../Rigidbody.h"
-#include "../Physics.h"
+#include "Physics/Physics.h"
 #include "KatamariPlayer.h"
 #include "../Prefabs.h"
 #include "../Random.h"
-#define MAX_POINT_LIGHTS 10
+#include "Debugging/Profiler.h"
+#include "Physics/Components/CollisionEvent.h"
+#include "Physics/Events/CollisionEndEvent.h"
+#include "Renderer/RenderCommand.h"
 
-struct alignas(16) CameraData
+void OnKatamariCollided(Entity me, Entity other)
 {
-    Matrix ViewProjection;
-    Vector3 Position;
-};
+    auto& myCollider = me.GetComponent<SphereCollider>();
+    auto& myTransform = me.GetComponent<Transform>();
 
-struct DirLightData
+    auto& otherRigidbody = other.GetComponent<Rigidbody>();
+    auto& otherTransform = other.GetComponent<Transform>();
+    if (otherRigidbody.bodyType == BodyType::Static) return;
+
+    const auto size = myCollider.radius;
+    const auto otherSize = LevEngine::Math::MaxElement(otherTransform.GetWorldScale());
+
+    if (size <= otherSize) return;
+
+    myCollider.radius += otherSize;
+
+    otherRigidbody.enabled = false;
+
+    otherTransform.SetParent(&myTransform);
+}
+
+class TestSystem : public System
 {
-    Vector4 Direction{Vector3(-DirectX::XM_PIDIV4 / 2, -DirectX::XM_PIDIV4, 0)};
-    Vector4 Ambient{Vector3(0.3f, 0.3f, 0.3f)};
-    Vector4 Diffuse{Vector3(0.7f, 0.6f, 0.1f)};
-    Vector4 Specular{Vector3(1.0f, 1.0f, 1.0f)};
+	void Update(float deltaTime, entt::registry& registry) override
+	{
+        auto view = registry.view<Transform, DirectionalLightComponent, CameraComponent>();
+
+        for (auto entity : view)
+        {
+            auto [transform, light, camera] = view.get<Transform, DirectionalLightComponent, CameraComponent>(entity);
+
+           /* auto rot = transform.GetLocalRotation();
+            auto mouseDelta = Input::GetMouseDelta();
+            rot.x += mouseDelta.second / 180;
+            rot.y += mouseDelta.first / 180;
+            transform.SetLocalRotationRadians(rot);*/
+
+            float delta = 0;
+            if (Input::IsKeyDown(KeyCode::Q))
+                delta = 0.001f;
+            else if (Input::IsKeyDown(KeyCode::E))
+                delta = -0.001f;
+
+            auto ortho = camera.camera.GetOrthographicSize();
+            camera.camera.SetOrthographicSize(ortho + delta);
+
+            if (delta != 0)
+            {
+                std::cout << camera.camera.GetOrthographicSize() << std::endl;
+            }
+        }
+	}
 };
-
-struct PointLightData
-{
-    alignas(16) Vector3 Position;
-
-    float Constant = 1.0f;
-    float Linear = 0.09f;
-    float Quadratic = 0.032f;
-    float _pad = 0;
-
-    alignas(16) Vector3 Ambient{ 0.1f, 0.1f, 0.1f };
-    alignas(16) Vector3 Diffuse{ 1.0f, 0.0f, 0.0f };
-    alignas(16) Vector3 Specular{ 1.0f, 0.0f, 0.0f };
-};
-
-struct alignas(16) LightningData
-{
-    DirLightData DirLight;
-    PointLightData PointLightsData[MAX_POINT_LIGHTS];
-    int PointLightsCount = 0;
-};
-
-static std::vector<std::shared_ptr<GameObject>> gameObjects;
-
-std::shared_ptr<GameObject> player;
-
 void KatamariLayer::OnAttach()
 {
-    for (int i = 0; i < 20; i++)
+    LEV_PROFILE_FUNCTION();
+
+    m_Scene = CreateRef<Scene>();
+
+    for (int i = 0; i < 0; i++)
     {
-        auto go = Prefabs::Gear(gameObjects);
-        go->GetTransform()->SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
+        auto& go = Prefabs::Gear(m_Scene);
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
     }
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 0; i++)
     {
-	   	auto go = Prefabs::Log(gameObjects);
-        go->GetTransform()->SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
+	   	auto& go = Prefabs::Log(m_Scene);
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 0; i++)
     {
-        auto go = Prefabs::Rock(gameObjects);
-        go->GetTransform()->SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
+        auto& go = Prefabs::Rock(m_Scene);
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
     }
 
-    auto floorCollider = std::make_shared<BoxCollider>(Vector3(150, 0.5f, 150));
-    floorCollider->offset = Vector3::Down * 0.5f;
-	auto floorGo = std::make_shared<GameObject>(
-        std::make_shared<MeshRenderer>(ShaderAssets::Lit(), Mesh::CreatePlane(3), TextureAssets::Bricks(), 50),
-        floorCollider);
+    auto floor = m_Scene->CreateEntity("Floor");
+    auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube(), TextureAssets::Bricks());
+    floorMesh.castShadow = false;
+	floor.GetComponent<Transform>().SetLocalScale(Vector3(300, 1.0f, 300));
+    floor.GetComponent<Transform>().SetWorldRotation(Vector3(0, 0, 0));
+    auto& floorRigibody = floor.AddComponent<Rigidbody>();
+    floorRigibody.bodyType = BodyType::Static;
+    auto& floorCollider = floor.AddComponent<BoxCollider>();
+    floorCollider.extents = Vector3(150, 0.5f, 150);
 
-    floorGo->GetTransform()->SetLocalScale(Vector3(300, 300, 1));
-    floorGo->GetTransform()->SetWorldRotation(Vector3(90, 0, 0));
-    floorGo->GetRigidbody()->bodyType = BodyType::Static;
-    gameObjects.emplace_back(floorGo);
+    auto player = m_Scene->CreateEntity("Player");
+    player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45), TextureAssets::Rock());
+    auto& playerTransform = player.GetComponent<Transform>();
+    playerTransform.SetLocalPosition(Vector3::One * 10);
+    auto& playerRb = player.AddComponent<Rigidbody>();
+    playerRb.gravityScale = 10;
+    playerRb.angularDamping = 0.9f;
+    playerRb.InitSphereInertia(playerTransform);
+    player.AddComponent<SphereCollider>();
+    auto& p = player.AddComponent<KatamariPlayerComponent>();
+    auto& events = player.AddComponent<CollisionEvents>();
+    events.onCollisionBegin.connect<&OnKatamariCollided>();
+    auto& playerLight = player.AddComponent<PointLightComponent>();
+    playerLight.Diffuse = Vector3(1.0f, 0.0f, 0.0f);
+    playerLight.Ambient = Vector3(1.0f, 0.0f, 0.0f);
+    playerLight.Specular = Vector3(1.0f, 0.0f, 0.0f);
 
-    m_Camera = std::make_shared<OrbitCamera>(45, 0.01f, 10000);
-    m_Camera->SetPosition(Vector3(0, 50, 200));
+    auto camera = m_Scene->CreateEntity("Camera");
+    camera.AddComponent<OrbitCamera>().SetTarget(playerTransform);
+    camera.AddComponent<CameraComponent>();
 
-    player = std::make_shared<KatamariPlayer>(m_Camera->GetTransform());
-    player->GetTransform()->SetLocalPosition(Vector3::Up * 100);
-    player->GetRigidbody()->gravityScale = 10;
-    player->GetRigidbody()->angularDamping = 0.9f;
-    player->GetRigidbody()->InitSphereInertia();
-    gameObjects.emplace_back(player);
+    auto skybox = m_Scene->CreateEntity("Skybox");
+    skybox.AddComponent<SkyboxRendererComponent>(SkyboxAssets::Test());
 
-    m_Camera->SetTarget(player->GetTransform());
+    auto dirLight = m_Scene->CreateEntity("DirLight");
+    dirLight.AddComponent<MeshRendererComponent>(ShaderAssets::Unlit(), Mesh::CreateSphere(10), TextureAssets::Bricks());
+    auto& dirLightTransform = dirLight.GetComponent<Transform>();
+    dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
+    dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150)); 
+    auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
+    dirLightComponent.Ambient = Vector3{ 0.1f, 0.1f, 0.1f };
+    dirLightComponent.Diffuse = Vector3{ 0.1f, 0.1f, 0.1f };
+    dirLightComponent.Specular = Vector3{ 0.5f, 0.5f, 0.5f};
 
-    m_CameraConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof CameraData);
-    m_DirLightConstantBuffer = std::make_shared<D3D11ConstantBuffer>(sizeof LightningData, 2);
+    //dirLight.AddComponent<OrbitCamera>();
+    auto& lightCamera = dirLight.AddComponent<CameraComponent>();
+    lightCamera.camera.SetProjectionType(SceneCamera::ProjectionType::Orthographic);
+    lightCamera.camera.SetOrthographic(0.25f, 100.0f, 1000.0f);
+    lightCamera.isMain = true;
+
+    auto wall = m_Scene->CreateEntity("Wall");
+    wall.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube(), TextureAssets::Bricks());
+    auto& wallT = wall.GetComponent<Transform>();
+    wallT.SetLocalScale(Vector3(1, 20, 100));
+    wallT.SetWorldPosition(Vector3(150, 10, 50));
+
+    auto peak = m_Scene->CreateEntity("Peak");
+    peak.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube(), TextureAssets::Gear());
+    auto& peakT = peak.GetComponent<Transform>();
+    peakT.SetLocalScale(Vector3(10, 50, 10));
+    peakT.SetWorldPosition(Vector3(100, 25, 100));
+
+	m_Scene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
+    m_Scene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
+    m_Scene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
+    m_Scene->RegisterUpdateSystem(CreateRef<TestSystem>());
+    m_Scene->RegisterOneFrame<CollisionBeginEvent>();
+    m_Scene->RegisterOneFrame<CollisionEndEvent>();
+}
+
+void KatamariLayer::OnEvent(Event& e)
+{
+	
 }
 
 void KatamariLayer::OnUpdate(const float deltaTime)
 {
-    //Prepare Frame
-    RenderCommand::Begin();
-    auto& window = Application::Get().GetWindow();
-    RenderCommand::SetViewport(0, 0, window.GetWidth(), window.GetHeight());
-    m_Camera->SetViewportSize(window.GetWidth(), window.GetHeight());
-    //window.DisableCursor();
+    LEV_PROFILE_FUNCTION();
 
+    //window.DisableCursor();
+    
     float color[] = { 0.1f, 0.1f, 0.1f, 1.0f };
     RenderCommand::SetClearColor(color);
     RenderCommand::Clear();
 
-    //Logic
-    for (const auto& gameObject : gameObjects)
-        gameObject->Update(deltaTime);
-
-    UpdatePhysics(deltaTime, gameObjects);
-
-    m_Camera->Update(deltaTime);
-
-    //Draw
-    for (const auto& gameObject : gameObjects)
-        gameObject->GetTransform()->RecalculateModel();
-
-    const CameraData cameraData{ m_Camera->GetViewProjection(), m_Camera->GetPosition() };
-    m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
-
-    auto playerLight = PointLightData{};
-    playerLight.Position = player->GetTransform()->GetWorldPosition();
-
-    const LightningData lightningData
-    {
-        DirLightData{},
-        {playerLight},
-    	1,
-    };
-    m_DirLightConstantBuffer->SetData(&lightningData, sizeof LightningData);
-
-    for (const auto& gameObject : gameObjects)
-	    gameObject->Draw();
-
-    auto isOrtho = m_Camera->GetProjectionType() == SceneCamera::ProjectionType::Orthographic;
-
-    if (isOrtho)
-    {
-        m_Camera->SetProjectionType(SceneCamera::ProjectionType::Perspective);
-        const CameraData skyboxCameraData{ m_Camera->GetViewProjection(), Vector3::Zero };
-        m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
-        m_Camera->SetProjectionType(SceneCamera::ProjectionType::Orthographic);
-    }
-
-    static auto skybox = std::make_shared<SkyboxRenderer>(ShaderAssets::Skybox(), SkyboxAssets::Test());
-    skybox->Draw(nullptr);
-
-    //End frame
-    RenderCommand::End();
+    m_Scene->OnUpdate(deltaTime);
+    m_Scene->OnPhysics(deltaTime);
+    m_Scene->OnLateUpdate(deltaTime);
+    m_Scene->OnRender();
 }

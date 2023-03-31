@@ -1,5 +1,4 @@
 #pragma once
-#include "../GameObject.h"
 #include "../Kernel/Layer.h"
 
 class Pad;
@@ -18,6 +17,6 @@ private:
 	std::shared_ptr<Ball> m_Ball;
 	std::shared_ptr<Pad> m_LeftPad;
 	std::shared_ptr<Pad> m_RightPad;
-	std::shared_ptr<GameObject> m_Line;
+	//std::shared_ptr<GameObject> m_Line;
 };
 

@@ -1,39 +1,38 @@
 ﻿#pragma once
 
-#include "Camera.h"
-#include "../../Components/Transform.h"
+#include "Components/Transform.h"
 #include "directxmath.h"
 
-class SceneCamera : public Camera
+using namespace DirectX::SimpleMath;
+
+class SceneCamera
 {
 public:
 	enum class ProjectionType { Perspective = 0, Orthographic = 1 };
 
 	SceneCamera();
-	~SceneCamera() override = default;
+	virtual ~SceneCamera() = default;
 	void SetViewportSize(uint32_t width, uint32_t height);
 
-	void SetProjectionType(const ProjectionType type) { m_ProjectionType = type; RecalculateProjection(); }
+	[[nodiscard]] const Matrix& GetProjection() const { return m_ProjectionType == ProjectionType::Orthographic ? m_OrthographicProjection : m_PerspectiveProjection; }
+
+	void SetProjectionType(const ProjectionType type) { m_ProjectionType = type; }
 	[[nodiscard]] ProjectionType GetProjectionType() const { return m_ProjectionType; }
 	[[nodiscard]] const Matrix& GetViewMatrix() const { return m_ViewMatrix; }
-	[[nodiscard]] Matrix GetViewProjection() const { return m_ViewMatrix * m_Projection; }
-
-	[[nodiscard]] const Transform& GetTransform() const { return m_Transform; }
-	void SetPosition(const Vector3& value) { m_Transform.SetWorldPosition(value); }
-	[[nodiscard]] Vector3 GetPosition() const { return m_Transform.GetWorldPosition(); }
-	virtual void Update(float deltaTime) = 0;
+	[[nodiscard]] Matrix GetViewProjection() const { return m_ViewMatrix * GetProjection(); }
+	[[nodiscard]] Matrix GetPerspectiveProjection() const { return m_PerspectiveProjection; }
+	float GetPerspectiveProjectionSliceDistance(float cascadeDistance) const;
 
 private:
 	void RecalculateProjection();
 
 	ProjectionType m_ProjectionType = ProjectionType::Perspective;
 	float m_AspectRatio = 1.0f;
+	uint32_t m_ViewportHeight = 0;
 
 protected:
-	Transform m_Transform;
 
 	Matrix m_ViewMatrix;
-	virtual void UpdateView();
 
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// -- Orthographic -------------------------------------------------------------------------------------------
@@ -55,6 +54,8 @@ private:
 	float m_OrthographicNear = -1.0f;
 	float m_OrthographicFar = 1.0f;
 
+	Matrix m_OrthographicProjection = Matrix::Identity;
+
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// -- Perspective --------------------------------------------------------------------------------------------
 	// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -71,8 +72,12 @@ public:
 	void SetPerspectiveFar(const float farClip) { m_PerspectiveFar = farClip; RecalculateProjection(); }
 	[[nodiscard]] float GetPerspectiveFar() const { return m_PerspectiveFar; }
 
+	[[nodiscard]] std::vector<Matrix> GetSplitPerspectiveProjections(const float* distances, int count) const;
+
 private:
 	float m_FieldOfView = DirectX::XMConvertToRadians(45.0f);
 	float m_PerspectiveNear = 0.1f;
 	float m_PerspectiveFar = 1000.0f;
+
+	Matrix m_PerspectiveProjection = Matrix::Identity;
 };
