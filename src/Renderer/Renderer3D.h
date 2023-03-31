@@ -16,38 +16,40 @@ struct MeshModelBufferData
 struct DirLightData
 {
 	alignas(16) Vector3 Direction{};
-	alignas(16) Vector3 Ambient{};
-	alignas(16) Vector3 Diffuse{};
-	alignas(16) Vector3 Specular{};
+	alignas(16) Vector3 Color {};
 };
 
 struct PointLightData
 {
 	alignas(16) Vector3 Position;
-
-	float Constant = 1.0f;
-	float Linear = 0.09f;
-	float Quadratic = 0.032f;
-	float _pad = 0;
-
-	alignas(16) Vector3 Ambient{};
-	alignas(16) Vector3 Diffuse{};
-	alignas(16) Vector3 Specular{};
+	alignas(16) Vector3 Attenuation = Vector3(1.0f, 0.09f, 0.032f);
+	alignas(16) Vector3 Color{};
 };
 
 struct LightningData
 {
 	DirLightData DirLight;
 	PointLightData PointLightsData[RenderSettings::MaxPointLights];
+	alignas(16) Vector3 GlobalAmbient;
 	uint32_t PointLightsCount = 0;
 };
-
 
 struct ShadowData
 {
 	alignas(16) Matrix ViewProjection[RenderSettings::CascadeCount];
-	alignas(16) float distances[RenderSettings::CascadeCount];
-	alignas(16) float shadowMapDimensions;
+	alignas(16) float Distances[RenderSettings::CascadeCount];
+	alignas(16) float ShadowMapDimensions;
+};
+
+struct MaterialData
+{
+	alignas(16) Vector3 Emissive = Vector3{ 0, 0, 0 };
+	alignas(16) Vector3 Ambient = Vector3{ 0, 0, 0 };
+	alignas(16) Vector3 Diffuse = Vector3{ 0, 0, 0 };
+	alignas(16) Vector3 Specular = Vector3{ 0, 0, 0 };
+
+	float Shininess = 2;
+	int UseTexture;
 };
 
 class Renderer3D
@@ -74,6 +76,7 @@ private:
 	static Ref<D3D11ConstantBuffer> m_CameraConstantBuffer;
 	static Ref<D3D11ConstantBuffer> m_LightningConstantBuffer;
 	static Ref<D3D11ConstantBuffer> m_ShadowMapConstantBuffer;
+	static Ref<D3D11ConstantBuffer> m_MaterialConstantBuffer;
 
 	static Ref<D3D11ShadowMap> m_ShadowMap;
 	static Ref<D3D11CascadeShadowMap> m_CascadeShadowMap;

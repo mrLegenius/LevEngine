@@ -1,4 +1,4 @@
-#define MAX_POINT_LIGHTS 10
+#define MAX_POINT_LIGHTS 100
 #define CASCADE_COUNT 4
 #define DEBUG_CASCADES 0
 
@@ -12,7 +12,7 @@ cbuffer CameraConstantBuffer : register(b0)
 cbuffer ModelConstantBuffer : register(b1)
 {
 	row_major matrix model;
-};
+};	
 
 cbuffer lightSpaceConstantBuffer : register(b3)
 {
@@ -24,31 +24,42 @@ cbuffer lightSpaceConstantBuffer : register(b3)
 struct DirLight
 {
 	float3 direction;
-	float3 ambient;
-	float3 diffuse;
-	float3 specular;
+	float3 color;
 };
 
 struct PointLight 
 {
 	float3 position;
-
-	float constant;
-	float linea;
-	float quadratic;
-	float _;
-
-	float3 ambient;
-	float3 diffuse;
-	float3 specular;
+	float3 attenuation;
+	float3 color;
 };
 
 cbuffer LightningConstantBuffer : register(b2)
 {
 	DirLight dirLight;
 	PointLight pointLights[MAX_POINT_LIGHTS];
-	float pad_;
+	float3 globalAmbient;
 	int pointLightsCount;
+};
+
+struct Material
+{
+	float3 emissive;
+	// -- 16
+	float3 ambient;
+	// -- 16
+	float3 diffuse;
+	// -- 16
+	float3 specular;
+	// -- 16
+	float shininess;
+	bool useTexture;
+	// -- 8
+};
+
+cbuffer MaterialConstantBuffer : register(b4)
+{
+	Material material;
 };
 
 struct VS_IN
@@ -101,32 +112,93 @@ SamplerState my_sampler : register(s0);
 Texture2DArray shadowMapTexture : register(t1);
 SamplerComparisonState shadowMapSampler : register(s1);
 
-float3 CalcDirLight(DirLight light, float3 normal, float3 viewDir, float2 uv, float4 fragPosLightSpace, float depth);
-float3 CalcPointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDir, float2 uv);
+struct LightingResult
+{
+	float3 diffuse;
+	float3 specular;
+};
+
+float3 CalcDiffuse(float3 color, float3 lightDir, float3 normal);
+float3 CalcSpecular(float3 color, float3 viewDir, float3 lightDir, float3 normal);
+float CalcAttenuation(float3 attenuation, float distance);
+
 float CalcShadow(float4 lpos, float3 normal, float3 lightDir, float depth);
+LightingResult CalcDirLight(DirLight light, float3 normal, float3 viewDir, float4 fragPosLightSpace, float depth);
+LightingResult CalcPointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDir);
+LightingResult CalcLighting(float3 fragPos, float3 normal, float depth);
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-	float cascade = GetCascadeIndex(input.depth);
+	LightingResult lit = CalcLighting(input.fragPos, input.normal, input.depth);
 
-	float4 fragPosLightSpace = mul(float4(input.fragPos, 1.0f), lightViewProjection[cascade]);
+	float3 emissive = material.emissive;
+	float3 ambient = material.ambient * globalAmbient;
+	float3 diffuse = material.diffuse * lit.diffuse;
+	float3 specular = material.specular * lit.specular;
 
-	// properties
-	float3 norm = normalize(input.normal);
-	float3 viewDir = normalize(cameraPosition - input.fragPos);
+	float3 texColor = { 1, 1, 1 };
 
-	float3 result = CalcDirLight(dirLight, norm, viewDir, input.uv, fragPosLightSpace, input.depth);
+	if (material.useTexture)
+		texColor = my_texture.Sample(my_sampler, input.uv);
 
-	for (int i = 0; i < pointLightsCount; i++)
-		result += CalcPointLight(pointLights[i], norm, input.fragPos, viewDir, input.uv);
+	float3 finalColor = (emissive + ambient + diffuse + specular) * texColor;
 
-	return float4(result, 1.0f);
+	return float4(finalColor, 1.0);
 }
 
-float CalcShadow(float4 lpos, float3 normal, float3 lightDir, float depth)
+LightingResult CalcLighting(float3 fragPos, float3 normal, float depth)
 {
-	float cascadeIndex = GetCascadeIndex(depth);
+	float cascade = GetCascadeIndex(depth);
+	float4 fragPosLightSpace = mul(float4(fragPos, 1.0f), lightViewProjection[cascade]);
 
+	float3 norm = normalize(normal);
+	float3 viewDir = normalize(cameraPosition - fragPos);
+
+	LightingResult totalResult = CalcDirLight(dirLight, norm, viewDir, fragPosLightSpace, cascade);
+
+	[unroll]
+	for (int i = 0; i < pointLightsCount; i++)
+	{
+		LightingResult result = CalcPointLight(pointLights[i], norm, fragPos, viewDir);
+		
+		totalResult.diffuse += result.diffuse;
+		totalResult.specular += result.specular;
+	}
+
+	totalResult.diffuse = saturate(totalResult.diffuse);
+	totalResult.specular = saturate(totalResult.specular);
+
+	return totalResult;
+}
+
+float3 CalcDiffuse(float3 color, float3 lightDir, float3 normal)
+{
+	float NdotL = max(0.0, dot(normal, lightDir));
+	return color * NdotL;
+}
+
+float3 CalcSpecular(float3 color, float3 viewDir, float3 lightDir, float3 normal)
+{
+	//Blinn-Phong
+	float3 halfAngle = normalize(lightDir + viewDir);
+	float spec = dot(normal, halfAngle);
+	
+	//Phong
+	//float3 reflectDir = reflect(-lightDir, normal);
+	//float spec = dot(viewDir, reflectDir);
+
+	return color * pow(max(spec, 0.0), material.shininess);
+}
+
+float CalcAttenuation(float3 attenuation, float distance)
+{
+	return 1.0 / (attenuation.x 
+		+ attenuation.y * distance 
+		+ attenuation.z * (distance * distance));
+}
+
+float CalcShadow(float4 lpos, float3 normal, float3 lightDir, float cascade)
+{
 	//re-homogenize position after interpolation
 	lpos.xyz /= lpos.w;
 
@@ -150,20 +222,19 @@ float CalcShadow(float4 lpos, float3 normal, float3 lightDir, float depth)
 	float texelSize = 1.0f / shadowMapDimensions;
 
 	//No filtering
-	//float shadowFactor = shadowMapTexture.SampleCmpLevelZero(shadowMapSampler, float3(lpos.xy, cascadeIndex), lpos.z);
+	//float shadowFactor = shadowMapTexture.SampleCmpLevelZero(shadowMapSampler, float3(lpos.xy, cascade), lpos.z);
 
 	//PCF filtering on a 4 x 4 texel neighborhood
-	
 	float sum = 0;
 	for (float y = -1.5; y <= 1.5; y += 1.0)
 	{
 		for (float x = -1.5; x <= 1.5; x += 1.0)
 		{
-			sum += shadowMapTexture.SampleCmpLevelZero(shadowMapSampler, float3(lpos.x + x * texelSize, lpos.y + y * texelSize, cascadeIndex), lpos.z);
+			sum += shadowMapTexture.SampleCmpLevelZero(shadowMapSampler, float3(lpos.x + x * texelSize, lpos.y + y * texelSize, cascade), lpos.z);
 		}
 	}
 	float shadowFactor = sum / 16.0;
-	
+
 
 	//if clip space z value greater than shadow map value then pixel is in shadow
 	if (shadowFactor < lpos.z) return 0.0f;
@@ -172,72 +243,31 @@ float CalcShadow(float4 lpos, float3 normal, float3 lightDir, float depth)
 	return ndotl * shadowFactor;
 }
 
-float3 CalcDirLight(DirLight light, float3 normal, float3 viewDir, float2 uv, float4 fragPosLightSpace, float depth)
+LightingResult CalcDirLight(DirLight light, float3 normal, float3 viewDir, float4 fragPosLightSpace, float cascade)
 {
+	LightingResult result;
+
 	float3 lightDir = normalize(-light.direction);
-	// diffuse shading
-	float diff = max(dot(normal, lightDir), 0.0);
-	// specular shading
-	float3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 5); //TODO: material.shininess
 
-	float cascadeIndex = GetCascadeIndex(depth);
-	float3 tex = my_texture.Sample(my_sampler, uv).rgb;
-#if DEBUG_CASCADES 
-	if (cascadeIndex == 0)
-	{
-		tex.r = 1;
-		tex.g = 0;
-		tex.b = 0;
-	}
-	else if (cascadeIndex == 1)
-	{
-		tex.r = 0;
-		tex.g = 1;
-		tex.b = 0;
-	}
-	else if (cascadeIndex == 2)
-	{
-		tex.r = 0;
-		tex.g = 0;
-		tex.b = 1;
-	}
-	else if (cascadeIndex == 3)
-	{
-		tex.r = 1;
-		tex.g = 1;
-		tex.b = 0;
-	}
-#endif
-	// combine results
-	float3 ambient = light.ambient * tex;
-	float3 diffuse = light.diffuse * diff * my_texture.Sample(my_sampler, uv).rgb;
-	float3 specular = light.specular * spec * my_texture.Sample(my_sampler, uv).rgb;
+	float shadow = CalcShadow(fragPosLightSpace, normal, lightDir, cascade);
+	result.diffuse = CalcDiffuse(light.color, lightDir, normal) * shadow;
+	result.specular = CalcSpecular(light.color, viewDir, lightDir, normal) * shadow;
 
-	float shadow = CalcShadow(fragPosLightSpace, normal, lightDir, depth);
-
-	return (ambient + (shadow) * (diffuse + specular));
+	return result;
 }
 
-float3 CalcPointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDir, float2 uv)
+LightingResult CalcPointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDir)
 {
-	float3 lightDir = normalize(light.position - fragPos);
-	// diffuse shading
-	float diff = max(dot(normal, lightDir), 0.0);
-	// specular shading
-	float3 reflectDir = reflect(-lightDir, normal);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1); //TODO: material.shininess
-	// attenuation
-	float distance = length(light.position - fragPos);
-	float attenuation = 1.0 / (light.constant + light.linea * distance +
-		light.quadratic * (distance * distance));
-	// combine results
-	float3 ambient = light.ambient * my_texture.Sample(my_sampler, uv).rgb;
-	float3 diffuse = light.diffuse * diff * my_texture.Sample(my_sampler, uv).rgb;
-	float3 specular = light.specular * spec* my_texture.Sample(my_sampler, uv).rgb;
+	LightingResult result;
 
-	ambient *= attenuation;
-	diffuse *= attenuation;
-	specular *= attenuation;
-	return (ambient + diffuse + specular);
+	float3 lightDir = light.position - fragPos;
+	float distance = length(lightDir);
+	lightDir = lightDir / distance;
+	
+	float attenuation = CalcAttenuation(light.attenuation, distance);
+
+	result.diffuse = CalcDiffuse(light.color, lightDir, normal) * attenuation;
+	result.specular = CalcSpecular(light.color, viewDir, lightDir, normal) * attenuation;
+
+	return result;
 }

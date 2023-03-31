@@ -209,6 +209,7 @@
     <ClInclude Include="src\Renderer\D3D11Texture.h" />
     <ClInclude Include="src\Renderer\D3D11TextureCube.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />
+    <ClInclude Include="src\Renderer\Material.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\Renderer3D.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />

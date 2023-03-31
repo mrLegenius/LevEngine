@@ -8,6 +8,7 @@ Ref<D3D11ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_LightningConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_ShadowMapConstantBuffer;
+Ref<D3D11ConstantBuffer> Renderer3D::m_MaterialConstantBuffer;
 
 Ref<D3D11ShadowMap> Renderer3D::m_ShadowMap;
 Ref<D3D11CascadeShadowMap> Renderer3D::m_CascadeShadowMap;
@@ -89,11 +90,14 @@ void Renderer3D::Init()
 	m_ModelConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof MeshModelBufferData, 1);
 	m_LightningConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof LightningData, 2);
 	m_ShadowMapConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof ShadowData, 3);
+    m_MaterialConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof MaterialData, 4);
 
     m_ShadowMap = CreateRef<D3D11ShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
     m_CascadeShadowMap = CreateRef<D3D11CascadeShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
 
     s_SkyboxMesh = CreateRef<SkyboxMesh>(ShaderAssets::Skybox());
+
+    s_LightningData.GlobalAmbient = RenderSettings::GlobalAmbient;
 }
 
 void Renderer3D::Shutdown()
@@ -119,9 +123,9 @@ void Renderer3D::BeginShadowPass(SceneCamera& camera, const std::vector<Matrix> 
         const auto view = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + s_LightningData.DirLight.Direction, Vector3::Up);
 
         s_ShadowData.ViewProjection[cascadeIndex] = view * GetCascadeProjection(view, frustrumCorners);
-        s_ShadowData.distances[cascadeIndex] = camera.GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
+        s_ShadowData.Distances[cascadeIndex] = camera.GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
 
-        s_ShadowData.shadowMapDimensions = RenderSettings::ShadowMapResolution;
+        s_ShadowData.ShadowMapDimensions = RenderSettings::ShadowMapResolution;
     }
     m_CascadeShadowMap->SetRenderTarget();
     ShaderAssets::CascadeShadowPass()->Bind();
@@ -187,6 +191,15 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
 
+    MaterialData material;
+    material.Emissive = meshRenderer.material.Emissive;
+    material.Ambient = meshRenderer.material.Ambient;
+    material.Diffuse = meshRenderer.material.Diffuse;
+    material.Specular = meshRenderer.material.Specular;
+    material.Shininess = meshRenderer.material.Shininess;
+    material.UseTexture = meshRenderer.material.UseTexture;
+
+    m_MaterialConstantBuffer->SetData(&material);
     m_CascadeShadowMap->Bind(1);
     meshRenderer.texture->Bind();
     meshRenderer.shader->Bind();
@@ -215,10 +228,7 @@ void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const Directional
 
     auto& data = s_LightningData.DirLight;
     data.Direction = dirLightDirection;
-
-    data.Ambient = dirLight.Ambient;
-    data.Diffuse = dirLight.Diffuse;
-    data.Specular = dirLight.Specular;
+    data.Color = dirLight.Color;
 }
 
 void Renderer3D::AddPointLights(const Vector3& position, const PointLightComponent& pointLight)
@@ -234,14 +244,8 @@ void Renderer3D::AddPointLights(const Vector3& position, const PointLightCompone
     PointLightData& pointLightData = s_LightningData.PointLightsData[s_LightningData.PointLightsCount];
 
     pointLightData.Position = position;
-
-    pointLightData.Constant = pointLight.constant;
-    pointLightData.Linear = pointLight.linear;
-    pointLightData.Quadratic = pointLight.quadratic;
-
-    pointLightData.Ambient = pointLight.Ambient;
-    pointLightData.Diffuse = pointLight.Diffuse;
-    pointLightData.Specular = pointLight.Specular;
+    pointLightData.Color = pointLight.Color;
+    pointLightData.Attenuation = Vector3{ pointLight.constant, pointLight.linear, pointLight.quadratic };
 
     s_LightningData.PointLightsCount++;
 }

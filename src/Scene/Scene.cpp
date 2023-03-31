@@ -44,7 +44,7 @@ void Scene::OnPhysics(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-    constexpr float iterationDt = 1.0f / 60.0f; //Ideally we'll have 120 physics updates a second 
+    constexpr float iterationDt = 1.0f / 120.0f; //Ideally we'll have 120 physics updates a second 
     dTOffset += deltaTime; //We accumulate time delta here - there might be remainders from previous frame!
 
     const int iterationCount = static_cast<int>(dTOffset / iterationDt); //And split it up here
@@ -72,10 +72,9 @@ void Scene::OnPhysics(const float deltaTime)
 
         for (int j = 0; j < constraintIterationCount; ++j) {
             //UpdateConstraints(constraintDt);
+            UpdatePositionSystem(constraintDt, m_Registry);
         }
 
-        UpdatePositionSystem(subDt, m_Registry);
-        
         dTOffset -= iterationDt;
     }
     ForcesClearSystem(deltaTime, m_Registry);//Once we've finished with the forces, reset them to zero

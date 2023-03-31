@@ -12,6 +12,7 @@
 #include "Physics/Components/CollisionEvent.h"
 #include "Physics/Events/CollisionEndEvent.h"
 #include "Renderer/RenderCommand.h"
+#include "Renderer/Material.h"
 
 void OnKatamariCollided(Entity me, Entity other)
 {
@@ -90,9 +91,25 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
     }
 
+    for (int i = 0; i < 50; i++)
+    {
+        auto& go = Prefabs::Sphere(m_Scene);
+        auto& light = go.AddComponent<PointLightComponent>();
+        const auto color = Vector3(
+            static_cast<float>(Random::Range(0, 100)) / 100.0f,
+            static_cast<float>(Random::Range(0, 100)) / 100.0f, 
+            static_cast<float>(Random::Range(0, 100)) / 100.0f);
+
+        light.Color = color;
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-50, 50), 3, Random::Range(-50, 50)));
+    }
+
     auto floor = m_Scene->CreateEntity("Floor");
     auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube(), TextureAssets::Bricks());
     floorMesh.castShadow = false;
+    floorMesh.material = Materials::CyanPlastic();
+    floorMesh.material.UseTexture = false;
+
 	floor.GetComponent<Transform>().SetLocalScale(Vector3(300, 1.0f, 300));
     floor.GetComponent<Transform>().SetWorldRotation(Vector3(0, 0, 0));
     auto& floorRigibody = floor.AddComponent<Rigidbody>();
@@ -101,7 +118,10 @@ void KatamariLayer::OnAttach()
     floorCollider.extents = Vector3(150, 0.5f, 150);
 
     auto player = m_Scene->CreateEntity("Player");
-    player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45), TextureAssets::Rock());
+    auto& playerMesh = player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45), TextureAssets::Rock());
+    playerMesh.material = Materials::Emerald();
+	playerMesh.material.UseTexture = false;
+
     auto& playerTransform = player.GetComponent<Transform>();
     playerTransform.SetLocalPosition(Vector3::One * 10);
     auto& playerRb = player.AddComponent<Rigidbody>();
@@ -113,9 +133,7 @@ void KatamariLayer::OnAttach()
     auto& events = player.AddComponent<CollisionEvents>();
     events.onCollisionBegin.connect<&OnKatamariCollided>();
     auto& playerLight = player.AddComponent<PointLightComponent>();
-    playerLight.Diffuse = Vector3(1.0f, 0.0f, 0.0f);
-    playerLight.Ambient = Vector3(1.0f, 0.0f, 0.0f);
-    playerLight.Specular = Vector3(1.0f, 0.0f, 0.0f);
+    playerLight.Color = Vector3(1.0f, 0.0f, 0.0f);
 
     auto camera = m_Scene->CreateEntity("Camera");
     camera.AddComponent<OrbitCamera>().SetTarget(playerTransform);
@@ -130,9 +148,7 @@ void KatamariLayer::OnAttach()
     dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
     dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150)); 
     auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
-    dirLightComponent.Ambient = Vector3{ 0.1f, 0.1f, 0.1f };
-    dirLightComponent.Diffuse = Vector3{ 0.1f, 0.1f, 0.1f };
-    dirLightComponent.Specular = Vector3{ 0.5f, 0.5f, 0.5f};
+    dirLightComponent.Color = Vector3{ 0.9f, 0.9f, 0.9f };
 
     //dirLight.AddComponent<OrbitCamera>();
     auto& lightCamera = dirLight.AddComponent<CameraComponent>();

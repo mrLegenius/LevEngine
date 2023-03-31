@@ -10,6 +10,7 @@
 #include "Physics/Components/Collider.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Renderer/D3D11TextureCube.h"
+#include "Renderer/Material.h"
 
 struct IDComponent
 {
@@ -34,6 +35,7 @@ struct MeshRendererComponent
 	Ref<Mesh> mesh;
 	Ref<D3D11Shader> shader;
 	Ref<Texture> texture;
+	Material material;
 	bool castShadow = true;
 
 	MeshRendererComponent() = default;
@@ -55,9 +57,7 @@ struct SkyboxRendererComponent
 
 struct DirectionalLightComponent
 {
-	Vector3 Ambient = Vector3(1.0f);
-	Vector3 Diffuse = Vector3(1.0f);
-	Vector3 Specular = Vector3(1.0f);
+	Vector3 Color = Vector3(1.0f);
 
 	DirectionalLightComponent() = default;
 	DirectionalLightComponent(const DirectionalLightComponent&) = default;
@@ -65,9 +65,7 @@ struct DirectionalLightComponent
 
 struct PointLightComponent
 {
-	Vector3 Ambient = Vector3(1.0f);
-	Vector3 Diffuse = Vector3(1.0f);
-	Vector3 Specular = Vector3(1.0f);
+	Vector3 Color = Vector3(1.0f);
 
 	float constant = 1.0f;
 	float linear = 0.09f;

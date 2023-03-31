@@ -1,4 +1,5 @@
 #pragma once
+#include <SimpleMath.h>
 
 struct RenderSettings
 {
@@ -9,6 +10,7 @@ struct RenderSettings
 	static constexpr float ShadowMapResolution = 2048;
 
 	//Lightning
-	static constexpr int MaxPointLights = 10;
+	static constexpr int MaxPointLights = 100;
+	static constexpr DirectX::SimpleMath::Vector3 GlobalAmbient{ 0.99f, 0.99f, 0.99f };
 };
 
