@@ -185,16 +185,14 @@ LightingResult CalcLighting(float3 fragPos, float3 normal, float depth)
 	float cascade = GetCascadeIndex(depth);
 	float4 fragPosLightSpace = mul(float4(fragPos, 1.0f), lightViewProjection[cascade]);
 
-	float3 norm = normalize(normal);
 	float3 viewDir = normalize(cameraPosition - fragPos);
 
-	LightingResult totalResult = CalcDirLight(dirLight, norm, viewDir, fragPosLightSpace, cascade);
+	LightingResult totalResult = CalcDirLight(dirLight, normal, viewDir, fragPosLightSpace, cascade);
 
 	[unroll]
 	for (int i = 0; i < pointLightsCount; i++)
 	{
-		LightingResult result = CalcPointLight(pointLights[i], norm, fragPos, viewDir);
-		
+		LightingResult result = CalcPointLight(pointLights[i], normal, fragPos, viewDir);
 		totalResult.diffuse += result.diffuse;
 		totalResult.specular += result.specular;
 	}

@@ -70,7 +70,7 @@ struct PointLightComponent
 {
 	Vector3 Color = Vector3(1.0f);
 
-	float Range = 1.0f;
+	float Range = 10.0f;
 	float Smoothness = 0.75f;
 	float Intensity = 1.0f;
 

@@ -119,8 +119,7 @@ void KatamariLayer::OnAttach()
 
     auto player = m_Scene->CreateEntity("Player");
     auto& playerMesh = player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45));
-    playerMesh.material = Materials::Emerald();
-    playerMesh.diffuseTexture = TextureAssets::Rock();
+    playerMesh.material = Materials::Ruby();
 
     auto& playerTransform = player.GetComponent<Transform>();
     playerTransform.SetLocalPosition(Vector3::One * 10);

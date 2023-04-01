@@ -72,6 +72,7 @@ struct Prefabs
         mesh.GetComponent<Transform>().SetLocalRotation(Vector3{90.0f, 0.0f, -90.0f});
         auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), LavaRockAssets::Mesh());
         meshRenderer.ambientTexture = LavaRockAssets::AmbientTexture();
+        meshRenderer.diffuseTexture = LavaRockAssets::AmbientTexture();
         meshRenderer.emissiveTexture = LavaRockAssets::EmissiveTexture();
         meshRenderer.specularTexture = LavaRockAssets::SpecularTexture();
         meshRenderer.normalTexture = LavaRockAssets::NormalTexture();
