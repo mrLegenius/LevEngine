@@ -12,6 +12,40 @@ static std::string GetShaderPath(const std::string& name) { return (resources / 
 static std::string GetTexturePath(const std::string& name) { return (resources / "Textures" / name).string(); }
 static std::string GetModelPath(const std::string& name) { return (resources / "Models" / name).string(); }
 
+struct LavaRockAssets
+{
+	static auto Mesh()
+	{
+		static auto mesh = ObjLoader().LoadMesh(GetModelPath("lava_rock.obj"));
+		return mesh;
+	}
+
+	static auto AmbientTexture()
+	{
+		static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("LavaRock/ambient.jpg"));
+		return texture;
+	}
+
+	static auto EmissiveTexture()
+	{
+		static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("LavaRock/emissive.jpg"));
+		return texture;
+	}
+
+	static auto SpecularTexture()
+	{
+		static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("LavaRock/specular.jpg"));
+		return texture;
+	}
+
+
+	static auto NormalTexture()
+	{
+		static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("LavaRock/normal.jpg"));
+		return texture;
+	}
+};
+
 namespace ShaderAssets
 {
     inline auto Lit()

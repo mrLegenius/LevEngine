@@ -11,8 +11,6 @@ struct Material
 
 	float Shininess = 2;
 
-	bool UseTexture = false;
-
 	Material() = default;
 	Material(const Vector3 ambient,
 	         const Vector3 diffuse,

@@ -153,6 +153,7 @@
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="src\Renderer\D3D11CascadeShadowMap.cpp" />
     <ClCompile Include="src\Renderer\D3D11ConstantBuffer.cpp" />
+    <ClCompile Include="src\Renderer\D3D11GBuffer.cpp" />
     <ClCompile Include="src\Renderer\D3D11Texture.cpp" />
     <ClCompile Include="src\Renderer\D3D11TextureCube.cpp" />
     <ClCompile Include="src\Renderer\D3D11ShadowMap.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="src\Renderer\D3D11CascadeShadowMap.h" />
     <ClInclude Include="src\Renderer\D3D11ConstantBuffer.h" />
+    <ClInclude Include="src\Renderer\D3D11GBuffer.h" />
     <ClInclude Include="src\Renderer\D3D11ShadowMap.h" />
     <ClInclude Include="src\Renderer\D3D11Texture.h" />
     <ClInclude Include="src\Renderer\D3D11TextureCube.h" />

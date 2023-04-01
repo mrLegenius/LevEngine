@@ -181,6 +181,14 @@ void Renderer3D::DrawMeshShadow(const Matrix& model, const MeshRendererComponent
     RenderCommand::DrawIndexed(meshRenderer.mesh->VertexBuffer, meshRenderer.mesh->IndexBuffer);
 }
 
+inline void TryBindTexture(const Ref<Texture> texture, int& hasTexture, const int slot)
+{
+    if (texture)
+    {
+        hasTexture = true;
+        texture->Bind(slot);
+    }
+}
 void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer)
 {
     LEV_PROFILE_FUNCTION();
@@ -197,11 +205,18 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
     material.Diffuse = meshRenderer.material.Diffuse;
     material.Specular = meshRenderer.material.Specular;
     material.Shininess = meshRenderer.material.Shininess;
-    material.UseTexture = meshRenderer.material.UseTexture;
+    material.HasDiffuseTexture = meshRenderer.diffuseTexture != nullptr;
+    material.HasSpecularTexture = meshRenderer.specularTexture != nullptr;
+    material.HasNormalTexture = meshRenderer.normalTexture != nullptr;
+
+    TryBindTexture(meshRenderer.emissiveTexture, material.HasEmissiveTexture, 0);
+    TryBindTexture(meshRenderer.ambientTexture, material.HasAmbientTexture, 1);
+    TryBindTexture(meshRenderer.diffuseTexture, material.HasDiffuseTexture, 2);
+    TryBindTexture(meshRenderer.specularTexture, material.HasSpecularTexture, 3);
+    TryBindTexture(meshRenderer.normalTexture, material.HasNormalTexture, 4);
 
     m_MaterialConstantBuffer->SetData(&material);
-    m_CascadeShadowMap->Bind(1);
-    meshRenderer.texture->Bind();
+    m_CascadeShadowMap->Bind(9);
     meshRenderer.shader->Bind();
     
     RenderCommand::DrawIndexed(meshRenderer.mesh->VertexBuffer, meshRenderer.mesh->IndexBuffer);
@@ -245,7 +260,9 @@ void Renderer3D::AddPointLights(const Vector3& position, const PointLightCompone
 
     pointLightData.Position = position;
     pointLightData.Color = pointLight.Color;
-    pointLightData.Attenuation = Vector3{ pointLight.constant, pointLight.linear, pointLight.quadratic };
+    pointLightData.Range = pointLight.Range;
+    pointLightData.Intensity = pointLight.Intensity;
+    pointLightData.Smoothness = pointLight.Smoothness;
 
     s_LightningData.PointLightsCount++;
 }

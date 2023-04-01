@@ -34,14 +34,17 @@ struct MeshRendererComponent
 {
 	Ref<Mesh> mesh;
 	Ref<D3D11Shader> shader;
-	Ref<Texture> texture;
+	Ref<Texture> emissiveTexture;
+	Ref<Texture> ambientTexture;
+	Ref<Texture> diffuseTexture;
+	Ref<Texture> specularTexture;
+	Ref<Texture> normalTexture;
 	Material material;
 	bool castShadow = true;
 
 	MeshRendererComponent() = default;
 	MeshRendererComponent(const Ref<D3D11Shader>& shader,
-		const Ref<Mesh>& mesh,
-		const Ref<Texture>& texture) : mesh(mesh), shader(shader), texture(texture)
+		const Ref<Mesh>& mesh) : mesh(mesh), shader(shader)
 	{ }
 	MeshRendererComponent(const MeshRendererComponent&) = default;
 };
@@ -67,9 +70,9 @@ struct PointLightComponent
 {
 	Vector3 Color = Vector3(1.0f);
 
-	float constant = 1.0f;
-	float linear = 0.09f;
-	float quadratic = 0.032f;
+	float Range = 1.0f;
+	float Smoothness = 0.75f;
+	float Intensity = 1.0f;
 
 	PointLightComponent() = default;
 	PointLightComponent(const PointLightComponent&) = default;

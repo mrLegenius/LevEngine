@@ -85,13 +85,13 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
-    for (int i = 0; i < 0; i++)
+    for (int i = 0; i < 3; i++)
     {
-        auto& go = Prefabs::Rock(m_Scene);
+        auto& go = Prefabs::LavaRock(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
     }
 
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < 5; i++)
     {
         auto& go = Prefabs::Sphere(m_Scene);
         auto& light = go.AddComponent<PointLightComponent>();
@@ -105,10 +105,10 @@ void KatamariLayer::OnAttach()
     }
 
     auto floor = m_Scene->CreateEntity("Floor");
-    auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube(), TextureAssets::Bricks());
+    auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     floorMesh.castShadow = false;
     floorMesh.material = Materials::CyanPlastic();
-    floorMesh.material.UseTexture = false;
+    floorMesh.diffuseTexture = TextureAssets::Bricks();
 
 	floor.GetComponent<Transform>().SetLocalScale(Vector3(300, 1.0f, 300));
     floor.GetComponent<Transform>().SetWorldRotation(Vector3(0, 0, 0));
@@ -118,9 +118,9 @@ void KatamariLayer::OnAttach()
     floorCollider.extents = Vector3(150, 0.5f, 150);
 
     auto player = m_Scene->CreateEntity("Player");
-    auto& playerMesh = player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45), TextureAssets::Rock());
+    auto& playerMesh = player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45));
     playerMesh.material = Materials::Emerald();
-	playerMesh.material.UseTexture = false;
+    playerMesh.diffuseTexture = TextureAssets::Rock();
 
     auto& playerTransform = player.GetComponent<Transform>();
     playerTransform.SetLocalPosition(Vector3::One * 10);
@@ -143,7 +143,6 @@ void KatamariLayer::OnAttach()
     skybox.AddComponent<SkyboxRendererComponent>(SkyboxAssets::Test());
 
     auto dirLight = m_Scene->CreateEntity("DirLight");
-    dirLight.AddComponent<MeshRendererComponent>(ShaderAssets::Unlit(), Mesh::CreateSphere(10), TextureAssets::Bricks());
     auto& dirLightTransform = dirLight.GetComponent<Transform>();
     dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
     dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150)); 
@@ -157,13 +156,15 @@ void KatamariLayer::OnAttach()
     lightCamera.isMain = true;
 
     auto wall = m_Scene->CreateEntity("Wall");
-    wall.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube(), TextureAssets::Bricks());
+    auto& wallMesh = wall.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
+    wallMesh.material = Materials::BlackPlastic();
     auto& wallT = wall.GetComponent<Transform>();
     wallT.SetLocalScale(Vector3(1, 20, 100));
     wallT.SetWorldPosition(Vector3(150, 10, 50));
 
     auto peak = m_Scene->CreateEntity("Peak");
-    peak.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube(), TextureAssets::Gear());
+    auto& peakMesh = peak.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
+    peakMesh.material = Materials::Brass();
     auto& peakT = peak.GetComponent<Transform>();
     peakT.SetLocalScale(Vector3(10, 50, 10));
     peakT.SetWorldPosition(Vector3(100, 25, 100));

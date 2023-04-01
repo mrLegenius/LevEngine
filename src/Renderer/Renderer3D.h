@@ -22,8 +22,10 @@ struct DirLightData
 struct PointLightData
 {
 	alignas(16) Vector3 Position;
-	alignas(16) Vector3 Attenuation = Vector3(1.0f, 0.09f, 0.032f);
 	alignas(16) Vector3 Color{};
+	float Range = 1.0f;
+	float Smoothness = 0.75f;
+	float Intensity = 1.0f;
 };
 
 struct LightningData
@@ -49,7 +51,11 @@ struct MaterialData
 	alignas(16) Vector3 Specular = Vector3{ 0, 0, 0 };
 
 	float Shininess = 2;
-	int UseTexture;
+	int HasEmissiveTexture = 0;
+	int HasAmbientTexture = 0;
+	int HasDiffuseTexture = 0;
+	int HasSpecularTexture = 0;
+	int HasNormalTexture = 0;
 };
 
 class Renderer3D

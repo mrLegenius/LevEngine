@@ -30,8 +30,11 @@ struct DirLight
 struct PointLight 
 {
 	float3 position;
-	float3 attenuation;
 	float3 color;
+
+	float range;
+	float smoothness;
+	float intensity;
 };
 
 cbuffer LightningConstantBuffer : register(b2)
@@ -53,7 +56,12 @@ struct Material
 	float3 specular;
 	// -- 16
 	float shininess;
-	bool useTexture;
+	bool hasEmissiveTexture;
+	bool hasAmbientTexture;
+	bool hasDiffuseTexture;
+	// -- 16
+	bool hasSpecularTexture;
+	bool hasNormalTexture;
 	// -- 8
 };
 
@@ -106,11 +114,24 @@ PS_IN VSMain(VS_IN input)
 	return output;
 }
 
-Texture2D my_texture : register(t0);
-SamplerState my_sampler : register(s0);
 
-Texture2DArray shadowMapTexture : register(t1);
-SamplerComparisonState shadowMapSampler : register(s1);
+Texture2D emissiveTexture : register(t0);
+SamplerState emissiveTextureSampler : register(s0);
+
+Texture2D ambientTexture : register(t1);
+SamplerState ambientTextureSampler : register(s1);
+
+Texture2D diffuseTexture : register(t2);
+SamplerState diffuseTextureSampler : register(s2);
+
+Texture2D specularTexture : register(t3);
+SamplerState specularTextureSampler : register(s3);
+
+Texture2D normalTexture : register(t4);
+SamplerState normalTextureSampler : register(s4);
+
+Texture2DArray shadowMapTexture : register(t9);
+SamplerComparisonState shadowMapSampler : register(s9);
 
 struct LightingResult
 {
@@ -127,21 +148,34 @@ LightingResult CalcDirLight(DirLight light, float3 normal, float3 viewDir, float
 LightingResult CalcPointLight(PointLight light, float3 normal, float3 fragPos, float3 viewDir);
 LightingResult CalcLighting(float3 fragPos, float3 normal, float depth);
 
+float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv);
+
+[earlydepthstencil]
 float4 PSMain(PS_IN input) : SV_Target
 {
-	LightingResult lit = CalcLighting(input.fragPos, input.normal, input.depth);
+	float3 normal;
+		
+	if (material.hasNormalTexture)
+	{
+		float3 texNormal = normalTexture.Sample(normalTextureSampler, input.uv).rgb;
+		normal = normalize(texNormal * 2.0 - 1.0);
+	}
+	else
+	{
+		normal = normalize(input.normal);
+	}
 
-	float3 emissive = material.emissive;
-	float3 ambient = material.ambient * globalAmbient;
-	float3 diffuse = material.diffuse * lit.diffuse;
-	float3 specular = material.specular * lit.specular;
+	LightingResult lit = CalcLighting(input.fragPos, normal, input.depth);
 
-	float3 texColor = { 1, 1, 1 };
+	float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, input.uv);
+	float3 ambient = CombineColorAndTexture(material.ambient, ambientTexture, ambientTextureSampler, material.hasAmbientTexture, input.uv) * globalAmbient;
+	float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, input.uv) * lit.diffuse;
 
-	if (material.useTexture)
-		texColor = my_texture.Sample(my_sampler, input.uv);
+	float3 specular = 0;
+	if (material.shininess > 1.0f)
+		specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, input.uv) * lit.specular;
 
-	float3 finalColor = (emissive + ambient + diffuse + specular) * texColor;
+	float3 finalColor = (emissive + ambient + diffuse + specular);
 
 	return float4(finalColor, 1.0);
 }
@@ -190,11 +224,9 @@ float3 CalcSpecular(float3 color, float3 viewDir, float3 lightDir, float3 normal
 	return color * pow(max(spec, 0.0), material.shininess);
 }
 
-float CalcAttenuation(float3 attenuation, float distance)
+float CalcAttenuation(float range, float smoothness, float distance)
 {
-	return 1.0 / (attenuation.x 
-		+ attenuation.y * distance 
-		+ attenuation.z * (distance * distance));
+	return 1.0f - smoothstep(range * smoothness, range, distance);
 }
 
 float CalcShadow(float4 lpos, float3 normal, float3 lightDir, float cascade)
@@ -264,10 +296,29 @@ LightingResult CalcPointLight(PointLight light, float3 normal, float3 fragPos, f
 	float distance = length(lightDir);
 	lightDir = lightDir / distance;
 	
-	float attenuation = CalcAttenuation(light.attenuation, distance);
+	float attenuation = CalcAttenuation(light.range, light.smoothness, distance);
 
-	result.diffuse = CalcDiffuse(light.color, lightDir, normal) * attenuation;
-	result.specular = CalcSpecular(light.color, viewDir, lightDir, normal) * attenuation;
+	result.diffuse = CalcDiffuse(light.color, lightDir, normal) * attenuation * light.intensity;
+	result.specular = CalcSpecular(light.color, viewDir, lightDir, normal) * attenuation * light.intensity;
+
+	return result;
+}
+
+float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv)
+{
+	float3 result = color;
+	if (hasTexture)
+	{
+		float3 texColor = tex.Sample(sampl, uv);
+		if (any(result.rgb))
+		{
+			result *= texColor;
+		}
+		else
+		{
+			result = texColor;
+		}
+	}
 
 	return result;
 }
