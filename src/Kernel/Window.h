@@ -43,6 +43,8 @@ public:
 	void EnableCursor();
 	void DisableCursor();
 
+	[[nodiscard]] D3D11Context* GetContext() const { return m_Context; }
+
 	[[nodiscard]] bool IsVSync() const;
 
 	[[nodiscard]] void* GetNativeWindow() const { return m_Window; }

@@ -2,6 +2,7 @@
 #include <string>
 #include <filesystem>
 #include "Katamari/ObjLoader.h"
+#include "Renderer/D3D11Shader.h"
 #include "Renderer/D3D11Texture.h"
 #include "Renderer/D3D11TextureCube.h"
 #include "Renderer/Material.h"
@@ -22,26 +23,26 @@ struct LavaRockAssets
 
 	static auto AmbientTexture()
 	{
-		static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("LavaRock/ambient.jpg"));
+		static auto texture = CreateRef<D3D11Texture>(GetTexturePath("LavaRock/ambient.jpg"));
 		return texture;
 	}
 
 	static auto EmissiveTexture()
 	{
-		static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("LavaRock/emissive.jpg"));
+		static auto texture = CreateRef<D3D11Texture>(GetTexturePath("LavaRock/emissive.jpg"));
 		return texture;
 	}
 
 	static auto SpecularTexture()
 	{
-		static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("LavaRock/specular.jpg"));
+		static auto texture = CreateRef<D3D11Texture>(GetTexturePath("LavaRock/specular.jpg"));
 		return texture;
 	}
 
 
 	static auto NormalTexture()
 	{
-		static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("LavaRock/normal.jpg"));
+		static auto texture = CreateRef<D3D11Texture>(GetTexturePath("LavaRock/normal.jpg"));
 		return texture;
 	}
 };
@@ -109,7 +110,7 @@ namespace ShaderAssets
         static Ref<D3D11Shader> shader;
         if (shader) return shader;
 
-        shader = CreateRef<D3D11Shader>(GetShaderPath("CascadeShadowPass.hlsl"), D3D11Shader::Vertex | D3D11Shader::Geometry);
+        shader = CreateRef<D3D11Shader>(GetShaderPath("CascadeShadowPass.hlsl"), D3D11Shader::ShaderType::Vertex | D3D11Shader::ShaderType::Geometry);
         shader->SetLayout({
         { ShaderDataType::Float3, "POSITION" },
         { ShaderDataType::Float3, "NORMAL" },
@@ -119,45 +120,90 @@ namespace ShaderAssets
         return shader;
     }
 
-    inline auto ShadowMapTest()
-    {
-        static Ref<D3D11Shader> shader;
-        if (shader) return shader;
+	inline auto GBufferPass()
+	{
+		static Ref<D3D11Shader> shader;
+		if (shader) return shader;
 
-        shader = CreateRef<D3D11Shader>(GetShaderPath("ShadowMapVisual.hlsl"));
-        shader->SetLayout({
-        { ShaderDataType::Float3, "POSITION" },
-        { ShaderDataType::Float3, "NORMAL" },
-        { ShaderDataType::Float2, "UV" },
-            });
+		shader = CreateRef<D3D11Shader>(GetShaderPath("GBufferPass.hlsl"));
+		shader->SetLayout({
+		{ ShaderDataType::Float3, "POSITION" },
+		{ ShaderDataType::Float3, "NORMAL" },
+		{ ShaderDataType::Float2, "UV" },
+			});
 
-        return shader;
-    }
+		return shader;
+	}
+
+	inline auto DeferredVertexOnly()
+	{
+		static Ref<D3D11Shader> shader;
+		if (shader) return shader;
+
+		shader = CreateRef<D3D11Shader>(GetShaderPath("DeferredLightningPass.hlsl"), D3D11Shader::ShaderType::Vertex);
+		shader->SetLayout({
+		{ ShaderDataType::Float3, "POSITION" },
+		{ ShaderDataType::Float3, "NORMAL" },
+		{ ShaderDataType::Float2, "UV" },
+			});
+
+		return shader;
+	}
+
+	inline auto DeferredPointLight()
+	{
+		static Ref<D3D11Shader> shader;
+		if (shader) return shader;
+
+		shader = CreateRef<D3D11Shader>(GetShaderPath("DeferredLightningPass.hlsl"));
+		shader->SetLayout({
+		{ ShaderDataType::Float3, "POSITION" },
+		{ ShaderDataType::Float3, "NORMAL" },
+		{ ShaderDataType::Float2, "UV" },
+			});
+
+		return shader;
+	}
+
+	inline auto DeferredQuadRender()
+	{
+		static Ref<D3D11Shader> shader;
+		if (shader) return shader;
+
+		shader = CreateRef<D3D11Shader>(GetShaderPath("ForwardQuadRender.hlsl"));
+		shader->SetLayout({
+		{ ShaderDataType::Float3, "POSITION" },
+		{ ShaderDataType::Float3, "NORMAL" },
+		{ ShaderDataType::Float2, "UV" },
+			});
+
+		return shader;
+	}
 };
 
 namespace TextureAssets
 {
-    inline std::shared_ptr<D3D11Texture2D> Bricks()
+    inline std::shared_ptr<D3D11Texture> Bricks()
     {
-        static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("bricks.jpg"));
+        static auto texture = CreateRef<D3D11Texture>(GetTexturePath("bricks.jpg"));
         return texture;
     }
 
-    inline std::shared_ptr<D3D11Texture2D> Log()
+    inline std::shared_ptr<D3D11Texture> Log()
     {
-        static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("log.jpg"));
+        static auto texture = CreateRef<D3D11Texture>(GetTexturePath("log.jpg"));
         return texture;
     }
 
-    inline std::shared_ptr<D3D11Texture2D> Gear()
+    inline std::shared_ptr<D3D11Texture> Gear()
     {
-        static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("gear.png"));
+        static auto texture = CreateRef<D3D11Texture>(GetTexturePath("gear.png"));
         return texture;
     }
 
-    inline std::shared_ptr<D3D11Texture2D> Rock()
+    inline std::shared_ptr<D3D11Texture> Rock()
     {
-        static auto texture = CreateRef<D3D11Texture2D>(GetTexturePath("rock.tga"));
+        static auto texture = CreateRef<D3D11Texture>(GetTexturePath("rock.tga"));
         return texture;
     }
 };

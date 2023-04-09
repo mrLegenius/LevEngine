@@ -288,7 +288,7 @@ void Scene::OnRender()
         }
     }
 
-    //Render Scene
+    //Find Camera
     {
 	    const auto group = m_Registry.group<>(entt::get<Transform, CameraComponent>);
         for (auto entity : group)
@@ -307,10 +307,13 @@ void Scene::OnRender()
         }
     }
 
-    //Render Scene
+    //Forward Rendering
 
-    if (mainCamera)
+    if (!mainCamera) return;
+
+    if constexpr (!RenderSettings::DeferredRendering)
     {
+        LEV_PROFILE_SCOPE("Forward Rendering");
 
         DirectionalLightSystem();
         PointLightsSystem();
@@ -351,6 +354,85 @@ void Scene::OnRender()
             Renderer3D::EndScene();
         }
     }
+
+    //Deferred Rendering
+    if constexpr (RenderSettings::DeferredRendering)
+    {
+        LEV_PROFILE_SCOPE("Deferred Rendering");
+
+        DirectionalLightSystem();
+
+        {
+            LEV_PROFILE_SCOPE("ShadowPass");
+
+            SceneCamera* lightCamera = nullptr;
+            auto view = m_Registry.group<>(entt::get<Transform, DirectionalLightComponent, CameraComponent>);
+            for (auto entity : view)
+            {
+                auto& camera = view.get<CameraComponent>(entity);
+                lightCamera = &camera.camera;
+            }
+
+            if (lightCamera)
+            {
+                const auto cameraCascadeProjections = mainCamera->GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
+
+                Renderer3D::BeginShadowPass(*lightCamera, cameraCascadeProjections, cameraTransform);
+
+                MeshShadowSystem();
+
+                Renderer3D::EndShadowPass();
+            }
+        }
+
+	    //G-Buffer Pass
+        {
+            LEV_PROFILE_SCOPE("OpaquePass");
+
+            Renderer3D::BeginDeferred(*mainCamera, cameraTransform, cameraPosition);
+
+            MeshDeferredSystem();
+        }
+        
+        //Lightning Pass
+        {
+            LEV_PROFILE_SCOPE("LightningPass");
+
+            //Start Directional light pipeline
+            Renderer3D::BeginDeferredDirLightningSubPass(*mainCamera);
+
+            //Render Dir light
+
+            //For each light
+            auto view = m_Registry.group<>(entt::get<Transform, PointLightComponent>);
+            for (auto entity : view)
+            {
+                auto [transform, light] = view.get<Transform, PointLightComponent>(entity);
+
+                auto model = Matrix::CreateScale(light.Range, light.Range, light.Range)
+            		* Matrix::CreateFromQuaternion(transform.GetWorldOrientation())
+            		* Matrix::CreateTranslation(transform.GetWorldPosition());
+
+                auto worldPosition = transform.GetWorldPosition();
+                auto positionViewSpace = Vector4::Transform(Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0f), cameraTransform);
+                Renderer3D::AddPointLights(positionViewSpace, worldPosition, light);
+
+                // Start pipeline1
+                Renderer3D::BeginDeferredPositionalLightningSubPass1(*mainCamera, cameraTransform, cameraPosition);
+                // Render lights with sphere
+                Renderer3D::RenderSphere(model);
+
+                // Start pipeline2
+                Renderer3D::BeginDeferredPositionalLightningSubPass2(*mainCamera, cameraTransform, cameraPosition);
+                // Render lights with sphere
+                Renderer3D::RenderSphere(model);
+            }
+
+            //Render skybox
+
+            Renderer3D::EndDeferredLightningPass();
+        }
+    }
 }
 
 void Scene::DirectionalLightSystem()
@@ -375,7 +457,7 @@ void Scene::PointLightsSystem()
     {
         auto [transform, light] = view.get<Transform, PointLightComponent>(entity);
 
-        Renderer3D::AddPointLights(transform.GetWorldPosition(), light);
+        Renderer3D::AddPointLights({}, transform.GetWorldPosition(), light);
     }
 }
 
@@ -405,6 +487,18 @@ void Scene::MeshShadowSystem()
     }
 }
 
+void Scene::MeshDeferredSystem()
+{
+    LEV_PROFILE_FUNCTION();
+
+    auto view = m_Registry.group<>(entt::get<Transform, MeshRendererComponent>);
+    for (auto entity : view)
+    {
+        auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
+    	Renderer3D::DrawDeferredMesh(transform.GetModel(), mesh);
+    }
+}
+
 void Scene::MeshRenderSystem()
 {
     LEV_PROFILE_FUNCTION();
@@ -413,7 +507,7 @@ void Scene::MeshRenderSystem()
     for (auto entity : view)
     {
         auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
-        Renderer3D::DrawMesh(transform.GetModel(), mesh);
+        Renderer3D::DrawOpaqueMesh(transform.GetModel(), mesh);
     }
 }
 

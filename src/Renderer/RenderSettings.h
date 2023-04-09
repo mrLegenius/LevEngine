@@ -12,5 +12,6 @@ struct RenderSettings
 	//Lightning
 	static constexpr int MaxPointLights = 100;
 	static constexpr DirectX::SimpleMath::Vector3 GlobalAmbient{ 0.99f, 0.99f, 0.99f };
+	static constexpr bool DeferredRendering = true;
 };
 
