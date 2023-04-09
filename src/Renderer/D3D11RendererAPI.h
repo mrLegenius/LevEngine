@@ -18,6 +18,7 @@ public:
 	void SetDepthFunc(DepthFunc depthFunc);
 
 	void DrawIndexed(const std::shared_ptr<D3D11VertexBuffer>& vertexBuffer, const std::shared_ptr<D3D11IndexBuffer>& indexBuffer);
+	void DrawFullScreenQuad();
 	//void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
 
 	void SetLineWidth(float width);

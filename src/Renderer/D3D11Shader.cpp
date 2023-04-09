@@ -33,7 +33,7 @@ static DXGI_FORMAT ParseShaderDataTypeToD3D11DataType(const ShaderDataType type)
 	}
 }
 
-D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, static_cast<ShaderType>(Vertex | Pixel)) { }
+D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, ShaderType::Vertex | ShaderType::Pixel) { }
 D3D11Shader::D3D11Shader(const std::string& filepath, ShaderType shaderTypes)
 {
 	auto lastSlash = filepath.find_last_of("/\\");
@@ -86,6 +86,14 @@ void D3D11Shader::Bind() const
 	context->IASetInputLayout(m_InputLayout);
 }
 
+void D3D11Shader::Unbind() const
+{
+	context->VSSetShader(nullptr, nullptr, 0);
+	context->PSSetShader(nullptr, nullptr, 0);
+	context->GSSetShader(nullptr, nullptr, 0);
+	context->IASetInputLayout(nullptr);
+}
+
 bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target)
 {
 	const std::wstring widestr = std::wstring(shaderFilepath.begin(), shaderFilepath.end());
@@ -125,7 +133,7 @@ bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SH
 
 bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const std::string& filepath)
 {
-	if (!CreateShader(vertexBC, filepath, nullptr, nullptr, "VSMain", "vs_5_0"))
+	if (!CreateShader(vertexBC, filepath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSMain", "vs_5_0"))
 		return false;
 
 	device->CreateVertexShader(
@@ -141,7 +149,7 @@ bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath)
 	ID3DBlob* pixelBC;
 	D3D_SHADER_MACRO defines[] = { "TEST", "1", "TCOLOR", "float4(0.0f, 1.0f, 0.0f, 1.0f)", nullptr, nullptr};
 
-	if (!CreateShader(pixelBC, filepath, defines, nullptr, "PSMain", "ps_5_0"))
+	if (!CreateShader(pixelBC, filepath, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PSMain", "ps_5_0"))
 		return false;
 
 	device->CreatePixelShader(
@@ -157,7 +165,7 @@ bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& file
 	ID3DBlob* geometryBC;
 	D3D_SHADER_MACRO defines[] = { nullptr, nullptr };
 
-	if (!CreateShader(geometryBC, filepath, defines, nullptr, "GSMain", "gs_5_0"))
+	if (!CreateShader(geometryBC, filepath, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GSMain", "gs_5_0"))
 		return false;
 
 	device->CreateGeometryShader(

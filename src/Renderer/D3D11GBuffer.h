@@ -1,9 +1,34 @@
 #pragma once
+#include <d3d11.h>
+
+#include "D3D11RasterizerState.h"
+#include "Kernel/PointerUtils.h"
+#include "PipelineState.h"
 
 class D3D11GBuffer
 {
-	//Diffuse buffer and render target
-	//Specular buffer and render target
-	//Depth buffer and render target
-	//Normals buffer and render target
+public:
+	D3D11GBuffer(uint32_t width, uint32_t height);
+	~D3D11GBuffer();
+	void BindTextures();
+	void UnbindTextures();
+	void StartOpaquePass();
+	void StartPositionalLightingPass1();
+	void StartPositionalLightingPass2();
+	void StartDirectionalLightingPass();
+	void EndLightningPass();
+
+private:
+
+	Ref<D3D11Texture> m_DepthTexture = nullptr;
+	Ref<D3D11Texture> m_DiffuseTexture = nullptr;
+	Ref<D3D11Texture> m_SpecularTexture = nullptr;
+	Ref<D3D11Texture> m_NormalTexture = nullptr;
+
+	PipelineState m_GeometryPipeline;
+	PipelineState m_PositionalLightPipeline1;
+	PipelineState m_PositionalLightPipeline2;
+
+	Ref<D3D11RenderTarget> m_GBufferRenderTarget;
+	Ref<D3D11RenderTarget> m_DepthOnlyRenderTarget;
 };

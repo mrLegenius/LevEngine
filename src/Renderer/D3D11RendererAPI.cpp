@@ -37,7 +37,7 @@ static D3D11_COMPARISON_FUNC ConvertDepthFuncToD3DComparison(DepthFunc depthFunc
 	case DepthFunc::Always:
 		return D3D11_COMPARISON_ALWAYS;
 	default:
-		assert(false && "[OpenGL Renderer API] Unknown depth function");
+		assert(false && "[D3D11 Renderer API] Unknown depth function");
 	}
 }
 
@@ -96,10 +96,16 @@ void D3D11RendererAPI::DrawIndexed(
 	context->DrawIndexed(indexBuffer->GetCount(), 0, 0);
 }
 
+void D3D11RendererAPI::DrawFullScreenQuad()
+{
+	context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	context->Draw(4, 0);
+}
+
 void D3D11RendererAPI::Init()
 {
 	ID3D11Texture2D* backTex;
-	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backTex));	// __uuidof(ID3D11Texture2D)
+	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backTex));
 	device->CreateRenderTargetView(backTex, nullptr, &rtv);
 
 	if (!CreateRastState(rastState))

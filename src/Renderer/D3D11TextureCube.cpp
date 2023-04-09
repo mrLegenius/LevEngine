@@ -124,3 +124,43 @@ void D3D11TextureCube::Bind(const uint32_t slot) const
 	context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
 	context->PSSetSamplers(slot, 1, &m_SamplerState);
 }
+
+void D3D11TextureCube::GenerateMipMaps()
+{
+}
+
+Ref<Texture> D3D11TextureCube::GetSlice(unsigned slice) const
+{
+	return nullptr;
+}
+
+uint16_t D3D11TextureCube::GetDepth() const
+{
+	return 0;
+}
+
+bool D3D11TextureCube::IsTransparent() const
+{
+	return false;
+}
+
+void D3D11TextureCube::Resize(uint16_t width, uint16_t height, uint16_t depth)
+{
+}
+
+void D3D11TextureCube::Copy(Ref<Texture> other)
+{
+}
+
+uint8_t D3D11TextureCube::GetBPP() const
+{
+	return 0;
+}
+
+void D3D11TextureCube::Clear(ClearFlags clearFlags, const Vector4& color, float depth, uint8_t stencil)
+{
+}
+
+void D3D11TextureCube::Unbind(uint32_t slot) const
+{
+}

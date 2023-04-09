@@ -7,7 +7,7 @@
 class D3D11Shader
 {
 public:
-	enum ShaderType
+	enum class ShaderType
 	{
 		None = 0,
 		Vertex = 1,
@@ -40,4 +40,9 @@ private:
 inline D3D11Shader::ShaderType operator|(const D3D11Shader::ShaderType a, const D3D11Shader::ShaderType b)
 {
 	return static_cast<D3D11Shader::ShaderType>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline bool operator&(const D3D11Shader::ShaderType a, const D3D11Shader::ShaderType b)
+{
+	return static_cast<int>(a) & static_cast<int>(b);
 }

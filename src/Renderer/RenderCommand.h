@@ -33,6 +33,11 @@ public:
 		s_RendererAPI->DrawIndexed(vertexBuffer, indexBuffer);
 	}
 
+	static void DrawFullScreenQuad()
+	{
+		s_RendererAPI->DrawFullScreenQuad();
+	}
+
 	static void SetLineWidth(float width)
 	{
 		s_RendererAPI->SetLineWidth(width);
