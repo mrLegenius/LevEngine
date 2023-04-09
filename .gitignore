@@ -32,6 +32,9 @@ Latest commit 491040e on Jan 26, 2022
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+#Profiler output
+LevEngineProfile-*.json
+
 # User-specific files
 *.rsuser
 *.suo
