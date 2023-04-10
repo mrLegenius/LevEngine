@@ -1,4 +1,4 @@
-#include "D3D11GBuffer.h"
+#include "D3D11DeferredTechnique.h"
 
 #include <cassert>
 #include <cstdint>
@@ -12,7 +12,7 @@ extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 extern IDXGISwapChain* swapChain;
 
-D3D11GBuffer::D3D11GBuffer(const uint32_t width, const uint32_t height)
+D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint32_t height)
 {
     
     //Depth Texture
@@ -111,15 +111,25 @@ D3D11GBuffer::D3D11GBuffer(const uint32_t width, const uint32_t height)
 
         m_PositionalLightPipeline2.GetDepthStencilState().SetStencilMode(stencilMode);
     }
+
+    //Skybox
+    {
+        m_SkyboxPipeline.SetRenderTarget(mainRenderTarget);
+
+        DepthMode depthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual };
+        m_SkyboxPipeline.GetRasterizerState().SetCullMode(CullMode::None);
+        m_SkyboxPipeline.GetRasterizerState().SetDepthClipEnabled(false);
+        m_SkyboxPipeline.GetDepthStencilState().SetDepthMode(depthMode);
+    }
 }
 
-D3D11GBuffer::~D3D11GBuffer()
+D3D11DeferredTechnique::~D3D11DeferredTechnique()
 {
 
 }
 
 
-void D3D11GBuffer::BindTextures()
+void D3D11DeferredTechnique::BindTextures()
 {
     m_DiffuseTexture->Bind(1);
     m_SpecularTexture->Bind(2);
@@ -127,7 +137,7 @@ void D3D11GBuffer::BindTextures()
     m_DepthTexture->Bind(4);
 }
 
-void D3D11GBuffer::UnbindTextures()
+void D3D11DeferredTechnique::UnbindTextures()
 {
     context->PSSetShaderResources(0, 0, nullptr);
     context->PSSetShaderResources(1, 0, nullptr);
@@ -138,13 +148,13 @@ void D3D11GBuffer::UnbindTextures()
     context->PSSetSamplers(0, 0, nullptr);
 }
 
-void D3D11GBuffer::StartOpaquePass()
+void D3D11DeferredTechnique::StartOpaquePass()
 {
 	m_GBufferRenderTarget->Clear();
     m_GeometryPipeline.Bind();
 }
 
-void D3D11GBuffer::StartPositionalLightingPass1()
+void D3D11DeferredTechnique::StartPositionalLightingPass1()
 {
     context->ClearDepthStencilView(m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil)->GetDepthStencilView(), D3D11_CLEAR_STENCIL, 1.0f, 1);
     m_PositionalLightPipeline1.Bind();
@@ -152,15 +162,16 @@ void D3D11GBuffer::StartPositionalLightingPass1()
     ShaderAssets::DeferredVertexOnly()->Bind();
 }
 
-void D3D11GBuffer::StartPositionalLightingPass2()
+void D3D11DeferredTechnique::StartPositionalLightingPass2()
 {
     BindTextures();
+    m_PositionalLightPipeline1.Unbind();
     m_PositionalLightPipeline2.Bind();
     ShaderAssets::DeferredPointLight()->Unbind();
     ShaderAssets::DeferredPointLight()->Bind();
 }
 
-void D3D11GBuffer::StartDirectionalLightingPass()
+void D3D11DeferredTechnique::StartDirectionalLightingPass()
 {
     Ref<D3D11Texture> depthStencilBuffer = m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil);
 
@@ -170,7 +181,14 @@ void D3D11GBuffer::StartDirectionalLightingPass()
     BindTextures();
 }
 
-void D3D11GBuffer::EndLightningPass()
+void D3D11DeferredTechnique::StartSkyboxPass()
+{
+    UnbindTextures();
+    m_PositionalLightPipeline2.Unbind();
+    m_SkyboxPipeline.Bind();
+}
+
+void D3D11DeferredTechnique::EndLightningPass()
 {
     m_PositionalLightPipeline2.Unbind();
     UnbindTextures();

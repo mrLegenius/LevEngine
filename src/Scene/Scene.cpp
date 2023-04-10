@@ -429,6 +429,17 @@ void Scene::OnRender()
             }
 
             //Render skybox
+            {
+                LEV_PROFILE_FUNCTION();
+
+                auto view = m_Registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
+                for (auto entity : view)
+                {
+                    auto [transform, skybox] = view.get<Transform, SkyboxRendererComponent>(entity);
+                    Renderer3D::DrawDeferredSkybox(skybox);
+                    break;
+                }
+            }
 
             Renderer3D::EndDeferredLightningPass();
         }

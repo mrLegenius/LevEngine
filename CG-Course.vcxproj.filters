@@ -102,7 +102,7 @@
     <ClCompile Include="src\Renderer\D3D11CascadeShadowMap.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11GBuffer.cpp">
+    <ClCompile Include="src\Renderer\D3D11DeferredTechnique.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\D3D11RasterizerState.cpp">
@@ -308,7 +308,7 @@
     <ClInclude Include="src\Physics\Components\CollisionEvent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11GBuffer.h">
+    <ClInclude Include="src\Renderer\D3D11DeferredTechnique.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Material.h">

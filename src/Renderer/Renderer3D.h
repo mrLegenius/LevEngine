@@ -3,7 +3,7 @@
 
 #include "D3D11ShadowMap.h"
 #include "D3D11CascadeShadowMap.h"
-#include "D3D11GBuffer.h"
+#include "D3D11DeferredTechnique.h"
 #include "RenderSettings.h"
 #include "3D/Mesh.h"
 #include "3D/SkyboxMesh.h"
@@ -83,6 +83,7 @@ public:
 	static void BeginDeferredPositionalLightningSubPass2(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void EndDeferredLightningPass();
 
+	static void DrawDeferredSkybox(const SkyboxRendererComponent& renderer);
 	static void DrawDeferredMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
 
 	static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
@@ -104,7 +105,7 @@ private:
 	static Ref<D3D11ShadowMap> m_ShadowMap;
 	static Ref<D3D11CascadeShadowMap> m_CascadeShadowMap;
 
-	static Ref<D3D11GBuffer> m_GBuffer;
+	static Ref<D3D11DeferredTechnique> m_GBuffer;
 
 	static Matrix m_PerspectiveViewProjection;
 	static Matrix m_ViewProjection;

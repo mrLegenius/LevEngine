@@ -75,25 +75,25 @@ void KatamariLayer::OnAttach()
 
     for (int i = 0; i < 0; i++)
     {
-        auto& go = Prefabs::Gear(m_Scene);
+        auto go = Prefabs::Gear(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
     }
 
     for (int i = 0; i < 0; i++)
     {
-	   	auto& go = Prefabs::Log(m_Scene);
+	   	auto go = Prefabs::Log(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 0; i++)
     {
-        auto& go = Prefabs::LavaRock(m_Scene);
+        auto go = Prefabs::LavaRock(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
     }
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 50; i++)
     {
-        auto& go = Prefabs::Sphere(m_Scene);
+        auto go = Prefabs::Sphere(m_Scene);
         auto& light = go.AddComponent<PointLightComponent>();
         const auto color = Vector3(
             static_cast<float>(Random::Range(0, 100)) / 100.0f,
@@ -192,7 +192,7 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     RenderCommand::Clear();
 
     m_Scene->OnUpdate(deltaTime);
-    m_Scene->OnPhysics(deltaTime);
+    //m_Scene->OnPhysics(deltaTime);
     m_Scene->OnLateUpdate(deltaTime);
     m_Scene->OnRender();
 }

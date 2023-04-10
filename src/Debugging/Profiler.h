@@ -199,7 +199,7 @@ namespace LevEngine
 	}
 }
 
-#define LEV_PROFILE 1
+#define LEV_PROFILE 0
 #if LEV_PROFILE
 // Resolve which function signature macro will be used. Note that this only
 // is resolved when the (pre)compiler starts, so the syntax highlighting

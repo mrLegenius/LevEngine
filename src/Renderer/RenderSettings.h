@@ -1,5 +1,6 @@
 #pragma once
 #include <SimpleMath.h>
+using namespace DirectX::SimpleMath;
 
 struct RenderSettings
 {
@@ -11,7 +12,7 @@ struct RenderSettings
 
 	//Lightning
 	static constexpr int MaxPointLights = 100;
-	static constexpr DirectX::SimpleMath::Vector3 GlobalAmbient{ 0.99f, 0.99f, 0.99f };
+	static constexpr Vector3 GlobalAmbient{ 0.3f, 0.3f, 0.3f };
 	static constexpr bool DeferredRendering = true;
 };
 

@@ -3,7 +3,7 @@
 #include "Scene/Entity.h"
 struct Prefabs
 {
-    static Entity& Log(const Ref<Scene> scene)
+    static Entity Log(const Ref<Scene> scene)
     {
         auto entity = scene->CreateEntity("Log");
         auto mesh = scene->CreateEntity("LogMesh");
@@ -23,7 +23,7 @@ struct Prefabs
         return entity;
     }
 
-    static Entity& Gear(const Ref<Scene> scene)
+    static Entity Gear(const Ref<Scene> scene)
     {
         auto entity = scene->CreateEntity("Gear");
         entity.AddComponent<BoxCollider>(Vector3(0.9f, 0.1f, 0.9f));
@@ -40,7 +40,7 @@ struct Prefabs
         return entity;
     }
 
-    static Entity& Rock(const Ref<Scene> scene)
+    static Entity Rock(const Ref<Scene> scene)
     {
         auto entity = scene->CreateEntity("Rock");
         auto mesh = scene->CreateEntity("RockMesh");
@@ -62,7 +62,7 @@ struct Prefabs
         return entity;
     }
 
-    static Entity& LavaRock(const Ref<Scene> scene)
+    static Entity LavaRock(const Ref<Scene> scene)
     {
         auto entity = scene->CreateEntity("LavaRock");
         auto mesh = scene->CreateEntity("LavaRockMesh");
@@ -89,7 +89,7 @@ struct Prefabs
         return entity;
     }
 
-    static Entity& Sphere(const Ref<Scene> scene)
+    static Entity Sphere(const Ref<Scene> scene)
     {
         auto entity = scene->CreateEntity("Sphere");
         entity.AddComponent<SphereCollider>(2.0f);

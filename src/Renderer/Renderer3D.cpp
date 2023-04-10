@@ -14,7 +14,7 @@ Ref<D3D11ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
 Ref<D3D11ShadowMap> Renderer3D::m_ShadowMap;
 Ref<D3D11CascadeShadowMap> Renderer3D::m_CascadeShadowMap;
 
-Ref<D3D11GBuffer> Renderer3D::m_GBuffer;
+Ref<D3D11DeferredTechnique> Renderer3D::m_GBuffer;
 
 Matrix Renderer3D::m_PerspectiveViewProjection;
 Matrix Renderer3D::m_ViewProjection;
@@ -109,7 +109,7 @@ void Renderer3D::Init()
     s_LightningData.GlobalAmbient = RenderSettings::GlobalAmbient;
 
     const auto& window = Application::Get().GetWindow();
-    m_GBuffer = CreateRef<D3D11GBuffer>(window.GetWidth(), window.GetHeight());
+    m_GBuffer = CreateRef<D3D11DeferredTechnique>(window.GetWidth(), window.GetHeight());
 }
 
 void Renderer3D::Shutdown()
@@ -200,6 +200,22 @@ inline void TryBindTexture(const Ref<Texture> texture, int& hasTexture, const in
     }
 }
 
+
+void Renderer3D::DrawDeferredSkybox(const SkyboxRendererComponent& renderer)
+{
+    LEV_PROFILE_FUNCTION();
+
+    m_GBuffer->StartSkyboxPass();
+
+    renderer.texture->Bind();
+    ShaderAssets::Skybox()->Bind();
+
+    const CameraData skyboxCameraData{ Matrix::Identity, m_PerspectiveViewProjection, Vector3::Zero };
+    m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
+
+    RenderCommand::DrawIndexed(s_SkyboxMesh->VertexBuffer, s_SkyboxMesh->IndexBuffer);
+}
+
 void Renderer3D::DrawDeferredMesh(const Matrix& model, const MeshRendererComponent& meshRenderer)
 {
     LEV_PROFILE_FUNCTION();
@@ -210,7 +226,6 @@ void Renderer3D::DrawDeferredMesh(const Matrix& model, const MeshRendererCompone
     ShaderAssets::GBufferPass()->Bind();
     DrawMesh(model, meshRenderer);
 }
-
 
 void Renderer3D::DrawOpaqueMesh(const Matrix& model, const MeshRendererComponent& meshRenderer)
 {
@@ -396,7 +411,7 @@ void Renderer3D::RenderSphere(const Matrix& model)
     static Ref<Mesh> mesh;
     if (mesh == nullptr)
     {
-        mesh = Mesh::CreateSphere(30);
+        mesh = Mesh::CreateSphere(10);
         mesh->Init(ShaderAssets::DeferredVertexOnly()->GetLayout());
     }
 
