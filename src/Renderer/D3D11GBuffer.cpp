@@ -94,12 +94,12 @@ D3D11GBuffer::D3D11GBuffer(const uint32_t width, const uint32_t height)
     //Pipeline2 for point and spot lights
     {
         m_PositionalLightPipeline2.SetRenderTarget(mainRenderTarget);
-        m_PositionalLightPipeline2.GetRasterizerState().SetCullMode(CullMode::None);
+        m_PositionalLightPipeline2.GetRasterizerState().SetCullMode(CullMode::Front);
         m_PositionalLightPipeline2.GetRasterizerState().SetDepthClipEnabled(false);
 
         m_PositionalLightPipeline2.GetBlendState().SetBlendMode(additiveBlending);
 
-        DepthMode depthMode{ true, DepthWrite::Disable, CompareFunction::Always };
+        DepthMode depthMode{ true, DepthWrite::Disable, CompareFunction::GreaterOrEqual };
         m_PositionalLightPipeline2.GetDepthStencilState().SetDepthMode(depthMode);
 
         StencilMode stencilMode{ true };
@@ -146,7 +146,7 @@ void D3D11GBuffer::StartOpaquePass()
 
 void D3D11GBuffer::StartPositionalLightingPass1()
 {
-    context->ClearDepthStencilView(m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil)->GetDepthStencilView(), D3D11_CLEAR_STENCIL, 1.0f, 0);
+    context->ClearDepthStencilView(m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil)->GetDepthStencilView(), D3D11_CLEAR_STENCIL, 1.0f, 1);
     m_PositionalLightPipeline1.Bind();
     ShaderAssets::DeferredPointLight()->Unbind();
     ShaderAssets::DeferredVertexOnly()->Bind();

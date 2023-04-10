@@ -39,23 +39,8 @@ float4 PSMain(PS_IN input) : SV_Target
 	float3 diffuse = diffuseTexture.Load(int3(uv, 0)).rgb;
 	float3 specular = specularValues.rgb;
 
-	float4 cameraPosition = { 0, 0, 0, 1 };
-	float3 viewDir = normalize(cameraPosition - fragPos);
-
-	LightingResult result;
-	PointLight light = pointLights[pointLightsCount];
-	float3 lightDir = light.positionViewSpace - fragPos;
-	float distance = length(lightDir);
-	lightDir = lightDir / distance;
-
-	float attenuation = CalcAttenuation(light.range, light.smoothness, distance);
-
-	result.diffuse = CalcDiffuse(light.color, lightDir, normal) * attenuation * light.intensity;
-	result.specular = CalcSpecular(light.color, viewDir, lightDir, normal, shininess) * attenuation * light.intensity;
-
 	float3 finalColor = (diffuse * lit.diffuse + specular * lit.specular);
 
-	//return float4(result.diffuse, 1.0f);
     return float4(finalColor, 1.0f);
 }
 
