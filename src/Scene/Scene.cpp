@@ -349,7 +349,18 @@ void Scene::OnRender()
 
             MeshRenderSystem();
 
-            SkyboxRenderSystem();
+            //Render skybox
+            {
+                LEV_PROFILE_SCOPE("Skybox");
+
+                auto view = m_Registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
+                for (auto entity : view)
+                {
+                    auto [transform, skybox] = view.get<Transform, SkyboxRendererComponent>(entity);
+                    Renderer3D::DrawSkybox(skybox);
+                    break;
+                }
+            }
 
             Renderer3D::EndScene();
         }
@@ -430,7 +441,7 @@ void Scene::OnRender()
 
             //Render skybox
             {
-                LEV_PROFILE_FUNCTION();
+                LEV_PROFILE_SCOPE("Skybox");
 
                 auto view = m_Registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
                 for (auto entity : view)

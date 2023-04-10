@@ -15,6 +15,7 @@ Ref<D3D11ShadowMap> Renderer3D::m_ShadowMap;
 Ref<D3D11CascadeShadowMap> Renderer3D::m_CascadeShadowMap;
 
 Ref<D3D11DeferredTechnique> Renderer3D::m_GBuffer;
+Ref<D3D11ForwardTechnique> Renderer3D::s_ForwardTechnique;
 
 Matrix Renderer3D::m_PerspectiveViewProjection;
 Matrix Renderer3D::m_ViewProjection;
@@ -110,6 +111,7 @@ void Renderer3D::Init()
 
     const auto& window = Application::Get().GetWindow();
     m_GBuffer = CreateRef<D3D11DeferredTechnique>(window.GetWidth(), window.GetHeight());
+    s_ForwardTechnique = CreateRef<D3D11ForwardTechnique>();
 }
 
 void Renderer3D::Shutdown()
@@ -159,7 +161,7 @@ void Renderer3D::BeginScene(const SceneCamera& camera, const Matrix& viewMatrix,
 {
     LEV_PROFILE_FUNCTION();
 
-    RenderCommand::Begin();
+    s_ForwardTechnique->StartOpaquePass();
     const auto& window = Application::Get().GetWindow();
     RenderCommand::SetViewport(0, 0, window.GetWidth(), window.GetHeight());
 
@@ -171,11 +173,12 @@ void Renderer3D::BeginScene(const SceneCamera& camera, const Matrix& viewMatrix,
     m_ShadowMapConstantBuffer->SetData(&s_ShadowData, sizeof ShadowData);
 }
 
+
 void Renderer3D::EndScene()
 {
     LEV_PROFILE_FUNCTION();
 
-    RenderCommand::End();
+    s_ForwardTechnique->End();
 }
 
 void Renderer3D::DrawMeshShadow(const Matrix& model, const MeshRendererComponent& meshRenderer)
@@ -353,6 +356,7 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
 void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer)
 {
     LEV_PROFILE_FUNCTION();
+    s_ForwardTechnique->StartSkyboxPass();
 
     renderer.texture->Bind();
     ShaderAssets::Skybox()->Bind();
@@ -360,9 +364,8 @@ void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer)
     const CameraData skyboxCameraData{  Matrix::Identity, m_PerspectiveViewProjection, Vector3::Zero };
     m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
 
-    RenderCommand::SetDepthFunc(DepthFunc::LessOrEqual);
     RenderCommand::DrawIndexed(s_SkyboxMesh->VertexBuffer, s_SkyboxMesh->IndexBuffer);
-    RenderCommand::SetDepthFunc(DepthFunc::Less);
+    renderer.texture->Unbind();
 }
 
 void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)

@@ -4,6 +4,7 @@
 #include "D3D11ShadowMap.h"
 #include "D3D11CascadeShadowMap.h"
 #include "D3D11DeferredTechnique.h"
+#include "D3D11ForwardTechnique.h"
 #include "RenderSettings.h"
 #include "3D/Mesh.h"
 #include "3D/SkyboxMesh.h"
@@ -106,6 +107,7 @@ private:
 	static Ref<D3D11CascadeShadowMap> m_CascadeShadowMap;
 
 	static Ref<D3D11DeferredTechnique> m_GBuffer;
+	static Ref<D3D11ForwardTechnique> s_ForwardTechnique;
 
 	static Matrix m_PerspectiveViewProjection;
 	static Matrix m_ViewProjection;

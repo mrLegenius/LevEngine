@@ -91,7 +91,7 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
     }
 
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < 99; i++)
     {
         auto go = Prefabs::Sphere(m_Scene);
         auto& light = go.AddComponent<PointLightComponent>();

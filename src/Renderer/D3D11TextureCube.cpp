@@ -163,4 +163,6 @@ void D3D11TextureCube::Clear(ClearFlags clearFlags, const Vector4& color, float 
 
 void D3D11TextureCube::Unbind(uint32_t slot) const
 {
+	context->PSSetShaderResources(slot, 0, nullptr);
+	context->PSSetSamplers(slot, 0, nullptr);
 }

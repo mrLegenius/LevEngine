@@ -29,6 +29,7 @@ struct DirLight
 
 struct PointLight 
 {
+	float4 positionViewSpace;
 	float3 position;
 	float3 color;
 

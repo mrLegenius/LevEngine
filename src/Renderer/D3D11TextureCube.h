@@ -21,7 +21,7 @@ public:
 	void Copy(Ref<Texture> other) override;
 	uint8_t GetBPP() const override;
 	void Clear(ClearFlags clearFlags, const Vector4& color, float depth, uint8_t stencil) override;
-	void Unbind(uint32_t slot) const override;
+	void Unbind(uint32_t slot = 0) const override;
 
 private:
 	std::string m_Paths[6];
