@@ -4,6 +4,8 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
+#include "Debugging/Profiler.h"
+
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -78,6 +80,8 @@ D3D11RasterizerState::~D3D11RasterizerState()
 
 void D3D11RasterizerState::Bind()
 {
+    LEV_PROFILE_FUNCTION();
+
     if (m_StateDirty)
     {
         D3D11_RASTERIZER_DESC rasterizerDesc = {};
@@ -107,5 +111,7 @@ void D3D11RasterizerState::Bind()
 
 void D3D11RasterizerState::Unbind()
 {
+    LEV_PROFILE_FUNCTION();
+
     context->RSSetState(nullptr);
 }

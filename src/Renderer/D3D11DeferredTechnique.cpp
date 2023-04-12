@@ -6,6 +6,7 @@
 #include <wrl/client.h>
 #include <Assets.h>
 
+#include "Debugging/Profiler.h"
 #include "Kernel/Application.h"
 
 extern ID3D11DeviceContext* context;
@@ -14,7 +15,8 @@ extern IDXGISwapChain* swapChain;
 
 D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint32_t height)
 {
-    
+    LEV_PROFILE_FUNCTION();
+
     //Depth Texture
     {
         Texture::TextureFormat depthStencilTextureFormat(
@@ -131,6 +133,8 @@ D3D11DeferredTechnique::~D3D11DeferredTechnique()
 
 void D3D11DeferredTechnique::BindTextures()
 {
+    LEV_PROFILE_FUNCTION();
+
     m_DiffuseTexture->Bind(1);
     m_SpecularTexture->Bind(2);
     m_NormalTexture->Bind(3);
@@ -139,6 +143,8 @@ void D3D11DeferredTechnique::BindTextures()
 
 void D3D11DeferredTechnique::UnbindTextures()
 {
+    LEV_PROFILE_FUNCTION();
+
     context->PSSetShaderResources(0, 0, nullptr);
     context->PSSetShaderResources(1, 0, nullptr);
     context->PSSetShaderResources(2, 0, nullptr);
@@ -150,20 +156,30 @@ void D3D11DeferredTechnique::UnbindTextures()
 
 void D3D11DeferredTechnique::StartOpaquePass()
 {
+    LEV_PROFILE_FUNCTION();
+
 	m_GBufferRenderTarget->Clear();
     m_GeometryPipeline.Bind();
 }
 
 void D3D11DeferredTechnique::StartPositionalLightingPass1()
 {
+    LEV_PROFILE_FUNCTION();
+
     context->ClearDepthStencilView(m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil)->GetDepthStencilView(), D3D11_CLEAR_STENCIL, 1.0f, 1);
-    m_PositionalLightPipeline1.Bind();
+    {
+        LEV_PROFILE_SCOPE("Pipeline 1");
+        m_PositionalLightPipeline1.Bind();
+    }
+    
     ShaderAssets::DeferredPointLight()->Unbind();
     ShaderAssets::DeferredVertexOnly()->Bind();
 }
 
 void D3D11DeferredTechnique::StartPositionalLightingPass2()
 {
+    LEV_PROFILE_FUNCTION();
+
     BindTextures();
     m_PositionalLightPipeline1.Unbind();
     m_PositionalLightPipeline2.Bind();
@@ -173,6 +189,8 @@ void D3D11DeferredTechnique::StartPositionalLightingPass2()
 
 void D3D11DeferredTechnique::StartDirectionalLightingPass()
 {
+    LEV_PROFILE_FUNCTION();
+
     Ref<D3D11Texture> depthStencilBuffer = m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil);
 
     if (depthStencilBuffer)
@@ -183,6 +201,8 @@ void D3D11DeferredTechnique::StartDirectionalLightingPass()
 
 void D3D11DeferredTechnique::StartSkyboxPass()
 {
+    LEV_PROFILE_FUNCTION();
+
     UnbindTextures();
     m_PositionalLightPipeline2.Unbind();
     m_SkyboxPipeline.Bind();
@@ -190,6 +210,8 @@ void D3D11DeferredTechnique::StartSkyboxPass()
 
 void D3D11DeferredTechnique::EndLightningPass()
 {
+    LEV_PROFILE_FUNCTION();
+
     m_PositionalLightPipeline2.Unbind();
     UnbindTextures();
 }

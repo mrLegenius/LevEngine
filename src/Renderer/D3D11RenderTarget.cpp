@@ -2,11 +2,15 @@
 
 #include <wrl/client.h>
 
+#include "Debugging/Profiler.h"
+
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 void D3D11RenderTarget::Bind()
 {
+    LEV_PROFILE_FUNCTION();
+
     if (m_CheckValidity)
     {
         if (!IsValid())
@@ -51,12 +55,14 @@ void D3D11RenderTarget::Bind()
         depthStencilView = depthStencilTexture->GetDepthStencilView();
     }
 
-    context->OMSetRenderTargets(numRTVs, renderTargetViews, depthStencilView);
+	context->OMSetRenderTargets(numRTVs, renderTargetViews, depthStencilView);
     //context->OMSetRenderTargetsAndUnorderedAccessViews(numRTVs, renderTargetViews, depthStencilView, uavStartSlot, numUAVs, uavViews, nullptr); //TODO: UAV Support
 }
 
 void D3D11RenderTarget::Unbind()
 {
+    LEV_PROFILE_FUNCTION();
+
     context->OMSetRenderTargets(0, nullptr, nullptr);
     //context->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr, 0, 0, nullptr, nullptr); //TODO: UAV Support
 }

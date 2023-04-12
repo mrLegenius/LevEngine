@@ -3,6 +3,8 @@
 #include <cassert>
 #include <wrl/client.h>
 
+#include "Debugging/Profiler.h"
+
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -122,6 +124,8 @@ D3D11DepthStencilState::~D3D11DepthStencilState()
 
 void D3D11DepthStencilState::Bind()
 {
+    LEV_PROFILE_FUNCTION();
+
     if (m_Dirty)
     {
         D3D11_DEPTH_STENCIL_DESC desc;
@@ -149,5 +153,7 @@ void D3D11DepthStencilState::Bind()
 
 void D3D11DepthStencilState::Unbind()
 {
+    LEV_PROFILE_FUNCTION();
+
     context->OMSetDepthStencilState(nullptr, m_StencilMode.StencilReference);
 }

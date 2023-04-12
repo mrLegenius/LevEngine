@@ -3,6 +3,8 @@
 #include <cassert>
 #include <wrl/client.h>
 
+#include "Debugging/Profiler.h"
+
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -175,6 +177,8 @@ D3D11BlendState::~D3D11BlendState()
 
 void D3D11BlendState::Bind()
 {
+    LEV_PROFILE_FUNCTION();
+
     if (m_Dirty)
     {
         D3D11_BLEND_DESC blendDesc;
@@ -211,5 +215,7 @@ void D3D11BlendState::Bind()
 
 void D3D11BlendState::Unbind()
 {
+    LEV_PROFILE_FUNCTION();
+
     context->OMSetBlendState(nullptr, &m_ConstBlendFactor.x, m_SampleMask);
 }

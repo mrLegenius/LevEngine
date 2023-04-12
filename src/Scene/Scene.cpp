@@ -17,6 +17,8 @@
 #include "Physics/Systems/ForcesClearSystem.h"
 #include "Physics/Systems/PositionUpdateSystem.h"
 #include "Renderer/Renderer3D.h"
+#include "Renderer/RenderParams.h"
+#include "Renderer/ShadowMapPass.h"
 
 struct CollisionInfo;
 using namespace DirectX::SimpleMath;
@@ -270,6 +272,9 @@ void Scene::AABBCollisionResolveSystem()
     }
 }
 
+
+Ref<ShadowMapPass> s_ShadowMapPass;
+
 void Scene::OnRender()
 {
     LEV_PROFILE_FUNCTION();
@@ -311,7 +316,12 @@ void Scene::OnRender()
 
     if (!mainCamera) return;
 
-    if constexpr (!RenderSettings::DeferredRendering)
+    RenderParams renderParams{ *mainCamera, cameraTransform };
+
+    if (!s_ShadowMapPass)
+	    s_ShadowMapPass = CreateRef<ShadowMapPass>(m_Registry);
+
+    if (!RenderSettings::DeferredRendering)
     {
         LEV_PROFILE_SCOPE("Forward Rendering");
 
@@ -321,7 +331,14 @@ void Scene::OnRender()
         {
             LEV_PROFILE_SCOPE("ShadowPass");
 
-            SceneCamera* lightCamera = nullptr;
+            auto success = s_ShadowMapPass->Begin(renderParams);
+            if (success)
+            {
+                s_ShadowMapPass->Process(renderParams);
+                s_ShadowMapPass->End(renderParams);
+            }
+
+           /* SceneCamera* lightCamera = nullptr;
             auto view = m_Registry.group<>(entt::get<Transform, DirectionalLightComponent, CameraComponent>);
             for (auto entity : view)
             {
@@ -338,7 +355,7 @@ void Scene::OnRender()
                 MeshShadowSystem();
 
                 Renderer3D::EndShadowPass();
-            }
+            }*/
         }
 
         {
@@ -367,7 +384,7 @@ void Scene::OnRender()
     }
 
     //Deferred Rendering
-    if constexpr (RenderSettings::DeferredRendering)
+    if (RenderSettings::DeferredRendering)
     {
         LEV_PROFILE_SCOPE("Deferred Rendering");
 
@@ -376,7 +393,7 @@ void Scene::OnRender()
         {
             LEV_PROFILE_SCOPE("ShadowPass");
 
-            SceneCamera* lightCamera = nullptr;
+            /*SceneCamera* lightCamera = nullptr;
             auto view = m_Registry.group<>(entt::get<Transform, DirectionalLightComponent, CameraComponent>);
             for (auto entity : view)
             {
@@ -393,6 +410,13 @@ void Scene::OnRender()
                 MeshShadowSystem();
 
                 Renderer3D::EndShadowPass();
+            }*/
+
+            auto success = s_ShadowMapPass->Begin(renderParams);
+            if (success)
+            {
+                s_ShadowMapPass->Process(renderParams);
+                s_ShadowMapPass->End(renderParams);
             }
         }
 
@@ -412,8 +436,7 @@ void Scene::OnRender()
             //Start Directional light pipeline
             Renderer3D::BeginDeferredDirLightningSubPass(*mainCamera);
 
-            //Render Dir light
-
+            Renderer3D::BeginDeferredPositionalLightningSubPass(*mainCamera, cameraTransform, cameraPosition);
             //For each light
             auto view = m_Registry.group<>(entt::get<Transform, PointLightComponent>);
             for (auto entity : view)
@@ -505,7 +528,7 @@ void Scene::MeshShadowSystem()
     {
         auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
         if (mesh.castShadow)
-			Renderer3D::DrawMeshShadow(transform.GetModel(), mesh);
+			Renderer3D::DrawMesh(transform.GetModel(), mesh);
     }
 }
 
@@ -516,6 +539,7 @@ void Scene::MeshDeferredSystem()
     auto view = m_Registry.group<>(entt::get<Transform, MeshRendererComponent>);
     for (auto entity : view)
     {
+        ShaderAssets::GBufferPass()->Bind();
         auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
     	Renderer3D::DrawDeferredMesh(transform.GetModel(), mesh);
     }

@@ -39,13 +39,6 @@ struct LightningData
 	uint32_t PointLightsCount = 0;
 };
 
-struct ShadowData
-{
-	alignas(16) Matrix ViewProjection[RenderSettings::CascadeCount];
-	alignas(16) float Distances[RenderSettings::CascadeCount];
-	alignas(16) float ShadowMapDimensions;
-};
-
 struct MaterialData
 {
 	alignas(16) Vector3 Emissive = Vector3{ 0, 0, 0 };
@@ -67,12 +60,6 @@ public:
 	static void Init();
 	static void Shutdown();
 
-
-	static void BeginShadowPass(SceneCamera& camera, const std::vector<Matrix> mainCameraProjections, const Matrix& mainCameraView);
-	static void EndShadowPass();
-	static void DrawMeshShadow(const Matrix& model, const MeshRendererComponent& meshRenderer);
-
-
 	static void BeginScene(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void EndScene();
 	static void DrawOpaqueMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
@@ -80,6 +67,8 @@ public:
 	static void BeginDeferred(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void EndDeferred();
 	static void BeginDeferredDirLightningSubPass(const SceneCamera& camera);
+	static void BeginDeferredPositionalLightningSubPass(const SceneCamera& camera, const Matrix& viewMatrix,
+	                                                    const Vector3& position);
 	static void BeginDeferredPositionalLightningSubPass1(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void BeginDeferredPositionalLightningSubPass2(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void EndDeferredLightningPass();
@@ -99,12 +88,8 @@ private:
 	static Ref<D3D11ConstantBuffer> m_ModelConstantBuffer;
 	static Ref<D3D11ConstantBuffer> m_CameraConstantBuffer;
 	static Ref<D3D11ConstantBuffer> m_LightningConstantBuffer;
-	static Ref<D3D11ConstantBuffer> m_ShadowMapConstantBuffer;
 	static Ref<D3D11ConstantBuffer> m_MaterialConstantBuffer;
 	static Ref<D3D11ConstantBuffer> m_ScreenToViewParamsConstantBuffer;
-
-	static Ref<D3D11ShadowMap> m_ShadowMap;
-	static Ref<D3D11CascadeShadowMap> m_CascadeShadowMap;
 
 	static Ref<D3D11DeferredTechnique> m_GBuffer;
 	static Ref<D3D11ForwardTechnique> s_ForwardTechnique;
@@ -116,5 +101,4 @@ private:
 
 	static PointLightData s_PointLights[RenderSettings::MaxPointLights];
 	static LightningData s_LightningData;
-	static ShadowData s_ShadowData;
 };

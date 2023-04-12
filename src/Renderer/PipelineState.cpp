@@ -1,11 +1,13 @@
 #include "PipelineState.h"
 
+#include "Debugging/Profiler.h"
+
 void PipelineState::Bind()
 {
+    LEV_PROFILE_FUNCTION();
+
     if (m_RenderTarget)
-    {
-        m_RenderTarget->Bind();
-    }
+	    m_RenderTarget->Bind();
 
     m_BlendState.Bind();
     m_RasterizerState.Bind();
@@ -14,6 +16,8 @@ void PipelineState::Bind()
 
 void PipelineState::Unbind()
 {
+    LEV_PROFILE_FUNCTION();
+
     if (m_RenderTarget)
 	    m_RenderTarget->Unbind();
 

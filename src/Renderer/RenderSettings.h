@@ -11,8 +11,10 @@ struct RenderSettings
 	static constexpr float ShadowMapResolution = 2048;
 
 	//Lightning
-	static constexpr int MaxPointLights = 100;
+	static constexpr int MaxPointLights = 200;
 	static constexpr Vector3 GlobalAmbient{ 0.3f, 0.3f, 0.3f };
 	static constexpr bool DeferredRendering = true;
+
+	static constexpr uint32_t ShadowMapSlot = 9;
 };
 

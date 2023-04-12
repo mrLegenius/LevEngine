@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <filesystem>
+
+#include "Debugging/Profiler.h"
 #include "Katamari/ObjLoader.h"
 #include "Renderer/D3D11Shader.h"
 #include "Renderer/D3D11Texture.h"
@@ -107,6 +109,8 @@ namespace ShaderAssets
 
     inline auto CascadeShadowPass()
     {
+		LEV_PROFILE_FUNCTION();
+
         static Ref<D3D11Shader> shader;
         if (shader) return shader;
 
@@ -122,6 +126,8 @@ namespace ShaderAssets
 
 	inline auto GBufferPass()
 	{
+		LEV_PROFILE_FUNCTION();
+
 		static Ref<D3D11Shader> shader;
 		if (shader) return shader;
 
@@ -137,6 +143,8 @@ namespace ShaderAssets
 
 	inline auto DeferredVertexOnly()
 	{
+		LEV_PROFILE_FUNCTION();
+
 		static Ref<D3D11Shader> shader;
 		if (shader) return shader;
 
@@ -152,6 +160,8 @@ namespace ShaderAssets
 
 	inline auto DeferredPointLight()
 	{
+		LEV_PROFILE_FUNCTION();
+
 		static Ref<D3D11Shader> shader;
 		if (shader) return shader;
 
@@ -167,6 +177,8 @@ namespace ShaderAssets
 
 	inline auto DeferredQuadRender()
 	{
+		LEV_PROFILE_FUNCTION();
+
 		static Ref<D3D11Shader> shader;
 		if (shader) return shader;
 

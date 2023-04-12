@@ -155,6 +155,7 @@
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
+    <ClCompile Include="src\Renderer\ClearPass.cpp" />
     <ClCompile Include="src\Renderer\D3D11BlendState.cpp" />
     <ClCompile Include="src\Renderer\D3D11CascadeShadowMap.cpp" />
     <ClCompile Include="src\Renderer\D3D11ConstantBuffer.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\OrbitCamera.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
+    <ClCompile Include="src\Renderer\ShadowMapPass.cpp" />
     <ClCompile Include="src\Scene\Entity.cpp" />
     <ClCompile Include="src\Scene\Scene.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
@@ -215,6 +217,7 @@
     <ClInclude Include="src\Renderer\3D\SkyboxMesh.h" />
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="src\Renderer\ClearFlags.h" />
+    <ClInclude Include="src\Renderer\ClearPass.h" />
     <ClInclude Include="src\Renderer\CPUAccess.h" />
     <ClInclude Include="src\Renderer\D3D11BlendState.h" />
     <ClInclude Include="src\Renderer\D3D11CascadeShadowMap.h" />
@@ -233,7 +236,10 @@
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\Renderer3D.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
+    <ClInclude Include="src\Renderer\RenderParams.h" />
+    <ClInclude Include="src\Renderer\RenderPass.h" />
     <ClInclude Include="src\Renderer\RenderSettings.h" />
+    <ClInclude Include="src\Renderer\ShadowMapPass.h" />
     <ClInclude Include="src\Scene\Components\Components.h" />
     <ClInclude Include="src\Scene\Entity.h" />
     <ClInclude Include="src\Scene\Scene.h" />

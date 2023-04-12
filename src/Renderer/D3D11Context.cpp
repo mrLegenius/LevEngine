@@ -6,6 +6,7 @@
 #include <wrl/client.h>
 
 #include "D3D11Texture.h"
+#include "Debugging/Profiler.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -46,7 +47,7 @@ void D3D11Context::Init(uint32_t width, uint32_t height, HWND window)
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		D3D11_CREATE_DEVICE_DEBUG,
+		D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_SINGLETHREADED,
 		featureLevel,
 		1,
 		D3D11_SDK_VERSION,
@@ -82,6 +83,8 @@ void D3D11Context::Init(uint32_t width, uint32_t height, HWND window)
 
 void D3D11Context::SwapBuffers()
 {
+	LEV_PROFILE_FUNCTION();
+
 	m_RenderTarget->Bind();
 
 	// Copy the render target's color buffer to the swap chain's back buffer.
@@ -89,5 +92,5 @@ void D3D11Context::SwapBuffers()
 	if (colorBuffer)
 		context->CopyResource(m_BackBuffer, colorBuffer->GetTextureResource());
 
-	swapChain->Present(1, /*DXGI_PRESENT_DO_NOT_WAIT*/ 0);
+	swapChain->Present(0, /*DXGI_PRESENT_DO_NOT_WAIT*/ 0);
 }
