@@ -5,4 +5,5 @@ struct RenderParams
 {
     SceneCamera& Camera;
     Matrix& CameraViewMatrix;
+    Matrix& CameraPerspectiveViewProjectionMatrix;
 };

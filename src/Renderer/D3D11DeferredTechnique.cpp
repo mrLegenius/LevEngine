@@ -199,15 +199,6 @@ void D3D11DeferredTechnique::StartDirectionalLightingPass()
     BindTextures();
 }
 
-void D3D11DeferredTechnique::StartSkyboxPass()
-{
-    LEV_PROFILE_FUNCTION();
-
-    UnbindTextures();
-    m_PositionalLightPipeline2.Unbind();
-    m_SkyboxPipeline.Bind();
-}
-
 void D3D11DeferredTechnique::EndLightningPass()
 {
     LEV_PROFILE_FUNCTION();

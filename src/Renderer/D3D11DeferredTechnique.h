@@ -15,7 +15,6 @@ public:
 	void StartPositionalLightingPass1();
 	void StartPositionalLightingPass2();
 	void StartDirectionalLightingPass();
-	void StartSkyboxPass();
 	void EndLightningPass();
 
 private:

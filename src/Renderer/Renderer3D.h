@@ -1,8 +1,6 @@
 #pragma once
 #include <Kernel/PointerUtils.h>
 
-#include "D3D11ShadowMap.h"
-#include "D3D11CascadeShadowMap.h"
 #include "D3D11DeferredTechnique.h"
 #include "D3D11ForwardTechnique.h"
 #include "RenderSettings.h"
@@ -73,11 +71,10 @@ public:
 	static void BeginDeferredPositionalLightningSubPass2(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void EndDeferredLightningPass();
 
-	static void DrawDeferredSkybox(const SkyboxRendererComponent& renderer);
+	static void DrawSkybox(const SkyboxRendererComponent& renderer, const Matrix& perspectiveViewProjection);
 	static void DrawDeferredMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
 
 	static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
-	static void DrawSkybox(const SkyboxRendererComponent& renderer);
 
 	static void SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight);
 	static void AddPointLights(const Vector4& positionViewSpace, const Vector3& position, const PointLightComponent& pointLight);
@@ -94,7 +91,6 @@ private:
 	static Ref<D3D11DeferredTechnique> m_GBuffer;
 	static Ref<D3D11ForwardTechnique> s_ForwardTechnique;
 
-	static Matrix m_PerspectiveViewProjection;
 	static Matrix m_ViewProjection;
 
 	static Ref<SkyboxMesh> s_SkyboxMesh;

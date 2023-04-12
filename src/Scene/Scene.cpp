@@ -19,6 +19,7 @@
 #include "Renderer/Renderer3D.h"
 #include "Renderer/RenderParams.h"
 #include "Renderer/ShadowMapPass.h"
+#include "Renderer/SkyboxPass.h"
 
 struct CollisionInfo;
 using namespace DirectX::SimpleMath;
@@ -274,6 +275,7 @@ void Scene::AABBCollisionResolveSystem()
 
 
 Ref<ShadowMapPass> s_ShadowMapPass;
+Ref<SkyboxPass> s_SkyboxPass;
 
 void Scene::OnRender()
 {
@@ -316,10 +318,14 @@ void Scene::OnRender()
 
     if (!mainCamera) return;
 
-    RenderParams renderParams{ *mainCamera, cameraTransform };
+    auto perspectiveViewProjectionMatrix = cameraTransform * mainCamera->GetPerspectiveProjection();
+    RenderParams renderParams{ *mainCamera, cameraTransform, perspectiveViewProjectionMatrix };
 
     if (!s_ShadowMapPass)
 	    s_ShadowMapPass = CreateRef<ShadowMapPass>(m_Registry);
+
+    if (!s_SkyboxPass)
+        s_SkyboxPass = CreateRef<SkyboxPass>(m_Registry);
 
     if (!RenderSettings::DeferredRendering)
     {
@@ -367,17 +373,7 @@ void Scene::OnRender()
             MeshRenderSystem();
 
             //Render skybox
-            {
-                LEV_PROFILE_SCOPE("Skybox");
-
-                auto view = m_Registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
-                for (auto entity : view)
-                {
-                    auto [transform, skybox] = view.get<Transform, SkyboxRendererComponent>(entity);
-                    Renderer3D::DrawSkybox(skybox);
-                    break;
-                }
-            }
+            s_SkyboxPass->Process(renderParams);
 
             Renderer3D::EndScene();
         }
@@ -463,17 +459,7 @@ void Scene::OnRender()
             }
 
             //Render skybox
-            {
-                LEV_PROFILE_SCOPE("Skybox");
-
-                auto view = m_Registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
-                for (auto entity : view)
-                {
-                    auto [transform, skybox] = view.get<Transform, SkyboxRendererComponent>(entity);
-                    Renderer3D::DrawDeferredSkybox(skybox);
-                    break;
-                }
-            }
+            s_SkyboxPass->Process(renderParams);
 
             Renderer3D::EndDeferredLightningPass();
         }
@@ -503,19 +489,6 @@ void Scene::PointLightsSystem()
         auto [transform, light] = view.get<Transform, PointLightComponent>(entity);
 
         Renderer3D::AddPointLights({}, transform.GetWorldPosition(), light);
-    }
-}
-
-void Scene::SkyboxRenderSystem()
-{
-    LEV_PROFILE_FUNCTION();
-
-    auto view = m_Registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
-    for (auto entity : view)
-    {
-    	auto [transform, skybox] = view.get<Transform, SkyboxRendererComponent>(entity);
-        Renderer3D::DrawSkybox(skybox);
-        break;
     }
 }
 

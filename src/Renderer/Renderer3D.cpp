@@ -13,7 +13,6 @@ Ref<D3D11ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
 Ref<D3D11DeferredTechnique> Renderer3D::m_GBuffer;
 Ref<D3D11ForwardTechnique> Renderer3D::s_ForwardTechnique;
 
-Matrix Renderer3D::m_PerspectiveViewProjection;
 Matrix Renderer3D::m_ViewProjection;
 Ref<SkyboxMesh> Renderer3D::s_SkyboxMesh;
 
@@ -66,7 +65,6 @@ void Renderer3D::BeginScene(const SceneCamera& camera, const Matrix& viewMatrix,
     RenderCommand::SetViewport(0, 0, window.GetWidth(), window.GetHeight());
 
     m_ViewProjection = viewMatrix * camera.GetProjection();
-    m_PerspectiveViewProjection = viewMatrix * camera.GetPerspectiveProjection();
 
     const CameraData cameraData{  viewMatrix, m_ViewProjection, position };
     m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
@@ -124,16 +122,14 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
     RenderCommand::DrawIndexed(meshRenderer.mesh->VertexBuffer, meshRenderer.mesh->IndexBuffer);
 }
 
-void Renderer3D::DrawDeferredSkybox(const SkyboxRendererComponent& renderer)
+void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer, const Matrix& perspectiveViewProjection)
 {
     LEV_PROFILE_FUNCTION();
-
-    m_GBuffer->StartSkyboxPass();
 
     renderer.texture->Bind();
     ShaderAssets::Skybox()->Bind();
 
-    const CameraData skyboxCameraData{ Matrix::Identity, m_PerspectiveViewProjection, Vector3::Zero };
+    const CameraData skyboxCameraData{ Matrix::Identity, perspectiveViewProjection, Vector3::Zero };
     m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
 
     RenderCommand::DrawIndexed(s_SkyboxMesh->VertexBuffer, s_SkyboxMesh->IndexBuffer);
@@ -174,7 +170,6 @@ void Renderer3D::BeginDeferred(const SceneCamera& camera, const Matrix& viewMatr
     RenderCommand::SetViewport(0, 0, window.GetWidth(), window.GetHeight());
 
     m_ViewProjection = viewMatrix * camera.GetProjection();
-    m_PerspectiveViewProjection = viewMatrix * camera.GetPerspectiveProjection();
 
     const CameraData cameraData{ viewMatrix, m_ViewProjection, position };
     m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
@@ -206,7 +201,6 @@ void Renderer3D::BeginDeferredPositionalLightningSubPass(const SceneCamera& came
     m_ScreenToViewParamsConstantBuffer->SetData(&params);
 
     m_ViewProjection = viewMatrix * camera.GetProjection();
-    m_PerspectiveViewProjection = viewMatrix * camera.GetPerspectiveProjection();
 
     const CameraData cameraData{ viewMatrix, m_ViewProjection, position };
     m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
@@ -237,22 +231,6 @@ void Renderer3D::EndDeferredLightningPass()
 void Renderer3D::EndDeferred()
 {
     
-}
-
-
-void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer)
-{
-    LEV_PROFILE_FUNCTION();
-    s_ForwardTechnique->StartSkyboxPass();
-
-    renderer.texture->Bind();
-    ShaderAssets::Skybox()->Bind();
-
-    const CameraData skyboxCameraData{  Matrix::Identity, m_PerspectiveViewProjection, Vector3::Zero };
-    m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
-
-    RenderCommand::DrawIndexed(s_SkyboxMesh->VertexBuffer, s_SkyboxMesh->IndexBuffer);
-    renderer.texture->Unbind();
 }
 
 void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)

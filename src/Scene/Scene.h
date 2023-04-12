@@ -65,7 +65,6 @@ private:
 	friend class Entity;
 
 	void MeshRenderSystem();
-	void SkyboxRenderSystem();
 	void MeshShadowSystem();
 	void MeshDeferredSystem();
 
