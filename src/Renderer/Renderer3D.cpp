@@ -126,9 +126,6 @@ void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer, const Matri
 {
     LEV_PROFILE_FUNCTION();
 
-    renderer.texture->Bind();
-    ShaderAssets::Skybox()->Bind();
-
     const CameraData skyboxCameraData{ Matrix::Identity, perspectiveViewProjection, Vector3::Zero };
     m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
 

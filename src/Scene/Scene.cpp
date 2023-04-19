@@ -16,6 +16,7 @@
 #include "Physics/Components/CollisionEvent.h"
 #include "Physics/Systems/ForcesClearSystem.h"
 #include "Physics/Systems/PositionUpdateSystem.h"
+#include "Renderer/ParticlePass.h"
 #include "Renderer/Renderer3D.h"
 #include "Renderer/RenderParams.h"
 #include "Renderer/ShadowMapPass.h"
@@ -276,6 +277,7 @@ void Scene::AABBCollisionResolveSystem()
 
 Ref<ShadowMapPass> s_ShadowMapPass;
 Ref<SkyboxPass> s_SkyboxPass;
+Ref<ParticlePass> s_ParticlePass;
 
 void Scene::OnRender()
 {
@@ -319,13 +321,16 @@ void Scene::OnRender()
     if (!mainCamera) return;
 
     auto perspectiveViewProjectionMatrix = cameraTransform * mainCamera->GetPerspectiveProjection();
-    RenderParams renderParams{ *mainCamera, cameraTransform, perspectiveViewProjectionMatrix };
+    RenderParams renderParams{ cameraPosition, *mainCamera, cameraTransform, perspectiveViewProjectionMatrix };
 
     if (!s_ShadowMapPass)
 	    s_ShadowMapPass = CreateRef<ShadowMapPass>(m_Registry);
 
     if (!s_SkyboxPass)
         s_SkyboxPass = CreateRef<SkyboxPass>(m_Registry);
+
+    if (!s_ParticlePass)
+        s_ParticlePass = CreateRef<ParticlePass>(m_Registry);
 
     if (!RenderSettings::DeferredRendering)
     {
@@ -376,6 +381,8 @@ void Scene::OnRender()
             s_SkyboxPass->Process(renderParams);
 
             Renderer3D::EndScene();
+
+            s_ParticlePass->Process(renderParams);
         }
     }
 

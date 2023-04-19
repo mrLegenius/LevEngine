@@ -85,13 +85,35 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
-    for (int i = 0; i < 0; i++)
+    for (int i = 0; i < 5; i++)
     {
         auto go = Prefabs::LavaRock(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
+
+        auto& particles = go.AddComponent<EmitterComponent>();
+        particles.Rate = 10;
+        particles.Texture = TextureAssets::Fire();
+        particles.MaxParticles = 10000;
+        particles.Birth.Velocity = Vector3{ 0, 5, 0 };
+
+        particles.Birth.StartColor = Color{ 1, 1, 1, 1 };
+        particles.Birth.EndColor = Color{ 0, 0, 0, 0 };
+
+        particles.Birth.RandomStartSize = true;
+        particles.Birth.StartSize = 0.5f;
+        particles.Birth.StartSizeB = 1.0f;
+        particles.Birth.EndSize = 0.1f;
+
+        particles.Birth.RandomStartPosition = true;
+        particles.Birth.Position = Vector3{ -3.5, -0.5, -3 };
+        particles.Birth.PositionB = Vector3{ 4, 0.5, 3 };
+
+        particles.Birth.RandomStartLifeTime = true;
+        particles.Birth.LifeTime = 0.5;
+        particles.Birth.LifeTimeB = 1;
     }
 
-    for (int i = 0; i < 99; i++)
+    for (int i = 0; i < 0; i++)
     {
         auto go = Prefabs::Sphere(m_Scene);
         auto& light = go.AddComponent<PointLightComponent>();
@@ -104,6 +126,7 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-50, 50), 3, Random::Range(-50, 50)));
     }
 
+    //<--- Floor ---<<
     auto floor = m_Scene->CreateEntity("Floor");
     auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     floorMesh.castShadow = false;
@@ -117,9 +140,32 @@ void KatamariLayer::OnAttach()
     auto& floorCollider = floor.AddComponent<BoxCollider>();
     floorCollider.extents = Vector3(150, 0.5f, 150);
 
+    //<--- Player ---<<
     auto player = m_Scene->CreateEntity("Player");
     auto& playerMesh = player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45));
     playerMesh.material = Materials::Ruby();
+
+    auto& playerParticles = player.AddComponent<EmitterComponent>();
+    playerParticles.Rate = 10;
+    playerParticles.Texture = TextureAssets::Smoke();
+    playerParticles.MaxParticles = 10000;
+    playerParticles.Birth.Velocity = Vector3{ 0, 5, 0 };
+
+    playerParticles.Birth.StartColor = Color{ 1, 1, 1, 1 };
+    playerParticles.Birth.EndColor = Color{ 1, 1, 1, 0 };
+
+    playerParticles.Birth.RandomStartSize = true;
+    playerParticles.Birth.StartSize = 1.0f;
+    playerParticles.Birth.StartSizeB = 1.5f;
+    playerParticles.Birth.EndSize = 0.1f;
+
+    playerParticles.Birth.RandomStartPosition = true;
+    playerParticles.Birth.Position = Vector3{ -1, 0, -1 };
+    playerParticles.Birth.PositionB = Vector3{ 1, 0, 1 };
+   
+    playerParticles.Birth.RandomStartLifeTime = true;
+    playerParticles.Birth.LifeTime = 0.5;
+    playerParticles.Birth.LifeTimeB = 1;
 
     auto& playerTransform = player.GetComponent<Transform>();
     playerTransform.SetLocalPosition(Vector3::One * 10);
@@ -134,13 +180,18 @@ void KatamariLayer::OnAttach()
     auto& playerLight = player.AddComponent<PointLightComponent>();
     playerLight.Color = Vector3(1.0f, 0.0f, 0.0f);
 
+    //<--- Camera ---<<
     auto camera = m_Scene->CreateEntity("Camera");
     camera.AddComponent<OrbitCamera>().SetTarget(playerTransform);
     camera.AddComponent<CameraComponent>();
+    camera.GetComponent<Transform>().SetWorldPosition(Vector3{ 50, 100, 200 });
+    camera.GetComponent<Transform>().SetWorldRotation(Vector3{ -30, 15, 0 });
 
+    //<--- Skybox ---<<
     auto skybox = m_Scene->CreateEntity("Skybox");
     skybox.AddComponent<SkyboxRendererComponent>(SkyboxAssets::Test());
 
+    //<--- DirLight ---<<
     auto dirLight = m_Scene->CreateEntity("DirLight");
     auto& dirLightTransform = dirLight.GetComponent<Transform>();
     dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
@@ -148,12 +199,12 @@ void KatamariLayer::OnAttach()
     auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
     dirLightComponent.Color = Vector3{ 0.9f, 0.9f, 0.9f };
 
-    //dirLight.AddComponent<OrbitCamera>();
     auto& lightCamera = dirLight.AddComponent<CameraComponent>();
     lightCamera.camera.SetProjectionType(SceneCamera::ProjectionType::Orthographic);
     lightCamera.camera.SetOrthographic(0.25f, 100.0f, 1000.0f);
     lightCamera.isMain = true;
 
+    //<--- Wall ---<<
     auto wall = m_Scene->CreateEntity("Wall");
     auto& wallMesh = wall.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     wallMesh.material = Materials::BlackPlastic();
@@ -161,6 +212,7 @@ void KatamariLayer::OnAttach()
     wallT.SetLocalScale(Vector3(1, 20, 100));
     wallT.SetWorldPosition(Vector3(150, 10, 50));
 
+    //<--- Peak ---<<
     auto peak = m_Scene->CreateEntity("Peak");
     auto& peakMesh = peak.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     peakMesh.material = Materials::Brass();
@@ -168,6 +220,7 @@ void KatamariLayer::OnAttach()
     peakT.SetLocalScale(Vector3(10, 50, 10));
     peakT.SetWorldPosition(Vector3(100, 25, 100));
 
+    //<--- Systems ---<<
 	m_Scene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
     m_Scene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
     m_Scene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
@@ -192,7 +245,7 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     RenderCommand::Clear();
 
     m_Scene->OnUpdate(deltaTime);
-    //m_Scene->OnPhysics(deltaTime);
+    m_Scene->OnPhysics(deltaTime);
     m_Scene->OnLateUpdate(deltaTime);
     m_Scene->OnRender();
 }

@@ -25,6 +25,8 @@ public:
 
 	void Init();
 	void SetViewport(int x, int y, uint32_t width, uint32_t height);
+	void DrawPointList(uint32_t count);
+
 private:
 	float* m_Color;
 };

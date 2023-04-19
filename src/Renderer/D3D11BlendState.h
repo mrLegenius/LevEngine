@@ -147,6 +147,9 @@ struct BlendMode
         , LogicOp(logicOp)
         , Write(blendWrite)
     {}
+
+    static BlendMode AlphaBlending;
+    static BlendMode Additive;
 };
 
 class D3D11BlendState

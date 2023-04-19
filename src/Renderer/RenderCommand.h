@@ -58,6 +58,11 @@ public:
 		s_RendererAPI->SetDepthFunc(depthFunc);
 	}
 
+	static void DrawPointList(const uint32_t count)
+	{
+		s_RendererAPI->DrawPointList(count);
+	}
+
 private:
 	static D3D11RendererAPI* s_RendererAPI;
 };

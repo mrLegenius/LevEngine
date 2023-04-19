@@ -154,3 +154,9 @@ void D3D11RendererAPI::SetViewport(int x, int y, uint32_t width, uint32_t height
 
 	context->RSSetViewports(1, &viewport);
 }
+
+void D3D11RendererAPI::DrawPointList(const uint32_t count)
+{
+	context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	context->Draw(count, 0);
+}

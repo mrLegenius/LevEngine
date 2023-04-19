@@ -12,6 +12,7 @@ bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER
 bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const std::string& filepath);
 bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath);
 bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath);
+bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepath);
 
 static DXGI_FORMAT ParseShaderDataTypeToD3D11DataType(const ShaderDataType type)
 {
@@ -60,6 +61,12 @@ D3D11Shader::D3D11Shader(const std::string& filepath, ShaderType shaderTypes)
 		auto result = CreateGeometryShader(m_GeometryShader, filepath);
 		assert(result);
 	}
+
+	if (shaderTypes & ShaderType::Compute)
+	{
+		auto result = CreateComputeShader(m_ComputeShader, filepath);
+		assert(result);
+	}
 }
 
 D3D11Shader::~D3D11Shader()
@@ -70,9 +77,13 @@ D3D11Shader::~D3D11Shader()
 		m_VertexShader->Release();
 	if (m_GeometryShader)
 		m_GeometryShader->Release();
+	if (m_ComputeShader)
+		m_ComputeShader->Release();
 
-	m_VertexBC->Release();
-	m_InputLayout->Release();
+	if (m_InputLayout)
+		m_VertexBC->Release();
+	if (m_InputLayout)
+		m_InputLayout->Release();
 }
 
 void D3D11Shader::Bind() const
@@ -83,7 +94,10 @@ void D3D11Shader::Bind() const
 		context->PSSetShader(m_PixelShader, nullptr, 0);
 	if (m_GeometryShader)
 		context->GSSetShader(m_GeometryShader, nullptr, 0);
-	context->IASetInputLayout(m_InputLayout);
+	if (m_ComputeShader)
+		context->CSSetShader(m_ComputeShader, nullptr, 0);
+	if (m_InputLayout)
+		context->IASetInputLayout(m_InputLayout);
 }
 
 void D3D11Shader::Unbind() const
@@ -91,6 +105,7 @@ void D3D11Shader::Unbind() const
 	context->VSSetShader(nullptr, nullptr, 0);
 	context->PSSetShader(nullptr, nullptr, 0);
 	context->GSSetShader(nullptr, nullptr, 0);
+	context->CSSetShader(nullptr, nullptr, 0);
 	context->IASetInputLayout(nullptr);
 }
 
@@ -125,6 +140,7 @@ bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SH
 			std::cout << shaderFilepath << " Missing shader file" << std::endl;
 		}
 
+		assert(false);
 		return false;
 	}
 
@@ -171,6 +187,22 @@ bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& file
 	device->CreateGeometryShader(
 		geometryBC->GetBufferPointer(),
 		geometryBC->GetBufferSize(),
+		nullptr, &shader);
+
+	return true;
+}
+
+bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepath)
+{
+	ID3DBlob* blob;
+	D3D_SHADER_MACRO defines[] = { nullptr, nullptr };
+
+	if (!CreateShader(blob, filepath, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CSMain", "cs_5_0"))
+		return false;
+
+	device->CreateComputeShader(
+		blob->GetBufferPointer(),
+		blob->GetBufferSize(),
 		nullptr, &shader);
 
 	return true;

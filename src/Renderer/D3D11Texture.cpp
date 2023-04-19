@@ -1676,14 +1676,18 @@ D3D11Texture::D3D11Texture(const std::string& path)
 
 	if (!data) return;
 
-	if (channels == 3)
-	{
+    if (channels == 4)
+    {
         m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	}
-	else if (channels == 4)
-	{
+    }
+	else if (channels == 3)
+    {
         m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	}
+    }
+    else
+    {
+        assert(false && "Unsupported number of channels");
+    }
 
     if (FAILED(device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport)))
     {

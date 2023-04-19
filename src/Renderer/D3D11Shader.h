@@ -4,16 +4,18 @@
 
 #include "Buffer.h"
 
+enum class ShaderType
+{
+	None = 0,
+	Vertex = 1,
+	Geometry = 2,
+	Pixel = 4,
+	Compute = 8,
+};
+
 class D3D11Shader
 {
 public:
-	enum class ShaderType
-	{
-		None = 0,
-		Vertex = 1,
-		Geometry = 2,
-		Pixel = 4,
-	};
 
 	explicit D3D11Shader(const std::string& filepath);
 	D3D11Shader(const std::string& filepath, ShaderType shaderTypes);
@@ -32,17 +34,18 @@ private:
 	ID3DBlob* m_VertexBC = nullptr;
 	ID3D11PixelShader* m_PixelShader = nullptr;
 	ID3D11GeometryShader* m_GeometryShader = nullptr;
+	ID3D11ComputeShader* m_ComputeShader = nullptr;
 
 	ID3D11InputLayout* m_InputLayout = nullptr;
 	BufferLayout m_Layout;
 };
 
-inline D3D11Shader::ShaderType operator|(const D3D11Shader::ShaderType a, const D3D11Shader::ShaderType b)
+inline ShaderType operator|(const ShaderType a, const ShaderType b)
 {
-	return static_cast<D3D11Shader::ShaderType>(static_cast<int>(a) | static_cast<int>(b));
+	return static_cast<ShaderType>(static_cast<int>(a) | static_cast<int>(b));
 }
 
-inline bool operator&(const D3D11Shader::ShaderType a, const D3D11Shader::ShaderType b)
+inline bool operator&(const ShaderType a, const ShaderType b)
 {
 	return static_cast<int>(a) & static_cast<int>(b);
 }

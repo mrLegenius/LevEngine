@@ -88,6 +88,37 @@ struct CameraComponent
 	CameraComponent(const CameraComponent&) = default;
 };
 
+struct EmitterComponent
+{
+	struct BirthParams
+	{
+		Vector3 Velocity = Vector3::Zero;
+
+		bool RandomStartPosition;
+		Vector3 Position = Vector3::Zero;
+		Vector3 PositionB = Vector3::Zero;
+
+		bool RandomStartColor;
+		::Color StartColor;
+		::Color StartColorB;
+		Color EndColor = ::Color{ 1, 1, 1, 1 };
+
+		bool RandomStartSize;
+		float StartSize = 0.1f;
+		float StartSizeB = 0.1f;
+		float EndSize = 0.1f;
+
+		bool RandomStartLifeTime;
+		float LifeTime = 1;
+		float LifeTimeB = 1;
+	};
+
+	uint32_t MaxParticles = 10000;
+	float Rate;
+	BirthParams Birth;
+	Ref<Texture> Texture;
+};
+
 template<typename... Component>
 struct ComponentGroup { };
 

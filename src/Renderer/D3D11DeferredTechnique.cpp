@@ -62,8 +62,6 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
     m_DepthOnlyRenderTarget = CreateRef<D3D11RenderTarget>();
     m_DepthOnlyRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil));
 
-    auto additiveBlending = BlendMode{ true, false, BlendFactor::One, BlendFactor::One};
-
     m_GBufferRenderTarget = CreateRef<D3D11RenderTarget>();
     m_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color0, mainRenderTarget->GetTexture(AttachmentPoint::Color0));
     m_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color1, m_DiffuseTexture);
@@ -99,7 +97,7 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
         m_PositionalLightPipeline2.GetRasterizerState().SetCullMode(CullMode::Front);
         m_PositionalLightPipeline2.GetRasterizerState().SetDepthClipEnabled(false);
 
-        m_PositionalLightPipeline2.GetBlendState().SetBlendMode(additiveBlending);
+        m_PositionalLightPipeline2.GetBlendState().SetBlendMode(BlendMode::Additive);
 
         DepthMode depthMode{ true, DepthWrite::Disable, CompareFunction::GreaterOrEqual };
         m_PositionalLightPipeline2.GetDepthStencilState().SetDepthMode(depthMode);

@@ -2,6 +2,7 @@
 
 #include <chrono>
 
+#include "Time.h"
 #include "Utils.h"
 #include "../Renderer/Renderer.h"
 #include "../Events/ApplicationEvent.h"
@@ -37,6 +38,7 @@ void Application::Run()
 	{
 		auto curTime = std::chrono::steady_clock::now();
 		const float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
+		LevEngine::Time::SetDeltaTime(deltaTime);
 		PrevTime = curTime;
 
 		totalTime += deltaTime;

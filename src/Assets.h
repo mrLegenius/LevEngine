@@ -114,7 +114,7 @@ namespace ShaderAssets
         static Ref<D3D11Shader> shader;
         if (shader) return shader;
 
-        shader = CreateRef<D3D11Shader>(GetShaderPath("CascadeShadowPass.hlsl"), D3D11Shader::ShaderType::Vertex | D3D11Shader::ShaderType::Geometry);
+        shader = CreateRef<D3D11Shader>(GetShaderPath("CascadeShadowPass.hlsl"), ShaderType::Vertex | ShaderType::Geometry);
         shader->SetLayout({
         { ShaderDataType::Float3, "POSITION" },
         { ShaderDataType::Float3, "NORMAL" },
@@ -148,7 +148,7 @@ namespace ShaderAssets
 		static Ref<D3D11Shader> shader;
 		if (shader) return shader;
 
-		shader = CreateRef<D3D11Shader>(GetShaderPath("DeferredLightningPass.hlsl"), D3D11Shader::ShaderType::Vertex);
+		shader = CreateRef<D3D11Shader>(GetShaderPath("DeferredLightningPass.hlsl"), ShaderType::Vertex);
 		shader->SetLayout({
 		{ ShaderDataType::Float3, "POSITION" },
 		{ ShaderDataType::Float3, "NORMAL" },
@@ -191,6 +191,42 @@ namespace ShaderAssets
 
 		return shader;
 	}
+
+	inline auto Particles()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<D3D11Shader> shader;
+		if (shader) return shader;
+
+		shader = CreateRef<D3D11Shader>(GetShaderPath("Particles.hlsl"), ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
+
+		return shader;
+	}
+
+	inline auto ParticlesCompute()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<D3D11Shader> shader;
+		if (shader) return shader;
+
+		shader = CreateRef<D3D11Shader>(GetShaderPath("ParticlesCompute.hlsl"), ShaderType::Compute);
+
+		return shader;
+	}
+
+	inline auto ParticlesEmitter()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<D3D11Shader> shader;
+		if (shader) return shader;
+
+		shader = CreateRef<D3D11Shader>(GetShaderPath("ParticlesEmitter.hlsl"), ShaderType::Compute);
+
+		return shader;
+	}
 };
 
 namespace TextureAssets
@@ -200,6 +236,18 @@ namespace TextureAssets
         static auto texture = CreateRef<D3D11Texture>(GetTexturePath("bricks.jpg"));
         return texture;
     }
+
+	inline std::shared_ptr<D3D11Texture> Particle()
+	{
+		static auto texture = CreateRef<D3D11Texture>(GetTexturePath("particle.png"));
+		return texture;
+	}
+
+	inline std::shared_ptr<D3D11Texture> Smoke()
+	{
+		static auto texture = CreateRef<D3D11Texture>(GetTexturePath("smoke.png"));
+		return texture;
+	}
 
     inline std::shared_ptr<D3D11Texture> Log()
     {
@@ -218,6 +266,12 @@ namespace TextureAssets
         static auto texture = CreateRef<D3D11Texture>(GetTexturePath("rock.tga"));
         return texture;
     }
+
+	inline std::shared_ptr<D3D11Texture> Fire()
+	{
+		static auto texture = CreateRef<D3D11Texture>(GetTexturePath("fire.png"));
+		return texture;
+	}
 };
 
 namespace SkyboxAssets

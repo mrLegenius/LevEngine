@@ -3,6 +3,7 @@
 
 struct RenderParams
 {
+    Vector3 CameraPosition;
     SceneCamera& Camera;
     Matrix& CameraViewMatrix;
     Matrix& CameraPerspectiveViewProjectionMatrix;

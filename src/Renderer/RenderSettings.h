@@ -13,7 +13,7 @@ struct RenderSettings
 	//Lightning
 	static constexpr int MaxPointLights = 200;
 	static constexpr Vector3 GlobalAmbient{ 0.3f, 0.3f, 0.3f };
-	static constexpr bool DeferredRendering = true;
+	static constexpr bool DeferredRendering = false;
 
 	static constexpr uint32_t ShadowMapSlot = 9;
 };

@@ -24,6 +24,7 @@ D3D11ConstantBuffer::D3D11ConstantBuffer(const uint32_t size, const uint32_t slo
 	if (FAILED(result))
 	{
 		std::cout << "Unable to create constant buffer with size " << size << " and slot " << slot << std::endl;
+		assert(false);
 	}
 }
 
@@ -45,4 +46,5 @@ void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size) const
 	context->VSSetConstantBuffers(m_Slot, 1, &m_Buffer);
 	context->PSSetConstantBuffers(m_Slot, 1, &m_Buffer);
 	context->GSSetConstantBuffers(m_Slot, 1, &m_Buffer);
+	context->CSSetConstantBuffers(m_Slot, 1, &m_Buffer);
 }

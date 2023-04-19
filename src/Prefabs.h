@@ -83,7 +83,7 @@ struct Prefabs
         auto& transform = entity.GetComponent<Transform>();
 
         transform.SetLocalScale(Vector3::One);
-        rb.gravityScale = 1;
+        rb.gravityScale = 2;
         rb.mass = 100.0f;
         rb.InitCubeInertia(transform);
         return entity;
