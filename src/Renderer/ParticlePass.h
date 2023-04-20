@@ -37,7 +37,7 @@ class ParticlePass : public RenderPass
 			float StartSize;
 			float EndSize;
 			float LifeTime;
-
+			uint32_t TextureIndex;
 			//<--- 16 byte ---<<
 		};
 
@@ -52,14 +52,19 @@ public:
 	void Process(RenderParams& params) override;
 
 private:
-	static constexpr uint32_t c_MaxThreadCount = 768;
+
+	static constexpr uint32_t c_MaxThreadCount = 1024;
+
+	Ref<D3D11StructuredBuffer> m_ParticlesBuffer;
+	Ref<D3D11StructuredBuffer> m_DeadBuffer;
+	Ref<D3D11StructuredBuffer> m_SortedBuffer;
 
 	PipelineState m_PipelineState;
-	Ref<D3D11ConstantBuffer> m_CameraData;
-	Ref<D3D11ConstantBuffer> m_ComputeData;
-	Ref<D3D11ConstantBuffer> m_EmitterData;
+	Ref<D3D11ConstantBuffer> m_CameraData{};
+	Ref<D3D11ConstantBuffer> m_ComputeData{};
+	Ref<D3D11ConstantBuffer> m_EmitterData{};
 
-	std::unordered_map<LevEngine::UUID, Ref<ParticleSystem>> m_ParticleSystems;
+	std::unordered_map<LevEngine::UUID, Ref<ParticleSystem>> m_ParticleSystems{};
 
 	void GetGroupSize(int totalCount, int& groupSizeX, int& groupSizeY) const;
 

@@ -1,25 +1,4 @@
-struct Particle
-{
-    float3 Position;
-    float3 Velocity;
-
-    float4 StartColor;
-    float4 EndColor;
-    float4 Color;
-
-    float StartSize;
-    float EndSize;
-    float Size;
-
-    float Age;
-    float LifeTime;
-};
-
-struct SortedElement
-{
-    uint index;
-    float depth;
-};
+#include "ParticlesCommon.hlsl"
 
 StructuredBuffer<Particle> Particles : register(t0); // буфер частиц
 StructuredBuffer<SortedElement> SortedParticles : register(t2); // буфер частиц
@@ -42,6 +21,7 @@ struct PixelInput // описывает вертекс на выходе из Vertex Shader
     float2 UV : TEXCOORD0;
     float4 Color : COLOR;
     float Size : COLOR1;
+    uint TextureIndex : COLOR2;
 };
 
 struct PixelOutput // цвет результирующего пикселя
@@ -62,6 +42,7 @@ PixelInput VSMain(VertexInput input)
     output.UV = 0;
     output.Color = particle.Color;
     output.Size = particle.Size;
+    output.TextureIndex = particle.TextureIndex;
 
     return output;
 }
@@ -93,14 +74,15 @@ void GSMain(point PixelInput input[1], inout TriangleStream<PixelInput> stream)
     stream.RestartStrip();
 }
 
-Texture2D ParticleTexture : register(t1);
+Texture2D ParticleTexture0 : register(t1);
+
 SamplerState ParticleSampler : register(s1);
 
 PixelOutput PSMain(PixelInput input)
 {
     PixelOutput output;
 
-    float4 particle = ParticleTexture.Sample(ParticleSampler, input.UV);
+    float4 particle = ParticleTexture0.Sample(ParticleSampler, input.UV);
     //particle.a = particle.r;
     output.Color = particle * input.Color;
 

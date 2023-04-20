@@ -1,26 +1,4 @@
-struct Particle
-{
-	float3 Position;
-	float3 Velocity;
-
-	float4 StartColor;
-	float4 EndColor;
-	float4 Color;
-
-	float StartSize;
-	float EndSize;
-	float Size;
-
-	float Age;
-	float LifeTime;
-};
-
-cbuffer Handler : register(b0)
-{
-	int GroupDim;
-	uint MaxParticles;
-	float DeltaTime;
-};
+#include "ParticlesCommon.hlsl"
 
 cbuffer Emitter : register(b1)
 {
@@ -36,6 +14,7 @@ cbuffer Emitter : register(b1)
 		float EndSize;
 
 		float LifeTime;
+		uint TextureIndex;
 	};
 	
 	BirthParams Birth;
@@ -47,16 +26,18 @@ ConsumeStructuredBuffer<uint> DeadParticles : register(u1);
 [numthreads(1, 1, 1)]
 void CSMain()
 {
-	const uint index = DeadParticles.Consume();
+	const uint index = DeadParticles.Consume() - 1;
 
 	if (index >= MaxParticles) return;
 
 	Particle particle = Particles[index];
 
+	particle.TextureIndex = Birth.TextureIndex;
+
 	particle.Position = Birth.Position;
 	particle.Velocity = Birth.Velocity;
 
-	particle.Age = Birth.LifeTime;
+	particle.Age = 0;
 	particle.LifeTime = Birth.LifeTime;
 
 	particle.StartColor = Birth.StartColor;

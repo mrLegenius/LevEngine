@@ -85,7 +85,7 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 3; i++)
     {
         auto go = Prefabs::LavaRock(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
@@ -96,8 +96,8 @@ void KatamariLayer::OnAttach()
         particles.MaxParticles = 10000;
         particles.Birth.Velocity = Vector3{ 0, 5, 0 };
 
-        particles.Birth.StartColor = Color{ 1, 1, 1, 1 };
-        particles.Birth.EndColor = Color{ 0, 0, 0, 0 };
+        particles.Birth.StartColor = Color{ 1, 0.7, 0, 1 };
+        particles.Birth.EndColor = Color{ 0.5, 0, 0, 0 };
 
         particles.Birth.RandomStartSize = true;
         particles.Birth.StartSize = 0.5f;

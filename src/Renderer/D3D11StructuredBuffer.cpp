@@ -166,7 +166,7 @@ bool D3D11StructuredBuffer::Bind(const unsigned id, const ShaderType shaderType,
         switch (shaderType)
         {
         case ShaderType::Compute:
-            auto counter = counterValue;
+	        const auto counter = counterValue;
             context->CSSetUnorderedAccessViews(id, 1, uav, &counter);
             break;
         }

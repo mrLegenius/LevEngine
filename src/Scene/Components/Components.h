@@ -116,7 +116,7 @@ struct EmitterComponent
 	uint32_t MaxParticles = 10000;
 	float Rate;
 	BirthParams Birth;
-	Ref<Texture> Texture;
+	Ref<D3D11Texture> Texture;
 };
 
 template<typename... Component>

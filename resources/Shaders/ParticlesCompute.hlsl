@@ -1,41 +1,12 @@
-struct Particle
-{
-	float3 Position;
-	float3 Velocity;
-
-	float4 StartColor;
-	float4 EndColor;
-	float4 Color;
-
-	float StartSize;
-	float EndSize;
-	float Size;
-
-	float Age;
-	float LifeTime;
-};
-
-
-cbuffer Handler : register(b0)
-{
-	int GroupDim;
-	uint MaxParticles;
-	float DeltaTime;
-};
-
-struct SortedElement
-{
-	uint index;
-	float depth;
-};
+#include "ParticlesCommon.hlsl"
 
 RWStructuredBuffer<Particle> Particles : register(u0);
 AppendStructuredBuffer<uint> DeadParticles : register(u1);
 AppendStructuredBuffer<SortedElement> SortedParticles : register(u2);
 
 #define THREAD_GROUP_X 32
-#define THREAD_GROUP_Y 24
-#define THREAD_GROUP_TOTAL 768
+#define THREAD_GROUP_Y 32
+#define THREAD_GROUP_TOTAL 1024
 
 float3 _calculate(float3 anchor, float3 position)
 {
@@ -57,15 +28,15 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 	Particle particle = Particles[index];
 
 	[branch]
-	if (particle.Age <= 0.0f)
+	if (particle.Age >= particle.LifeTime)
 		return;
 
-	particle.Age -= DeltaTime;
+	particle.Age += DeltaTime;
 
 	[branch]
-	if (particle.Age <= 0.0f)
+	if (particle.Age >= particle.LifeTime || particle.Age < 0)
 	{
-		DeadParticles.Append(index);
+		DeadParticles.Append(index + 1);
 		return;
 	}
 
@@ -79,7 +50,7 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 	particle.Position = position + velocity * DeltaTime;
 	particle.Velocity = velocity;
 
-	float lifeDelta = 1 - particle.Age / particle.LifeTime;
+	float lifeDelta = particle.Age / particle.LifeTime;
 
 	particle.Color = lerp(particle.StartColor, particle.EndColor, lifeDelta);
 	particle.Size = lerp(particle.StartSize, particle.EndSize, lifeDelta);

@@ -16,5 +16,7 @@ struct RenderSettings
 	static constexpr bool DeferredRendering = false;
 
 	static constexpr uint32_t ShadowMapSlot = 9;
+
+	static constexpr uint32_t MaxParticles = 1024 * 1024;
 };
 

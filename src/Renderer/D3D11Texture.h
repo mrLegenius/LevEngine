@@ -144,10 +144,11 @@ public:
 
 	ID3D11Resource* GetTextureResource() const;
 	void Resize2D(uint16_t width, uint16_t height);
-	const ID3D11ShaderResourceView* GetShaderResourceView() const { return m_ShaderResourceView; }
+	ID3D11ShaderResourceView* GetShaderResourceView() const { return m_ShaderResourceView; }
 	ID3D11RenderTargetView* GetRenderTargetView() const { return m_RenderTargetView; }
 	ID3D11DepthStencilView* GetDepthStencilView() const { return m_DepthStencilView; }
 	ID3D11UnorderedAccessView* GetUnorderedAccessView() const { return m_UnorderedAccessView; }
+	ID3D11SamplerState* GetSamplerState() const { return m_SamplerState; }
 
 	[[nodiscard]] Ref<Texture> GetSlice(unsigned slice) const override { return nullptr; }
 	[[nodiscard]] uint16_t GetDepth() const override { return m_NumSlices; }
