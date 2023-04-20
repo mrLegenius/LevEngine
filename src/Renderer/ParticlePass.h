@@ -32,11 +32,13 @@ class ParticlePass : public RenderPass
 
 			alignas(16) Color StartColor;
 			alignas(16) Color EndColor;
-			//
+
+			//<--- 16 byte ---<<
 			float StartSize;
 			float EndSize;
 			float LifeTime;
-			//
+
+			//<--- 16 byte ---<<
 		};
 
 		BirthParams Birth;

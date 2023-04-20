@@ -101,7 +101,7 @@ PixelOutput PSMain(PixelInput input)
     PixelOutput output;
 
     float4 particle = ParticleTexture.Sample(ParticleSampler, input.UV);
-    particle.a = particle.r;
+    //particle.a = particle.r;
     output.Color = particle * input.Color;
 
     return output;
