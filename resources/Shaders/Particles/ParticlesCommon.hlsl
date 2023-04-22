@@ -22,7 +22,14 @@ struct SortedElement
 	float depth;
 };
 
-cbuffer Handler : register(b0)
+cbuffer CameraParams : register(b0) // матрицы вида и проекции
+{
+	row_major matrix View;
+	row_major matrix Projection;
+	float3 Position;
+};
+
+cbuffer Handler : register(b1)
 {
 	int GroupDim;
 	uint MaxParticles;

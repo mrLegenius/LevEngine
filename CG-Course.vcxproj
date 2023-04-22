@@ -156,6 +156,7 @@
     <ClCompile Include="src\Kernel\UUID.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
+    <ClCompile Include="src\Renderer\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="src\Renderer\ClearPass.cpp" />
     <ClCompile Include="src\Renderer\D3D11BlendState.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="src\Random.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
     <ClInclude Include="src\Renderer\3D\SkyboxMesh.h" />
+    <ClInclude Include="src\Renderer\BitonicSort.h" />
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="src\Renderer\ClearFlags.h" />
     <ClInclude Include="src\Renderer\ClearPass.h" />

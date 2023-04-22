@@ -2,7 +2,7 @@
 
 RWStructuredBuffer<Particle> Particles : register(u0);
 AppendStructuredBuffer<uint> DeadParticles : register(u1);
-AppendStructuredBuffer<SortedElement> SortedParticles : register(u2);
+RWStructuredBuffer<float2> SortedParticles : register(u2);
 
 #define THREAD_GROUP_X 32
 #define THREAD_GROUP_Y 32
@@ -29,14 +29,22 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 
 	[branch]
 	if (particle.Age >= particle.LifeTime)
+	{
+		SortedParticles[index] = float2(index, 1000);
 		return;
+	}
 
 	particle.Age += DeltaTime;
 
 	[branch]
 	if (particle.Age >= particle.LifeTime || particle.Age < 0)
 	{
-		DeadParticles.Append(index + 1);
+		particle.Color = float4(1.0f, 0.0f, 1.0f, 1.0f);
+		particle.Size = 1;
+		Particles[index] = particle;
+
+		DeadParticles.Append(index);
+		SortedParticles[index] = float2(index, 1000);
 		return;
 	}
 
@@ -57,8 +65,7 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 
 	Particles[index] = particle;
 
-	SortedElement elem;
-	elem.index = index;
-	elem.depth = 0;
-	SortedParticles.Append(elem);
+	float depth = -length(Position - particle.Position);
+	SortedParticles[index] = float2(index, depth);
+	SortedParticles.IncrementCounter();
 }

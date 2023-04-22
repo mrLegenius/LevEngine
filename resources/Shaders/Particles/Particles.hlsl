@@ -1,13 +1,7 @@
 #include "ParticlesCommon.hlsl"
 
 StructuredBuffer<Particle> Particles : register(t0); // буфер частиц
-StructuredBuffer<SortedElement> SortedParticles : register(t2); // буфер частиц
-
-cbuffer Params : register(b0) // матрицы вида и проекции
-{
-    row_major matrix View;
-    row_major matrix Projection;
-};
+StructuredBuffer<float2> SortedParticles : register(t2); // буфер частиц
 
 // т.к. вертексов у нас нет, мы можем получить текущий ID вертекса при рисовании без использования Vertex Buffer
 struct VertexInput
@@ -33,7 +27,7 @@ PixelInput VSMain(VertexInput input)
 {
     PixelInput output;
 
-    uint particleIndex = SortedParticles[input.VertexID].index;
+    uint particleIndex = SortedParticles[input.VertexID].x;
     Particle particle = Particles[particleIndex];
 
     float4 worldPosition = float4(particle.Position, 1);

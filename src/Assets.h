@@ -199,7 +199,7 @@ namespace ShaderAssets
 		static Ref<D3D11Shader> shader;
 		if (shader) return shader;
 
-		shader = CreateRef<D3D11Shader>(GetShaderPath("Particles.hlsl"), ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
+		shader = CreateRef<D3D11Shader>(GetShaderPath("Particles/Particles.hlsl"), ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
 
 		return shader;
 	}
@@ -211,7 +211,7 @@ namespace ShaderAssets
 		static Ref<D3D11Shader> shader;
 		if (shader) return shader;
 
-		shader = CreateRef<D3D11Shader>(GetShaderPath("ParticlesCompute.hlsl"), ShaderType::Compute);
+		shader = CreateRef<D3D11Shader>(GetShaderPath("Particles/ParticlesCompute.hlsl"), ShaderType::Compute);
 
 		return shader;
 	}
@@ -223,7 +223,31 @@ namespace ShaderAssets
 		static Ref<D3D11Shader> shader;
 		if (shader) return shader;
 
-		shader = CreateRef<D3D11Shader>(GetShaderPath("ParticlesEmitter.hlsl"), ShaderType::Compute);
+		shader = CreateRef<D3D11Shader>(GetShaderPath("Particles/ParticlesEmitter.hlsl"), ShaderType::Compute);
+
+		return shader;
+	}
+
+	inline auto BitonicSort()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<D3D11Shader> shader;
+		if (shader) return shader;
+
+		shader = CreateRef<D3D11Shader>(GetShaderPath("Particles/BitonicSort.hlsl"), ShaderType::Compute);
+
+		return shader;
+	}
+
+	inline auto BitonicTranspose()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<D3D11Shader> shader;
+		if (shader) return shader;
+
+		shader = CreateRef<D3D11Shader>(GetShaderPath("Particles/BitonicTranspose.hlsl"), ShaderType::Compute);
 
 		return shader;
 	}

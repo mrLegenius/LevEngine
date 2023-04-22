@@ -7,6 +7,8 @@
 #include "RenderCommand.h"
 #include "RenderSettings.h"
 
+extern ID3D11DeviceContext* context;
+
 void BindTextureArray(Ref<D3D11Texture>* textures, uint32_t count)
 {
 	auto** srv = new ID3D11ShaderResourceView *[count];
@@ -30,8 +32,8 @@ ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
 	m_PipelineState.SetRenderTarget(mainRenderTarget);
 
 	m_CameraData = CreateRef<D3D11ConstantBuffer>(sizeof ParticleCameraData, 0);
-	m_ComputeData = CreateRef<D3D11ConstantBuffer>(sizeof Handler, 0);
-	m_EmitterData = CreateRef<D3D11ConstantBuffer>(sizeof Emitter, 1);
+	m_ComputeData = CreateRef<D3D11ConstantBuffer>(sizeof Handler, 1);
+	m_EmitterData = CreateRef<D3D11ConstantBuffer>(sizeof Emitter, 2);
 
 	auto particles = new GPUParticleData[RenderSettings::MaxParticles];
 	auto indices = new uint32_t[RenderSettings::MaxParticles];
@@ -39,15 +41,18 @@ ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
 	for (int i = 0; i < RenderSettings::MaxParticles; ++i)
 	{
 		//particles[i].Age = -1;
-		indices[i] = i + 1; // RenderSettings::MaxParticles - i;
+		indices[i] = RenderSettings::MaxParticles - 1 - i;
 	}
 
 	m_ParticlesBuffer = CreateRef<D3D11StructuredBuffer>(particles, RenderSettings::MaxParticles, sizeof GPUParticleData, CPUAccess::None, true);
 	m_DeadBuffer = CreateRef<D3D11StructuredBuffer>(indices, RenderSettings::MaxParticles, sizeof uint32_t, CPUAccess::None, true, D3D11StructuredBuffer::UAVType::Append);
-	m_SortedBuffer = CreateRef<D3D11StructuredBuffer>(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true, D3D11StructuredBuffer::UAVType::Append);
+	m_SortedBuffer = CreateRef<D3D11StructuredBuffer>(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true, D3D11StructuredBuffer::UAVType::Counter);
+	m_TempBuffer = CreateRef<D3D11StructuredBuffer>(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true);
 
 	m_DeadBuffer->Bind(1, ShaderType::Compute, true, RenderSettings::MaxParticles);
 	m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
+
+	m_BitonicSort = CreateRef<BitonicSort>(RenderSettings::MaxParticles);
 
 	delete[] particles;
 	delete[] indices;
@@ -120,6 +125,10 @@ void ParticlePass::Process(RenderParams& params)
 
 	const Handler handler{ groupSizeY, RenderSettings::MaxParticles, deltaTime };
 	m_ComputeData->SetData(&handler);
+
+	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
+	m_CameraData->SetData(&cameraData);
+
 	m_DeadBuffer->Bind(1, ShaderType::Compute, true, -1);
 	
 	for (const auto entity : group)
@@ -174,16 +183,23 @@ void ParticlePass::Process(RenderParams& params)
 	m_ParticlesBuffer->Unbind(0, ShaderType::Compute, true);
 	m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
 	m_SortedBuffer->Unbind(2, ShaderType::Compute, true);
+
+	//<--- Sort ---<<
+	m_BitonicSort->Sort(m_SortedBuffer, m_TempBuffer);
+
 	//<--- Render ---<<
+	{
+		const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
+		m_CameraData->SetData(&cameraData);
+	}
+	
+	ShaderAssets::Particles()->Bind();
 
 	m_ParticlesBuffer->Bind(0, ShaderType::Vertex, false);
 	m_SortedBuffer->Bind(2, ShaderType::Vertex, false);
 
-	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection() };
-	m_CameraData->SetData(&cameraData);
-
 	m_PipelineState.Bind();
-	ShaderAssets::Particles()->Bind();
+	
 
 	TextureAssets::Particle()->Bind(1);
 	/*for (uint32_t i = 0; i < textureSlotIndex; i++)

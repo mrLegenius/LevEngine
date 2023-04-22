@@ -1,12 +1,11 @@
 #pragma once
 
+#include "BitonicSort.h"
 #include "PipelineState.h"
 #include "ParticleSystem.h"
 #include "RenderPass.h"
 #include "entt/entt.hpp""
 #include "Scene/Components/Components.h"
-
-extern ID3D11DeviceContext* context;
 
 class ParticlePass : public RenderPass
 {
@@ -14,6 +13,7 @@ class ParticlePass : public RenderPass
 	{
 		Matrix View;
 		Matrix Projection;
+		alignas(16) Vector3 Position;
 	};
 
 	struct alignas(16) Handler
@@ -63,6 +63,9 @@ private:
 	Ref<D3D11ConstantBuffer> m_CameraData{};
 	Ref<D3D11ConstantBuffer> m_ComputeData{};
 	Ref<D3D11ConstantBuffer> m_EmitterData{};
+	Ref<D3D11StructuredBuffer> m_TempBuffer{};
+
+	Ref<BitonicSort> m_BitonicSort{};
 
 	std::unordered_map<LevEngine::UUID, Ref<ParticleSystem>> m_ParticleSystems{};
 

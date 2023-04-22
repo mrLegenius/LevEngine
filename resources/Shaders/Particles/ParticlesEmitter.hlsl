@@ -1,6 +1,6 @@
 #include "ParticlesCommon.hlsl"
 
-cbuffer Emitter : register(b1)
+cbuffer Emitter : register(b2)
 {
 	struct BirthParams
 	{
@@ -26,7 +26,7 @@ ConsumeStructuredBuffer<uint> DeadParticles : register(u1);
 [numthreads(1, 1, 1)]
 void CSMain()
 {
-	const uint index = DeadParticles.Consume() - 1;
+	const uint index = DeadParticles.Consume();
 
 	if (index >= MaxParticles) return;
 
