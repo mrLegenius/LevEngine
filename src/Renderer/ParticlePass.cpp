@@ -64,6 +64,10 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 		? Random::Color(emitter.Birth.StartColor, emitter.Birth.StartColorB)
 		: emitter.Birth.StartColor;
 
+	Vector3 velocity = emitter.Birth.RandomVelocity
+		? Random::Vec3(emitter.Birth.Velocity, emitter.Birth.VelocityB)
+		: emitter.Birth.Velocity;
+
 	Vector3 position = emitter.Birth.RandomStartPosition
 		? Random::Vec3(emitter.Birth.Position, emitter.Birth.PositionB)
 		: emitter.Birth.Position;
@@ -78,7 +82,7 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 
 	auto emitterData = Emitter{
 			Emitter::BirthParams{
-				emitter.Birth.Velocity,
+				velocity,
 				transform.GetWorldPosition() + position,
 				color,
 				emitter.Birth.EndColor,

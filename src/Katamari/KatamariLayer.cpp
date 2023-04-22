@@ -73,10 +73,38 @@ void KatamariLayer::OnAttach()
 
     m_Scene = CreateRef<Scene>();
 
-    for (int i = 0; i < 0; i++)
+    for (int i = 0; i < 1; i++)
     {
         auto go = Prefabs::Gear(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
+
+        auto& particles = go.AddComponent<EmitterComponent>();
+        particles.Rate = 10;
+        particles.Texture = TextureAssets::Smoke();
+        particles.MaxParticles = 10000;
+        particles.Birth.GravityScale = 5;
+
+        particles.Birth.RandomVelocity = true;
+        particles.Birth.Velocity = Vector3{ -10, 20, -10 };
+        particles.Birth.VelocityB = Vector3{ 10, 20, 10 };
+
+        particles.Birth.RandomStartColor = true;
+        particles.Birth.StartColor = Color{ 0.06, 0.37, 0.611, 1 };
+        particles.Birth.StartColorB = Color{ 0.11, 0.64, 0.925, 1 };
+        particles.Birth.EndColor = Color{ 0.83, 0.945, 0.976, 0 };
+
+        particles.Birth.RandomStartSize = true;
+        particles.Birth.StartSize = 0.2f;
+        particles.Birth.StartSizeB = 0.5f;
+        particles.Birth.EndSize = 0.1f;
+
+        particles.Birth.RandomStartPosition = true;
+        particles.Birth.Position = Vector3{ -1, 0, -1 };
+        particles.Birth.PositionB = Vector3{ 1, 0, 1 };
+
+        particles.Birth.RandomStartLifeTime = true;
+        particles.Birth.LifeTime = 0.5;
+        particles.Birth.LifeTimeB = 1;
     }
 
     for (int i = 0; i < 0; i++)

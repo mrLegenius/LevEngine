@@ -92,7 +92,9 @@ struct EmitterComponent
 {
 	struct BirthParams
 	{
+		bool RandomVelocity = false;
 		Vector3 Velocity = Vector3::Zero;
+		Vector3 VelocityB = Vector3::Zero;
 
 		bool RandomStartPosition;
 		Vector3 Position = Vector3::Zero;
