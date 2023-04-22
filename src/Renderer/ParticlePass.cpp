@@ -143,7 +143,11 @@ void ParticlePass::Process(RenderParams& params)
 		//<--- Emit ---<<
 		
 		ShaderAssets::ParticlesEmitter()->Bind();
-		context->Dispatch(emitter.Rate, 1, 1);
+		const uint32_t deadParticlesCount = m_DeadBuffer->GetCounterValue();
+		auto particlesToEmit = min(deadParticlesCount, static_cast<uint32_t>(emitter.Rate));
+		if (particlesToEmit > 0)
+				context->Dispatch(particlesToEmit, 1, 1);
+		
 
 		/*float textureIndex = -1.0f;
 
