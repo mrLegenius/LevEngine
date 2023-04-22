@@ -149,7 +149,8 @@ void KatamariLayer::OnAttach()
     playerParticles.Rate = 10;
     playerParticles.Texture = TextureAssets::Smoke();
     playerParticles.MaxParticles = 10000;
-    playerParticles.Birth.Velocity = Vector3{ 0, 5, 0 };
+    playerParticles.Birth.Velocity = Vector3{ 0, 0, 0 };
+    playerParticles.Birth.GravityScale = 1;
 
     playerParticles.Birth.StartColor = Color{ 1, 1, 1, 1 };
     playerParticles.Birth.EndColor = Color{ 1, 1, 1, 0 };

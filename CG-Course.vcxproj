@@ -237,7 +237,6 @@
     <ClInclude Include="src\Renderer\D3D11ForwardTechnique.h" />
     <ClInclude Include="src\Renderer\D3D11StructuredBuffer.h" />
     <ClInclude Include="src\Renderer\ParticlePass.h" />
-    <ClInclude Include="src\Renderer\ParticleSystem.h" />
     <ClInclude Include="src\Renderer\PipelineState.h" />
     <ClInclude Include="src\Renderer\D3D11RenderTarget.h" />
     <ClInclude Include="src\Renderer\D3D11ShadowMap.h" />

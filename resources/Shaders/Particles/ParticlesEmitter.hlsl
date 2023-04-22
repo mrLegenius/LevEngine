@@ -10,11 +10,14 @@ cbuffer Emitter : register(b2)
 		float4 StartColor;
 		float4 EndColor;
 
+		//<--- 16 byte ---<<
 		float StartSize;
 		float EndSize;
-
 		float LifeTime;
 		uint TextureIndex;
+
+		//<--- 16 byte ---<<
+		float GravityScale;
 	};
 	
 	BirthParams Birth;
@@ -47,6 +50,8 @@ void CSMain()
 	particle.StartSize = Birth.StartSize;
 	particle.EndSize = Birth.EndSize;
 	particle.Size = Birth.StartSize;
+
+	particle.GravityScale = Birth.GravityScale;
 
 	Particles[index] = particle;
 }

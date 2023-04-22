@@ -111,6 +111,7 @@ struct EmitterComponent
 		bool RandomStartLifeTime;
 		float LifeTime = 1;
 		float LifeTimeB = 1;
+		float GravityScale = 0;
 	};
 
 	uint32_t MaxParticles = 10000;

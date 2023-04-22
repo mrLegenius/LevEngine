@@ -58,22 +58,6 @@ ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
 	delete[] indices;
 }
 
-Ref<ParticleSystem> ParticlePass::GetParticleSystem(EmitterComponent emitter, IDComponent id)
-{
-	Ref<ParticleSystem> particleSystem;
-	if (auto iterator = m_ParticleSystems.find(id.ID); iterator == m_ParticleSystems.end())
-	{
-		particleSystem = CreateRef<ParticleSystem>(emitter.MaxParticles);
-		m_ParticleSystems.emplace(id.ID, particleSystem);
-	}
-	else
-	{
-		particleSystem = iterator->second;
-	}
-
-	return particleSystem;
-}
-
 ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Transform transform) const
 {
 	Color color = emitter.Birth.RandomStartColor
@@ -101,6 +85,8 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 				size,
 				emitter.Birth.EndSize,
 				lifeTime,
+				0,
+				emitter.Birth.GravityScale,
 			},
 	};
 	return emitterData;
@@ -134,8 +120,6 @@ void ParticlePass::Process(RenderParams& params)
 	for (const auto entity : group)
 	{
 		auto [transform, emitter, id] = group.get<Transform, EmitterComponent, IDComponent>(entity);
-
-		const Ref<ParticleSystem> particleSystem = GetParticleSystem(emitter, id);
 
 		auto emitterData = GetEmitterData(emitter, transform);
 		m_EmitterData->SetData(&emitterData);

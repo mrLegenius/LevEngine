@@ -2,13 +2,31 @@
 
 #include "BitonicSort.h"
 #include "PipelineState.h"
-#include "ParticleSystem.h"
 #include "RenderPass.h"
 #include "entt/entt.hpp""
 #include "Scene/Components/Components.h"
 
 class ParticlePass : public RenderPass
 {
+	struct GPUParticleData
+	{
+		Vector3 Position;
+		Vector3 Velocity;
+
+		Color StartColor;
+		Color EndColor;
+		Color Color;
+
+		float StartSize;
+		float EndSize;
+		float Size;
+
+		float LifeTime;
+		float Age;
+		uint32_t TextureIndex;
+		float GravityScale;
+	};
+
 	struct ParticleCameraData
 	{
 		Matrix View;
@@ -38,7 +56,9 @@ class ParticlePass : public RenderPass
 			float EndSize;
 			float LifeTime;
 			uint32_t TextureIndex;
+
 			//<--- 16 byte ---<<
+			float GravityScale;
 		};
 
 		BirthParams Birth;
@@ -46,7 +66,6 @@ class ParticlePass : public RenderPass
 
 public:
 	ParticlePass(entt::registry& registry);
-	Ref<ParticleSystem> GetParticleSystem(EmitterComponent emitter, IDComponent id);
 	Emitter GetEmitterData(EmitterComponent emitter, Transform transform) const;
 
 	void Process(RenderParams& params) override;
@@ -66,8 +85,6 @@ private:
 	Ref<D3D11StructuredBuffer> m_TempBuffer{};
 
 	Ref<BitonicSort> m_BitonicSort{};
-
-	std::unordered_map<LevEngine::UUID, Ref<ParticleSystem>> m_ParticleSystems{};
 
 	void GetGroupSize(int totalCount, int& groupSizeX, int& groupSizeY) const;
 

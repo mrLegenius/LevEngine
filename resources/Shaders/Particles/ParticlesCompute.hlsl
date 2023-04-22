@@ -54,6 +54,7 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 
 	float3 Attractor = 0;
 	//velocity += _calculate(Attractor, position);
+	velocity += float3(0, -9.8f * DeltaTime * particle.GravityScale, 0);
 
 	particle.Position = position + velocity * DeltaTime;
 	particle.Velocity = velocity;

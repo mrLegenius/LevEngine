@@ -14,6 +14,7 @@ struct Particle
 	float Age;
 	float LifeTime;
 	float TextureIndex;
+	float GravityScale;
 };
 
 struct SortedElement

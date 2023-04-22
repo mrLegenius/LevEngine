@@ -380,9 +380,6 @@
     <ClInclude Include="src\Renderer\D3D11StructuredBuffer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\ParticleSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\Renderer\SkyboxPass.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
