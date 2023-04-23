@@ -1,4 +1,5 @@
 #include "ParticlePass.h"
+#include "ParticlePass.h"
 
 #include "Assets.h"
 #include "Random.h"
@@ -34,6 +35,7 @@ ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
 	m_CameraData = CreateRef<D3D11ConstantBuffer>(sizeof ParticleCameraData, 0);
 	m_ComputeData = CreateRef<D3D11ConstantBuffer>(sizeof Handler, 1);
 	m_EmitterData = CreateRef<D3D11ConstantBuffer>(sizeof Emitter, 2);
+	m_RandomData = CreateRef<D3D11ConstantBuffer>(sizeof RandomGPUData, 3);
 
 	auto particles = new GPUParticleData[RenderSettings::MaxParticles];
 	auto indices = new uint32_t[RenderSettings::MaxParticles];
@@ -60,7 +62,7 @@ ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
 	srand(time(nullptr));
 }
 
-ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Transform transform)
+ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex)
 {
 	RandomColor color{ emitter.Birth.StartColor, emitter.Birth.StartColorB, emitter.Birth.RandomStartColor };
 	RandomVector3 velocity{  (Vector4)emitter.Birth.Velocity, emitter.Birth.VelocityB, emitter.Birth.RandomVelocity };
@@ -77,7 +79,7 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 				size,
 				emitter.Birth.EndSize,
 				lifeTime,
-				0,
+				textureIndex,
 				emitter.Birth.GravityScale,
 			},
 	};
@@ -101,7 +103,7 @@ void ParticlePass::Process(RenderParams& params)
 
 	GetGroupSize(RenderSettings::MaxParticles, groupSizeX, groupSizeY);
 
-	const Handler handler{ groupSizeY, RenderSettings::MaxParticles, deltaTime, rand()};
+	const Handler handler{ groupSizeY, RenderSettings::MaxParticles, deltaTime};
 	m_ComputeData->SetData(&handler);
 
 	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
@@ -113,25 +115,13 @@ void ParticlePass::Process(RenderParams& params)
 	{
 		auto [transform, emitter, id] = group.get<Transform, EmitterComponent, IDComponent>(entity);
 
-		auto emitterData = GetEmitterData(emitter, transform);
-		m_EmitterData->SetData(&emitterData);
-
-		//<--- Emit ---<<
-		
-		ShaderAssets::ParticlesEmitter()->Bind();
-		const uint32_t deadParticlesCount = m_DeadBuffer->GetCounterValue();
-		auto particlesToEmit = min(deadParticlesCount, static_cast<uint32_t>(emitter.Rate));
-		if (particlesToEmit > 0)
-				context->Dispatch(particlesToEmit, 1, 1);
-		
-
-		/*float textureIndex = -1.0f;
+		int textureIndex = -1.0f;
 
 		for (uint32_t i = 0; i < textureSlotIndex; i++)
 		{
-			if (textureSlots[i]->GetRenderTargetView() == emitter.Texture->GetRenderTargetView())
+			if (textureSlots[i]->GetPath() == emitter.Texture->GetPath())
 			{
-				textureIndex = static_cast<float>(i);
+				textureIndex = i;
 				break;
 			}
 		}
@@ -144,11 +134,25 @@ void ParticlePass::Process(RenderParams& params)
 			}
 			else
 			{
-				textureIndex = static_cast<float>(textureSlotIndex);
+				textureIndex = textureSlotIndex;
 				textureSlots[textureSlotIndex] = emitter.Texture;
 				textureSlotIndex++;
 			}
-		}*/
+		}
+
+		auto emitterData = GetEmitterData(emitter, transform, textureIndex);
+		m_EmitterData->SetData(&emitterData);
+
+		RandomGPUData randomData{ rand() };
+		m_RandomData->SetData(&randomData);
+
+		//<--- Emit ---<<
+		
+		ShaderAssets::ParticlesEmitter()->Bind();
+		const uint32_t deadParticlesCount = m_DeadBuffer->GetCounterValue();
+		auto particlesToEmit = min(deadParticlesCount, static_cast<uint32_t>(emitter.Rate));
+		if (particlesToEmit > 0)
+				context->Dispatch(particlesToEmit, 1, 1);
 	}
 
 	//<--- Simulate ---<<
@@ -179,11 +183,10 @@ void ParticlePass::Process(RenderParams& params)
 	m_SortedBuffer->Bind(2, ShaderType::Vertex, false);
 
 	m_PipelineState.Bind();
-	
 
-	TextureAssets::Particle()->Bind(1);
-	/*for (uint32_t i = 0; i < textureSlotIndex; i++)
-		textureSlots[i]->Bind(i);*/
+	//TextureAssets::Particle()->Bind(1);
+	for (uint32_t i = 0; i < textureSlotIndex; i++)
+		textureSlots[i]->Bind(i+1);
 
 	const uint32_t particlesCount = m_SortedBuffer->GetCounterValue();
 	RenderCommand::DrawPointList(particlesCount);
@@ -194,8 +197,8 @@ void ParticlePass::Process(RenderParams& params)
 	m_PipelineState.Unbind();
 	ShaderAssets::Particles()->Unbind();
 	TextureAssets::Particle()->Unbind(1);
-	/*for (uint32_t i = 0; i < textureSlotIndex; i++)
-		textureSlots[i]->Unbind(i);*/
+	for (uint32_t i = 0; i < textureSlotIndex; i++)
+		textureSlots[i]->Unbind(i+1);
 }
 
 void ParticlePass::GetGroupSize(const int totalCount, int& groupSizeX, int& groupSizeY) const

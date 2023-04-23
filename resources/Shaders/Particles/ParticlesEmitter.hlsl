@@ -95,6 +95,11 @@ cbuffer Emitter : register(b2)
 	BirthParams Birth;
 };
 
+cbuffer RandomData : register(b3)
+{
+	uint RandomSeed;
+};
+
 RWStructuredBuffer<Particle> Particles : register(u0);
 ConsumeStructuredBuffer<uint> DeadParticles : register(u1);
 

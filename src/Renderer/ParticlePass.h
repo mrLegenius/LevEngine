@@ -39,7 +39,6 @@ class ParticlePass : public RenderPass
 		int GroupDim;
 		uint32_t MaxParticles;
 		float DeltaTime;
-		int RandomSeed;
 	};
 
 
@@ -90,11 +89,14 @@ class ParticlePass : public RenderPass
 		BirthParams Birth;
 	};
 
-	
+	struct RandomGPUData
+	{
+		alignas(16) int RandomSeed;
+	};
 
 public:
 	ParticlePass(entt::registry& registry);
-	static Emitter GetEmitterData(EmitterComponent emitter, Transform transform);
+	static Emitter GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex);
 
 	void Process(RenderParams& params) override;
 
@@ -110,6 +112,7 @@ private:
 	Ref<D3D11ConstantBuffer> m_CameraData{};
 	Ref<D3D11ConstantBuffer> m_ComputeData{};
 	Ref<D3D11ConstantBuffer> m_EmitterData{};
+	Ref<D3D11ConstantBuffer> m_RandomData{};
 	Ref<D3D11StructuredBuffer> m_TempBuffer{};
 
 	Ref<BitonicSort> m_BitonicSort{};

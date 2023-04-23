@@ -69,14 +69,40 @@ void GSMain(point PixelInput input[1], inout TriangleStream<PixelInput> stream)
 }
 
 Texture2D ParticleTexture0 : register(t1);
+Texture2D ParticleTexture1 : register(t2);
+Texture2D ParticleTexture2 : register(t3);
+Texture2D ParticleTexture3 : register(t4);
+Texture2D ParticleTexture4 : register(t5);
+Texture2D ParticleTexture5 : register(t6);
 
-SamplerState ParticleSampler : register(s1);
+SamplerState ParticleSampler0 : register(s1);
+SamplerState ParticleSampler1 : register(s2);
+SamplerState ParticleSampler2 : register(s3);
+SamplerState ParticleSampler3 : register(s4);
+SamplerState ParticleSampler4 : register(s5);
+SamplerState ParticleSampler5 : register(s6);
 
 PixelOutput PSMain(PixelInput input)
 {
     PixelOutput output;
+    float4 particle;
 
-    float4 particle = ParticleTexture0.Sample(ParticleSampler, input.UV);
+    switch (input.TextureIndex)
+    {
+    default:
+    case 0:
+        particle = ParticleTexture0.Sample(ParticleSampler0, input.UV); break;
+    case 1:
+        particle = ParticleTexture1.Sample(ParticleSampler1, input.UV); break;
+    case 2:
+        particle = ParticleTexture2.Sample(ParticleSampler2, input.UV); break;
+    case 3:
+        particle = ParticleTexture3.Sample(ParticleSampler3, input.UV); break;
+    case 4:
+        particle = ParticleTexture4.Sample(ParticleSampler4, input.UV); break;
+    case 5:
+        particle = ParticleTexture5.Sample(ParticleSampler5, input.UV); break;
+    }
     //particle.a = particle.r;
     output.Color = particle * input.Color;
 

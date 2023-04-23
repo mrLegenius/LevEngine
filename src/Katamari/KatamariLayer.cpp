@@ -73,14 +73,14 @@ void KatamariLayer::OnAttach()
 
     m_Scene = CreateRef<Scene>();
 
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 2; i++)
     {
         auto go = Prefabs::Gear(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
 
         auto& particles = go.AddComponent<EmitterComponent>();
         particles.Rate = 10;
-        particles.Texture = TextureAssets::Smoke();
+        particles.Texture = TextureAssets::Particle();
         particles.MaxParticles = 10000;
         particles.Birth.GravityScale = 5;
 
@@ -113,7 +113,7 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 3; i++)
     {
         auto entity = m_Scene->CreateEntity("LavaRock");
         auto& transform = entity.GetComponent<Transform>();
@@ -170,8 +170,8 @@ void KatamariLayer::OnAttach()
             particles.Birth.EndSize = 0.1f;
 
             particles.Birth.RandomStartPosition = true;
-            particles.Birth.Position = Vector3{ -3.5, -0.5, -3 };
-            particles.Birth.PositionB = Vector3{ 4, 0.5, 3 };
+            particles.Birth.Position = Vector3{ -3, -0.5, -2.5 };
+            particles.Birth.PositionB = Vector3{ 3, 0.5, 2.5 };
 
             particles.Birth.RandomStartLifeTime = true;
             particles.Birth.LifeTime = 0.5;
@@ -187,8 +187,8 @@ void KatamariLayer::OnAttach()
             particles.Texture = TextureAssets::Smoke();
             particles.Birth.Velocity = Vector3{ 0, 10, 0 };
 
-            particles.Birth.StartColor = LevEngine::Color{ 0x848884FF };
-            particles.Birth.EndColor = LevEngine::Color{ 0.0, 0, 0, 0 };
+            particles.Birth.StartColor = LevEngine::Color{ 0xFFFFFFFF };
+            particles.Birth.EndColor = LevEngine::Color{ 0xFFFFFF00 };
 
             particles.Birth.RandomStartSize = true;
             particles.Birth.StartSize = 0.5f;
@@ -196,8 +196,8 @@ void KatamariLayer::OnAttach()
             particles.Birth.EndSize = 0.1f;
 
             particles.Birth.RandomStartPosition = true;
-            particles.Birth.Position = Vector3{ -3, -0.5, -3 };
-            particles.Birth.PositionB = Vector3{ 3, 0.5, 3 };
+            particles.Birth.Position = Vector3{ -2, -0.5, -2 };
+            particles.Birth.PositionB = Vector3{ 2, 0.5, 2 };
 
             particles.Birth.RandomStartLifeTime = true;
             particles.Birth.LifeTime = 0.5;
@@ -246,8 +246,8 @@ void KatamariLayer::OnAttach()
     playerParticles.Birth.GravityScale = 0;
 
     playerParticles.Birth.RandomStartColor = true;
-    playerParticles.Birth.StartColor = LevEngine::Color{ 1, 0, 0, 1 };
-    playerParticles.Birth.StartColorB = LevEngine::Color{ 0, 1, 0, 1 };
+    playerParticles.Birth.StartColor = LevEngine::Color{ 1, 1, 1, 0.5 };
+    playerParticles.Birth.StartColorB = LevEngine::Color{ 1, 1, 1, 1 };
     playerParticles.Birth.EndColor = LevEngine::Color{ 1, 1, 1, 0 };
 
     playerParticles.Birth.RandomStartSize = true;
@@ -256,8 +256,8 @@ void KatamariLayer::OnAttach()
     playerParticles.Birth.EndSize = 0.1f;
 
     playerParticles.Birth.RandomStartPosition = true;
-    playerParticles.Birth.Position = Vector3{ -5, 0, -5 };
-    playerParticles.Birth.PositionB = Vector3{ 5, 0, 5 };
+    playerParticles.Birth.Position = Vector3{ -1, -1, -1 };
+    playerParticles.Birth.PositionB = Vector3{ 1, 1, 1 };
    
     playerParticles.Birth.RandomStartLifeTime = true;
     playerParticles.Birth.LifeTime = 0.5;
