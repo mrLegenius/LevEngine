@@ -35,5 +35,6 @@ cbuffer Handler : register(b1)
 	int GroupDim;
 	uint MaxParticles;
 	float DeltaTime;
+	uint RandomSeed;
 };
 

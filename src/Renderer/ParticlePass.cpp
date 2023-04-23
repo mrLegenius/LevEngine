@@ -56,34 +56,22 @@ ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
 
 	delete[] particles;
 	delete[] indices;
+
+	srand(time(nullptr));
 }
 
-ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Transform transform) const
+ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Transform transform)
 {
-	Color color = emitter.Birth.RandomStartColor
-		? Random::Color(emitter.Birth.StartColor, emitter.Birth.StartColorB)
-		: emitter.Birth.StartColor;
-
-	Vector3 velocity = emitter.Birth.RandomVelocity
-		? Random::Vec3(emitter.Birth.Velocity, emitter.Birth.VelocityB)
-		: emitter.Birth.Velocity;
-
-	Vector3 position = emitter.Birth.RandomStartPosition
-		? Random::Vec3(emitter.Birth.Position, emitter.Birth.PositionB)
-		: emitter.Birth.Position;
-
-	float size = emitter.Birth.RandomStartSize
-		? Random::Range(emitter.Birth.StartSize, emitter.Birth.StartSizeB)
-		: emitter.Birth.StartSize;
-
-	float lifeTime = emitter.Birth.RandomStartLifeTime
-		? Random::Range(emitter.Birth.LifeTime, emitter.Birth.LifeTimeB)
-		: emitter.Birth.LifeTime;
+	RandomColor color{ emitter.Birth.StartColor, emitter.Birth.StartColorB, emitter.Birth.RandomStartColor };
+	RandomVector3 velocity{  (Vector4)emitter.Birth.Velocity, emitter.Birth.VelocityB, emitter.Birth.RandomVelocity };
+	RandomVector3 position{ (Vector4)transform.GetWorldPosition() + emitter.Birth.Position, transform.GetWorldPosition() + emitter.Birth.PositionB, emitter.Birth.RandomStartPosition };
+	RandomFloat size{  emitter.Birth.StartSize, emitter.Birth.StartSizeB, emitter.Birth.RandomStartSize };
+	RandomFloat lifeTime{  emitter.Birth.LifeTime, emitter.Birth.LifeTimeB, emitter.Birth.RandomStartLifeTime };
 
 	auto emitterData = Emitter{
 			Emitter::BirthParams{
 				velocity,
-				transform.GetWorldPosition() + position,
+				position,
 				color,
 				emitter.Birth.EndColor,
 				size,
@@ -113,7 +101,7 @@ void ParticlePass::Process(RenderParams& params)
 
 	GetGroupSize(RenderSettings::MaxParticles, groupSizeX, groupSizeY);
 
-	const Handler handler{ groupSizeY, RenderSettings::MaxParticles, deltaTime };
+	const Handler handler{ groupSizeY, RenderSettings::MaxParticles, deltaTime, rand()};
 	m_ComputeData->SetData(&handler);
 
 	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };

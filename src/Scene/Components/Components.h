@@ -2,6 +2,7 @@
 #include <string>
 
 #include "OrbitCamera.h"
+#include "Kernel/Color.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Renderer/D3D11Texture.h"
 #include "Renderer/3D/Mesh.h"
@@ -96,21 +97,21 @@ struct EmitterComponent
 		Vector3 Velocity = Vector3::Zero;
 		Vector3 VelocityB = Vector3::Zero;
 
-		bool RandomStartPosition;
+		bool RandomStartPosition = false;
 		Vector3 Position = Vector3::Zero;
 		Vector3 PositionB = Vector3::Zero;
 
-		bool RandomStartColor;
-		::Color StartColor;
-		::Color StartColorB;
-		Color EndColor = ::Color{ 1, 1, 1, 1 };
+		bool RandomStartColor = false;
+		LevEngine::Color StartColor;
+		LevEngine::Color StartColorB;
+		LevEngine::Color EndColor = LevEngine::Color{ 1, 1, 1, 1 };
 
-		bool RandomStartSize;
+		bool RandomStartSize = false;
 		float StartSize = 0.1f;
 		float StartSizeB = 0.1f;
 		float EndSize = 0.1f;
 
-		bool RandomStartLifeTime;
+		bool RandomStartLifeTime = false;
 		float LifeTime = 1;
 		float LifeTimeB = 1;
 		float GravityScale = 0;

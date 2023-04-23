@@ -16,10 +16,10 @@ namespace LevEngine
     		, A(a) { }
 
         explicit Color(const uint32_t hex)
-            : R((hex >> 24) & 0xff)
-            , G((hex >> 16) & 0xff)
-            , B((hex >> 8) & 0xff)
-            , A((hex >> 0) & 0xff)
+            : R(((hex >> 24) & 0xff) / 255.0f)
+            , G(((hex >> 16) & 0xff) / 255.0f)
+            , B(((hex >> 8) & 0xff) / 255.0f)
+            , A(((hex >> 0) & 0xff) / 255.0f)
     	{ }
 
         float* Raw() { return &R; }

@@ -39,34 +39,62 @@ class ParticlePass : public RenderPass
 		int GroupDim;
 		uint32_t MaxParticles;
 		float DeltaTime;
+		int RandomSeed;
+	};
+
+
+	struct RandomFloat
+	{
+		float From;
+		float To;
+		int Randomize = false;
+
+		float pad;
+	};
+
+	struct RandomVector3
+	{
+		alignas(16) Vector4 From;
+		Vector3 To;
+		int Randomize = false;
+	};
+
+	struct RandomColor
+	{
+		alignas(16) LevEngine::Color From;
+		alignas(16) LevEngine::Color To;
+		int Randomize = false;
+
+		float pad[3];
 	};
 
 	struct Emitter
 	{
 		struct BirthParams
 		{
-			alignas(16) Vector3 Velocity = Vector3::Zero;
-			alignas(16) Vector3 Position = Vector3::Zero;
+			alignas(16) RandomVector3 Velocity;
+			alignas(16) RandomVector3 Position;
 
-			alignas(16) Color StartColor;
-			alignas(16) Color EndColor;
+			alignas(16) RandomColor StartColor;
+			alignas(16) LevEngine::Color EndColor;
 
-			//<--- 16 byte ---<<
-			float StartSize;
+			alignas(16) RandomFloat StartSize;
 			float EndSize;
-			float LifeTime;
-			uint32_t TextureIndex;
+			alignas(16) RandomFloat LifeTime;
 
 			//<--- 16 byte ---<<
+			uint32_t TextureIndex;
 			float GravityScale;
 		};
 
 		BirthParams Birth;
 	};
 
+	
+
 public:
 	ParticlePass(entt::registry& registry);
-	Emitter GetEmitterData(EmitterComponent emitter, Transform transform) const;
+	static Emitter GetEmitterData(EmitterComponent emitter, Transform transform);
 
 	void Process(RenderParams& params) override;
 

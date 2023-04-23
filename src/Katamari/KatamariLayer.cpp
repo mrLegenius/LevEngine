@@ -89,9 +89,9 @@ void KatamariLayer::OnAttach()
         particles.Birth.VelocityB = Vector3{ 10, 20, 10 };
 
         particles.Birth.RandomStartColor = true;
-        particles.Birth.StartColor = Color{ 0.06, 0.37, 0.611, 1 };
-        particles.Birth.StartColorB = Color{ 0.11, 0.64, 0.925, 1 };
-        particles.Birth.EndColor = Color{ 0.83, 0.945, 0.976, 0 };
+        particles.Birth.StartColor = LevEngine::Color{ 0.06, 0.37, 0.611, 1 };
+        particles.Birth.StartColorB = LevEngine::Color{ 0.11, 0.64, 0.925, 1 };
+        particles.Birth.EndColor = LevEngine::Color{ 0.83, 0.945, 0.976, 0 };
 
         particles.Birth.RandomStartSize = true;
         particles.Birth.StartSize = 0.2f;
@@ -113,32 +113,97 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 1; i++)
     {
-        auto go = Prefabs::LavaRock(m_Scene);
-        go.GetComponent<Transform>().SetWorldPosition(Vector3(10 * i, 10, 0));
+        auto entity = m_Scene->CreateEntity("LavaRock");
+        auto& transform = entity.GetComponent<Transform>();
 
-        auto& particles = go.AddComponent<EmitterComponent>();
-        particles.Rate = 10;
-        particles.Texture = TextureAssets::Fire();
-        particles.MaxParticles = 10000;
-        particles.Birth.Velocity = Vector3{ 0, 5, 0 };
+        //<--- Transform ---<<
+        {
+            transform.SetLocalScale(Vector3::One);
+            transform.SetWorldPosition(Vector3(10 * i, 20, 0));
+        }
 
-        particles.Birth.StartColor = Color{ 1, 0.7, 0, 1 };
-        particles.Birth.EndColor = Color{ 0.5, 0, 0, 0 };
+        //<--- Physics ---<<
+        {
+            constexpr auto colliderScale = 2.0f;
+            entity.AddComponent<BoxCollider>(Vector3(colliderScale, colliderScale, colliderScale));
+            auto& rb = entity.AddComponent<Rigidbody>();
 
-        particles.Birth.RandomStartSize = true;
-        particles.Birth.StartSize = 0.5f;
-        particles.Birth.StartSizeB = 1.0f;
-        particles.Birth.EndSize = 0.1f;
+            rb.gravityScale = 2;
+            rb.mass = 100.0f;
+            rb.InitCubeInertia(transform);
+        }
 
-        particles.Birth.RandomStartPosition = true;
-        particles.Birth.Position = Vector3{ -3.5, -0.5, -3 };
-        particles.Birth.PositionB = Vector3{ 4, 0.5, 3 };
+        //<--- Mesh ---<<
+        {
+            auto mesh = m_Scene->CreateEntity("LavaRockMesh");
 
-        particles.Birth.RandomStartLifeTime = true;
-        particles.Birth.LifeTime = 0.5;
-        particles.Birth.LifeTimeB = 1;
+            mesh.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
+            mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.2f);
+            mesh.GetComponent<Transform>().SetLocalRotation(Vector3{ 90.0f, 0.0f, -90.0f });
+            auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), LavaRockAssets::Mesh());
+            meshRenderer.ambientTexture = LavaRockAssets::AmbientTexture();
+            meshRenderer.diffuseTexture = LavaRockAssets::AmbientTexture();
+            meshRenderer.emissiveTexture = LavaRockAssets::EmissiveTexture();
+            meshRenderer.specularTexture = LavaRockAssets::SpecularTexture();
+            meshRenderer.normalTexture = LavaRockAssets::NormalTexture();
+        }
+
+        //<--- Fire Particles ---<<
+        {
+            auto fireParticles = m_Scene->CreateEntity("LavaRock Fire Particles");
+            fireParticles.GetComponent<Transform>().SetParent(&transform, false);
+            fireParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 0, 0 });
+            auto& particles = fireParticles.AddComponent<EmitterComponent>();
+            particles.Rate = 5;
+            particles.Texture = TextureAssets::Fire();
+            particles.MaxParticles = 10000;
+            particles.Birth.Velocity = Vector3{ 0, 5, 0 };
+
+            particles.Birth.StartColor = LevEngine::Color{ 1.0f, 0.7f, 0.0f, 1.0f };
+            particles.Birth.EndColor = LevEngine::Color{ 0.5, 0, 0, 0 };
+
+            particles.Birth.RandomStartSize = true;
+            particles.Birth.StartSize = 0.5f;
+            particles.Birth.StartSizeB = 1.0f;
+            particles.Birth.EndSize = 0.1f;
+
+            particles.Birth.RandomStartPosition = true;
+            particles.Birth.Position = Vector3{ -3.5, -0.5, -3 };
+            particles.Birth.PositionB = Vector3{ 4, 0.5, 3 };
+
+            particles.Birth.RandomStartLifeTime = true;
+            particles.Birth.LifeTime = 0.5;
+            particles.Birth.LifeTimeB = 1;
+        }
+
+        //<--- Smoke Particles ---<<
+        {
+            auto smokeParticles = m_Scene->CreateEntity("LavaRock Smoke Particles");
+            smokeParticles.GetComponent<Transform>().SetParent(&transform, false);
+            auto& particles = smokeParticles.AddComponent<EmitterComponent>();
+            particles.Rate = 1;
+            particles.Texture = TextureAssets::Smoke();
+            particles.Birth.Velocity = Vector3{ 0, 10, 0 };
+
+            particles.Birth.StartColor = LevEngine::Color{ 0x848884FF };
+            particles.Birth.EndColor = LevEngine::Color{ 0.0, 0, 0, 0 };
+
+            particles.Birth.RandomStartSize = true;
+            particles.Birth.StartSize = 0.5f;
+            particles.Birth.StartSizeB = 1.0f;
+            particles.Birth.EndSize = 0.1f;
+
+            particles.Birth.RandomStartPosition = true;
+            particles.Birth.Position = Vector3{ -3, -0.5, -3 };
+            particles.Birth.PositionB = Vector3{ 3, 0.5, 3 };
+
+            particles.Birth.RandomStartLifeTime = true;
+            particles.Birth.LifeTime = 0.5;
+            particles.Birth.LifeTimeB = 1;
+        }
+        
     }
 
     for (int i = 0; i < 0; i++)
@@ -147,7 +212,7 @@ void KatamariLayer::OnAttach()
         auto& light = go.AddComponent<PointLightComponent>();
         const auto color = Vector3(
             static_cast<float>(Random::Range(0, 100)) / 100.0f,
-            static_cast<float>(Random::Range(0, 100)) / 100.0f, 
+            static_cast<float>(Random::Range(0, 100)) / 100.0f,
             static_cast<float>(Random::Range(0, 100)) / 100.0f);
 
         light.Color = color;
@@ -174,23 +239,25 @@ void KatamariLayer::OnAttach()
     playerMesh.material = Materials::Ruby();
 
     auto& playerParticles = player.AddComponent<EmitterComponent>();
-    playerParticles.Rate = 10;
+    playerParticles.Rate = 2;
     playerParticles.Texture = TextureAssets::Smoke();
     playerParticles.MaxParticles = 10000;
     playerParticles.Birth.Velocity = Vector3{ 0, 0, 0 };
-    playerParticles.Birth.GravityScale = 1;
+    playerParticles.Birth.GravityScale = 0;
 
-    playerParticles.Birth.StartColor = Color{ 1, 1, 1, 1 };
-    playerParticles.Birth.EndColor = Color{ 1, 1, 1, 0 };
+    playerParticles.Birth.RandomStartColor = true;
+    playerParticles.Birth.StartColor = LevEngine::Color{ 1, 0, 0, 1 };
+    playerParticles.Birth.StartColorB = LevEngine::Color{ 0, 1, 0, 1 };
+    playerParticles.Birth.EndColor = LevEngine::Color{ 1, 1, 1, 0 };
 
     playerParticles.Birth.RandomStartSize = true;
-    playerParticles.Birth.StartSize = 1.0f;
-    playerParticles.Birth.StartSizeB = 1.5f;
+    playerParticles.Birth.StartSize = 0.5f;
+    playerParticles.Birth.StartSizeB = 0.75f;
     playerParticles.Birth.EndSize = 0.1f;
 
     playerParticles.Birth.RandomStartPosition = true;
-    playerParticles.Birth.Position = Vector3{ -1, 0, -1 };
-    playerParticles.Birth.PositionB = Vector3{ 1, 0, 1 };
+    playerParticles.Birth.Position = Vector3{ -5, 0, -5 };
+    playerParticles.Birth.PositionB = Vector3{ 5, 0, 5 };
    
     playerParticles.Birth.RandomStartLifeTime = true;
     playerParticles.Birth.LifeTime = 0.5;
