@@ -23,7 +23,7 @@ inline D3D11_DEPTH_WRITE_MASK ConvertDepthWriteMask(const DepthWrite depthWrite)
         result = D3D11_DEPTH_WRITE_MASK_ZERO;
         break;
     default:
-        assert(false && "Unknown depth write mask");
+        LEV_THROW("Unknown depth write mask");
         break;
     }
 
@@ -61,7 +61,7 @@ inline D3D11_COMPARISON_FUNC ConvertCompareFunc(const CompareFunction compareFun
         result = D3D11_COMPARISON_ALWAYS;
         break;
     default:
-        assert(false && "Unknown compare function");
+        LEV_THROW("Unknown compare function");
         break;
     }
 
@@ -99,7 +99,7 @@ inline D3D11_STENCIL_OP ConvertStencilOperation(const StencilOperation stencilOp
         result = D3D11_STENCIL_OP_DECR;
         break;
     default:
-        assert(false && "Unknown stencil operation");
+        LEV_THROW("Unknown stencil operation");
         break;
     }
 
@@ -144,8 +144,9 @@ void D3D11DepthStencilState::Bind()
         if (m_DepthStencilState)
             m_DepthStencilState->Release();
 
-        if (FAILED(device->CreateDepthStencilState(&desc, &m_DepthStencilState)))
-	        assert(false && "Failed to create depth stencil state.");
+        auto res = device->CreateDepthStencilState(&desc, &m_DepthStencilState);
+
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create depth stencil state")
 
         m_Dirty = false;
     }

@@ -37,7 +37,7 @@ D3D11TextureCube::D3D11TextureCube(const std::string paths[6])
 
 	const int pitch = width * 4;
 
-	assert((m_DataFormat != DXGI_FORMAT_UNKNOWN) && "Format is not supported!");
+	LEV_CORE_ASSERT(m_DataFormat != DXGI_FORMAT_UNKNOWN, "Format is not supported");
 
 	// Texture
 
@@ -70,7 +70,7 @@ D3D11TextureCube::D3D11TextureCube(const std::string paths[6])
 		&m_Texture
 	);
 
-	assert(SUCCEEDED(result));
+	LEV_CORE_ASSERT(SUCCEEDED(result));
 
 	for (auto& i : data)
 		stbi_image_free(i);
@@ -88,7 +88,7 @@ D3D11TextureCube::D3D11TextureCube(const std::string paths[6])
 		&m_ShaderResourceView
 	);
 
-	assert(SUCCEEDED(result));
+	LEV_CORE_ASSERT(SUCCEEDED(result));
 
 	// Sampler
 
@@ -111,7 +111,7 @@ D3D11TextureCube::D3D11TextureCube(const std::string paths[6])
 	result = device->CreateSamplerState(&ImageSamplerDesc,
 		&m_SamplerState);
 
-	assert(SUCCEEDED(result));
+	LEV_CORE_ASSERT(SUCCEEDED(result));
 }
 
 D3D11TextureCube::~D3D11TextureCube()

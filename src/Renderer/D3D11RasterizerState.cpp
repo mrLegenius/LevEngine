@@ -23,7 +23,7 @@ inline D3D11_FILL_MODE ConvertFillMode(const FillMode fillMode)
         result = D3D11_FILL_SOLID;
         break;
     default:
-        assert(false && "Unknown fill mode.");
+        LEV_THROW("Unknown fill mode")
         break;
     }
 
@@ -48,7 +48,7 @@ inline D3D11_CULL_MODE ConvertCullMode(const CullMode cullMode)
         // This mode is not supported in DX11.
         break;
     default:
-        assert(false && "Unknown cull mode.");
+        LEV_THROW("Unknown cull mode")
         break;
     }
 
@@ -67,7 +67,7 @@ bool ConvertFrontFace(const FrontFace frontFace)
         frontCounterClockwise = true;
         break;
     default:
-        assert(false && "Unknown front face winding order.");
+        LEV_THROW("Unknown front face winding order")
         break;
     }
 
@@ -102,8 +102,9 @@ void D3D11RasterizerState::Bind()
         if (m_RasterizerState)
             m_RasterizerState->Release();
 
-        if (FAILED(device->CreateRasterizerState(&rasterizerDesc, &m_RasterizerState)))
-	        assert(false && "Failed to create rasterizer state.");
+        auto res = device->CreateRasterizerState(&rasterizerDesc, &m_RasterizerState);
+
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create rasterizer state")
 
         m_StateDirty = false;
     }

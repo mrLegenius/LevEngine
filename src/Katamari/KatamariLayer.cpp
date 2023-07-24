@@ -60,11 +60,6 @@ class TestSystem : public System
 
             auto ortho = camera.camera.GetOrthographicSize();
             camera.camera.SetOrthographicSize(ortho + delta);
-
-            if (delta != 0)
-            {
-                std::cout << camera.camera.GetOrthographicSize() << std::endl;
-            }
         }
 	}
 };

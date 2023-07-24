@@ -78,7 +78,5 @@ public:
             
             otherTransform.SetParent(&transform);
         }
-
-        //std::cout << count << " collisions" << std::endl;
     }
 };

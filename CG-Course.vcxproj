@@ -119,7 +119,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>S:\Projects\C++\CG-Course\external\spdlog\include;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -214,6 +214,7 @@
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\Debug\Profiler.h" />
     <ClInclude Include="src\Katamari\KatamariPlayer.h" />
+    <ClInclude Include="src\Kernel\Asserts.h" />
     <ClInclude Include="src\Kernel\Color.h" />
     <ClInclude Include="src\Kernel\Logger.h" />
     <ClInclude Include="src\Kernel\Time.h" />

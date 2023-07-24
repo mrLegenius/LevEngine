@@ -49,25 +49,25 @@ D3D11Shader::D3D11Shader(const std::string& filepath, ShaderType shaderTypes)
 	if (shaderTypes & ShaderType::Vertex)
 	{
 		auto result = CreateVertexShader(m_VertexShader, m_VertexBC, filepath);
-		assert(result);
+		LEV_CORE_ASSERT(result, "Can't create vertex shader")
 	}
 
 	if (shaderTypes & ShaderType::Pixel)
 	{
 		auto result = CreatePixelShader(m_PixelShader, filepath);
-		assert(result);
+		LEV_CORE_ASSERT(result, "Can't create pixel shader")
 	}
 
 	if (shaderTypes & ShaderType::Geometry)
 	{
 		auto result = CreateGeometryShader(m_GeometryShader, filepath);
-		assert(result);
+		LEV_CORE_ASSERT(result, "Can't create geometry shader")
 	}
 
 	if (shaderTypes & ShaderType::Compute)
 	{
 		auto result = CreateComputeShader(m_ComputeShader, filepath);
-		assert(result);
+		LEV_CORE_ASSERT(result, "Can't create compute shader")
 	}
 }
 
@@ -134,12 +134,12 @@ bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SH
 		{
 			const char* compileErrors = static_cast<char*>(errorCode->GetBufferPointer());
 
-			std::cout << compileErrors << std::endl;
+			Log::CoreError(compileErrors);
 		}
 		// If there was  nothing in the error message then it simply could not find the shader file itself.
 		else
 		{
-			std::cout << shaderFilepath << " Missing shader file" << std::endl;
+			Log::CoreError("{0} is missing shader file", shaderFilepath);
 		}
 
 		assert(false);

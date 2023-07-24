@@ -15,10 +15,7 @@ void D3D11RenderTarget::Bind()
 
     if (m_CheckValidity)
     {
-        if (!IsValid())
-        {
-            assert(false && "Invalid render target");
-        }
+        LEV_CORE_ASSERT(IsValid(), "Invalid render target")
         m_CheckValidity = false;
     }
 

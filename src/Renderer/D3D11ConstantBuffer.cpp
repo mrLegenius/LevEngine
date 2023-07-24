@@ -23,11 +23,7 @@ D3D11ConstantBuffer::D3D11ConstantBuffer(const uint32_t size, const uint32_t slo
 
 	const auto result = device->CreateBuffer(&bufferDesc, nullptr, &m_Buffer);
 
-	if (FAILED(result))
-	{
-		std::cout << "Unable to create constant buffer with size " << size << " and slot " << slot << std::endl;
-		assert(false);
-	}
+	LEV_CORE_ASSERT(SUCCEEDED(result), "Unable to create constant buffer")
 }
 
 D3D11ConstantBuffer::~D3D11ConstantBuffer()
@@ -37,7 +33,7 @@ D3D11ConstantBuffer::~D3D11ConstantBuffer()
 
 void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size) const
 {
-	assert(m_Buffer && "Trying to SetData with null buffer");
+	LEV_CORE_ASSERT(m_Buffer != nullptr, "Trying to SetData with null buffer");
 		
 	const auto actualSize = size ? size : m_Size;
 	D3D11_MAPPED_SUBRESOURCE resource;

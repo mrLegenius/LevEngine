@@ -1286,7 +1286,7 @@ Texture::TextureFormat ConvertFormat(DXGI_FORMAT format, uint8_t numSamples)
         result.StencilBits = 0;
         break;
     default:
-        assert(false && "Unsupported DXGI format");
+        LEV_THROW("Unsupported DXGI format");
         break;
     }
 
@@ -1567,7 +1567,7 @@ uint8_t GetBPP(DXGI_FORMAT format)
         bpp = 32;
         break;
     default:
-        assert(false && "Unsupported texture format");
+        LEV_THROW("Unsupported texture format");
         break;
     }
 
@@ -1628,31 +1628,25 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(uint16_t width, uint16_t height,
     texture->m_BPP = LevEngine::GetBPP(texture->m_TextureResourceFormat);
 
     // Query for texture format support.
-    if (FAILED(device->CheckFormatSupport(texture->m_TextureResourceFormat, &texture->m_TextureResourceFormatSupport)))
-    {
-        assert(false && "Failed to query texture resource format support");
-    }
-    if (FAILED(device->CheckFormatSupport(texture->m_DepthStencilViewFormat, &texture->m_DepthStencilViewFormatSupport)))
-    {
-        assert(false && "Failed to query depth/stencil format support");
-    }
-    if (FAILED(device->CheckFormatSupport(texture->m_ShaderResourceViewFormat, &texture->m_ShaderResourceViewFormatSupport)))
-    {
-        assert(false && "Failed to query shader resource format support");
-    }
-    if (FAILED(device->CheckFormatSupport(texture->m_RenderTargetViewFormat, &texture->m_RenderTargetViewFormatSupport)))
-    {
-        assert(false && "Failed to query render target format support");
-    }
-    if (FAILED(device->CheckFormatSupport(texture->m_UnorderedAccessViewFormat, &texture->m_UnorderedAccessViewFormatSupport)))
-    {
-        assert(false && "Failed to query uav format support");
-    }
-    if ((texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D) == 0)
-    {
-        assert(false && "Unsupported texture format for 2D textures");
-        //ReportTextureFormatError(m_TextureFormat, "Unsupported texture format for 2D textures.");
-    }
+    auto res = device->CheckFormatSupport(texture->m_TextureResourceFormat, &texture->m_TextureResourceFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query texture resource format support")
+
+	res = device->CheckFormatSupport(texture->m_DepthStencilViewFormat, &texture->m_DepthStencilViewFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query depth/stencil format support")
+
+    res = device->CheckFormatSupport(texture->m_ShaderResourceViewFormat, &texture->m_ShaderResourceViewFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query shader resource format support")
+
+    res = device->CheckFormatSupport(texture->m_RenderTargetViewFormat, &texture->m_RenderTargetViewFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query render target format support")
+
+    res = device->CheckFormatSupport(texture->m_UnorderedAccessViewFormat, &texture->m_UnorderedAccessViewFormatSupport);
+	LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query uav format support")
+
+	const auto textureFormatSupported = texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D;
+
+    LEV_CORE_ASSERT(textureFormatSupported, "Unsupported texture format for 2D textures")
+
     // Can the texture be dynamically modified on the CPU?
     texture->m_Dynamic = (int)texture->m_CPUAccess != 0 && (texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_CPU_LOCKABLE) != 0;
     // Can mipmaps be automatically generated for this texture format?
@@ -1688,19 +1682,14 @@ D3D11Texture::D3D11Texture(const std::string& path)
     }
     else
     {
-        assert(false && "Unsupported number of channels");
+        LEV_THROW("Unsupported number of channels");
     }
 
-    if (FAILED(device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport)))
-    {
-        assert(false && "Failed to query format support");
-    }
-    if ((m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D) == 0)
-    {
-        assert(false && "Unsupported texture format for 2D textures");
-        //ReportTextureFormatError(m_TextureFormat, "Unsupported texture format for 2D textures.");
-        return;
-    }
+    auto res = device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query format support")
+
+	auto textureFormatSupported = m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D;
+    LEV_CORE_ASSERT(textureFormatSupported, "Unsupported texture format for 2D textures")
 
 	// Texture
 
@@ -1755,7 +1744,7 @@ D3D11Texture::D3D11Texture(const std::string& path)
 		&m_Texture2D
 	);
 
-	assert(SUCCEEDED(result));
+	LEV_CORE_ASSERT(SUCCEEDED(result));
 
 	//Shader resource view
 
@@ -1772,7 +1761,7 @@ D3D11Texture::D3D11Texture(const std::string& path)
 		&m_ShaderResourceView
 	);
 
-	assert(SUCCEEDED(result));
+    LEV_CORE_ASSERT(SUCCEEDED(result));
 
     if (m_GenerateMipMaps)
     {
@@ -1803,7 +1792,7 @@ D3D11Texture::D3D11Texture(const std::string& path)
 	result = device->CreateSamplerState(&ImageSamplerDesc,
 		&m_SamplerState);
 
-	assert(SUCCEEDED(result));
+    LEV_CORE_ASSERT(SUCCEEDED(result));
 
     stbi_image_free(data);
 }
@@ -1870,7 +1859,7 @@ ID3D11Resource* D3D11Texture::GetTextureResource() const
 		resource = m_Texture3D;
 		break;
 	default:
-		assert(false && "Unknown texture dimension.");
+		LEV_THROW("Unknown texture dimension");
 		break;
 	}
 
@@ -1937,11 +1926,8 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 
     textureDesc.MiscFlags = m_GenerateMipMaps ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
 
-    if (FAILED(device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D)))
-    {
-	    assert(false && "Failed to create texture");
-	    return;
-    }
+    auto res = device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture")
 
     if ((textureDesc.BindFlags & D3D11_BIND_DEPTH_STENCIL) != 0)
     {
@@ -1979,10 +1965,8 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 		    }
 	    }
 
-	    if (FAILED(device->CreateDepthStencilView(m_Texture2D, &depthStencilViewDesc, &m_DepthStencilView)))
-	    {
-		    assert(false && "Failed to create depth/stencil view");
-	    }
+        res = device->CreateDepthStencilView(m_Texture2D, &depthStencilViewDesc, &m_DepthStencilView);
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create depth/stencil view")
     }
 
     if ((textureDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE) != 0)
@@ -2021,15 +2005,11 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 			    resourceViewDesc.Texture2D.MostDetailedMip = 0;
 		    }
 	    }
+        res = device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView);
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
 
-	    if (FAILED(device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView)))
-	    {
-		    assert(false && "Failed to create texture resource view.");
-	    }
-	    else if (m_GenerateMipMaps)
-	    {
+	    if (m_GenerateMipMaps)
 		    context->GenerateMips(m_ShaderResourceView);
-	    }
     }
 
     if ((textureDesc.BindFlags & D3D11_BIND_RENDER_TARGET) != 0)
@@ -2068,16 +2048,13 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 		    }
 	    }
 
-	    if (FAILED(device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView)))
-	    {
-		    assert(false && "Failed to create render target view.");
-	    }
+        res = device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView);
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create render target view")
     }
 
     if ((textureDesc.BindFlags & D3D11_BIND_UNORDERED_ACCESS) != 0)
     {
-	    // UAVs cannot be multi sampled.
-	    assert(m_SampleDesc.Count == 1);
+	    LEV_CORE_ASSERT(m_SampleDesc.Count == 1, "UAVs cannot be multi sampled");
 
 	    // Create a Shader resource view for the texture.
 	    D3D11_UNORDERED_ACCESS_VIEW_DESC unorderedAccessViewDesc;
@@ -2096,13 +2073,11 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 		    unorderedAccessViewDesc.Texture2D.MipSlice = 0;
 	    }
 
-	    if (FAILED(device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView)))
-	    {
-		    assert(false && "Failed to create unordered access view.");
-	    }
+        res = device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView);
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create unordered access view")
     }
 
-    assert(m_BPP > 0 && m_BPP % 8 == 0);
+    LEV_CORE_ASSERT(m_BPP > 0 && m_BPP % 8 == 0);
     m_Buffer.resize(width * height * (m_BPP / 8));
 }
 
@@ -2126,7 +2101,7 @@ void D3D11Texture::Resize(uint16_t width, uint16_t height, uint16_t depth)
 		//ResizeCube(width); //TODO: TextureCube Support
 		break;
 	default:
-		assert(false && "Unknown texture dimension.");
+		LEV_THROW("Unknown texture dimension");
 		break;
 	}
 }
@@ -2159,7 +2134,7 @@ void D3D11Texture::Copy(Ref<Texture> other)
         }
         else
         {
-            assert(false && "Incompatible source texture");
+            LEV_THROW("Incompatible source texture");
         }
     }
 
@@ -2168,8 +2143,8 @@ void D3D11Texture::Copy(Ref<Texture> other)
         D3D11_MAPPED_SUBRESOURCE mappedResource;
 
         // Copy the texture data from the texture resource
-        if (FAILED(context->Map(m_Texture2D, 0, D3D11_MAP_READ, 0, &mappedResource)))
-	        assert(false && "Failed to map texture resource for reading.");
+        auto res = context->Map(m_Texture2D, 0, D3D11_MAP_READ, 0, &mappedResource);
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to map texture resource for reading")
 
         memcpy_s(m_Buffer.data(), m_Buffer.size(), mappedResource.pData, m_Buffer.size());
 

@@ -27,7 +27,7 @@ D3D11CascadeShadowMap::D3D11CascadeShadowMap(uint32_t width, uint32_t height) : 
         &m_Texture
     );
 
-    assert(SUCCEEDED(hr) && "Can't create a Texture2D for DepthBuffer");
+    LEV_CORE_ASSERT(SUCCEEDED(hr), "Can't create a Texture2D for DepthBuffer");
 
 
     D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
@@ -42,7 +42,7 @@ D3D11CascadeShadowMap::D3D11CascadeShadowMap(uint32_t width, uint32_t height) : 
         &m_ShaderResourceView
     );
 
-    assert(SUCCEEDED(hr) && "Can't create a ShaderResourceView for DepthBuffer");
+    LEV_CORE_ASSERT(SUCCEEDED(hr), "Can't create a ShaderResourceView for DepthBuffer");
 
     D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
     ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
@@ -56,7 +56,7 @@ D3D11CascadeShadowMap::D3D11CascadeShadowMap(uint32_t width, uint32_t height) : 
         &m_DepthStencilView
     );
 
-    assert(SUCCEEDED(hr) && "Can't create a DepthStencilView for DepthBuffer");
+    LEV_CORE_ASSERT(SUCCEEDED(hr), "Can't create a DepthStencilView for DepthBuffer");
 
     D3D11_SAMPLER_DESC comparisonSamplerDesc;
     ZeroMemory(&comparisonSamplerDesc, sizeof(D3D11_SAMPLER_DESC));
@@ -81,7 +81,7 @@ D3D11CascadeShadowMap::D3D11CascadeShadowMap(uint32_t width, uint32_t height) : 
         &comparisonSamplerDesc,
         &m_SamplerState);
 
-    assert(SUCCEEDED(hr) && "Can't create a SamplerState for DepthBuffer");
+    LEV_CORE_ASSERT(SUCCEEDED(hr), "Can't create a SamplerState for DepthBuffer");
 
     CD3D11_RASTERIZER_DESC rastDesc = {};
     rastDesc.CullMode = D3D11_CULL_NONE;
@@ -90,7 +90,7 @@ D3D11CascadeShadowMap::D3D11CascadeShadowMap(uint32_t width, uint32_t height) : 
 
     auto res = device->CreateRasterizerState(&rastDesc, &m_RastState);
 
-    assert(SUCCEEDED(hr) && "Can't create a RasterizerState for DepthBuffer");
+    LEV_CORE_ASSERT(SUCCEEDED(hr), "Can't create a RasterizerState for DepthBuffer");
 }
 
 D3D11CascadeShadowMap::~D3D11CascadeShadowMap()

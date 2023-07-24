@@ -59,8 +59,7 @@ void D3D11Context::Init(uint32_t width, uint32_t height, HWND window)
 		nullptr,
 		&context);
 
-	if (FAILED(res))
-		std::cout << "Failed to create device and swap chain";
+	LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create device and swap chain")
 
 	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_BackBuffer));
 

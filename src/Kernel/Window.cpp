@@ -47,8 +47,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 	{
 		const auto keyCode = static_cast<KeyCode>(wparam);
 
-		//std::cout << "Key pressed: " << static_cast<int>(keyCode) << std::endl;
-
 		KeyPressedEvent event(keyCode, 0);
 		data->eventCallback(event);
 
@@ -241,11 +239,9 @@ void Window::Init(const WindowAttributes& attributes)
 	Rid[1].dwFlags = 0;   // adds HID keyboard and also ignores legacy keyboard messages
 	Rid[1].hwndTarget = m_Window;
 
-	if (RegisterRawInputDevices(Rid, 2, sizeof(Rid[0])) == FALSE)
-	{
-		auto errorCode = GetLastError();
-		std::cout << "ERROR: " << errorCode << std::endl;
-	}
+	auto res = RegisterRawInputDevices(Rid, 2, sizeof(Rid[0]));
+	if (res == FALSE)
+		Log::CoreError("Error while registering raw input devices. Error code {0}", GetLastError());
 
 	m_Context = new D3D11Context();
 	m_Context->Init(attributes.width, attributes.height, m_Window);

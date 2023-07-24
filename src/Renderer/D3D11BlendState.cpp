@@ -71,7 +71,7 @@ D3D11_BLEND ConvertBlendFactor(const BlendFactor blendFactor)
         result = D3D11_BLEND_INV_SRC1_ALPHA;
         break;
     default:
-        assert(false && "Unknown blend factor");
+        LEV_THROW("Unknown blend factor")
         break;
     }
 
@@ -99,7 +99,7 @@ D3D11_BLEND_OP ConvertBlendOp(BlendOperation blendOperation)
         result = D3D11_BLEND_OP_MAX;
         break;
     default:
-        assert(false && "Unknown blend operation");
+        LEV_THROW("Unknown blend operation")
         break;
     }
 

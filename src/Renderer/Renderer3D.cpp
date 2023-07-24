@@ -261,7 +261,7 @@ void Renderer3D::AddPointLights(const Vector4& positionViewSpace, const Vector3&
 
     if (s_LightningData.PointLightsCount >= RenderSettings::MaxPointLights)
     {
-        std::cout << "Trying to add point light beyond maximum" << std::endl;
+        Log::CoreWarning("Trying to add point light beyond maximum");
         return;
     }
 

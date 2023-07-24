@@ -16,6 +16,7 @@
 
 #include "Debugging/Profiler.h"
 #include "Kernel/Logger.h"
+#include "Kernel/Asserts.h"
 
 #ifdef LEV_PLATFORM_WINDOWS
 	#include <Windows.h>

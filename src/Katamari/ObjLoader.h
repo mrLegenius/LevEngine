@@ -30,7 +30,7 @@ public:
 
 		if (!file.is_open())
 		{
-			std::cout << "[ObjLoader] Can't open " << path << " file" << std::endl;
+			Log::CoreWarning("[ObjLoader] Can't open {0} file", path);
 			return nullptr;
 		}
 
@@ -88,6 +88,7 @@ public:
 					indices.emplace_back(verticesCount + 0);
 					indices.emplace_back(verticesCount + 2);
 					indices.emplace_back(verticesCount + 3);
+
 					verticesCount += 4;
 				}
 
@@ -95,8 +96,17 @@ public:
 					"f %d//%d %d//%d %d//%d %d//%d",
 					&v1, &n1, &v2, &n2, &v3, &n3, &v4, &n4) == 8)
 				{
-					std::cout << "successful read of face4x2" << std::endl;
-					//TODO
+					position_indices.emplace_back(v1);
+					position_indices.emplace_back(v2);
+					position_indices.emplace_back(v3);
+					position_indices.emplace_back(v4);
+
+					normal_indices.emplace_back(n1);
+					normal_indices.emplace_back(n2);
+					normal_indices.emplace_back(n3);
+					normal_indices.emplace_back(n4);
+
+					verticesCount += 4;
 				}
 
 				else if (sscanf_s(ss.str().c_str(),
@@ -118,6 +128,7 @@ public:
 					indices.emplace_back(verticesCount);
 					indices.emplace_back(verticesCount + 1);
 					indices.emplace_back(verticesCount + 2);
+
 					verticesCount += 3;
 				}
 

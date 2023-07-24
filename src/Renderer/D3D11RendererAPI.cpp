@@ -41,7 +41,7 @@ static D3D11_COMPARISON_FUNC ConvertDepthFuncToD3DComparison(DepthFunc depthFunc
 	case DepthFunc::Always:
 		return D3D11_COMPARISON_ALWAYS;
 	default:
-		assert(false && "[D3D11 Renderer API] Unknown depth function");
+		LEV_THROW("[D3D11 Renderer API] Unknown depth function");
 	}
 }
 
@@ -112,8 +112,9 @@ void D3D11RendererAPI::Init()
 	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backTex));
 	device->CreateRenderTargetView(backTex, nullptr, &rtv);
 
-	if (!CreateRastState(rastState))
-		std::cout << "Failed to create rast state";
+	const auto res = CreateRastState(rastState);
+
+	LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create rast state")
 
 	D3D11_DEPTH_STENCIL_DESC dsDesc{ };
 	dsDesc.DepthEnable = true;

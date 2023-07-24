@@ -69,11 +69,9 @@ D3D11StructuredBuffer::D3D11StructuredBuffer(const void* data, size_t count, uin
     subResourceData.SysMemPitch = 0;
     subResourceData.SysMemSlicePitch = 0;
 
-    if (FAILED(device->CreateBuffer(&bufferDesc, &subResourceData, &m_Buffer)))
-    {
-        assert(false && "Failed to create read/write buffer");
-        return;
-    }
+    auto res = device->CreateBuffer(&bufferDesc, &subResourceData, &m_Buffer);
+
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create read/write buffer")
 
     if ((bufferDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE) != 0)
     {
@@ -83,11 +81,9 @@ D3D11StructuredBuffer::D3D11StructuredBuffer(const void* data, size_t count, uin
         srvDesc.Buffer.FirstElement = 0;
         srvDesc.Buffer.NumElements = m_uiCount;
 
-        if (FAILED(device->CreateShaderResourceView(m_Buffer, &srvDesc, &m_ShaderResourceView)))
-        {
-            assert(false && "Failed to create shader resource view.");
-            return;
-        }
+        res = device->CreateShaderResourceView(m_Buffer, &srvDesc, &m_ShaderResourceView);
+
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create shader resource view")
     }
 
     if ((bufferDesc.BindFlags & D3D11_BIND_UNORDERED_ACCESS) != 0)
@@ -99,11 +95,8 @@ D3D11StructuredBuffer::D3D11StructuredBuffer(const void* data, size_t count, uin
         uavDesc.Buffer.NumElements = m_uiCount;
         uavDesc.Buffer.Flags = ConvertUAVFlag(uavType);
 
-        if (FAILED(device->CreateUnorderedAccessView(m_Buffer, &uavDesc, &m_UnorderedAccessView)))
-        {
-            assert(false && "Failed to create unordered access view.");
-            return;
-        }
+        res = device->CreateUnorderedAccessView(m_Buffer, &uavDesc, &m_UnorderedAccessView);
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create unordered access view")
 
         if (uavType == UAVType::Append || uavType == UAVType::Counter)
         {
@@ -115,11 +108,8 @@ D3D11StructuredBuffer::D3D11StructuredBuffer(const void* data, size_t count, uin
             countBufferDesc.StructureByteStride = 0;
             countBufferDesc.ByteWidth = 4;
 
-            if (FAILED(device->CreateBuffer(&countBufferDesc, nullptr, &m_CountBuffer)))
-            {
-                assert(false && "Failed to create count buffer");
-                return;
-            }
+            res = device->CreateBuffer(&countBufferDesc, nullptr, &m_CountBuffer);
+            LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create count buffer")
         }
     }
 }
@@ -230,7 +220,7 @@ void D3D11StructuredBuffer::Copy(const Ref<D3D11StructuredBuffer> other)
     }
     else
     {
-        assert(false && "Source buffer is not compatible with this buffer");
+        LEV_THROW("Source buffer is not compatible with this buffer")
     }
 
     if (((int)m_CPUAccess & (int)CPUAccess::Read) != 0)
@@ -238,8 +228,9 @@ void D3D11StructuredBuffer::Copy(const Ref<D3D11StructuredBuffer> other)
         D3D11_MAPPED_SUBRESOURCE mappedResource;
 
         // Copy the texture data from the buffer resource
-        if (FAILED(context->Map(m_Buffer, 0, D3D11_MAP_READ, 0, &mappedResource)))
-	        assert(false && "Failed to map texture resource for reading");
+        auto res = context->Map(m_Buffer, 0, D3D11_MAP_READ, 0, &mappedResource);
+
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to map texture resource for reading")
 
         memcpy_s(m_Data.data(), m_Data.size(), mappedResource.pData, m_Data.size());
 
@@ -272,8 +263,9 @@ void D3D11StructuredBuffer::Commit()
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         // Copy the contents of the data buffer to the GPU.
 
-        if (FAILED(context->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
-	        assert(false && "Failed to map subresource");
+        auto res = context->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to map subresource")
 
         size_t sizeInBytes = m_Data.size();
         memcpy_s(mappedResource.pData, sizeInBytes, m_Data.data(), sizeInBytes);
@@ -286,17 +278,8 @@ void D3D11StructuredBuffer::Commit()
 
 uint32_t D3D11StructuredBuffer::GetCounterValue() const
 {
-    if (m_CountBuffer == nullptr)
-    {
-        assert(false && "Count buffer is null");
-        return 0;
-    }
-
-    if (m_UnorderedAccessView == nullptr)
-    {
-        assert(false && "UnorderedAccessView is null");
-        return 0;
-    }
+    LEV_CORE_ASSERT(m_CountBuffer != nullptr, "Count buffer is null");
+    LEV_CORE_ASSERT(m_UnorderedAccessView != nullptr, "UnorderedAccessView is null");
 
     context->CopyStructureCount(m_CountBuffer, 0, m_UnorderedAccessView);
 
