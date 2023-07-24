@@ -17,6 +17,9 @@ public:
 	void StartDirectionalLightingPass();
 	void EndLightningPass();
 
+	Ref<D3D11Texture> GetDepthTexture() { return m_DepthTexture; }
+	Ref<D3D11Texture> GetNormalTexture() { return m_NormalTexture; }
+
 private:
 
 	Ref<D3D11Texture> m_DepthTexture = nullptr;

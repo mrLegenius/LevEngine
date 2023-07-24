@@ -16,6 +16,9 @@ float3 _calculate(float3 anchor, float3 position)
 	return direction * clamp((1 / (distance * distance)), 0.01, 1);
 }
 
+Texture2D normalTexture : register(t8);
+Texture2D depthTexture : register(t9);
+
 [numthreads(THREAD_GROUP_X, THREAD_GROUP_Y, 1)]
 void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 {
@@ -55,6 +58,27 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 	float3 Attractor = 0;
 	//velocity += _calculate(Attractor, position);
 	velocity += float3(0, -9.8f * DeltaTime * particle.GravityScale, 0);
+
+	{//<--- particle bounce ---<<
+		float4 posViewSpace = mul(mul(float4(particle.Position, 1.0f), View), Projection);
+		posViewSpace = posViewSpace / posViewSpace.w;
+		float particleDepth = posViewSpace.z;
+
+		float2 uv = (posViewSpace.xy + float2(1.0f, 1.0f)) / 2;
+		uv.y = 1.0f - uv.y;
+
+		float bufferWidth, bufferHeight;
+		normalTexture.GetDimensions(bufferWidth, bufferHeight);
+		uv.xy *= float2(bufferWidth, bufferHeight);
+
+		float4 normal = normalTexture.Load(int3(uv, 0));
+		float depth = depthTexture.Load(int3(uv, 0)).r;
+
+		if (particleDepth > depth && (particleDepth - depth) <= 0.001f)
+		{
+			velocity = reflect(float4(velocity, 1.0f), normal);
+		}
+	}
 
 	particle.Position = position + velocity * DeltaTime;
 	particle.Velocity = velocity;

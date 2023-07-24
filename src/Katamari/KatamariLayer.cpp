@@ -73,13 +73,13 @@ void KatamariLayer::OnAttach()
 
     m_Scene = CreateRef<Scene>();
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 1; i++)
     {
         auto go = Prefabs::Gear(m_Scene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
 
         auto& particles = go.AddComponent<EmitterComponent>();
-        particles.Rate = 10;
+        particles.Rate = 1;
         particles.Texture = TextureAssets::Particle();
         particles.MaxParticles = 10000;
         particles.Birth.GravityScale = 5;
@@ -104,7 +104,7 @@ void KatamariLayer::OnAttach()
 
         particles.Birth.RandomStartLifeTime = true;
         particles.Birth.LifeTime = 0.5;
-        particles.Birth.LifeTimeB = 1;
+        particles.Birth.LifeTimeB = 5;
     }
 
     for (int i = 0; i < 0; i++)
@@ -113,7 +113,7 @@ void KatamariLayer::OnAttach()
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
     }
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 1; i++)
     {
         auto entity = m_Scene->CreateEntity("LavaRock");
         auto& transform = entity.GetComponent<Transform>();

@@ -29,9 +29,9 @@ void SkyboxPass::Process(RenderParams& params)
 		skybox.texture->Bind();
 		Renderer3D::DrawSkybox(skybox, params.CameraPerspectiveViewProjectionMatrix);
 		skybox.texture->Unbind();
+
+		ShaderAssets::Skybox()->Unbind();
+		m_SkyboxPipeline.Unbind();
 		break;
 	}
-
-	ShaderAssets::Skybox()->Unbind();
-	m_SkyboxPipeline.Unbind();
 }

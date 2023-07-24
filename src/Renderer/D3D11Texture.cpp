@@ -1825,6 +1825,10 @@ void D3D11Texture::Bind(const uint32_t slot) const
 	context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (m_SamplerState)
 		context->PSSetSamplers(slot, 1, &m_SamplerState);
+
+    context->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
+    if (m_SamplerState)
+        context->CSSetSamplers(slot, 1, &m_SamplerState);
 }
 
 void D3D11Texture::Clear(ClearFlags clearFlags, const DirectX::SimpleMath::Vector4& color, float depth, uint8_t stencil)
@@ -2183,6 +2187,7 @@ void D3D11Texture::Unbind(uint32_t slot) const
     context->PSSetShaderResources(slot, 1, srv);
     context->CSSetShaderResources(slot, 1, srv);
     context->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
+	context->CSSetSamplers(slot, 0, nullptr);
 }
 
 void D3D11Texture::GenerateMipMaps()

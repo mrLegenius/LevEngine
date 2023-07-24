@@ -77,6 +77,14 @@ void Renderer3D::EndScene()
     s_ForwardTechnique->End();
 }
 
+inline void TryUnbindTexture(const Ref<Texture> texture, const int slot)
+{
+    if (texture)
+    {
+        texture->Unbind(slot);
+    }
+}
+
 inline void TryBindTexture(const Ref<Texture> texture, int& hasTexture, const int slot)
 {
     if (texture)
@@ -155,6 +163,12 @@ void Renderer3D::DrawDeferredMesh(const Matrix& model, const MeshRendererCompone
     m_MaterialConstantBuffer->SetData(&material);
 
     DrawMesh(model, meshRenderer);
+
+    TryUnbindTexture(meshRenderer.emissiveTexture,0);
+    TryUnbindTexture(meshRenderer.ambientTexture, 1);
+    TryUnbindTexture(meshRenderer.diffuseTexture, 2);
+    TryUnbindTexture(meshRenderer.specularTexture,3);
+    TryUnbindTexture(meshRenderer.normalTexture, 4);
 }
 
 void Renderer3D::BeginDeferred(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position)

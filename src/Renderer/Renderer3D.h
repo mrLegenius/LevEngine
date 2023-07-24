@@ -80,6 +80,7 @@ public:
 	static void AddPointLights(const Vector4& positionViewSpace, const Vector3& position, const PointLightComponent& pointLight);
 	static void UpdateLights();
 	static void RenderSphere(const Matrix& model);
+	static Ref<D3D11DeferredTechnique> m_GBuffer;
 
 private:
 	static Ref<D3D11ConstantBuffer> m_ModelConstantBuffer;
@@ -88,7 +89,7 @@ private:
 	static Ref<D3D11ConstantBuffer> m_MaterialConstantBuffer;
 	static Ref<D3D11ConstantBuffer> m_ScreenToViewParamsConstantBuffer;
 
-	static Ref<D3D11DeferredTechnique> m_GBuffer;
+	
 	static Ref<D3D11ForwardTechnique> s_ForwardTechnique;
 
 	static Matrix m_ViewProjection;

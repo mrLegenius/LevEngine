@@ -29,7 +29,7 @@ float4 PSMain(PS_IN input) : SV_Target
 	int2 uv = input.pos.xy;
 	float depth = depthTexture.Load(int3(uv, 0)).r;
 	float4 fragPos = ScreenToView(float4(uv, depth, 1.0f));
-	float3 normal = normalTexture.Load(int3(uv, 0)).rgb;
+	float3 normal = mul(normalTexture.Load(int3(uv, 0)), cameraView).rgb;
 
 	float4 specularValues = specularTexture.Load(int3(uv, 0));
 	float shininess = exp2(specularValues.a * 10.5f);

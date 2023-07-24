@@ -469,6 +469,12 @@ void Scene::OnRender()
             s_SkyboxPass->Process(renderParams);
 
             Renderer3D::EndDeferredLightningPass();
+
+            Renderer3D::m_GBuffer->GetNormalTexture()->Bind(8);
+            Renderer3D::m_GBuffer->GetDepthTexture()->Bind(9);
+            s_ParticlePass->Process(renderParams);
+            Renderer3D::m_GBuffer->GetNormalTexture()->Unbind(8);
+            Renderer3D::m_GBuffer->GetDepthTexture()->Unbind(9);
         }
     }
 }
