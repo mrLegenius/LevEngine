@@ -1,6 +1,7 @@
 #pragma once
 #include "../System.h"
-
+namespace LevEngine
+{
 template<typename T>
 class EventSystem final : public System
 {
@@ -9,3 +10,4 @@ class EventSystem final : public System
 		registry.clear<T>();
 	}
 };
+}

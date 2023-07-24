@@ -1,6 +1,7 @@
 #pragma once
 #include "Camera/SceneCamera.h"
-
+namespace LevEngine
+{
 struct RenderParams
 {
     Vector3 CameraPosition;
@@ -8,3 +9,4 @@ struct RenderParams
     Matrix& CameraViewMatrix;
     Matrix& CameraPerspectiveViewProjectionMatrix;
 };
+}

@@ -7,7 +7,8 @@
 #include "3D/Mesh.h"
 #include "3D/SkyboxMesh.h"
 #include "Scene/Components/Components.h"
-
+namespace LevEngine
+{
 struct MeshModelBufferData
 {
 	Matrix Model;
@@ -99,3 +100,4 @@ private:
 	static PointLightData s_PointLights[RenderSettings::MaxPointLights];
 	static LightningData s_LightningData;
 };
+}

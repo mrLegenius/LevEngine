@@ -3,7 +3,8 @@
 
 #include "Buffer.h"
 #include "D3D11Shader.h"
-
+namespace LevEngine
+{
 class D3D11VertexBuffer final
 {
 public:
@@ -25,3 +26,4 @@ private:
 	uint32_t m_Size;
 	BufferLayout m_Layout;
 };
+}

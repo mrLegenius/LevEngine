@@ -3,7 +3,8 @@
 #include "D3D11DepthStencilState.h"
 #include "D3D11RasterizerState.h"
 #include "D3D11RenderTarget.h"
-
+namespace LevEngine
+{
 class PipelineState
 {
 public:
@@ -30,3 +31,4 @@ private:
     D3D11DepthStencilState m_DepthStencilState;
     Ref<D3D11RenderTarget> m_RenderTarget;
 };
+}

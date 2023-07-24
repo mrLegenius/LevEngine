@@ -13,7 +13,8 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxguid.lib")
-
+namespace LevEngine
+{
 ID3D11DeviceContext* context;
 Microsoft::WRL::ComPtr<ID3D11Device> device;
 IDXGISwapChain* swapChain;
@@ -94,4 +95,5 @@ void D3D11Context::SwapBuffers()
 		context->CopyResource(m_BackBuffer, colorBuffer->GetTextureResource());
 
 	swapChain->Present(0, /*DXGI_PRESENT_DO_NOT_WAIT*/ 0);
+}
 }

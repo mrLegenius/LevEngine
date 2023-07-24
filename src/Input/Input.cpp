@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Input.h"
 
+namespace LevEngine
+{
 std::unordered_map<KeyCode, Input::State> Input::s_CurrentKeyStates;
 std::unordered_map<KeyCode, Input::State> Input::s_PreviousKeyStates;
 std::unordered_map<MouseButton, Input::State> Input::s_ButtonStates;
@@ -134,4 +136,5 @@ void Input::Reset()
 	s_MouseWheelOffset = 0;
 	s_MousePreviousX = s_MousePositionX;
 	s_MousePreviousY = s_MousePositionY;
+}
 }

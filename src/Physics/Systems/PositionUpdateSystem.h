@@ -2,7 +2,8 @@
 #include "Components/Transform.h"
 #include "entt/entt.hpp"
 #include "Physics/Components/Rigidbody.h"
-
+namespace LevEngine
+{
 inline void UpdatePositionSystem(const float deltaTime, entt::registry& registry)
 {
     LEV_PROFILE_FUNCTION();
@@ -37,4 +38,5 @@ inline void UpdatePositionSystem(const float deltaTime, entt::registry& registry
         const float angularFrameDamping = powf(angularDampingFactor, deltaTime);
         rigidbody.angularVelocity *= angularFrameDamping;
     }
+}
 }

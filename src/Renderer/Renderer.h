@@ -1,5 +1,6 @@
 #pragma once
-
+namespace LevEngine
+{
 class Renderer
 {
 public:
@@ -7,4 +8,4 @@ public:
 	static void Render();
 	static void Shutdown();
 };
-
+}

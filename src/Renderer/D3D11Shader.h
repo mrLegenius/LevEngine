@@ -3,7 +3,8 @@
 #include <string>
 
 #include "Buffer.h"
-
+namespace LevEngine
+{
 enum class ShaderType
 {
 	None = 0,
@@ -48,4 +49,5 @@ inline ShaderType operator|(const ShaderType a, const ShaderType b)
 inline bool operator&(const ShaderType a, const ShaderType b)
 {
 	return static_cast<int>(a) & static_cast<int>(b);
+}
 }

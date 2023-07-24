@@ -1,5 +1,6 @@
 #pragma once
-
+namespace LevEngine
+{
 enum class DepthFunc
 {
     Never,
@@ -11,3 +12,4 @@ enum class DepthFunc
     Greater,
     Always,
 };
+}

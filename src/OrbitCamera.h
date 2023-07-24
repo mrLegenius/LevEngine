@@ -3,6 +3,8 @@
 #include "Renderer/Camera/SceneCamera.h"
 #include "Scene/System.h"
 
+using namespace LevEngine;
+
 class OrbitCamera final
 {
 public:

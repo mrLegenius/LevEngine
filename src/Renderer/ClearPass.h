@@ -6,7 +6,8 @@
 #include "D3D11RenderTarget.h"
 #include "D3D11Texture.h"
 #include "RenderPass.h"
-
+namespace LevEngine
+{
 class ClearPass : public RenderPass
 {
 public:
@@ -34,3 +35,4 @@ private:
     float m_ClearDepth;
     uint8_t m_ClearStencil;
 };
+}

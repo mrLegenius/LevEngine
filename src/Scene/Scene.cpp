@@ -22,7 +22,8 @@
 #include "Renderer/RenderParams.h"
 #include "Renderer/ShadowMapPass.h"
 #include "Renderer/SkyboxPass.h"
-
+namespace LevEngine
+{
 struct CollisionInfo;
 using namespace DirectX::SimpleMath;
 
@@ -566,10 +567,10 @@ Entity Scene::CreateEntity(const std::string& name)
 {
     LEV_PROFILE_FUNCTION();
 
-    return CreateEntity(LevEngine::UUID(), name);
+    return CreateEntity(UUID(), name);
 }
 
-Entity Scene::CreateEntity(LevEngine::UUID uuid, const std::string& name)
+Entity Scene::CreateEntity(UUID uuid, const std::string& name)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -686,4 +687,5 @@ Entity Scene::GetMainCameraEntity()
             return Entity(entt::handle(m_Registry, entity));
     }
     return { };
+}
 }

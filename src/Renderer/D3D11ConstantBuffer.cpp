@@ -4,7 +4,8 @@
 #include <cassert>
 #include <iostream>
 #include <wrl/client.h>
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -48,4 +49,5 @@ void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size) const
 	context->PSSetConstantBuffers(m_Slot, 1, &m_Buffer);
 	context->GSSetConstantBuffers(m_Slot, 1, &m_Buffer);
 	context->CSSetConstantBuffers(m_Slot, 1, &m_Buffer);
+}
 }

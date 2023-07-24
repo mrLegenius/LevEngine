@@ -2,7 +2,8 @@
 #include "PipelineState.h"
 
 #include "Debugging/Profiler.h"
-
+namespace LevEngine
+{
 void PipelineState::Bind()
 {
     LEV_PROFILE_FUNCTION();
@@ -25,4 +26,5 @@ void PipelineState::Unbind()
     m_BlendState.Unbind();
     m_RasterizerState.Unbind();
     m_DepthStencilState.Unbind();
+}
 }

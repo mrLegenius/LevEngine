@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Input/Input.h"
+using namespace LevEngine;
 
 OrbitCamera::OrbitCamera(Transform& target)
 {

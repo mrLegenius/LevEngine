@@ -2,6 +2,8 @@
 #include "entt/entt.hpp"
 #include "Components/Components.h"
 
+namespace LevEngine
+{
 class Entity
 {
 public:
@@ -55,7 +57,7 @@ public:
 	template <typename T>
 	void AddScript();
 
-	LevEngine::UUID GetUUID() { return GetComponent<IDComponent>().ID; }
+	UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 	const std::string& GetName() { return GetComponent<TagComponent>().tag; }
 
 	operator bool() const { return m_Handle.entity() != entt::null; }
@@ -73,3 +75,4 @@ public:
 private:
 	entt::handle m_Handle;
 };
+}

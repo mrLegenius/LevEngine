@@ -1,7 +1,8 @@
 #pragma once
 #include "entt/entt.hpp"
 #include "Physics/Components/Rigidbody.h"
-
+namespace LevEngine
+{
 inline void ForcesClearSystem(const float, entt::registry& registry)
 {
     LEV_PROFILE_FUNCTION();
@@ -10,4 +11,5 @@ inline void ForcesClearSystem(const float, entt::registry& registry)
 
     for (const auto entity : view)
 	    view.get<Rigidbody>(entity).ClearForces();
+}
 }

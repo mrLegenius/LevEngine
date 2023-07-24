@@ -4,15 +4,16 @@
 #include <memory>
 #include <sstream>
 #include "../Renderer/3D/Mesh.h"
-
+namespace LevEngine
+{
 class ObjLoader
 {
 public:
 	std::shared_ptr<Mesh> LoadMesh(const std::string& path)
 	{
-		std::vector<DirectX::SimpleMath::Vector3> positions;
-		std::vector<DirectX::SimpleMath::Vector2> uvs;
-		std::vector<DirectX::SimpleMath::Vector3> normals;
+		std::vector<Vector3> positions;
+		std::vector<Vector2> uvs;
+		std::vector<Vector3> normals;
 
 		std::vector<uint32_t> position_indices;
 		std::vector<uint32_t> uv_indices;
@@ -46,17 +47,17 @@ public:
 			if (prefix == "v")
 			{
 				ss >> tempX >> tempY >> tempZ;
-				positions.emplace_back(DirectX::SimpleMath::Vector3(tempX, tempY, tempZ));
+				positions.emplace_back(Vector3(tempX, tempY, tempZ));
 			}
 			else if (prefix == "vt")
 			{
 				ss >> tempX >> tempY;
-				uvs.emplace_back(DirectX::SimpleMath::Vector2(tempX, tempY));
+				uvs.emplace_back(Vector2(tempX, tempY));
 			}
 			else if (prefix == "vn")
 			{
 				ss >> tempX >> tempY >> tempZ;
-				normals.emplace_back(DirectX::SimpleMath::Vector3(tempX, tempY, tempZ));
+				normals.emplace_back(Vector3(tempX, tempY, tempZ));
 			}
 			else if (prefix == "f")
 			{
@@ -150,3 +151,4 @@ public:
 		return mesh;
 	}
 };
+}

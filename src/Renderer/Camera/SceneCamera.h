@@ -4,7 +4,8 @@
 #include "directxmath.h"
 
 using namespace DirectX::SimpleMath;
-
+namespace LevEngine
+{
 class SceneCamera
 {
 public:
@@ -81,3 +82,4 @@ private:
 
 	Matrix m_PerspectiveProjection = Matrix::Identity;
 };
+}

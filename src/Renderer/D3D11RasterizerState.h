@@ -1,6 +1,7 @@
 #pragma once
 #include "d3d11.h"
-
+namespace LevEngine
+{
 enum class FillMode
 {
     Wireframe,
@@ -88,3 +89,4 @@ private:
 
     bool m_StateDirty = true;
 };
+}

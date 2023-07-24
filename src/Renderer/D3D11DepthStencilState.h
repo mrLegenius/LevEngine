@@ -1,7 +1,8 @@
 #pragma once
 #include <cstdint>
 #include "d3d11.h"
-
+namespace LevEngine
+{
 enum class DepthWrite
 {
     Enable,
@@ -190,3 +191,4 @@ private:
 
     bool m_Dirty = true;
 };
+}

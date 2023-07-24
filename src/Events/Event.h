@@ -2,7 +2,8 @@
 #include <ostream>
 #include <string>
 #include <functional>
-
+namespace LevEngine
+{
 enum class EventType
 {
 	None = 0,
@@ -67,4 +68,5 @@ private:
 inline std::ostream& operator<<(std::ostream& os, const Event& e)
 {
 	return os << e.ToString();
+}
 }

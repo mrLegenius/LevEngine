@@ -4,7 +4,8 @@
 #include <vector>
 
 using namespace DirectX::SimpleMath;
-
+namespace LevEngine
+{
 enum class BlendOperation // could also be called BlendOperand
 {
     Add,                // Add source and destination ( s + d ).
@@ -245,3 +246,4 @@ private:
 
     bool m_Dirty = true;
 };
+}

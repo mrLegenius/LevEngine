@@ -7,6 +7,9 @@
 
 #include "d3d11.h"
 #include "../Kernel/Application.h"
+
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 
 extern IDXGISwapChain* swapChain;
@@ -160,4 +163,5 @@ void D3D11RendererAPI::DrawPointList(const uint32_t count)
 {
 	context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	context->Draw(count, 0);
+}
 }

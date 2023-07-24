@@ -2,7 +2,8 @@
 #include <SimpleMath.h>
 
 using namespace DirectX::SimpleMath;
-
+namespace LevEngine
+{
 class BoxCollider final 
 {
 public:
@@ -16,3 +17,4 @@ public:
 	float radius = 1;
 	Vector3 offset;
 };
+}

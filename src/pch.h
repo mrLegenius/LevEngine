@@ -15,6 +15,7 @@
 #include <unordered_set>
 
 #include "Debugging/Profiler.h"
+#include "Kernel/Logger.h"
 
 #ifdef LEV_PLATFORM_WINDOWS
 	#include <Windows.h>

@@ -9,6 +9,8 @@
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
 
+namespace LevEngine
+{
 class Application
 {
 public:
@@ -43,4 +45,4 @@ private:
 
 	static Application* s_Instance;
 };
-
+}

@@ -2,12 +2,13 @@
 #include <string>
 #include <filesystem>
 
-#include "Debugging/Profiler.h"
 #include "Katamari/ObjLoader.h"
 #include "Renderer/D3D11Shader.h"
 #include "Renderer/D3D11Texture.h"
 #include "Renderer/D3D11TextureCube.h"
 #include "Renderer/Material.h"
+
+using namespace LevEngine;
 
 static std::filesystem::path resources = std::filesystem::path("resources");
 

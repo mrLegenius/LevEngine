@@ -1,4 +1,6 @@
 #pragma once
+namespace LevEngine
+{
 // CPU Access. Used for textures and Buffers
 enum class CPUAccess
 {
@@ -7,3 +9,4 @@ enum class CPUAccess
     Write = 2, // CPU writes permitted.
     ReadWrite = Read | Write
 };
+}

@@ -4,7 +4,8 @@
 #include <wrl/client.h>
 
 #include "Debugging/Profiler.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -111,4 +112,5 @@ bool D3D11RenderTarget::IsValid() const
     }
 
     return true;
+}
 }

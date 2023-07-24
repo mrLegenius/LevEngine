@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
-
+namespace LevEngine
+{
 enum class ClearFlags : uint8_t
 {
     Color = 1 << 0,
@@ -9,3 +10,4 @@ enum class ClearFlags : uint8_t
     DepthStencil = Depth | Stencil,
     All = Color | Depth | Stencil,
 };
+}

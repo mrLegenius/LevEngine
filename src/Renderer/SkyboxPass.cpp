@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "SkyboxPass.h"
 #include "Kernel/Application.h"
-
+namespace LevEngine
+{
 SkyboxPass::SkyboxPass(entt::registry& registry) : m_Registry(registry)
 {
 	//Pipeline
@@ -35,4 +36,5 @@ void SkyboxPass::Process(RenderParams& params)
 		m_SkyboxPipeline.Unbind();
 		break;
 	}
+}
 }

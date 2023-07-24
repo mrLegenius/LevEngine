@@ -121,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>S:\Projects\C++\CG-Course\external\spdlog\include;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>S:\Projects\C++\CG-Course\external\spdlog\include;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -159,6 +159,7 @@
     <ClCompile Include="src\Components\Transform.cpp" />
     <ClCompile Include="src\Katamari\KatamariLayer.cpp" />
     <ClCompile Include="src\Kernel\Color.cpp" />
+    <ClCompile Include="src\Kernel\Logger.cpp" />
     <ClCompile Include="src\Kernel\Time.cpp" />
     <ClCompile Include="src\Kernel\UUID.cpp" />
     <ClCompile Include="src\pch.cpp">
@@ -214,6 +215,7 @@
     <ClInclude Include="src\Debug\Profiler.h" />
     <ClInclude Include="src\Katamari\KatamariPlayer.h" />
     <ClInclude Include="src\Kernel\Color.h" />
+    <ClInclude Include="src\Kernel\Logger.h" />
     <ClInclude Include="src\Kernel\Time.h" />
     <ClInclude Include="src\Kernel\Timestep.h" />
     <ClInclude Include="src\LevEngine.h" />

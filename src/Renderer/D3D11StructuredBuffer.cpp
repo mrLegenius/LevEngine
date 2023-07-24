@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "D3D11StructuredBuffer.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -308,4 +309,5 @@ uint32_t D3D11StructuredBuffer::GetCounterValue() const
     context->Unmap(m_CountBuffer, 0);
 
     return counterValue;
+}
 }

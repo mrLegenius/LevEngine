@@ -12,6 +12,8 @@
 #include "../Input/Input.h"
 #include "../Events/Event.h"
 
+namespace LevEngine
+{
 Application* Application::s_Instance = nullptr;
 
 Application::Application(const std::string& name, uint32_t width, uint32_t height)
@@ -39,7 +41,7 @@ void Application::Run()
 	{
 		auto curTime = std::chrono::steady_clock::now();
 		const float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
-		LevEngine::Time::SetDeltaTime(deltaTime);
+		Time::SetDeltaTime(deltaTime);
 		PrevTime = curTime;
 
 		totalTime += deltaTime;
@@ -158,4 +160,5 @@ bool Application::OnMouseScrolled(MouseScrolledEvent& e)
 {
 	Input::OnMouseScrolled(e.GetYOffset());
 	return true;
+}
 }

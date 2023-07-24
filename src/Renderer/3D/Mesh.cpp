@@ -2,7 +2,8 @@
 #include "Mesh.h"
 
 #include <iostream>
-
+namespace LevEngine
+{
 std::shared_ptr<Mesh> Mesh::CreatePlane(int resolution)
 {
 	auto mesh = std::make_shared<Mesh>();
@@ -272,4 +273,5 @@ std::shared_ptr<D3D11VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& 
 	vertexBuffer->SetLayout(bufferLayout);
 
 	return vertexBuffer;
+}
 }

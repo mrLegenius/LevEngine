@@ -1,7 +1,8 @@
 #pragma once
 #include <SimpleMath.h>
 using namespace DirectX::SimpleMath;
-
+namespace LevEngine
+{
 struct RenderSettings
 {
 	//Shadows
@@ -19,4 +20,4 @@ struct RenderSettings
 
 	static constexpr uint32_t MaxParticles = 1024 * 8;
 };
-
+}

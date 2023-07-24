@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Physics.h"
 #include "Scene/Entity.h"
-
+namespace LevEngine
+{
 bool Physics::AABBTest(
     const Vector3& posA, const Vector3& posB,
     const Vector3& halfSizeA, const Vector3& halfSizeB)
@@ -162,4 +163,5 @@ void Physics::HandleCollision(Transform& transformA, Rigidbody& rigidbodyA, Tran
 
 	rigidbodyA.AddAngularImpulse(relativeA.Cross(-fullImpulse));
 	rigidbodyB.AddAngularImpulse(relativeB.Cross(fullImpulse));
+}
 }

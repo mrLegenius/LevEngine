@@ -5,7 +5,8 @@
 #include "RenderPass.h"
 #include "entt/entt.hpp""
 #include "Scene/Components/Components.h"
-
+namespace LevEngine
+{
 class ParticlePass : public RenderPass
 {
 	struct GPUParticleData
@@ -60,8 +61,8 @@ class ParticlePass : public RenderPass
 
 	struct RandomColor
 	{
-		alignas(16) LevEngine::Color From;
-		alignas(16) LevEngine::Color To;
+		alignas(16) Color From;
+		alignas(16) Color To;
 		int Randomize = false;
 
 		float pad[3];
@@ -75,7 +76,7 @@ class ParticlePass : public RenderPass
 			alignas(16) RandomVector3 Position;
 
 			alignas(16) RandomColor StartColor;
-			alignas(16) LevEngine::Color EndColor;
+			alignas(16) Color EndColor;
 
 			alignas(16) RandomFloat StartSize;
 			float EndSize;
@@ -121,3 +122,4 @@ private:
 
 	entt::registry& m_Registry;
 };
+}

@@ -5,7 +5,8 @@
 #include "D3D11IndexBuffer.h"
 #include "D3D11VertexBuffer.h"
 #include "DepthFunc.h"
-
+namespace LevEngine
+{
 class D3D11RendererAPI
 {
 public:
@@ -30,3 +31,4 @@ public:
 private:
 	float* m_Color;
 };
+}

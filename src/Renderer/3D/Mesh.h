@@ -8,6 +8,8 @@
 #include "Kernel/PointerUtils.h"
 
 using namespace DirectX::SimpleMath;
+namespace LevEngine
+{
 class Mesh
 {
 	struct MeshVertex
@@ -84,4 +86,4 @@ private:
 	std::vector<uint32_t> indices;
 	std::vector<Vector3> normals;
 };
-
+}

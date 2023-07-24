@@ -2,7 +2,8 @@
 #include "D3D11IndexBuffer.h"
 #include <wrl/client.h>
 #include "D3D11Shader.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -39,4 +40,5 @@ void D3D11IndexBuffer::Bind() const
 void D3D11IndexBuffer::Unbind() const
 {
 	
+}
 }

@@ -8,7 +8,8 @@
 #include "Physics/Physics.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Systems/EventSystem.h"
-
+namespace LevEngine
+{
 class Entity;
 class Scene
 {
@@ -32,7 +33,7 @@ public:
 	void OnViewportResized(uint32_t width, uint32_t height);
 
 	Entity CreateEntity(const std::string& name = "Entity");
-	Entity CreateEntity(LevEngine::UUID uuid, const std::string& name);
+	Entity CreateEntity(UUID uuid, const std::string& name);
 
 	void DestroyEntity(Entity entity);
 
@@ -74,3 +75,4 @@ private:
 	std::vector<Ref<System>> m_LateUpdateSystems;
 	std::vector<Ref<System>> m_EventSystems;
 };
+}

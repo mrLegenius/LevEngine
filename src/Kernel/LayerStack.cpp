@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "LayerStack.h"
-
+namespace LevEngine
+{
 LayerStack::LayerStack()
 {
 }
@@ -26,4 +27,5 @@ void LayerStack::PopLayer(Layer* layer)
 		m_Layers.erase(it);
 		m_LayerInsertIndex--;
 	}
+}
 }

@@ -4,7 +4,8 @@
 #include "Assets.h"
 #include "Debugging/Profiler.h"
 #include "Kernel/Application.h"
-
+namespace LevEngine
+{
 Ref<D3D11ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
 Ref<D3D11ConstantBuffer> Renderer3D::m_LightningConstantBuffer;
@@ -299,4 +300,5 @@ void Renderer3D::RenderSphere(const Matrix& model)
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
 
     RenderCommand::DrawIndexed(mesh->VertexBuffer, mesh->IndexBuffer);
+}
 }

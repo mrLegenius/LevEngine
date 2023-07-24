@@ -2,7 +2,8 @@
 #include <memory>
 
 #pragma region Scope
-
+namespace LevEngine
+{
 template<typename T>
 using Scope = std::unique_ptr<T>;
 
@@ -48,3 +49,4 @@ constexpr Ref<T> CreateRef(std::initializer_list<List> list)
 	return Ref<T>{ new T(list) };
 }
 #pragma endregion
+}

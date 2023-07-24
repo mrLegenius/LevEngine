@@ -5,6 +5,8 @@
 #include "../Renderer/D3D11IndexBuffer.h"
 #include "../Renderer/D3D11VertexBuffer.h"
 
+using namespace LevEngine;
+
 class MySuper3DLayer : public Layer
 {
 public:

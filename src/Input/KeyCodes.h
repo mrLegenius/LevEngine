@@ -1,5 +1,7 @@
 #pragma once
 
+namespace LevEngine
+{
 enum class KeyCode
 {
 	None = 0,
@@ -173,3 +175,4 @@ enum class KeyCode
 	Pa1 = 253,
 	OemClear = 254,
 };
+}

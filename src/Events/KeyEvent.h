@@ -2,7 +2,8 @@
 #include <sstream>
 #include "Event.h"
 #include "../Input/KeyCodes.h"
-
+namespace LevEngine
+{
 class KeyEvent : public Event
 {
 public:
@@ -67,3 +68,4 @@ public:
 
 	EVENT_CLASS_TYPE(KeyReleased)
 };
+}

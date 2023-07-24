@@ -6,7 +6,8 @@
 #include <wrl/client.h>
 
 #include "Debugging/Profiler.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -115,4 +116,5 @@ void D3D11RasterizerState::Unbind()
     LEV_PROFILE_FUNCTION();
 
     context->RSSetState(nullptr);
+}
 }

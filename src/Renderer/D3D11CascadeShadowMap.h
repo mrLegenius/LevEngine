@@ -3,7 +3,8 @@
 #include <string>
 
 #include "RenderSettings.h"
-
+namespace LevEngine
+{
 class D3D11CascadeShadowMap
 {
 public:
@@ -26,4 +27,4 @@ private:
 	uint32_t m_Width{};
 	uint32_t m_Height{};
 };
-
+}

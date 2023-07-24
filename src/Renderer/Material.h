@@ -2,6 +2,8 @@
 #include <SimpleMath.h>
 
 using namespace DirectX::SimpleMath;
+namespace LevEngine
+{
 struct Material
 {
 	Vector3 Emissive = Vector3{ 0, 0, 0 };
@@ -18,3 +20,4 @@ struct Material
 	         const float shininess)
 	: Ambient(ambient), Diffuse(diffuse), Specular(specular), Shininess(shininess) { }
 };
+}

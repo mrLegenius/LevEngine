@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "BitonicSort.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 
 BitonicSort::BitonicSort(const int numElements): m_NumElements(numElements)
@@ -70,4 +71,5 @@ void BitonicSort::SetGPUSortConstants(const uint32_t level, const uint32_t level
 {
 	const ConstantsGPUData data {(int)level, (int)levelMask, (int)width, (int)height};
 	m_ConstantsBuffer->SetData(&data);
+}
 }

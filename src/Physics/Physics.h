@@ -5,6 +5,8 @@
 #include "Components/Collider.h"
 #include "Components/Transform.h"
 
+namespace LevEngine
+{
 struct CollisionInfo;
 class Entity;
 using DirectX::SimpleMath::Vector3;
@@ -54,3 +56,4 @@ public:
                 constraint->Update(deltaTime);*/
     }
 };
+}

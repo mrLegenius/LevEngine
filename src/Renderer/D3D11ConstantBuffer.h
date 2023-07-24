@@ -1,7 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <d3d11.h>
-
+namespace LevEngine
+{
 class D3D11ConstantBuffer
 {
 public:
@@ -13,3 +14,4 @@ private:
 	uint32_t m_Size;
 	uint32_t m_Slot;
 };
+}

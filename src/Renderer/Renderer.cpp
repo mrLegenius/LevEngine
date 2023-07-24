@@ -3,7 +3,8 @@
 
 #include "RenderCommand.h"
 #include "Renderer3D.h"
-
+namespace LevEngine
+{
 void Renderer::Init()
 {
 	RenderCommand::Init();
@@ -18,4 +19,5 @@ void Renderer::Render()
 void Renderer::Shutdown()
 {
 	Renderer3D::Shutdown();
+}
 }

@@ -5,6 +5,8 @@
 #include "../Events/Event.h"
 #include <memory>
 
+namespace LevEngine
+{
 struct WindowAttributes
 {
 	std::string title;
@@ -80,5 +82,5 @@ public:
 
 	WindowData m_Data;
 };
-
+}
 

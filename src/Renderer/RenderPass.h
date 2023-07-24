@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderParams.h"
-
+namespace LevEngine
+{
 class RenderPass
 {
 public:
@@ -16,3 +17,4 @@ public:
 private:
 	bool m_Enabled = true;
 };
+}

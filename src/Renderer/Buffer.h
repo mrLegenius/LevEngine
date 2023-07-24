@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-
+namespace LevEngine
+{
 enum class ShaderDataType : uint8_t
 {
 	None = 0,
@@ -118,3 +119,4 @@ private:
 	std::vector<BufferElement> m_Elements;
 	uint32_t m_Stride = 0;
 };
+}

@@ -5,7 +5,8 @@
 #include <wrl/client.h>
 
 #include "stb/include/stb_image.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -166,4 +167,5 @@ void D3D11TextureCube::Unbind(uint32_t slot) const
 {
 	context->PSSetShaderResources(slot, 0, nullptr);
 	context->PSSetSamplers(slot, 0, nullptr);
+}
 }

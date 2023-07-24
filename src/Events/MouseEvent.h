@@ -3,7 +3,8 @@
 
 #include "Event.h"
 #include "../Input/MouseButtonCodes.h"
-
+namespace LevEngine
+{
 class MouseMovedEvent : public Event
 {
 public:
@@ -94,4 +95,4 @@ public:
 
 	EVENT_CLASS_TYPE(MouseButtonReleased)
 };
-
+}

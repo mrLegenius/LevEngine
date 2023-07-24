@@ -2,7 +2,8 @@
 #include <string>
 
 #include "../Events/Event.h"
-
+namespace LevEngine
+{
 class Layer
 {
 public:
@@ -17,3 +18,4 @@ public:
 protected:
 	std::string m_Name;
 };
+}

@@ -2,7 +2,8 @@
 #include "D3D11ForwardTechnique.h"
 
 #include "Kernel/Application.h"
-
+namespace LevEngine
+{
 D3D11ForwardTechnique::D3D11ForwardTechnique()
 {
 	const auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
@@ -43,4 +44,5 @@ void D3D11ForwardTechnique::StartSkyboxPass()
 void D3D11ForwardTechnique::End()
 {
     m_GeometryPipeline.Unbind();
+}
 }

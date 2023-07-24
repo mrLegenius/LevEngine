@@ -3,7 +3,8 @@
 
 #include "Kernel/PointerUtils.h"
 #include "PipelineState.h"
-
+namespace LevEngine
+{
 class D3D11DeferredTechnique
 {
 public:
@@ -35,3 +36,4 @@ private:
 	Ref<D3D11RenderTarget> m_GBufferRenderTarget;
 	Ref<D3D11RenderTarget> m_DepthOnlyRenderTarget;
 };
+}

@@ -10,6 +10,8 @@
 #include "Debugging/Profiler.h"
 #include "Kernel/Application.h"
 
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 extern IDXGISwapChain* swapChain;
@@ -204,4 +206,5 @@ void D3D11DeferredTechnique::EndLightningPass()
 
     m_PositionalLightPipeline2.Unbind();
     UnbindTextures();
+}
 }

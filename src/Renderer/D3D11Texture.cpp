@@ -7,7 +7,8 @@
 #include "d3d11.h"
 #include "../../external/stb/include/stb_image.h"
 #include "Kernel/Math.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -1601,7 +1602,7 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(uint16_t width, uint16_t height,
 	texture->m_CPUAccess = cpuAccess;
 	texture->m_IsTransparent = true;
 
-	texture->m_NumSlices = LevEngine::Math::Max<uint16_t>(slices, 1);
+	texture->m_NumSlices = Math::Max<uint16_t>(slices, 1);
 
 	texture->m_TextureDimension = Dimension::Texture2D;
 	if (texture->m_NumSlices > 1)
@@ -1624,7 +1625,7 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(uint16_t width, uint16_t height,
     // Convert typeless format to Unordered Access View formats.
     texture->m_UnorderedAccessViewFormat = GetUAVFormat(dxgiFormat);
 
-    texture->m_BPP = ::GetBPP(texture->m_TextureResourceFormat);
+    texture->m_BPP = LevEngine::GetBPP(texture->m_TextureResourceFormat);
 
     // Query for texture format support.
     if (FAILED(device->CheckFormatSupport(texture->m_TextureResourceFormat, &texture->m_TextureResourceFormatSupport)))
@@ -1832,7 +1833,7 @@ void D3D11Texture::Bind(const uint32_t slot) const
         context->CSSetSamplers(slot, 1, &m_SamplerState);
 }
 
-void D3D11Texture::Clear(ClearFlags clearFlags, const DirectX::SimpleMath::Vector4& color, float depth, uint8_t stencil)
+void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, float depth, uint8_t stencil)
 {
 	if (m_RenderTargetView && ((int)clearFlags & (int)ClearFlags::Color) != 0)
 	{
@@ -1887,8 +1888,8 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
     if (m_ShaderResourceView) m_ShaderResourceView->Release(); m_ShaderResourceView = nullptr;
     if (m_UnorderedAccessView) m_UnorderedAccessView->Release(); m_UnorderedAccessView = nullptr;
 
-    m_Width = LevEngine::Math::Max<uint16_t>(width, 1);
-    m_Height = LevEngine::Math::Max<uint16_t>(height, 1);
+    m_Width = Math::Max<uint16_t>(width, 1);
+    m_Height = Math::Max<uint16_t>(height, 1);
 
     // Create texture with the dimensions specified.
     D3D11_TEXTURE2D_DESC textureDesc = { 0 };
@@ -2195,4 +2196,5 @@ void D3D11Texture::GenerateMipMaps()
 {
 	if (m_GenerateMipMaps && m_ShaderResourceView)
 		context->GenerateMips(m_ShaderResourceView);
+}
 }

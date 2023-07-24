@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include <vector>
 #include "Layer.h"
-
+namespace LevEngine
+{
 class LayerStack
 {
 public:
@@ -20,3 +21,4 @@ private:
 	std::vector<Layer*> m_Layers;
 	unsigned int m_LayerInsertIndex = 0;
 };
+}

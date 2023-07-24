@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ClearPass.h"
-
+namespace LevEngine
+{
 ClearPass::ClearPass(const Ref<D3D11RenderTarget> renderTarget, const ClearFlags clearFlags, const Vector4& color, const float depth, const uint8_t stencil)
     : m_RenderTarget(renderTarget)
     , m_ClearFlags(clearFlags)
@@ -24,4 +25,5 @@ void ClearPass::Process(RenderParams&)
 
     if (m_Texture)
 	    m_Texture->Clear(m_ClearFlags, m_ClearColor, m_ClearDepth, m_ClearStencil);
+}
 }

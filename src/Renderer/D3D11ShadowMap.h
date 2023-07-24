@@ -1,7 +1,8 @@
 #pragma once
 #include <d3d11.h>
 #include <string>
-
+namespace LevEngine
+{
 class D3D11ShadowMap
 {
 public:
@@ -24,4 +25,4 @@ private:
 	uint32_t m_Width{};
 	uint32_t m_Height{};
 };
-
+}

@@ -2,7 +2,8 @@
 #include "SceneCamera.h"
 
 #include "Kernel/Math.h"
-
+namespace LevEngine
+{
 SceneCamera::SceneCamera()
 {
 	RecalculateProjection();
@@ -34,7 +35,7 @@ std::vector<Matrix> SceneCamera::GetSplitPerspectiveProjections(const float* dis
 
 	for (int i = 0; i < count; ++i)
 	{
-		const float max = LevEngine::Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distances[i]);
+		const float max = Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distances[i]);
 		auto projection = Matrix::CreatePerspectiveFieldOfView(m_FieldOfView, m_AspectRatio, min, max);
 
 		projections.emplace_back(projection);
@@ -46,7 +47,7 @@ std::vector<Matrix> SceneCamera::GetSplitPerspectiveProjections(const float* dis
 
 float SceneCamera::GetPerspectiveProjectionSliceDistance(const float distance) const
 {
-	return m_PerspectiveNear + LevEngine::Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distance);
+	return m_PerspectiveNear + Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distance);
 }
 
 void SceneCamera::SetViewportSize(const uint32_t width, const uint32_t height)
@@ -68,4 +69,5 @@ void SceneCamera::RecalculateProjection()
 	}
 
 	m_PerspectiveProjection = Matrix::CreatePerspectiveFieldOfView(m_FieldOfView, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+}
 }

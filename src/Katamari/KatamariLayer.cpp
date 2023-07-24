@@ -25,7 +25,7 @@ void OnKatamariCollided(Entity me, Entity other)
     if (otherRigidbody.bodyType == BodyType::Static) return;
 
     const auto size = myCollider.radius;
-    const auto otherSize = LevEngine::Math::MaxElement(otherTransform.GetWorldScale());
+    const auto otherSize = Math::MaxElement(otherTransform.GetWorldScale());
 
     if (size <= otherSize) return;
 

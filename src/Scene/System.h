@@ -1,5 +1,7 @@
 #pragma once
 #include "entt/entt.hpp"
+namespace LevEngine
+{
 using namespace entt::literals;
 class System
 {
@@ -8,3 +10,4 @@ public:
 	virtual ~System() = default;
 	virtual void Update(float deltaTime, entt::registry& registry) = 0;
 };
+}

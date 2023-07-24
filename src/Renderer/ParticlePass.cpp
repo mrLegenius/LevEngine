@@ -8,7 +8,8 @@
 #include "Kernel/Application.h"
 #include "RenderCommand.h"
 #include "RenderSettings.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 
 void BindTextureArray(Ref<D3D11Texture>* textures, uint32_t count)
@@ -94,7 +95,7 @@ void ParticlePass::Process(RenderParams& params)
 	textureSlots[0] = TextureAssets::Particle();  //<--- default particle ---<<
 	uint32_t textureSlotIndex = 1;
 
-	const float deltaTime = LevEngine::Time::GetDeltaTime().GetSeconds();
+	const float deltaTime = Time::GetDeltaTime().GetSeconds();
 
 	const auto group = m_Registry.view<Transform, EmitterComponent, IDComponent>();
 	m_ParticlesBuffer->Bind(0, ShaderType::Compute, true, -1);
@@ -151,7 +152,7 @@ void ParticlePass::Process(RenderParams& params)
 		
 		ShaderAssets::ParticlesEmitter()->Bind();
 		const uint32_t deadParticlesCount = m_DeadBuffer->GetCounterValue();
-		auto particlesToEmit = min(deadParticlesCount, static_cast<uint32_t>(emitter.Rate));
+		auto particlesToEmit = std::min(deadParticlesCount, static_cast<uint32_t>(emitter.Rate));
 		if (particlesToEmit > 0)
 				context->Dispatch(particlesToEmit, 1, 1);
 	}
@@ -208,4 +209,5 @@ void ParticlePass::GetGroupSize(const int totalCount, int& groupSizeX, int& grou
 	const double secondRoot = std::ceil(std::pow(static_cast<double>(numGroups), 0.5));
 	groupSizeX = static_cast<int>(secondRoot);
 	groupSizeY = static_cast<int>(secondRoot);
+}
 }

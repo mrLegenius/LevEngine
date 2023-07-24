@@ -5,7 +5,8 @@
 #include <d3dcompiler.h>
 #include <iostream>
 #include <wrl/client.h>
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -235,4 +236,5 @@ void D3D11Shader::SetLayout(const BufferLayout& layout)
 		&m_InputLayout);
 
 	delete[] input;
+}
 }

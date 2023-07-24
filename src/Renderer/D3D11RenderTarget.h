@@ -9,7 +9,8 @@
 #include "Kernel/PointerUtils.h"
 
 using namespace DirectX::SimpleMath;
-
+namespace LevEngine
+{
 enum class AttachmentPoint : uint8_t
 {
     Color0,         // Must be a uncompressed color format.
@@ -61,8 +62,8 @@ public:
     {
         if (m_Width != width || m_Height != height)
         {
-            m_Width = LevEngine::Math::Max<uint16_t>(width, 1);
-            m_Height = LevEngine::Math::Max<uint16_t>(height, 1);
+            m_Width = Math::Max<uint16_t>(width, 1);
+            m_Height = Math::Max<uint16_t>(height, 1);
             // Resize the attached textures
             for (auto texture : m_Textures)
             {
@@ -89,3 +90,4 @@ private:
     // Check to see if the render target is valid.
     bool m_CheckValidity = true;
 };
+}

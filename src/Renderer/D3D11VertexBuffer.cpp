@@ -5,7 +5,8 @@
 #include <wrl/client.h>
 
 #include "D3D11Shader.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -67,4 +68,5 @@ void D3D11VertexBuffer::SetData(const void* data, const uint32_t size)
 	context->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, data, actualSize);
 	context->Unmap(m_Buffer, 0);
+}
 }

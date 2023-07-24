@@ -2,7 +2,8 @@
 #include <cstdint>
 
 #include "D3D11RendererAPI.h"
-
+namespace LevEngine
+{
 class RenderCommand
 {
 public:
@@ -66,4 +67,4 @@ public:
 private:
 	static D3D11RendererAPI* s_RendererAPI;
 };
-
+}

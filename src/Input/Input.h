@@ -3,6 +3,8 @@
 #include "KeyCodes.h"
 #include "MouseButtonCodes.h"
 
+namespace LevEngine
+{
 class Input
 {
 public:
@@ -51,3 +53,4 @@ private:
 	static void OnMouseScrolled(float offset);
 	static void Reset();
 };
+}

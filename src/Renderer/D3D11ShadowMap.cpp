@@ -3,7 +3,8 @@
 #include <wrl/client.h>
 
 #include "D3D11ShadowMap.h"
-
+namespace LevEngine
+{
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
@@ -114,4 +115,5 @@ void D3D11ShadowMap::SetRenderTarget() const
         m_DepthStencilView
     );
     context->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+}
 }

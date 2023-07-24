@@ -1,6 +1,7 @@
 #pragma once
 #include "D3D11Texture.h"
-
+namespace LevEngine
+{
 class D3D11TextureCube : public Texture
 {
 public:
@@ -36,3 +37,4 @@ private:
 
 	DXGI_FORMAT m_DataFormat;
 };
+}

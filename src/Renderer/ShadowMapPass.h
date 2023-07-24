@@ -6,7 +6,8 @@
 #include "RenderPass.h"
 #include "RenderSettings.h"
 
-
+namespace LevEngine
+{
 class ShadowMapPass : public RenderPass
 {
     struct ShadowData
@@ -41,3 +42,4 @@ private:
     std::vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const;
     Matrix GetCascadeProjection(const Matrix& lightView, std::vector<Vector4> frustrumCorners) const;
 };
+}

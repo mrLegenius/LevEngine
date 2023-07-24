@@ -10,7 +10,8 @@
 #include "Kernel/PointerUtils.h"
 
 using namespace DirectX::SimpleMath;
-
+namespace LevEngine
+{
 class Texture
 {
 public:
@@ -140,7 +141,7 @@ public:
 	[[nodiscard]] bool IsLoaded() const override { return m_IsLoaded; }
 
 	void Bind(uint32_t slot = 0) const override;
-	void Clear(ClearFlags clearFlags, const ::Vector4& color, float depth, uint8_t stencil) override;
+	void Clear(ClearFlags clearFlags, const Vector4& color, float depth, uint8_t stencil) override;
 
 	ID3D11Resource* GetTextureResource() const;
 	void Resize2D(uint16_t width, uint16_t height);
@@ -221,3 +222,4 @@ protected:
 
 	bool m_IsDirty = false;
 };
+}

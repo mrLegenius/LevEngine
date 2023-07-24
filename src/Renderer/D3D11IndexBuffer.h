@@ -2,7 +2,8 @@
 #include <cstdint>
 
 #include "D3D11VertexBuffer.h"
-
+namespace LevEngine
+{
 class D3D11IndexBuffer final
 {
 public:
@@ -18,4 +19,4 @@ private:
 	ID3D11Buffer* m_Buffer = nullptr;
 	uint32_t m_Count = 0;
 };
-
+}

@@ -6,6 +6,8 @@
 #include "Scene/Entity.h"
 #include "Physics/Events/CollisionBeginEvent.h"
 
+using namespace LevEngine;
+
 struct KatamariPlayerComponent
 {
     int s;
@@ -66,7 +68,7 @@ public:
             if (otherRigidbody.bodyType == BodyType::Static) return;
 
             auto size = collider.radius;
-            auto otherSize = LevEngine::Math::MaxElement(otherTransform.GetWorldScale());
+            auto otherSize = Math::MaxElement(otherTransform.GetWorldScale());
             
             if (size <= otherSize) return;
 

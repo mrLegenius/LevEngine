@@ -2,7 +2,8 @@
 #include "Renderer3D.h"
 #include "RenderPass.h"
 #include "entt/entt.hpp"
-
+namespace LevEngine
+{
 class SkyboxPass final : public RenderPass
 {
 public:
@@ -15,3 +16,4 @@ private:
 	entt::registry& m_Registry;
 	PipelineState m_SkyboxPipeline;
 };
+}

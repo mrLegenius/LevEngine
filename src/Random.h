@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdlib>
 
+namespace LevEngine
+{
 struct Random
 {
 	static float Float01()
@@ -38,8 +40,9 @@ struct Random
 		return Vector4{ Range(min, max), Range(min, max), Range(min, max), Range(min, max) };
 	}
 
-	static Color Color(const Color& a, const Color& b)
+	static DirectX::SimpleMath::Color Color(const DirectX::SimpleMath::Color& a, const DirectX::SimpleMath::Color& b)
 	{
-		return ::Color{ Range(a.x, b.x), Range(a.y, b.y), Range(a.z, b.z), Range(a.w, b.w) };
+		return DirectX::SimpleMath::Color{ Range(a.x, b.x), Range(a.y, b.y), Range(a.z, b.z), Range(a.w, b.w) };
 	}
 };
+}

@@ -2,7 +2,8 @@
 #include <sstream>
 
 #include "Event.h" 
-
+namespace LevEngine
+{
 class WindowResizedEvent : public Event
 {
 public:
@@ -62,3 +63,4 @@ public:
 	EVENT_CLASS_TYPE(AppRender)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 };
+}

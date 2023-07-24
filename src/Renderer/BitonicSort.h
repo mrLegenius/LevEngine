@@ -5,7 +5,8 @@
 #include "D3D11Shader.h"
 #include "D3D11StructuredBuffer.h"
 #include "Kernel/PointerUtils.h"
-
+namespace LevEngine
+{
 class BitonicSort
 {
     struct ConstantsGPUData
@@ -32,3 +33,4 @@ private:
 
     void SetGPUSortConstants(uint32_t level, uint32_t levelMask, uint32_t width, uint32_t height) const;
 };
+}

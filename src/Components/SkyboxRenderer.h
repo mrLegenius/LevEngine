@@ -7,7 +7,7 @@
 
 struct SkyboxVertex
 {
-	DirectX::SimpleMath::Vector3 Position;
+	Vector3 Position;
 };
 
 class SkyboxRenderer final : public RendererComponent

@@ -2,12 +2,16 @@
 #include "Window.h"
 
 #include <iostream>
+
+#include "Logger.h"
 #include "windowsx.h"
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
 #include "../Input/Input.h"
 
+namespace LevEngine
+{
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) noexcept
 {
 	auto data = reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
@@ -180,8 +184,8 @@ void Window::Init(const WindowAttributes& attributes)
 	m_Data.width = attributes.width;
 	m_Data.height = attributes.height;
 
-	std::cout << "Creating window " << attributes.title << " (" << attributes.width << "x" << attributes.height << ")" << std::endl;
-
+	Log::CoreInfo("Creating window {0} ({1}x{2})", attributes.title, attributes.width, attributes.height);
+	
 	const HINSTANCE hInstance = GetModuleHandle(nullptr);
 	WNDCLASSEX wc{};
 
@@ -325,4 +329,5 @@ void Window::HideCursor() const
 bool Window::IsVSync() const
 {
 	return m_Data.vSync;
+}
 }

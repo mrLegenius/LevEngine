@@ -2,7 +2,8 @@
 #include <windows.h>
 
 #include "D3D11RenderTarget.h"
-
+namespace LevEngine
+{
 class D3D11Context
 {
 public:
@@ -16,4 +17,4 @@ private:
 	ID3D11Texture2D* m_BackBuffer;
 	Ref<D3D11RenderTarget> m_RenderTarget;
 };
-
+}

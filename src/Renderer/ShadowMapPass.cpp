@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "ShadowMapPass.h"
 #include "RenderCommand.h"
-
+namespace LevEngine
+{
 std::vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const
 {
     const auto viewProj = view * proj;
@@ -38,12 +39,12 @@ Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, std::vector<
     {
         const auto trf = Vector4::Transform(corner, lightView);
 
-        minX = LevEngine::Math::Min(minX, trf.x);
-        maxX = LevEngine::Math::Max(maxX, trf.x);
-        minY = LevEngine::Math::Min(minY, trf.y);
-        maxY = LevEngine::Math::Max(maxY, trf.y);
-        minZ = LevEngine::Math::Min(minZ, trf.z);
-        maxZ = LevEngine::Math::Max(maxZ, trf.z);
+        minX = Math::Min(minX, trf.x);
+        maxX = Math::Max(maxX, trf.x);
+        minY = Math::Min(minY, trf.y);
+        maxY = Math::Max(maxY, trf.y);
+        minZ = Math::Min(minZ, trf.z);
+        maxZ = Math::Max(maxZ, trf.z);
     }
 
     constexpr float zMult = 10.0f;
@@ -116,4 +117,5 @@ void ShadowMapPass::End(RenderParams& params)
     RenderCommand::End();
     m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_CascadeShadowMap->Bind(RenderSettings::ShadowMapSlot);
+}
 }

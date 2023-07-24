@@ -6,7 +6,8 @@
 #include "Renderer/D3D11IndexBuffer.h"
 #include "Renderer/D3D11Shader.h"
 #include "Renderer/D3D11VertexBuffer.h"
-
+namespace LevEngine
+{
 class SkyboxMesh
 {
     struct SkyboxVertex
@@ -34,3 +35,4 @@ public:
     Ref<D3D11VertexBuffer> VertexBuffer;
     Ref<D3D11IndexBuffer> IndexBuffer;
 };
+}

@@ -7,6 +7,10 @@
 using DirectX::SimpleMath::Vector3;
 using DirectX::SimpleMath::Quaternion;
 using DirectX::SimpleMath::Matrix;
+
+namespace LevEngine
+{
+
 static Vector3 gravity = Vector3(0, -9.8f, 0);
 
 enum class BodyType
@@ -77,7 +81,7 @@ public:
 	void InitSphereInertia(const Transform& transform)
 	{
 		auto scale = transform.GetLocalScale();
-		const auto maxElement = LevEngine::Math::Max(LevEngine::Math::Max(scale.x, scale.y), scale.z);
+		const auto maxElement = Math::Max(Math::Max(scale.x, scale.y), scale.z);
 		const float radius = maxElement;
 		const float i = 2.5f * GetInverseMass() / (radius * radius);
 
@@ -96,5 +100,5 @@ public:
 		inverseInteriaTensor = invOrientation * Matrix::CreateScale(inverseInertia) * orientation;
 	}
 };
-
+}
 

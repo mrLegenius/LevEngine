@@ -1,6 +1,9 @@
 #pragma once
 #include "Assets.h"
 #include "Scene/Entity.h"
+
+using namespace LevEngine;
+
 struct Prefabs
 {
     static Entity Log(const Ref<Scene> scene)
