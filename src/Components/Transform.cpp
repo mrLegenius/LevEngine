@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Transform.h"
 
 void Transform::SetParent(Transform* value, const bool keepWorldTransform)

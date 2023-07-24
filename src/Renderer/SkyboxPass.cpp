@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "SkyboxPass.h"
 #include "Kernel/Application.h"
 

@@ -1,4 +1,5 @@
-﻿#include "SceneCamera.h"
+﻿#include "pch.h"
+#include "SceneCamera.h"
 
 #include "Kernel/Math.h"
 

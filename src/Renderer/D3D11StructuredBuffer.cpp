@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "D3D11StructuredBuffer.h"
 
 extern ID3D11DeviceContext* context;

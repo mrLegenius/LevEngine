@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ClearPass.h"
 
 ClearPass::ClearPass(const Ref<D3D11RenderTarget> renderTarget, const ClearFlags clearFlags, const Vector4& color, const float depth, const uint8_t stencil)

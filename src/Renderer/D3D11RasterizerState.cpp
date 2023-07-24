@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "D3D11RasterizerState.h"
 
 #include <cassert>

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "D3D11IndexBuffer.h"
 #include <wrl/client.h>
 #include "D3D11Shader.h"

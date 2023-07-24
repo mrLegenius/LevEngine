@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "BitonicSort.h"
 
 extern ID3D11DeviceContext* context;

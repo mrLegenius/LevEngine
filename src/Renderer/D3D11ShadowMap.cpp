@@ -1,3 +1,4 @@
+#include "pch.h"
 #include <cassert>
 #include <wrl/client.h>
 

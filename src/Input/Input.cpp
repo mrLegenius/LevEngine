@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Input.h"
 
 std::unordered_map<KeyCode, Input::State> Input::s_CurrentKeyStates;
