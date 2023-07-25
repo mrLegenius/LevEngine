@@ -5,8 +5,8 @@
 #include <wrl/client.h>
 
 #include "d3d11.h"
-#include "../../external/stb/include/stb_image.h"
-#include "Kernel/Math.h"
+#include "stb/include/stb_image.h"
+#include "Math/Math.h"
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;

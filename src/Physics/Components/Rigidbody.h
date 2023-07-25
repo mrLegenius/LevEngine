@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <SimpleMath.h>
-#include "Kernel/Math.h"
+#include "Math/Math.h"
 #include "Components/Transform.h"
 
 using DirectX::SimpleMath::Vector3;

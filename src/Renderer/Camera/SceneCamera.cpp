@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "SceneCamera.h"
 
-#include "Kernel/Math.h"
+#include "Math/Math.h"
 namespace LevEngine
 {
 SceneCamera::SceneCamera()

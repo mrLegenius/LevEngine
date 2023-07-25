@@ -287,7 +287,7 @@
     <ClInclude Include="src\Components\Transform.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kernel\Math.h">
+    <ClInclude Include="src\Math\Math.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Physics\Events\CollisionEndEvent.h">

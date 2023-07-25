@@ -227,7 +227,7 @@
     <ClInclude Include="src\Components\Transform.h" />
     <ClInclude Include="src\Katamari\KatamariLayer.h" />
     <ClInclude Include="src\Katamari\ObjLoader.h" />
-    <ClInclude Include="src\Kernel\Math.h" />
+    <ClInclude Include="src\Math\Math.h" />
     <ClInclude Include="src\Kernel\PointerUtils.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
     <ClInclude Include="src\Kernel\UUID.h" />

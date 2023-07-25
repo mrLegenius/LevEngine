@@ -5,7 +5,7 @@
 
 #include "ClearFlags.h"
 #include "D3D11Texture.h"
-#include "Kernel/Math.h"
+#include "Math/Math.h"
 #include "Kernel/PointerUtils.h"
 
 using namespace DirectX::SimpleMath;
