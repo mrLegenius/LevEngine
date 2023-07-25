@@ -21,7 +21,7 @@ public:
         : m_Registry(registry)
     {
         m_CascadeShadowMap = CreateRef<D3D11CascadeShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
-        m_ShadowMapConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof ShadowData, 3);
+        m_ShadowMapConstantBuffer = ConstantBuffer::Create(sizeof ShadowData, 3);
     }
 
     bool Begin(RenderParams& params) override;
@@ -37,7 +37,7 @@ private:
     entt::registry& m_Registry;
     ShadowData m_ShadowData{};
     Ref<D3D11CascadeShadowMap> m_CascadeShadowMap = nullptr;
-    Ref<D3D11ConstantBuffer> m_ShadowMapConstantBuffer;
+    Ref<ConstantBuffer> m_ShadowMapConstantBuffer;
 
     std::vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const;
     Matrix GetCascadeProjection(const Matrix& lightView, std::vector<Vector4> frustrumCorners) const;

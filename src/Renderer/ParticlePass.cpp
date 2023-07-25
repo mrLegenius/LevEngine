@@ -29,15 +29,15 @@ void BindTextureArray(Ref<D3D11Texture>* textures, uint32_t count)
 ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
 {
 	const auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
-	m_PipelineState.GetBlendState().SetBlendMode(BlendMode::AlphaBlending);
-	m_PipelineState.GetDepthStencilState().SetDepthMode(DepthMode{ true, DepthWrite::Disable });
+	m_PipelineState.GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
+	m_PipelineState.GetDepthStencilState()->SetDepthMode(DepthMode{ true, DepthWrite::Disable });
 	m_PipelineState.GetRasterizerState().SetCullMode(CullMode::None);
 	m_PipelineState.SetRenderTarget(mainRenderTarget);
 
-	m_CameraData = CreateRef<D3D11ConstantBuffer>(sizeof ParticleCameraData, 0);
-	m_ComputeData = CreateRef<D3D11ConstantBuffer>(sizeof Handler, 1);
-	m_EmitterData = CreateRef<D3D11ConstantBuffer>(sizeof Emitter, 2);
-	m_RandomData = CreateRef<D3D11ConstantBuffer>(sizeof RandomGPUData, 3);
+	m_CameraData = ConstantBuffer::Create(sizeof ParticleCameraData, 0);
+	m_ComputeData = ConstantBuffer::Create(sizeof Handler, 1);
+	m_EmitterData = ConstantBuffer::Create(sizeof Emitter, 2);
+	m_RandomData = ConstantBuffer::Create(sizeof RandomGPUData, 3);
 
 	auto particles = new GPUParticleData[RenderSettings::MaxParticles];
 	auto indices = new uint32_t[RenderSettings::MaxParticles];

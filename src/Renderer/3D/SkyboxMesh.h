@@ -3,7 +3,7 @@
 #include "Mesh.h"
 
 #include "Kernel/PointerUtils.h"
-#include "Renderer/D3D11IndexBuffer.h"
+#include "Renderer/IndexBuffer.h"
 #include "Renderer/D3D11Shader.h"
 #include "Renderer/D3D11VertexBuffer.h"
 namespace LevEngine
@@ -16,7 +16,7 @@ class SkyboxMesh
     };
 
 public:
-	SkyboxMesh(const Ref<D3D11Shader> shader)
+    explicit SkyboxMesh(const Ref<D3D11Shader>& shader)
 	{
         const auto mesh = Mesh::CreateCube();
         IndexBuffer = mesh->CreateIndexBuffer();
@@ -33,6 +33,6 @@ public:
 	}
 
     Ref<D3D11VertexBuffer> VertexBuffer;
-    Ref<D3D11IndexBuffer> IndexBuffer;
+    Ref<IndexBuffer> IndexBuffer;
 };
 }

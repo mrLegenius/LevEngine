@@ -21,7 +21,7 @@ D3D11ForwardTechnique::D3D11ForwardTechnique()
         DepthMode depthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual };
         m_SkyboxPipeline.GetRasterizerState().SetCullMode(CullMode::None);
         m_SkyboxPipeline.GetRasterizerState().SetDepthClipEnabled(false);
-        m_SkyboxPipeline.GetDepthStencilState().SetDepthMode(depthMode);
+        m_SkyboxPipeline.GetDepthStencilState()->SetDepthMode(depthMode);
     }
 }
 

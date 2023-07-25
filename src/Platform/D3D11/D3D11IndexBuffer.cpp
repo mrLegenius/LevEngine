@@ -1,16 +1,16 @@
 #include "pch.h"
-#include "D3D11IndexBuffer.h"
 #include <wrl/client.h>
-#include "D3D11Shader.h"
+
+#include "D3D11IndexBuffer.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
-D3D11IndexBuffer::D3D11IndexBuffer(uint32_t* indices, const uint32_t count)
-	: m_Count(count)
+D3D11IndexBuffer::D3D11IndexBuffer(const uint32_t* indices, const uint32_t count) : IndexBuffer(count)
 {
-	D3D11_BUFFER_DESC indexBufDesc = {};
+	D3D11_BUFFER_DESC indexBufDesc;
 	indexBufDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufDesc.CPUAccessFlags = 0;
@@ -18,12 +18,13 @@ D3D11IndexBuffer::D3D11IndexBuffer(uint32_t* indices, const uint32_t count)
 	indexBufDesc.StructureByteStride = 0;
 	indexBufDesc.ByteWidth = sizeof(uint32_t) * count;
 
-	D3D11_SUBRESOURCE_DATA indexData = {};
+	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices;
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	device->CreateBuffer(&indexBufDesc, &indexData, &m_Buffer);
+	const auto res = device->CreateBuffer(&indexBufDesc, &indexData, &m_Buffer);
+	LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create index buffer")
 }
 
 D3D11IndexBuffer::~D3D11IndexBuffer()

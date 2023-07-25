@@ -242,14 +242,14 @@ std::shared_ptr<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 	return mesh;
 }
 
-std::shared_ptr<D3D11IndexBuffer> Mesh::CreateIndexBuffer() const
+std::shared_ptr<IndexBuffer> Mesh::CreateIndexBuffer() const
 {
 	auto indicesCount = GetIndicesCount();
 	const auto indices = new uint32_t[indicesCount];
 	for (uint32_t i = 0; i < indicesCount; i++)
 		indices[i] = GetIndex(i);
 
-	auto indexBuffer = std::make_shared<D3D11IndexBuffer>(indices, indicesCount);
+	auto indexBuffer = IndexBuffer::Create(indices, indicesCount);
 	delete[] indices;
 
 	return indexBuffer;

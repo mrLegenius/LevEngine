@@ -110,10 +110,10 @@ private:
 	Ref<D3D11StructuredBuffer> m_SortedBuffer;
 
 	PipelineState m_PipelineState;
-	Ref<D3D11ConstantBuffer> m_CameraData{};
-	Ref<D3D11ConstantBuffer> m_ComputeData{};
-	Ref<D3D11ConstantBuffer> m_EmitterData{};
-	Ref<D3D11ConstantBuffer> m_RandomData{};
+	Ref<ConstantBuffer> m_CameraData{};
+	Ref<ConstantBuffer> m_ComputeData{};
+	Ref<ConstantBuffer> m_EmitterData{};
+	Ref<ConstantBuffer> m_RandomData{};
 	Ref<D3D11StructuredBuffer> m_TempBuffer{};
 
 	Ref<BitonicSort> m_BitonicSort{};

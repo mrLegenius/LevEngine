@@ -8,7 +8,7 @@ BitonicSort::BitonicSort(const int numElements): m_NumElements(numElements)
 {
 	m_BitonicSortCS = ShaderAssets::BitonicSort();
 	m_BitonicTransposeCS = ShaderAssets::BitonicTranspose();
-	m_ConstantsBuffer = CreateRef<D3D11ConstantBuffer>(sizeof ConstantsGPUData, 0);
+	m_ConstantsBuffer = ConstantBuffer::Create(sizeof ConstantsGPUData);
 }
 
 void BitonicSort::Sort(const Ref<D3D11StructuredBuffer> inBuffer, const Ref<D3D11StructuredBuffer> tempBuffer) const

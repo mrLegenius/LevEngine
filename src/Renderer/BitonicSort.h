@@ -2,9 +2,10 @@
 #include <cstdint>
 
 #include "Assets.h"
+#include "ConstantBuffer.h"
 #include "D3D11Shader.h"
 #include "D3D11StructuredBuffer.h"
-#include "Kernel/PointerUtils.h"
+
 namespace LevEngine
 {
 class BitonicSort
@@ -22,7 +23,7 @@ class BitonicSort
 
     Ref<D3D11Shader> m_BitonicSortCS;
     Ref<D3D11Shader> m_BitonicTransposeCS;
-    Ref<D3D11ConstantBuffer> m_ConstantsBuffer;
+    Ref<ConstantBuffer> m_ConstantsBuffer;
 
     int m_NumElements;
 public:

@@ -1,12 +1,9 @@
 #pragma once
-#include <cstdint>
-#include <memory>
 #include <wrl/client.h>
 
 #include "CPUAccess.h"
-#include "D3D11BlendState.h"
 #include "D3D11Shader.h"
-#include "Kernel/PointerUtils.h"
+
 namespace LevEngine
 {
 class D3D11StructuredBuffer

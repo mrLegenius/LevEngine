@@ -6,11 +6,11 @@
 #include "Kernel/Application.h"
 namespace LevEngine
 {
-Ref<D3D11ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
-Ref<D3D11ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
-Ref<D3D11ConstantBuffer> Renderer3D::m_LightningConstantBuffer;
-Ref<D3D11ConstantBuffer> Renderer3D::m_MaterialConstantBuffer;
-Ref<D3D11ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
+Ref<ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
+Ref<ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
+Ref<ConstantBuffer> Renderer3D::m_LightningConstantBuffer;
+Ref<ConstantBuffer> Renderer3D::m_MaterialConstantBuffer;
+Ref<ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
 
 Ref<D3D11DeferredTechnique> Renderer3D::m_GBuffer;
 Ref<D3D11ForwardTechnique> Renderer3D::s_ForwardTechnique;
@@ -38,11 +38,11 @@ void Renderer3D::Init()
 {
     LEV_PROFILE_FUNCTION();
 
-	m_CameraConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof CameraData, 0);
-	m_ModelConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof MeshModelBufferData, 1);
-	m_LightningConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof LightningData, 2);
-    m_MaterialConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof MaterialData, 4);
-    m_ScreenToViewParamsConstantBuffer = CreateRef<D3D11ConstantBuffer>(sizeof ScreenToViewParams, 5);
+	m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
+	m_ModelConstantBuffer = ConstantBuffer::Create(sizeof MeshModelBufferData, 1);
+	m_LightningConstantBuffer = ConstantBuffer::Create(sizeof LightningData, 2);
+    m_MaterialConstantBuffer = ConstantBuffer::Create(sizeof MaterialData, 4);
+    m_ScreenToViewParamsConstantBuffer = ConstantBuffer::Create(sizeof ScreenToViewParams, 5);
 
     s_SkyboxMesh = CreateRef<SkyboxMesh>(ShaderAssets::Skybox());
 

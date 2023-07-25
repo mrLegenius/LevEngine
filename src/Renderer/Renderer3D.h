@@ -1,12 +1,12 @@
 #pragma once
-#include <Kernel/PointerUtils.h>
-
+#include "ConstantBuffer.h"
 #include "D3D11DeferredTechnique.h"
 #include "D3D11ForwardTechnique.h"
 #include "RenderSettings.h"
 #include "3D/Mesh.h"
 #include "3D/SkyboxMesh.h"
 #include "Scene/Components/Components.h"
+
 namespace LevEngine
 {
 struct MeshModelBufferData
@@ -84,11 +84,11 @@ public:
 	static Ref<D3D11DeferredTechnique> m_GBuffer;
 
 private:
-	static Ref<D3D11ConstantBuffer> m_ModelConstantBuffer;
-	static Ref<D3D11ConstantBuffer> m_CameraConstantBuffer;
-	static Ref<D3D11ConstantBuffer> m_LightningConstantBuffer;
-	static Ref<D3D11ConstantBuffer> m_MaterialConstantBuffer;
-	static Ref<D3D11ConstantBuffer> m_ScreenToViewParamsConstantBuffer;
+	static Ref<ConstantBuffer> m_ModelConstantBuffer;
+	static Ref<ConstantBuffer> m_CameraConstantBuffer;
+	static Ref<ConstantBuffer> m_LightningConstantBuffer;
+	static Ref<ConstantBuffer> m_MaterialConstantBuffer;
+	static Ref<ConstantBuffer> m_ScreenToViewParamsConstantBuffer;
 
 	
 	static Ref<D3D11ForwardTechnique> s_ForwardTechnique;

@@ -1,16 +1,14 @@
 #include "pch.h"
+#include <wrl/client.h>
+
 #include "D3D11ConstantBuffer.h"
 
-#include <cassert>
-#include <iostream>
-#include <wrl/client.h>
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
-D3D11ConstantBuffer::D3D11ConstantBuffer(const uint32_t size, const uint32_t slot)
-	: m_Size(size), m_Slot(slot)
+D3D11ConstantBuffer::D3D11ConstantBuffer(const uint32_t size, const uint32_t slot) : ConstantBuffer(size, slot)
 {
 	D3D11_BUFFER_DESC bufferDesc;
 

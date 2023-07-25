@@ -3,7 +3,7 @@
 #include <memory>
 #include "SimpleMath.h"
 
-#include "../D3D11IndexBuffer.h"
+#include "Renderer/IndexBuffer.h"
 #include "../D3D11VertexBuffer.h"
 #include "Kernel/PointerUtils.h"
 
@@ -25,7 +25,7 @@ public:
 	static std::shared_ptr<Mesh> CreateSphere(const uint32_t sliceCount);
 	static std::shared_ptr<Mesh> CreateCube();
 
-	std::shared_ptr<D3D11IndexBuffer> CreateIndexBuffer() const;
+	std::shared_ptr<IndexBuffer> CreateIndexBuffer() const;
 
 	[[nodiscard]] std::shared_ptr<D3D11VertexBuffer> CreateVertexBuffer(const BufferLayout&) const;
 	std::shared_ptr<D3D11VertexBuffer> CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const;
@@ -77,7 +77,7 @@ public:
 		delete[] meshVertexBuffer;
 	}
 
-	Ref<D3D11IndexBuffer> IndexBuffer;
+	Ref<IndexBuffer> IndexBuffer;
 	Ref<D3D11VertexBuffer> VertexBuffer;
 
 private:

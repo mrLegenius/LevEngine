@@ -3,7 +3,7 @@
 
 #include "Transform.h"
 #include "../Renderer/D3D11VertexBuffer.h"
-#include "../Renderer/D3D11IndexBuffer.h"
+#include "../Renderer/IndexBuffer.h"
 #include "../Renderer/D3D11Shader.h"
 #include "../Renderer/RenderCommand.h"
 
@@ -33,5 +33,5 @@ protected:
 
 	std::shared_ptr<D3D11Shader> m_Shader;
 	std::shared_ptr<D3D11VertexBuffer> m_VertexBuffer;
-	std::shared_ptr<D3D11IndexBuffer> m_IndexBuffer;
+	std::shared_ptr<IndexBuffer> m_IndexBuffer;
 };

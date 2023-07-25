@@ -2,9 +2,10 @@
 #include <cstdint>
 #include <memory>
 
-#include "D3D11IndexBuffer.h"
+#include "IndexBuffer.h"
 #include "D3D11VertexBuffer.h"
 #include "DepthFunc.h"
+
 namespace LevEngine
 {
 class D3D11RendererAPI
@@ -18,7 +19,7 @@ public:
 	void Clear();
 	void SetDepthFunc(DepthFunc depthFunc);
 
-	void DrawIndexed(const std::shared_ptr<D3D11VertexBuffer>& vertexBuffer, const std::shared_ptr<D3D11IndexBuffer>& indexBuffer);
+	void DrawIndexed(const std::shared_ptr<D3D11VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer);
 	void DrawFullScreenQuad();
 	//void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
 

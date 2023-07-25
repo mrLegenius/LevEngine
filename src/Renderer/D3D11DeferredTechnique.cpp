@@ -82,7 +82,7 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
         m_PositionalLightPipeline1.GetRasterizerState().SetDepthClipEnabled(true);
 
         DepthMode depthMode{ true, DepthWrite::Disable, CompareFunction::Greater };
-        m_PositionalLightPipeline1.GetDepthStencilState().SetDepthMode(depthMode);
+        m_PositionalLightPipeline1.GetDepthStencilState()->SetDepthMode(depthMode);
 
         StencilMode stencilMode{ true };
         FaceOperation faceOperation;
@@ -91,7 +91,7 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
         stencilMode.StencilReference = 1;
         stencilMode.FrontFace = faceOperation;
 
-        m_PositionalLightPipeline1.GetDepthStencilState().SetStencilMode(stencilMode);
+        m_PositionalLightPipeline1.GetDepthStencilState()->SetStencilMode(stencilMode);
     }
 
     //Pipeline2 for point and spot lights
@@ -100,10 +100,10 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
         m_PositionalLightPipeline2.GetRasterizerState().SetCullMode(CullMode::Front);
         m_PositionalLightPipeline2.GetRasterizerState().SetDepthClipEnabled(false);
 
-        m_PositionalLightPipeline2.GetBlendState().SetBlendMode(BlendMode::Additive);
+        m_PositionalLightPipeline2.GetBlendState()->SetBlendMode(BlendMode::Additive);
 
         DepthMode depthMode{ true, DepthWrite::Disable, CompareFunction::GreaterOrEqual };
-        m_PositionalLightPipeline2.GetDepthStencilState().SetDepthMode(depthMode);
+        m_PositionalLightPipeline2.GetDepthStencilState()->SetDepthMode(depthMode);
 
         StencilMode stencilMode{ true };
         FaceOperation faceOperation;
@@ -112,7 +112,7 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
         stencilMode.StencilReference = 1;
         stencilMode.BackFace = faceOperation;
 
-        m_PositionalLightPipeline2.GetDepthStencilState().SetStencilMode(stencilMode);
+        m_PositionalLightPipeline2.GetDepthStencilState()->SetStencilMode(stencilMode);
     }
 
     //Skybox
@@ -122,7 +122,7 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
         DepthMode depthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual };
         m_SkyboxPipeline.GetRasterizerState().SetCullMode(CullMode::None);
         m_SkyboxPipeline.GetRasterizerState().SetDepthClipEnabled(false);
-        m_SkyboxPipeline.GetDepthStencilState().SetDepthMode(depthMode);
+        m_SkyboxPipeline.GetDepthStencilState()->SetDepthMode(depthMode);
     }
 }
 

@@ -1,11 +1,9 @@
 #include "pch.h"
-#include "D3D11RendererAPI.h"
-
-#include <cassert>
-#include <iostream>
+#include <d3d11.h>
 #include <wrl/client.h>
 
-#include "d3d11.h"
+#include "D3D11RendererAPI.h"
+
 #include "../Kernel/Application.h"
 
 namespace LevEngine
@@ -92,7 +90,7 @@ void D3D11RendererAPI::SetDepthFunc(const DepthFunc depthFunc)
 
 void D3D11RendererAPI::DrawIndexed(
 	const std::shared_ptr<D3D11VertexBuffer>& vertexBuffer,
-	const std::shared_ptr<D3D11IndexBuffer>& indexBuffer)
+	const std::shared_ptr<IndexBuffer>& indexBuffer)
 {
 	context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	indexBuffer->Bind();

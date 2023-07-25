@@ -15,7 +15,7 @@ SkyboxPass::SkyboxPass(entt::registry& registry) : m_Registry(registry)
 		DepthMode depthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual };
 		m_SkyboxPipeline.GetRasterizerState().SetCullMode(CullMode::None);
 		m_SkyboxPipeline.GetRasterizerState().SetDepthClipEnabled(false);
-		m_SkyboxPipeline.GetDepthStencilState().SetDepthMode(depthMode);
+		m_SkyboxPipeline.GetDepthStencilState()->SetDepthMode(depthMode);
 	}
 }
 

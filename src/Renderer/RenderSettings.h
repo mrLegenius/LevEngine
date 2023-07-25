@@ -1,8 +1,16 @@
 #pragma once
 #include <SimpleMath.h>
+
 using namespace DirectX::SimpleMath;
 namespace LevEngine
 {
+enum class RendererAPI
+{
+	None = 0,
+	D3D11 = 5,
+	OpenGL = 10,
+};
+
 struct RenderSettings
 {
 	//Shadows
@@ -19,5 +27,7 @@ struct RenderSettings
 	static constexpr uint32_t ShadowMapSlot = 9;
 
 	static constexpr uint32_t MaxParticles = 1024 * 8;
+
+	static constexpr RendererAPI RendererAPI = RendererAPI::D3D11;
 };
 }

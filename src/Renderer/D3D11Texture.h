@@ -1,12 +1,13 @@
 #pragma once
 #include <cstdint>
+#include <cstdint>
 #include <dxgiformat.h>
 #include <SimpleMath.h>
 #include <string>
+#include <d3d11.h>
 
 #include "ClearFlags.h"
 #include "CPUAccess.h"
-#include "D3D11ConstantBuffer.h"
 #include "Kernel/PointerUtils.h"
 
 using namespace DirectX::SimpleMath;

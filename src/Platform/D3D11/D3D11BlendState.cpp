@@ -1,10 +1,9 @@
 #include "pch.h"
-#include "D3D11BlendState.h"
-
-#include <cassert>
 #include <wrl/client.h>
 
-#include "Debugging/Profiler.h"
+#include "D3D11BlendState.h"
+
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
@@ -78,7 +77,7 @@ D3D11_BLEND ConvertBlendFactor(const BlendFactor blendFactor)
     return result;
 }
 
-D3D11_BLEND_OP ConvertBlendOp(BlendOperation blendOperation)
+D3D11_BLEND_OP ConvertBlendOp(const BlendOperation blendOperation)
 {
     D3D11_BLEND_OP result = D3D11_BLEND_OP_ADD;
     switch (blendOperation)
@@ -210,7 +209,9 @@ void D3D11BlendState::Bind()
         if (m_BlendState)
             m_BlendState->Release();
 
-        device->CreateBlendState(&blendDesc, &m_BlendState);
+        const auto res = device->CreateBlendState(&blendDesc, &m_BlendState);
+
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create blend state")
 
         m_Dirty = false;
     }

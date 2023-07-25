@@ -1,6 +1,6 @@
 #pragma once
-#include "D3D11BlendState.h"
-#include "D3D11DepthStencilState.h"
+#include "BlendState.h"
+#include "DepthStencilState.h"
 #include "D3D11RasterizerState.h"
 #include "D3D11RenderTarget.h"
 namespace LevEngine
@@ -8,17 +8,22 @@ namespace LevEngine
 class PipelineState
 {
 public:
-    PipelineState() = default;
-    void SetBlendState(const D3D11BlendState& blendState) { m_BlendState = blendState; }
-    [[nodiscard]] D3D11BlendState& GetBlendState() { return m_BlendState; }
+    PipelineState()
+    {
+        m_BlendState = BlendState::Create();
+        m_DepthStencilState = DepthStencilState::Create();
+    }
+
+    void SetBlendState(const Ref<BlendState>& blendState) { m_BlendState = blendState; }
+    [[nodiscard]] const Ref<BlendState>& GetBlendState() { return m_BlendState; }
 
     void SetRasterizerState(const D3D11RasterizerState& rasterizerState) { m_RasterizerState = rasterizerState; }
     [[nodiscard]] D3D11RasterizerState& GetRasterizerState() { return m_RasterizerState; }
 
-    void SetDepthStencilState(const D3D11DepthStencilState& depthStencilState) { m_DepthStencilState = depthStencilState; }
-    [[nodiscard]] D3D11DepthStencilState& GetDepthStencilState() { return m_DepthStencilState; }
+    void SetDepthStencilState(const Ref<DepthStencilState>& depthStencilState) { m_DepthStencilState = depthStencilState; }
+    [[nodiscard]] const Ref<DepthStencilState>& GetDepthStencilState() { return m_DepthStencilState; }
 
-    void SetRenderTarget(const Ref<D3D11RenderTarget> renderTarget) { m_RenderTarget = renderTarget; }
+    void SetRenderTarget(const Ref<D3D11RenderTarget>& renderTarget) { m_RenderTarget = renderTarget; }
     [[nodiscard]] Ref<D3D11RenderTarget> GetRenderTarget() const { return m_RenderTarget; }
 
     // Bind this pipeline state for rendering.
@@ -26,9 +31,9 @@ public:
     // Unbind render target
     void Unbind();
 private:
-    D3D11BlendState m_BlendState;
+    Ref<BlendState> m_BlendState;
     D3D11RasterizerState m_RasterizerState;
-    D3D11DepthStencilState m_DepthStencilState;
+    Ref<DepthStencilState> m_DepthStencilState;
     Ref<D3D11RenderTarget> m_RenderTarget;
 };
 }
