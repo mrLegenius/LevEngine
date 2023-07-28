@@ -4,7 +4,6 @@
 
 #include "Katamari/ObjLoader.h"
 #include "Renderer/Texture.h"
-#include "Renderer/D3D11TextureCube.h"
 #include "Renderer/Material.h"
 #include "Renderer/Shader.h"
 
@@ -312,7 +311,7 @@ namespace SkyboxAssets
             GetTexturePath("TestSkybox/front.png"), //front
         };
 
-        static auto texture = CreateRef<D3D11TextureCube>(paths);
+        static auto texture = Texture::CreateTextureCube(paths);
 
         return texture;
     }
@@ -328,7 +327,7 @@ namespace SkyboxAssets
             GetTexturePath("LightBlueSkybox/front.png"), //front
         };
 
-        static auto texture = CreateRef<D3D11TextureCube>(paths);
+        static auto texture = Texture::CreateTextureCube(paths);
 
         return texture;
     }

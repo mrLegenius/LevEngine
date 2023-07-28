@@ -98,6 +98,7 @@ namespace LevEngine
 		virtual ~Texture() = default;
 
 		static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format, CPUAccess cpuAccess = CPUAccess::None, bool uav = false);
+		static Ref<Texture> CreateTextureCube(const std::string paths[6]);
 		static Ref<Texture> Create(const std::string& path);
 
 		virtual void GenerateMipMaps() = 0;
@@ -127,7 +128,7 @@ namespace LevEngine
 
 	protected:
 		Texture() = default;
-		explicit Texture(const std::string& path) : m_Path(path) { }
+		explicit Texture(std::string path) : m_Path(std::move(path)) { }
 
 		std::string m_Path{};
 	};

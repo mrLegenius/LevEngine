@@ -46,7 +46,7 @@ void D3D11Context::Init(uint32_t width, uint32_t height, HWND window)
 	swapDesc.SampleDesc.Count = 1;
 	swapDesc.SampleDesc.Quality = 0;
 
-	const auto res = D3D11CreateDeviceAndSwapChain(
+	auto res = D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
@@ -62,7 +62,8 @@ void D3D11Context::Init(uint32_t width, uint32_t height, HWND window)
 
 	LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create device and swap chain")
 
-	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_BackBuffer));
+	res = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_BackBuffer));
+	LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to get buffer from swap chain")
 
 	const Texture::TextureFormat depthStencilTextureFormat(
 		Texture::Components::DepthStencil,

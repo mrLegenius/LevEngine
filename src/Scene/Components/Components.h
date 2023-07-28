@@ -10,7 +10,6 @@
 #include "Kernel/UUID.h"
 #include "Physics/Components/Collider.h"
 #include "Physics/Components/Rigidbody.h"
-#include "Renderer/D3D11TextureCube.h"
 #include "Renderer/Material.h"
 namespace LevEngine
 {
@@ -53,9 +52,9 @@ namespace LevEngine
 
 	struct SkyboxRendererComponent
 	{
-		Ref<D3D11TextureCube> texture;
+		Ref<Texture> texture;
 
-		SkyboxRendererComponent(const Ref<D3D11TextureCube> texture) : texture(texture) { }
+		SkyboxRendererComponent(const Ref<Texture> texture) : texture(texture) { }
 		SkyboxRendererComponent() = default;
 		SkyboxRendererComponent(const SkyboxRendererComponent&) = default;
 	};

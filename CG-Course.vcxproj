@@ -189,7 +189,6 @@
     <ClCompile Include="src\Platform\D3D11\D3D11RasterizerState.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderTarget.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Texture.cpp" />
-    <ClCompile Include="src\Renderer\D3D11TextureCube.cpp" />
     <ClCompile Include="src\Renderer\D3D11ShadowMap.cpp" />
     <ClCompile Include="src\Renderer\RasterizerState.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
@@ -273,7 +272,6 @@
     <ClInclude Include="src\Platform\D3D11\D3D11RenderTarget.h" />
     <ClInclude Include="src\Renderer\D3D11ShadowMap.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Texture.h" />
-    <ClInclude Include="src\Renderer\D3D11TextureCube.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />
     <ClInclude Include="src\Renderer\Material.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RasterizerState.h" />

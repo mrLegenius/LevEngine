@@ -3,7 +3,6 @@
 
 #include "Assets.h"
 #include "ConstantBuffer.h"
-#include "D3D11Shader.h"
 #include "StructuredBuffer.h"
 
 namespace LevEngine

@@ -1,5 +1,8 @@
 #include "pch.h"
+#include <d3d11.h>
+
 #include "BitonicSort.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
@@ -29,7 +32,7 @@ void BitonicSort::Sort(const Ref<StructuredBuffer> inBuffer, const Ref<Structure
 
 	inBuffer->Unbind(0, Shader::Type::Compute, true);
 
-	auto heightTransposeBlocks = static_cast<int>(matrixHeight / TransposeBlockSize);
+	const auto heightTransposeBlocks = static_cast<int>(matrixHeight / TransposeBlockSize);
 	// Then sort the rows and columns for the levels > than the block size
 	// Transpose. Sort the Columns. Transpose. Sort the Rows.
 	for (uint32_t level = (BitonicBlockSize << 1); level <= numElements; level <<= 1) {

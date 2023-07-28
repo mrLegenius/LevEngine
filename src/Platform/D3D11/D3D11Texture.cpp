@@ -1832,6 +1832,145 @@ D3D11Texture::D3D11Texture(const std::string& path) : Texture(path)
     stbi_image_free(data);
 }
 
+D3D11Texture::D3D11Texture(const std::string paths[6])
+{
+    int width, height, channels;
+
+    stbi_uc* data[6];
+
+    for (int i = 0; i < 6; ++i)
+        data[i] = stbi_load(paths[i].c_str(), &width, &height, &channels, 4);
+
+    m_IsLoaded = true;
+    m_Width = width;
+    m_Height = height;
+
+    if (channels == 3)
+    {
+        m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+    }
+    else if (channels == 4)
+    {
+        m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+    }
+    else
+    {
+        LEV_THROW("Unsupported number of channels");
+    }
+
+    auto res = device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query format support")
+
+	LEV_CORE_ASSERT(m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURECUBE, "Format is not supported");
+
+    m_Pitch = width * 4;
+
+    m_IsLoaded = true;
+    m_Width = width;
+    m_Height = height;
+    m_TextureDimension = Dimension::TextureCube;
+    m_NumSlices = 6;
+    m_SampleDesc = GetSupportedSampleCount(m_TextureResourceFormat, 1);
+
+    m_ShaderResourceViewFormat = m_RenderTargetViewFormat = m_TextureResourceFormat;
+    m_ShaderResourceViewFormatSupport = m_RenderTargetViewFormatSupport = m_TextureResourceFormatSupport;
+    m_GenerateMipMaps = !m_Dynamic && (m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN) != 0;
+
+    // Texture
+
+    D3D11_TEXTURE2D_DESC textureDesc{};
+
+    textureDesc.Width = width;
+    textureDesc.Height = height;
+    textureDesc.MipLevels = 1;
+    textureDesc.ArraySize = 6;
+    textureDesc.Format = m_TextureResourceFormat;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.CPUAccessFlags = 0;
+
+    textureDesc.MiscFlags = m_GenerateMipMaps ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
+    textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+    if ((m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_SHADER_SAMPLE) != 0)
+    {
+        textureDesc.BindFlags |= D3D11_BIND_SHADER_RESOURCE;
+    }
+    if ((m_RenderTargetViewFormatSupport & D3D11_FORMAT_SUPPORT_RENDER_TARGET) != 0)
+    {
+        textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+    }
+
+    D3D11_SUBRESOURCE_DATA imageSubresourceData[6];
+    for (int i = 0; i < 6; ++i)
+    {
+        auto& subResourceData = imageSubresourceData[i];
+        subResourceData.pSysMem = data[i];
+        subResourceData.SysMemPitch = m_Pitch;
+        subResourceData.SysMemSlicePitch = 0;
+    }
+
+    auto result = device->CreateTexture2D(
+        &textureDesc,
+        imageSubresourceData,
+        &m_Texture2D
+    );
+
+    LEV_CORE_ASSERT(SUCCEEDED(result));
+
+    //Shader resource view
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc{};
+    resourceViewDesc.Format = m_ShaderResourceViewFormat;
+    resourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+    resourceViewDesc.Texture2D.MostDetailedMip = 0;
+    resourceViewDesc.Texture2D.MipLevels = m_GenerateMipMaps ? -1 : 1;
+
+    result = device->CreateShaderResourceView(m_Texture2D,
+        &resourceViewDesc,
+        &m_ShaderResourceView
+    );
+
+    LEV_CORE_ASSERT(SUCCEEDED(result));
+
+    //TODO: Do we need mip maps for cube map?
+    /*if (m_GenerateMipMaps)
+    {
+        context->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
+        context->GenerateMips(m_ShaderResourceView);
+    }*/
+
+    m_IsDirty = false;
+
+    // Sampler
+
+    D3D11_SAMPLER_DESC ImageSamplerDesc = {};
+
+    ImageSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    ImageSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    ImageSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    ImageSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+    ImageSamplerDesc.MipLODBias = 0.0f;
+    ImageSamplerDesc.MaxAnisotropy = 1;
+    ImageSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    ImageSamplerDesc.BorderColor[0] = 1.0f;
+    ImageSamplerDesc.BorderColor[1] = 1.0f;
+    ImageSamplerDesc.BorderColor[2] = 1.0f;
+    ImageSamplerDesc.BorderColor[3] = 1.0f;
+    ImageSamplerDesc.MinLOD = -FLT_MAX;
+    ImageSamplerDesc.MaxLOD = FLT_MAX;
+
+    result = device->CreateSamplerState(&ImageSamplerDesc,
+        &m_SamplerState);
+
+    LEV_CORE_ASSERT(SUCCEEDED(result));
+
+    for (auto& i : data)
+        stbi_image_free(i);
+}
+
 D3D11Texture::~D3D11Texture()
 {
     if (m_Texture1D) m_Texture1D->Release();
@@ -1848,6 +1987,8 @@ D3D11Texture::~D3D11Texture()
 
 void D3D11Texture::Bind(const uint32_t slot) const
 {
+    //TODO: Bind only by shaderType
+
 	context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (m_SamplerState)
 		context->PSSetSamplers(slot, 1, &m_SamplerState);
@@ -1855,6 +1996,22 @@ void D3D11Texture::Bind(const uint32_t slot) const
     context->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (m_SamplerState)
         context->CSSetSamplers(slot, 1, &m_SamplerState);
+}
+
+void D3D11Texture::Unbind(const uint32_t slot) const
+{
+    //TODO: Clear only by shaderType
+    ID3D11ShaderResourceView* srv[] = { nullptr };
+    ID3D11UnorderedAccessView* uav[] = { nullptr };
+
+    context->VSSetShaderResources(slot, 1, srv);
+    context->HSSetShaderResources(slot, 1, srv);
+    context->DSSetShaderResources(slot, 1, srv);
+    context->GSSetShaderResources(slot, 1, srv);
+    context->PSSetShaderResources(slot, 1, srv);
+    context->CSSetShaderResources(slot, 1, srv);
+    context->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
+    context->CSSetSamplers(slot, 0, nullptr);
 }
 
 void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, float depth, uint8_t stencil)
@@ -1877,28 +2034,20 @@ void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, float dept
 
 ID3D11Resource* D3D11Texture::GetTextureResource() const
 {
-	ID3D11Resource* resource = nullptr;
-
 	switch (m_TextureDimension)
 	{
 	case Dimension::Texture1D:
 	case Dimension::Texture1DArray:
-		resource = m_Texture1D;
-		break;
+		return m_Texture1D;
 	case Dimension::Texture2D:
 	case Dimension::Texture2DArray:
-		resource = m_Texture2D;
-		break;
+		return m_Texture2D;
 	case Dimension::Texture3D:
 	case Dimension::TextureCube:
-		resource = m_Texture3D;
-		break;
+		return m_Texture3D;
 	default:
 		LEV_THROW("Unknown texture dimension")
-		break;
 	}
-
-	return resource;
 }
 
 void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
@@ -2185,22 +2334,6 @@ void D3D11Texture::Copy(const Ref<Texture> other)
 
         context->Unmap(m_Texture2D, 0);
     }
-}
-
-void D3D11Texture::Unbind(const uint32_t slot) const
-{
-    //TODO: Clear only by flag
-    ID3D11ShaderResourceView* srv[] = { nullptr };
-    ID3D11UnorderedAccessView* uav[] = { nullptr };
-
-    context->VSSetShaderResources(slot, 1, srv);
-    context->HSSetShaderResources(slot, 1, srv);
-    context->DSSetShaderResources(slot, 1, srv);
-    context->GSSetShaderResources(slot, 1, srv);
-    context->PSSetShaderResources(slot, 1, srv);
-    context->CSSetShaderResources(slot, 1, srv);
-    context->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
-	context->CSSetSamplers(slot, 0, nullptr);
 }
 
 void D3D11Texture::GenerateMipMaps()
