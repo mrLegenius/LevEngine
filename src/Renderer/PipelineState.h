@@ -2,7 +2,7 @@
 #include "BlendState.h"
 #include "DepthStencilState.h"
 #include "D3D11RasterizerState.h"
-#include "D3D11RenderTarget.h"
+#include "RenderTarget.h"
 namespace LevEngine
 {
 class PipelineState
@@ -23,8 +23,8 @@ public:
     void SetDepthStencilState(const Ref<DepthStencilState>& depthStencilState) { m_DepthStencilState = depthStencilState; }
     [[nodiscard]] const Ref<DepthStencilState>& GetDepthStencilState() { return m_DepthStencilState; }
 
-    void SetRenderTarget(const Ref<D3D11RenderTarget>& renderTarget) { m_RenderTarget = renderTarget; }
-    [[nodiscard]] Ref<D3D11RenderTarget> GetRenderTarget() const { return m_RenderTarget; }
+    void SetRenderTarget(const Ref<RenderTarget>& renderTarget) { m_RenderTarget = renderTarget; }
+    [[nodiscard]] Ref<RenderTarget> GetRenderTarget() const { return m_RenderTarget; }
 
     // Bind this pipeline state for rendering.
     void Bind();
@@ -34,6 +34,6 @@ private:
     Ref<BlendState> m_BlendState;
     D3D11RasterizerState m_RasterizerState;
     Ref<DepthStencilState> m_DepthStencilState;
-    Ref<D3D11RenderTarget> m_RenderTarget;
+    Ref<RenderTarget> m_RenderTarget;
 };
 }

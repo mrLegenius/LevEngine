@@ -32,7 +32,7 @@ private:
 	PipelineState m_PositionalLightPipeline2;
 	PipelineState m_SkyboxPipeline;
 
-	Ref<D3D11RenderTarget> m_GBufferRenderTarget;
-	Ref<D3D11RenderTarget> m_DepthOnlyRenderTarget;
+	Ref<RenderTarget> m_GBufferRenderTarget;
+	Ref<RenderTarget> m_DepthOnlyRenderTarget;
 };
 }

@@ -1,9 +1,6 @@
 #pragma once
-
-#include <d3d11.h>
-
-#include "Kernel/PointerUtils.h"
 #include "PipelineState.h"
+
 namespace LevEngine
 {
 class D3D11ForwardTechnique
@@ -17,17 +14,17 @@ public:
 
 private:
 
-	Ref<D3D11Texture> m_DepthTexture = nullptr;
-	Ref<D3D11Texture> m_DiffuseTexture = nullptr;
-	Ref<D3D11Texture> m_SpecularTexture = nullptr;
-	Ref<D3D11Texture> m_NormalTexture = nullptr;
+	Ref<Texture> m_DepthTexture = nullptr;
+	Ref<Texture> m_DiffuseTexture = nullptr;
+	Ref<Texture> m_SpecularTexture = nullptr;
+	Ref<Texture> m_NormalTexture = nullptr;
 
 	PipelineState m_GeometryPipeline;
 	PipelineState m_PositionalLightPipeline1;
 	PipelineState m_PositionalLightPipeline2;
 	PipelineState m_SkyboxPipeline;
 
-	Ref<D3D11RenderTarget> m_GBufferRenderTarget;
-	Ref<D3D11RenderTarget> m_DepthOnlyRenderTarget;
+	Ref<RenderTarget> m_GBufferRenderTarget;
+	Ref<RenderTarget> m_DepthOnlyRenderTarget;
 };
 }

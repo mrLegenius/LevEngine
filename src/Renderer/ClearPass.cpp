@@ -2,7 +2,7 @@
 #include "ClearPass.h"
 namespace LevEngine
 {
-ClearPass::ClearPass(const Ref<D3D11RenderTarget> renderTarget, const ClearFlags clearFlags, const Vector4& color, const float depth, const uint8_t stencil)
+ClearPass::ClearPass(const Ref<RenderTarget> renderTarget, const ClearFlags clearFlags, const Vector4& color, const float depth, const uint8_t stencil)
     : m_RenderTarget(renderTarget)
     , m_ClearFlags(clearFlags)
     , m_ClearColor(color)

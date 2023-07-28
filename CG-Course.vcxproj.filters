@@ -114,7 +114,7 @@
     <ClCompile Include="src\Platform\D3D11\D3D11BlendState.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11RenderTarget.cpp">
+    <ClCompile Include="src\Platform\D3D11\D3D11RenderTarget.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\PipelineState.cpp">
@@ -172,6 +172,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\Shader.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\RenderTarget.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -377,7 +380,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11BlendState.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11RenderTarget.h">
+    <ClInclude Include="src\Platform\D3D11\D3D11RenderTarget.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\ClearFlags.h">
@@ -456,6 +459,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Shader.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\RenderTarget.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

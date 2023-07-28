@@ -8,7 +8,7 @@ D3D11ForwardTechnique::D3D11ForwardTechnique()
 {
 	const auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
 
-    m_DepthOnlyRenderTarget = CreateRef<D3D11RenderTarget>();
+    m_DepthOnlyRenderTarget = RenderTarget::Create();
     m_DepthOnlyRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil));
 
     m_GeometryPipeline.SetRenderTarget(mainRenderTarget);

@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "ParticlePass.h"
-#include "ParticlePass.h"
 
 #include "Assets.h"
-#include "Random.h"
 #include "Kernel/Time.h"
 #include "Kernel/Application.h"
 #include "RenderCommand.h"
 #include "RenderSettings.h"
+#include "Platform/D3D11/D3D11Texture.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;

@@ -19,8 +19,6 @@ namespace LevEngine
 		default:
 			LEV_THROW("Unknown Renderer API")
 		}
-
-		return nullptr;
 	}
 
 	Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, uint32_t size)
@@ -36,7 +34,5 @@ namespace LevEngine
 		default:
 			LEV_THROW("Unknown Renderer API")
 		}
-
-		return nullptr;
 	}
 }

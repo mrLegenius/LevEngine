@@ -1,14 +1,20 @@
 #include "pch.h"
 #include <d3d11.h>
-#include "D3D11RenderTarget.h"
-
 #include <wrl/client.h>
 
-#include "Debugging/Profiler.h"
+
+#include "D3D11RenderTarget.h"
+#include "D3D11Texture.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
+
+inline Ref<D3D11Texture> ConvertTextureToD3D11Texture(const Ref<Texture>& texture)
+{
+    return std::dynamic_pointer_cast<D3D11Texture>(texture);
+}
 
 void D3D11RenderTarget::Bind()
 {
@@ -25,7 +31,7 @@ void D3D11RenderTarget::Bind()
 
     for (uint8_t i = 0; i < 8; i++)
     {
-	    if (const std::shared_ptr<D3D11Texture> texture = m_Textures[i])
+	    if (const std::shared_ptr<D3D11Texture> texture = ConvertTextureToD3D11Texture(m_Textures[i]))
 		    renderTargetViews[numRTVs++] = texture->GetRenderTargetView();
     }
 
@@ -43,8 +49,8 @@ void D3D11RenderTarget::Bind()
     */
 
     ID3D11DepthStencilView* depthStencilView = nullptr;
-    const std::shared_ptr<D3D11Texture> depthTexture = m_Textures[static_cast<uint8_t>(AttachmentPoint::Depth)];
-    const std::shared_ptr<D3D11Texture> depthStencilTexture = m_Textures[static_cast<uint8_t>(AttachmentPoint::DepthStencil)];
+    const Ref<D3D11Texture> depthTexture = ConvertTextureToD3D11Texture(m_Textures[static_cast<uint8_t>(AttachmentPoint::Depth)]);
+    const Ref<D3D11Texture> depthStencilTexture = ConvertTextureToD3D11Texture(m_Textures[static_cast<uint8_t>(AttachmentPoint::DepthStencil)]);
 
     if (depthTexture)
     {
@@ -77,7 +83,8 @@ bool D3D11RenderTarget::IsValid() const
     {
         if (texture)
         {
-            if (texture->GetRenderTargetView()) ++numRTV;
+            if (ConvertTextureToD3D11Texture(texture)->GetRenderTargetView()) 
+                ++numRTV;
 
             if (width == -1 || height == -1)
             {

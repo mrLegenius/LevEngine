@@ -8,6 +8,7 @@
 
 #include "Texture.h"
 #include "Debugging/Profiler.h"
+#include "Platform/D3D11/D3D11Texture.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -28,7 +29,7 @@ void D3D11Context::Init(uint32_t width, uint32_t height, HWND window)
 {
 	constexpr D3D_FEATURE_LEVEL featureLevel[] = { D3D_FEATURE_LEVEL_11_1 };
 
-	DXGI_SWAP_CHAIN_DESC swapDesc = {};
+	DXGI_SWAP_CHAIN_DESC swapDesc;
 	swapDesc.BufferCount = 2;
 	swapDesc.BufferDesc.Width = width;
 	swapDesc.BufferDesc.Height = height;
@@ -63,21 +64,21 @@ void D3D11Context::Init(uint32_t width, uint32_t height, HWND window)
 
 	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_BackBuffer));
 
-	Texture::TextureFormat depthStencilTextureFormat(
+	const Texture::TextureFormat depthStencilTextureFormat(
 		Texture::Components::DepthStencil,
 		Texture::Type::UnsignedNormalized,
 		1,
 		0, 0, 0, 0, 24, 8);
-	std::shared_ptr<Texture> depthStencilTexture = D3D11Texture::CreateTexture2D(width, height, 1, depthStencilTextureFormat);
+	const Ref<Texture> depthStencilTexture = Texture::CreateTexture2D(width, height, 1, depthStencilTextureFormat);
 
 	// Color buffer (Color0)
-	Texture::TextureFormat colorTextureFormat(
+	const Texture::TextureFormat colorTextureFormat(
 		Texture::Components::RGBA,
 		Texture::Type::UnsignedNormalized,
 		1,
 		8, 8, 8, 8, 0, 0);
-	std::shared_ptr<Texture> colorTexture = D3D11Texture::CreateTexture2D(width, height, 1, colorTextureFormat);
-	m_RenderTarget = CreateRef<D3D11RenderTarget>();
+	const Ref<Texture> colorTexture = Texture::CreateTexture2D(width, height, 1, colorTextureFormat);
+	m_RenderTarget = RenderTarget::Create();
 	m_RenderTarget->AttachTexture(AttachmentPoint::Color0, colorTexture);
 	m_RenderTarget->AttachTexture(AttachmentPoint::DepthStencil, depthStencilTexture);
 }
@@ -89,7 +90,7 @@ void D3D11Context::SwapBuffers()
 	m_RenderTarget->Bind();
 
 	// Copy the render target's color buffer to the swap chain's back buffer.
-	Ref<D3D11Texture> colorBuffer = std::dynamic_pointer_cast<D3D11Texture>(m_RenderTarget->GetTexture(AttachmentPoint::Color0));
+	const Ref<D3D11Texture> colorBuffer = std::dynamic_pointer_cast<D3D11Texture>(m_RenderTarget->GetTexture(AttachmentPoint::Color0));
 	if (colorBuffer)
 		context->CopyResource(m_BackBuffer, colorBuffer->GetTextureResource());
 

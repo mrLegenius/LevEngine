@@ -64,7 +64,6 @@ public:
 	static void DrawOpaqueMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
 
 	static void BeginDeferred(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
-	static void EndDeferred();
 	static void BeginDeferredDirLightningSubPass(const SceneCamera& camera);
 	static void BeginDeferredPositionalLightningSubPass(const SceneCamera& camera, const Matrix& viewMatrix,
 	                                                    const Vector3& position);

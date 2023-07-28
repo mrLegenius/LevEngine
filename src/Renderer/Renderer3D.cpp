@@ -79,7 +79,7 @@ void Renderer3D::EndScene()
     s_ForwardTechnique->End();
 }
 
-inline void TryUnbindTexture(const Ref<Texture> texture, const int slot)
+inline void TryUnbindTexture(const Ref<Texture>& texture, const int slot)
 {
     if (texture)
     {
@@ -87,7 +87,7 @@ inline void TryUnbindTexture(const Ref<Texture> texture, const int slot)
     }
 }
 
-inline void TryBindTexture(const Ref<Texture> texture, int& hasTexture, const int slot)
+inline void TryBindTexture(const Ref<Texture>& texture, int& hasTexture, const int slot)
 {
     if (texture)
     {
@@ -239,11 +239,6 @@ void Renderer3D::BeginDeferredPositionalLightningSubPass2(const SceneCamera& cam
 void Renderer3D::EndDeferredLightningPass()
 {
     m_GBuffer->EndLightningPass();
-}
-
-void Renderer3D::EndDeferred()
-{
-    
 }
 
 void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)

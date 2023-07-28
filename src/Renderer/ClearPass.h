@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "ClearFlags.h"
-#include "D3D11RenderTarget.h"
+#include "RenderTarget.h"
 #include "Texture.h"
 #include "RenderPass.h"
 namespace LevEngine
@@ -11,7 +11,7 @@ namespace LevEngine
 class ClearPass : public RenderPass
 {
 public:
-	explicit ClearPass(std::shared_ptr<D3D11RenderTarget> renderTarget,
+	explicit ClearPass(std::shared_ptr<RenderTarget> renderTarget,
 	                   ClearFlags clearFlags = ClearFlags::All,
 	                   const Vector4& color = Vector4::Zero,
 	                   float depth = 1.0f,
@@ -28,7 +28,7 @@ public:
     void Process(RenderParams&) override;
 
 private:
-    std::shared_ptr<D3D11RenderTarget> m_RenderTarget;
+    std::shared_ptr<RenderTarget> m_RenderTarget;
     std::shared_ptr<Texture> m_Texture;
     ClearFlags m_ClearFlags;
     Vector4 m_ClearColor;

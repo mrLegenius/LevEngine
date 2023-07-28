@@ -63,10 +63,10 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
 
     auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
 
-    m_DepthOnlyRenderTarget = CreateRef<D3D11RenderTarget>();
+    m_DepthOnlyRenderTarget = RenderTarget::Create();
     m_DepthOnlyRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil));
 
-    m_GBufferRenderTarget = CreateRef<D3D11RenderTarget>();
+    m_GBufferRenderTarget = RenderTarget::Create();
     m_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color0, mainRenderTarget->GetTexture(AttachmentPoint::Color0));
     m_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color1, m_DiffuseTexture);
     m_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color2, m_SpecularTexture);
