@@ -4,7 +4,7 @@
 #include "Debugging/Profiler.h"
 namespace LevEngine
 {
-void PipelineState::Bind()
+void PipelineState::Bind() const
 {
     LEV_PROFILE_FUNCTION();
 
@@ -12,11 +12,11 @@ void PipelineState::Bind()
 	    m_RenderTarget->Bind();
 
     m_BlendState->Bind();
-    m_RasterizerState.Bind();
+    m_RasterizerState->Bind();
     m_DepthStencilState->Bind();
 }
 
-void PipelineState::Unbind()
+void PipelineState::Unbind() const
 {
     LEV_PROFILE_FUNCTION();
 
@@ -24,7 +24,7 @@ void PipelineState::Unbind()
 	    m_RenderTarget->Unbind();
 
     m_BlendState->Unbind();
-    m_RasterizerState.Unbind();
+    m_RasterizerState->Unbind();
     m_DepthStencilState->Unbind();
 }
 }

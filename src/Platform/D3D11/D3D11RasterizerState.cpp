@@ -1,11 +1,9 @@
 #include "pch.h"
-#include "D3D11RasterizerState.h"
-
-#include <cassert>
 #include <d3d11.h>
 #include <wrl/client.h>
 
-#include "Debugging/Profiler.h"
+#include "D3D11RasterizerState.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
@@ -13,65 +11,47 @@ extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 inline D3D11_FILL_MODE ConvertFillMode(const FillMode fillMode)
 {
-    D3D11_FILL_MODE result = D3D11_FILL_SOLID;
     switch (fillMode)
     {
     case FillMode::Wireframe:
-        result = D3D11_FILL_WIREFRAME;
+        return D3D11_FILL_WIREFRAME;
         break;
     case FillMode::Solid:
-        result = D3D11_FILL_SOLID;
-        break;
+        return D3D11_FILL_SOLID;
     default:
         LEV_THROW("Unknown fill mode")
-        break;
     }
-
-    return result;
 }
 
 inline D3D11_CULL_MODE ConvertCullMode(const CullMode cullMode)
 {
-    D3D11_CULL_MODE result = D3D11_CULL_BACK;
     switch (cullMode)
     {
     case CullMode::None:
-        result = D3D11_CULL_NONE;
-        break;
+        return D3D11_CULL_NONE;
     case CullMode::Front:
-        result = D3D11_CULL_FRONT;
-        break;
+        return D3D11_CULL_FRONT;
     case CullMode::Back:
-        result = D3D11_CULL_BACK;
-        break;
+        return D3D11_CULL_BACK;
     case CullMode::FrontAndBack:
         // This mode is not supported in DX11.
-        break;
+        return D3D11_CULL_BACK;
     default:
         LEV_THROW("Unknown cull mode")
-        break;
     }
-
-    return result;
 }
 
 bool ConvertFrontFace(const FrontFace frontFace)
 {
-    bool frontCounterClockwise = true;
     switch (frontFace)
     {
     case FrontFace::Clockwise:
-        frontCounterClockwise = false;
-        break;
+        return false;
     case FrontFace::CounterClockwise:
-        frontCounterClockwise = true;
-        break;
+        return true;
     default:
         LEV_THROW("Unknown front face winding order")
-        break;
     }
-
-    return frontCounterClockwise;
 }
 
 D3D11RasterizerState::~D3D11RasterizerState()
@@ -91,6 +71,7 @@ void D3D11RasterizerState::Bind()
         rasterizerDesc.FillMode = ConvertFillMode(m_FrontFaceFillMode);
         rasterizerDesc.CullMode = ConvertCullMode(m_CullMode);
         rasterizerDesc.FrontCounterClockwise = ConvertFrontFace(m_FrontFace);
+        //TODO: DirectX 11.1 support
         //rasterizerDesc.DepthBias = (m_DepthBias < 0.0f) ? static_cast<INT>(m_DepthBias - 0.5f) : static_cast<INT>(m_DepthBias + 0.5f);
         //rasterizerDesc.DepthBiasClamp = m_BiasClamp;
         //rasterizerDesc.SlopeScaledDepthBias = m_SlopeBias;

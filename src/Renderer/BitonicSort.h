@@ -4,7 +4,7 @@
 #include "Assets.h"
 #include "ConstantBuffer.h"
 #include "D3D11Shader.h"
-#include "D3D11StructuredBuffer.h"
+#include "StructuredBuffer.h"
 
 namespace LevEngine
 {
@@ -29,7 +29,7 @@ class BitonicSort
 public:
     explicit BitonicSort(int numElements);
 
-    void Sort(Ref<D3D11StructuredBuffer> inBuffer, Ref<D3D11StructuredBuffer> tempBuffer) const;
+    void Sort(Ref<StructuredBuffer> inBuffer, Ref<StructuredBuffer> tempBuffer) const;
 private:
 
     void SetGPUSortConstants(uint32_t level, uint32_t levelMask, uint32_t width, uint32_t height) const;

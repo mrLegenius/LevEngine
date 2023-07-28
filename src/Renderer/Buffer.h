@@ -1,6 +1,5 @@
 #pragma once
-#include <string>
-#include <vector>
+
 namespace LevEngine
 {
 enum class ShaderDataType : uint8_t

@@ -5,6 +5,7 @@
 #include "RenderPass.h"
 #include "entt/entt.hpp""
 #include "Scene/Components/Components.h"
+
 namespace LevEngine
 {
 class ParticlePass : public RenderPass
@@ -105,16 +106,16 @@ private:
 
 	static constexpr uint32_t c_MaxThreadCount = 1024;
 
-	Ref<D3D11StructuredBuffer> m_ParticlesBuffer;
-	Ref<D3D11StructuredBuffer> m_DeadBuffer;
-	Ref<D3D11StructuredBuffer> m_SortedBuffer;
+	Ref<StructuredBuffer> m_ParticlesBuffer;
+	Ref<StructuredBuffer> m_DeadBuffer;
+	Ref<StructuredBuffer> m_SortedBuffer;
 
 	PipelineState m_PipelineState;
 	Ref<ConstantBuffer> m_CameraData{};
 	Ref<ConstantBuffer> m_ComputeData{};
 	Ref<ConstantBuffer> m_EmitterData{};
 	Ref<ConstantBuffer> m_RandomData{};
-	Ref<D3D11StructuredBuffer> m_TempBuffer{};
+	Ref<StructuredBuffer> m_TempBuffer{};
 
 	Ref<BitonicSort> m_BitonicSort{};
 

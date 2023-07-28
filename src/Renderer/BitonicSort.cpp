@@ -11,7 +11,7 @@ BitonicSort::BitonicSort(const int numElements): m_NumElements(numElements)
 	m_ConstantsBuffer = ConstantBuffer::Create(sizeof ConstantsGPUData);
 }
 
-void BitonicSort::Sort(const Ref<D3D11StructuredBuffer> inBuffer, const Ref<D3D11StructuredBuffer> tempBuffer) const
+void BitonicSort::Sort(const Ref<StructuredBuffer> inBuffer, const Ref<StructuredBuffer> tempBuffer) const
 {
 	const uint32_t numElements = m_NumElements;
 	constexpr uint32_t matrixWidth = BitonicBlockSize;

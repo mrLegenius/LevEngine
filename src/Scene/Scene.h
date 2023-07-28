@@ -66,7 +66,6 @@ private:
 	friend class Entity;
 
 	void MeshRenderSystem();
-	void MeshShadowSystem();
 	void MeshDeferredSystem();
 
 	Entity ConvertEntity(entt::entity entity);

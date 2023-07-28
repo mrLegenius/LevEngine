@@ -507,19 +507,6 @@ void Scene::PointLightsSystem()
     }
 }
 
-void Scene::MeshShadowSystem()
-{
-    LEV_PROFILE_FUNCTION();
-
-    auto view = m_Registry.group<>(entt::get<Transform, MeshRendererComponent>);
-    for (auto entity : view)
-    {
-        auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
-        if (mesh.castShadow)
-			Renderer3D::DrawMesh(transform.GetModel(), mesh);
-    }
-}
-
 void Scene::MeshDeferredSystem()
 {
     LEV_PROFILE_FUNCTION();

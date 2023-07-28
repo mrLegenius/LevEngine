@@ -105,7 +105,7 @@
     <ClCompile Include="src\Renderer\D3D11DeferredTechnique.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11RasterizerState.cpp">
+    <ClCompile Include="src\Platform\D3D11\D3D11RasterizerState.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\D3D11\D3D11DepthStencilState.cpp">
@@ -129,7 +129,7 @@
     <ClCompile Include="src\Renderer\ShadowMapPass.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11StructuredBuffer.cpp">
+    <ClCompile Include="src\Platform\D3D11\D3D11StructuredBuffer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\SkyboxPass.cpp">
@@ -175,6 +175,12 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\RenderTarget.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\StructuredBuffer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\RasterizerState.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -371,7 +377,7 @@
     <ClInclude Include="src\Renderer\Material.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11RasterizerState.h">
+    <ClInclude Include="src\Platform\D3D11\D3D11RasterizerState.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h">
@@ -407,7 +413,7 @@
     <ClInclude Include="src\Renderer\RenderParams.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11StructuredBuffer.h">
+    <ClInclude Include="src\Platform\D3D11\D3D11StructuredBuffer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\SkyboxPass.h">
@@ -462,6 +468,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\RenderTarget.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\StructuredBuffer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\RasterizerState.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

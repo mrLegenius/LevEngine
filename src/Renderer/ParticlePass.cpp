@@ -48,10 +48,10 @@ ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
 		indices[i] = RenderSettings::MaxParticles - 1 - i;
 	}
 
-	m_ParticlesBuffer = CreateRef<D3D11StructuredBuffer>(particles, RenderSettings::MaxParticles, sizeof GPUParticleData, CPUAccess::None, true);
-	m_DeadBuffer = CreateRef<D3D11StructuredBuffer>(indices, RenderSettings::MaxParticles, sizeof uint32_t, CPUAccess::None, true, D3D11StructuredBuffer::UAVType::Append);
-	m_SortedBuffer = CreateRef<D3D11StructuredBuffer>(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true, D3D11StructuredBuffer::UAVType::Counter);
-	m_TempBuffer = CreateRef<D3D11StructuredBuffer>(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true);
+	m_ParticlesBuffer = StructuredBuffer::Create(particles, RenderSettings::MaxParticles, sizeof GPUParticleData, CPUAccess::None, true);
+	m_DeadBuffer = StructuredBuffer::Create(indices, RenderSettings::MaxParticles, sizeof uint32_t, CPUAccess::None, true, StructuredBuffer::UAVType::Append);
+	m_SortedBuffer = StructuredBuffer::Create(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true, StructuredBuffer::UAVType::Counter);
+	m_TempBuffer = StructuredBuffer::Create(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true);
 
 	m_DeadBuffer->Bind(1, Shader::Type::Compute, true, RenderSettings::MaxParticles);
 	m_DeadBuffer->Unbind(1, Shader::Type::Compute, true);

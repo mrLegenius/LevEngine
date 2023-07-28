@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <d3d11.h>
+#include <wrl/client.h>
 
 #include "D3D11StructuredBuffer.h"
 
@@ -14,17 +15,13 @@ D3D11_BUFFER_UAV_FLAG ConvertUAVFlag(D3D11StructuredBuffer::UAVType type)
 }
 
 D3D11StructuredBuffer::D3D11StructuredBuffer(const void* data, size_t count, uint32_t stride,
-    CPUAccess cpuAccess, bool uav, UAVType uavType)
-	    : m_uiStride(stride),
-			m_uiCount((UINT)count),
-			m_IsDirty(false),
-			m_CPUAccess(cpuAccess)
+    CPUAccess cpuAccess, bool uav, UAVType uavType) : StructuredBuffer(count, stride, cpuAccess)
 	{
     m_Dynamic = (int)m_CPUAccess & (int)CPUAccess::Write;
     m_UAV = uav && !m_Dynamic;
 
     // Assign the data to the system buffer.
-    size_t numBytes = m_uiCount * m_uiStride;
+    size_t numBytes = m_ElementsCount * m_Stride;
 
     if (data)
     {
@@ -65,7 +62,7 @@ D3D11StructuredBuffer::D3D11StructuredBuffer(const void* data, size_t count, uin
     }
 
     bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-    bufferDesc.StructureByteStride = m_uiStride;
+    bufferDesc.StructureByteStride = m_Stride;
 
     D3D11_SUBRESOURCE_DATA subResourceData;
     subResourceData.pSysMem = (void*)m_Data.data();
@@ -82,7 +79,7 @@ D3D11StructuredBuffer::D3D11StructuredBuffer(const void* data, size_t count, uin
         srvDesc.Format = DXGI_FORMAT_UNKNOWN;
         srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
         srvDesc.Buffer.FirstElement = 0;
-        srvDesc.Buffer.NumElements = m_uiCount;
+        srvDesc.Buffer.NumElements = m_ElementsCount;
 
         res = device->CreateShaderResourceView(m_Buffer, &srvDesc, &m_ShaderResourceView);
 
@@ -95,7 +92,7 @@ D3D11StructuredBuffer::D3D11StructuredBuffer(const void* data, size_t count, uin
         uavDesc.Format = DXGI_FORMAT_UNKNOWN;
         uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
         uavDesc.Buffer.FirstElement = 0;
-        uavDesc.Buffer.NumElements = m_uiCount;
+        uavDesc.Buffer.NumElements = m_ElementsCount;
         uavDesc.Buffer.Flags = ConvertUAVFlag(uavType);
 
         res = device->CreateUnorderedAccessView(m_Buffer, &uavDesc, &m_UnorderedAccessView);
@@ -217,7 +214,7 @@ void D3D11StructuredBuffer::Copy(const Ref<D3D11StructuredBuffer> other)
     }
 
     if (srcBuffer && srcBuffer.get() != this &&
-        m_uiCount * m_uiStride == srcBuffer->m_uiCount * srcBuffer->m_uiStride)
+        m_ElementsCount * m_Stride == srcBuffer->m_ElementsCount * srcBuffer->m_Stride)
     {
         context->CopyResource(m_Buffer, srcBuffer->m_Buffer);
     }

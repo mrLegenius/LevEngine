@@ -19,8 +19,6 @@ Ref<ConstantBuffer> ConstantBuffer::Create(uint32_t size, uint32_t slot)
 	default:
 		LEV_THROW("Unknown Renderer API")
 	}
-
-	return nullptr;
 }
 }
 

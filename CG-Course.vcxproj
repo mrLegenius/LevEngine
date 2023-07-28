@@ -121,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>S:\Projects\C++\CG-Course\external\spdlog\include;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external\spdlog\include;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>S:\Projects\C++\CG-Course\external\spdlog\include;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external\spdlog\include;external;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -181,16 +181,17 @@
     <ClCompile Include="src\Platform\D3D11\D3D11DepthStencilState.cpp" />
     <ClCompile Include="src\Renderer\D3D11DeferredTechnique.cpp" />
     <ClCompile Include="src\Renderer\D3D11ForwardTechnique.cpp" />
-    <ClCompile Include="src\Renderer\D3D11StructuredBuffer.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11StructuredBuffer.cpp" />
     <ClCompile Include="src\Renderer\DepthStencilState.cpp" />
     <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
     <ClCompile Include="src\Renderer\ParticlePass.cpp" />
     <ClCompile Include="src\Renderer\PipelineState.cpp" />
-    <ClCompile Include="src\Renderer\D3D11RasterizerState.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11RasterizerState.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderTarget.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Texture.cpp" />
     <ClCompile Include="src\Renderer\D3D11TextureCube.cpp" />
     <ClCompile Include="src\Renderer\D3D11ShadowMap.cpp" />
+    <ClCompile Include="src\Renderer\RasterizerState.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\OrbitCamera.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
@@ -198,6 +199,7 @@
     <ClCompile Include="src\Renderer\Shader.cpp" />
     <ClCompile Include="src\Renderer\ShadowMapPass.cpp" />
     <ClCompile Include="src\Renderer\SkyboxPass.cpp" />
+    <ClCompile Include="src\Renderer\StructuredBuffer.cpp" />
     <ClCompile Include="src\Renderer\Texture.cpp" />
     <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="src\Scene\Entity.cpp" />
@@ -263,7 +265,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h" />
     <ClInclude Include="src\Renderer\D3D11DeferredTechnique.h" />
     <ClInclude Include="src\Renderer\D3D11ForwardTechnique.h" />
-    <ClInclude Include="src\Renderer\D3D11StructuredBuffer.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11StructuredBuffer.h" />
     <ClInclude Include="src\Renderer\DepthStencilState.h" />
     <ClInclude Include="src\Renderer\IndexBuffer.h" />
     <ClInclude Include="src\Renderer\ParticlePass.h" />
@@ -274,7 +276,8 @@
     <ClInclude Include="src\Renderer\D3D11TextureCube.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />
     <ClInclude Include="src\Renderer\Material.h" />
-    <ClInclude Include="src\Renderer\D3D11RasterizerState.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RasterizerState.h" />
+    <ClInclude Include="src\Renderer\RasterizerState.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\Renderer3D.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
@@ -285,6 +288,7 @@
     <ClInclude Include="src\Renderer\Shader.h" />
     <ClInclude Include="src\Renderer\ShadowMapPass.h" />
     <ClInclude Include="src\Renderer\SkyboxPass.h" />
+    <ClInclude Include="src\Renderer\StructuredBuffer.h" />
     <ClInclude Include="src\Renderer\Texture.h" />
     <ClInclude Include="src\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\Scene\Components\Components.h" />
