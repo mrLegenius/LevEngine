@@ -32,12 +32,12 @@ static DXGI_FORMAT ParseShaderDataTypeToD3D11DataType(const ShaderDataType type)
 	case ShaderDataType::Int4: return DXGI_FORMAT_R32G32B32A32_SINT;
 	case ShaderDataType::Bool: return DXGI_FORMAT_R8_UINT;
 	default:
-		throw std::exception("Unknown ShaderDataType!");
+		LEV_THROW("Unknown ShaderDataType")
 	}
 }
 
-D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, ShaderType::Vertex | ShaderType::Pixel) { }
-D3D11Shader::D3D11Shader(const std::string& filepath, ShaderType shaderTypes)
+D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, Type::Vertex | Type::Pixel) { }
+D3D11Shader::D3D11Shader(const std::string& filepath, const Type shaderTypes) : Shader(filepath)
 {
 	auto lastSlash = filepath.find_last_of("/\\");
 	lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
@@ -46,25 +46,25 @@ D3D11Shader::D3D11Shader(const std::string& filepath, ShaderType shaderTypes)
 	const auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
 	m_Name = filepath.substr(lastSlash, count);
 
-	if (shaderTypes & ShaderType::Vertex)
+	if (shaderTypes & Type::Vertex)
 	{
 		auto result = CreateVertexShader(m_VertexShader, m_VertexBC, filepath);
 		LEV_CORE_ASSERT(result, "Can't create vertex shader")
 	}
 
-	if (shaderTypes & ShaderType::Pixel)
+	if (shaderTypes & Type::Pixel)
 	{
 		auto result = CreatePixelShader(m_PixelShader, filepath);
 		LEV_CORE_ASSERT(result, "Can't create pixel shader")
 	}
 
-	if (shaderTypes & ShaderType::Geometry)
+	if (shaderTypes & Type::Geometry)
 	{
 		auto result = CreateGeometryShader(m_GeometryShader, filepath);
 		LEV_CORE_ASSERT(result, "Can't create geometry shader")
 	}
 
-	if (shaderTypes & ShaderType::Compute)
+	if (shaderTypes & Type::Compute)
 	{
 		auto result = CreateComputeShader(m_ComputeShader, filepath);
 		LEV_CORE_ASSERT(result, "Can't create compute shader")

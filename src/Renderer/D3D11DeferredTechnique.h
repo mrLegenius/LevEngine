@@ -1,5 +1,4 @@
 #pragma once
-#include <d3d11.h>
 
 #include "Kernel/PointerUtils.h"
 #include "PipelineState.h"
@@ -18,15 +17,15 @@ public:
 	void StartDirectionalLightingPass();
 	void EndLightningPass();
 
-	Ref<D3D11Texture> GetDepthTexture() { return m_DepthTexture; }
-	Ref<D3D11Texture> GetNormalTexture() { return m_NormalTexture; }
+	Ref<Texture> GetDepthTexture() { return m_DepthTexture; }
+	Ref<Texture> GetNormalTexture() { return m_NormalTexture; }
 
 private:
 
-	Ref<D3D11Texture> m_DepthTexture = nullptr;
-	Ref<D3D11Texture> m_DiffuseTexture = nullptr;
-	Ref<D3D11Texture> m_SpecularTexture = nullptr;
-	Ref<D3D11Texture> m_NormalTexture = nullptr;
+	Ref<Texture> m_DepthTexture = nullptr;
+	Ref<Texture> m_DiffuseTexture = nullptr;
+	Ref<Texture> m_SpecularTexture = nullptr;
+	Ref<Texture> m_NormalTexture = nullptr;
 
 	PipelineState m_GeometryPipeline;
 	PipelineState m_PositionalLightPipeline1;

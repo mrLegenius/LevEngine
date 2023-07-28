@@ -9,6 +9,7 @@
 
 #include "Debugging/Profiler.h"
 #include "Kernel/Application.h"
+#include "Platform/D3D11/D3D11Texture.h"
 
 namespace LevEngine
 {
@@ -27,7 +28,7 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
             Texture::Type::UnsignedNormalized,
             1,
             0, 0, 0, 0, 24, 8);
-        m_DepthTexture = D3D11Texture::CreateTexture2D(width, height, 1, depthStencilTextureFormat);
+        m_DepthTexture = Texture::CreateTexture2D(width, height, 1, depthStencilTextureFormat);
     }
 
     //Diffuse
@@ -37,7 +38,7 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
             Texture::Type::UnsignedNormalized,
             1,
             8, 8, 8, 8, 0, 0);
-        m_DiffuseTexture = D3D11Texture::CreateTexture2D(width, height, 1, diffuseTextureFormat);
+        m_DiffuseTexture = Texture::CreateTexture2D(width, height, 1, diffuseTextureFormat);
     }
 
     //Specular
@@ -47,7 +48,7 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
             Texture::Type::UnsignedNormalized,
             1,
             8, 8, 8, 8, 0, 0);
-        m_SpecularTexture = D3D11Texture::CreateTexture2D(width, height, 1, specularTextureFormat);
+        m_SpecularTexture = Texture::CreateTexture2D(width, height, 1, specularTextureFormat);
     }
 
     //Normal
@@ -57,7 +58,7 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
             Texture::Type::Float,
             1,
             32, 32, 32, 32, 0, 0);
-        m_NormalTexture = D3D11Texture::CreateTexture2D(width, height, 1, normalTextureFormat);
+        m_NormalTexture = Texture::CreateTexture2D(width, height, 1, normalTextureFormat);
     }
 
     auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
@@ -146,6 +147,11 @@ void D3D11DeferredTechnique::UnbindTextures()
 {
     LEV_PROFILE_FUNCTION();
 
+    m_DiffuseTexture->Unbind(1);
+    m_SpecularTexture->Unbind(2);
+    m_NormalTexture->Unbind(3);
+    m_DepthTexture->Bind(4);
+
     context->PSSetShaderResources(0, 0, nullptr);
     context->PSSetShaderResources(1, 0, nullptr);
     context->PSSetShaderResources(2, 0, nullptr);
@@ -167,7 +173,10 @@ void D3D11DeferredTechnique::StartPositionalLightingPass1()
 {
     LEV_PROFILE_FUNCTION();
 
-    context->ClearDepthStencilView(m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil)->GetDepthStencilView(), D3D11_CLEAR_STENCIL, 1.0f, 1);
+    const auto texture = m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil);
+    const auto depthStencilView = std::dynamic_pointer_cast<D3D11Texture>(texture)->GetDepthStencilView();
+
+    context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_STENCIL, 1.0f, 1);
     {
         LEV_PROFILE_SCOPE("Pipeline 1");
         m_PositionalLightPipeline1.Bind();
@@ -192,7 +201,7 @@ void D3D11DeferredTechnique::StartDirectionalLightingPass()
 {
     LEV_PROFILE_FUNCTION();
 
-    Ref<D3D11Texture> depthStencilBuffer = m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil);
+    const Ref<Texture> depthStencilBuffer = m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil);
 
     if (depthStencilBuffer)
         depthStencilBuffer->Copy(m_DepthTexture);

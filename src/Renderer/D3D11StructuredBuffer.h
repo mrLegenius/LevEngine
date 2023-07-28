@@ -2,7 +2,7 @@
 #include <wrl/client.h>
 
 #include "CPUAccess.h"
-#include "D3D11Shader.h"
+#include "Shader.h"
 
 namespace LevEngine
 {
@@ -22,9 +22,9 @@ public:
     ~D3D11StructuredBuffer();
 
     // Bind the buffer for rendering.
-    bool Bind(const unsigned id, const ShaderType shaderType, const bool readWrite, const uint32_t counterValue = -1);
+    bool Bind(const unsigned id, const Shader::Type shaderType, const bool readWrite, const uint32_t counterValue = -1);
     // Unbind the buffer for rendering.
-    void Unbind(const unsigned id, const ShaderType shaderType, const bool readWrite) const;
+    void Unbind(const unsigned id, const Shader::Type shaderType, const bool readWrite) const;
 
     // How many elements does this buffer contain?
     uint32_t GetElementCount() const { return m_uiCount; }

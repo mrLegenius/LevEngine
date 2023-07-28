@@ -1,9 +1,7 @@
 #pragma once
-#include <cstdint>
-#include <memory>
 
 #include "IndexBuffer.h"
-#include "D3D11VertexBuffer.h"
+#include "VertexBuffer.h"
 #include "DepthFunc.h"
 
 namespace LevEngine
@@ -19,7 +17,7 @@ public:
 	void Clear();
 	void SetDepthFunc(DepthFunc depthFunc);
 
-	void DrawIndexed(const std::shared_ptr<D3D11VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer);
+	void DrawIndexed(const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer);
 	void DrawFullScreenQuad();
 	//void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
 

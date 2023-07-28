@@ -53,8 +53,8 @@ ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
 	m_SortedBuffer = CreateRef<D3D11StructuredBuffer>(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true, D3D11StructuredBuffer::UAVType::Counter);
 	m_TempBuffer = CreateRef<D3D11StructuredBuffer>(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true);
 
-	m_DeadBuffer->Bind(1, ShaderType::Compute, true, RenderSettings::MaxParticles);
-	m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
+	m_DeadBuffer->Bind(1, Shader::Type::Compute, true, RenderSettings::MaxParticles);
+	m_DeadBuffer->Unbind(1, Shader::Type::Compute, true);
 
 	m_BitonicSort = CreateRef<BitonicSort>(RenderSettings::MaxParticles);
 
@@ -91,14 +91,14 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 void ParticlePass::Process(RenderParams& params)
 {
 	constexpr uint32_t MaxTextureSlots = 32;
-	std::array<Ref<D3D11Texture>, MaxTextureSlots> textureSlots{};
+	std::array<Ref<Texture>, MaxTextureSlots> textureSlots{};
 	textureSlots[0] = TextureAssets::Particle();  //<--- default particle ---<<
 	uint32_t textureSlotIndex = 1;
 
 	const float deltaTime = Time::GetDeltaTime().GetSeconds();
 
 	const auto group = m_Registry.view<Transform, EmitterComponent, IDComponent>();
-	m_ParticlesBuffer->Bind(0, ShaderType::Compute, true, -1);
+	m_ParticlesBuffer->Bind(0, Shader::Type::Compute, true, -1);
 
 	int groupSizeX = 0;
 	int groupSizeY = 0;
@@ -111,7 +111,7 @@ void ParticlePass::Process(RenderParams& params)
 	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
 	m_CameraData->SetData(&cameraData);
 
-	m_DeadBuffer->Bind(1, ShaderType::Compute, true, -1);
+	m_DeadBuffer->Bind(1, Shader::Type::Compute, true, -1);
 	
 	for (const auto entity : group)
 	{
@@ -158,17 +158,17 @@ void ParticlePass::Process(RenderParams& params)
 	}
 
 	//<--- Simulate ---<<
-	m_DeadBuffer->Bind(1, ShaderType::Compute, true, -1);
-	m_SortedBuffer->Bind(2, ShaderType::Compute, true, 0);
+	m_DeadBuffer->Bind(1, Shader::Type::Compute, true, -1);
+	m_SortedBuffer->Bind(2, Shader::Type::Compute, true, 0);
 
 	ShaderAssets::ParticlesCompute()->Bind();
 	context->Dispatch(groupSizeX, groupSizeY, 1);
 
 	ShaderAssets::ParticlesCompute()->Unbind();
 
-	m_ParticlesBuffer->Unbind(0, ShaderType::Compute, true);
-	m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
-	m_SortedBuffer->Unbind(2, ShaderType::Compute, true);
+	m_ParticlesBuffer->Unbind(0, Shader::Type::Compute, true);
+	m_DeadBuffer->Unbind(1, Shader::Type::Compute, true);
+	m_SortedBuffer->Unbind(2, Shader::Type::Compute, true);
 
 	//<--- Sort ---<<
 	m_BitonicSort->Sort(m_SortedBuffer, m_TempBuffer);
@@ -181,8 +181,8 @@ void ParticlePass::Process(RenderParams& params)
 	
 	ShaderAssets::Particles()->Bind();
 
-	m_ParticlesBuffer->Bind(0, ShaderType::Vertex, false);
-	m_SortedBuffer->Bind(2, ShaderType::Vertex, false);
+	m_ParticlesBuffer->Bind(0, Shader::Type::Vertex, false);
+	m_SortedBuffer->Bind(2, Shader::Type::Vertex, false);
 
 	m_PipelineState.Bind();
 
@@ -194,8 +194,8 @@ void ParticlePass::Process(RenderParams& params)
 	RenderCommand::DrawPointList(particlesCount);
 
 	//<--- Clean ---<<
-	m_ParticlesBuffer->Unbind(0, ShaderType::Vertex, false);
-	m_SortedBuffer->Unbind(2, ShaderType::Vertex, false);
+	m_ParticlesBuffer->Unbind(0, Shader::Type::Vertex, false);
+	m_SortedBuffer->Unbind(2, Shader::Type::Vertex, false);
 	m_PipelineState.Unbind();
 	ShaderAssets::Particles()->Unbind();
 	TextureAssets::Particle()->Unbind(1);

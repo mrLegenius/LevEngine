@@ -6,7 +6,7 @@
 #include <iostream>
 #include <wrl/client.h>
 
-#include "D3D11Texture.h"
+#include "Texture.h"
 #include "Debugging/Profiler.h"
 
 #pragma comment(lib, "d3d11.lib")

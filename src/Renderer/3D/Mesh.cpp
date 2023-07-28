@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Mesh.h"
 
-#include <iostream>
 namespace LevEngine
 {
 std::shared_ptr<Mesh> Mesh::CreatePlane(int resolution)
@@ -255,20 +254,20 @@ std::shared_ptr<IndexBuffer> Mesh::CreateIndexBuffer() const
 	return indexBuffer;
 }
 
-std::shared_ptr<D3D11VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout) const
+std::shared_ptr<VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout) const
 {
 	auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
-	auto vertexBuffer = std::make_shared<D3D11VertexBuffer>(vertexBufferSize);
+	auto vertexBuffer = VertexBuffer::Create(vertexBufferSize);
 
 	vertexBuffer->SetLayout(bufferLayout);
 
 	return vertexBuffer;
 }
 
-std::shared_ptr<D3D11VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const
+std::shared_ptr<VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const
 {
 	auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
-	auto vertexBuffer = std::make_shared<D3D11VertexBuffer>(data, vertexBufferSize);
+	auto vertexBuffer = VertexBuffer::Create(data, vertexBufferSize);
 
 	vertexBuffer->SetLayout(bufferLayout);
 

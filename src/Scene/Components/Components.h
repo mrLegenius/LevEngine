@@ -4,9 +4,9 @@
 #include "OrbitCamera.h"
 #include "Kernel/Color.h"
 #include "Renderer/Camera/SceneCamera.h"
-#include "Renderer/D3D11Texture.h"
+#include "Renderer/Texture.h"
 #include "Renderer/3D/Mesh.h"
-#include "Renderer/D3d11Shader.h"
+#include "Renderer/Shader.h"
 #include "Kernel/UUID.h"
 #include "Physics/Components/Collider.h"
 #include "Physics/Components/Rigidbody.h"
@@ -35,7 +35,7 @@ namespace LevEngine
 	struct MeshRendererComponent
 	{
 		Ref<Mesh> mesh;
-		Ref<D3D11Shader> shader;
+		Ref<Shader> shader;
 		Ref<Texture> emissiveTexture;
 		Ref<Texture> ambientTexture;
 		Ref<Texture> diffuseTexture;
@@ -45,7 +45,7 @@ namespace LevEngine
 		bool castShadow = true;
 
 		MeshRendererComponent() = default;
-		MeshRendererComponent(const Ref<D3D11Shader>& shader,
+		MeshRendererComponent(const Ref<Shader>& shader,
 			const Ref<Mesh>& mesh) : mesh(mesh), shader(shader)
 		{ }
 		MeshRendererComponent(const MeshRendererComponent&) = default;
@@ -121,7 +121,7 @@ namespace LevEngine
 		uint32_t MaxParticles = 10000;
 		float Rate;
 		BirthParams Birth;
-		Ref<D3D11Texture> Texture;
+		Ref<Texture> Texture;
 	};
 
 	template<typename... Component>

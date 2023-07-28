@@ -1,11 +1,9 @@
 #pragma once
 
-#include <memory>
 #include "SimpleMath.h"
 
 #include "Renderer/IndexBuffer.h"
-#include "../D3D11VertexBuffer.h"
-#include "Kernel/PointerUtils.h"
+#include "Renderer/VertexBuffer.h"
 
 using namespace DirectX::SimpleMath;
 namespace LevEngine
@@ -27,8 +25,8 @@ public:
 
 	std::shared_ptr<IndexBuffer> CreateIndexBuffer() const;
 
-	[[nodiscard]] std::shared_ptr<D3D11VertexBuffer> CreateVertexBuffer(const BufferLayout&) const;
-	std::shared_ptr<D3D11VertexBuffer> CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const;
+	[[nodiscard]] std::shared_ptr<VertexBuffer> CreateVertexBuffer(const BufferLayout&) const;
+	std::shared_ptr<VertexBuffer> CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const;
 
 	void Clear()
 	{
@@ -78,7 +76,7 @@ public:
 	}
 
 	Ref<IndexBuffer> IndexBuffer;
-	Ref<D3D11VertexBuffer> VertexBuffer;
+	Ref<VertexBuffer> VertexBuffer;
 
 private:
 	std::vector<Vector3> vertices;

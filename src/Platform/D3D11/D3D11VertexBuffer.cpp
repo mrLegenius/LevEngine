@@ -1,16 +1,14 @@
 #include "pch.h"
-#include "D3D11VertexBuffer.h"
-
-#include <directxmath.h>
 #include <wrl/client.h>
 
-#include "D3D11Shader.h"
+#include "D3D11VertexBuffer.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
-D3D11VertexBuffer::D3D11VertexBuffer(const uint32_t size) : m_Size(size)
+D3D11VertexBuffer::D3D11VertexBuffer(const uint32_t size) : VertexBuffer(size)
 {
 	D3D11_BUFFER_DESC vertexBufDesc;
 
@@ -21,10 +19,12 @@ D3D11VertexBuffer::D3D11VertexBuffer(const uint32_t size) : m_Size(size)
 	vertexBufDesc.StructureByteStride = 0;
 	vertexBufDesc.ByteWidth = size;
 
-	device->CreateBuffer(&vertexBufDesc, nullptr, &m_Buffer);
+	const auto res = device->CreateBuffer(&vertexBufDesc, nullptr, &m_Buffer);
+
+	LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create Vertex Buffer")
 }
 
-D3D11VertexBuffer::D3D11VertexBuffer(float* vertices, const uint32_t size) : m_Size(size)
+D3D11VertexBuffer::D3D11VertexBuffer(const float* vertices, const uint32_t size) : VertexBuffer(size)
 {
 	D3D11_BUFFER_DESC vertexBufDesc = {};
 	vertexBufDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -39,7 +39,9 @@ D3D11VertexBuffer::D3D11VertexBuffer(float* vertices, const uint32_t size) : m_S
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	device->CreateBuffer(&vertexBufDesc, &vertexData, &m_Buffer);
+	const auto res = device->CreateBuffer(&vertexBufDesc, &vertexData, &m_Buffer);
+
+	LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create Vertex Buffer")
 }
 
 D3D11VertexBuffer::~D3D11VertexBuffer()

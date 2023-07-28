@@ -22,12 +22,12 @@ void BitonicSort::Sort(const Ref<D3D11StructuredBuffer> inBuffer, const Ref<D3D1
 		SetGPUSortConstants(level, level, matrixHeight, matrixWidth);
 
 		// Sort the row data
-		inBuffer->Bind(0, ShaderType::Compute, true, -1);
+		inBuffer->Bind(0, Shader::Type::Compute, true, -1);
 		m_BitonicSortCS->Bind();
 		context->Dispatch(static_cast<int>(numElements / BitonicBlockSize), 1, 1);
 	}
 
-	inBuffer->Unbind(0, ShaderType::Compute, true);
+	inBuffer->Unbind(0, Shader::Type::Compute, true);
 
 	auto heightTransposeBlocks = static_cast<int>(matrixHeight / TransposeBlockSize);
 	// Then sort the rows and columns for the levels > than the block size
@@ -35,34 +35,34 @@ void BitonicSort::Sort(const Ref<D3D11StructuredBuffer> inBuffer, const Ref<D3D1
 	for (uint32_t level = (BitonicBlockSize << 1); level <= numElements; level <<= 1) {
 		// Transpose the data from buffer 1 into buffer 2
 		SetGPUSortConstants(level / BitonicBlockSize, (level & ~numElements) / BitonicBlockSize, matrixWidth, matrixHeight);
-		inBuffer->Bind(0, ShaderType::Compute, false);
-		tempBuffer->Bind(0, ShaderType::Compute, true);
+		inBuffer->Bind(0, Shader::Type::Compute, false);
+		tempBuffer->Bind(0, Shader::Type::Compute, true);
 
 		m_BitonicTransposeCS->Bind();
 		if (heightTransposeBlocks != 0)
 			context->Dispatch(static_cast<int>(matrixWidth / TransposeBlockSize), heightTransposeBlocks, 1);
-		inBuffer->Unbind(0, ShaderType::Compute, false);
+		inBuffer->Unbind(0, Shader::Type::Compute, false);
 		// Sort the transposed column data
-		//tempBuffer->Bind(0, ShaderType::Compute, true);
+		//tempBuffer->Bind(0, Shader::Type::Compute, true);
 		m_BitonicSortCS->Bind();
 		context->Dispatch(static_cast<int>(numElements / BitonicBlockSize), 1, 1);
-		tempBuffer->Unbind(0, ShaderType::Compute, true);
+		tempBuffer->Unbind(0, Shader::Type::Compute, true);
 
 		// Transpose the data from buffer 2 back into buffer 1
 		SetGPUSortConstants(BitonicBlockSize, level, matrixHeight, matrixWidth);
 
-		tempBuffer->Bind(0, ShaderType::Compute, false);
-		inBuffer->Bind(0, ShaderType::Compute, true, -1);
+		tempBuffer->Bind(0, Shader::Type::Compute, false);
+		inBuffer->Bind(0, Shader::Type::Compute, true, -1);
 
 		m_BitonicTransposeCS->Bind();
 		if (heightTransposeBlocks != 0)
 			context->Dispatch(heightTransposeBlocks, static_cast<int>(matrixWidth / TransposeBlockSize), 1);
-		tempBuffer->Unbind(0, ShaderType::Compute, false);
+		tempBuffer->Unbind(0, Shader::Type::Compute, false);
 		// Sort the row data
-		//inBuffer->Bind(0, ShaderType::Compute, true);
+		//inBuffer->Bind(0, Shader::Type::Compute, true);
 		m_BitonicSortCS->Bind();
 		context->Dispatch(static_cast<int>(numElements / BitonicBlockSize), 1, 1);
-		inBuffer->Unbind(0, ShaderType::Compute, true);
+		inBuffer->Unbind(0, Shader::Type::Compute, true);
 	}
 }
 

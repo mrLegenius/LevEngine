@@ -28,8 +28,8 @@ public:
 	}
 
 	static void DrawIndexed(
-		const std::shared_ptr<D3D11VertexBuffer>& vertexBuffer,
-		const std::shared_ptr<IndexBuffer>& indexBuffer)
+		const Ref<VertexBuffer>& vertexBuffer,
+		const Ref<IndexBuffer>& indexBuffer)
 	{
 		s_RendererAPI->DrawIndexed(vertexBuffer, indexBuffer);
 	}

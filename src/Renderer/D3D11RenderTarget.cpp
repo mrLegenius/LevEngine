@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <d3d11.h>
 #include "D3D11RenderTarget.h"
 
 #include <wrl/client.h>
@@ -42,8 +43,8 @@ void D3D11RenderTarget::Bind()
     */
 
     ID3D11DepthStencilView* depthStencilView = nullptr;
-    std::shared_ptr<D3D11Texture> depthTexture = m_Textures[(uint8_t)AttachmentPoint::Depth];
-    std::shared_ptr<D3D11Texture> depthStencilTexture = m_Textures[(uint8_t)AttachmentPoint::DepthStencil];
+    const std::shared_ptr<D3D11Texture> depthTexture = m_Textures[static_cast<uint8_t>(AttachmentPoint::Depth)];
+    const std::shared_ptr<D3D11Texture> depthStencilTexture = m_Textures[static_cast<uint8_t>(AttachmentPoint::DepthStencil)];
 
     if (depthTexture)
     {

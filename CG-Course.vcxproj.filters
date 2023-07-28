@@ -18,10 +18,10 @@
     <ClCompile Include="src\MySuper3DApp.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11Shader.cpp">
+    <ClCompile Include="src\Platform\D3D11\D3D11Shader.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11VertexBuffer.cpp">
+    <ClCompile Include="src\Platform\D3D11\D3D11VertexBuffer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\D3D11\D3D11IndexBuffer.cpp">
@@ -60,7 +60,7 @@
     <ClCompile Include="src\Platform\D3D11\D3D11ConstantBuffer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11Texture.cpp">
+    <ClCompile Include="src\Platform\D3D11\D3D11Texture.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="external\stb\stb.cpp">
@@ -165,12 +165,21 @@
     <ClCompile Include="src\Renderer\BlendState.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\VertexBuffer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\Texture.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\Shader.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Renderer\D3D11Shader.h">
+    <ClInclude Include="src\Platform\D3D11\D3D11Shader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11VertexBuffer.h">
+    <ClInclude Include="src\Platform\D3D11\D3D11VertexBuffer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Buffer.h">
@@ -233,7 +242,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11Texture.h">
+    <ClInclude Include="src\Platform\D3D11\D3D11Texture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="external\stb\include\stb_image.h">
@@ -438,6 +447,15 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\IndexBuffer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\VertexBuffer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\Texture.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\Shader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

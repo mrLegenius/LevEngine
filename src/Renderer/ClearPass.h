@@ -4,7 +4,7 @@
 
 #include "ClearFlags.h"
 #include "D3D11RenderTarget.h"
-#include "D3D11Texture.h"
+#include "Texture.h"
 #include "RenderPass.h"
 namespace LevEngine
 {

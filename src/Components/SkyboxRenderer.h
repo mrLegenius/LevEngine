@@ -13,12 +13,12 @@ struct SkyboxVertex
 class SkyboxRenderer final : public RendererComponent
 {
 public:
-	explicit SkyboxRenderer(const std::shared_ptr<D3D11Shader>& shader, const std::string paths[6])
+	explicit SkyboxRenderer(const Ref<Shader>& shader, const std::string paths[6])
 		: SkyboxRenderer(shader, std::make_shared<D3D11TextureCube>(paths))
 	{
 	}
 
-	explicit SkyboxRenderer(const std::shared_ptr<D3D11Shader>& shader, const std::shared_ptr<D3D11TextureCube>& texture)
+	explicit SkyboxRenderer(const Ref<Shader>& shader, const Ref<D3D11TextureCube>& texture)
 		: RendererComponent(shader),
 		m_Texture(texture),
 		m_Mesh(Mesh::CreateCube())
@@ -57,6 +57,6 @@ public:
 	}
 
 private:
-	std::shared_ptr<D3D11TextureCube> m_Texture;
-	std::shared_ptr<Mesh> m_Mesh;
+	Ref<D3D11TextureCube> m_Texture;
+	Ref<Mesh> m_Mesh;
 };

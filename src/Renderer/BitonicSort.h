@@ -21,8 +21,8 @@ class BitonicSort
     static constexpr uint32_t BitonicBlockSize = 512;
     static constexpr uint32_t TransposeBlockSize = 16;
 
-    Ref<D3D11Shader> m_BitonicSortCS;
-    Ref<D3D11Shader> m_BitonicTransposeCS;
+    Ref<Shader> m_BitonicSortCS;
+    Ref<Shader> m_BitonicTransposeCS;
     Ref<ConstantBuffer> m_ConstantsBuffer;
 
     int m_NumElements;

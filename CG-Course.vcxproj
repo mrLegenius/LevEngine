@@ -188,14 +188,17 @@
     <ClCompile Include="src\Renderer\PipelineState.cpp" />
     <ClCompile Include="src\Renderer\D3D11RasterizerState.cpp" />
     <ClCompile Include="src\Renderer\D3D11RenderTarget.cpp" />
-    <ClCompile Include="src\Renderer\D3D11Texture.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11Texture.cpp" />
     <ClCompile Include="src\Renderer\D3D11TextureCube.cpp" />
     <ClCompile Include="src\Renderer\D3D11ShadowMap.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\OrbitCamera.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
+    <ClCompile Include="src\Renderer\Shader.cpp" />
     <ClCompile Include="src\Renderer\ShadowMapPass.cpp" />
     <ClCompile Include="src\Renderer\SkyboxPass.cpp" />
+    <ClCompile Include="src\Renderer\Texture.cpp" />
+    <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="src\Scene\Entity.cpp" />
     <ClCompile Include="src\Scene\Scene.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
@@ -206,8 +209,8 @@
     <ClCompile Include="src\Renderer\D3D11Context.cpp" />
     <ClCompile Include="src\Kernel\Application.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11IndexBuffer.cpp" />
-    <ClCompile Include="src\Renderer\D3D11VertexBuffer.cpp" />
-    <ClCompile Include="src\Renderer\D3D11Shader.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11VertexBuffer.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11Shader.cpp" />
     <ClCompile Include="src\MySuper3DApp.cpp" />
     <ClCompile Include="src\Kernel\Window.cpp" />
   </ItemGroup>
@@ -266,7 +269,7 @@
     <ClInclude Include="src\Renderer\PipelineState.h" />
     <ClInclude Include="src\Renderer\D3D11RenderTarget.h" />
     <ClInclude Include="src\Renderer\D3D11ShadowMap.h" />
-    <ClInclude Include="src\Renderer\D3D11Texture.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11Texture.h" />
     <ClInclude Include="src\Renderer\D3D11TextureCube.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />
     <ClInclude Include="src\Renderer\Material.h" />
@@ -277,8 +280,11 @@
     <ClInclude Include="src\Renderer\RenderParams.h" />
     <ClInclude Include="src\Renderer\RenderPass.h" />
     <ClInclude Include="src\Renderer\RenderSettings.h" />
+    <ClInclude Include="src\Renderer\Shader.h" />
     <ClInclude Include="src\Renderer\ShadowMapPass.h" />
     <ClInclude Include="src\Renderer\SkyboxPass.h" />
+    <ClInclude Include="src\Renderer\Texture.h" />
+    <ClInclude Include="src\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\Scene\Components\Components.h" />
     <ClInclude Include="src\Scene\Entity.h" />
     <ClInclude Include="src\Scene\Scene.h" />
@@ -297,9 +303,9 @@
     <ClInclude Include="src\Renderer\D3D11Context.h" />
     <ClInclude Include="src\Kernel\Application.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11IndexBuffer.h" />
-    <ClInclude Include="src\Renderer\D3D11VertexBuffer.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11VertexBuffer.h" />
     <ClInclude Include="src\Renderer\Buffer.h" />
-    <ClInclude Include="src\Renderer\D3D11Shader.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11Shader.h" />
     <ClInclude Include="src\Kernel\Window.h" />
     <ClInclude Include="src\Scene\System.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />

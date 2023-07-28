@@ -1,7 +1,9 @@
 #pragma once
-#include "D3D11Texture.h"
+#include <d3d11.h>
+#include "Texture.h"
 namespace LevEngine
 {
+//TODO: Move this logic to Texture
 class D3D11TextureCube : public Texture
 {
 public:

@@ -1,16 +1,27 @@
 #include "pch.h"
-#include "D3D11Texture.h"
-
-#include <cassert>
+#include <d3d11.h>
 #include <wrl/client.h>
 
-#include "d3d11.h"
+#include "D3D11Texture.h"
+
 #include "stb/include/stb_image.h"
 #include "Math/Math.h"
+#include "Renderer/Texture.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
+
+inline void PrintTextureFormatReplaceWarning()
+{
+    Log::CoreWarning("Unsupported texture format. Trying best alternative");
+}
+
+inline void UnknownFormatThrow()
+{
+	LEV_THROW("Unknown texture format")
+}
 
 DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
 {
@@ -36,7 +47,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose the best format based on the requested format.
                 if (format.RedBits > 16)
                 {
@@ -50,6 +60,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8_TYPELESS;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::UnsignedNormalized:
@@ -67,7 +79,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative to the requested format.
                 if (format.RedBits > 8)
                 {
@@ -81,6 +92,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R1_UNORM;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::SignedNormalized:
@@ -94,7 +107,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 8)
                 {
@@ -104,6 +116,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8_SNORM;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::Float:
@@ -117,7 +131,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 16)
                 {
@@ -127,6 +140,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R16_FLOAT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::UnsignedInteger:
@@ -144,7 +159,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 16)
                 {
@@ -158,6 +172,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8_UINT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::SignedInteger:
@@ -175,7 +191,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative
                 if (format.RedBits > 16)
                 {
@@ -189,10 +204,12 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8_SINT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         default:
-            //ReportTextureFormatError(format, "Unknown texture format.");
+            UnknownFormatThrow();
             break;
         }
         break;
@@ -218,7 +235,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose the best format based on the requested format.
                 if (format.RedBits > 24 || format.GreenBits > 16)
                 {
@@ -236,6 +252,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8_TYPELESS;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::UnsignedNormalized:
@@ -249,7 +267,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 8 || format.GreenBits > 8)
                 {
@@ -259,6 +276,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8_UNORM;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::SignedNormalized:
@@ -272,7 +291,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 8 || format.GreenBits > 8)
                 {
@@ -282,6 +300,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8_SNORM;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::Float:
@@ -295,7 +315,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 16 || format.GreenBits > 16)
                 {
@@ -305,6 +324,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R16G16_FLOAT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::UnsignedInteger:
@@ -322,7 +343,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 16 || format.GreenBits > 16)
                 {
@@ -336,6 +356,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8_UINT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::SignedInteger:
@@ -353,7 +375,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 16 || format.GreenBits > 16)
                 {
@@ -367,10 +388,12 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8_SINT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         default:
-            //ReportTextureFormatError(format, "Unknown texture format.");
+            UnknownFormatThrow();
             break;
         }
         break;
@@ -384,9 +407,10 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // There is only 1 RGB typeless format
                 result = DXGI_FORMAT_R32G32B32_TYPELESS;
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::Float:
@@ -400,7 +424,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-              //  ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 11 || format.GreenBits > 11 || format.BlueBits > 10)
                 {
@@ -410,6 +433,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R11G11B10_FLOAT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::UnsignedInteger:
@@ -419,9 +444,10 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // There is only 1 3-component UINT format.
                 result = DXGI_FORMAT_R32G32B32_UINT;
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::SignedInteger:
@@ -431,13 +457,13 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // There is only 1 3-component SINT format.
                 result = DXGI_FORMAT_R32G32B32_SINT;
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         default:
-           // ReportTextureFormatError(format, "Unsupported texture format.");
             // Try to choose a reasonable alternative
             switch (format.Type)
             {
@@ -450,9 +476,11 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 result = DXGI_FORMAT_R32G32B32_SINT;
                 break;
             default:
-                //ReportTextureFormatError(format, "Unknown texture format.");
+                UnknownFormatThrow();
                 break;
             }
+
+            PrintTextureFormatReplaceWarning();
             break;
         }
         break;
@@ -478,7 +506,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose the best format based on the requested format.
                 if (format.RedBits > 16 || format.GreenBits > 16 || format.BlueBits > 16 || format.AlphaBits > 16)
                 {
@@ -496,6 +523,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8B8A8_TYPELESS;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::UnsignedNormalized:
@@ -513,7 +542,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 10 || format.GreenBits > 10 || format.BlueBits > 10 || format.AlphaBits > 8)
                 {
@@ -527,6 +555,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8B8A8_UNORM;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::SignedNormalized:
@@ -540,7 +570,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 8 || format.GreenBits > 8 || format.BlueBits > 8 || format.AlphaBits > 8)
                 {
@@ -550,6 +579,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8B8A8_SNORM;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::Float:
@@ -563,7 +594,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                //ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 16 || format.GreenBits > 16 || format.BlueBits > 16 || format.AlphaBits > 16)
                 {
@@ -573,6 +603,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R16G16B16A16_FLOAT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::UnsignedInteger:
@@ -590,7 +622,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 10 || format.GreenBits > 10 || format.BlueBits > 10 || format.AlphaBits > 10)
                 {
@@ -604,6 +635,8 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8B8A8_UINT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::SignedInteger:
@@ -621,7 +654,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // Try to choose a reasonable alternative.
                 if (format.RedBits > 16 || format.GreenBits > 16 || format.BlueBits > 16 || format.AlphaBits > 16)
                 {
@@ -635,10 +667,12 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 {
                     result = DXGI_FORMAT_R8G8B8A8_SINT;
                 }
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         default:
-            // ReportTextureFormatError(format, "Unknown texture format.");
+            UnknownFormatThrow();
             break;
         }
         break;
@@ -652,9 +686,10 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-                // ReportTextureFormatError(format, "Unsupported texture format.");
                 // Only 1 format that could match.
                 result = DXGI_FORMAT_D16_UNORM;
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         case Texture::Type::Float:
@@ -664,14 +699,15 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             }
             else
             {
-               // ReportTextureFormatError(format, "Unsupported texture format.");
                 // Only 1 format that could match.
                 result = DXGI_FORMAT_D32_FLOAT;
+
+                PrintTextureFormatReplaceWarning();
             }
             break;
         default:
             // There are no SNORM, SINT, or UINT depth-only formats.
-           // ReportTextureFormatError(format, "Unknown texture format.");
+            UnknownFormatThrow();
             break;
         }
         break;
@@ -688,7 +724,6 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
         }
         else
         {
-           // ReportTextureFormatError(format, "Unsupported texture format.");
             // Try to choose a reasonable alternative...
             if (format.DepthBits > 24)
             {
@@ -698,10 +733,12 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
             {
                 result = DXGI_FORMAT_D24_UNORM_S8_UINT;
             }
+
+            PrintTextureFormatReplaceWarning();
         }
         break;
     default:
-       // ReportTextureFormatError(format, "Unknown texture format.");
+        UnknownFormatThrow();
         break;
     }
 
@@ -1293,7 +1330,7 @@ Texture::TextureFormat ConvertFormat(DXGI_FORMAT format, uint8_t numSamples)
     return result;
 }
 
-DXGI_FORMAT GetTextureFormat(DXGI_FORMAT format)
+DXGI_FORMAT GetTextureFormat(const DXGI_FORMAT format)
 {
     DXGI_FORMAT result = format;
 
@@ -1316,7 +1353,7 @@ DXGI_FORMAT GetTextureFormat(DXGI_FORMAT format)
     return result;
 }
 
-DXGI_FORMAT GetDSVFormat(DXGI_FORMAT format)
+DXGI_FORMAT GetDSVFormat(const DXGI_FORMAT format)
 {
     DXGI_FORMAT result = format;
 
@@ -1341,7 +1378,7 @@ DXGI_FORMAT GetDSVFormat(DXGI_FORMAT format)
     return result;
 }
 
-DXGI_FORMAT GetSRVFormat(DXGI_FORMAT format)
+DXGI_FORMAT GetSRVFormat(const DXGI_FORMAT format)
 {
     DXGI_FORMAT result = format;
     switch (format)
@@ -1394,7 +1431,7 @@ DXGI_FORMAT GetSRVFormat(DXGI_FORMAT format)
     return result;
 }
 
-DXGI_FORMAT GetRTVFormat(DXGI_FORMAT format)
+DXGI_FORMAT GetRTVFormat(const DXGI_FORMAT format)
 {
     DXGI_FORMAT result = format;
 
@@ -1435,12 +1472,12 @@ DXGI_FORMAT GetRTVFormat(DXGI_FORMAT format)
     return result;
 }
 
-DXGI_FORMAT GetUAVFormat(DXGI_FORMAT format)
+DXGI_FORMAT GetUAVFormat(const DXGI_FORMAT format)
 {
     return GetRTVFormat(format);
 }
 
-uint8_t GetBPP(DXGI_FORMAT format)
+uint8_t GetBPP(const DXGI_FORMAT format)
 {
     uint8_t bpp = 0;
 
@@ -1567,16 +1604,16 @@ uint8_t GetBPP(DXGI_FORMAT format)
         bpp = 32;
         break;
     default:
-        LEV_THROW("Unsupported texture format");
+        LEV_THROW("Unsupported texture format")
         break;
     }
 
     return bpp;
 }
 
-DXGI_SAMPLE_DESC GetSupportedSampleCount(DXGI_FORMAT format, uint8_t numSamples)
+DXGI_SAMPLE_DESC GetSupportedSampleCount(const DXGI_FORMAT format, const uint8_t numSamples)
 {
-    DXGI_SAMPLE_DESC sampleDesc;
+    DXGI_SAMPLE_DESC sampleDesc{};
 
     UINT sampleCount = 1;
     UINT qualityLevels = 0;
@@ -1594,7 +1631,7 @@ DXGI_SAMPLE_DESC GetSupportedSampleCount(DXGI_FORMAT format, uint8_t numSamples)
     return sampleDesc;
 }
 
-Ref<D3D11Texture> D3D11Texture::CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format, CPUAccess cpuAccess, bool uav)
+Ref<D3D11Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint16_t height, const uint16_t slices, const TextureFormat& format, const CPUAccess cpuAccess, const bool uav)
 {
 	Ref<D3D11Texture> texture = CreateRef<D3D11Texture>();
 
@@ -1644,7 +1681,6 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(uint16_t width, uint16_t height,
 	LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query uav format support")
 
 	const auto textureFormatSupported = texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D;
-
     LEV_CORE_ASSERT(textureFormatSupported, "Unsupported texture format for 2D textures")
 
     // Can the texture be dynamically modified on the CPU?
@@ -1659,8 +1695,7 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(uint16_t width, uint16_t height,
 	return texture;
 }
 
-D3D11Texture::D3D11Texture(const std::string& path)
-	: m_Path(path)
+D3D11Texture::D3D11Texture(const std::string& path) : Texture(path)
 {
 	// Load image
 
@@ -1859,7 +1894,7 @@ ID3D11Resource* D3D11Texture::GetTextureResource() const
 		resource = m_Texture3D;
 		break;
 	default:
-		LEV_THROW("Unknown texture dimension");
+		LEV_THROW("Unknown texture dimension")
 		break;
 	}
 
@@ -2101,14 +2136,14 @@ void D3D11Texture::Resize(uint16_t width, uint16_t height, uint16_t depth)
 		//ResizeCube(width); //TODO: TextureCube Support
 		break;
 	default:
-		LEV_THROW("Unknown texture dimension");
+		LEV_THROW("Unknown texture dimension")
 		break;
 	}
 }
 
-void D3D11Texture::Copy(Ref<Texture> other)
+void D3D11Texture::Copy(const Ref<Texture> other)
 {
-    std::shared_ptr<D3D11Texture> srcTexture = std::dynamic_pointer_cast<D3D11Texture>(other);
+	const std::shared_ptr<D3D11Texture> srcTexture = std::dynamic_pointer_cast<D3D11Texture>(other);
 
     if (srcTexture && srcTexture.get() != this)
     {
@@ -2134,11 +2169,11 @@ void D3D11Texture::Copy(Ref<Texture> other)
         }
         else
         {
-            LEV_THROW("Incompatible source texture");
+            LEV_THROW("Incompatible source texture")
         }
     }
 
-    if (((int)m_CPUAccess & (int)CPUAccess::Read) != 0 && m_Texture2D)
+    if ((static_cast<int>(m_CPUAccess) & static_cast<int>(CPUAccess::Read)) != 0 && m_Texture2D)
     {
         D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -2152,8 +2187,9 @@ void D3D11Texture::Copy(Ref<Texture> other)
     }
 }
 
-void D3D11Texture::Unbind(uint32_t slot) const
+void D3D11Texture::Unbind(const uint32_t slot) const
 {
+    //TODO: Clear only by flag
     ID3D11ShaderResourceView* srv[] = { nullptr };
     ID3D11UnorderedAccessView* uav[] = { nullptr };
 

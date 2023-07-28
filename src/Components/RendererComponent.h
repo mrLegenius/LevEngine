@@ -2,9 +2,9 @@
 #include <memory>
 
 #include "Transform.h"
-#include "../Renderer/D3D11VertexBuffer.h"
+#include "../Renderer/VertexBuffer.h"
 #include "../Renderer/IndexBuffer.h"
-#include "../Renderer/D3D11Shader.h"
+#include "../Renderer/Shader.h"
 #include "../Renderer/RenderCommand.h"
 
 class RendererComponent
@@ -17,7 +17,7 @@ public:
 		RenderCommand::DrawIndexed(m_VertexBuffer, m_IndexBuffer);
 	}
 protected:
-	explicit RendererComponent(const std::shared_ptr<D3D11Shader>& shader) : m_Shader(shader)
+	explicit RendererComponent(const Ref<Shader>& shader) : m_Shader(shader)
 	{
 
 	}
@@ -31,7 +31,7 @@ protected:
 
 	virtual void Prepare(const Transform& transform) = 0;
 
-	std::shared_ptr<D3D11Shader> m_Shader;
-	std::shared_ptr<D3D11VertexBuffer> m_VertexBuffer;
-	std::shared_ptr<IndexBuffer> m_IndexBuffer;
+	Ref<Shader> m_Shader;
+	Ref<VertexBuffer> m_VertexBuffer;
+	Ref<IndexBuffer> m_IndexBuffer;
 };

@@ -89,8 +89,8 @@ void D3D11RendererAPI::SetDepthFunc(const DepthFunc depthFunc)
 }
 
 void D3D11RendererAPI::DrawIndexed(
-	const std::shared_ptr<D3D11VertexBuffer>& vertexBuffer,
-	const std::shared_ptr<IndexBuffer>& indexBuffer)
+	const Ref<VertexBuffer>& vertexBuffer,
+	const Ref<IndexBuffer>& indexBuffer)
 {
 	context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	indexBuffer->Bind();

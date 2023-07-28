@@ -4,9 +4,10 @@
 #include <vector>
 
 #include "ClearFlags.h"
-#include "D3D11Texture.h"
+#include "Texture.h"
 #include "Math/Math.h"
-#include "Kernel/PointerUtils.h"
+
+#include "Platform/D3D11/D3D11Texture.h"
 
 using namespace DirectX::SimpleMath;
 namespace LevEngine
@@ -31,18 +32,18 @@ class D3D11RenderTarget
 public:
     D3D11RenderTarget()
     {
-        m_Textures.resize((size_t)AttachmentPoint::NumAttachmentPoints + 1);
+        m_Textures.resize(static_cast<size_t>(AttachmentPoint::NumAttachmentPoints));
     }
-    void AttachTexture(AttachmentPoint attachment, std::shared_ptr<Texture> texture)
+    void AttachTexture(AttachmentPoint attachment, const Ref<Texture>& texture)
     {
-        std::shared_ptr<D3D11Texture> textureDX11 = std::dynamic_pointer_cast<D3D11Texture>(texture);
-        m_Textures[static_cast<uint8_t>(attachment)] = textureDX11;
+	    const Ref<D3D11Texture> d3d11Texture = std::dynamic_pointer_cast<D3D11Texture>(texture);
+        m_Textures[static_cast<uint8_t>(attachment)] = d3d11Texture;
 
         // Next time the render target is "bound", check that it is valid.
         m_CheckValidity = true;
     }
 
-    std::shared_ptr<D3D11Texture> GetTexture(AttachmentPoint attachment) { return m_Textures[static_cast<uint8_t>(attachment)]; }
+    std::shared_ptr<Texture> GetTexture(AttachmentPoint attachment) { return m_Textures[static_cast<uint8_t>(attachment)]; }
 
     void Clear(AttachmentPoint attachment, const ClearFlags clearFlags = ClearFlags::All, const Vector4& color = Vector4::Zero, const float depth = 1.0f, const uint8_t stencil = 0) const
     {
@@ -52,13 +53,13 @@ public:
 
     void Clear(const ClearFlags clearFlags = ClearFlags::All, const Vector4& color = Vector4::Zero, const float depth = 1.0f, const uint8_t stencil = 0) const
     {
-        for (uint8_t i = 0; i < (uint8_t)AttachmentPoint::NumAttachmentPoints; ++i)
+        for (uint8_t i = 0; i < static_cast<uint8_t>(AttachmentPoint::NumAttachmentPoints); ++i)
         {
-            Clear((AttachmentPoint)i, clearFlags, color, depth, stencil);
+            Clear(static_cast<AttachmentPoint>(i), clearFlags, color, depth, stencil);
         }
     }
 
-    void Resize(uint16_t width, uint16_t height)
+    void Resize(const uint16_t width, const uint16_t height)
     {
         if (m_Width != width || m_Height != height)
         {
@@ -80,7 +81,7 @@ public:
 private:
 
     typedef std::vector<Ref<D3D11Texture>> TextureList;
-    TextureList m_Textures;
+    TextureList m_Textures{};
 
     // The width in pixels of textures associated to this render target.
     uint16_t m_Width = 0;
