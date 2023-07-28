@@ -4,6 +4,7 @@
 #include "Components/Rigidbody.h"
 #include "Components/Collider.h"
 #include "Components/Transform.h"
+#include "entt/entt.hpp"
 
 namespace LevEngine
 {
@@ -38,6 +39,7 @@ class Physics
 {
 public:
     static void HandleCollision(Transform& transformA, Rigidbody& rigidbodyA, Transform& transformB, Rigidbody& rigidbodyB, ContactPoint p);
+    static void Process(entt::registry& registry, float deltaTime);
 
     static bool AABBTest(
         const Vector3& posA, const Vector3& posB,

@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "Physics.h"
+
+#include "Components/CollisionEvent.h"
 #include "Scene/Entity.h"
+#include "Systems/ForcesClearSystem.h"
+#include "Systems/PositionUpdateSystem.h"
+#include "Systems/VelocityUpdateSystem.h"
+
 namespace LevEngine
 {
 bool Physics::AABBTest(
@@ -163,5 +169,234 @@ void Physics::HandleCollision(Transform& transformA, Rigidbody& rigidbodyA, Tran
 
 	rigidbodyA.AddAngularImpulse(relativeA.Cross(-fullImpulse));
 	rigidbodyB.AddAngularImpulse(relativeB.Cross(fullImpulse));
+}
+
+
+void CollisionDetectionSystem(entt::registry& registry);
+void UpdateCollisionList(entt::registry& registry);
+void SphereCollisionSystem(entt::registry& registry);
+void AABBSphereCollisionSystem(entt::registry& registry);
+void AABBCollisionResolveSystem(entt::registry& registry);
+static void RegisterCollision(entt::entity i, entt::entity j);
+
+Entity ConvertEntity(const entt::entity entity, entt::registry& registry)
+{
+	return Entity(entt::handle(registry, entity));
+}
+
+static float dTOffset = 0;
+using entity_pair = std::pair<entt::entity, entt::entity>;
+std::map<entity_pair, int> collisions;
+
+void Physics::Process(entt::registry& registry, float deltaTime)
+{
+	LEV_PROFILE_FUNCTION();
+
+	constexpr float iterationDt = 1.0f / 120.0f; //Ideally we'll have 120 physics updates a second 
+	dTOffset += deltaTime; //We accumulate time delta here - there might be remainders from previous frame!
+
+	const int iterationCount = static_cast<int>(dTOffset / iterationDt); //And split it up here
+
+	const float subDt = deltaTime / static_cast<float>(iterationCount);	//How many seconds per iteration do we get?
+
+	VelocityUpdateSystem(deltaTime, registry);
+
+	for (int i = 0; i < iterationCount; ++i)
+	{
+		/*if (useBroadPhase) { //TODO: Add optimization
+			BroadPhase();
+			NarrowPhase();
+		}
+		else {*/
+		CollisionDetectionSystem(registry);
+		//}
+
+		//This is our simple iterative solver - 
+		//we just run things multiple times, slowly moving things forward
+		//and then rechecking that the constraints have been met
+
+		constexpr int constraintIterationCount = 10;
+		const float constraintDt = subDt / static_cast<float>(constraintIterationCount);
+
+		for (int j = 0; j < constraintIterationCount; ++j) {
+			//UpdateConstraints(constraintDt);
+			UpdatePositionSystem(constraintDt, registry);
+		}
+
+		dTOffset -= iterationDt;
+	}
+	ForcesClearSystem(deltaTime, registry);//Once we've finished with the forces, reset them to zero
+
+	UpdateCollisionList(registry); //Remove any old collisions
+}
+
+void CollisionDetectionSystem(entt::registry& registry)
+{
+	LEV_PROFILE_FUNCTION();
+
+	AABBCollisionResolveSystem(registry);
+	SphereCollisionSystem(registry);
+	AABBSphereCollisionSystem(registry);
+}
+void UpdateCollisionList(entt::registry& registry)
+{
+	LEV_PROFILE_FUNCTION();
+
+	std::vector<entity_pair> pairsToDelete;
+
+	for (auto [pair, frames] : collisions)
+	{
+		auto a = pair.first;
+		auto b = pair.second;
+		if (frames == NumCollisionFrames)
+		{
+			if (const CollisionEvents* eventA = registry.try_get<CollisionEvents>(a))
+			{
+				if (eventA->onCollisionBegin)
+					eventA->onCollisionBegin(ConvertEntity(a, registry), ConvertEntity(b, registry));
+			}
+
+			if (const CollisionEvents* eventB = registry.try_get<CollisionEvents>(b))
+			{
+				if (eventB->onCollisionBegin)
+					eventB->onCollisionBegin(ConvertEntity(b, registry), ConvertEntity(a, registry));
+			}
+		}
+
+		collisions[pair]--;
+
+		if (frames < 0)
+		{
+			if (const CollisionEvents* eventA = registry.try_get<CollisionEvents>(a))
+			{
+				if (eventA->onCollisionEnd)
+					eventA->onCollisionEnd(ConvertEntity(a, registry), ConvertEntity(b, registry));
+			}
+
+
+			if (const CollisionEvents* eventB = registry.try_get<CollisionEvents>(b))
+			{
+				if (eventB->onCollisionEnd)
+					eventB->onCollisionEnd(ConvertEntity(b, registry), ConvertEntity(a, registry));
+			}
+
+			pairsToDelete.emplace_back(pair);
+		}
+	}
+
+	for (auto pair : pairsToDelete)
+		collisions.erase(pair);
+}
+void SphereCollisionSystem(entt::registry& registry)
+{
+	LEV_PROFILE_FUNCTION();
+
+	const auto view = registry.group<>(entt::get<Transform, Rigidbody, SphereCollider>);
+	const auto first = view.begin();
+	const auto last = view.end();
+
+	for (auto i = first; i != last; ++i)
+	{
+		auto [transform1, rigidbody1, colliderA] = view.get<Transform, Rigidbody, SphereCollider>(*i);
+		for (auto j = i + 1; j != last; ++j)
+		{
+			auto [transform2, rigidbody2, colliderB] = view.get<Transform, Rigidbody, SphereCollider>(*j);
+
+			if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
+			CollisionInfo info;
+
+			if (Physics::HasSphereIntersection(
+				colliderA,
+				transform1,
+				colliderB,
+				transform2,
+				info))
+			{
+				Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
+				RegisterCollision(*i, *j);
+			}
+		}
+	}
+}
+void AABBSphereCollisionSystem(entt::registry& registry)
+{
+	LEV_PROFILE_FUNCTION();
+
+	const auto view = registry.group<>(entt::get<Transform, Rigidbody, BoxCollider>);
+	const auto first = view.begin();
+	const auto last = view.end();
+
+	const auto viewB = registry.group<>(entt::get<Transform, Rigidbody, SphereCollider>);
+	const auto firstB = viewB.begin();
+	const auto lastB = viewB.end();
+
+	for (auto i = first; i != last; ++i)
+	{
+		auto [transform1, rigidbody1, colliderA] = view.get<Transform, Rigidbody, BoxCollider>(*i);
+		for (auto j = firstB; j != lastB; ++j)
+		{
+			if (*i == *j) continue;
+
+			auto [transform2, rigidbody2, colliderB] = viewB.get<Transform, Rigidbody, SphereCollider>(*j);
+
+			if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
+			CollisionInfo info;
+
+			if (Physics::HasAABBSphereIntersection(
+				colliderA,
+				transform1,
+				colliderB,
+				transform2,
+				info))
+			{
+				Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
+				RegisterCollision(*i, *j);
+			}
+		}
+	}
+}
+void AABBCollisionResolveSystem(entt::registry& registry)
+{
+	LEV_PROFILE_FUNCTION();
+
+	const auto group = registry.group<Transform>(entt::get<Rigidbody, BoxCollider>);
+	const auto first = group.begin();
+	const auto last = group.end();
+
+	for (auto i = first; i != last; ++i)
+	{
+		auto [transform1, rigidbody1, boxCollider1] = group.get<Transform, Rigidbody, BoxCollider>(*i);
+		for (auto j = i + 1; j != last; ++j)
+		{
+			auto [transform2, rigidbody2, boxCollider2] = group.get<Transform, Rigidbody, BoxCollider>(*j);
+
+			if (!rigidbody1.enabled || !rigidbody2.enabled) continue;
+
+			CollisionInfo info;
+
+			if (Physics::HasAABBIntersection(
+				boxCollider1,
+				transform1,
+				boxCollider2,
+				transform2,
+				info))
+			{
+				Physics::HandleCollision(transform1, rigidbody1, transform2, rigidbody2, info.point);
+				RegisterCollision(*i, *j);
+			}
+		}
+	}
+}
+
+static void RegisterCollision(entt::entity i, entt::entity j)
+{
+	auto exist = collisions.find(entity_pair(i, j));
+	if (exist == collisions.end())
+		exist = collisions.find(entity_pair(j, i));
+
+	if (exist == collisions.end())
+		collisions.emplace(entity_pair(i, j), NumCollisionFrames);
+	else
+		exist->second = NumCollisionFrames - 1;
 }
 }
