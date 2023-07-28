@@ -2,8 +2,8 @@
 #include "Renderer3D.h"
 #include "RenderCommand.h"
 #include "Assets.h"
-#include "Debugging/Profiler.h"
 #include "Kernel/Application.h"
+
 namespace LevEngine
 {
 Ref<ConstantBuffer> Renderer3D::m_ModelConstantBuffer;

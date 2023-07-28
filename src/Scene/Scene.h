@@ -2,7 +2,6 @@
 #include <entt/entt.hpp>
 
 #include "System.h"
-#include "Components/Components.h"
 #include "Kernel/PointerUtils.h"
 #include "Kernel/UUID.h"
 #include "Physics/Physics.h"
@@ -27,8 +26,6 @@ public:
 	void AABBCollisionResolveSystem();
 	static void RegisterCollision(entt::entity i, entt::entity j);
 	void OnRender();
-	void DirectionalLightSystem();
-	void PointLightsSystem();
 
 	void OnViewportResized(uint32_t width, uint32_t height);
 
@@ -64,9 +61,6 @@ private:
 	uint32_t m_ViewportHeight = 0;
 
 	friend class Entity;
-
-	void MeshRenderSystem();
-	void MeshDeferredSystem();
 
 	Entity ConvertEntity(entt::entity entity);
 

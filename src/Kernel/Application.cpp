@@ -68,7 +68,6 @@ void Application::Run()
 			layer->OnUpdate(deltaTime);
 		}
 
-		Renderer::Render();
 		Input::Reset();
 		m_Window->Update();
 	}

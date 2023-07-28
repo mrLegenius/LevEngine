@@ -8,11 +8,11 @@ SkyboxPass::SkyboxPass(entt::registry& registry) : m_Registry(registry)
 	//Pipeline
 	{
 		//TODO: maybe pass by parameter
-		auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
+		const auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
 
 		m_SkyboxPipeline.SetRenderTarget(mainRenderTarget);
 
-		DepthMode depthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual };
+		const DepthMode depthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual };
 		m_SkyboxPipeline.GetRasterizerState().SetCullMode(CullMode::None);
 		m_SkyboxPipeline.GetRasterizerState().SetDepthClipEnabled(false);
 		m_SkyboxPipeline.GetDepthStencilState()->SetDepthMode(depthMode);

@@ -4,9 +4,9 @@ namespace LevEngine
 {
 struct RenderParams
 {
-    Vector3 CameraPosition;
-    SceneCamera& Camera;
-    Matrix& CameraViewMatrix;
-    Matrix& CameraPerspectiveViewProjectionMatrix;
+	SceneCamera& Camera;
+	Vector3 CameraPosition;
+	Matrix CameraViewMatrix;
+	Matrix CameraPerspectiveViewProjectionMatrix;
 };
 }
