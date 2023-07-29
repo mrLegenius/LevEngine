@@ -24,5 +24,11 @@ namespace LevEngine
 		{
 			return a + t * (b - a);
 		}
+
+		template<typename T>
+		static T Clamp(T value, T from, T to)
+		{
+			return Min(Max(value, from), to);
+		}
 	};
 }

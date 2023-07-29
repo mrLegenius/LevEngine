@@ -1684,11 +1684,12 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint
     LEV_CORE_ASSERT(textureFormatSupported, "Unsupported texture format for 2D textures")
 
     // Can the texture be dynamically modified on the CPU?
-    texture->m_Dynamic = (int)texture->m_CPUAccess != 0 && (texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_CPU_LOCKABLE) != 0;
+    texture->m_Dynamic = (int)texture->m_CPUAccess != 0 && texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_CPU_LOCKABLE;
     // Can mipmaps be automatically generated for this texture format?
-    texture->m_GenerateMipMaps = !texture->m_Dynamic && (texture->m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN) != 0;
+    //TODO: Restore mipmaps
+    //texture->m_GenerateMipMaps = !texture->m_Dynamic && texture->m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
     // Are UAVs supported?
-    texture->m_UAV = uav && (texture->m_UnorderedAccessViewFormatSupport & D3D11_FORMAT_SUPPORT_SHADER_LOAD) != 0;
+    texture->m_UAV = uav && texture->m_UnorderedAccessViewFormatSupport & D3D11_FORMAT_SUPPORT_SHADER_LOAD;
 
     texture->Resize(width, height);
 
@@ -1874,7 +1875,7 @@ D3D11Texture::D3D11Texture(const std::string paths[6])
 
     m_ShaderResourceViewFormat = m_RenderTargetViewFormat = m_TextureResourceFormat;
     m_ShaderResourceViewFormatSupport = m_RenderTargetViewFormatSupport = m_TextureResourceFormatSupport;
-    m_GenerateMipMaps = !m_Dynamic && (m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN) != 0;
+    m_GenerateMipMaps = !m_Dynamic && m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
 
     // Texture
 
@@ -2091,11 +2092,11 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 	    textureDesc.CPUAccessFlags = 0;
     }
 
-    if (!m_UAV && !m_Dynamic && (m_DepthStencilViewFormatSupport & D3D11_FORMAT_SUPPORT_DEPTH_STENCIL) != 0)
+    if (!m_UAV && !m_Dynamic && m_DepthStencilViewFormatSupport & D3D11_FORMAT_SUPPORT_DEPTH_STENCIL)
     {
 	    textureDesc.BindFlags |= D3D11_BIND_DEPTH_STENCIL;
     }
-    if (!m_Dynamic && (m_RenderTargetViewFormatSupport & D3D11_FORMAT_SUPPORT_RENDER_TARGET) != 0)
+    if (!m_Dynamic && m_RenderTargetViewFormatSupport & D3D11_FORMAT_SUPPORT_RENDER_TARGET)
     {
 	    textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
     }
@@ -2113,7 +2114,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
     auto res = device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
     LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture")
 
-    if ((textureDesc.BindFlags & D3D11_BIND_DEPTH_STENCIL) != 0)
+    if (textureDesc.BindFlags & D3D11_BIND_DEPTH_STENCIL)
     {
 	    // Create the depth/stencil view for the texture.
 	    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;

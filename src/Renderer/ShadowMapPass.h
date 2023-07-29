@@ -1,6 +1,6 @@
 #pragma once
 #include "Assets.h"
-#include "D3D11CascadeShadowMap.h"
+#include "CascadeShadowMap.h"
 #include "Renderer3D.h"
 #include "RenderParams.h"
 #include "RenderPass.h"
@@ -19,7 +19,7 @@ class ShadowMapPass : public RenderPass
 public:
     ShadowMapPass()
     {
-        m_CascadeShadowMap = CreateRef<D3D11CascadeShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
+        m_CascadeShadowMap = CreateRef<CascadeShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
         m_ShadowMapConstantBuffer = ConstantBuffer::Create(sizeof ShadowData, 3);
     }
 
@@ -34,7 +34,7 @@ public:
 
 private:
     ShadowData m_ShadowData{};
-    Ref<D3D11CascadeShadowMap> m_CascadeShadowMap = nullptr;
+    Ref<CascadeShadowMap> m_CascadeShadowMap = nullptr;
     Ref<ConstantBuffer> m_ShadowMapConstantBuffer;
 
     std::vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const;

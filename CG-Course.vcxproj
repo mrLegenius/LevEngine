@@ -169,6 +169,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Physics\Physics.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11SamplerState.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
     <ClCompile Include="src\Renderer\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\BlendState.cpp" />
@@ -176,7 +177,7 @@
     <ClCompile Include="src\Renderer\ClearPass.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11BlendState.cpp" />
     <ClCompile Include="src\Renderer\ConstantBuffer.cpp" />
-    <ClCompile Include="src\Renderer\D3D11CascadeShadowMap.cpp" />
+    <ClCompile Include="src\Renderer\CascadeShadowMap.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11ConstantBuffer.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DepthStencilState.cpp" />
     <ClCompile Include="src\Renderer\DeferredTechnique.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="src\OrbitCamera.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\Renderer\RenderTarget.cpp" />
+    <ClCompile Include="src\Renderer\SamplerState.cpp" />
     <ClCompile Include="src\Renderer\Shader.cpp" />
     <ClCompile Include="src\Renderer\ShadowMapPass.cpp" />
     <ClCompile Include="src\Renderer\SkyboxPass.cpp" />
@@ -247,6 +249,7 @@
     <ClInclude Include="src\Physics\Systems\ForcesClearSystem.h" />
     <ClInclude Include="src\Physics\Systems\PositionUpdateSystem.h" />
     <ClInclude Include="src\Physics\Systems\VelocityUpdateSystem.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11SamplerState.h" />
     <ClInclude Include="src\Prefabs.h" />
     <ClInclude Include="src\Random.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
@@ -259,7 +262,7 @@
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
     <ClInclude Include="src\Renderer\CPUAccess.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11BlendState.h" />
-    <ClInclude Include="src\Renderer\D3D11CascadeShadowMap.h" />
+    <ClInclude Include="src\Renderer\CascadeShadowMap.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h" />
     <ClInclude Include="src\Renderer\DeferredTechnique.h" />
@@ -283,6 +286,7 @@
     <ClInclude Include="src\Renderer\RenderPass.h" />
     <ClInclude Include="src\Renderer\RenderSettings.h" />
     <ClInclude Include="src\Renderer\RenderTarget.h" />
+    <ClInclude Include="src\Renderer\SamplerState.h" />
     <ClInclude Include="src\Renderer\Shader.h" />
     <ClInclude Include="src\Renderer\ShadowMapPass.h" />
     <ClInclude Include="src\Renderer\SkyboxPass.h" />

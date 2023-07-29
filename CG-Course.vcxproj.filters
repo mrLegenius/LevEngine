@@ -96,7 +96,7 @@
     <ClCompile Include="src\Renderer\D3D11ShadowMap.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11CascadeShadowMap.cpp">
+    <ClCompile Include="src\Renderer\CascadeShadowMap.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\DeferredTechnique.cpp">
@@ -178,6 +178,12 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\RasterizerState.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\SamplerState.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\D3D11\D3D11SamplerState.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -353,7 +359,7 @@
     <ClInclude Include="src\Debugging\Profiler.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11CascadeShadowMap.h">
+    <ClInclude Include="src\Renderer\CascadeShadowMap.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\RenderSettings.h">
@@ -468,6 +474,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\RasterizerState.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\SamplerState.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\D3D11\D3D11SamplerState.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
