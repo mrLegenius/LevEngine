@@ -28,9 +28,9 @@ void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 	for (const auto entity : group)
 	{
 		auto [transform, skybox] = group.get<Transform, SkyboxRendererComponent>(entity);
-		skybox.texture->Bind();
+		skybox.texture->Bind(0, Shader::Type::Pixel);
 		Renderer3D::DrawSkybox(skybox, params.CameraPerspectiveViewProjectionMatrix);
-		skybox.texture->Unbind();
+		skybox.texture->Unbind(0, Shader::Type::Pixel);
 
 		ShaderAssets::Skybox()->Unbind();
 		m_SkyboxPipeline.Unbind();

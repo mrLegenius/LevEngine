@@ -157,7 +157,7 @@ namespace LevEngine
 		}
 	}
 
-	void D3D11SamplerState::UnBind(const uint32_t slot, const Shader::Type shaderType)
+	void D3D11SamplerState::Unbind(const uint32_t slot, const Shader::Type shaderType)
 	{
 		ID3D11SamplerState* pSamplers[] = { nullptr };
 

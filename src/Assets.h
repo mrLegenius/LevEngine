@@ -15,6 +15,48 @@ static std::string GetShaderPath(const std::string& name) { return (resources / 
 static std::string GetTexturePath(const std::string& name) { return (resources / "Textures" / name).string(); }
 static std::string GetModelPath(const std::string& name) { return (resources / "Models" / name).string(); }
 
+static Ref<SamplerState> GetDefaultClampedSamplerState()
+{
+	static Ref<SamplerState> sampler;
+
+	if (sampler) return sampler;
+
+	sampler = SamplerState::Create();
+	sampler->SetFilter(SamplerState::MinFilter::Linear, SamplerState::MagFilter::Linear, SamplerState::MipFilter::Linear);
+	sampler->SetWrapMode(SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp);
+	sampler->SetCompareFunction(SamplerState::CompareFunc::Never);
+	sampler->SetCompareMode(SamplerState::CompareMode::None);
+	sampler->SetMinLOD(-FLT_MAX);
+	sampler->SetMaxLOD(FLT_MAX);
+	sampler->SetMaxAnisotropy(1);
+	sampler->EnableAnisotropicFiltering(false);
+	sampler->SetBorderColor({ 1, 1, 1, 1 });
+	sampler->SetLODBias(0);
+
+	return sampler;
+}
+
+static Ref<SamplerState> GetDefaultWrappedSamplerState()
+{
+	static Ref<SamplerState> sampler;
+
+	if (sampler) return sampler;
+
+	sampler = SamplerState::Create();
+	sampler->SetFilter(SamplerState::MinFilter::Linear, SamplerState::MagFilter::Linear, SamplerState::MipFilter::Linear);
+	sampler->SetWrapMode(SamplerState::WrapMode::Repeat, SamplerState::WrapMode::Repeat, SamplerState::WrapMode::Repeat);
+	sampler->SetCompareFunction(SamplerState::CompareFunc::Never);
+	sampler->SetCompareMode(SamplerState::CompareMode::None);
+	sampler->SetMinLOD(-FLT_MAX);
+	sampler->SetMaxLOD(FLT_MAX);
+	sampler->SetMaxAnisotropy(1);
+	sampler->EnableAnisotropicFiltering(false);
+	sampler->SetBorderColor({ 1, 1, 1, 1 });
+	sampler->SetLODBias(0);
+
+	return sampler;
+}
+
 struct LavaRockAssets
 {
 	static auto Mesh()
@@ -26,18 +68,21 @@ struct LavaRockAssets
 	static auto AmbientTexture()
 	{
 		static auto texture = Texture::Create(GetTexturePath("LavaRock/ambient.jpg"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto EmissiveTexture()
 	{
 		static auto texture = Texture::Create(GetTexturePath("LavaRock/emissive.jpg"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto SpecularTexture()
 	{
 		static auto texture = Texture::Create(GetTexturePath("LavaRock/specular.jpg"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
@@ -45,6 +90,7 @@ struct LavaRockAssets
 	static auto NormalTexture()
 	{
 		static auto texture = Texture::Create(GetTexturePath("LavaRock/normal.jpg"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 };
@@ -258,42 +304,49 @@ namespace TextureAssets
     inline Ref<Texture> Bricks()
     {
         static auto texture = Texture::Create(GetTexturePath("bricks.jpg"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
         return texture;
     }
 
 	inline Ref<Texture> Particle()
 	{
 		static auto texture = Texture::Create(GetTexturePath("particle.png"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	inline Ref<Texture> Smoke()
 	{
 		static auto texture = Texture::Create(GetTexturePath("smoke.png"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
     inline Ref<Texture> Log()
     {
         static auto texture = Texture::Create(GetTexturePath("log.jpg"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
         return texture;
     }
 
     inline Ref<Texture> Gear()
     {
         static auto texture = Texture::Create(GetTexturePath("gear.png"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
         return texture;
     }
 
     inline Ref<Texture> Rock()
     {
         static auto texture = Texture::Create(GetTexturePath("rock.tga"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
         return texture;
     }
 
 	inline Ref<Texture> Fire()
 	{
 		static auto texture = Texture::Create(GetTexturePath("fire.png"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 };
@@ -312,6 +365,7 @@ namespace SkyboxAssets
         };
 
         static auto texture = Texture::CreateTextureCube(paths);
+		texture->AttachSampler(GetDefaultClampedSamplerState());
 
         return texture;
     }
@@ -328,6 +382,7 @@ namespace SkyboxAssets
         };
 
         static auto texture = Texture::CreateTextureCube(paths);
+		texture->AttachSampler(GetDefaultClampedSamplerState());
 
         return texture;
     }

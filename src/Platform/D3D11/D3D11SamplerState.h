@@ -11,7 +11,12 @@ namespace LevEngine
         ~D3D11SamplerState() override;
 
         void Bind(uint32_t slot, Shader::Type shaderType) override;
-        void UnBind(uint32_t slot, Shader::Type shaderType) override;
+        void Unbind(uint32_t slot, Shader::Type shaderType) override;
+
+        [[nodiscard]] ID3D11SamplerState* GetSamplerState() const
+        {
+            return m_SamplerState;
+        }
 
     protected:
         [[nodiscard]] D3D11_FILTER TranslateFilter() const;

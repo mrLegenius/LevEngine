@@ -1807,29 +1807,6 @@ D3D11Texture::D3D11Texture(const std::string& path) : Texture(path)
 
     m_IsDirty = false;
 
-	// Sampler
-
-	D3D11_SAMPLER_DESC ImageSamplerDesc = {};
-
-	ImageSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	ImageSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	ImageSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	ImageSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	ImageSamplerDesc.MipLODBias = 0.0f;
-	ImageSamplerDesc.MaxAnisotropy = 1;
-	ImageSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	ImageSamplerDesc.BorderColor[0] = 1.0f;
-	ImageSamplerDesc.BorderColor[1] = 1.0f;
-	ImageSamplerDesc.BorderColor[2] = 1.0f;
-	ImageSamplerDesc.BorderColor[3] = 1.0f;
-	ImageSamplerDesc.MinLOD = -FLT_MAX;
-	ImageSamplerDesc.MaxLOD = FLT_MAX;
-
-	result = device->CreateSamplerState(&ImageSamplerDesc,
-		&m_SamplerState);
-
-    LEV_CORE_ASSERT(SUCCEEDED(result));
-
     stbi_image_free(data);
 }
 
@@ -1945,29 +1922,6 @@ D3D11Texture::D3D11Texture(const std::string paths[6])
 
     m_IsDirty = false;
 
-    // Sampler
-
-    D3D11_SAMPLER_DESC ImageSamplerDesc = {};
-
-    ImageSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    ImageSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-    ImageSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-    ImageSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-    ImageSamplerDesc.MipLODBias = 0.0f;
-    ImageSamplerDesc.MaxAnisotropy = 1;
-    ImageSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    ImageSamplerDesc.BorderColor[0] = 1.0f;
-    ImageSamplerDesc.BorderColor[1] = 1.0f;
-    ImageSamplerDesc.BorderColor[2] = 1.0f;
-    ImageSamplerDesc.BorderColor[3] = 1.0f;
-    ImageSamplerDesc.MinLOD = -FLT_MAX;
-    ImageSamplerDesc.MaxLOD = FLT_MAX;
-
-    result = device->CreateSamplerState(&ImageSamplerDesc,
-        &m_SamplerState);
-
-    LEV_CORE_ASSERT(SUCCEEDED(result));
-
     for (auto& i : data)
         stbi_image_free(i);
 }
@@ -1982,37 +1936,56 @@ D3D11Texture::~D3D11Texture()
     if (m_RenderTargetView) m_RenderTargetView->Release();
     if (m_DepthStencilView) m_DepthStencilView->Release();
     if (m_UnorderedAccessView) m_UnorderedAccessView->Release();
-
-    if (m_SamplerState) m_SamplerState->Release();
 }
 
-void D3D11Texture::Bind(const uint32_t slot) const
+void D3D11Texture::Bind(const uint32_t slot, const Shader::Type type) const
 {
-    //TODO: Bind only by shaderType
+    //TODO: Fix compute shader binding (uav)
+    switch (type)
+    {
+    case Shader::Type::Vertex:
+        context->VSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        break;
+    case Shader::Type::Geometry:
+        context->GSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        break;
+    case Shader::Type::Pixel:
+        context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        break;
+    case Shader::Type::Compute:
+        context->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        context->CSSetUnorderedAccessViews(slot, 1, &m_UnorderedAccessView, nullptr);
+        break;
+    }
 
-	context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (m_SamplerState)
-		context->PSSetSamplers(slot, 1, &m_SamplerState);
-
-    context->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
-    if (m_SamplerState)
-        context->CSSetSamplers(slot, 1, &m_SamplerState);
+        m_SamplerState->Bind(slot, type);
 }
 
-void D3D11Texture::Unbind(const uint32_t slot) const
+void D3D11Texture::Unbind(const uint32_t slot, const Shader::Type type) const
 {
-    //TODO: Clear only by shaderType
     ID3D11ShaderResourceView* srv[] = { nullptr };
     ID3D11UnorderedAccessView* uav[] = { nullptr };
 
-    context->VSSetShaderResources(slot, 1, srv);
-    context->HSSetShaderResources(slot, 1, srv);
-    context->DSSetShaderResources(slot, 1, srv);
-    context->GSSetShaderResources(slot, 1, srv);
-    context->PSSetShaderResources(slot, 1, srv);
-    context->CSSetShaderResources(slot, 1, srv);
-    context->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
-    context->CSSetSamplers(slot, 0, nullptr);
+    switch (type)
+    {
+    case Shader::Type::Vertex:
+        context->VSSetShaderResources(slot, 1, srv);
+        break;
+    case Shader::Type::Geometry:
+        context->GSSetShaderResources(slot, 1, srv);
+        break;
+    case Shader::Type::Pixel:
+        context->PSSetShaderResources(slot, 1, srv);
+        break;
+    case Shader::Type::Compute:
+        context->CSSetShaderResources(slot, 1, srv);
+        context->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
+        break;
+    }
+
+    if (m_SamplerState)
+        m_SamplerState->Unbind(slot, type);
 }
 
 void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, const float depth, const uint8_t stencil)

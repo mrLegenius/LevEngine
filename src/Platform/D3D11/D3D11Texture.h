@@ -24,7 +24,8 @@ public:
 
 	[[nodiscard]] bool IsLoaded() const override { return m_IsLoaded; }
 
-	void Bind(uint32_t slot = 0) const override;
+	void Bind(uint32_t slot, Shader::Type type) const override;
+	void Unbind(uint32_t slot, Shader::Type type) const override;
 	void Clear(ClearFlags clearFlags, const Vector4& color, float depth, uint8_t stencil) override;
 
 	ID3D11Resource* GetTextureResource() const;
@@ -33,7 +34,6 @@ public:
 	ID3D11RenderTargetView* GetRenderTargetView() const { return m_RenderTargetView; }
 	ID3D11DepthStencilView* GetDepthStencilView() const { return m_DepthStencilView; }
 	ID3D11UnorderedAccessView* GetUnorderedAccessView() const { return m_UnorderedAccessView; }
-	ID3D11SamplerState* GetSamplerState() const { return m_SamplerState; }
 
 	[[nodiscard]] Ref<Texture> GetSlice(unsigned slice) const override { return nullptr; }
 	[[nodiscard]] uint16_t GetDepth() const override { return m_NumSlices; }
@@ -41,12 +41,10 @@ public:
 	void Resize(uint16_t width, uint16_t height = 0, uint16_t depth = 0) override;
 	void Copy(Ref<Texture> other) override;
 	uint8_t GetBPP() const override { return m_BPP; }
-	void Unbind(uint32_t slot) const override;
+
 	void GenerateMipMaps() override;
 
 protected:
-
-	ID3D11SamplerState* m_SamplerState = nullptr;
 
 	ID3D11Texture1D* m_Texture1D = nullptr;
 	ID3D11Texture2D* m_Texture2D = nullptr;

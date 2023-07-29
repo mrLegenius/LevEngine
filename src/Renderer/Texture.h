@@ -2,6 +2,8 @@
 #include <SimpleMath.h>
 #include "ClearFlags.h"
 #include "CPUAccess.h"
+#include "SamplerState.h"
+#include "Shader.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -113,6 +115,16 @@ namespace LevEngine
 
 		[[nodiscard]] virtual bool IsTransparent() const = 0;
 
+		void AttachSampler(const Ref<SamplerState>& sampler)
+		{
+			m_SamplerState = sampler;
+		}
+
+		[[nodiscard]] const Ref<SamplerState>& GetSamplerState() const
+		{
+			return m_SamplerState;
+		}
+
 		virtual void Resize(uint16_t width, uint16_t height = 0, uint16_t depth = 0) = 0;
 
 		virtual void Copy(Ref<Texture> other) = 0;
@@ -121,8 +133,8 @@ namespace LevEngine
 
 		virtual void Clear(ClearFlags clearFlags = ClearFlags::All, const Vector4& color = Vector4::Zero, float depth = 1.0f, uint8_t stencil = 0) = 0;
 
-		virtual void Bind(uint32_t slot = 0) const = 0;
-		virtual void Unbind(uint32_t slot = 0) const = 0;
+		virtual void Bind(uint32_t slot, Shader::Type type) const = 0;
+		virtual void Unbind(uint32_t slot, Shader::Type type) const = 0;
 
 		[[nodiscard]] virtual bool IsLoaded() const = 0;
 
@@ -131,5 +143,7 @@ namespace LevEngine
 		explicit Texture(std::string path) : m_Path(std::move(path)) { }
 
 		std::string m_Path{};
+
+		Ref<SamplerState> m_SamplerState;
 	};
 }

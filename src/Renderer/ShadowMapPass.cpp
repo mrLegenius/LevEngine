@@ -62,7 +62,7 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
     Vector3 lightDirection;
 	for (const auto entity : group)
 	{
-		auto [transform, camera]= group.get<Transform, CameraComponent>(entity);
+		auto [transform, camera] = group.get<Transform, CameraComponent>(entity);
 		lightCamera = &camera.camera;
         lightDirection = transform.GetForwardDirection();
 	}

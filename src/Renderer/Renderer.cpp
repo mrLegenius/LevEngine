@@ -94,11 +94,11 @@ void Renderer::RenderDeferred(entt::registry& registry, RenderParams renderParam
 
 		Renderer3D::EndDeferredLightningPass();
 
-		Renderer3D::m_GBuffer->GetNormalTexture()->Bind(8);
-		Renderer3D::m_GBuffer->GetDepthTexture()->Bind(9);
+		Renderer3D::m_GBuffer->GetNormalTexture()->Bind(8, Shader::Type::Pixel);
+		Renderer3D::m_GBuffer->GetDepthTexture()->Bind(9, Shader::Type::Pixel);
 		s_ParticlePass->Process(registry, renderParams);
-		Renderer3D::m_GBuffer->GetNormalTexture()->Unbind(8);
-		Renderer3D::m_GBuffer->GetDepthTexture()->Unbind(9);
+		Renderer3D::m_GBuffer->GetNormalTexture()->Unbind(8, Shader::Type::Pixel);
+		Renderer3D::m_GBuffer->GetDepthTexture()->Unbind(9, Shader::Type::Pixel);
 	}
 }
 

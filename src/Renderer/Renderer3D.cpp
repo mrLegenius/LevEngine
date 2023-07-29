@@ -83,7 +83,7 @@ inline void TryUnbindTexture(const Ref<Texture>& texture, const int slot)
 {
     if (texture)
     {
-        texture->Unbind(slot);
+        texture->Unbind(slot, Shader::Type::Pixel);
     }
 }
 
@@ -92,7 +92,7 @@ inline void TryBindTexture(const Ref<Texture>& texture, int& hasTexture, const i
     if (texture)
     {
         hasTexture = true;
-        texture->Bind(slot);
+        texture->Bind(slot, Shader::Type::Pixel);
     }
 }
 

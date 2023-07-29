@@ -119,20 +119,20 @@ void DeferredTechnique::BindTextures()
 {
     LEV_PROFILE_FUNCTION();
 
-    m_DiffuseTexture->Bind(1);
-    m_SpecularTexture->Bind(2);
-    m_NormalTexture->Bind(3);
-    m_DepthTexture->Bind(4);
+    m_DiffuseTexture->Bind(1, Shader::Type::Pixel);
+    m_SpecularTexture->Bind(2, Shader::Type::Pixel);
+    m_NormalTexture->Bind(3, Shader::Type::Pixel);
+    m_DepthTexture->Bind(4, Shader::Type::Pixel);
 }
 
 void DeferredTechnique::UnbindTextures()
 {
     LEV_PROFILE_FUNCTION();
 
-    m_DiffuseTexture->Unbind(1);
-    m_SpecularTexture->Unbind(2);
-    m_NormalTexture->Unbind(3);
-    m_DepthTexture->Bind(4);
+    m_DiffuseTexture->Unbind(1, Shader::Type::Pixel);
+    m_SpecularTexture->Unbind(2, Shader::Type::Pixel);
+    m_NormalTexture->Unbind(3, Shader::Type::Pixel);
+    m_DepthTexture->Bind(4, Shader::Type::Pixel);
 }
 
 void DeferredTechnique::StartOpaquePass()

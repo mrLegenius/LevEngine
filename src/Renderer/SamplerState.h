@@ -60,7 +60,7 @@ namespace LevEngine
         // Bind this sampler state to the ID for a specific shader type.
         virtual void Bind(uint32_t slot, Shader::Type shaderType) = 0;
         // Unbind the sampler state.
-        virtual void UnBind(uint32_t slot, Shader::Type shaderType) = 0;
+        virtual void Unbind(uint32_t slot, Shader::Type shaderType) = 0;
 
         void SetFilter(MinFilter minFilter, MagFilter magFilter, MipFilter mipFilter)
         {
@@ -183,7 +183,7 @@ namespace LevEngine
          */
         void SetMaxAnisotropy(const uint8_t maxAnisotropy)
         {
-            m_AnisotropicFiltering = Math::Clamp<uint8_t>(maxAnisotropy, 0, 16);
+            m_AnisotropicFiltering = Math::Clamp<uint8_t>(maxAnisotropy, 1, 16);
             m_IsDirty = true;
         }
         [[nodiscard]] uint8_t GetMaxAnisotropy() const
@@ -205,8 +205,8 @@ namespace LevEngine
 
         Color m_BorderColor{};
 
-        bool m_IsAnisotropicFilteringEnabled{};
-        uint8_t m_AnisotropicFiltering{};
+        bool m_IsAnisotropicFilteringEnabled = false;
+        uint8_t m_AnisotropicFiltering = 1;
 
         // Set to true if the sampler state needs to be recreated.
         bool m_IsDirty{};

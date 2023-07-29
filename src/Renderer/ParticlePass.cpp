@@ -6,6 +6,7 @@
 #include "Kernel/Application.h"
 #include "RenderCommand.h"
 #include "RenderSettings.h"
+#include "Platform/D3D11/D3D11SamplerState.h"
 #include "Platform/D3D11/D3D11Texture.h"
 
 namespace LevEngine
@@ -20,7 +21,7 @@ void BindTextureArray(Ref<D3D11Texture>* textures, const uint32_t count)
 
 	auto ss = new ID3D11SamplerState* [count];
 	for (int i = 0; i < count; ++i)
-		ss[i] = textures[i]->GetSamplerState();
+		ss[i] = std::dynamic_pointer_cast<D3D11SamplerState>(textures[i]->GetSamplerState())->GetSamplerState();
 
 	context->PSSetShaderResources(0, count, srv);
 	context->PSSetSamplers(0, count, ss);
@@ -188,7 +189,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 
 	//TextureAssets::Particle()->Bind(1);
 	for (uint32_t i = 0; i < textureSlotIndex; i++)
-		textureSlots[i]->Bind(i+1);
+		textureSlots[i]->Bind(i+1, Shader::Type::Pixel);
 
 	const uint32_t particlesCount = m_SortedBuffer->GetCounterValue();
 	RenderCommand::DrawPointList(particlesCount);
@@ -198,9 +199,9 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	m_SortedBuffer->Unbind(2, Shader::Type::Vertex, false);
 	m_PipelineState.Unbind();
 	ShaderAssets::Particles()->Unbind();
-	TextureAssets::Particle()->Unbind(1);
+	TextureAssets::Particle()->Unbind(1, Shader::Type::Pixel);
 	for (uint32_t i = 0; i < textureSlotIndex; i++)
-		textureSlots[i]->Unbind(i+1);
+		textureSlots[i]->Unbind(i+1, Shader::Type::Pixel);
 }
 
 void ParticlePass::GetGroupSize(const int totalCount, int& groupSizeX, int& groupSizeY) const
