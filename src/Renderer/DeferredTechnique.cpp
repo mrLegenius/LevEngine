@@ -1,23 +1,15 @@
 #include "pch.h"
-#include "D3D11DeferredTechnique.h"
+#include "DeferredTechnique.h"
 
-#include <cassert>
-#include <cstdint>
 #include <SimpleMath.h>
-#include <wrl/client.h>
 #include <Assets.h>
 
-#include "Debugging/Profiler.h"
 #include "Kernel/Application.h"
-#include "Platform/D3D11/D3D11Texture.h"
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-extern IDXGISwapChain* swapChain;
 
-D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint32_t height)
+DeferredTechnique::DeferredTechnique(const uint32_t width, const uint32_t height)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -115,25 +107,15 @@ D3D11DeferredTechnique::D3D11DeferredTechnique(const uint32_t width, const uint3
 
         m_PositionalLightPipeline2.GetDepthStencilState()->SetStencilMode(stencilMode);
     }
-
-    //Skybox
-    {
-        m_SkyboxPipeline.SetRenderTarget(mainRenderTarget);
-
-        DepthMode depthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual };
-        m_SkyboxPipeline.GetRasterizerState().SetCullMode(CullMode::None);
-        m_SkyboxPipeline.GetRasterizerState().SetDepthClipEnabled(false);
-        m_SkyboxPipeline.GetDepthStencilState()->SetDepthMode(depthMode);
-    }
 }
 
-D3D11DeferredTechnique::~D3D11DeferredTechnique()
+DeferredTechnique::~DeferredTechnique()
 {
 
 }
 
 
-void D3D11DeferredTechnique::BindTextures()
+void DeferredTechnique::BindTextures()
 {
     LEV_PROFILE_FUNCTION();
 
@@ -143,7 +125,7 @@ void D3D11DeferredTechnique::BindTextures()
     m_DepthTexture->Bind(4);
 }
 
-void D3D11DeferredTechnique::UnbindTextures()
+void DeferredTechnique::UnbindTextures()
 {
     LEV_PROFILE_FUNCTION();
 
@@ -151,17 +133,9 @@ void D3D11DeferredTechnique::UnbindTextures()
     m_SpecularTexture->Unbind(2);
     m_NormalTexture->Unbind(3);
     m_DepthTexture->Bind(4);
-
-    context->PSSetShaderResources(0, 0, nullptr);
-    context->PSSetShaderResources(1, 0, nullptr);
-    context->PSSetShaderResources(2, 0, nullptr);
-    context->PSSetShaderResources(3, 0, nullptr);
-    context->PSSetShaderResources(4, 0, nullptr);
-
-    context->PSSetSamplers(0, 0, nullptr);
 }
 
-void D3D11DeferredTechnique::StartOpaquePass()
+void DeferredTechnique::StartOpaquePass()
 {
     LEV_PROFILE_FUNCTION();
 
@@ -169,14 +143,12 @@ void D3D11DeferredTechnique::StartOpaquePass()
     m_GeometryPipeline.Bind();
 }
 
-void D3D11DeferredTechnique::StartPositionalLightingPass1()
+void DeferredTechnique::StartPositionalLightingPass1()
 {
     LEV_PROFILE_FUNCTION();
 
-    const auto texture = m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil);
-    const auto depthStencilView = std::dynamic_pointer_cast<D3D11Texture>(texture)->GetDepthStencilView();
+    m_DepthOnlyRenderTarget->Clear(ClearFlags::Stencil, Vector4::Zero, 1, 1);
 
-    context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_STENCIL, 1.0f, 1);
     {
         LEV_PROFILE_SCOPE("Pipeline 1");
         m_PositionalLightPipeline1.Bind();
@@ -186,7 +158,7 @@ void D3D11DeferredTechnique::StartPositionalLightingPass1()
     ShaderAssets::DeferredVertexOnly()->Bind();
 }
 
-void D3D11DeferredTechnique::StartPositionalLightingPass2()
+void DeferredTechnique::StartPositionalLightingPass2()
 {
     LEV_PROFILE_FUNCTION();
 
@@ -197,7 +169,7 @@ void D3D11DeferredTechnique::StartPositionalLightingPass2()
     ShaderAssets::DeferredPointLight()->Bind();
 }
 
-void D3D11DeferredTechnique::StartDirectionalLightingPass()
+void DeferredTechnique::StartDirectionalLightingPass()
 {
     LEV_PROFILE_FUNCTION();
 
@@ -209,7 +181,7 @@ void D3D11DeferredTechnique::StartDirectionalLightingPass()
     BindTextures();
 }
 
-void D3D11DeferredTechnique::EndLightningPass()
+void DeferredTechnique::EndLightningPass()
 {
     LEV_PROFILE_FUNCTION();
 

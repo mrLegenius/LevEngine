@@ -10,7 +10,6 @@
 
 namespace LevEngine
 {
-struct CollisionInfo;
 using namespace DirectX::SimpleMath;
 
 Scene::~Scene()
@@ -57,7 +56,7 @@ void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
     m_ViewportHeight = height;
 
     const auto view = m_Registry.view<CameraComponent>();
-    for (auto entity : view)
+    for (const auto entity : view)
     {
         auto& camera = view.get<CameraComponent>(entity);
 

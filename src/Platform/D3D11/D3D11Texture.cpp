@@ -2014,17 +2014,17 @@ void D3D11Texture::Unbind(const uint32_t slot) const
     context->CSSetSamplers(slot, 0, nullptr);
 }
 
-void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, float depth, uint8_t stencil)
+void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, const float depth, const uint8_t stencil)
 {
-	if (m_RenderTargetView && ((int)clearFlags & (int)ClearFlags::Color) != 0)
+	if (m_RenderTargetView && (int)clearFlags & (int)ClearFlags::Color)
 	{
 		context->ClearRenderTargetView(m_RenderTargetView, &color.x);
 	}
 
 	{
 		UINT flags = 0;
-		flags |= ((int)clearFlags & (int)ClearFlags::Depth) != 0 ? D3D11_CLEAR_DEPTH : 0;
-		flags |= ((int)clearFlags & (int)ClearFlags::Stencil) != 0 ? D3D11_CLEAR_STENCIL : 0;
+		flags |= (int)clearFlags & (int)ClearFlags::Depth ? D3D11_CLEAR_DEPTH : 0;
+		flags |= (int)clearFlags & (int)ClearFlags::Stencil ? D3D11_CLEAR_STENCIL : 0;
 		if (m_DepthStencilView && flags > 0)
 		{
 			context->ClearDepthStencilView(m_DepthStencilView, flags, depth, stencil);

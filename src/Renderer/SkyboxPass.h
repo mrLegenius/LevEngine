@@ -8,13 +8,12 @@ namespace LevEngine
 class SkyboxPass final : public RenderPass
 {
 public:
-	explicit SkyboxPass(entt::registry& registry);
+	explicit SkyboxPass();
 
-	void Process(RenderParams& params) override;
+	void Process(entt::registry& registry, RenderParams& params) override;
 
 private:
 
-	entt::registry& m_Registry;
 	PipelineState m_SkyboxPipeline;
 };
 }

@@ -12,7 +12,7 @@ Ref<ConstantBuffer> Renderer3D::m_LightningConstantBuffer;
 Ref<ConstantBuffer> Renderer3D::m_MaterialConstantBuffer;
 Ref<ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
 
-Ref<D3D11DeferredTechnique> Renderer3D::m_GBuffer;
+Ref<DeferredTechnique> Renderer3D::m_GBuffer;
 Ref<D3D11ForwardTechnique> Renderer3D::s_ForwardTechnique;
 
 Matrix Renderer3D::m_ViewProjection;
@@ -49,7 +49,7 @@ void Renderer3D::Init()
     s_LightningData.GlobalAmbient = RenderSettings::GlobalAmbient;
 
     const auto& window = Application::Get().GetWindow();
-    m_GBuffer = CreateRef<D3D11DeferredTechnique>(window.GetWidth(), window.GetHeight());
+    m_GBuffer = CreateRef<DeferredTechnique>(window.GetWidth(), window.GetHeight());
     s_ForwardTechnique = CreateRef<D3D11ForwardTechnique>();
 }
 
@@ -245,9 +245,8 @@ void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const Directional
 {
     LEV_PROFILE_FUNCTION();
 
-    auto& data = s_LightningData.DirLight;
-    data.Direction = dirLightDirection;
-    data.Color = dirLight.Color;
+    s_LightningData.DirLight.Direction = dirLightDirection;
+    s_LightningData.DirLight.Color = dirLight.Color;
 }
 
 void Renderer3D::AddPointLights(const Vector4& positionViewSpace, const Vector3& position, const PointLightComponent& pointLight)

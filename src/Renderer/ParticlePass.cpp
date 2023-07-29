@@ -12,13 +12,13 @@ namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
 
-void BindTextureArray(Ref<D3D11Texture>* textures, uint32_t count)
+void BindTextureArray(Ref<D3D11Texture>* textures, const uint32_t count)
 {
 	auto** srv = new ID3D11ShaderResourceView *[count];
 	for (int i = 0; i < count; ++i)
 		srv[i] = textures[i]->GetShaderResourceView();
 
-	auto ss = new ID3D11SamplerState * [count];
+	auto ss = new ID3D11SamplerState* [count];
 	for (int i = 0; i < count; ++i)
 		ss[i] = textures[i]->GetSamplerState();
 
@@ -26,7 +26,7 @@ void BindTextureArray(Ref<D3D11Texture>* textures, uint32_t count)
 	context->PSSetSamplers(0, count, ss);
 }
 
-ParticlePass::ParticlePass(entt::registry& registry) : m_Registry(registry)
+ParticlePass::ParticlePass()
 {
 	const auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
 	m_PipelineState.GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
@@ -88,7 +88,7 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 	return emitterData;
 }
 
-void ParticlePass::Process(RenderParams& params)
+void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 {
 	constexpr uint32_t MaxTextureSlots = 32;
 	std::array<Ref<Texture>, MaxTextureSlots> textureSlots{};
@@ -97,7 +97,7 @@ void ParticlePass::Process(RenderParams& params)
 
 	const float deltaTime = Time::GetDeltaTime().GetSeconds();
 
-	const auto group = m_Registry.view<Transform, EmitterComponent, IDComponent>();
+	const auto group = registry.view<Transform, EmitterComponent, IDComponent>();
 	m_ParticlesBuffer->Bind(0, Shader::Type::Compute, true, -1);
 
 	int groupSizeX = 0;

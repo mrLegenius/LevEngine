@@ -72,9 +72,6 @@
     <ClCompile Include="src\OrbitCamera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11TextureCube.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="src\Katamari\KatamariLayer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -102,7 +99,7 @@
     <ClCompile Include="src\Renderer\D3D11CascadeShadowMap.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11DeferredTechnique.cpp">
+    <ClCompile Include="src\Renderer\DeferredTechnique.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\D3D11\D3D11RasterizerState.cpp">
@@ -266,9 +263,6 @@
     <ClInclude Include="src\OrbitCamera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11TextureCube.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\Katamari\KatamariLayer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -371,7 +365,7 @@
     <ClInclude Include="src\Physics\Components\CollisionEvent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11DeferredTechnique.h">
+    <ClInclude Include="src\Renderer\DeferredTechnique.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Material.h">

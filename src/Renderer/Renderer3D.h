@@ -1,6 +1,6 @@
 #pragma once
 #include "ConstantBuffer.h"
-#include "D3D11DeferredTechnique.h"
+#include "DeferredTechnique.h"
 #include "D3D11ForwardTechnique.h"
 #include "RenderSettings.h"
 #include "3D/Mesh.h"
@@ -80,7 +80,7 @@ public:
 	static void AddPointLights(const Vector4& positionViewSpace, const Vector3& position, const PointLightComponent& pointLight);
 	static void UpdateLights();
 	static void RenderSphere(const Matrix& model);
-	static Ref<D3D11DeferredTechnique> m_GBuffer;
+	static Ref<DeferredTechnique> m_GBuffer;
 
 private:
 	static Ref<ConstantBuffer> m_ModelConstantBuffer;

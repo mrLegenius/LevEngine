@@ -18,6 +18,11 @@ void Renderer::Init()
 {
 	RenderCommand::Init();
 	Renderer3D::Init();
+
+	s_ShadowMapPass = CreateRef<ShadowMapPass>();
+	s_SkyboxPass = CreateRef<SkyboxPass>();
+
+	s_ParticlePass = CreateRef<ParticlePass>();
 }
 
 void Renderer::Shutdown()
@@ -34,18 +39,13 @@ void Renderer::RenderDeferred(entt::registry& registry, RenderParams renderParam
 {
     LEV_PROFILE_FUNCTION();
 
-	DirectionalLightSystem(registry);
-
 	{
 		LEV_PROFILE_SCOPE("ShadowPass");
 
-		const auto success = s_ShadowMapPass->Begin(renderParams);
-		if (success)
-		{
-			s_ShadowMapPass->Process(renderParams);
-			s_ShadowMapPass->End(renderParams);
-		}
+		s_ShadowMapPass->Execute(registry, renderParams);
 	}
+
+	DirectionalLightSystem(registry);
 
 	//G-Buffer Pass
 	{
@@ -90,13 +90,13 @@ void Renderer::RenderDeferred(entt::registry& registry, RenderParams renderParam
 		}
 
 		//Render skybox
-		s_SkyboxPass->Process(renderParams);
+		s_SkyboxPass->Execute(registry, renderParams);
 
 		Renderer3D::EndDeferredLightningPass();
 
 		Renderer3D::m_GBuffer->GetNormalTexture()->Bind(8);
 		Renderer3D::m_GBuffer->GetDepthTexture()->Bind(9);
-		s_ParticlePass->Process(renderParams);
+		s_ParticlePass->Process(registry, renderParams);
 		Renderer3D::m_GBuffer->GetNormalTexture()->Unbind(8);
 		Renderer3D::m_GBuffer->GetDepthTexture()->Unbind(9);
 	}
@@ -112,12 +112,7 @@ void Renderer::RenderForward(entt::registry& registry, RenderParams renderParams
 	{
 		LEV_PROFILE_SCOPE("ShadowPass");
 
-		const auto success = s_ShadowMapPass->Begin(renderParams);
-		if (success)
-		{
-			s_ShadowMapPass->Process(renderParams);
-			s_ShadowMapPass->End(renderParams);
-		}
+		s_ShadowMapPass->Execute(registry, renderParams);
 	}
 
 	{
@@ -129,11 +124,11 @@ void Renderer::RenderForward(entt::registry& registry, RenderParams renderParams
 		MeshRenderSystem(registry);
 
 		//Render skybox
-		s_SkyboxPass->Process(renderParams);
+		s_SkyboxPass->Execute(registry, renderParams);
 
 		Renderer3D::EndScene();
 
-		s_ParticlePass->Process(renderParams);
+		s_ParticlePass->Execute(registry, renderParams);
 	}
 }
 
@@ -193,15 +188,6 @@ void Renderer::Render(entt::registry& registry)
     if (!mainCamera) return;
 
     const auto renderParams = CreateRenderParams(mainCamera, cameraTransform);
-
-    if (!s_ShadowMapPass)
-        s_ShadowMapPass = CreateRef<ShadowMapPass>(registry);
-
-    if (!s_SkyboxPass)
-        s_SkyboxPass = CreateRef<SkyboxPass>(registry);
-
-    if (!s_ParticlePass)
-        s_ParticlePass = CreateRef<ParticlePass>(registry);
 
     if constexpr (RenderSettings::DeferredRendering)
 	    RenderDeferred(registry, renderParams);

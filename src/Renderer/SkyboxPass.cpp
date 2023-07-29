@@ -3,7 +3,7 @@
 #include "Kernel/Application.h"
 namespace LevEngine
 {
-SkyboxPass::SkyboxPass(entt::registry& registry) : m_Registry(registry)
+SkyboxPass::SkyboxPass() 
 {
 	//Pipeline
 	{
@@ -19,12 +19,12 @@ SkyboxPass::SkyboxPass(entt::registry& registry) : m_Registry(registry)
 	}
 }
 
-void SkyboxPass::Process(RenderParams& params)
+void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 {
 	m_SkyboxPipeline.Bind();
 	ShaderAssets::Skybox()->Bind();
 
-	const auto group = m_Registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
+	const auto group = registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
 	for (const auto entity : group)
 	{
 		auto [transform, skybox] = group.get<Transform, SkyboxRendererComponent>(entity);

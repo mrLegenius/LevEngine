@@ -1,14 +1,13 @@
 #pragma once
-
-#include "Kernel/PointerUtils.h"
 #include "PipelineState.h"
+
 namespace LevEngine
 {
-class D3D11DeferredTechnique
+class DeferredTechnique
 {
 public:
-	D3D11DeferredTechnique(uint32_t width, uint32_t height);
-	~D3D11DeferredTechnique();
+	DeferredTechnique(uint32_t width, uint32_t height);
+	~DeferredTechnique();
 	void BindTextures();
 	void UnbindTextures();
 	void StartOpaquePass();
@@ -30,7 +29,6 @@ private:
 	PipelineState m_GeometryPipeline;
 	PipelineState m_PositionalLightPipeline1;
 	PipelineState m_PositionalLightPipeline2;
-	PipelineState m_SkyboxPipeline;
 
 	Ref<RenderTarget> m_GBufferRenderTarget;
 	Ref<RenderTarget> m_DepthOnlyRenderTarget;

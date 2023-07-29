@@ -17,16 +17,15 @@ class ShadowMapPass : public RenderPass
         alignas(16) float ShadowMapDimensions;
     };
 public:
-    explicit ShadowMapPass(entt::registry& registry)
-        : m_Registry(registry)
+    ShadowMapPass()
     {
         m_CascadeShadowMap = CreateRef<D3D11CascadeShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
         m_ShadowMapConstantBuffer = ConstantBuffer::Create(sizeof ShadowData, 3);
     }
 
-    bool Begin(RenderParams& params) override;
-    void Process(RenderParams& params) override;
-    void End(RenderParams& params) override;
+    bool Begin(entt::registry& registry, RenderParams& params) override;
+    void Process(entt::registry& registry, RenderParams& params) override;
+    void End(entt::registry& registry, RenderParams& params) override;
 
     void BindConstantBuffer() const
     {
@@ -34,7 +33,6 @@ public:
     }
 
 private:
-    entt::registry& m_Registry;
     ShadowData m_ShadowData{};
     Ref<D3D11CascadeShadowMap> m_CascadeShadowMap = nullptr;
     Ref<ConstantBuffer> m_ShadowMapConstantBuffer;

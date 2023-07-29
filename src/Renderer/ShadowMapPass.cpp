@@ -55,10 +55,10 @@ Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, std::vector<
     return Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ);
 }
 
-bool ShadowMapPass::Begin(RenderParams& params)
+bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 {
 	const SceneCamera* lightCamera = nullptr;
-	const auto group = m_Registry.group<>(entt::get<Transform, DirectionalLightComponent, CameraComponent>);
+	const auto group = registry.group<>(entt::get<Transform, DirectionalLightComponent, CameraComponent>);
     Vector3 lightDirection;
 	for (const auto entity : group)
 	{
@@ -100,9 +100,9 @@ bool ShadowMapPass::Begin(RenderParams& params)
     return true;
 }
 
-void ShadowMapPass::Process(RenderParams& params)
+void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 {
-	const auto view = m_Registry.group<>(entt::get<Transform, MeshRendererComponent>);
+	const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
     for (const auto entity : view)
     {
         auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
@@ -111,7 +111,7 @@ void ShadowMapPass::Process(RenderParams& params)
     }
 }
 
-void ShadowMapPass::End(RenderParams& params)
+void ShadowMapPass::End(entt::registry& registry, RenderParams& params)
 {
     ShaderAssets::CascadeShadowPass()->Unbind();
     RenderCommand::End();

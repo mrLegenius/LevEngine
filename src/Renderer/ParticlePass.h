@@ -97,10 +97,10 @@ class ParticlePass : public RenderPass
 	};
 
 public:
-	ParticlePass(entt::registry& registry);
+	ParticlePass();
 	static Emitter GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex);
 
-	void Process(RenderParams& params) override;
+	void Process(entt::registry& registry, RenderParams& params) override;
 
 private:
 
@@ -120,7 +120,5 @@ private:
 	Ref<BitonicSort> m_BitonicSort{};
 
 	void GetGroupSize(int totalCount, int& groupSizeX, int& groupSizeY) const;
-
-	entt::registry& m_Registry;
 };
 }
