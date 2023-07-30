@@ -225,7 +225,6 @@ void KatamariLayer::OnAttach()
     auto floor = m_Scene->CreateEntity("Floor");
     auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     floorMesh.castShadow = false;
-    floorMesh.material = Materials::CyanPlastic();
     floorMesh.material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Bricks());
 
 	floor.GetComponent<Transform>().SetLocalScale(Vector3(300, 1.0f, 300));
