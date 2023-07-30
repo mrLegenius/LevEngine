@@ -38,10 +38,17 @@ void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size) const
 	context->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, data, actualSize);
 	context->Unmap(m_Buffer, 0);
+}
 
-	context->VSSetConstantBuffers(m_Slot, 1, &m_Buffer);
-	context->PSSetConstantBuffers(m_Slot, 1, &m_Buffer);
-	context->GSSetConstantBuffers(m_Slot, 1, &m_Buffer);
-	context->CSSetConstantBuffers(m_Slot, 1, &m_Buffer);
+void D3D11ConstantBuffer::Bind(const Shader::Type shaderType)
+{
+	if (shaderType & Shader::Type::Vertex)
+		context->VSSetConstantBuffers(m_Slot, 1, &m_Buffer);
+	if (shaderType & Shader::Type::Pixel)
+		context->PSSetConstantBuffers(m_Slot, 1, &m_Buffer);
+	if (shaderType & Shader::Type::Geometry)
+		context->GSSetConstantBuffers(m_Slot, 1, &m_Buffer);
+	if (shaderType & Shader::Type::Compute)
+		context->CSSetConstantBuffers(m_Slot, 1, &m_Buffer);
 }
 }

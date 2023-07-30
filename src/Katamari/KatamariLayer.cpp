@@ -139,11 +139,17 @@ void KatamariLayer::OnAttach()
             mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.2f);
             mesh.GetComponent<Transform>().SetLocalRotation(Vector3{ 90.0f, 0.0f, -90.0f });
             auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), LavaRockAssets::Mesh());
-            meshRenderer.ambientTexture = LavaRockAssets::AmbientTexture();
-            meshRenderer.diffuseTexture = LavaRockAssets::AmbientTexture();
-            meshRenderer.emissiveTexture = LavaRockAssets::EmissiveTexture();
-            meshRenderer.specularTexture = LavaRockAssets::SpecularTexture();
-            meshRenderer.normalTexture = LavaRockAssets::NormalTexture();
+
+            meshRenderer.material.SetAmbientColor(LevEngine::Color::White);
+            meshRenderer.material.SetDiffuseColor(LevEngine::Color::White);
+            meshRenderer.material.SetEmissiveColor(LevEngine::Color::White);
+            meshRenderer.material.SetSpecularColor(LevEngine::Color::White);
+
+            meshRenderer.material.SetTexture(Material::TextureType::Ambient, LavaRockAssets::AmbientTexture());
+            meshRenderer.material.SetTexture(Material::TextureType::Diffuse, LavaRockAssets::AmbientTexture());
+            meshRenderer.material.SetTexture(Material::TextureType::Emissive, LavaRockAssets::EmissiveTexture());
+            meshRenderer.material.SetTexture(Material::TextureType::Specular, LavaRockAssets::SpecularTexture());
+            meshRenderer.material.SetTexture(Material::TextureType::Normal, LavaRockAssets::NormalTexture());
         }
 
         //<--- Fire Particles ---<<
@@ -220,7 +226,7 @@ void KatamariLayer::OnAttach()
     auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     floorMesh.castShadow = false;
     floorMesh.material = Materials::CyanPlastic();
-    floorMesh.diffuseTexture = TextureAssets::Bricks();
+    floorMesh.material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Bricks());
 
 	floor.GetComponent<Transform>().SetLocalScale(Vector3(300, 1.0f, 300));
     floor.GetComponent<Transform>().SetWorldRotation(Vector3(0, 0, 0));

@@ -15,5 +15,7 @@ public:
 private:
 
 	PipelineState m_SkyboxPipeline;
+	Ref<SkyboxMesh> m_SkyboxMesh;
+	Ref<ConstantBuffer> m_CameraConstantBuffer;
 };
 }

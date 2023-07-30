@@ -9,14 +9,12 @@ namespace LevEngine
 Ref<ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
 Ref<ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
 Ref<ConstantBuffer> Renderer3D::m_LightningConstantBuffer;
-Ref<ConstantBuffer> Renderer3D::m_MaterialConstantBuffer;
 Ref<ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
 
 Ref<DeferredTechnique> Renderer3D::m_GBuffer;
 Ref<D3D11ForwardTechnique> Renderer3D::s_ForwardTechnique;
 
 Matrix Renderer3D::m_ViewProjection;
-Ref<SkyboxMesh> Renderer3D::s_SkyboxMesh;
 
 PointLightData Renderer3D::s_PointLights[RenderSettings::MaxPointLights];
 LightningData Renderer3D::s_LightningData;
@@ -41,10 +39,7 @@ void Renderer3D::Init()
 	m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
 	m_ModelConstantBuffer = ConstantBuffer::Create(sizeof MeshModelBufferData, 1);
 	m_LightningConstantBuffer = ConstantBuffer::Create(sizeof LightningData, 2);
-    m_MaterialConstantBuffer = ConstantBuffer::Create(sizeof MaterialData, 4);
     m_ScreenToViewParamsConstantBuffer = ConstantBuffer::Create(sizeof ScreenToViewParams, 5);
-
-    s_SkyboxMesh = CreateRef<SkyboxMesh>(ShaderAssets::Skybox());
 
     s_LightningData.GlobalAmbient = RenderSettings::GlobalAmbient;
 
@@ -69,7 +64,8 @@ void Renderer3D::BeginScene(const SceneCamera& camera, const Matrix& viewMatrix,
     m_ViewProjection = viewMatrix * camera.GetProjection();
 
     const CameraData cameraData{  viewMatrix, m_ViewProjection, position };
-    m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
+    m_CameraConstantBuffer->SetData(&cameraData);
+    m_CameraConstantBuffer->Bind(Shader::Type::Vertex | Shader::Type::Pixel);
 }
 
 void Renderer3D::EndScene()
@@ -79,44 +75,14 @@ void Renderer3D::EndScene()
     s_ForwardTechnique->End();
 }
 
-inline void TryUnbindTexture(const Ref<Texture>& texture, const int slot)
-{
-    if (texture)
-    {
-        texture->Unbind(slot, Shader::Type::Pixel);
-    }
-}
-
-inline void TryBindTexture(const Ref<Texture>& texture, int& hasTexture, const int slot)
-{
-    if (texture)
-    {
-        hasTexture = true;
-        texture->Bind(slot, Shader::Type::Pixel);
-    }
-}
-
-void Renderer3D::DrawOpaqueMesh(const Matrix& model, const MeshRendererComponent& meshRenderer)
+void Renderer3D::DrawOpaqueMesh(const Matrix& model, MeshRendererComponent& meshRenderer)
 {
     LEV_PROFILE_FUNCTION();
 
-    MaterialData material;
-    material.Emissive = meshRenderer.material.Emissive;
-    material.Ambient = meshRenderer.material.Ambient;
-    material.Diffuse = meshRenderer.material.Diffuse;
-    material.Specular = meshRenderer.material.Specular;
-    material.Shininess = meshRenderer.material.Shininess;
-
-    TryBindTexture(meshRenderer.emissiveTexture, material.HasEmissiveTexture, 0);
-    TryBindTexture(meshRenderer.ambientTexture, material.HasAmbientTexture, 1);
-    TryBindTexture(meshRenderer.diffuseTexture, material.HasDiffuseTexture, 2);
-    TryBindTexture(meshRenderer.specularTexture, material.HasSpecularTexture, 3);
-    TryBindTexture(meshRenderer.normalTexture, material.HasNormalTexture, 4);
-
-    m_MaterialConstantBuffer->SetData(&material);
-
+    meshRenderer.material.Bind(meshRenderer.shader);
     meshRenderer.shader->Bind();
     DrawMesh(model, meshRenderer);
+    meshRenderer.material.Unbind(meshRenderer.shader);
 }
 
 void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer)
@@ -128,49 +94,21 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
+    m_ModelConstantBuffer->Bind(Shader::Type::Vertex);
 
     RenderCommand::DrawIndexed(meshRenderer.mesh->VertexBuffer, meshRenderer.mesh->IndexBuffer);
 }
 
-void Renderer3D::DrawSkybox(const SkyboxRendererComponent& renderer, const Matrix& perspectiveViewProjection)
-{
-    LEV_PROFILE_FUNCTION();
-
-    const CameraData skyboxCameraData{ Matrix::Identity, perspectiveViewProjection, Vector3::Zero };
-    m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
-
-    RenderCommand::DrawIndexed(s_SkyboxMesh->VertexBuffer, s_SkyboxMesh->IndexBuffer);
-}
-
-void Renderer3D::DrawDeferredMesh(const Matrix& model, const MeshRendererComponent& meshRenderer)
+void Renderer3D::DrawDeferredMesh(const Matrix& model, MeshRendererComponent& meshRenderer)
 {
     LEV_PROFILE_FUNCTION();
 
     if (!meshRenderer.mesh->VertexBuffer)
         meshRenderer.mesh->Init(ShaderAssets::GBufferPass()->GetLayout());
 
-    MaterialData material;
-    material.Emissive = meshRenderer.material.Emissive;
-    material.Ambient = meshRenderer.material.Ambient;
-    material.Diffuse = meshRenderer.material.Diffuse;
-    material.Specular = meshRenderer.material.Specular;
-    material.Shininess = meshRenderer.material.Shininess;
-
-    TryBindTexture(meshRenderer.emissiveTexture, material.HasEmissiveTexture, 0);
-    TryBindTexture(meshRenderer.ambientTexture, material.HasAmbientTexture, 1);
-    TryBindTexture(meshRenderer.diffuseTexture, material.HasDiffuseTexture, 2);
-    TryBindTexture(meshRenderer.specularTexture, material.HasSpecularTexture, 3);
-    TryBindTexture(meshRenderer.normalTexture, material.HasNormalTexture, 4);
-
-    m_MaterialConstantBuffer->SetData(&material);
-
+    meshRenderer.material.Bind(ShaderAssets::GBufferPass());
     DrawMesh(model, meshRenderer);
-
-    TryUnbindTexture(meshRenderer.emissiveTexture,0);
-    TryUnbindTexture(meshRenderer.ambientTexture, 1);
-    TryUnbindTexture(meshRenderer.diffuseTexture, 2);
-    TryUnbindTexture(meshRenderer.specularTexture,3);
-    TryUnbindTexture(meshRenderer.normalTexture, 4);
+    meshRenderer.material.Unbind(ShaderAssets::GBufferPass());
 }
 
 void Renderer3D::BeginDeferred(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position)
@@ -185,7 +123,8 @@ void Renderer3D::BeginDeferred(const SceneCamera& camera, const Matrix& viewMatr
     m_ViewProjection = viewMatrix * camera.GetProjection();
 
     const CameraData cameraData{ viewMatrix, m_ViewProjection, position };
-    m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
+    m_CameraConstantBuffer->SetData(&cameraData);
+    m_CameraConstantBuffer->Bind(Shader::Type::Vertex | Shader::Type::Pixel);
     UpdateLights();
 }
 
@@ -200,6 +139,7 @@ void Renderer3D::BeginDeferredDirLightningSubPass(const SceneCamera& camera)
     const float height = window.GetHeight();
     const ScreenToViewParams params{ camera.GetProjection().Invert(), Vector2{width, height}};
     m_ScreenToViewParamsConstantBuffer->SetData(&params);
+    m_ScreenToViewParamsConstantBuffer->Bind(Shader::Type::Pixel);
     UpdateLights();
 }
 
@@ -212,11 +152,13 @@ void Renderer3D::BeginDeferredPositionalLightningSubPass(const SceneCamera& came
     const float height = window.GetHeight();
     const ScreenToViewParams params{ camera.GetProjection().Invert(), Vector2{width, height} };
     m_ScreenToViewParamsConstantBuffer->SetData(&params);
+    m_ScreenToViewParamsConstantBuffer->Bind(Shader::Type::Pixel);
 
     m_ViewProjection = viewMatrix * camera.GetProjection();
 
     const CameraData cameraData{ viewMatrix, m_ViewProjection, position };
-    m_CameraConstantBuffer->SetData(&cameraData, sizeof CameraData);
+    m_CameraConstantBuffer->SetData(&cameraData);
+    m_CameraConstantBuffer->Bind(Shader::Type::Vertex | Shader::Type::Pixel);
 }
 
 void Renderer3D::BeginDeferredPositionalLightningSubPass1(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position)
@@ -276,6 +218,7 @@ void Renderer3D::UpdateLights()
     LEV_PROFILE_FUNCTION();
 
     m_LightningConstantBuffer->SetData(&s_LightningData);
+    m_LightningConstantBuffer->Bind(Shader::Type::Pixel);
     s_LightningData.PointLightsCount = 0;
 }
 
@@ -292,6 +235,7 @@ void Renderer3D::RenderSphere(const Matrix& model)
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
+    m_ModelConstantBuffer->Bind(Shader::Type::Vertex);
 
     RenderCommand::DrawIndexed(mesh->VertexBuffer, mesh->IndexBuffer);
 }

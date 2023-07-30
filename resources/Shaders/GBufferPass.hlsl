@@ -16,11 +16,11 @@ PS_IN VSMain(VS_IN input)
 	return output;
 }
 
-Texture2D emissiveTexture : register(t0);
-SamplerState emissiveTextureSampler : register(s0);
+Texture2D ambientTexture : register(t0);
+SamplerState ambientTextureSampler : register(s0);
 
-Texture2D ambientTexture : register(t1);
-SamplerState ambientTextureSampler : register(s1);
+Texture2D emissiveTexture : register(t1);
+SamplerState emissiveTextureSampler : register(s1);
 
 Texture2D diffuseTexture : register(t2);
 SamplerState diffuseTextureSampler : register(s2);

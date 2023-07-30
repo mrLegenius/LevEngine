@@ -11,7 +11,7 @@ BitonicSort::BitonicSort(const int numElements): m_NumElements(numElements)
 {
 	m_BitonicSortCS = ShaderAssets::BitonicSort();
 	m_BitonicTransposeCS = ShaderAssets::BitonicTranspose();
-	m_ConstantsBuffer = ConstantBuffer::Create(sizeof ConstantsGPUData);
+	m_ConstantsBuffer = ConstantBuffer::Create(sizeof ConstantsGPUData, 0);
 }
 
 void BitonicSort::Sort(const Ref<StructuredBuffer> inBuffer, const Ref<StructuredBuffer> tempBuffer) const
@@ -74,5 +74,6 @@ void BitonicSort::SetGPUSortConstants(const uint32_t level, const uint32_t level
 {
 	const ConstantsGPUData data {(int)level, (int)levelMask, (int)width, (int)height};
 	m_ConstantsBuffer->SetData(&data);
+	m_ConstantsBuffer->Bind(Shader::Type::Compute);
 }
 }

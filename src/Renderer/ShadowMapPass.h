@@ -27,11 +27,6 @@ public:
     void Process(entt::registry& registry, RenderParams& params) override;
     void End(entt::registry& registry, RenderParams& params) override;
 
-    void BindConstantBuffer() const
-    {
-	    m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
-    }
-
 private:
     ShadowData m_ShadowData{};
     Ref<CascadeShadowMap> m_CascadeShadowMap = nullptr;

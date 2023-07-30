@@ -35,11 +35,6 @@ namespace LevEngine
 	{
 		Ref<Mesh> mesh;
 		Ref<Shader> shader;
-		Ref<Texture> emissiveTexture;
-		Ref<Texture> ambientTexture;
-		Ref<Texture> diffuseTexture;
-		Ref<Texture> specularTexture;
-		Ref<Texture> normalTexture;
 		Material material;
 		bool castShadow = true;
 

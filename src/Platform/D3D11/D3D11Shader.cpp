@@ -69,6 +69,8 @@ D3D11Shader::D3D11Shader(const std::string& filepath, const Type shaderTypes) : 
 		auto result = CreateComputeShader(m_ComputeShader, filepath);
 		LEV_CORE_ASSERT(result, "Can't create compute shader")
 	}
+
+	m_Type = shaderTypes;
 }
 
 D3D11Shader::~D3D11Shader()

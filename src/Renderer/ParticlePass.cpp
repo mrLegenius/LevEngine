@@ -108,9 +108,11 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 
 	const Handler handler{ groupSizeY, RenderSettings::MaxParticles, deltaTime};
 	m_ComputeData->SetData(&handler);
+	m_ComputeData->Bind(Shader::Type::Compute);
 
 	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
 	m_CameraData->SetData(&cameraData);
+	m_CameraData->Bind(Shader::Type::Compute);
 
 	m_DeadBuffer->Bind(1, Shader::Type::Compute, true, -1);
 	
@@ -145,9 +147,11 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 
 		auto emitterData = GetEmitterData(emitter, transform, textureIndex);
 		m_EmitterData->SetData(&emitterData);
+		m_EmitterData->Bind(Shader::Type::Compute);
 
 		RandomGPUData randomData{ rand() };
 		m_RandomData->SetData(&randomData);
+		m_RandomData->Bind(Shader::Type::Compute);
 
 		//<--- Emit ---<<
 		
@@ -159,6 +163,8 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	}
 
 	//<--- Simulate ---<<
+
+	//TODO: Bind depth and normal maps here to enable bounce again
 	m_DeadBuffer->Bind(1, Shader::Type::Compute, true, -1);
 	m_SortedBuffer->Bind(2, Shader::Type::Compute, true, 0);
 
@@ -178,6 +184,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	{
 		const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
 		m_CameraData->SetData(&cameraData);
+		m_CameraData->Bind(Shader::Type::Vertex | Shader::Type::Geometry);
 	}
 	
 	ShaderAssets::Particles()->Bind();

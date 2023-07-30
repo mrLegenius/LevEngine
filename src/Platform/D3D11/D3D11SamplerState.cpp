@@ -140,43 +140,27 @@ namespace LevEngine
 
 		ID3D11SamplerState* pSamplers[] = { m_SamplerState };
 
-		switch (shaderType)
-		{
-		case Shader::Type::Vertex:
-			context->VSSetSamplers(slot, 1, &m_SamplerState);
-			break;
-		case Shader::Type::Geometry:
-			context->GSSetSamplers(slot, 1, &m_SamplerState);
-			break;
-		case Shader::Type::Pixel:
-			context->PSSetSamplers(slot, 1, &m_SamplerState);
-			break;
-		case Shader::Type::Compute:
-			context->CSSetSamplers(slot, 1, &m_SamplerState);
-			break;
-		}
+		if (shaderType & Shader::Type::Vertex)
+			context->VSSetSamplers(slot, 1, pSamplers);
+		if (shaderType & Shader::Type::Pixel)
+			context->PSSetSamplers(slot, 1, pSamplers);
+		if (shaderType & Shader::Type::Geometry)
+			context->GSSetSamplers(slot, 1, pSamplers);
+		if (shaderType & Shader::Type::Compute)
+			context->CSSetSamplers(slot, 1, pSamplers);
 	}
 
 	void D3D11SamplerState::Unbind(const uint32_t slot, const Shader::Type shaderType)
 	{
 		ID3D11SamplerState* pSamplers[] = { nullptr };
 
-		switch (shaderType)
-		{
-		case Shader::Type::Vertex:
+		if (shaderType & Shader::Type::Vertex)
 			context->VSSetSamplers(slot, 1, pSamplers);
-			break;
-		case Shader::Type::Geometry:
-			context->GSSetSamplers(slot, 1, pSamplers);
-			break;
-		case Shader::Type::Pixel:
+		if (shaderType & Shader::Type::Pixel)
 			context->PSSetSamplers(slot, 1, pSamplers);
-			break;
-		case Shader::Type::Compute:
+		if (shaderType & Shader::Type::Geometry)
+			context->GSSetSamplers(slot, 1, pSamplers);
+		if (shaderType & Shader::Type::Compute)
 			context->CSSetSamplers(slot, 1, pSamplers);
-			break;
-		}
 	}
-
-
 }

@@ -38,21 +38,6 @@ struct LightningData
 	uint32_t PointLightsCount = 0;
 };
 
-struct MaterialData
-{
-	alignas(16) Vector3 Emissive = Vector3{ 0, 0, 0 };
-	alignas(16) Vector3 Ambient = Vector3{ 0, 0, 0 };
-	alignas(16) Vector3 Diffuse = Vector3{ 0, 0, 0 };
-	alignas(16) Vector3 Specular = Vector3{ 0, 0, 0 };
-
-	float Shininess = 2;
-	int HasEmissiveTexture = 0;
-	int HasAmbientTexture = 0;
-	int HasDiffuseTexture = 0;
-	int HasSpecularTexture = 0;
-	int HasNormalTexture = 0;
-};
-
 class Renderer3D
 {
 public:
@@ -61,7 +46,7 @@ public:
 
 	static void BeginScene(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void EndScene();
-	static void DrawOpaqueMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
+	static void DrawOpaqueMesh(const Matrix& model, MeshRendererComponent& meshRenderer);
 
 	static void BeginDeferred(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void BeginDeferredDirLightningSubPass(const SceneCamera& camera);
@@ -71,8 +56,7 @@ public:
 	static void BeginDeferredPositionalLightningSubPass2(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void EndDeferredLightningPass();
 
-	static void DrawSkybox(const SkyboxRendererComponent& renderer, const Matrix& perspectiveViewProjection);
-	static void DrawDeferredMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
+	static void DrawDeferredMesh(const Matrix& model, MeshRendererComponent& meshRenderer);
 
 	static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
 
@@ -86,15 +70,11 @@ private:
 	static Ref<ConstantBuffer> m_ModelConstantBuffer;
 	static Ref<ConstantBuffer> m_CameraConstantBuffer;
 	static Ref<ConstantBuffer> m_LightningConstantBuffer;
-	static Ref<ConstantBuffer> m_MaterialConstantBuffer;
 	static Ref<ConstantBuffer> m_ScreenToViewParamsConstantBuffer;
 
-	
 	static Ref<D3D11ForwardTechnique> s_ForwardTechnique;
 
 	static Matrix m_ViewProjection;
-
-	static Ref<SkyboxMesh> s_SkyboxMesh;
 
 	static PointLightData s_PointLights[RenderSettings::MaxPointLights];
 	static LightningData s_LightningData;

@@ -25,12 +25,16 @@ namespace LevEngine
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 		[[nodiscard]] const BufferLayout& GetLayout() const { return m_Layout; }
 
+		[[nodiscard]] Type GetType() const { return m_Type; }
+
 	protected:
-		explicit Shader(const std::string& filepath) : m_FilePath(filepath) { }
+		explicit Shader(std::string filepath) : m_FilePath(std::move(filepath)) { }
 		virtual ~Shader() = default;
 
 		std::string m_FilePath;
 		std::string m_Name;
+
+		Type m_Type;
 
 		BufferLayout m_Layout;
 	};

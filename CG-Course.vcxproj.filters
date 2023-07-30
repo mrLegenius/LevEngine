@@ -186,6 +186,9 @@
     <ClCompile Include="src\Platform\D3D11\D3D11SamplerState.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\Material.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\D3D11\D3D11Shader.h">

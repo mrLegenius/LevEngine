@@ -37,17 +37,18 @@ struct PointLight
 
 struct Material
 {
-	float3 emissive;
+    float3 ambient;
 	// -- 16
-	float3 ambient;
+    float3 emissive;
 	// -- 16
 	float3 diffuse;
 	// -- 16
 	float3 specular;
 	// -- 16
 	float shininess;
+	
+    bool hasAmbientTexture;
 	bool hasEmissiveTexture;
-	bool hasAmbientTexture;
 	bool hasDiffuseTexture;
 	// -- 16
 	bool hasSpecularTexture;

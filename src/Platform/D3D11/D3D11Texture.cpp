@@ -1941,21 +1941,16 @@ D3D11Texture::~D3D11Texture()
 void D3D11Texture::Bind(const uint32_t slot, const Shader::Type type) const
 {
     //TODO: Fix compute shader binding (uav)
-    switch (type)
-    {
-    case Shader::Type::Vertex:
+    if (type & Shader::Type::Vertex)
         context->VSSetShaderResources(slot, 1, &m_ShaderResourceView);
-        break;
-    case Shader::Type::Geometry:
-        context->GSSetShaderResources(slot, 1, &m_ShaderResourceView);
-        break;
-    case Shader::Type::Pixel:
+    if (type & Shader::Type::Pixel)
         context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
-        break;
-    case Shader::Type::Compute:
+    if (type & Shader::Type::Geometry)
+        context->GSSetShaderResources(slot, 1, &m_ShaderResourceView);
+    if (type & Shader::Type::Compute)
+    {
         context->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
         context->CSSetUnorderedAccessViews(slot, 1, &m_UnorderedAccessView, nullptr);
-        break;
     }
 
     if (m_SamplerState)
@@ -1967,21 +1962,16 @@ void D3D11Texture::Unbind(const uint32_t slot, const Shader::Type type) const
     ID3D11ShaderResourceView* srv[] = { nullptr };
     ID3D11UnorderedAccessView* uav[] = { nullptr };
 
-    switch (type)
-    {
-    case Shader::Type::Vertex:
+    if (type & Shader::Type::Vertex)
         context->VSSetShaderResources(slot, 1, srv);
-        break;
-    case Shader::Type::Geometry:
-        context->GSSetShaderResources(slot, 1, srv);
-        break;
-    case Shader::Type::Pixel:
+    if (type & Shader::Type::Pixel)
         context->PSSetShaderResources(slot, 1, srv);
-        break;
-    case Shader::Type::Compute:
+    if (type & Shader::Type::Geometry)
+        context->GSSetShaderResources(slot, 1, srv);
+    if (type & Shader::Type::Compute)
+    {
         context->CSSetShaderResources(slot, 1, srv);
         context->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
-        break;
     }
 
     if (m_SamplerState)

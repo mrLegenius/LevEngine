@@ -1,11 +1,10 @@
 #pragma once
-#include <cstdint>
 
 namespace LevEngine
 {
 struct Color
 {
-    float R = 0, G = 0, B = 0, A = 0;
+	float R = 0, G = 0, B = 0, A = 0;
 
     Color() = default;
 
