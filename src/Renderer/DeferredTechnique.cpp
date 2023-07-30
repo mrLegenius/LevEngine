@@ -67,6 +67,8 @@ DeferredTechnique::DeferredTechnique(const uint32_t width, const uint32_t height
 
     m_GeometryPipeline.SetRenderTarget(m_GBufferRenderTarget);
     m_GeometryPipeline.GetRasterizerState().SetCullMode(CullMode::Back);
+    m_GeometryPipeline.SetShader(Shader::Type::Vertex, ShaderAssets::GBufferPass());
+    m_GeometryPipeline.SetShader(Shader::Type::Pixel, ShaderAssets::GBufferPass());
 
     //Pipeline1 for point and spot lights
     {
@@ -85,6 +87,8 @@ DeferredTechnique::DeferredTechnique(const uint32_t width, const uint32_t height
         stencilMode.FrontFace = faceOperation;
 
         m_PositionalLightPipeline1.GetDepthStencilState()->SetStencilMode(stencilMode);
+
+        m_PositionalLightPipeline1.SetShader(Shader::Type::Vertex, ShaderAssets::DeferredVertexOnly());
     }
 
     //Pipeline2 for point and spot lights
@@ -106,6 +110,8 @@ DeferredTechnique::DeferredTechnique(const uint32_t width, const uint32_t height
         stencilMode.BackFace = faceOperation;
 
         m_PositionalLightPipeline2.GetDepthStencilState()->SetStencilMode(stencilMode);
+        m_PositionalLightPipeline2.SetShader(Shader::Type::Vertex, ShaderAssets::DeferredPointLight());
+        m_PositionalLightPipeline2.SetShader(Shader::Type::Pixel, ShaderAssets::DeferredPointLight());
     }
 }
 
@@ -147,15 +153,9 @@ void DeferredTechnique::StartPositionalLightingPass1()
 {
     LEV_PROFILE_FUNCTION();
 
+    m_GeometryPipeline.Unbind();
     m_DepthOnlyRenderTarget->Clear(ClearFlags::Stencil, Vector4::Zero, 1, 1);
-
-    {
-        LEV_PROFILE_SCOPE("Pipeline 1");
-        m_PositionalLightPipeline1.Bind();
-    }
-    
-    ShaderAssets::DeferredPointLight()->Unbind();
-    ShaderAssets::DeferredVertexOnly()->Bind();
+    m_PositionalLightPipeline1.Bind();
 }
 
 void DeferredTechnique::StartPositionalLightingPass2()
@@ -165,8 +165,6 @@ void DeferredTechnique::StartPositionalLightingPass2()
     BindTextures();
     m_PositionalLightPipeline1.Unbind();
     m_PositionalLightPipeline2.Bind();
-    ShaderAssets::DeferredPointLight()->Unbind();
-    ShaderAssets::DeferredPointLight()->Bind();
 }
 
 void DeferredTechnique::StartDirectionalLightingPass()

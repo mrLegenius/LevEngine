@@ -1,4 +1,6 @@
 #pragma once
+#include <map>
+
 #include "BlendState.h"
 #include "DepthStencilState.h"
 #include "RasterizerState.h"
@@ -9,11 +11,28 @@ namespace LevEngine
 class PipelineState
 {
 public:
+    using ShaderMap = std::map<Shader::Type, Ref<Shader>>;
+
     PipelineState()
     {
         m_BlendState = BlendState::Create();
         m_DepthStencilState = DepthStencilState::Create();
         m_RasterizerState = RasterizerState::Create();
+    }
+
+    void SetShader(const Shader::Type type, const Ref<Shader>& shader)
+    {
+        m_Shaders[type] = shader;
+    }
+    [[nodiscard]] Ref<Shader> GetShader(const Shader::Type type) const
+    {
+	    const auto it = m_Shaders.find(type);
+
+        return it != m_Shaders.end() ? it->second : nullptr;
+    }
+    [[nodiscard]] const ShaderMap& GetShaders() const
+    {
+        return m_Shaders;
     }
 
     void SetBlendState(const Ref<BlendState>& blendState) { m_BlendState = blendState; }
@@ -31,6 +50,8 @@ public:
     void Bind() const;
     void Unbind() const;
 private:
+    ShaderMap m_Shaders;
+
     Ref<BlendState> m_BlendState;
     Ref<RasterizerState> m_RasterizerState;
     Ref<DepthStencilState> m_DepthStencilState;

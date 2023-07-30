@@ -228,7 +228,6 @@ void MeshDeferredSystem(entt::registry& registry)
     const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
     for (const auto entity : view)
     {
-        ShaderAssets::GBufferPass()->Bind();
         auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
         Renderer3D::DrawDeferredMesh(transform.GetModel(), mesh);
     }

@@ -14,6 +14,11 @@ void PipelineState::Bind() const
     m_BlendState->Bind();
     m_RasterizerState->Bind();
     m_DepthStencilState->Bind();
+    for (auto& [type, shader] : m_Shaders)
+    {
+        if (shader)
+            shader->Bind();
+    }
 }
 
 void PipelineState::Unbind() const
@@ -26,5 +31,11 @@ void PipelineState::Unbind() const
     m_BlendState->Unbind();
     m_RasterizerState->Unbind();
     m_DepthStencilState->Unbind();
+
+    for (auto& [type, shader] : m_Shaders)
+    {
+        if (shader)
+			shader->Unbind();
+    }
 }
 }
