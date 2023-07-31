@@ -27,7 +27,7 @@ void BindTextureArray(Ref<D3D11Texture>* textures, const uint32_t count)
 	context->PSSetSamplers(0, count, ss);
 }
 
-ParticlePass::ParticlePass()
+ParticlePass::ParticlePass(const Ref<Texture>& depthTexture, const Ref<Texture>& normalTexture) : m_DepthTexture(depthTexture), m_NormalTexture(normalTexture)
 {
 	const auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
 	m_PipelineState.GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
@@ -87,6 +87,13 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 			},
 	};
 	return emitterData;
+}
+
+bool ParticlePass::Begin(entt::registry& registry, RenderParams& params)
+{
+	m_NormalTexture->Bind(8, Shader::Type::Pixel);
+	m_DepthTexture->Bind(9, Shader::Type::Pixel);
+	return RenderPass::Begin(registry, params);
 }
 
 void ParticlePass::Process(entt::registry& registry, RenderParams& params)
@@ -209,6 +216,12 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	TextureAssets::Particle()->Unbind(1, Shader::Type::Pixel);
 	for (uint32_t i = 0; i < textureSlotIndex; i++)
 		textureSlots[i]->Unbind(i+1, Shader::Type::Pixel);
+}
+
+void ParticlePass::End(entt::registry& registry, RenderParams& params)
+{
+	m_NormalTexture->Unbind(8, Shader::Type::Pixel);
+	m_DepthTexture->Unbind(9, Shader::Type::Pixel);
 }
 
 void ParticlePass::GetGroupSize(const int totalCount, int& groupSizeX, int& groupSizeY) const

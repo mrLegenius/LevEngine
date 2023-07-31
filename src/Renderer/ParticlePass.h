@@ -97,10 +97,12 @@ class ParticlePass : public RenderPass
 	};
 
 public:
-	ParticlePass();
+	ParticlePass(const Ref<Texture>& depthTexture, const Ref<Texture>& normalTexture);
 	static Emitter GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex);
 
+	bool Begin(entt::registry& registry, RenderParams& params) override;
 	void Process(entt::registry& registry, RenderParams& params) override;
+	void End(entt::registry& registry, RenderParams& params) override;
 
 private:
 
@@ -118,6 +120,9 @@ private:
 	Ref<StructuredBuffer> m_TempBuffer{};
 
 	Ref<BitonicSort> m_BitonicSort{};
+
+	Ref<Texture> m_DepthTexture;
+	Ref<Texture> m_NormalTexture;
 
 	void GetGroupSize(int totalCount, int& groupSizeX, int& groupSizeY) const;
 };

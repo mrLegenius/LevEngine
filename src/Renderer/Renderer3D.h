@@ -1,6 +1,6 @@
 #pragma once
 #include "ConstantBuffer.h"
-#include "DeferredTechnique.h"
+#include "RenderTechnique.h"
 #include "D3D11ForwardTechnique.h"
 #include "RenderSettings.h"
 #include "3D/Mesh.h"
@@ -49,12 +49,10 @@ public:
 	static void DrawOpaqueMesh(const Matrix& model, MeshRendererComponent& meshRenderer);
 
 	static void BeginDeferred(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
-	static void BeginDeferredDirLightningSubPass(const SceneCamera& camera);
+	static void SetScreenToViewParams(const SceneCamera& camera);
 	static void BeginDeferredPositionalLightningSubPass(const SceneCamera& camera, const Matrix& viewMatrix,
 	                                                    const Vector3& position);
-	static void BeginDeferredPositionalLightningSubPass1(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
-	static void BeginDeferredPositionalLightningSubPass2(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
-	static void EndDeferredLightningPass();
+	static void ResetLights();
 
 	static void DrawDeferredMesh(const Matrix& model, MeshRendererComponent& meshRenderer);
 
@@ -64,7 +62,6 @@ public:
 	static void AddPointLights(const Vector4& positionViewSpace, const Vector3& position, const PointLightComponent& pointLight);
 	static void UpdateLights();
 	static void RenderSphere(const Matrix& model);
-	static Ref<DeferredTechnique> m_GBuffer;
 
 private:
 	static Ref<ConstantBuffer> m_ModelConstantBuffer;

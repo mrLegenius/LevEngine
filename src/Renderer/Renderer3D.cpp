@@ -11,7 +11,6 @@ Ref<ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
 Ref<ConstantBuffer> Renderer3D::m_LightningConstantBuffer;
 Ref<ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
 
-Ref<DeferredTechnique> Renderer3D::m_GBuffer;
 Ref<D3D11ForwardTechnique> Renderer3D::s_ForwardTechnique;
 
 Matrix Renderer3D::m_ViewProjection;
@@ -43,8 +42,6 @@ void Renderer3D::Init()
 
     s_LightningData.GlobalAmbient = RenderSettings::GlobalAmbient;
 
-    const auto& window = Application::Get().GetWindow();
-    m_GBuffer = CreateRef<DeferredTechnique>(window.GetWidth(), window.GetHeight());
     s_ForwardTechnique = CreateRef<D3D11ForwardTechnique>();
 }
 
@@ -115,8 +112,6 @@ void Renderer3D::BeginDeferred(const SceneCamera& camera, const Matrix& viewMatr
 {
     LEV_PROFILE_FUNCTION();
 
-    m_GBuffer->StartOpaquePass();
-
     const auto& window = Application::Get().GetWindow();
     RenderCommand::SetViewport(0, 0, window.GetWidth(), window.GetHeight());
 
@@ -125,14 +120,12 @@ void Renderer3D::BeginDeferred(const SceneCamera& camera, const Matrix& viewMatr
     const CameraData cameraData{ viewMatrix, m_ViewProjection, position };
     m_CameraConstantBuffer->SetData(&cameraData);
     m_CameraConstantBuffer->Bind(Shader::Type::Vertex | Shader::Type::Pixel);
-    UpdateLights();
+
 }
 
-void Renderer3D::BeginDeferredDirLightningSubPass(const SceneCamera& camera)
+void Renderer3D::SetScreenToViewParams(const SceneCamera& camera)
 {
     LEV_PROFILE_FUNCTION();
-
-    m_GBuffer->StartDirectionalLightingPass();
 
     const auto& window = Application::Get().GetWindow();
     const float width = window.GetWidth();
@@ -140,47 +133,25 @@ void Renderer3D::BeginDeferredDirLightningSubPass(const SceneCamera& camera)
     const ScreenToViewParams params{ camera.GetProjection().Invert(), Vector2{width, height}};
     m_ScreenToViewParamsConstantBuffer->SetData(&params);
     m_ScreenToViewParamsConstantBuffer->Bind(Shader::Type::Pixel);
-    UpdateLights();
 }
 
 void Renderer3D::BeginDeferredPositionalLightningSubPass(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position)
 {
     LEV_PROFILE_FUNCTION();
 
-    const auto& window = Application::Get().GetWindow();
-    const float width = window.GetWidth();
-    const float height = window.GetHeight();
-    const ScreenToViewParams params{ camera.GetProjection().Invert(), Vector2{width, height} };
-    m_ScreenToViewParamsConstantBuffer->SetData(&params);
-    m_ScreenToViewParamsConstantBuffer->Bind(Shader::Type::Pixel);
+    const auto viewProjection = viewMatrix * camera.GetProjection();
 
-    m_ViewProjection = viewMatrix * camera.GetProjection();
-
-    const CameraData cameraData{ viewMatrix, m_ViewProjection, position };
+    const CameraData cameraData{ viewMatrix, viewProjection, position };
     m_CameraConstantBuffer->SetData(&cameraData);
     m_CameraConstantBuffer->Bind(Shader::Type::Vertex | Shader::Type::Pixel);
 }
 
-void Renderer3D::BeginDeferredPositionalLightningSubPass1(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position)
+void Renderer3D::ResetLights()
 {
     LEV_PROFILE_FUNCTION();
 
-    m_GBuffer->StartPositionalLightingPass1();
-}
-
-void Renderer3D::BeginDeferredPositionalLightningSubPass2(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position)
-{
-    LEV_PROFILE_FUNCTION();
-
-    m_GBuffer->StartPositionalLightingPass2();
     s_LightningData.PointLightsCount = 0;
     UpdateLights();
-}
-
-
-void Renderer3D::EndDeferredLightningPass()
-{
-    m_GBuffer->EndLightningPass();
 }
 
 void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)
