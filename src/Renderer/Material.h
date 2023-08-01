@@ -23,7 +23,7 @@ public:
 
 	void SetAmbientColor(const Color color)
 	{
-		m_Data.Ambient = Vector3{ color.R, color.G, color.B };
+		m_Data.Ambient = Vector3{ color.r, color.g, color.b };
 		m_IsDirty = true;
 	}
 	[[nodiscard]] Color GetAmbientColor() const
@@ -33,7 +33,7 @@ public:
 
 	void SetEmissiveColor(const Color color)
 	{
-		m_Data.Emissive = Vector3{ color.R, color.G, color.B };
+		m_Data.Emissive = Vector3{ color.r, color.g, color.b };
 		m_IsDirty = true;
 	}
 	[[nodiscard]] Color GetEmissiveColor() const
@@ -43,7 +43,7 @@ public:
 
 	void SetDiffuseColor(const Color color)
 	{
-		m_Data.Diffuse = Vector3{ color.R, color.G, color.B };
+		m_Data.Diffuse = Vector3{ color.r, color.g, color.b };
 		m_IsDirty = true;
 	}
 	[[nodiscard]] Color GetDiffuseColor() const
@@ -53,7 +53,7 @@ public:
 
 	void SetSpecularColor(const Color color)
 	{
-		m_Data.Specular = Vector3{ color.R, color.G, color.B };
+		m_Data.Specular = Vector3{ color.r, color.g, color.b };
 		m_IsDirty = true;
 	}
 	[[nodiscard]] Color GetSpecularColor() const

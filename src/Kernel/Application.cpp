@@ -11,6 +11,7 @@
 #include "../Events/MouseEvent.h"
 #include "../Input/Input.h"
 #include "../Events/Event.h"
+#include "Math/Random.h"
 
 namespace LevEngine
 {
@@ -24,6 +25,7 @@ Application::Application(const std::string& name, uint32_t width, uint32_t heigh
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 	Renderer::Init();
+	Random::Init();
 }
 
 Application::~Application()

@@ -4,24 +4,24 @@ namespace LevEngine
 {
 struct Color
 {
-	float R = 0, G = 0, B = 0, A = 0;
+	float r = 0, g = 0, b = 0, a = 0;
 
     Color() = default;
 
     Color(const float r, const float g, const float b, const float a = 1)
-        : R(r)
-        , G(g)
-        , B(b)
-		, A(a) { }
+        : r(r)
+        , g(g)
+        , b(b)
+		, a(a) { }
 
     explicit Color(const uint32_t hex)
-        : R(((hex >> 24) & 0xff) / 255.0f)
-        , G(((hex >> 16) & 0xff) / 255.0f)
-        , B(((hex >> 8) & 0xff) / 255.0f)
-        , A(((hex >> 0) & 0xff) / 255.0f)
+        : r(((hex >> 24) & 0xff) / 255.0f)
+        , g(((hex >> 16) & 0xff) / 255.0f)
+        , b(((hex >> 8) & 0xff) / 255.0f)
+        , a(((hex >> 0) & 0xff) / 255.0f)
 	{ }
 
-    float* Raw() { return &R; }
+    float* Raw() { return &r; }
 
     static const Color White;
     static const Color Silver;

@@ -8,8 +8,7 @@
 #include "Physics/Physics.h"
 #include "KatamariPlayer.h"
 #include "../Prefabs.h"
-#include "../Random.h"
-#include "Debugging/Profiler.h"
+#include "Math/Random.h"
 #include "Physics/Components/CollisionEvent.h"
 #include "Physics/Events/CollisionEndEvent.h"
 #include "Renderer/RenderCommand.h"
@@ -72,7 +71,7 @@ void KatamariLayer::OnAttach()
     for (int i = 0; i < 1; i++)
     {
         auto go = Prefabs::Gear(m_Scene);
-        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-20, 20), 2, Random::Range(-20, 20)));
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Float(-20, 20), 2, Random::Float(-20, 20)));
 
         auto& particles = go.AddComponent<EmitterComponent>();
         particles.Rate = 1;
@@ -106,7 +105,7 @@ void KatamariLayer::OnAttach()
     for (int i = 0; i < 0; i++)
     {
 	   	auto go = Prefabs::Log(m_Scene);
-        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-100, 100), 1, Random::Range(-100, 100)));
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Float(-100, 100), 1, Random::Float(-100, 100)));
     }
 
     for (int i = 0; i < 1; i++)
@@ -213,12 +212,12 @@ void KatamariLayer::OnAttach()
         auto go = Prefabs::Sphere(m_Scene);
         auto& light = go.AddComponent<PointLightComponent>();
         const auto color = Vector3(
-            static_cast<float>(Random::Range(0, 100)) / 100.0f,
-            static_cast<float>(Random::Range(0, 100)) / 100.0f,
-            static_cast<float>(Random::Range(0, 100)) / 100.0f);
+            Random::Float(0, 100) / 100.0f,
+            Random::Float(0, 100) / 100.0f,
+            Random::Float(0, 100) / 100.0f);
 
         light.Color = color;
-        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Range(-50, 50), 3, Random::Range(-50, 50)));
+        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Float(-50, 50), 3, Random::Float(-50, 50)));
     }
 
     //<--- Floor ---<<

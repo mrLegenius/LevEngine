@@ -175,6 +175,7 @@ void Renderer::Init()
 	s_ForwardTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget));
 	s_ForwardTechnique->AddPass(CreateRef<OpaquePass>(s_OpaquePipeline));
 	s_ForwardTechnique->AddPass(CreateRef<SkyboxPass>());
+	//TODO: Fix particle bounce
 	s_ForwardTechnique->AddPass(CreateRef<ParticlePass>(mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_NormalTexture));
 }
 

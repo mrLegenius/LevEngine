@@ -162,6 +162,7 @@
     <ClCompile Include="src\Kernel\Logger.cpp" />
     <ClCompile Include="src\Kernel\Time.cpp" />
     <ClCompile Include="src\Kernel\UUID.cpp" />
+    <ClCompile Include="src\Math\Random.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
@@ -253,7 +254,7 @@
     <ClInclude Include="src\Physics\Systems\VelocityUpdateSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11SamplerState.h" />
     <ClInclude Include="src\Prefabs.h" />
-    <ClInclude Include="src\Random.h" />
+    <ClInclude Include="src\Math\Random.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
     <ClInclude Include="src\Renderer\3D\SkyboxMesh.h" />
     <ClInclude Include="src\Renderer\BitonicSort.h" />
