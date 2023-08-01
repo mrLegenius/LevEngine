@@ -24,6 +24,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 		data->eventCallback(event);
 		return 0;
 	}
+	case WM_QUIT:
+	{
+		WindowClosedEvent event;
+		data->eventCallback(event);
+		return 0;
+	}
 	case WM_SIZE:
 	{
 		if (data == nullptr)
@@ -50,7 +56,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 		KeyPressedEvent event(keyCode, 0);
 		data->eventCallback(event);
 
-		if (static_cast<unsigned int>(wparam) == 27) PostQuitMessage(0);
+		if (static_cast<unsigned int>(wparam) == 27)
+		{
+			WindowClosedEvent closeEvent;
+			data->eventCallback(closeEvent);
+		}
 		return 0;
 	}
 	case WM_LBUTTONDOWN:
