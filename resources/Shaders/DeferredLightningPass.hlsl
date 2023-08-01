@@ -16,10 +16,15 @@ PS_IN VSMain(VS_IN input)
 	return output;
 }
 
-Texture2D diffuseTexture : register(t1);
-Texture2D specularTexture : register(t2);
-Texture2D normalTexture : register(t3);
-Texture2D depthTexture : register(t4);
+cbuffer LightIndexBuffer : register(b4)
+{
+    uint LightIndex;
+}
+
+Texture2D diffuseMap : register(t1);
+Texture2D specularMap : register(t2);
+Texture2D normalMap : register(t3);
+Texture2D depthMap : register(t4);
 
 LightingResult CalcLighting(float3 fragPos, float3 normal, float depth, float shininess);
 
@@ -27,16 +32,16 @@ LightingResult CalcLighting(float3 fragPos, float3 normal, float depth, float sh
 float4 PSMain(PS_IN input) : SV_Target
 {
 	int2 uv = input.pos.xy;
-	float depth = depthTexture.Load(int3(uv, 0)).r;
+    float depth = depthMap.Load(int3(uv, 0)).r;
 	float4 fragPos = ScreenToView(float4(uv, depth, 1.0f));
-	float3 normal = mul(normalTexture.Load(int3(uv, 0)), cameraView).rgb;
+    float3 normal = mul(normalMap.Load(int3(uv, 0)), cameraView).rgb;
 
-	float4 specularValues = specularTexture.Load(int3(uv, 0));
+    float4 specularValues = specularMap.Load(int3(uv, 0));
 	float shininess = exp2(specularValues.a * 10.5f);
 
 	LightingResult lit = CalcLighting(fragPos, normal, depth, shininess);
 
-	float3 diffuse = diffuseTexture.Load(int3(uv, 0)).rgb;
+    float3 diffuse = diffuseMap.Load(int3(uv, 0)).rgb;
 	float3 specular = specularValues.rgb;
 
 	float3 finalColor = (diffuse * lit.diffuse + specular * lit.specular);
@@ -49,5 +54,5 @@ LightingResult CalcLighting(float3 fragPos, float3 normal, float depth, float sh
 	float4 cameraPosition = { 0, 0, 0, 1 };
 	float3 viewDir = normalize(cameraPosition - fragPos);
 	
-	return CalcPointLight(pointLights[pointLightsCount], normal, fragPos, viewDir, shininess);
+    return CalcPointLightInViewSpace(pointLights[LightIndex], normal, fragPos, viewDir, shininess);
 }

@@ -3,6 +3,8 @@
 
 #include "RenderCommand.h"
 #include "Kernel/Application.h"
+#include "Scene/Components/Components.h"
+
 namespace LevEngine
 {
 struct alignas(16) CameraData

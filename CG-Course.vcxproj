@@ -182,10 +182,9 @@
     <ClCompile Include="src\Platform\D3D11\D3D11DepthStencilState.cpp" />
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />
     <ClCompile Include="src\Renderer\DeferredLightingPass.cpp" />
-    <ClCompile Include="src\Renderer\D3D11ForwardTechnique.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11StructuredBuffer.cpp" />
     <ClCompile Include="src\Renderer\DepthStencilState.cpp" />
-    <ClCompile Include="src\Renderer\GBufferPass.cpp" />
+    <ClCompile Include="src\Renderer\OpaquePass.cpp" />
     <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
     <ClCompile Include="src\Renderer\Material.cpp" />
     <ClCompile Include="src\Renderer\ParticlePass.cpp" />
@@ -271,10 +270,9 @@
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h" />
     <ClInclude Include="src\Renderer\DeferredLightingPass.h" />
     <ClInclude Include="src\Renderer\RenderTechnique.h" />
-    <ClInclude Include="src\Renderer\D3D11ForwardTechnique.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11StructuredBuffer.h" />
     <ClInclude Include="src\Renderer\DepthStencilState.h" />
-    <ClInclude Include="src\Renderer\GBufferPass.h" />
+    <ClInclude Include="src\Renderer\OpaquePass.h" />
     <ClInclude Include="src\Renderer\IndexBuffer.h" />
     <ClInclude Include="src\Renderer\ParticlePass.h" />
     <ClInclude Include="src\Renderer\PipelineState.h" />

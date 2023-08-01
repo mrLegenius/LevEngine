@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "ConstantBuffer.h"
 #include "PipelineState.h"
 #include "RenderPass.h"
 #include "Texture.h"
@@ -21,12 +22,21 @@ namespace LevEngine
 				, m_SpecularTexture(specularTexture)
 				, m_NormalTexture(normalTexture)
 				, m_DepthTexture(depthTexture)
-		{ }
+		{
+			m_LightIndexBuffer = ConstantBuffer::Create(sizeof m_LightParams, 4);
+		}
 
 		bool Begin(entt::registry& registry, RenderParams& params) override;
 		void Process(entt::registry& registry, RenderParams& params) override;
 		void End(entt::registry& registry, RenderParams& params) override;
 	private:
+		struct alignas(16) LightParams
+		{
+			uint32_t LightIndex;
+		};
+
+		LightParams m_LightParams;
+
 		Ref<PipelineState> m_Pipeline1;
 		Ref<PipelineState> m_Pipeline2;
 
@@ -34,6 +44,8 @@ namespace LevEngine
 		Ref<Texture> m_SpecularTexture;
 		Ref<Texture> m_NormalTexture;
 		Ref<Texture> m_DepthTexture;
+
+		Ref<ConstantBuffer> m_LightIndexBuffer;
 	};
 }
 

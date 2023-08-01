@@ -114,9 +114,6 @@
     <ClCompile Include="src\Renderer\PipelineState.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11ForwardTechnique.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="src\Renderer\ClearPass.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -186,7 +183,7 @@
     <ClCompile Include="src\Renderer\Material.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\GBufferPass.cpp">
+    <ClCompile Include="src\Renderer\OpaquePass.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\DeferredLightingPass.cpp">
@@ -407,9 +404,6 @@
     <ClInclude Include="src\Renderer\CPUAccess.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11ForwardTechnique.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\Renderer\RenderPass.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -491,7 +485,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11SamplerState.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\GBufferPass.h">
+    <ClInclude Include="src\Renderer\OpaquePass.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\DeferredLightingPass.h">

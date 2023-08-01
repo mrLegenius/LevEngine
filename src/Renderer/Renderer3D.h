@@ -1,10 +1,7 @@
 #pragma once
 #include "ConstantBuffer.h"
 #include "RenderTechnique.h"
-#include "D3D11ForwardTechnique.h"
 #include "RenderSettings.h"
-#include "3D/Mesh.h"
-#include "3D/SkyboxMesh.h"
 #include "Scene/Components/Components.h"
 
 namespace LevEngine
@@ -42,19 +39,8 @@ class Renderer3D
 {
 public:
 	static void Init();
-	static void Shutdown();
 
-	static void BeginScene(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
-	static void EndScene();
-	static void DrawOpaqueMesh(const Matrix& model, MeshRendererComponent& meshRenderer);
-
-	static void BeginDeferred(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
-	static void SetScreenToViewParams(const SceneCamera& camera);
-	static void BeginDeferredPositionalLightningSubPass(const SceneCamera& camera, const Matrix& viewMatrix,
-	                                                    const Vector3& position);
-	static void ResetLights();
-
-	static void DrawDeferredMesh(const Matrix& model, MeshRendererComponent& meshRenderer);
+	static void SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 
 	static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
 
@@ -68,8 +54,6 @@ private:
 	static Ref<ConstantBuffer> m_CameraConstantBuffer;
 	static Ref<ConstantBuffer> m_LightningConstantBuffer;
 	static Ref<ConstantBuffer> m_ScreenToViewParamsConstantBuffer;
-
-	static Ref<D3D11ForwardTechnique> s_ForwardTechnique;
 
 	static Matrix m_ViewProjection;
 

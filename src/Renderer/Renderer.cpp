@@ -25,12 +25,14 @@ Ref<Texture> Renderer::m_NormalTexture;
 
 Ref<RenderTarget> Renderer::s_GBufferRenderTarget;
 Ref<RenderTarget> Renderer::s_DepthOnlyRenderTarget;
-Ref<GBufferPass> Renderer::s_GBufferPass;
+Ref<OpaquePass> Renderer::s_GBufferPass;
 Ref<PipelineState> Renderer::s_GBufferPipeline;
+Ref<PipelineState> Renderer::s_OpaquePipeline;
 Ref<PipelineState> Renderer::m_PositionalLightPipeline1;
 Ref<PipelineState> Renderer::m_PositionalLightPipeline2;
 
 Ref<RenderTechnique> Renderer::s_DeferredTechnique;
+Ref<RenderTechnique> Renderer::s_ForwardTechnique;
 
 void Renderer::Init()
 {
@@ -94,7 +96,6 @@ void Renderer::Init()
 	s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color1, m_DiffuseTexture);
 	s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color2, m_SpecularTexture);
 	s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color3, m_NormalTexture);
-
 	s_GBufferRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, m_DepthTexture);
 
 	s_GBufferPipeline = CreateRef<PipelineState>();
@@ -103,7 +104,7 @@ void Renderer::Init()
 	s_GBufferPipeline->SetShader(Shader::Type::Vertex, ShaderAssets::GBufferPass());
 	s_GBufferPipeline->SetShader(Shader::Type::Pixel, ShaderAssets::GBufferPass());
 
-	s_GBufferPass = CreateRef<GBufferPass>(s_GBufferPipeline);
+	s_GBufferPass = CreateRef<OpaquePass>(s_GBufferPipeline);
 
 	//Pipeline1 for point and spot lights
 	{
@@ -151,57 +152,40 @@ void Renderer::Init()
 		m_PositionalLightPipeline2->SetShader(Shader::Type::Pixel, ShaderAssets::DeferredPointLight());
 	}
 
+	s_OpaquePipeline = CreateRef<PipelineState>();
+	s_OpaquePipeline->GetRasterizerState().SetCullMode(CullMode::Back);
+	s_OpaquePipeline->SetShader(Shader::Type::Vertex, ShaderAssets::Lit());
+	s_OpaquePipeline->SetShader(Shader::Type::Vertex, ShaderAssets::Lit());
+	s_OpaquePipeline->SetRenderTarget(mainRenderTarget);
+
 	s_ParticlePass = CreateRef<ParticlePass>(m_DepthTexture, m_NormalTexture);
 
 	s_DeferredTechnique = CreateRef<RenderTechnique>();
 	s_DeferredTechnique->AddPass(CreateRef<ShadowMapPass>());
 	s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_GBufferRenderTarget));
-	s_DeferredTechnique->AddPass(CreateRef<GBufferPass>(s_GBufferPipeline));
+	s_DeferredTechnique->AddPass(CreateRef<OpaquePass>(s_GBufferPipeline));
 	s_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(s_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture));
 	s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, ClearFlags::Stencil, Vector4::Zero, 1, 1));
 	s_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_DiffuseTexture, m_SpecularTexture, m_NormalTexture, m_DepthTexture));
 	s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>());
 	s_DeferredTechnique->AddPass(CreateRef<ParticlePass>(m_DepthTexture, m_NormalTexture));
+
+	s_ForwardTechnique = CreateRef<RenderTechnique>();
+	s_ForwardTechnique->AddPass(CreateRef<ShadowMapPass>());
+	s_ForwardTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget));
+	s_ForwardTechnique->AddPass(CreateRef<OpaquePass>(s_OpaquePipeline));
+	s_ForwardTechnique->AddPass(CreateRef<SkyboxPass>());
+	s_ForwardTechnique->AddPass(CreateRef<ParticlePass>(mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_NormalTexture));
 }
 
 void Renderer::Shutdown()
 {
-    Renderer3D::Shutdown();
+
 }
 
 void DirectionalLightSystem(entt::registry& registry);
-void PointLightsSystem(entt::registry& registry);
-void MeshRenderSystem(entt::registry& registry);
+void PointLightsSystem(entt::registry& registry, const RenderParams& params);
 
-void Renderer::RenderForward(entt::registry& registry, RenderParams renderParams)
-{
-    LEV_PROFILE_FUNCTION();
-
-	DirectionalLightSystem(registry);
-	PointLightsSystem(registry);
-
-	//{
-	//	LEV_PROFILE_SCOPE("ShadowPass");
-
-	//	s_ShadowMapPass->Execute(registry, renderParams);
-	//}
-
-	//{
-	//	LEV_PROFILE_SCOPE("RenderPass");
-	//	Renderer3D::BeginScene(renderParams.Camera, renderParams.CameraViewMatrix, renderParams.CameraPosition);
-
-	//	Renderer3D::UpdateLights();
-
-	//	MeshRenderSystem(registry);
-
-	//	//Render skybox
-	//	s_SkyboxPass->Execute(registry, renderParams);
-
-	//	Renderer3D::EndScene();
-
-	//	s_ParticlePass->Execute(registry, renderParams);
-	//}
-}
 
 void Renderer::RecalculateAllTransforms(entt::registry& registry)
 {
@@ -260,10 +244,18 @@ void Renderer::Render(entt::registry& registry)
 
     const auto renderParams = CreateRenderParams(mainCamera, cameraTransform);
 
+	//TODO: Maybe move to its own pass?
+	DirectionalLightSystem(registry);
+	PointLightsSystem(registry, renderParams);
+	Renderer3D::UpdateLights();
+
+	//TODO: Maybe move to its own pass?
+	Renderer3D::SetCameraBuffer(renderParams.Camera, renderParams.CameraViewMatrix, renderParams.CameraPosition);
+
     if constexpr (RenderSettings::DeferredRendering)
 		s_DeferredTechnique->Process(registry, renderParams);
     else
-	    RenderForward(registry, renderParams);
+		s_ForwardTechnique->Process(registry, renderParams);
 }
 
 void DirectionalLightSystem(entt::registry& registry)
@@ -279,7 +271,7 @@ void DirectionalLightSystem(entt::registry& registry)
     }
 }
 
-void PointLightsSystem(entt::registry& registry)
+void PointLightsSystem(entt::registry& registry, const RenderParams& params)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -288,19 +280,10 @@ void PointLightsSystem(entt::registry& registry)
     {
         auto [transform, light] = view.get<Transform, PointLightComponent>(entity);
 
-        Renderer3D::AddPointLights({}, transform.GetWorldPosition(), light);
+		auto worldPosition = transform.GetWorldPosition();
+		auto positionViewSpace = Vector4::Transform(Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0f), params.CameraViewMatrix);
+		Renderer3D::AddPointLights(positionViewSpace, worldPosition, light);
     }
 }
 
-void MeshRenderSystem(entt::registry& registry)
-{
-    LEV_PROFILE_FUNCTION();
-
-    const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
-    for (const auto entity : view)
-    {
-        auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
-        Renderer3D::DrawOpaqueMesh(transform.GetModel(), mesh);
-    }
-}
 }

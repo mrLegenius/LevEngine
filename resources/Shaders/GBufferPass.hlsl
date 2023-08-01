@@ -16,23 +16,6 @@ PS_IN VSMain(VS_IN input)
 	return output;
 }
 
-Texture2D ambientTexture : register(t0);
-SamplerState ambientTextureSampler : register(s0);
-
-Texture2D emissiveTexture : register(t1);
-SamplerState emissiveTextureSampler : register(s1);
-
-Texture2D diffuseTexture : register(t2);
-SamplerState diffuseTextureSampler : register(s2);
-
-Texture2D specularTexture : register(t3);
-SamplerState specularTextureSampler : register(s3);
-
-Texture2D normalTexture : register(t4);
-SamplerState normalTextureSampler : register(s4);
-
-float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv);
-
 struct PS_OUT
 {
 	float4 LightAccumulation : SV_Target0;
@@ -79,24 +62,6 @@ PS_OUT PSMain(PS_IN input)
 	result.LightAccumulation = float4(ambient + emissive + (diffuse * lit.diffuse) + (specular * lit.specular), 1.0f);
 
 	result.Specular = float4(specular, log2(material.shininess) / 10.5f);
-
-	return result;
-}
-float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv)
-{
-	float3 result = color;
-	if (hasTexture)
-	{
-		float3 texColor = tex.Sample(sampl, uv);
-		if (any(result.rgb))
-		{
-			result *= texColor;
-		}
-		else
-		{
-			result = texColor;
-		}
-	}
 
 	return result;
 }

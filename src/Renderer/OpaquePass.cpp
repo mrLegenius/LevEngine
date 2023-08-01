@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "GBufferPass.h"
+#include "OpaquePass.h"
 
 #include "RenderCommand.h"
 #include "Renderer3D.h"
@@ -8,7 +8,7 @@
 
 namespace LevEngine
 {
-    bool GBufferPass::Begin(entt::registry& registry, RenderParams& params)
+    bool OpaquePass::Begin(entt::registry& registry, RenderParams& params)
     {
         //TODO: Move this to its own pass
         const auto view = registry.group<>(entt::get<Transform, DirectionalLightComponent>);
@@ -29,11 +29,10 @@ namespace LevEngine
         const CameraData cameraData{ params.CameraViewMatrix, viewProjection, params.CameraPosition };
         m_CameraConstantBuffer->SetData(&cameraData);
         m_CameraConstantBuffer->Bind(Shader::Type::Vertex | Shader::Type::Pixel);
-        Renderer3D::UpdateLights();
         return RenderPass::Begin(registry, params);
     }
 
-    void GBufferPass::Process(entt::registry& registry, RenderParams& params)
+    void OpaquePass::Process(entt::registry& registry, RenderParams& params)
     {
 	    const auto shader = m_PipelineState->GetShader(Shader::Type::Vertex);
         const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
@@ -50,7 +49,7 @@ namespace LevEngine
         }
     }
 
-    void GBufferPass::End(entt::registry& registry, RenderParams& params)
+    void OpaquePass::End(entt::registry& registry, RenderParams& params)
     {
         m_PipelineState->Unbind();
     }

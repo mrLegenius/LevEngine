@@ -1,7 +1,7 @@
 #pragma once
-#include "Renderer3D.h"
 #include "RenderPass.h"
-#include "entt/entt.hpp"
+#include "PipelineState.h"
+#include "3D/SkyboxMesh.h"
 
 namespace LevEngine
 {

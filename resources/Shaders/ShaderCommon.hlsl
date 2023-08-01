@@ -94,9 +94,23 @@ cbuffer ScreenToViewParams : register(b5)
 	float2 ScreenDimensions;
 }
 
+Texture2D ambientTexture : register(t0);
+SamplerState ambientTextureSampler : register(s0);
+
+Texture2D emissiveTexture : register(t1);
+SamplerState emissiveTextureSampler : register(s1);
+
+Texture2D diffuseTexture : register(t2);
+SamplerState diffuseTextureSampler : register(s2);
+
+Texture2D specularTexture : register(t3);
+SamplerState specularTextureSampler : register(s3);
+
+Texture2D normalTexture : register(t4);
+SamplerState normalTextureSampler : register(s4);
+
 Texture2DArray shadowMapTexture : register(t9);
 SamplerComparisonState shadowMapSampler : register(s9);
-
 
 float4 ClipToView(float4 clip)
 {
@@ -225,7 +239,7 @@ LightingResult CalcPointLight(PointLight light, float3 normal, float3 fragPos, f
 {
 	LightingResult result;
 
-	float3 lightDir = light.positionViewSpace - fragPos;
+	float3 lightDir = light.position - fragPos;
 	float distance = length(lightDir);
 	lightDir = lightDir / distance;
 
@@ -235,4 +249,39 @@ LightingResult CalcPointLight(PointLight light, float3 normal, float3 fragPos, f
 	result.specular = CalcSpecular(light.color, viewDir, lightDir, normal, shininess) * attenuation * light.intensity;
 
 	return result;
+}
+
+LightingResult CalcPointLightInViewSpace(PointLight light, float3 normal, float3 fragPos, float3 viewDir, float shininess)
+{
+    LightingResult result;
+
+    float3 lightDir = light.positionViewSpace - fragPos;
+    float distance = length(lightDir);
+    lightDir = lightDir / distance;
+
+    float attenuation = CalcAttenuation(light.range, light.smoothness, distance);
+
+    result.diffuse = CalcDiffuse(light.color, lightDir, normal) * attenuation * light.intensity;
+    result.specular = CalcSpecular(light.color, viewDir, lightDir, normal, shininess) * attenuation * light.intensity;
+
+    return result;
+}
+
+float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv)
+{
+    float3 result = color;
+    if (hasTexture)
+    {
+        float3 texColor = tex.Sample(sampl, uv);
+        if (any(result.rgb))
+        {
+            result *= texColor;
+        }
+        else
+        {
+            result = texColor;
+        }
+    }
+
+    return result;
 }

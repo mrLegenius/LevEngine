@@ -18,6 +18,8 @@ namespace LevEngine
 
 	void DeferredLightingPass::Process(entt::registry& registry, RenderParams& params)
 	{
+		m_LightParams.LightIndex = 0;
+
 		const auto view = registry.group<>(entt::get<Transform, PointLightComponent>);
 		for (const auto entity : view)
 		{
@@ -27,17 +29,18 @@ namespace LevEngine
 			auto model = Matrix::CreateScale(light.Range, light.Range, light.Range)
 				* Matrix::CreateTranslation(worldPosition);
 
-			auto positionViewSpace = Vector4::Transform(Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0f), params.CameraViewMatrix);
-			Renderer3D::AddPointLights(positionViewSpace, worldPosition, light);
+			m_LightIndexBuffer->SetData(&m_LightParams);
+			m_LightIndexBuffer->Bind(Shader::Type::Pixel);
 
 			m_Pipeline1->Bind();
 			Renderer3D::RenderSphere(model);
 			m_Pipeline1->Unbind();
 
 			m_Pipeline2->Bind();
-			Renderer3D::ResetLights();
 			Renderer3D::RenderSphere(model);
 			m_Pipeline2->Unbind();
+
+			m_LightParams.LightIndex++;
 		}
 	}
 

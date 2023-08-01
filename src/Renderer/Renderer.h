@@ -1,5 +1,5 @@
 #pragma once
-#include "GBufferPass.h"
+#include "OpaquePass.h"
 #include "ParticlePass.h"
 #include "RenderParams.h"
 #include "ShadowMapPass.h"
@@ -12,7 +12,6 @@ class Renderer
 {
 public:
 	static void Init();
-	static void RenderForward(entt::registry& registry, RenderParams renderParams);
 	static void RecalculateAllTransforms(entt::registry& registry);
 	static void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
 	static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);
@@ -30,11 +29,13 @@ private:
 	static Ref<Texture> m_NormalTexture;
 	static Ref<RenderTarget> s_GBufferRenderTarget;
 	static Ref<RenderTarget> s_DepthOnlyRenderTarget;
-	static Ref<GBufferPass> s_GBufferPass;
+	static Ref<OpaquePass> s_GBufferPass;
 	static Ref<PipelineState> s_GBufferPipeline;
+	static Ref<PipelineState> s_OpaquePipeline;
 	static Ref<PipelineState> m_PositionalLightPipeline1;
 	static Ref<PipelineState> m_PositionalLightPipeline2;
 
 	static Ref<RenderTechnique> s_DeferredTechnique;
+	static Ref<RenderTechnique> s_ForwardTechnique;
 };
 }

@@ -5,14 +5,13 @@
 
 namespace LevEngine
 {
-class GBufferPass final : public RenderPass
+class OpaquePass final : public RenderPass
 {
 public:
-	explicit GBufferPass(const Ref<PipelineState>& pipelineState)
+	explicit OpaquePass(const Ref<PipelineState>& pipelineState)
 		: m_PipelineState(pipelineState)
 	{
 		m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
-
 	}
 
 	bool Begin(entt::registry& registry, RenderParams& params) override;
