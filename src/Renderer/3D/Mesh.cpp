@@ -44,7 +44,7 @@ std::shared_ptr<Mesh> Mesh::CreateCube()
 {
 	auto mesh = std::make_shared<Mesh>();
 
-	const float side = 0.5f;
+	constexpr float side = 0.5f;
 
 	// front
 

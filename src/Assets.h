@@ -359,30 +359,13 @@ namespace TextureAssets
 
 namespace SkyboxAssets
 {
-    inline auto Test()
-    {
-        static std::string paths[6] = {
-            GetTexturePath("TestSkybox/left.png"), //left
-            GetTexturePath("TestSkybox/right.png"), //right
-            GetTexturePath("TestSkybox/top.png"), //top
-            GetTexturePath("TestSkybox/bottom.png"), //bottom
-            GetTexturePath("TestSkybox/back.png"), //back
-            GetTexturePath("TestSkybox/front.png"), //front
-        };
-
-        static auto texture = Texture::CreateTextureCube(paths);
-		texture->AttachSampler(GetDefaultClampedSamplerState());
-
-        return texture;
-    }
-
-    inline auto LightBlue()
+	inline auto LightBlue()
     {
         static std::string paths[6] = {
             GetTexturePath("LightBlueSkybox/left.png"), //left
             GetTexturePath("LightBlueSkybox/right.png"), //right
+        	GetTexturePath("LightBlueSkybox/bottom.png"), //bottom
             GetTexturePath("LightBlueSkybox/top.png"), //top
-            GetTexturePath("LightBlueSkybox/bottom.png"), //bottom
             GetTexturePath("LightBlueSkybox/back.png"), //back
             GetTexturePath("LightBlueSkybox/front.png"), //front
         };
@@ -392,6 +375,40 @@ namespace SkyboxAssets
 
         return texture;
     }
+
+	inline auto Lake()
+	{
+		static std::string paths[6] = {
+			GetTexturePath("LakeSkybox/left.jpg"), //left
+			GetTexturePath("LakeSkybox/right.jpg"), //right
+			GetTexturePath("LakeSkybox/bottom.jpg"), //bottom
+			GetTexturePath("LakeSkybox/top.jpg"), //top
+			GetTexturePath("LakeSkybox/back.jpg"), //back
+			GetTexturePath("LakeSkybox/front.jpg"), //front
+		};
+
+		static auto texture = Texture::CreateTextureCube(paths);
+		texture->AttachSampler(GetDefaultClampedSamplerState());
+
+		return texture;
+	}
+
+	inline auto Interstellar()
+	{
+		static std::string paths[6] = {
+			GetTexturePath("Skyboxes/Interstellar/left.png"), //left
+			GetTexturePath("Skyboxes/Interstellar/right.png"), //right
+			GetTexturePath("Skyboxes/Interstellar/bottom.png"), //bottom
+			GetTexturePath("Skyboxes/Interstellar/top.png"), //top
+			GetTexturePath("Skyboxes/Interstellar/back.png"), //back
+			GetTexturePath("Skyboxes/Interstellar/front.png"), //front
+		};
+
+		static auto texture = Texture::CreateTextureCube(paths);
+		texture->AttachSampler(GetDefaultClampedSamplerState());
+
+		return texture;
+	}
 };
 
 namespace MeshAssets

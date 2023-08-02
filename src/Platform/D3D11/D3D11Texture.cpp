@@ -1822,6 +1822,8 @@ D3D11Texture::D3D11Texture(const std::string paths[6])
 
     stbi_uc* data[6];
 
+    stbi_set_flip_vertically_on_load(1);
+
     for (int i = 0; i < 6; ++i)
         data[i] = stbi_load(paths[i].c_str(), &width, &height, &channels, 4);
 

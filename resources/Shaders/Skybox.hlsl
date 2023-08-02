@@ -22,10 +22,9 @@ PS_IN VSMain(VS_IN input)
 
 	float4 pos = float4(input.pos * 1000, 0.0f);
 	output.pos = mul(pos, viewProjection).xyww;
-	output.uv = input.pos;
+    output.uv = pos;
 
-	//output.uv.x = -pos.x;
-	//output.uv.yz = pos.yz;
+	output.uv.xy = -pos.xy;
 
 	return output;
 }
