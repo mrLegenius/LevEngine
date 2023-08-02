@@ -57,7 +57,6 @@ LightingResult CalcLighting(float3 fragPos, float3 normal, float depth)
 
 	LightingResult totalResult = CalcDirLight(dirLight, normal, viewDir, fragPosLightSpace, cascade, material.shininess);
 
-	[unroll]
 	for (int i = 0; i < pointLightsCount; i++)
 	{
         LightingResult result = CalcPointLight(pointLights[i], normal, fragPos, viewDir, material.shininess);
