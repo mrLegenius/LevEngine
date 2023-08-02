@@ -23,6 +23,8 @@ namespace LevEngine
 				, m_NormalTexture(normalTexture)
 				, m_DepthTexture(depthTexture)
 		{
+			LEV_PROFILE_FUNCTION();
+
 			m_LightIndexBuffer = ConstantBuffer::Create(sizeof m_LightParams, 4);
 		}
 

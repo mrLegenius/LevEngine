@@ -1633,6 +1633,8 @@ DXGI_SAMPLE_DESC GetSupportedSampleCount(const DXGI_FORMAT format, const uint8_t
 
 Ref<D3D11Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint16_t height, const uint16_t slices, const TextureFormat& format, const CPUAccess cpuAccess, const bool uav)
 {
+    LEV_PROFILE_FUNCTION();
+
 	Ref<D3D11Texture> texture = CreateRef<D3D11Texture>();
 
 	texture->m_TextureFormat = format;
@@ -1698,6 +1700,8 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint
 
 D3D11Texture::D3D11Texture(const std::string& path) : Texture(path)
 {
+    LEV_PROFILE_FUNCTION();
+
 	// Load image
 
 	stbi_set_flip_vertically_on_load(1);
@@ -1812,6 +1816,8 @@ D3D11Texture::D3D11Texture(const std::string& path) : Texture(path)
 
 D3D11Texture::D3D11Texture(const std::string paths[6])
 {
+    LEV_PROFILE_FUNCTION();
+
     int width, height, channels;
 
     stbi_uc* data[6];
@@ -1928,6 +1934,8 @@ D3D11Texture::D3D11Texture(const std::string paths[6])
 
 D3D11Texture::~D3D11Texture()
 {
+    LEV_PROFILE_FUNCTION();
+
     if (m_Texture1D) m_Texture1D->Release();
     if (m_Texture2D) m_Texture2D->Release();
     if (m_Texture3D) m_Texture3D->Release();
@@ -1940,6 +1948,8 @@ D3D11Texture::~D3D11Texture()
 
 void D3D11Texture::Bind(const uint32_t slot, const Shader::Type type) const
 {
+    LEV_PROFILE_FUNCTION();
+
     //TODO: Fix compute shader binding (uav)
     if (type & Shader::Type::Vertex)
         context->VSSetShaderResources(slot, 1, &m_ShaderResourceView);
@@ -1959,6 +1969,8 @@ void D3D11Texture::Bind(const uint32_t slot, const Shader::Type type) const
 
 void D3D11Texture::Unbind(const uint32_t slot, const Shader::Type type) const
 {
+    LEV_PROFILE_FUNCTION();
+
     ID3D11ShaderResourceView* srv[] = { nullptr };
     ID3D11UnorderedAccessView* uav[] = { nullptr };
 
@@ -1980,6 +1992,8 @@ void D3D11Texture::Unbind(const uint32_t slot, const Shader::Type type) const
 
 void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, const float depth, const uint8_t stencil)
 {
+    LEV_PROFILE_FUNCTION();
+
 	if (m_RenderTargetView && (int)clearFlags & (int)ClearFlags::Color)
 	{
 		context->ClearRenderTargetView(m_RenderTargetView, &color.x);
@@ -1998,6 +2012,8 @@ void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, const floa
 
 ID3D11Resource* D3D11Texture::GetTextureResource() const
 {
+    LEV_PROFILE_FUNCTION();
+
 	switch (m_TextureDimension)
 	{
 	case Dimension::Texture1D:
@@ -2016,6 +2032,8 @@ ID3D11Resource* D3D11Texture::GetTextureResource() const
 
 void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 {
+    LEV_PROFILE_FUNCTION();
+
     if (m_Width == width && m_Height == height) return;
 
     // Release resource before resizing
@@ -2232,6 +2250,8 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 
 void D3D11Texture::Resize(uint16_t width, uint16_t height, uint16_t depth)
 {
+    LEV_PROFILE_FUNCTION();
+
 	switch (m_TextureDimension)
 	{
 	case Dimension::Texture1D:
@@ -2256,6 +2276,8 @@ void D3D11Texture::Resize(uint16_t width, uint16_t height, uint16_t depth)
 
 void D3D11Texture::Copy(const Ref<Texture> other)
 {
+    LEV_PROFILE_FUNCTION();
+
 	const std::shared_ptr<D3D11Texture> srcTexture = std::dynamic_pointer_cast<D3D11Texture>(other);
 
     if (srcTexture && srcTexture.get() != this)
@@ -2302,6 +2324,8 @@ void D3D11Texture::Copy(const Ref<Texture> other)
 
 void D3D11Texture::GenerateMipMaps()
 {
+    LEV_PROFILE_FUNCTION();
+
 	if (m_GenerateMipMaps && m_ShaderResourceView)
 		context->GenerateMips(m_ShaderResourceView);
 }

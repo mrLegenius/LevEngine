@@ -173,21 +173,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 
 std::unique_ptr<Window> Window::Create(const WindowAttributes& attributes)
 {
+	LEV_PROFILE_FUNCTION();
+
 	return std::make_unique<Window>(attributes);
 }
 
 Window::Window(const WindowAttributes& attributes)
 {
+	LEV_PROFILE_FUNCTION();
+
 	Window::Init(attributes);
 }
 
 Window::~Window()
 {
+	LEV_PROFILE_FUNCTION();
+
 	Window::Close();
 }
 
 void Window::Init(const WindowAttributes& attributes)
 {
+	LEV_PROFILE_FUNCTION();
+
 	m_Data.title = attributes.title;
 	m_Data.width = attributes.width;
 	m_Data.height = attributes.height;
@@ -261,6 +269,8 @@ void Window::Init(const WindowAttributes& attributes)
 
 void Window::Close()
 {
+	LEV_PROFILE_FUNCTION();
+
 	DestroyWindow(m_Window);
 	m_Window = nullptr;
 }
@@ -285,6 +295,8 @@ void Window::Update()
 
 void Window::SetWindowTitle(std::string& title)
 {
+	LEV_PROFILE_FUNCTION();
+
 	const std::wstring widestr = std::wstring(title.begin(), title.end());
 	const wchar_t* wide_title = widestr.c_str();
 	SetWindowText(m_Window, wide_title);
@@ -297,6 +309,8 @@ void Window::SetVSync(const bool enabled)
 
 void Window::EnableCursor()
 {
+	LEV_PROFILE_FUNCTION();
+
 	m_CursorEnabled = true;
 	ShowCursor();
 	FreeCursor();
@@ -304,6 +318,8 @@ void Window::EnableCursor()
 
 void Window::DisableCursor()
 {
+	LEV_PROFILE_FUNCTION();
+
 	m_CursorEnabled = false;
 	HideCursor();
 	ConfineCursor();
@@ -311,6 +327,8 @@ void Window::DisableCursor()
 
 void Window::ConfineCursor() const
 {
+	LEV_PROFILE_FUNCTION();
+
 	RECT rect;
 	GetClientRect(m_Window, &rect);
 	MapWindowRect(m_Window, nullptr, reinterpret_cast<POINT*>(&rect), 2);
@@ -319,16 +337,22 @@ void Window::ConfineCursor() const
 
 void Window::FreeCursor() const
 {
+	LEV_PROFILE_FUNCTION();
+
 	ClipCursor(nullptr);
 }
 
 void Window::ShowCursor() const
 {
+	LEV_PROFILE_FUNCTION();
+
 	while (::ShowCursor(true) < 0);
 }
 
 void Window::HideCursor() const
 {
+	LEV_PROFILE_FUNCTION();
+
 	while (::ShowCursor(false) >= 0);
 }
 

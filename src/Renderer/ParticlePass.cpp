@@ -29,6 +29,8 @@ void BindTextureArray(Ref<D3D11Texture>* textures, const uint32_t count)
 
 ParticlePass::ParticlePass(const Ref<Texture>& depthTexture, const Ref<Texture>& normalTexture) : m_DepthTexture(depthTexture), m_NormalTexture(normalTexture)
 {
+	LEV_PROFILE_FUNCTION();
+
 	const auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
 	m_PipelineState.GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
 	m_PipelineState.GetDepthStencilState()->SetDepthMode(DepthMode{ true, DepthWrite::Disable });
@@ -67,6 +69,8 @@ ParticlePass::ParticlePass(const Ref<Texture>& depthTexture, const Ref<Texture>&
 
 ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex)
 {
+	LEV_PROFILE_FUNCTION();
+
 	RandomColor color{ emitter.Birth.StartColor, emitter.Birth.StartColorB, emitter.Birth.RandomStartColor };
 	RandomVector3 velocity{  (Vector4)emitter.Birth.Velocity, emitter.Birth.VelocityB, emitter.Birth.RandomVelocity };
 	RandomVector3 position{ (Vector4)transform.GetWorldPosition() + emitter.Birth.Position, transform.GetWorldPosition() + emitter.Birth.PositionB, emitter.Birth.RandomStartPosition };
@@ -91,6 +95,8 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 
 bool ParticlePass::Begin(entt::registry& registry, RenderParams& params)
 {
+	LEV_PROFILE_FUNCTION();
+
 	m_NormalTexture->Bind(8, Shader::Type::Pixel);
 	m_DepthTexture->Bind(9, Shader::Type::Pixel);
 	return RenderPass::Begin(registry, params);
@@ -98,6 +104,8 @@ bool ParticlePass::Begin(entt::registry& registry, RenderParams& params)
 
 void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 {
+	LEV_PROFILE_FUNCTION();
+
 	constexpr uint32_t MaxTextureSlots = 32;
 	std::array<Ref<Texture>, MaxTextureSlots> textureSlots{};
 	textureSlots[0] = TextureAssets::Particle();  //<--- default particle ---<<
@@ -220,12 +228,16 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 
 void ParticlePass::End(entt::registry& registry, RenderParams& params)
 {
+	LEV_PROFILE_FUNCTION();
+
 	m_NormalTexture->Unbind(8, Shader::Type::Pixel);
 	m_DepthTexture->Unbind(9, Shader::Type::Pixel);
 }
 
 void ParticlePass::GetGroupSize(const int totalCount, int& groupSizeX, int& groupSizeY) const
 {
+	LEV_PROFILE_FUNCTION();
+
 	const int numGroups = (totalCount % c_MaxThreadCount != 0) ? ((totalCount / c_MaxThreadCount) + 1) : (totalCount / c_MaxThreadCount);
 	const double secondRoot = std::ceil(std::pow(static_cast<double>(numGroups), 0.5));
 	groupSizeX = static_cast<int>(secondRoot);

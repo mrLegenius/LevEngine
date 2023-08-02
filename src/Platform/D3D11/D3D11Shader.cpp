@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "D3D11Shader.h"
 
-#include <cassert>
 #include <d3dcompiler.h>
-#include <iostream>
 #include <wrl/client.h>
+
+#include "Renderer/RenderSettings.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
@@ -39,6 +40,8 @@ static DXGI_FORMAT ParseShaderDataTypeToD3D11DataType(const ShaderDataType type)
 D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, Type::Vertex | Type::Pixel) { }
 D3D11Shader::D3D11Shader(const std::string& filepath, const Type shaderTypes) : Shader(filepath)
 {
+	LEV_PROFILE_FUNCTION();
+
 	auto lastSlash = filepath.find_last_of("/\\");
 	lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
 	const auto lastDot = filepath.rfind('.');
@@ -115,8 +118,17 @@ void D3D11Shader::Unbind() const
 
 bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target)
 {
+	LEV_PROFILE_FUNCTION();
+
 	const std::wstring widestr = std::wstring(shaderFilepath.begin(), shaderFilepath.end());
 	const wchar_t* wide_filepath = widestr.c_str();
+
+	int flags = 0;
+
+	if constexpr (RenderSettings::EnableShaderDebug)
+	{
+		flags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+	}
 
 	ID3DBlob* errorCode = nullptr;
 	const auto res = D3DCompileFromFile(wide_filepath,
@@ -124,7 +136,7 @@ bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SH
 		includes /*include*/,
 		entrypoint,
 		target,
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
+		flags,
 		0,
 		&shaderBC,
 		&errorCode);
@@ -137,6 +149,8 @@ bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SH
 			const char* compileErrors = static_cast<char*>(errorCode->GetBufferPointer());
 
 			Log::CoreError(compileErrors);
+
+			errorCode->Release();
 		}
 		// If there was  nothing in the error message then it simply could not find the shader file itself.
 		else
@@ -153,6 +167,8 @@ bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SH
 
 bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const std::string& filepath)
 {
+	LEV_PROFILE_FUNCTION();
+
 	if (!CreateShader(vertexBC, filepath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSMain", "vs_5_0"))
 		return false;
 
@@ -166,10 +182,11 @@ bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const 
 
 bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath)
 {
-	ID3DBlob* pixelBC;
-	D3D_SHADER_MACRO defines[] = { "TEST", "1", "TCOLOR", "float4(0.0f, 1.0f, 0.0f, 1.0f)", nullptr, nullptr};
+	LEV_PROFILE_FUNCTION();
 
-	if (!CreateShader(pixelBC, filepath, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PSMain", "ps_5_0"))
+	ID3DBlob* pixelBC;
+
+	if (!CreateShader(pixelBC, filepath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PSMain", "ps_5_0"))
 		return false;
 
 	device->CreatePixelShader(
@@ -182,6 +199,8 @@ bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath)
 
 bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath)
 {
+	LEV_PROFILE_FUNCTION();
+
 	ID3DBlob* geometryBC;
 	D3D_SHADER_MACRO defines[] = { nullptr, nullptr };
 
@@ -198,6 +217,8 @@ bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& file
 
 bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepath)
 {
+	LEV_PROFILE_FUNCTION();
+
 	ID3DBlob* blob;
 	D3D_SHADER_MACRO defines[] = { nullptr, nullptr };
 
@@ -214,6 +235,8 @@ bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepa
 
 void D3D11Shader::SetLayout(const BufferLayout& layout)
 {
+	LEV_PROFILE_FUNCTION();
+
 	m_Layout = layout;
 	const auto& elements = layout.GetElements();
 	auto* input = new D3D11_INPUT_ELEMENT_DESC[elements.size()];

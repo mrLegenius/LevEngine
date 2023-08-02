@@ -19,6 +19,8 @@ class ShadowMapPass : public RenderPass
 public:
     ShadowMapPass()
     {
+        LEV_PROFILE_FUNCTION();
+
         m_CascadeShadowMap = CreateRef<CascadeShadowMap>(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
         m_ShadowMapConstantBuffer = ConstantBuffer::Create(sizeof ShadowData, 3);
     }

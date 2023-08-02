@@ -19,10 +19,6 @@ public:
 	static void Shutdown();
 
 private:
-	static Ref<ShadowMapPass> s_ShadowMapPass;
-	static Ref<SkyboxPass> s_SkyboxPass;
-	static Ref<ParticlePass> s_ParticlePass;
-
 	static Ref<Texture> m_DepthTexture;
 	static Ref<Texture> m_DiffuseTexture;
 	static Ref<Texture> m_SpecularTexture;

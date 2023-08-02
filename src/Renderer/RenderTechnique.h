@@ -10,11 +10,15 @@ public:
 
 	void AddPass(Ref<RenderPass> renderPass)
 	{
+		LEV_PROFILE_FUNCTION();
+
 		m_PassList.emplace_back(renderPass);
 	}
 
 	void Process(entt::registry& registry, RenderParams params) const
 	{
+		LEV_PROFILE_FUNCTION();
+
 		for (const auto pass : m_PassList)
 		{
 			if (pass->Begin(registry, params))

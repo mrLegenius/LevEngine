@@ -22,11 +22,15 @@ IDXGISwapChain* swapChain;
 
 D3D11Context::~D3D11Context()
 {
+	LEV_PROFILE_FUNCTION();
+
 	m_BackBuffer->Release();
 }
 
-void D3D11Context::Init(uint32_t width, uint32_t height, HWND window)
+void D3D11Context::Init(const uint32_t width, const uint32_t height, const HWND window)
 {
+	LEV_PROFILE_FUNCTION();
+
 	constexpr D3D_FEATURE_LEVEL featureLevel[] = { D3D_FEATURE_LEVEL_11_1 };
 
 	DXGI_SWAP_CHAIN_DESC swapDesc;

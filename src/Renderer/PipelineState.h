@@ -15,6 +15,8 @@ public:
 
     PipelineState()
     {
+        LEV_PROFILE_FUNCTION();
+
         m_BlendState = BlendState::Create();
         m_DepthStencilState = DepthStencilState::Create();
         m_RasterizerState = RasterizerState::Create();
@@ -26,6 +28,8 @@ public:
     }
     [[nodiscard]] Ref<Shader> GetShader(const Shader::Type type) const
     {
+        LEV_PROFILE_FUNCTION();
+
 	    const auto it = m_Shaders.find(type);
 
         return it != m_Shaders.end() ? it->second : nullptr;

@@ -97,6 +97,8 @@ namespace ShaderAssets
 {
     inline auto Lit()
     {
+		LEV_PROFILE_FUNCTION();
+
         static Ref<Shader> shader;
         if (shader) return shader;
 
@@ -112,6 +114,8 @@ namespace ShaderAssets
 
 	inline auto Unlit()
 	{
+		LEV_PROFILE_FUNCTION();
+
         static Ref<Shader> shader;
         if (shader) return shader;
 
@@ -127,6 +131,8 @@ namespace ShaderAssets
 
 	inline auto Skybox()
     {
+		LEV_PROFILE_FUNCTION();
+
 	    static Ref<Shader> shader;
 	    if (shader) return shader;
 
@@ -138,6 +144,8 @@ namespace ShaderAssets
 
     inline auto ShadowPass()
     {
+		LEV_PROFILE_FUNCTION();
+
         static Ref<Shader> shader;
         if (shader) return shader;
 

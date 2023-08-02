@@ -30,5 +30,7 @@ struct RenderSettings
 	static constexpr uint32_t MaxParticles = 1024 * 8;
 
 	static constexpr RendererAPI RendererAPI = RendererAPI::D3D11;
+
+	static constexpr bool EnableShaderDebug = false;
 };
 }
