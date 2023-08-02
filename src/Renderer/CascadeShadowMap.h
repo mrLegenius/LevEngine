@@ -13,6 +13,7 @@ public:
 
 	void Bind(uint32_t slot = 0) const;
 	void SetRenderTarget() const;
+	void ResetRenderTarget() const;
 
 private:
 

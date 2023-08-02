@@ -36,7 +36,6 @@ Ref<RenderTechnique> Renderer::s_ForwardTechnique;
 
 void Renderer::Init()
 {
-	RenderCommand::Init();
 	Renderer3D::Init();
 
 	s_ShadowMapPass = CreateRef<ShadowMapPass>();

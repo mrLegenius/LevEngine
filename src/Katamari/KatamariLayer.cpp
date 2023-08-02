@@ -335,10 +335,6 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     LEV_PROFILE_FUNCTION();
 
     //window.DisableCursor();
-    
-    float color[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-    RenderCommand::SetClearColor(color);
-    RenderCommand::Clear();
 
     m_Scene->OnUpdate(deltaTime);
     m_Scene->OnPhysics(deltaTime);

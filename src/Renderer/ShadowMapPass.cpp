@@ -115,7 +115,7 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 void ShadowMapPass::End(entt::registry& registry, RenderParams& params)
 {
     ShaderAssets::CascadeShadowPass()->Unbind();
-    RenderCommand::End();
+    m_CascadeShadowMap->ResetRenderTarget();
     m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_ShadowMapConstantBuffer->Bind(Shader::Type::Pixel);
     m_CascadeShadowMap->Bind(RenderSettings::ShadowMapSlot);

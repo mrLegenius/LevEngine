@@ -54,4 +54,9 @@ void CascadeShadowMap::SetRenderTarget() const
     m_RenderTarget->Bind();
     m_RenderTarget->Clear();
 }
+
+void CascadeShadowMap::ResetRenderTarget() const
+{
+    m_RenderTarget->Unbind();
+}
 }
