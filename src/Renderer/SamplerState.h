@@ -1,9 +1,8 @@
 ﻿#pragma once
 #include "Shader.h"
-#include "SimpleMath.h"
+#include "Kernel/Color.h"
 #include "Math/Math.h"
 
-using namespace DirectX::SimpleMath;
 namespace LevEngine
 {
 	class SamplerState

@@ -1,12 +1,6 @@
 ﻿#pragma once
-
-#include <SimpleMath.h>
 #include "Math/Math.h"
 #include "Components/Transform.h"
-
-using DirectX::SimpleMath::Vector3;
-using DirectX::SimpleMath::Quaternion;
-using DirectX::SimpleMath::Matrix;
 
 namespace LevEngine
 {

@@ -1,12 +1,10 @@
 #pragma once
 #include <random>
-#include <SimpleMath.h>
 
 #include "Kernel/Color.h"
 
 namespace LevEngine
 {
-
 struct Random
 {
 	static void Init()
@@ -68,25 +66,25 @@ struct Random
 	/**
 	 * \return Vector3 with each element in [0, 1]
 	 */
-	static DirectX::SimpleMath::Vector3 Vec3()
+	static Vector3 Vec3()
 	{
-		return DirectX::SimpleMath::Vector3{ Float(), Float(), Float() };
+		return Vector3{ Float(), Float(), Float() };
 	}
 
 	/**
 	 * \return Vector3 with each element in [min, max]
 	 */
-	static DirectX::SimpleMath::Vector3 Vec3(const float min, const float max)
+	static Vector3 Vec3(const float min, const float max)
 	{
-		return DirectX::SimpleMath::Vector3{ Float(min, max), Float(min, max), Float(min, max) };
+		return Vector3{ Float(min, max), Float(min, max), Float(min, max) };
 	}
 
 	/**
 	 * \return Vector3 with x = [a.x, b.x], y = [a.y, b.y], z = [a.z, b.z]
 	 */
-	static DirectX::SimpleMath::Vector3 Vec3(const DirectX::SimpleMath::Vector3 a, const DirectX::SimpleMath::Vector3 b)
+	static Vector3 Vec3(const Vector3 a, const Vector3 b)
 	{
-		return DirectX::SimpleMath::Vector3{ Float(a.x, b.x), Float(a.y, b.y), Float(a.z, b.z) };
+		return Vector3{ Float(a.x, b.x), Float(a.y, b.y), Float(a.z, b.z) };
 	}
 
 #pragma endregion
@@ -96,25 +94,25 @@ struct Random
 	/**
 	 * \return Vector4 with each element in [0, 1]
 	 */
-	static DirectX::SimpleMath::Vector4 Vec4()
+	static Vector4 Vec4()
 	{
-		return DirectX::SimpleMath::Vector4{ Float(), Float(), Float(), Float() };
+		return Vector4{ Float(), Float(), Float(), Float() };
 	}
 
 	/**
 	 * \return Vector4 with each element in [min, max]
 	 */
-	static DirectX::SimpleMath::Vector4 Vec4(const float min, const float max)
+	static Vector4 Vec4(const float min, const float max)
 	{
-		return DirectX::SimpleMath::Vector4{ Float(min, max), Float(min, max), Float(min, max), Float(min, max) };
+		return Vector4{ Float(min, max), Float(min, max), Float(min, max), Float(min, max) };
 	}
 
 	/**
 	 * \return Vector3 with x = [a.x, b.x], y = [a.y, b.y], z = [a.z, b.z], w = [a.w, b.w]
 	 */
-	static DirectX::SimpleMath::Vector4 Vec4(const DirectX::SimpleMath::Vector4 a, const DirectX::SimpleMath::Vector4 b)
+	static Vector4 Vec4(const Vector4 a, const Vector4 b)
 	{
-		return DirectX::SimpleMath::Vector4{ Float(a.x, b.x), Float(a.y, b.y), Float(a.z, b.z), Float(a.w, b.w) };
+		return Vector4{ Float(a.x, b.x), Float(a.y, b.y), Float(a.z, b.z), Float(a.w, b.w) };
 	}
 
 #pragma endregion

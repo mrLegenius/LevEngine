@@ -1,11 +1,9 @@
 ﻿#pragma once
-#include <SimpleMath.h>
 #include "ClearFlags.h"
 #include "CPUAccess.h"
 #include "SamplerState.h"
 #include "Shader.h"
-
-using namespace DirectX::SimpleMath;
+#include "Math/Vector4.h"
 
 namespace LevEngine
 {

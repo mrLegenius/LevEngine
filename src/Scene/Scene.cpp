@@ -10,8 +10,6 @@
 
 namespace LevEngine
 {
-using namespace DirectX::SimpleMath;
-
 Scene::~Scene()
 {
     LEV_PROFILE_FUNCTION();

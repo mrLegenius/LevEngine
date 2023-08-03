@@ -1,13 +1,11 @@
 #pragma once
 #include <dxgiformat.h>
-#include <SimpleMath.h>
 #include <d3d11.h>
 
 #include "Renderer/ClearFlags.h"
 #include "Renderer/CPUAccess.h"
 #include "Renderer/Texture.h"
 
-using namespace DirectX::SimpleMath;
 namespace LevEngine
 {
 class D3D11Texture : public Texture

@@ -1,8 +1,9 @@
 #pragma once
 #include <set>
-#include <SimpleMath.h>
 
-using namespace DirectX::SimpleMath;
+#include "Math/Matrix.h"
+#include "Math/Vector3.h"
+
 struct Transform
 {
 	Transform()

@@ -234,10 +234,13 @@
     <ClInclude Include="src\Kernel\Time.h" />
     <ClInclude Include="src\Kernel\Timestep.h" />
     <ClInclude Include="src\LevEngine.h" />
+    <ClInclude Include="src\Math\Matrix.h" />
+    <ClInclude Include="src\Math\Quaternion.h" />
+    <ClInclude Include="src\Math\Vector2.h" />
+    <ClInclude Include="src\Math\Vector3.h" />
+    <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
-    <ClInclude Include="src\Components\RendererComponent.h" />
-    <ClInclude Include="src\Components\SkyboxRenderer.h" />
     <ClInclude Include="src\Components\Transform.h" />
     <ClInclude Include="src\Katamari\KatamariLayer.h" />
     <ClInclude Include="src\Katamari\ObjLoader.h" />

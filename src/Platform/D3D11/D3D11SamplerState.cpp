@@ -121,10 +121,10 @@ namespace LevEngine
 			samplerDesc.AddressW = TranslateWrapMode(m_WrapModeW);
 			samplerDesc.MaxAnisotropy = m_AnisotropicFiltering;
 			samplerDesc.ComparisonFunc = TranslateComparisonFunction(m_CompareFunc);
-			samplerDesc.BorderColor[0] = m_BorderColor.x;
-			samplerDesc.BorderColor[1] = m_BorderColor.y;
-			samplerDesc.BorderColor[2] = m_BorderColor.z;
-			samplerDesc.BorderColor[3] = m_BorderColor.w;
+			samplerDesc.BorderColor[0] = m_BorderColor.r;
+			samplerDesc.BorderColor[1] = m_BorderColor.g;
+			samplerDesc.BorderColor[2] = m_BorderColor.b;
+			samplerDesc.BorderColor[3] = m_BorderColor.a;
 			samplerDesc.MinLOD = m_MinLOD;
 			samplerDesc.MaxLOD = m_MaxLOD;
 			samplerDesc.MipLODBias = m_LODBias;

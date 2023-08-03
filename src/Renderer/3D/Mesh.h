@@ -1,11 +1,10 @@
 #pragma once
 
-#include "SimpleMath.h"
-
+#include "Math/Vector2.h"
+#include "Math/Vector3.h"
 #include "Renderer/IndexBuffer.h"
 #include "Renderer/VertexBuffer.h"
 
-using namespace DirectX::SimpleMath;
 namespace LevEngine
 {
 class Mesh
@@ -15,7 +14,6 @@ class Mesh
 		Vector3 Position;
 		Vector3 Normal;
 		Vector2 UV;
-		//float TexTiling;
 	};
 
 public:

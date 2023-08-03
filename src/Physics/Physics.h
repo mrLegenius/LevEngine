@@ -1,6 +1,4 @@
 #pragma once
-#include <SimpleMath.h>
-
 #include "Components/Rigidbody.h"
 #include "Components/Collider.h"
 #include "Components/Transform.h"
@@ -10,7 +8,6 @@ namespace LevEngine
 {
 struct CollisionInfo;
 class Entity;
-using DirectX::SimpleMath::Vector3;
 
 inline constexpr int NumCollisionFrames = 10;
 

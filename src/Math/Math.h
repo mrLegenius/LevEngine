@@ -1,7 +1,5 @@
 #pragma once
-#include "SimpleMath.h"
-
-using namespace DirectX::SimpleMath;
+#include "Vector3.h"
 
 namespace LevEngine
 {
@@ -9,11 +7,13 @@ namespace LevEngine
 	{
 	public:
 
-		template<typename T>
-		static T Max(T a, T b) { return ((a) > (b)) ? (a) : (b); }
+		static constexpr float FloatEpsilon = 0.000001;
 
 		template<typename T>
-		static T Min(T a, T b) { return ((a) < (b)) ? (a) : (b); }
+		static T Max(const T a, const T b) { return ((a) > (b)) ? (a) : (b); }
+
+		template<typename T>
+		static T Min(const T a, const T b) { return ((a) < (b)) ? (a) : (b); }
 
 		static float MaxElement(const Vector3 vector)
 		{
@@ -26,9 +26,19 @@ namespace LevEngine
 		}
 
 		template<typename T>
-		static T Clamp(T value, T from, T to)
+		static T Clamp(const T value, const T from, const T to)
 		{
 			return Min(Max(value, from), to);
+		}
+
+		static bool IsZero(const float value)
+		{
+			return IsEqual(value, 0.0f);
+		}
+
+		static bool IsEqual(const float a, const float b)
+		{
+			return std::abs(a - b) < FloatEpsilon;
 		}
 	};
 }

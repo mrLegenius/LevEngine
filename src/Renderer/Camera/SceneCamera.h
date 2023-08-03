@@ -1,9 +1,7 @@
 ﻿#pragma once
 
 #include "Components/Transform.h"
-#include "directxmath.h"
 
-using namespace DirectX::SimpleMath;
 namespace LevEngine
 {
 class SceneCamera

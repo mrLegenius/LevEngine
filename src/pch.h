@@ -21,6 +21,12 @@
 #include "Kernel/Asserts.h"
 #include "Kernel/PointerUtils.h"
 
+#include "Math/Vector2.h"
+#include "Math/Vector3.h"
+#include "Math/Vector4.h"
+#include "Math/Matrix.h"
+#include "Math/Quaternion.h"
+
 #ifdef LEV_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif
