@@ -93,6 +93,45 @@ struct LavaRockAssets
 	}
 };
 
+struct FancyTorch
+{
+	static std::string GetAssetPath(const std::string& name) { return (resources / "FancyTorch" / name).string(); }
+
+	static auto Mesh()
+	{
+		static auto mesh = ObjLoader().LoadMesh(GetAssetPath("FancyTorch.obj"));
+		return mesh;
+	}
+
+	static auto AmbientTexture()
+	{
+		static auto texture = Texture::Create(GetAssetPath("FancyTorch_albedo.png"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
+		return texture;
+	}
+
+	static auto EmissiveTexture()
+	{
+		static auto texture = Texture::Create(GetAssetPath("FancyTorch_gloss.png"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
+		return texture;
+	}
+
+	static auto SpecularTexture()
+	{
+		static auto texture = Texture::Create(GetAssetPath("FancyTorch_metal.png"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
+		return texture;
+	}
+
+	static auto NormalTexture()
+	{
+		static auto texture = Texture::Create(GetAssetPath("FancyTorch_normal.png"));
+		texture->AttachSampler(GetDefaultWrappedSamplerState());
+		return texture;
+	}
+};
+
 namespace ShaderAssets
 {
     inline auto Lit()

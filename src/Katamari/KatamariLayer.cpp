@@ -319,6 +319,76 @@ void KatamariLayer::OnAttach()
     peakT.SetLocalScale(Vector3(10, 50, 10));
     peakT.SetWorldPosition(Vector3(100, 25, 100));
 
+    //<--- Torch ---<<
+    {
+        auto entity = m_Scene->CreateEntity("Torch");
+        auto mesh = entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), FancyTorch::Mesh());
+        mesh.castShadow = false;
+        mesh.material.SetTexture(Material::TextureType::Ambient, FancyTorch::AmbientTexture());
+        mesh.material.SetTexture(Material::TextureType::Diffuse, FancyTorch::AmbientTexture());
+        mesh.material.SetTexture(Material::TextureType::Specular, FancyTorch::SpecularTexture());
+        mesh.material.SetTexture(Material::TextureType::Normal, FancyTorch::NormalTexture());
+
+        entity.GetComponent<Transform>().SetWorldPosition(Vector3(10.f, 0.0f, 10.0f));
+        entity.GetComponent<Transform>().SetLocalScale(Vector3(0.1f,0.1f, 0.1f));
+        entity.GetComponent<Transform>().SetWorldRotation(Vector3(0, 0, 0));
+
+        //<--- Fire Particles ---<<
+        {
+            auto fireParticles = m_Scene->CreateEntity("Torch Fire Particles");
+            fireParticles.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
+            fireParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 50, 0 });
+            auto& particles = fireParticles.AddComponent<EmitterComponent>();
+            particles.Rate = 1;
+            particles.Texture = TextureAssets::Fire();
+            particles.MaxParticles = 100;
+            particles.Birth.Velocity = Vector3{ 0, 5, 0 };
+
+            particles.Birth.StartColor = LevEngine::Color{ 1.0f, 0.7f, 0.0f, 1.0f };
+            particles.Birth.EndColor = LevEngine::Color{ 0.5, 0, 0, 0 };
+
+            particles.Birth.RandomStartSize = true;
+            particles.Birth.StartSize = 0.2f;
+            particles.Birth.StartSizeB = 0.5f;
+            particles.Birth.EndSize = 0.1f;
+
+            particles.Birth.RandomStartPosition = true;
+            particles.Birth.Position = Vector3{ -0.5, -0.5, -0.5 };
+            particles.Birth.PositionB = Vector3{ 0.5, 0.5, 0.5 };
+
+            particles.Birth.RandomStartLifeTime = true;
+            particles.Birth.LifeTime = 0.5;
+            particles.Birth.LifeTimeB = 1;
+        }
+
+        //<--- Smoke Particles ---<<
+        {
+            auto smokeParticles = m_Scene->CreateEntity("Torch Smoke Particles");
+            smokeParticles.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
+            smokeParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 50, 0 });
+            auto& particles = smokeParticles.AddComponent<EmitterComponent>();
+            particles.Rate = 1;
+            particles.Texture = TextureAssets::Smoke();
+            particles.Birth.Velocity = Vector3{ 0, 6, 0 };
+
+            particles.Birth.StartColor = LevEngine::Color{ 0xFFFFFFFF };
+            particles.Birth.EndColor = LevEngine::Color{ 0xFFFFFF00 };
+
+            particles.Birth.RandomStartSize = true;
+            particles.Birth.StartSize = 0.1f;
+            particles.Birth.StartSizeB = 0.3f;
+            particles.Birth.EndSize = 0.05f;
+
+            particles.Birth.RandomStartPosition = true;
+            particles.Birth.Position = Vector3{ -0.3, -0.5, -0.3 };
+            particles.Birth.PositionB = Vector3{ 0.3, 0.5, 0.3 };
+
+            particles.Birth.RandomStartLifeTime = true;
+            particles.Birth.LifeTime = 0.5;
+            particles.Birth.LifeTimeB = 1;
+        }
+    }
+
     //<--- Systems ---<<
 	m_Scene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
     m_Scene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
