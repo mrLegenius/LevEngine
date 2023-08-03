@@ -101,25 +101,92 @@ public:
 		return it != m_Textures.end() ? it->second : nullptr;
 	}
 
+	void SetTextureTiling(const TextureType type, const float value)
+	{
+		SetTextureTiling(type, Vector2{ value, value });
+	}
+
+	void SetTextureTiling(const TextureType type, const Vector2 value)
+	{
+		auto& properties = GetTexturePropertiesBy(type);
+		properties.Tiling = value;
+
+		m_IsDirty = true;
+	}
+	[[nodiscard]] Vector2 GetTextureTiling(const TextureType type)
+	{
+		const auto& properties = GetTexturePropertiesBy(type);
+		return properties.Tiling;
+	}
+
+	void SetTextureOffset(const TextureType type, const float value)
+	{
+		SetTextureOffset(type, Vector2{ value, value });
+	}
+
+	void SetTextureOffset(const TextureType type, const Vector2 value)
+	{
+		auto& properties = GetTexturePropertiesBy(type);
+		properties.Offset = value;
+
+		m_IsDirty = true;
+	}
+	[[nodiscard]] Vector2 GetTextureOffset(const TextureType type)
+	{
+		const auto& properties = GetTexturePropertiesBy(type);
+		return properties.Offset;
+	}
+
 	void Bind(const Ref<Shader>& shader);
 	void Unbind(const Ref<Shader>& shader);
 
 private:
-
-	struct GPUData
+	struct alignas(16) TextureProperties
 	{
-		alignas(16) Vector3 Ambient = Vector3{ 0, 0, 0 };
-		alignas(16) Vector3 Emissive = Vector3{ 0, 0, 0 };
-		alignas(16) Vector3 Diffuse = Vector3{ 1,1, 1 };
-		alignas(16) Vector3 Specular = Vector3{ 0, 0, 0 };
+		Vector2 Tiling{ 1, 1 };
+		Vector2 Offset{ 0, 0 };
+	};
 
-		float Shininess = 2;
+	struct alignas(16) GPUData
+	{
+		alignas(16) Vector3 Ambient = Vector3{ 0, 0, 0 }; //<--- 16 ---<<
+		alignas(16) Vector3 Emissive = Vector3{ 0, 0, 0 }; //<--- 16 ---<<
+		alignas(16) Vector3 Diffuse = Vector3{ 1,1, 1 }; //<--- 16 ---<<
+		alignas(16) Vector3 Specular = Vector3{ 0, 0, 0 }; //<--- 16 ---<<
+
+		TextureProperties AmbientProperties; //<--- 16 ---<<
+		TextureProperties EmissiveProperties; //<--- 16 ---<<
+		TextureProperties DiffuseProperties; //<--- 16 ---<<
+		TextureProperties SpecularProperties; //<--- 16 ---<<
+		TextureProperties NormalProperties; //<--- 16 ---<<
+
 		uint32_t HasAmbientTexture = false;
 		uint32_t HasEmissiveTexture = false;
 		uint32_t HasDiffuseTexture = false;
 		uint32_t HasSpecularTexture = false;
 		uint32_t HasNormalTexture = false;
+		float Shininess = 2;
 	};
+
+	TextureProperties& GetTexturePropertiesBy(const TextureType type)
+	{
+		switch (type)
+		{
+		case TextureType::Ambient:
+			return m_Data.AmbientProperties;
+		case TextureType::Emissive:
+			return m_Data.EmissiveProperties;
+		case TextureType::Diffuse:
+			return m_Data.DiffuseProperties;
+		case TextureType::Specular:
+			return m_Data.SpecularProperties;
+		case TextureType::Normal:
+			return m_Data.NormalProperties;
+		default:
+			LEV_THROW("Unknown texture type of material")
+		}
+	}
+
 
 	using TextureMap = std::map<TextureType, Ref<Texture>>;
 	TextureMap m_Textures;

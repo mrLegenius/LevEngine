@@ -35,13 +35,13 @@ float4 PSMain(PS_IN input) : SV_Target
 
 	LightingResult lit = CalcLighting(input.fragPos, normal, input.depth);
 
-	float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, input.uv);
-	float3 ambient = CombineColorAndTexture(material.ambient, ambientTexture, ambientTextureSampler, material.hasAmbientTexture, input.uv) * globalAmbient;
-	float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, input.uv) * lit.diffuse;
+    float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, input.uv, material.emissiveProperties);
+    float3 ambient = CombineColorAndTexture(material.ambient, ambientTexture, ambientTextureSampler, material.hasAmbientTexture, input.uv, material.ambientProperties) * globalAmbient;
+    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, input.uv, material.diffuseProperties) * lit.diffuse;
 
 	float3 specular = 0;
 	if (material.shininess > 1.0f)
-		specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, input.uv) * lit.specular;
+        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, input.uv, material.specularProperties) * lit.specular;
 
 	float3 finalColor = (emissive + ambient + diffuse + specular);
 

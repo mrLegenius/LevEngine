@@ -32,7 +32,7 @@ PS_OUT PSMain(PS_IN input)
 
 	if (material.hasNormalTexture)
 	{
-		float3 texNormal = normalTexture.Sample(normalTextureSampler, input.uv).rgb;
+        float3 texNormal = normalTexture.Sample(normalTextureSampler, ApplyTextureProperties(input.uv, material.normalProperties)).rgb;
 		normal = normalize(texNormal * 2.0 - 1.0);
 	}
 	else
@@ -42,10 +42,10 @@ PS_OUT PSMain(PS_IN input)
 
 	result.Normal = float4(normal, 0.0f);
 
-	float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, input.uv);
-    float3 ambient = CombineColorAndTexture(material.ambient, ambientTexture, ambientTextureSampler, material.hasAmbientTexture, input.uv) * globalAmbient;
+	float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, input.uv, material.emissiveProperties);
+    float3 ambient = CombineColorAndTexture(material.ambient, ambientTexture, ambientTextureSampler, material.hasAmbientTexture, input.uv, material.ambientProperties) * globalAmbient;
 
-	float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, input.uv);
+    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, input.uv, material.diffuseProperties);
 	
 	float cascade = GetCascadeIndex(input.depth);
 	float4 fragPosLightSpace = mul(float4(input.fragPos, 1.0f), lightViewProjection[cascade]);
@@ -57,7 +57,7 @@ PS_OUT PSMain(PS_IN input)
 	
 	float3 specular = 0;
 	if (material.shininess > 1.0f)
-		specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, input.uv);
+        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, input.uv, material.specularProperties);
 
 	result.LightAccumulation = float4(ambient + emissive + (diffuse * lit.diffuse) + (specular * lit.specular), 1.0f);
 

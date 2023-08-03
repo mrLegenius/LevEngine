@@ -35,25 +35,36 @@ struct PointLight
 	float intensity;
 };
 
+struct TextureProperties
+{
+    float2 tiling;
+    float2 offset;
+};
+
 struct Material
 {
-    float3 ambient;
-	// -- 16
-    float3 emissive;
-	// -- 16
-	float3 diffuse;
-	// -- 16
-	float3 specular;
-	// -- 16
-	float shininess;
+    float3 ambient; //<--- 16 ---<<
+    float3 emissive; //<--- 16 ---<<
+    float3 diffuse; //<--- 16 ---<<
+    float3 specular; //<--- 16 ---<<
+
+    TextureProperties ambientProperties; //<--- 16 ---<<
+    TextureProperties emissiveProperties; //<--- 16 ---<<
+    TextureProperties diffuseProperties; //<--- 16 ---<<
+    TextureProperties specularProperties; //<--- 16 ---<<
+    TextureProperties normalProperties; //<--- 16 ---<<
 	
+	//<--- 16 ---<<
     bool hasAmbientTexture;
 	bool hasEmissiveTexture;
 	bool hasDiffuseTexture;
-	// -- 16
-	bool hasSpecularTexture;
+    bool hasSpecularTexture;
+	//<--- 16 ---<<
+
+	//<--- 8 ---<<
 	bool hasNormalTexture;
-	// -- 8
+    float shininess;
+	//<--- 8 ---<<
 };
 
 cbuffer CameraConstantBuffer : register(b0)
@@ -267,12 +278,18 @@ LightingResult CalcPointLightInViewSpace(PointLight light, float3 normal, float3
     return result;
 }
 
-float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv)
+float2 ApplyTextureProperties(float2 uv, TextureProperties props)
+{
+    return uv * props.tiling + props.offset;
+}
+
+float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv, TextureProperties properties)
 {
     float3 result = color;
     if (hasTexture)
     {
-        float3 texColor = tex.Sample(sampl, uv);
+        float2 finalUV = ApplyTextureProperties(uv, properties);
+        float3 texColor = tex.Sample(sampl, finalUV);
         if (any(result.rgb))
         {
             result *= texColor;
@@ -285,3 +302,4 @@ float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, b
 
     return result;
 }
+

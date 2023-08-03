@@ -224,7 +224,10 @@ void KatamariLayer::OnAttach()
     auto floor = m_Scene->CreateEntity("Floor");
     auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     floorMesh.castShadow = false;
+    floorMesh.material.SetTexture(Material::TextureType::Ambient, TextureAssets::Bricks());
     floorMesh.material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Bricks());
+    floorMesh.material.SetTextureTiling(Material::TextureType::Ambient, Vector2{16, 16});
+    floorMesh.material.SetTextureTiling(Material::TextureType::Diffuse, Vector2{16, 16});
 
 	floor.GetComponent<Transform>().SetLocalScale(Vector3(300, 1.0f, 300));
     floor.GetComponent<Transform>().SetWorldRotation(Vector3(0, 0, 0));
