@@ -80,6 +80,10 @@ void Application::Run()
 				layer->OnUpdate(deltaTime);
 		}
 
+		//We need to bind main render target before drawing GUI
+		//TODO: Maybe move to another place
+		m_Window->GetContext()->GetRenderTarget()->Bind();
+
 		m_ImGuiLayer->Begin();
 		{
 			LEV_PROFILE_SCOPE("LayerStack OnGUIRender");

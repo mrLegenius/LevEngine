@@ -1,13 +1,10 @@
 #include "pch.h"
-#include "D3D11Context.h"
-
-#include <cstdint>
 #include <d3d11.h>
-#include <iostream>
 #include <wrl/client.h>
 
+#include "D3D11Context.h"
+
 #include "Texture.h"
-#include "Debugging/Profiler.h"
 #include "Platform/D3D11/D3D11Texture.h"
 
 #pragma comment(lib, "d3d11.lib")
