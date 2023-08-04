@@ -8,6 +8,7 @@
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
+#include "GUI/ImGuiLayer.h"
 
 namespace LevEngine
 {
@@ -21,6 +22,7 @@ public:
 	void Close();
 
 	void PushLayer(Layer* layer);
+	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
 
 	static Application& Get() { return *s_Instance; }
@@ -42,6 +44,7 @@ private:
 
 	float m_LastFrameTime = 0.0f;
 	bool m_Minimized = false;
+	ImGuiLayer* m_ImGuiLayer;
 
 	static Application* s_Instance;
 };

@@ -17,8 +17,11 @@ namespace LevEngine
 {
 Application* Application::s_Instance = nullptr;
 
-Application::Application(const std::string& name, uint32_t width, uint32_t height)
+Application::Application(const std::string& name, const uint32_t width, const uint32_t height)
 {
+	LEV_PROFILE_FUNCTION();
+
+	LEV_CORE_ASSERT(!s_Instance, "Only one application is allowed");
 	s_Instance = this;
 
 	m_Window = Window::Create(WindowAttributes(name, width, height));
@@ -26,6 +29,11 @@ Application::Application(const std::string& name, uint32_t width, uint32_t heigh
 
 	Renderer::Init();
 	Random::Init();
+
+	m_ImGuiLayer = new ImGuiLayer;
+	PushOverlay(m_ImGuiLayer);
+
+	Time::s_StartupTime = std::chrono::high_resolution_clock::now();
 }
 
 Application::~Application()
@@ -65,10 +73,20 @@ void Application::Run()
 		if (deltaTime > 1.0f) // Maybe breakpoint is hit
 			continue;
 
-		for (Layer* layer : m_LayerStack)
+		if (!m_Minimized)
 		{
-			layer->OnUpdate(deltaTime);
+			LEV_PROFILE_SCOPE("LayerStack OnUpdate");
+			for (Layer* layer : m_LayerStack)
+				layer->OnUpdate(deltaTime);
 		}
+
+		m_ImGuiLayer->Begin();
+		{
+			LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
+			for (Layer* layer : m_LayerStack)
+				layer->OnGUIRender();
+		}
+		m_ImGuiLayer->End();
 
 		Input::Reset();
 		m_Window->Update();
@@ -84,6 +102,14 @@ void Application::PushLayer(Layer* layer)
 {
 	m_LayerStack.PushLayer(layer);
 	layer->OnAttach();
+}
+
+void Application::PushOverlay(Layer* overlay)
+{
+	LEV_PROFILE_FUNCTION();
+
+	m_LayerStack.PushOverlay(overlay);
+	overlay->OnAttach();
 }
 
 void Application::OnEvent(Event& e)

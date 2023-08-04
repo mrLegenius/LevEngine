@@ -11,7 +11,9 @@ public:
 	virtual ~Layer() = default;
 
 	virtual void OnAttach() { }
+	virtual void OnDetach() { };
 	virtual void OnUpdate(const float deltaTime) { }
+	virtual void OnGUIRender() { }
 	virtual void OnEvent(Event& event) { }
 
 	[[nodiscard]] const std::string& GetName() const { return m_Name; }

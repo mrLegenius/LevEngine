@@ -2,13 +2,11 @@
 #include "LayerStack.h"
 namespace LevEngine
 {
-LayerStack::LayerStack()
-{
-}
+LayerStack::LayerStack() = default;
 
 LayerStack::~LayerStack()
 {
-	for (auto layer : m_Layers)
+	for (const auto layer : m_Layers)
 		delete layer;
 }
 
@@ -18,7 +16,12 @@ void LayerStack::PushLayer(Layer* layer)
 	m_LayerInsertIndex++;
 }
 
-void LayerStack::PopLayer(Layer* layer)
+void LayerStack::PushOverlay(Layer* overlay)
+{
+	m_Layers.emplace_back(overlay);
+}
+
+void LayerStack::PopLayer(const Layer* layer)
 {
 	const auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
 
@@ -27,5 +30,12 @@ void LayerStack::PopLayer(Layer* layer)
 		m_Layers.erase(it);
 		m_LayerInsertIndex--;
 	}
+}
+
+void LayerStack::PopOverlay(const Layer* overlay)
+{
+	const auto it = std::find(m_Layers.begin(), m_Layers.end(), overlay);
+	if (it != m_Layers.end())
+		m_Layers.erase(it);
 }
 }
