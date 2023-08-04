@@ -1,20 +1,25 @@
 #include "pch.h"
 #include "Window.h"
 
-#include <iostream>
+#include <imgui.h>
 
-#include "Logger.h"
 #include "windowsx.h"
+
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
 #include "../Input/Input.h"
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace LevEngine
 {
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) noexcept
 {
-	auto data = reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam))
+		return true;
+
+	const auto data = reinterpret_cast<Window::WindowData*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
 	switch (umessage)
 	{
@@ -275,21 +280,21 @@ void Window::Close()
 	m_Window = nullptr;
 }
 
-void Window::Update()
+void Window::HandleInput()
 {
 	MSG msg = {};
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-	}
 
-	// If windows signals to end the application then exit out.
-	if (msg.message == WM_QUIT)
-	{
-		Close();
-		return;
+		// If windows signals to end the application then exit out.
+		if (msg.message == WM_QUIT)
+			Close();
 	}
+}
 
+void Window::Update() const
+{
 	m_Context->SwapBuffers();
 }
 

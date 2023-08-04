@@ -22,6 +22,9 @@ D3D11Context::~D3D11Context()
 	LEV_PROFILE_FUNCTION();
 
 	m_BackBuffer->Release();
+	context->Release();
+	device->Release();
+	swapChain->Release();
 }
 
 void D3D11Context::Init(const uint32_t width, const uint32_t height, const HWND window)

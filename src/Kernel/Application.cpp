@@ -73,6 +73,8 @@ void Application::Run()
 		if (deltaTime > 1.0f) // Maybe breakpoint is hit
 			continue;
 
+		m_Window->HandleInput();
+
 		if (!m_Minimized)
 		{
 			LEV_PROFILE_SCOPE("LayerStack OnUpdate");
@@ -160,36 +162,36 @@ bool Application::OnWindowResized(WindowResizedEvent& e)
 bool Application::OnKeyPressed(KeyPressedEvent& e)
 {
 	Input::OnKeyPressed(e.GetKeyCode());
-	return true;
+	return false;
 }
 
 bool Application::OnKeyReleased(KeyReleasedEvent& e)
 {
 	Input::OnKeyReleased(e.GetKeyCode());
-	return true;
+	return false;
 }
 
 bool Application::OnMouseMoved(MouseMovedEvent& e)
 {
 	Input::OnMouseMoved(e.GetX(), e.GetY());
-	return true;
+	return false;
 }
 
 bool Application::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 {
 	Input::OnMouseButtonPressed(e.GetMouseButton());
-	return true;
+	return false;
 }
 
 bool Application::OnMouseButtonReleased(MouseButtonReleasedEvent& e)
 {
 	Input::OnMouseButtonReleased(e.GetMouseButton());
-	return true;
+	return false;
 }
 
 bool Application::OnMouseScrolled(MouseScrolledEvent& e)
 {
 	Input::OnMouseScrolled(e.GetYOffset());
-	return true;
+	return false;
 }
 }

@@ -29,7 +29,8 @@ public:
 	explicit Window(const WindowAttributes& attributes);
 	~Window();
 
-	void Update();
+	void HandleInput();
+	void Update() const;
 
 	[[nodiscard]] unsigned int GetWidth() const { return m_Data.width; }
 	[[nodiscard]] unsigned int GetHeight() const { return m_Data.height; }

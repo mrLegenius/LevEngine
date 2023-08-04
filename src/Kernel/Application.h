@@ -24,6 +24,7 @@ public:
 	void PushLayer(Layer* layer);
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
+	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
 
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }

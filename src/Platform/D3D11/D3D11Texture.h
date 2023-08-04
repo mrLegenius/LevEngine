@@ -41,6 +41,7 @@ public:
 	uint8_t GetBPP() const override { return m_BPP; }
 
 	void GenerateMipMaps() override;
+	[[nodiscard]] void* GetId() override { return m_ShaderResourceView; }
 
 protected:
 

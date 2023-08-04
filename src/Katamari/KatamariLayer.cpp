@@ -13,7 +13,6 @@
 #include "Math/Random.h"
 #include "Physics/Components/CollisionEvent.h"
 #include "Physics/Events/CollisionEndEvent.h"
-#include "Renderer/RenderCommand.h"
 #include "Renderer/Material.h"
 
 void OnKatamariCollided(Entity me, Entity other)
@@ -86,9 +85,9 @@ void KatamariLayer::OnAttach()
         particles.Birth.VelocityB = Vector3{ 10, 20, 10 };
 
         particles.Birth.RandomStartColor = true;
-        particles.Birth.StartColor = LevEngine::Color{ 0.06, 0.37, 0.611, 1 };
-        particles.Birth.StartColorB = LevEngine::Color{ 0.11, 0.64, 0.925, 1 };
-        particles.Birth.EndColor = LevEngine::Color{ 0.83, 0.945, 0.976, 0 };
+        particles.Birth.StartColor = Color{ 0.06, 0.37, 0.611, 1 };
+        particles.Birth.StartColorB = Color{ 0.11, 0.64, 0.925, 1 };
+        particles.Birth.EndColor = Color{ 0.83, 0.945, 0.976, 0 };
 
         particles.Birth.RandomStartSize = true;
         particles.Birth.StartSize = 0.2f;
@@ -141,10 +140,10 @@ void KatamariLayer::OnAttach()
             mesh.GetComponent<Transform>().SetLocalRotation(Vector3{ 90.0f, 0.0f, -90.0f });
             auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), LavaRockAssets::Mesh());
 
-            meshRenderer.material.SetAmbientColor(LevEngine::Color::White);
-            meshRenderer.material.SetDiffuseColor(LevEngine::Color::White);
-            meshRenderer.material.SetEmissiveColor(LevEngine::Color::White);
-            meshRenderer.material.SetSpecularColor(LevEngine::Color::White);
+            meshRenderer.material.SetAmbientColor(Color::White);
+            meshRenderer.material.SetDiffuseColor(Color::White);
+            meshRenderer.material.SetEmissiveColor(Color::White);
+            meshRenderer.material.SetSpecularColor(Color::White);
 
             meshRenderer.material.SetTexture(Material::TextureType::Ambient, LavaRockAssets::AmbientTexture());
             meshRenderer.material.SetTexture(Material::TextureType::Diffuse, LavaRockAssets::AmbientTexture());
@@ -164,8 +163,8 @@ void KatamariLayer::OnAttach()
             particles.MaxParticles = 10000;
             particles.Birth.Velocity = Vector3{ 0, 5, 0 };
 
-            particles.Birth.StartColor = LevEngine::Color{ 1.0f, 0.7f, 0.0f, 1.0f };
-            particles.Birth.EndColor = LevEngine::Color{ 0.5, 0, 0, 0 };
+            particles.Birth.StartColor = Color{ 1.0f, 0.7f, 0.0f, 1.0f };
+            particles.Birth.EndColor = Color{ 0.5, 0, 0, 0 };
 
             particles.Birth.RandomStartSize = true;
             particles.Birth.StartSize = 0.5f;
@@ -190,8 +189,8 @@ void KatamariLayer::OnAttach()
             particles.Texture = TextureAssets::Smoke();
             particles.Birth.Velocity = Vector3{ 0, 10, 0 };
 
-            particles.Birth.StartColor = LevEngine::Color{ 0xFFFFFFFF };
-            particles.Birth.EndColor = LevEngine::Color{ 0xFFFFFF00 };
+            particles.Birth.StartColor = Color{ 0xFFFFFFFF };
+            particles.Birth.EndColor = Color{ 0xFFFFFF00 };
 
             particles.Birth.RandomStartSize = true;
             particles.Birth.StartSize = 0.5f;
@@ -251,9 +250,9 @@ void KatamariLayer::OnAttach()
     playerParticles.Birth.GravityScale = 0;
 
     playerParticles.Birth.RandomStartColor = true;
-    playerParticles.Birth.StartColor = LevEngine::Color{ 1, 1, 1, 0.5 };
-    playerParticles.Birth.StartColorB = LevEngine::Color{ 1, 1, 1, 1 };
-    playerParticles.Birth.EndColor = LevEngine::Color{ 1, 1, 1, 0 };
+    playerParticles.Birth.StartColor = Color{ 1, 1, 1, 0.5 };
+    playerParticles.Birth.StartColorB = Color{ 1, 1, 1, 1 };
+    playerParticles.Birth.EndColor = Color{ 1, 1, 1, 0 };
 
     playerParticles.Birth.RandomStartSize = true;
     playerParticles.Birth.StartSize = 0.5f;
@@ -346,8 +345,8 @@ void KatamariLayer::OnAttach()
             particles.MaxParticles = 100;
             particles.Birth.Velocity = Vector3{ 0, 5, 0 };
 
-            particles.Birth.StartColor = LevEngine::Color{ 1.0f, 0.7f, 0.0f, 1.0f };
-            particles.Birth.EndColor = LevEngine::Color{ 0.5, 0, 0, 0 };
+            particles.Birth.StartColor = Color{ 1.0f, 0.7f, 0.0f, 1.0f };
+            particles.Birth.EndColor = Color{ 0.5, 0, 0, 0 };
 
             particles.Birth.RandomStartSize = true;
             particles.Birth.StartSize = 0.2f;
@@ -373,8 +372,8 @@ void KatamariLayer::OnAttach()
             particles.Texture = TextureAssets::Smoke();
             particles.Birth.Velocity = Vector3{ 0, 6, 0 };
 
-            particles.Birth.StartColor = LevEngine::Color{ 0xFFFFFFFF };
-            particles.Birth.EndColor = LevEngine::Color{ 0xFFFFFF00 };
+            particles.Birth.StartColor = Color{ 0xFFFFFFFF };
+            particles.Birth.EndColor = Color{ 0xFFFFFF00 };
 
             particles.Birth.RandomStartSize = true;
             particles.Birth.StartSize = 0.1f;
@@ -415,7 +414,7 @@ void KatamariLayer::OnGUIRender()
     LEV_PROFILE_FUNCTION();
 
     DrawDockSpace();
-    //DrawViewport();
+    DrawViewport();
     //DrawStatistics();
     DrawToolbar();
 }
@@ -547,4 +546,91 @@ void KatamariLayer::DrawDockSpace()
     }
 
     ImGui::End();
+}
+
+void KatamariLayer::DrawViewport()
+{
+    LEV_PROFILE_FUNCTION();
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::Begin("Viewport");
+
+    const auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+    const auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+    const auto viewportOffset = ImGui::GetWindowPos();
+    m_ViewportBounds[0] = Vector2{ viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+    m_ViewportBounds[1] = Vector2{ viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+    m_ViewportFocused = ImGui::IsWindowFocused();
+    m_ViewportHovered = ImGui::IsWindowHovered();
+    Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+
+    const ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+
+    m_ViewportSize = Vector2{ viewportSize.x, viewportSize.y };
+
+    const auto mainTexture = Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0);
+
+    ImGui::Image(
+        mainTexture->GetId(),
+        ImVec2(m_ViewportSize.x, m_ViewportSize.y),
+        ImVec2(0, 1),
+        ImVec2(1, 0)
+    );
+
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+        {
+            const wchar_t* path = (const wchar_t*)payload->Data;
+            //OpenScene(std::filesystem::path(g_AssetsPath) / path);
+        }
+        ImGui::EndDragDropTarget();
+    }
+
+    //Gizmos
+    //Entity selectedEntity = m_Hierarchy.GetSelectedEntity();
+    //if (selectedEntity && m_GizmoType != -1)
+    //{
+    //    ImGuizmo::SetOrthographic(false);
+    //    ImGuizmo::SetDrawlist();
+
+    //    ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+
+    //    glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+    //    const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+
+    //    auto& tc = selectedEntity.GetComponent<TransformComponent>();
+    //    glm::mat4 model = tc.GetModel();
+
+    //    const bool snap = Input::IsKeyDown(KeyCode::LeftControl);
+    //    const float snapValue = m_GizmoType == ImGuizmo::OPERATION::ROTATE ? 5.0f : 0.5f;
+
+    //    float snapValues[3] = { snapValue, snapValue, snapValue };
+
+
+    //    ImGuizmo::Manipulate(glm::value_ptr(cameraView),
+    //        glm::value_ptr(cameraProjection),
+    //        static_cast<ImGuizmo::OPERATION>(m_GizmoType),
+    //        ImGuizmo::LOCAL,
+    //        glm::value_ptr(model),
+    //        nullptr,
+    //        snap ? snapValues : nullptr);
+
+    //    if (ImGuizmo::IsUsing())
+    //    {
+    //        glm::vec3 position, rotation, scale;
+    //        Math::DecomposeTransform(model, position, rotation, scale);
+
+    //        tc.position = position;
+
+    //        //Adding delta rotation to avoid Gimbal lock
+    //        tc.rotation += rotation - tc.rotation;
+
+    //        tc.scale = scale;
+    //    }
+    //}
+
+    ImGui::End();
+    ImGui::PopStyleVar();
 }

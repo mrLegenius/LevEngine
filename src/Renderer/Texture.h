@@ -101,6 +101,8 @@ namespace LevEngine
 		static Ref<Texture> CreateTextureCube(const std::string paths[6]);
 		static Ref<Texture> Create(const std::string& path);
 
+		[[nodiscard]] virtual void* GetId() = 0;
+
 		virtual void GenerateMipMaps() = 0;
 
 		[[nodiscard]] const std::string& GetPath() const { return m_Path; }
