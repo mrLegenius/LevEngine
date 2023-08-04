@@ -257,10 +257,17 @@ void Renderer::Render(entt::registry& registry)
 	//TODO: Maybe move to its own pass?
 	Renderer3D::SetCameraBuffer(renderParams.Camera, renderParams.CameraViewMatrix, renderParams.CameraPosition);
 
-    if constexpr (RenderSettings::DeferredRendering)
-		s_DeferredTechnique->Process(registry, renderParams);
-    else
+    switch (RenderSettings::RenderTechnique)
+    {
+    case RenderTechniqueType::Forward:
 		s_ForwardTechnique->Process(registry, renderParams);
+		break;
+    case RenderTechniqueType::Deferred:
+		s_DeferredTechnique->Process(registry, renderParams);
+		break;
+    case RenderTechniqueType::ForwardPlus:
+		LEV_NOT_IMPLEMENTED
+    }
 }
 
 void DirectionalLightSystem(entt::registry& registry)
