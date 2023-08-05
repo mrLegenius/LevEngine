@@ -127,7 +127,8 @@ namespace LevEngine
 
 		virtual void Resize(uint16_t width, uint16_t height = 0, uint16_t depth = 0) = 0;
 
-		virtual void Copy(Ref<Texture> other) = 0;
+		virtual void CopyFrom(Ref<Texture> sourceTexture) = 0;
+		virtual Ref<Texture> Clone() = 0;
 
 		virtual uint8_t GetBPP() const = 0;
 

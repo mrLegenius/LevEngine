@@ -2272,41 +2272,36 @@ void D3D11Texture::Resize(uint16_t width, uint16_t height, uint16_t depth)
 		break;
 	default:
 		LEV_THROW("Unknown texture dimension")
-		break;
 	}
 }
 
-void D3D11Texture::Copy(const Ref<Texture> other)
+void D3D11Texture::CopyFrom(const Ref<Texture> sourceTexture)
 {
     LEV_PROFILE_FUNCTION();
 
-	const std::shared_ptr<D3D11Texture> srcTexture = std::dynamic_pointer_cast<D3D11Texture>(other);
+	const std::shared_ptr<D3D11Texture> srcTexture = std::dynamic_pointer_cast<D3D11Texture>(sourceTexture);
 
     if (srcTexture && srcTexture.get() != this)
     {
-        if (m_TextureDimension == srcTexture->m_TextureDimension &&
-            m_Width == srcTexture->m_Width &&
-            m_Height == srcTexture->m_Height)
+        if (m_TextureDimension != srcTexture->m_TextureDimension 
+            || m_Width != srcTexture->m_Width 
+            || m_Height != srcTexture->m_Height)
+	        LEV_THROW("Incompatible source texture")
+
+    	switch (m_TextureDimension)
         {
-            switch (m_TextureDimension)
-            {
-            case Dimension::Texture1D:
-            case Dimension::Texture1DArray:
-                context->CopyResource(m_Texture1D, srcTexture->m_Texture1D);
-                break;
-            case Dimension::Texture2D:
-            case Dimension::Texture2DArray:
-                context->CopyResource(m_Texture2D, srcTexture->m_Texture2D);
-                break;
-            case Dimension::Texture3D:
-            case Dimension::TextureCube:
-                context->CopyResource(m_Texture3D, srcTexture->m_Texture3D);
-                break;
-            }
-        }
-        else
-        {
-            LEV_THROW("Incompatible source texture")
+        case Dimension::Texture1D:
+        case Dimension::Texture1DArray:
+	        context->CopyResource(m_Texture1D, srcTexture->m_Texture1D);
+	        break;
+        case Dimension::Texture2D:
+        case Dimension::Texture2DArray:
+	        context->CopyResource(m_Texture2D, srcTexture->m_Texture2D);
+	        break;
+        case Dimension::Texture3D:
+        case Dimension::TextureCube:
+	        context->CopyResource(m_Texture3D, srcTexture->m_Texture3D);
+	        break;
         }
     }
 
@@ -2322,6 +2317,29 @@ void D3D11Texture::Copy(const Ref<Texture> other)
 
         context->Unmap(m_Texture2D, 0);
     }
+}
+
+Ref<Texture> D3D11Texture::Clone()
+{
+    Ref<D3D11Texture> other;
+    switch (m_TextureDimension)
+    {
+    case Dimension::Texture1D:
+    case Dimension::Texture1DArray:
+        LEV_NOT_IMPLEMENTED
+    case Dimension::Texture2D:
+    case Dimension::Texture2DArray:
+        other = CreateTexture2D(m_Width, m_Height, m_NumSlices, m_TextureFormat, m_CPUAccess, m_UAV);
+        break;
+    case Dimension::Texture3D:
+    case Dimension::TextureCube:
+        LEV_NOT_IMPLEMENTED
+    default:
+        LEV_THROW("Unknown texture dimension")
+    }
+    
+    CopyFrom(other);
+    return other;
 }
 
 void D3D11Texture::GenerateMipMaps()

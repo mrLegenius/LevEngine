@@ -31,5 +31,7 @@ private:
 	SceneState m_SceneState = SceneState::Edit;
 
 	Ref<Texture> m_IconPlay, m_IconStop;
+
+	Ref<Texture> m_FrameTexture;
 };
 

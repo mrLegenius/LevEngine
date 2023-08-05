@@ -71,6 +71,8 @@ void KatamariLayer::OnAttach()
     m_IconPlay = Texture::Create("resources/Icons/PlayButton.png");
     m_IconStop = Texture::Create("resources/Icons/StopButton.png");
 
+    m_FrameTexture = Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0)->Clone();
+
     m_Scene = CreateRef<Scene>();
 
     for (int i = 0; i < 1; i++)
@@ -434,6 +436,8 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     m_Scene->OnPhysics(deltaTime);
     m_Scene->OnLateUpdate(deltaTime);
     m_Scene->OnRender();
+
+    m_FrameTexture->CopyFrom(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
 }
 
 constexpr float toolbarSize = 10;
@@ -602,13 +606,11 @@ void KatamariLayer::DrawViewport()
 
     m_ViewportSize = Vector2{ viewportSize.x, viewportSize.y };
 
-    const auto mainTexture = Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0);
-
     ImGui::Image(
-        mainTexture->GetId(),
+        m_FrameTexture->GetId(),
         ImVec2(m_ViewportSize.x, m_ViewportSize.y),
-        ImVec2(0, 1),
-        ImVec2(1, 0)
+        ImVec2(0, 0),
+        ImVec2(1, 1)
     );
 
     if (ImGui::BeginDragDropTarget())

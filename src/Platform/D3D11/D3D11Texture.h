@@ -37,7 +37,8 @@ public:
 	[[nodiscard]] uint16_t GetDepth() const override { return m_NumSlices; }
 	[[nodiscard]] bool IsTransparent() const override { return m_IsTransparent; }
 	void Resize(uint16_t width, uint16_t height = 0, uint16_t depth = 0) override;
-	void Copy(Ref<Texture> other) override;
+	void CopyFrom(Ref<Texture> sourceTexture) override;
+	Ref<Texture> Clone() override;
 	uint8_t GetBPP() const override { return m_BPP; }
 
 	void GenerateMipMaps() override;

@@ -8,7 +8,7 @@ int main()
 
 	LEV_PROFILE_BEGIN_SESSION("Startup", "LevEngineProfile-Startup.json");
 
-	const auto app = new Application("My3DApp", 800, 800);
+	const auto app = new Application("My3DApp", 800, 600);
 	app->PushLayer(new KatamariLayer);
 	LEV_PROFILE_END_SESSION();
 
