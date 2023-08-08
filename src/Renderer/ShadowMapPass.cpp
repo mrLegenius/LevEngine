@@ -93,7 +93,6 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 	ShaderAssets::CascadeShadowPass()->Bind();
 
 	params.Camera.SetViewportSize(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
-	RenderCommand::SetViewport(0, 0, RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
 
 	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_ShadowMapConstantBuffer->Bind(Shader::Type::Geometry);

@@ -21,9 +21,6 @@ namespace LevEngine
 
         m_PipelineState->Bind();
 
-        const auto& window = Application::Get().GetWindow();
-        RenderCommand::SetViewport(0, 0, window.GetWidth(), window.GetHeight());
-
         const auto viewProjection = params.CameraViewMatrix * params.Camera.GetProjection();
 
         const CameraData cameraData{ params.CameraViewMatrix, viewProjection, params.CameraPosition };

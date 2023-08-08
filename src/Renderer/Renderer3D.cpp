@@ -49,8 +49,6 @@ void Renderer3D::SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMa
     const float width = window.GetWidth();
     const float height = window.GetHeight();
 
-    RenderCommand::SetViewport(0, 0, width, height);
-
     const auto viewProjection = viewMatrix * camera.GetProjection();
 
     const CameraData cameraData{  viewMatrix, viewProjection, position };

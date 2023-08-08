@@ -181,6 +181,13 @@ void Renderer::Init()
 		//TODO: Fix particle bounce
 		s_ForwardTechnique->AddPass(CreateRef<ParticlePass>(mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_NormalTexture));
 	}
+
+	Viewport viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height));
+
+	m_PositionalLightPipeline1->GetRasterizerState().SetViewport(viewport);
+	m_PositionalLightPipeline2->GetRasterizerState().SetViewport(viewport);
+	s_GBufferPipeline->GetRasterizerState().SetViewport(viewport);
+	s_OpaquePipeline->GetRasterizerState().SetViewport(viewport);
 }
 
 void Renderer::Shutdown()

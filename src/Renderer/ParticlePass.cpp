@@ -37,6 +37,12 @@ ParticlePass::ParticlePass(const Ref<Texture>& depthTexture, const Ref<Texture>&
 	m_PipelineState.GetRasterizerState().SetCullMode(CullMode::None);
 	m_PipelineState.SetRenderTarget(mainRenderTarget);
 
+	const auto& window = Application::Get().GetWindow();
+	const auto width = window.GetWidth();
+	const auto height = window.GetHeight();
+	Viewport viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height));
+	m_PipelineState.GetRasterizerState().SetViewport(viewport);
+
 	m_CameraData = ConstantBuffer::Create(sizeof ParticleCameraData, 0);
 	m_ComputeData = ConstantBuffer::Create(sizeof Handler, 1);
 	m_EmitterData = ConstantBuffer::Create(sizeof Emitter, 2);

@@ -14,9 +14,8 @@ public:
 	void DrawFullScreenQuad();
 	//void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
 
-	void SetLineWidth(float width);
+	//void SetLineWidth(float width);
 
-	void SetViewport(int x, int y, uint32_t width, uint32_t height);
 	void DrawPointList(uint32_t count);
 };
 }

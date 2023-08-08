@@ -299,6 +299,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h" />
     <ClInclude Include="src\Renderer\DeferredLightingPass.h" />
+    <ClInclude Include="src\Renderer\Rect.h" />
     <ClInclude Include="src\Renderer\RenderTechnique.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11StructuredBuffer.h" />
     <ClInclude Include="src\Renderer\DepthStencilState.h" />
@@ -327,6 +328,7 @@
     <ClInclude Include="src\Renderer\StructuredBuffer.h" />
     <ClInclude Include="src\Renderer\Texture.h" />
     <ClInclude Include="src\Renderer\VertexBuffer.h" />
+    <ClInclude Include="src\Renderer\Viewport.h" />
     <ClInclude Include="src\Scene\Components\Components.h" />
     <ClInclude Include="src\Scene\Entity.h" />
     <ClInclude Include="src\Scene\Scene.h" />

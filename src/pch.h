@@ -26,6 +26,8 @@
 #include "Math/Vector4.h"
 #include "Math/Matrix.h"
 #include "Math/Quaternion.h"
+#include "Renderer/Viewport.h"
+#include "Renderer/Rect.h"
 
 #ifdef LEV_PLATFORM_WINDOWS
 	#include <Windows.h>

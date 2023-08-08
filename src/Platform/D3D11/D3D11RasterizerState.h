@@ -17,5 +17,7 @@ public:
 
 private:
     ID3D11RasterizerState* m_RasterizerState = nullptr;
+    std::vector<D3D11_RECT> m_d3dRects;
+    std::vector<D3D11_VIEWPORT> m_d3dViewports;
 };
 }

@@ -41,6 +41,7 @@ CascadeShadowMap::CascadeShadowMap(const uint32_t width, const uint32_t height)
     m_RastState = RasterizerState::Create();
     m_RastState->SetCullMode(CullMode::None);
     m_RastState->SetFrontFaceFillMode(FillMode::Solid);
+    m_RastState->SetViewport({0, 0, RenderSettings::ShadowMapResolution , RenderSettings::ShadowMapResolution });
 }
 
 void CascadeShadowMap::Bind(const uint32_t slot) const
