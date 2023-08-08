@@ -120,7 +120,7 @@ void Renderer3D::RenderSphere(const Matrix& model)
     static Ref<Mesh> mesh;
     if (mesh == nullptr)
     {
-        mesh = Mesh::CreateSphere(10);
+        mesh = Mesh::CreateSphere(30);
         mesh->Init(ShaderAssets::DeferredVertexOnly()->GetLayout());
     }
 
