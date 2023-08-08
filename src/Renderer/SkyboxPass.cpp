@@ -14,34 +14,19 @@ struct alignas(16) CameraData
 	Vector3 Position;
 };
 
-SkyboxPass::SkyboxPass() 
+SkyboxPass::SkyboxPass(Ref<PipelineState> pipeline) : m_SkyboxPipeline(pipeline)
 {
-	//Pipeline
-	{
-		//TODO: maybe pass by parameter
-		const auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
-
-		m_SkyboxPipeline.SetRenderTarget(mainRenderTarget);
-
-		const DepthMode depthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual };
-		m_SkyboxPipeline.GetRasterizerState().SetCullMode(CullMode::None);
-		m_SkyboxPipeline.GetRasterizerState().SetDepthClipEnabled(false);
-		m_SkyboxPipeline.GetDepthStencilState()->SetDepthMode(depthMode);
-		m_SkyboxPipeline.SetShader(Shader::Type::Vertex, ShaderAssets::Skybox());
-		m_SkyboxPipeline.SetShader(Shader::Type::Pixel, ShaderAssets::Skybox());
-	}
-
 	m_SkyboxMesh = CreateRef<SkyboxMesh>(ShaderAssets::Skybox());
 	m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
 }
 
 void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 {
-	m_SkyboxPipeline.Bind();
-
 	const auto group = registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
 	for (const auto entity : group)
 	{
+		m_SkyboxPipeline->Bind();
+
 		auto [transform, skybox] = group.get<Transform, SkyboxRendererComponent>(entity);
 		skybox.texture->Bind(0, Shader::Type::Pixel);
 
@@ -52,8 +37,7 @@ void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 		RenderCommand::DrawIndexed(m_SkyboxMesh->VertexBuffer, m_SkyboxMesh->IndexBuffer);
 
 		skybox.texture->Unbind(0, Shader::Type::Pixel);
-
-		m_SkyboxPipeline.Unbind();
+		m_SkyboxPipeline->Unbind();
 		break;
 	}
 }

@@ -8,13 +8,13 @@ namespace LevEngine
 class SkyboxPass final : public RenderPass
 {
 public:
-	explicit SkyboxPass();
 
+	explicit SkyboxPass(Ref<PipelineState> pipeline);
 	void Process(entt::registry& registry, RenderParams& params) override;
 
 private:
 
-	PipelineState m_SkyboxPipeline;
+	Ref<PipelineState> m_SkyboxPipeline;
 	Ref<SkyboxMesh> m_SkyboxMesh;
 	Ref<ConstantBuffer> m_CameraConstantBuffer;
 };
