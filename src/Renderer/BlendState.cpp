@@ -6,6 +6,9 @@
 
 namespace LevEngine
 {
+	BlendMode BlendMode::AlphaBlending = BlendMode{ true, false, BlendFactor::SrcAlpha, BlendFactor::OneMinusSrcAlpha, BlendOperation::Add, BlendFactor::SrcAlpha, BlendFactor::OneMinusSrcAlpha };
+	BlendMode BlendMode::Additive = BlendMode{ true, false, BlendFactor::One, BlendFactor::One };
+
 	Ref<BlendState> BlendState::Create()
 	{
 		switch (RenderSettings::RendererAPI)

@@ -9,9 +9,6 @@ namespace LevEngine
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
-BlendMode BlendMode::AlphaBlending = BlendMode{ true, false, BlendFactor::SrcAlpha, BlendFactor::OneMinusSrcAlpha };
-BlendMode BlendMode::Additive = BlendMode{ true, false, BlendFactor::One, BlendFactor::One };
-
 D3D11_BLEND ConvertBlendFactor(const BlendFactor blendFactor)
 {
     D3D11_BLEND result = D3D11_BLEND_ONE;

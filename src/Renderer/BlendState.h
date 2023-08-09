@@ -123,7 +123,7 @@ namespace LevEngine
          */
         BlendWrite Write;
 
-        explicit BlendMode(bool enabled = false,
+    	explicit BlendMode(bool enabled = false,
             bool logicOpEnabled = false,
             BlendFactor srcFactor = BlendFactor::One,
             BlendFactor dstFactor = BlendFactor::Zero,

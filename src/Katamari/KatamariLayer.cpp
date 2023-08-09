@@ -412,20 +412,6 @@ void KatamariLayer::OnEvent(Event& e)
 
 static bool show_demo_window = true;
 
-void KatamariLayer::OnGUIRender()
-{
-    if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
-
-    LEV_PROFILE_FUNCTION();
-
-    DrawDockSpace();
-    DrawViewport();
-    //DrawStatistics();
-    DrawToolbar();
-    DrawStatusbar();
-}
-
 void KatamariLayer::OnUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
@@ -438,6 +424,20 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     m_Scene->OnRender();
 
     m_FrameTexture->CopyFrom(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+}
+
+void KatamariLayer::OnGUIRender()
+{
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
+
+    LEV_PROFILE_FUNCTION();
+
+    DrawDockSpace();
+    DrawViewport();
+    //DrawStatistics();
+    DrawToolbar();
+    DrawStatusbar();
 }
 
 constexpr float toolbarSize = 10;
