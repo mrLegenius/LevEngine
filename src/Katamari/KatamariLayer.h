@@ -1,6 +1,7 @@
 #pragma once
 #include "../Kernel/Layer.h"
 #include "../OrbitCamera.h"
+#include "Panels/ViewportPanel.h"
 #include "Renderer/Texture.h"
 #include "Scene/Scene.h"
 
@@ -12,17 +13,13 @@ public:
 	void DrawToolbar();
 	void DrawStatusbar();
 	void DrawDockSpace();
-	void DrawViewport();
 	void OnEvent(Event& event) override;
 	void OnGUIRender() override;
 
 private:
 	Ref<Scene> m_Scene;
 
-	bool m_ViewportFocused = false;
-	bool m_ViewportHovered = false;
-	Vector2 m_ViewportSize{ 0.0f };
-	Vector2 m_ViewportBounds[2];
+	Ref<Editor::ViewportPanel> m_Viewport;
 
 	enum class SceneState
 	{
@@ -31,7 +28,5 @@ private:
 	SceneState m_SceneState = SceneState::Edit;
 
 	Ref<Texture> m_IconPlay, m_IconStop;
-
-	Ref<Texture> m_FrameTexture;
 };
 
