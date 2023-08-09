@@ -37,16 +37,14 @@ void Renderer::Init()
 	Renderer3D::Init();
 
 	const auto& window = Application::Get().GetWindow();
-
-	const auto mainRenderTarget = window.GetContext()->GetRenderTarget();
-	s_DepthOnlyRenderTarget = RenderTarget::Create();
-	s_DepthOnlyRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil));
-
 	const auto width = window.GetWidth();
 	const auto height = window.GetHeight();
 
-	//Depth Texture
-	{
+	const auto mainRenderTarget = window.GetContext()->GetRenderTarget();
+
+	{ 
+		LEV_PROFILE_SCOPE("GBuffer depth texture creation");
+
 		const Texture::TextureFormat depthStencilTextureFormat(
 			Texture::Components::DepthStencil,
 			Texture::Type::UnsignedNormalized,
@@ -55,8 +53,9 @@ void Renderer::Init()
 		m_DepthTexture = Texture::CreateTexture2D(width, height, 1, depthStencilTextureFormat);
 	}
 
-	//Diffuse
 	{
+		LEV_PROFILE_SCOPE("GBuffer diffuse texture creation");
+
 		const Texture::TextureFormat diffuseTextureFormat(
 			Texture::Components::RGBA,
 			Texture::Type::UnsignedNormalized,
@@ -65,8 +64,9 @@ void Renderer::Init()
 		m_DiffuseTexture = Texture::CreateTexture2D(width, height, 1, diffuseTextureFormat);
 	}
 
-	//Specular
 	{
+		LEV_PROFILE_SCOPE("GBuffer specular texture creation");
+
 		const Texture::TextureFormat specularTextureFormat(
 			Texture::Components::RGBA,
 			Texture::Type::UnsignedNormalized,
@@ -75,8 +75,9 @@ void Renderer::Init()
 		m_SpecularTexture = Texture::CreateTexture2D(width, height, 1, specularTextureFormat);
 	}
 
-	//Normal
 	{
+		LEV_PROFILE_SCOPE("GBuffer normal texture creation");
+
 		const Texture::TextureFormat normalTextureFormat(
 			Texture::Components::RGBA,
 			Texture::Type::Float,
@@ -85,20 +86,34 @@ void Renderer::Init()
 		m_NormalTexture = Texture::CreateTexture2D(width, height, 1, normalTextureFormat);
 	}
 
-	s_GBufferRenderTarget = RenderTarget::Create();
-	s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color0, mainRenderTarget->GetTexture(AttachmentPoint::Color0));
-	s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color1, m_DiffuseTexture);
-	s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color2, m_SpecularTexture);
-	s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color3, m_NormalTexture);
-	s_GBufferRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, m_DepthTexture);
+	{
+		LEV_PROFILE_SCOPE("DepthOnly render target creation");
 
-	s_GBufferPipeline = CreateRef<PipelineState>();
-	s_GBufferPipeline->SetRenderTarget(s_GBufferRenderTarget);
-	s_GBufferPipeline->GetRasterizerState().SetCullMode(CullMode::Back);
-	s_GBufferPipeline->SetShader(Shader::Type::Vertex, ShaderAssets::GBufferPass());
-	s_GBufferPipeline->SetShader(Shader::Type::Pixel, ShaderAssets::GBufferPass());
+		s_DepthOnlyRenderTarget = RenderTarget::Create();
+		s_DepthOnlyRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil));
+	}
 
-	//Pipeline1 for point and spot lights
+	{
+		LEV_PROFILE_SCOPE("GBuffer render target creation");
+
+		s_GBufferRenderTarget = RenderTarget::Create();
+		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color0, mainRenderTarget->GetTexture(AttachmentPoint::Color0));
+		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color1, m_DiffuseTexture);
+		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color2, m_SpecularTexture);
+		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color3, m_NormalTexture);
+		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, m_DepthTexture);
+	}
+
+	{
+		LEV_PROFILE_SCOPE("GBuffer pipeline creation");
+
+		s_GBufferPipeline = CreateRef<PipelineState>();
+		s_GBufferPipeline->SetRenderTarget(s_GBufferRenderTarget);
+		s_GBufferPipeline->GetRasterizerState().SetCullMode(CullMode::Back);
+		s_GBufferPipeline->SetShader(Shader::Type::Vertex, ShaderAssets::GBufferPass());
+		s_GBufferPipeline->SetShader(Shader::Type::Pixel, ShaderAssets::GBufferPass());
+	}
+
 	{
 		LEV_PROFILE_SCOPE("Deferred lighting pipeline 1 creation");
 
@@ -122,9 +137,8 @@ void Renderer::Init()
 		m_PositionalLightPipeline1->SetShader(Shader::Type::Vertex, ShaderAssets::DeferredVertexOnly());
 	}
 
-	//Pipeline2 for point and spot lights
 	{
-		LEV_PROFILE_SCOPE("Deferred lighting pipeline 1 creation");
+		LEV_PROFILE_SCOPE("Deferred lighting pipeline 2 creation");
 
 		m_PositionalLightPipeline2 = CreateRef<PipelineState>();
 		m_PositionalLightPipeline2->SetRenderTarget(mainRenderTarget);
