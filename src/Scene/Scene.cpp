@@ -64,6 +64,15 @@ void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
     }
 }
 
+void Scene::ForEachEntity(const std::function<void(Entity)>& callback)
+{
+    m_Registry.each([&](const entt::entity entityID)
+    {
+	    const auto entity = ConvertEntity(entityID);
+	    callback(entity);
+    });
+}
+
 Entity Scene::CreateEntity(const std::string& name)
 {
     LEV_PROFILE_FUNCTION();

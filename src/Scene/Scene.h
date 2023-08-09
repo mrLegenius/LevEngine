@@ -23,6 +23,8 @@ public:
 
 	void OnViewportResized(uint32_t width, uint32_t height);
 
+	void ForEachEntity(const std::function<void(Entity)>& callback);
+
 	Entity CreateEntity(const std::string& name = "Entity");
 	Entity CreateEntity(UUID uuid, const std::string& name);
 

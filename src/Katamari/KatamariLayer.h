@@ -2,6 +2,7 @@
 #include "../Kernel/Layer.h"
 #include "../OrbitCamera.h"
 #include "Events/ApplicationEvent.h"
+#include "Panels/HierarchyPanel.h"
 #include "Panels/ViewportPanel.h"
 #include "Renderer/Texture.h"
 #include "Scene/Scene.h"
@@ -22,6 +23,7 @@ private:
 	Ref<Scene> m_Scene;
 
 	Ref<Editor::ViewportPanel> m_Viewport;
+	Ref<Editor::HierarchyPanel> m_Hierarchy;
 
 	enum class SceneState
 	{

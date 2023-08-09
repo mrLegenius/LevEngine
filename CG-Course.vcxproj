@@ -183,6 +183,7 @@
     </ClCompile>
     <ClCompile Include="src\GUI\ImGuiLayer.cpp" />
     <ClCompile Include="src\Katamari\KatamariLayer.cpp" />
+    <ClCompile Include="src\Katamari\Panels\HierarchyPanel.cpp" />
     <ClCompile Include="src\Katamari\Panels\PanelBase.cpp" />
     <ClCompile Include="src\Kernel\Color.cpp" />
     <ClCompile Include="src\Kernel\Logger.cpp" />
@@ -256,6 +257,7 @@
     <ClInclude Include="src\Debug\Profiler.h" />
     <ClInclude Include="src\GUI\ImGuiLayer.h" />
     <ClInclude Include="src\Katamari\KatamariPlayer.h" />
+    <ClInclude Include="src\Katamari\Panels\HierarchyPanel.h" />
     <ClInclude Include="src\Katamari\Panels\PanelBase.h" />
     <ClInclude Include="src\Kernel\Asserts.h" />
     <ClInclude Include="src\Kernel\Color.h" />

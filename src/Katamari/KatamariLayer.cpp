@@ -72,9 +72,10 @@ void KatamariLayer::OnAttach()
     m_IconPlay = Texture::Create("resources/Icons/PlayButton.png");
     m_IconStop = Texture::Create("resources/Icons/StopButton.png");
 
-    m_Viewport = CreateRef<Editor::ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-
     m_Scene = CreateRef<Scene>();
+
+    m_Viewport = CreateRef<Editor::ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+    m_Hierarchy = CreateRef<Editor::HierarchyPanel>(m_Scene);
 
     for (int i = 0; i < 1; i++)
     {
@@ -445,6 +446,7 @@ void KatamariLayer::OnGUIRender()
 
     DrawDockSpace();
     m_Viewport->Render();
+    m_Hierarchy->Render();
     //DrawStatistics();
     DrawToolbar();
     DrawStatusbar();

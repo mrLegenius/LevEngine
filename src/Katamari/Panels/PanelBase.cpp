@@ -8,7 +8,7 @@ namespace LevEngine::Editor
 	void Panel::Render()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::Begin("Viewport");
+		ImGui::Begin(GetName().c_str());
 
 		m_Focused = ImGui::IsWindowFocused();
 		m_Hovered = ImGui::IsWindowHovered();
