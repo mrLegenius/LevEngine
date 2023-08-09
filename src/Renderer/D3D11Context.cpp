@@ -21,10 +21,10 @@ D3D11Context::~D3D11Context()
 {
 	LEV_PROFILE_FUNCTION();
 
-	m_BackBuffer->Release();
-	context->Release();
-	device->Release();
-	swapChain->Release();
+	if (m_BackBuffer) m_BackBuffer->Release();
+	if (context) context->Release();
+	if (device) device->Release();
+	if (swapChain) swapChain->Release();
 }
 
 void D3D11Context::Init(const uint32_t width, const uint32_t height, const HWND window)
@@ -100,5 +100,30 @@ void D3D11Context::SwapBuffers()
 		context->CopyResource(m_BackBuffer, colorBuffer->GetTextureResource());
 
 	swapChain->Present(0, /*DXGI_PRESENT_DO_NOT_WAIT*/ 0);
+}
+
+void D3D11Context::ResizeBackBuffer(uint16_t width, uint16_t height)
+{
+	// If either the width or the height are 0, make them 1.
+	width = Math::Max<uint32_t>(width, 1);
+	height = Math::Max<uint32_t>(height, 1);
+
+	//// Make sure we're not referencing the render targets when the window is resized.
+	context->OMSetRenderTargets(0, nullptr, nullptr);
+
+	// Release the current render target views and texture resources.
+	if (m_BackBuffer) m_BackBuffer->Release();
+
+	// Resize the swap chain buffers.
+	{
+		const auto res = swapChain->ResizeBuffers(2, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+		LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to resize the swap chain buffer");
+	}
+	{
+		const auto res = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_BackBuffer));
+		LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to get back buffer pointer from swap chain");
+	}
+
+	m_RenderTarget->Resize(width, height);
 }
 }

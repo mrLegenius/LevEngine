@@ -97,7 +97,7 @@ class ParticlePass : public RenderPass
 	};
 
 public:
-	ParticlePass(const Ref<Texture>& depthTexture, const Ref<Texture>& normalTexture);
+	ParticlePass(const Ref<PipelineState>& pipelineState, const Ref<Texture>& depthTexture, const Ref<Texture>& normalTexture);
 	static Emitter GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex);
 
 	bool Begin(entt::registry& registry, RenderParams& params) override;
@@ -112,7 +112,7 @@ private:
 	Ref<StructuredBuffer> m_DeadBuffer;
 	Ref<StructuredBuffer> m_SortedBuffer;
 
-	PipelineState m_PipelineState;
+	Ref<PipelineState> m_PipelineState{};
 	Ref<ConstantBuffer> m_CameraData{};
 	Ref<ConstantBuffer> m_ComputeData{};
 	Ref<ConstantBuffer> m_EmitterData{};

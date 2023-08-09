@@ -154,6 +154,8 @@ bool Application::OnWindowResized(WindowResizedEvent& e)
 		return false;
 	}
 
+	m_Window->GetContext()->ResizeBackBuffer(e.GetWidth(), e.GetHeight());
+
 	m_Minimized = false;
 
 	return false;

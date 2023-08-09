@@ -3,8 +3,8 @@
 #include "ParticlePass.h"
 #include "RenderParams.h"
 #include "ShadowMapPass.h"
-#include "SkyboxPass.h"
 #include "entt/entt.hpp"
+#include "Katamari/KatamariLayer.h"
 
 namespace LevEngine
 {
@@ -17,6 +17,7 @@ public:
 	static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);
 	static void Render(entt::registry& registry);
 	static void Shutdown();
+	static void SetViewport(float width, float height);
 
 private:
 	static Ref<Texture> m_DepthTexture;
@@ -29,6 +30,7 @@ private:
 	static Ref<PipelineState> s_GBufferPipeline;
 	static Ref<PipelineState> s_OpaquePipeline;
 	static Ref<PipelineState> s_SkyboxPipeline;
+	static Ref<PipelineState> s_ParticlesPipelineState;
 	static Ref<PipelineState> m_PositionalLightPipeline1;
 	static Ref<PipelineState> m_PositionalLightPipeline2;
 

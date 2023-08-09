@@ -27,21 +27,9 @@ void BindTextureArray(Ref<D3D11Texture>* textures, const uint32_t count)
 	context->PSSetSamplers(0, count, ss);
 }
 
-ParticlePass::ParticlePass(const Ref<Texture>& depthTexture, const Ref<Texture>& normalTexture) : m_DepthTexture(depthTexture), m_NormalTexture(normalTexture)
+ParticlePass::ParticlePass(const Ref<PipelineState>& pipelineState, const Ref<Texture>& depthTexture, const Ref<Texture>& normalTexture) : m_PipelineState(pipelineState), m_DepthTexture(depthTexture), m_NormalTexture(normalTexture)
 {
 	LEV_PROFILE_FUNCTION();
-
-	const auto mainRenderTarget = Application::Get().GetWindow().GetContext()->GetRenderTarget();
-	m_PipelineState.GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
-	m_PipelineState.GetDepthStencilState()->SetDepthMode(DepthMode{ true, DepthWrite::Disable });
-	m_PipelineState.GetRasterizerState().SetCullMode(CullMode::None);
-	m_PipelineState.SetRenderTarget(mainRenderTarget);
-
-	const auto& window = Application::Get().GetWindow();
-	const auto width = window.GetWidth();
-	const auto height = window.GetHeight();
-	Viewport viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height));
-	m_PipelineState.GetRasterizerState().SetViewport(viewport);
 
 	m_CameraData = ConstantBuffer::Create(sizeof ParticleCameraData, 0);
 	m_ComputeData = ConstantBuffer::Create(sizeof Handler, 1);
@@ -213,7 +201,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	m_ParticlesBuffer->Bind(0, Shader::Type::Vertex, false);
 	m_SortedBuffer->Bind(2, Shader::Type::Vertex, false);
 
-	m_PipelineState.Bind();
+	m_PipelineState->Bind();
 
 	//TextureAssets::Particle()->Bind(1);
 	for (uint32_t i = 0; i < textureSlotIndex; i++)
@@ -225,7 +213,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	//<--- Clean ---<<
 	m_ParticlesBuffer->Unbind(0, Shader::Type::Vertex, false);
 	m_SortedBuffer->Unbind(2, Shader::Type::Vertex, false);
-	m_PipelineState.Unbind();
+	m_PipelineState->Unbind();
 	ShaderAssets::Particles()->Unbind();
 	TextureAssets::Particle()->Unbind(1, Shader::Type::Pixel);
 	for (uint32_t i = 0; i < textureSlotIndex; i++)

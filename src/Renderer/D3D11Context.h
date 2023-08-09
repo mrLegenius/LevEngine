@@ -13,6 +13,7 @@ public:
 	~D3D11Context();
 	void Init(uint32_t width, uint32_t height, HWND window);
 	void SwapBuffers();
+	void ResizeBackBuffer(uint16_t width, uint16_t height);
 
 	Ref<RenderTarget> GetRenderTarget() { return m_RenderTarget; }
 private:

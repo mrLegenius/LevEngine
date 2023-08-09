@@ -17,6 +17,8 @@
 #include <unordered_set>
 
 #include "Debugging/Profiler.h"
+
+#include "Kernel/Utils.h"
 #include "Kernel/Logger.h"
 #include "Kernel/Asserts.h"
 #include "Kernel/PointerUtils.h"

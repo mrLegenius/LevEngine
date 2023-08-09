@@ -1,6 +1,7 @@
 #pragma once
 #include "../Kernel/Layer.h"
 #include "../OrbitCamera.h"
+#include "Events/ApplicationEvent.h"
 #include "Panels/ViewportPanel.h"
 #include "Renderer/Texture.h"
 #include "Scene/Scene.h"
@@ -14,6 +15,7 @@ public:
 	void DrawStatusbar();
 	void DrawDockSpace();
 	void OnEvent(Event& event) override;
+	bool OnWindowResized(const WindowResizedEvent& e) const;
 	void OnGUIRender() override;
 
 private:

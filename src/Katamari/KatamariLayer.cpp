@@ -15,6 +15,7 @@
 #include "Physics/Components/CollisionEvent.h"
 #include "Physics/Events/CollisionEndEvent.h"
 #include "Renderer/Material.h"
+#include "Renderer/Renderer.h"
 
 void OnKatamariCollided(Entity me, Entity other)
 {
@@ -407,7 +408,16 @@ void KatamariLayer::OnAttach()
 
 void KatamariLayer::OnEvent(Event& e)
 {
-	
+    EventDispatcher dispatcher{ e };
+
+    dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(KatamariLayer::OnWindowResized));
+}
+
+bool KatamariLayer::OnWindowResized(const WindowResizedEvent& e) const
+{
+    m_Scene->OnViewportResized(e.GetWidth(), e.GetHeight());
+    Renderer::SetViewport(e.GetWidth(), e.GetHeight());
+    return false;
 }
 
 void KatamariLayer::OnUpdate(const float deltaTime)
