@@ -256,6 +256,7 @@
     <ClInclude Include="external\entt\entt.hpp" />
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="src\Assets.h" />
+    <ClInclude Include="src\Components\CameraComponentDrawer.h" />
     <ClInclude Include="src\Components\ComponentDrawer.h" />
     <ClInclude Include="src\Components\TransformDrawer.h" />
     <ClInclude Include="src\Debugging\Profiler.h" />

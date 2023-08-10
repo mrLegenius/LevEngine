@@ -81,8 +81,9 @@ namespace LevEngine
 		}
 
 	protected:
-		virtual void DrawContent(T& component) = 0;
 		[[nodiscard]] virtual std::string GetLabel() const = 0;
 		[[nodiscard]] virtual bool IsRemovable() const { return true; }
+
+		virtual void DrawContent(T& component) = 0;
 	};
 }

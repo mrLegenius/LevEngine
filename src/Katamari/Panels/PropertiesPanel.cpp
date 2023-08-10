@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 
+#include "Components/CameraComponentDrawer.h"
 #include "Components/TransformDrawer.h"
 #include "Scene/Entity.h"
 
@@ -13,8 +14,8 @@ namespace LevEngine::Editor
 	{
 		m_ComponentDrawers = {
 			CreateRef<TransformDrawer>(),
+			CreateRef<CameraComponentDrawer>(),
 		};
-
 	}
 
 	void PropertiesPanel::DrawComponents(Entity entity) const
@@ -53,62 +54,6 @@ namespace LevEngine::Editor
 
 	for (const Ref<IComponentDrawer>& componentDrawer : m_ComponentDrawers)
 		componentDrawer->Draw(entity);
-
-	/*GUIUtils::DrawComponent<CameraComponent>("Camera", entity, [](CameraComponent& component)
-	{
-		auto& camera = component.camera;
-		ImGui::Checkbox("Main", &component.isMain);
-		ImGui::Checkbox("Fixed aspect ratio", &component.fixedAspectRatio);
-		const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-		const char* currentProjectionTypeString = projectionTypeStrings[static_cast<int>(camera.GetProjectionType())];
-		if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-		{
-			for (int i = 0; i < 2; i++)
-			{
-				const bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-				if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
-				{
-					currentProjectionTypeString = projectionTypeStrings[i];
-					camera.SetProjectionType(static_cast<SceneCamera::ProjectionType>(i));
-				}
-
-				if (isSelected)
-				{
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-
-			ImGui::EndCombo();
-		}
-
-		if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
-		{
-			float size = camera.GetOrthographicSize();
-			if (ImGui::DragFloat("Orthographic size", &size))
-				camera.SetOrthographicSize(size);
-
-			float nearClip = camera.GetOrthographicNear();
-			if (ImGui::DragFloat("Near clip", &nearClip))
-				camera.SetOrthographicNear(nearClip);
-
-			float farClip = camera.GetOrthographicFar();
-			if (ImGui::DragFloat("Far clip", &farClip))
-				camera.SetOrthographicFar(farClip);
-		}
-		else if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
-		{
-			float fov = Math::ToDegrees(camera.GetFieldOfView());
-			ImGui::DragFloat("Field of View", &fov);
-			camera.SetFieldOfView(fov);
-
-			float nearClip = camera.GetPerspectiveNear();
-			ImGui::DragFloat("Near clip", &nearClip);
-			camera.SetPerspectiveNear(nearClip);
-
-			float farClip = camera.GetPerspectiveFar();
-			ImGui::DragFloat("Far clip", &farClip);
-			camera.SetPerspectiveFar(farClip);
-	}});*/
 
 	/*DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [](auto& component)
 	{

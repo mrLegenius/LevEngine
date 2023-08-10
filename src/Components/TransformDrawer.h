@@ -8,9 +8,10 @@ namespace LevEngine
 {
 	class TransformDrawer final : public ComponentDrawer<Transform>
 	{
-	public:
-		~TransformDrawer() override = default;
 	protected:
+		std::string GetLabel() const override { return "Transform"; }
+		bool IsRemovable() const override { return false; }
+
 		void DrawContent(Transform& component) override
 		{
 			auto position = component.GetLocalPosition();
@@ -25,8 +26,5 @@ namespace LevEngine
 			GUIUtils::DrawVector3Control("Scale", scale, 1.0f);
 			component.SetLocalScale(scale);
 		}
-
-		std::string GetLabel() const override { return "Transform"; }
-		bool IsRemovable() const override { return false; }
 	};
 }
