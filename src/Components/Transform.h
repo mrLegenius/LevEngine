@@ -1,9 +1,6 @@
 #pragma once
 #include <set>
 
-#include "Math/Matrix.h"
-#include "Math/Vector3.h"
-
 struct Transform
 {
 	Transform()
@@ -225,6 +222,6 @@ private:
 	Vector3 prevRotation = Vector3::Zero;
 	Vector3 prevScale = Vector3::One;
 	Transform* prevParent;
-
-	
 };
+
+

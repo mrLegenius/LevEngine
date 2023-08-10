@@ -177,6 +177,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Components\Transform.cpp" />
+    <ClCompile Include="src\GUI\GUIUtils.cpp" />
     <ClCompile Include="src\GUI\ImGuiBuild.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -255,8 +256,11 @@
     <ClInclude Include="external\entt\entt.hpp" />
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="src\Assets.h" />
+    <ClInclude Include="src\Components\ComponentDrawer.h" />
+    <ClInclude Include="src\Components\TransformDrawer.h" />
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\Debug\Profiler.h" />
+    <ClInclude Include="src\GUI\GUIUtils.h" />
     <ClInclude Include="src\GUI\ImGuiLayer.h" />
     <ClInclude Include="src\Katamari\EntitySelection.h" />
     <ClInclude Include="src\Katamari\KatamariPlayer.h" />
