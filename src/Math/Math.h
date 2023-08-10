@@ -7,6 +7,9 @@ namespace LevEngine
 	public:
 
 		static constexpr float FloatEpsilon = 0.000001;
+		static constexpr float Pi = 3.141592653589793238463;
+		static constexpr float RadToDeg = 180.0 / 3.141592653589793238463;
+		static constexpr float DegToRad = 3.141592653589793238463 / 180.0;
 
 		template<typename T>
 		static T Max(const T a, const T b) { return ((a) > (b)) ? (a) : (b); }
@@ -39,5 +42,11 @@ namespace LevEngine
 		{
 			return std::abs(a - b) < FloatEpsilon;
 		}
+
+		template<typename T>
+		constexpr static T ToDegrees(const T value) { return value * RadToDeg; }
+
+		template<typename T>
+		constexpr static T ToRadians(const T value) { return value * DegToRad; }
 	};
 }

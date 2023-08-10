@@ -1,8 +1,10 @@
 #pragma once
+#include "EntitySelection.h"
 #include "../Kernel/Layer.h"
 #include "../OrbitCamera.h"
 #include "Events/ApplicationEvent.h"
 #include "Panels/HierarchyPanel.h"
+#include "Panels/PropertiesPanel.h"
 #include "Panels/ViewportPanel.h"
 #include "Renderer/Texture.h"
 #include "Scene/Scene.h"
@@ -22,8 +24,10 @@ public:
 private:
 	Ref<Scene> m_Scene;
 
+	Ref<Editor::EntitySelection> m_EntitySelection;
 	Ref<Editor::ViewportPanel> m_Viewport;
 	Ref<Editor::HierarchyPanel> m_Hierarchy;
+	Ref<Editor::PropertiesPanel> m_Properties;
 
 	enum class SceneState
 	{

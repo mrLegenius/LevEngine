@@ -7,7 +7,7 @@
 
 namespace LevEngine::Editor
 {
-	HierarchyPanel::HierarchyPanel(const Ref<Scene>& scene) : m_Context(scene) { }
+	HierarchyPanel::HierarchyPanel(const Ref<Scene>& scene, const Ref<EntitySelection>& selection) : m_Context(scene), m_Selection(selection) { }
 
 	void HierarchyPanel::DrawContent()
 	{
@@ -18,7 +18,7 @@ namespace LevEngine::Editor
 			});
 
 		if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(0))
-			m_SelectionContext = {};
+			m_Selection->Set({});
 
 		//Right click on a blank space
 		if (ImGui::BeginPopupContextWindow(nullptr, 1, false))
@@ -30,12 +30,12 @@ namespace LevEngine::Editor
 		}
 	}
 
-	void HierarchyPanel::DrawEntityNode(Entity entity)
+	void HierarchyPanel::DrawEntityNode(Entity entity) const
 	{
 		const auto& tag = entity.GetComponent<TagComponent>().tag;
 
 		const auto flags =
-			(m_SelectionContext == entity ? ImGuiTreeNodeFlags_Selected : 0)
+			(m_Selection->Get() == entity ? ImGuiTreeNodeFlags_Selected : 0)
 			| ImGuiTreeNodeFlags_OpenOnArrow
 			| ImGuiTreeNodeFlags_SpanAvailWidth;
 
@@ -43,7 +43,7 @@ namespace LevEngine::Editor
 
 		if (ImGui::IsItemClicked())
 		{
-			m_SelectionContext = entity;
+			m_Selection->Set(entity);
 		}
 
 		bool entityDeleted = false;
@@ -63,8 +63,8 @@ namespace LevEngine::Editor
 		if (entityDeleted)
 		{
 			m_Context->DestroyEntity(entity);
-			if (m_SelectionContext == entity)
-				m_SelectionContext = { };
+			if (m_Selection->Get() == entity)
+				m_Selection->Set({});
 		}
 
 	}

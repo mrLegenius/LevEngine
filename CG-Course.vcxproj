@@ -182,9 +182,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\GUI\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Katamari\EntitySelection.cpp" />
     <ClCompile Include="src\Katamari\KatamariLayer.cpp" />
     <ClCompile Include="src\Katamari\Panels\HierarchyPanel.cpp" />
     <ClCompile Include="src\Katamari\Panels\PanelBase.cpp" />
+    <ClCompile Include="src\Katamari\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Kernel\Color.cpp" />
     <ClCompile Include="src\Kernel\Logger.cpp" />
     <ClCompile Include="src\Kernel\Time.cpp" />
@@ -256,9 +258,11 @@
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\Debug\Profiler.h" />
     <ClInclude Include="src\GUI\ImGuiLayer.h" />
+    <ClInclude Include="src\Katamari\EntitySelection.h" />
     <ClInclude Include="src\Katamari\KatamariPlayer.h" />
     <ClInclude Include="src\Katamari\Panels\HierarchyPanel.h" />
     <ClInclude Include="src\Katamari\Panels\PanelBase.h" />
+    <ClInclude Include="src\Katamari\Panels\PropertiesPanel.h" />
     <ClInclude Include="src\Kernel\Asserts.h" />
     <ClInclude Include="src\Kernel\Color.h" />
     <ClInclude Include="src\Kernel\Logger.h" />
