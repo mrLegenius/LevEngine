@@ -222,12 +222,12 @@ void KatamariLayer::OnAttach()
     {
         auto go = Prefabs::Sphere(m_Scene);
         auto& light = go.AddComponent<PointLightComponent>();
-        const auto color = Vector3(
+        const auto color = Color(
             Random::Float(0, 100) / 100.0f,
             Random::Float(0, 100) / 100.0f,
             Random::Float(0, 100) / 100.0f);
 
-        light.Color = color;
+        light.color = color;
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Float(-50, 50), 3, Random::Float(-50, 50)));
     }
 
@@ -288,7 +288,7 @@ void KatamariLayer::OnAttach()
     auto& events = player.AddComponent<CollisionEvents>();
     events.onCollisionBegin.connect<&OnKatamariCollided>();
     auto& playerLight = player.AddComponent<PointLightComponent>();
-    playerLight.Color = Vector3(1.0f, 0.0f, 0.0f);
+    playerLight.color = Color(1.0f, 0.0f, 0.0f);
 
     //<--- Camera ---<<
     auto camera = m_Scene->CreateEntity("Camera");
@@ -307,7 +307,7 @@ void KatamariLayer::OnAttach()
     dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
     dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150)); 
     auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
-    dirLightComponent.Color = Vector3{ 0.9f, 0.9f, 0.9f };
+    dirLightComponent.color = Color{ 0.9f, 0.9f, 0.9f };
 
     auto& lightCamera = dirLight.AddComponent<CameraComponent>();
     lightCamera.camera.SetProjectionType(SceneCamera::ProjectionType::Orthographic);

@@ -79,7 +79,7 @@ void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const Directional
     LEV_PROFILE_FUNCTION();
 
     s_LightningData.DirLight.Direction = dirLightDirection;
-    s_LightningData.DirLight.Color = dirLight.Color;
+    s_LightningData.DirLight.Color = static_cast<Vector3>(dirLight.color);
 }
 
 void Renderer3D::AddPointLights(const Vector4& positionViewSpace, const Vector3& position, const PointLightComponent& pointLight)
@@ -96,7 +96,7 @@ void Renderer3D::AddPointLights(const Vector4& positionViewSpace, const Vector3&
 
     pointLightData.PositionViewSpace = positionViewSpace;
     pointLightData.Position = position;
-    pointLightData.Color = pointLight.Color;
+    pointLightData.Color = static_cast<Vector3>(pointLight.color);
     pointLightData.Range = pointLight.Range;
     pointLightData.Intensity = pointLight.Intensity;
     pointLightData.Smoothness = pointLight.Smoothness;

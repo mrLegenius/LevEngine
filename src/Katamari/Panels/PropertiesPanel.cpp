@@ -4,17 +4,19 @@
 #include <imgui.h>
 
 #include "Scene/Entity.h"
-#include "Scene/Components/Camera/CameraComponentDrawer.h"
-#include "Scene/Components/Transform/TransformDrawer.h"
+#include "../ComponentDrawers/CameraComponentDrawer.h"
+#include "../ComponentDrawers/TransformDrawer.h"
+#include "../ComponentDrawers/LightsDrawer.h"
 
 namespace LevEngine::Editor
 {
-
 	PropertiesPanel::PropertiesPanel(const Ref<EntitySelection>& entitySelection) : m_Selection(entitySelection)
 	{
 		m_ComponentDrawers = {
 			CreateRef<TransformDrawer>(),
 			CreateRef<CameraComponentDrawer>(),
+			CreateRef<DirectionalLightDrawer>(),
+			CreateRef<PointLightDrawer>(),
 		};
 	}
 

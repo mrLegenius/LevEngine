@@ -58,7 +58,7 @@ namespace LevEngine
 
 	struct DirectionalLightComponent
 	{
-		Vector3 Color = Vector3(1.0f);
+		Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
 		DirectionalLightComponent() = default;
 		DirectionalLightComponent(const DirectionalLightComponent&) = default;
@@ -66,7 +66,7 @@ namespace LevEngine
 
 	struct PointLightComponent
 	{
-		Vector3 Color = Vector3(1.0f);
+		Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
 		float Range = 10.0f;
 		float Smoothness = 0.75f;

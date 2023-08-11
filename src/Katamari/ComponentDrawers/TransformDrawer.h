@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Transform.h"
+#include "Scene/Components/Transform/Transform.h"
 #include "GUI/GUIUtils.h"
 #include "Math/Math.h"
 
