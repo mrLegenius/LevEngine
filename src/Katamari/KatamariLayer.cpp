@@ -334,7 +334,7 @@ void KatamariLayer::OnAttach()
     //<--- Torch ---<<
     {
         auto entity = m_Scene->CreateEntity("Torch");
-        auto mesh = entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), FancyTorch::Mesh());
+        auto& mesh = entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), FancyTorch::Mesh());
         mesh.castShadow = false;
         mesh.material.SetTexture(Material::TextureType::Ambient, FancyTorch::AmbientTexture());
         mesh.material.SetTexture(Material::TextureType::Diffuse, FancyTorch::AmbientTexture());
