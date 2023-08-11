@@ -1710,7 +1710,11 @@ D3D11Texture::D3D11Texture(const std::string& path) : Texture(path)
 
 	stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 4);
 
-	if (!data) return;
+    if (!data)
+    {
+        Log::CoreWarning("Failed to load texture from {0}", path);
+        return;
+    }
 
     if (channels == 4)
     {
@@ -1719,6 +1723,10 @@ D3D11Texture::D3D11Texture(const std::string& path) : Texture(path)
 	else if (channels == 3)
     {
         m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+    }
+    else if (channels == 1)
+    {
+        m_TextureResourceFormat = DXGI_FORMAT_R8_UNORM;
     }
     else
     {

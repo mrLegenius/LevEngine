@@ -3,6 +3,7 @@
 #include "../Kernel/Layer.h"
 #include "../OrbitCamera.h"
 #include "Events/ApplicationEvent.h"
+#include "Panels/AssetsBrowserPanel.h"
 #include "Panels/HierarchyPanel.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/ViewportPanel.h"
@@ -28,6 +29,7 @@ private:
 	Ref<Editor::ViewportPanel> m_Viewport;
 	Ref<Editor::HierarchyPanel> m_Hierarchy;
 	Ref<Editor::PropertiesPanel> m_Properties;
+	Ref<Editor::AssetsBrowserPanel> m_AssetsBrowser;
 
 	enum class SceneState
 	{

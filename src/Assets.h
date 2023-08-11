@@ -105,28 +105,28 @@ struct FancyTorch
 
 	static auto AmbientTexture()
 	{
-		static auto texture = Texture::Create(GetAssetPath("FancyTorch_albedo.png"));
+		static auto texture = Texture::Create(GetAssetPath("FancyTorchIron_albedo.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto EmissiveTexture()
 	{
-		static auto texture = Texture::Create(GetAssetPath("FancyTorch_gloss.png"));
+		static auto texture = Texture::Create(GetAssetPath("FancyTorchIron_gloss.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto SpecularTexture()
 	{
-		static auto texture = Texture::Create(GetAssetPath("FancyTorch_metal.png"));
+		static auto texture = Texture::Create(GetAssetPath("FancyTorchIron_metal.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto NormalTexture()
 	{
-		static auto texture = Texture::Create(GetAssetPath("FancyTorch_normal.png"));
+		static auto texture = Texture::Create(GetAssetPath("FancyTorchIron_normal.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}

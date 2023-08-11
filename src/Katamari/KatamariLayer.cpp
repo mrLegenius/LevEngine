@@ -78,6 +78,7 @@ void KatamariLayer::OnAttach()
     m_Viewport = CreateRef<Editor::ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
     m_Hierarchy = CreateRef<Editor::HierarchyPanel>(m_Scene, m_EntitySelection);
     m_Properties = CreateRef<Editor::PropertiesPanel>(m_EntitySelection);
+    m_AssetsBrowser = CreateRef<Editor::AssetsBrowserPanel>();
 
     for (int i = 0; i < 1; i++)
     {
@@ -454,6 +455,7 @@ void KatamariLayer::OnGUIRender()
     m_Viewport->Render();
     m_Hierarchy->Render();
     m_Properties->Render();
+    m_AssetsBrowser->Render();
     //DrawStatistics();
     DrawToolbar();
     DrawStatusbar();
