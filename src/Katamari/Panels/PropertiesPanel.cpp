@@ -7,6 +7,7 @@
 #include "../ComponentDrawers/CameraComponentDrawer.h"
 #include "../ComponentDrawers/TransformDrawer.h"
 #include "../ComponentDrawers/LightsDrawer.h"
+#include "../ComponentDrawers/EmitterDrawer.h"
 
 namespace LevEngine::Editor
 {
@@ -17,6 +18,7 @@ namespace LevEngine::Editor
 			CreateRef<CameraComponentDrawer>(),
 			CreateRef<DirectionalLightDrawer>(),
 			CreateRef<PointLightDrawer>(),
+			CreateRef<EmitterDrawer>(),
 		};
 	}
 
@@ -131,24 +133,6 @@ namespace LevEngine::Editor
 			ImGui::EndDragDropTarget();
 		}
 	});*/
-
-	/*DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)
-		{
-			ImGui::ColorEdit3("Ambient", glm::value_ptr(component.Ambient));
-	ImGui::ColorEdit3("Diffuse", glm::value_ptr(component.Diffuse));
-	ImGui::ColorEdit3("Specular", glm::value_ptr(component.Specular));
-		});
-
-	DrawComponent<PointLightComponent>("Point Light", entity, [](auto& component)
-		{
-			ImGui::ColorEdit3("Ambient", glm::value_ptr(component.Ambient));
-	ImGui::ColorEdit3("Diffuse", glm::value_ptr(component.Diffuse));
-	ImGui::ColorEdit3("Specular", glm::value_ptr(component.Specular));
-
-	ImGui::DragFloat("Constant", &component.constant);
-	ImGui::DragFloat("Linear", &component.linear);
-	ImGui::DragFloat("Quadratic", &component.quadratic);
-		});*/
 }
 
 void PropertiesPanel::DrawTexture2D(const std::string& label, std::function<void(const Ref<Texture>&)> onTextureLoaded)

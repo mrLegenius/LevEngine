@@ -1,6 +1,11 @@
 #include "ParticlesCommon.hlsl"
 #include "Random.hlsl"
 
+float Lerp(float a, float b, float t)
+{
+    return a + t * (b - a);
+}
+
 struct RandomFloat
 {
 	float From;
@@ -63,11 +68,14 @@ struct RandomFloat4
 	float4 GetRandom(NumberGenerator rng)
 	{
 		if (Randomize)
-			return float4(rng.GetRandomFloat(From.x, To.x), rng.GetRandomFloat(From.y, To.y), rng.GetRandomFloat(From.z, To.z), rng.GetRandomFloat(From.w, To.w));
+        {
+            float delta = rng.GetRandomFloat(0, 1);
+            return float4(Lerp(From.x, To.x, delta), Lerp(From.y, To.y, delta), Lerp(From.z, To.z, delta), Lerp(From.w, To.w, delta));
+        }
 		else
-			return From;
-	}
-};
+            return From;
+        }
+    };
 
 cbuffer Emitter : register(b2)
 {

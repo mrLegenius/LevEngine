@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Scene/Components/ComponentDrawer.h"
+#include "ComponentDrawer.h"
 
 namespace LevEngine
 {

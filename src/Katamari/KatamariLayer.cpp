@@ -429,9 +429,13 @@ void KatamariLayer::OnUpdate(const float deltaTime)
 
     //window.DisableCursor();
 
-    m_Scene->OnUpdate(deltaTime);
-    m_Scene->OnPhysics(deltaTime);
-    m_Scene->OnLateUpdate(deltaTime);
+    if (m_Viewport->IsFocused())
+    {
+        m_Scene->OnUpdate(deltaTime);
+        m_Scene->OnPhysics(deltaTime);
+        m_Scene->OnLateUpdate(deltaTime);
+    }
+    
     m_Scene->OnRender();
 
     m_Viewport->UpdateViewportTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));

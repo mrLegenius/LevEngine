@@ -133,5 +133,6 @@ namespace LevEngine
 		OrbitCamera,
 		CameraComponent,
 		DirectionalLightComponent,
-		PointLightComponent>;
+		PointLightComponent,
+		EmitterComponent>;
 }

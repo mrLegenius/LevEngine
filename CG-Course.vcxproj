@@ -256,10 +256,11 @@
     <ClInclude Include="external\entt\entt.hpp" />
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="src\Assets.h" />
+    <ClInclude Include="src\Katamari\ComponentDrawers\EmitterDrawer.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\LightsDrawer.h" />
     <ClInclude Include="src\Scene\Components\Camera\CameraComponent.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\CameraComponentDrawer.h" />
-    <ClInclude Include="src\Scene\Components\ComponentDrawer.h" />
+    <ClInclude Include="src\Katamari\ComponentDrawers\ComponentDrawer.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\TransformDrawer.h" />
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\Debug\Profiler.h" />

@@ -1,6 +1,7 @@
 #pragma once
 #include <random>
 
+#include "Math.h"
 #include "Kernel/Color.h"
 
 namespace LevEngine
@@ -118,6 +119,25 @@ struct Random
 #pragma endregion
 
 #pragma region Color
+
+	/**
+	 * \return Color with each element is same and in [min, max] and a = alpha
+	 */
+	static LevEngine::Color SmoothColor(const float min, const float max, const float alpha = 1.0f)
+	{
+		const auto delta = Float();
+		const auto value = Math::Lerp(min, max, delta);
+		return LevEngine::Color{ value, value, value, alpha };
+	}
+
+	/**
+	 * \return Color with random lerp color from a to b
+	 */
+	static LevEngine::Color SmoothColor(const LevEngine::Color& a, const LevEngine::Color& b)
+	{
+		const auto delta = Float();
+		return LevEngine::Color{ Math::Lerp(a.r, b.r, delta), Math::Lerp(a.g,b.g, delta), Math::Lerp(a.b, b.b, delta), Math::Lerp(a.a, b.a, delta) };
+	}
 
 	/**
 	 * \return Color with each element in [min, max] and a = alpha

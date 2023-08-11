@@ -8,6 +8,9 @@ namespace LevEngine::Editor
 		virtual ~Panel() = default;
 		void Render();
 
+		[[nodiscard]] bool IsFocused() const { return m_Focused; }
+		[[nodiscard]] bool IsHovered() const { return m_Hovered; }
+
 	protected:
 		virtual std::string GetName() = 0;
 		virtual void DrawContent() = 0;
