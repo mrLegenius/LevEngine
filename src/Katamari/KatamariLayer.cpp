@@ -78,7 +78,7 @@ void KatamariLayer::OnAttach()
     m_Viewport = CreateRef<Editor::ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
     m_Hierarchy = CreateRef<Editor::HierarchyPanel>(m_Scene, m_EntitySelection);
     m_Properties = CreateRef<Editor::PropertiesPanel>(m_EntitySelection);
-    m_AssetsBrowser = CreateRef<Editor::AssetsBrowserPanel>();
+    m_AssetsBrowser = CreateRef<Editor::AssetBrowserPanel>();
 
     for (int i = 0; i < 1; i++)
     {

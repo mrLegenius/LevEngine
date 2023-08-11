@@ -29,7 +29,7 @@ private:
 	Ref<Editor::ViewportPanel> m_Viewport;
 	Ref<Editor::HierarchyPanel> m_Hierarchy;
 	Ref<Editor::PropertiesPanel> m_Properties;
-	Ref<Editor::AssetsBrowserPanel> m_AssetsBrowser;
+	Ref<Editor::AssetBrowserPanel> m_AssetsBrowser;
 
 	enum class SceneState
 	{

@@ -176,7 +176,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Katamari\Panels\AssetsBrowserPanel.cpp" />
+    <ClCompile Include="src\Katamari\Panels\AssetBrowserPanel.cpp" />
     <ClCompile Include="src\Scene\Components\Transform\Transform.cpp" />
     <ClCompile Include="src\GUI\GUIUtils.cpp" />
     <ClCompile Include="src\GUI\ImGuiBuild.cpp">
@@ -260,7 +260,7 @@
     <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\EmitterDrawer.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\LightsDrawer.h" />
-    <ClInclude Include="src\Katamari\Panels\AssetsBrowserPanel.h" />
+    <ClInclude Include="src\Katamari\Panels\AssetBrowserPanel.h" />
     <ClInclude Include="src\Scene\Components\Camera\CameraComponent.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\CameraComponentDrawer.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\ComponentDrawer.h" />

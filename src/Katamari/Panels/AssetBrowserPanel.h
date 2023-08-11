@@ -4,13 +4,13 @@
 
 namespace LevEngine::Editor
 {
-	class AssetsBrowserPanel : public Panel
+	class AssetBrowserPanel : public Panel
 	{
     public:
-        AssetsBrowserPanel();
+        AssetBrowserPanel();
 
 protected:
-    std::string GetName() override { return "Assets Browser"; }
+    std::string GetName() override { return "Asset Browser"; }
         void DrawContent() override;
 
     private:

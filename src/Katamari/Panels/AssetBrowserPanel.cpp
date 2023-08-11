@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "AssetsBrowserPanel.h"
+#include "AssetBrowserPanel.h"
 
 #include <imgui.h>
 
@@ -8,15 +8,13 @@
 
 namespace LevEngine::Editor
 {
-
-
-    AssetsBrowserPanel::AssetsBrowserPanel() : m_CurrentDirectory(GUIUtils::AssetsPath)
+    AssetBrowserPanel::AssetBrowserPanel() : m_CurrentDirectory(GUIUtils::AssetsPath)
     {
         m_DirectoryIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\DirectoryIcon.png");
         m_FileIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\FileIcon.png");
     }
 
-    void AssetsBrowserPanel::DrawContent()
+    void AssetBrowserPanel::DrawContent()
     {
         if (m_CurrentDirectory != GUIUtils::AssetsPath)
         {
