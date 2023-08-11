@@ -3,7 +3,7 @@
 #include "../Kernel/Layer.h"
 #include "../OrbitCamera.h"
 #include "Events/ApplicationEvent.h"
-#include "Panels/AssetsBrowserPanel.h"
+#include "Panels/AssetBrowserPanel.h"
 #include "Panels/HierarchyPanel.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/ViewportPanel.h"
