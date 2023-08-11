@@ -1,5 +1,6 @@
 #pragma once
 
+#include "TextureLibrary.h"
 #include "Katamari/ObjLoader.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Material.h"
@@ -65,21 +66,21 @@ struct LavaRockAssets
 
 	static auto AmbientTexture()
 	{
-		static auto texture = Texture::Create(GetTexturePath("LavaRock/ambient.jpg"));
+		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/ambient.jpg"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto EmissiveTexture()
 	{
-		static auto texture = Texture::Create(GetTexturePath("LavaRock/emissive.jpg"));
+		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/emissive.jpg"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto SpecularTexture()
 	{
-		static auto texture = Texture::Create(GetTexturePath("LavaRock/specular.jpg"));
+		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/specular.jpg"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
@@ -87,7 +88,7 @@ struct LavaRockAssets
 
 	static auto NormalTexture()
 	{
-		static auto texture = Texture::Create(GetTexturePath("LavaRock/normal.jpg"));
+		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/normal.jpg"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
@@ -105,28 +106,28 @@ struct FancyTorch
 
 	static auto AmbientTexture()
 	{
-		static auto texture = Texture::Create(GetAssetPath("FancyTorchIron_albedo.png"));
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_albedo.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto EmissiveTexture()
 	{
-		static auto texture = Texture::Create(GetAssetPath("FancyTorchIron_gloss.png"));
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_gloss.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto SpecularTexture()
 	{
-		static auto texture = Texture::Create(GetAssetPath("FancyTorchIron_metal.png"));
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_metal.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto NormalTexture()
 	{
-		static auto texture = Texture::Create(GetAssetPath("FancyTorchIron_normal.png"));
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_normal.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
@@ -348,49 +349,49 @@ namespace TextureAssets
 {
     inline Ref<Texture> Bricks()
     {
-        static auto texture = Texture::Create(GetTexturePath("bricks.jpg"));
+        static auto texture = TextureLibrary::GetTexture(GetTexturePath("bricks.jpg"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
         return texture;
     }
 
 	inline Ref<Texture> Particle()
 	{
-		static auto texture = Texture::Create(GetTexturePath("particle.png"));
+		static auto texture = TextureLibrary::GetTexture(GetTexturePath("particle.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	inline Ref<Texture> Smoke()
 	{
-		static auto texture = Texture::Create(GetTexturePath("smoke.png"));
+		static auto texture = TextureLibrary::GetTexture(GetTexturePath("smoke.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
     inline Ref<Texture> Log()
     {
-        static auto texture = Texture::Create(GetTexturePath("log.jpg"));
+        static auto texture = TextureLibrary::GetTexture(GetTexturePath("log.jpg"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
         return texture;
     }
 
     inline Ref<Texture> Gear()
     {
-        static auto texture = Texture::Create(GetTexturePath("gear.png"));
+        static auto texture = TextureLibrary::GetTexture(GetTexturePath("gear.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
         return texture;
     }
 
     inline Ref<Texture> Rock()
     {
-        static auto texture = Texture::Create(GetTexturePath("rock.tga"));
+        static auto texture = TextureLibrary::GetTexture(GetTexturePath("rock.tga"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
         return texture;
     }
 
 	inline Ref<Texture> Fire()
 	{
-		static auto texture = Texture::Create(GetTexturePath("fire.png"));
+		static auto texture = TextureLibrary::GetTexture(GetTexturePath("fire.png"));
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}

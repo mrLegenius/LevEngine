@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include "TextureLibrary.h"
 #include "Scene/Entity.h"
 
 namespace LevEngine
@@ -92,5 +93,31 @@ namespace LevEngine
 		float value = getter();
 		if (ImGui::DragFloat(label.c_str(), &value))
 			setter(value);
+	}
+
+	void GUIUtils::DrawTexture2D(const std::string& label, const Ref<Texture>& texture, const std::function<void(const Ref<Texture>&)>& onTextureLoaded)
+	{
+		ImGui::Text(label.c_str(), ImVec2(100.0f, 0.0f));
+		ImGui::SameLine();
+		ImGui::Image(texture->GetId(), ImVec2(100.0f, 100.0f));
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
+			{
+				const auto path = static_cast<const wchar_t*>(payload->Data);
+				const std::filesystem::path texturePath = AssetsPath / path;
+				const Ref<Texture>& texture = TextureLibrary::GetTexture(texturePath.string());
+
+				if (texture->IsLoaded())
+				{
+					onTextureLoaded(texture);
+				}
+				else
+				{
+					Log::CoreWarning("Failed to load texture {0}", texturePath.filename().string());
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
 	}
 }

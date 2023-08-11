@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 
+#include "TextureLibrary.h"
 #include "Scene/Entity.h"
 #include "../ComponentDrawers/CameraComponentDrawer.h"
 #include "../ComponentDrawers/TransformDrawer.h"
@@ -137,14 +138,14 @@ namespace LevEngine::Editor
 
 void PropertiesPanel::DrawTexture2D(const std::string& label, std::function<void(const Ref<Texture>&)> onTextureLoaded)
 {
-	/*ImGui::Button(label.c_str(), ImVec2(100.0f, 0.0f));
+	ImGui::Button(label.c_str(), ImVec2(100.0f, 0.0f));
 	if (ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
 		{
-			auto path = (const wchar_t*)payload->Data;
-			std::filesystem::path texturePath = std::filesystem::path(g_AssetsPath) / path;
-			Ref<Texture> texture = Texture::Create(texturePath.string());
+			const auto path = static_cast<const wchar_t*>(payload->Data);
+			const std::filesystem::path texturePath = GUIUtils::AssetsPath / path;
+			const Ref<Texture>& texture = TextureLibrary::GetTexture(texturePath.string());
 
 			if (texture->IsLoaded())
 			{
@@ -156,7 +157,7 @@ void PropertiesPanel::DrawTexture2D(const std::string& label, std::function<void
 			}
 		}
 		ImGui::EndDragDropTarget();
-	}*/
+	}
 }
 template<typename T>
 void PropertiesPanel::DrawAddComponent(const std::string& label) const

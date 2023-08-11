@@ -252,6 +252,7 @@
     <ClCompile Include="src\MySuper3DApp.cpp" />
     <ClCompile Include="src\Kernel\Window.cpp" />
     <ClCompile Include="src\Katamari\Panels\ViewportPanel.cpp" />
+    <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\entt\entt.hpp" />
@@ -373,6 +374,7 @@
     <ClInclude Include="src\Scene\System.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />
     <ClInclude Include="src\Katamari\Panels\ViewportPanel.h" />
+    <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

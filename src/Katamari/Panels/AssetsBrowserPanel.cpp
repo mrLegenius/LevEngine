@@ -3,11 +3,14 @@
 
 #include <imgui.h>
 
+#include "TextureLibrary.h"
+#include "GUI/GUIUtils.h"
+
 namespace LevEngine::Editor
 {
-    extern const std::filesystem::path g_AssetsPath = "resources";
 
-    AssetsBrowserPanel::AssetsBrowserPanel() : m_CurrentDirectory(g_AssetsPath)
+
+    AssetsBrowserPanel::AssetsBrowserPanel() : m_CurrentDirectory(GUIUtils::AssetsPath)
     {
         m_DirectoryIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\DirectoryIcon.png");
         m_FileIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\FileIcon.png");
@@ -15,7 +18,7 @@ namespace LevEngine::Editor
 
     void AssetsBrowserPanel::DrawContent()
     {
-        if (m_CurrentDirectory != std::filesystem::path(g_AssetsPath))
+        if (m_CurrentDirectory != GUIUtils::AssetsPath)
         {
             if (ImGui::Button("<-"))
             {
@@ -41,17 +44,29 @@ namespace LevEngine::Editor
         {
             const auto& path = directoryEntry.path();
             std::string filenameString = path.filename().string();
+            std::string fileExtension = path.extension().string();
 
             ImGui::PushID(filenameString.c_str());
-            const Ref<Texture>& icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+            Ref<Texture> icon = nullptr;
+            if (directoryEntry.is_directory())
+            {
+                icon = m_DirectoryIcon;
+            }
+            else if (fileExtension == ".png"
+                || fileExtension == ".jpg"
+                || fileExtension == ".tga")
+                icon = TextureLibrary::GetTexture(path.string());
+            else
+                icon = m_FileIcon;
+
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton(icon->GetId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
             if (ImGui::BeginDragDropSource())
             {
-                auto relativePath = std::filesystem::relative(path, g_AssetsPath);
+                auto relativePath = std::filesystem::relative(path, GUIUtils::AssetsPath);
                 const wchar_t* itemPath = relativePath.c_str();
-                ImGui::SetDragDropPayload("ASSETS_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+                ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
                 ImGui::EndDragDropSource();
             }
 
