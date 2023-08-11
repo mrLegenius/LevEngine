@@ -6,6 +6,7 @@
 #include "Kernel/Application.h"
 #include "RenderCommand.h"
 #include "RenderSettings.h"
+#include "Math/Random.h"
 #include "Platform/D3D11/D3D11SamplerState.h"
 #include "Platform/D3D11/D3D11Texture.h"
 
@@ -158,7 +159,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 		m_EmitterData->SetData(&emitterData);
 		m_EmitterData->Bind(Shader::Type::Compute);
 
-		RandomGPUData randomData{ rand() };
+		RandomGPUData randomData{ Random::Int(0, std::numeric_limits<int>::max())};
 		m_RandomData->SetData(&randomData);
 		m_RandomData->Bind(Shader::Type::Compute);
 
