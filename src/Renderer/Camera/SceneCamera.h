@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Components/Transform.h"
-
 namespace LevEngine
 {
 class SceneCamera
@@ -63,7 +61,7 @@ public:
 	void SetPerspective(float fov, float nearClip, float farClip);
 
 	void SetFieldOfView(const float fov) { m_FieldOfView = DirectX::XMConvertToRadians(fov); RecalculateProjection(); }
-	[[nodiscard]] float GetFieldOfView() const { return m_FieldOfView; }
+	[[nodiscard]] float GetFieldOfView() const { return DirectX::XMConvertToDegrees(m_FieldOfView); }
 
 	void SetPerspectiveNear(const float nearClip) { m_PerspectiveNear = nearClip; RecalculateProjection(); }
 	[[nodiscard]] float GetPerspectiveNear() const { return m_PerspectiveNear; }

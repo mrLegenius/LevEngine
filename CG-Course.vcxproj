@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{2a55e557-b373-429a-8956-3cc8caeb792d}</ProjectGuid>
-    <RootNamespace>CGCourse</RootNamespace>
+    <RootNamespace>LevEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -176,7 +176,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Components\Transform.cpp" />
+    <ClCompile Include="src\Scene\Components\Transform\Transform.cpp" />
     <ClCompile Include="src\GUI\GUIUtils.cpp" />
     <ClCompile Include="src\GUI\ImGuiBuild.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -256,9 +256,10 @@
     <ClInclude Include="external\entt\entt.hpp" />
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="src\Assets.h" />
-    <ClInclude Include="src\Components\CameraComponentDrawer.h" />
-    <ClInclude Include="src\Components\ComponentDrawer.h" />
-    <ClInclude Include="src\Components\TransformDrawer.h" />
+    <ClInclude Include="src\Scene\Components\Camera\CameraComponent.h" />
+    <ClInclude Include="src\Scene\Components\Camera\CameraComponentDrawer.h" />
+    <ClInclude Include="src\Scene\Components\ComponentDrawer.h" />
+    <ClInclude Include="src\Scene\Components\Transform\TransformDrawer.h" />
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\Debug\Profiler.h" />
     <ClInclude Include="src\GUI\GUIUtils.h" />
@@ -281,7 +282,7 @@
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
-    <ClInclude Include="src\Components\Transform.h" />
+    <ClInclude Include="src\Scene\Components\Transform\Transform.h" />
     <ClInclude Include="src\Katamari\KatamariLayer.h" />
     <ClInclude Include="src\Katamari\ObjLoader.h" />
     <ClInclude Include="src\Math\Math.h" />

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Math/Math.h"
-#include "Components/Transform.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {

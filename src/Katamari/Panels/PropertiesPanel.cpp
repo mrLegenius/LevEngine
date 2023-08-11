@@ -3,9 +3,9 @@
 
 #include <imgui.h>
 
-#include "Components/CameraComponentDrawer.h"
-#include "Components/TransformDrawer.h"
 #include "Scene/Entity.h"
+#include "Scene/Components/Camera/CameraComponentDrawer.h"
+#include "Scene/Components/Transform/TransformDrawer.h"
 
 namespace LevEngine::Editor
 {

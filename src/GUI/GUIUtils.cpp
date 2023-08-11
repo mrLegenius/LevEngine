@@ -8,7 +8,7 @@
 
 namespace LevEngine
 {
-	void GUIUtils::DrawVector3Control(const std::string& label, Vector3& values, const float resetValue, const float columnWidth)
+	bool GUIUtils::DrawVector3Control(const std::string& label, Vector3& values, const float resetValue, const float columnWidth)
 	{
 		// -- Init -------------------------------------------------------
 		const ImGuiIO& io = ImGui::GetIO();
@@ -27,6 +27,8 @@ namespace LevEngine
 		const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
 
+		bool changed = false;
+
 		// -- X Component ------------------------------------------------
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
@@ -40,7 +42,7 @@ namespace LevEngine
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
-		ImGui::DragFloat("##X", &values.x, 0.1f);
+		changed |= ImGui::DragFloat("##X", &values.x, 0.1f);
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -57,7 +59,7 @@ namespace LevEngine
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
-		ImGui::DragFloat("##Y", &values.y, 0.1f);
+		changed |= ImGui::DragFloat("##Y", &values.y, 0.1f);
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -74,12 +76,21 @@ namespace LevEngine
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
-		ImGui::DragFloat("##Z", &values.z, 0.1f);
+		changed |= ImGui::DragFloat("##Z", &values.z, 0.1f);
 		ImGui::PopItemWidth();
 
 		// -- Reset ------------------------------------------------------
 		ImGui::PopStyleVar();
 		ImGui::Columns();
 		ImGui::PopID();
+
+		return changed;
+	}
+
+	void GUIUtils::DrawFloatControl(const std::string& label, std::function<float()> getter, std::function<void(float)> setter)
+	{
+		float value = getter();
+		if (ImGui::DragFloat(label.c_str(), &value))
+			setter(value);
 	}
 }

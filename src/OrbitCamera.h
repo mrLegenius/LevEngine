@@ -1,7 +1,7 @@
 #pragma once
 #include "entt/entt.hpp"
-#include "Renderer/Camera/SceneCamera.h"
 #include "Scene/System.h"
+#include "Scene/Components/Transform/Transform.h"
 
 using namespace LevEngine;
 

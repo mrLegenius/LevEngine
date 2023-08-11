@@ -1,8 +1,8 @@
 #pragma once
 #include "Components/Rigidbody.h"
 #include "Components/Collider.h"
-#include "Components/Transform.h"
 #include "entt/entt.hpp"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {

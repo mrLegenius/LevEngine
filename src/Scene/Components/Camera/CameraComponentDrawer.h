@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "ComponentDrawer.h"
 #include "GUI/GUIUtils.h"
+#include "Scene/Components/ComponentDrawer.h"
 
 namespace LevEngine
 {
@@ -38,31 +38,15 @@ namespace LevEngine
 
 			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 			{
-				float size = camera.GetOrthographicSize();
-				if (ImGui::DragFloat("Orthographic size", &size))
-					camera.SetOrthographicSize(size);
-
-				float nearClip = camera.GetOrthographicNear();
-				if (ImGui::DragFloat("Near clip", &nearClip))
-					camera.SetOrthographicNear(nearClip);
-
-				float farClip = camera.GetOrthographicFar();
-				if (ImGui::DragFloat("Far clip", &farClip))
-					camera.SetOrthographicFar(farClip);
+				GUIUtils::DrawFloatControl("Orthographic size", BindGetter(&SceneCamera::GetOrthographicSize, &camera), BindSetter(&SceneCamera::SetOrthographicSize, &camera));
+				GUIUtils::DrawFloatControl("Near clip", BindGetter(&SceneCamera::GetOrthographicNear, &camera), BindSetter(&SceneCamera::SetOrthographicNear, &camera));
+				GUIUtils::DrawFloatControl("Far clip", BindGetter(&SceneCamera::GetOrthographicFar, &camera), BindSetter(&SceneCamera::SetOrthographicNear, &camera));
 			}
 			else if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 			{
-				float fov = Math::ToDegrees(camera.GetFieldOfView());
-				ImGui::DragFloat("Field of View", &fov);
-				camera.SetFieldOfView(fov);
-
-				float nearClip = camera.GetPerspectiveNear();
-				ImGui::DragFloat("Near clip", &nearClip);
-				camera.SetPerspectiveNear(nearClip);
-
-				float farClip = camera.GetPerspectiveFar();
-				ImGui::DragFloat("Far clip", &farClip);
-				camera.SetPerspectiveFar(farClip);
+				GUIUtils::DrawFloatControl("Field of View", BindGetter(&SceneCamera::GetFieldOfView, &camera), BindSetter(&SceneCamera::SetFieldOfView, &camera));
+				GUIUtils::DrawFloatControl("Near clip", BindGetter(&SceneCamera::GetPerspectiveNear, &camera), BindSetter(&SceneCamera::SetPerspectiveNear, &camera));
+				GUIUtils::DrawFloatControl("Far clip", BindGetter(&SceneCamera::GetPerspectiveFar, &camera), BindSetter(&SceneCamera::SetPerspectiveFar, &camera));
 			}
 		}
 	};

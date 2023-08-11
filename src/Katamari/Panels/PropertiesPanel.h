@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "PanelBase.h"
-#include "Components/ComponentDrawer.h"
 #include "Katamari/EntitySelection.h"
 #include "Scene/Entity.h"
+#include "Scene/Components/ComponentDrawer.h"
 
 namespace LevEngine::Editor
 {

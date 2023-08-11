@@ -11,6 +11,8 @@
 #include "Physics/Components/Collider.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Renderer/Material.h"
+#include "Transform/Transform.h"
+
 namespace LevEngine
 {
 	struct IDComponent
