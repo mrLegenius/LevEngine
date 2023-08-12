@@ -37,7 +37,10 @@ namespace LevEngine
 		ImGui::PushFont(boldFont);
 
 		if (ImGui::Button("X", buttonSize))
+		{
 			values.x = resetValue;
+			changed = true;
+		}
 
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
@@ -54,7 +57,10 @@ namespace LevEngine
 		ImGui::PushFont(boldFont);
 
 		if (ImGui::Button("Y", buttonSize))
+		{
 			values.y = resetValue;
+			changed = true;
+		}
 
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
@@ -71,7 +77,10 @@ namespace LevEngine
 		ImGui::PushFont(boldFont);
 
 		if (ImGui::Button("Z", buttonSize))
+		{
 			values.z = resetValue;
+			changed = true;
+		}
 
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
