@@ -18,18 +18,25 @@ public:
 	void DrawToolbar();
 	void DrawStatusbar();
 	void DrawDockSpace();
+	void CreateNewScene();
+	void OpenScene();
+	void OpenScene(const std::filesystem::path& path);
+	void SaveScene();
+	void SaveSceneAs();
 	void OnEvent(Event& event) override;
 	bool OnWindowResized(const WindowResizedEvent& e) const;
 	void OnGUIRender() override;
 
 private:
-	Ref<Scene> m_Scene;
+	Ref<Scene> m_ActiveScene;
 
 	Ref<Editor::EntitySelection> m_EntitySelection;
 	Ref<Editor::ViewportPanel> m_Viewport;
 	Ref<Editor::HierarchyPanel> m_Hierarchy;
 	Ref<Editor::PropertiesPanel> m_Properties;
 	Ref<Editor::AssetBrowserPanel> m_AssetsBrowser;
+	std::filesystem::path m_EditorScenePath;
+	std::shared_ptr<Scene> m_EditorScene;
 
 	enum class SceneState
 	{

@@ -11,11 +11,13 @@
 #include "Physics/Physics.h"
 #include "KatamariPlayer.h"
 #include "../Prefabs.h"
+#include "Kernel/PlatformUtils.h"
 #include "Math/Random.h"
 #include "Physics/Components/CollisionEvent.h"
 #include "Physics/Events/CollisionEndEvent.h"
 #include "Renderer/Material.h"
 #include "Renderer/Renderer.h"
+#include "Scene/Serializers/SceneSerializer.h"
 
 void OnKatamariCollided(Entity me, Entity other)
 {
@@ -72,17 +74,17 @@ void KatamariLayer::OnAttach()
     m_IconPlay = Texture::Create("resources/Icons/PlayButton.png");
     m_IconStop = Texture::Create("resources/Icons/StopButton.png");
 
-    m_Scene = CreateRef<Scene>();
+    m_ActiveScene = CreateRef<Scene>();
     m_EntitySelection = CreateRef<Editor::EntitySelection>();
 
     m_Viewport = CreateRef<Editor::ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-    m_Hierarchy = CreateRef<Editor::HierarchyPanel>(m_Scene, m_EntitySelection);
+    m_Hierarchy = CreateRef<Editor::HierarchyPanel>(m_ActiveScene, m_EntitySelection);
     m_Properties = CreateRef<Editor::PropertiesPanel>(m_EntitySelection);
     m_AssetsBrowser = CreateRef<Editor::AssetBrowserPanel>();
 
     for (int i = 0; i < 1; i++)
     {
-        auto go = Prefabs::Gear(m_Scene);
+        auto go = Prefabs::Gear(m_ActiveScene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Float(-20, 20), 2, Random::Float(-20, 20)));
 
         auto& particles = go.AddComponent<EmitterComponent>();
@@ -116,13 +118,13 @@ void KatamariLayer::OnAttach()
 
     for (int i = 0; i < 0; i++)
     {
-	   	auto go = Prefabs::Log(m_Scene);
+	   	auto go = Prefabs::Log(m_ActiveScene);
         go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Float(-100, 100), 1, Random::Float(-100, 100)));
     }
 
     for (int i = 0; i < 1; i++)
     {
-        auto entity = m_Scene->CreateEntity("LavaRock");
+        auto entity = m_ActiveScene->CreateEntity("LavaRock");
         auto& transform = entity.GetComponent<Transform>();
 
         //<--- Transform ---<<
@@ -144,7 +146,7 @@ void KatamariLayer::OnAttach()
 
         //<--- Mesh ---<<
         {
-            auto mesh = m_Scene->CreateEntity("LavaRockMesh");
+            auto mesh = m_ActiveScene->CreateEntity("LavaRockMesh");
 
             mesh.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
             mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.2f);
@@ -165,7 +167,7 @@ void KatamariLayer::OnAttach()
 
         //<--- Fire Particles ---<<
         {
-            auto fireParticles = m_Scene->CreateEntity("LavaRock Fire Particles");
+            auto fireParticles = m_ActiveScene->CreateEntity("LavaRock Fire Particles");
             fireParticles.GetComponent<Transform>().SetParent(&transform, false);
             fireParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 0, 0 });
             auto& particles = fireParticles.AddComponent<EmitterComponent>();
@@ -193,7 +195,7 @@ void KatamariLayer::OnAttach()
 
         //<--- Smoke Particles ---<<
         {
-            auto smokeParticles = m_Scene->CreateEntity("LavaRock Smoke Particles");
+            auto smokeParticles = m_ActiveScene->CreateEntity("LavaRock Smoke Particles");
             smokeParticles.GetComponent<Transform>().SetParent(&transform, false);
             auto& particles = smokeParticles.AddComponent<EmitterComponent>();
             particles.Rate = 1;
@@ -221,7 +223,7 @@ void KatamariLayer::OnAttach()
 
     for (int i = 0; i < 0; i++)
     {
-        auto go = Prefabs::Sphere(m_Scene);
+        auto go = Prefabs::Sphere(m_ActiveScene);
         auto& light = go.AddComponent<PointLightComponent>();
         const auto color = Color(
             Random::Float(0, 100) / 100.0f,
@@ -233,7 +235,7 @@ void KatamariLayer::OnAttach()
     }
 
     //<--- Floor ---<<
-    auto floor = m_Scene->CreateEntity("Floor");
+    auto floor = m_ActiveScene->CreateEntity("Floor");
     auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     floorMesh.castShadow = false;
     floorMesh.material.SetTexture(Material::TextureType::Ambient, TextureAssets::Bricks());
@@ -249,7 +251,7 @@ void KatamariLayer::OnAttach()
     floorCollider.extents = Vector3(150, 0.5f, 150);
 
     //<--- Player ---<<
-    auto player = m_Scene->CreateEntity("Player");
+    auto player = m_ActiveScene->CreateEntity("Player");
     auto& playerMesh = player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45));
     playerMesh.material = Materials::Ruby();
 
@@ -292,18 +294,18 @@ void KatamariLayer::OnAttach()
     playerLight.color = Color(1.0f, 0.0f, 0.0f);
 
     //<--- Camera ---<<
-    auto camera = m_Scene->CreateEntity("Camera");
+    auto camera = m_ActiveScene->CreateEntity("Camera");
     camera.AddComponent<OrbitCamera>().SetTarget(playerTransform);
     camera.AddComponent<CameraComponent>();
     camera.GetComponent<Transform>().SetWorldPosition(Vector3{ 50, 100, 200 });
     camera.GetComponent<Transform>().SetWorldRotation(Vector3{ -30, 15, 0 });
 
     //<--- Skybox ---<<
-    auto skybox = m_Scene->CreateEntity("Skybox");
+    auto skybox = m_ActiveScene->CreateEntity("Skybox");
     skybox.AddComponent<SkyboxRendererComponent>(SkyboxAssets::Interstellar());
 
     //<--- DirLight ---<<
-    auto dirLight = m_Scene->CreateEntity("DirLight");
+    auto dirLight = m_ActiveScene->CreateEntity("DirLight");
     auto& dirLightTransform = dirLight.GetComponent<Transform>();
     dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
     dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150)); 
@@ -316,7 +318,7 @@ void KatamariLayer::OnAttach()
     lightCamera.isMain = true;
 
     //<--- Wall ---<<
-    auto wall = m_Scene->CreateEntity("Wall");
+    auto wall = m_ActiveScene->CreateEntity("Wall");
     auto& wallMesh = wall.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     wallMesh.material = Materials::BlackPlastic();
     auto& wallT = wall.GetComponent<Transform>();
@@ -324,7 +326,7 @@ void KatamariLayer::OnAttach()
     wallT.SetWorldPosition(Vector3(150, 10, 50));
 
     //<--- Peak ---<<
-    auto peak = m_Scene->CreateEntity("Peak");
+    auto peak = m_ActiveScene->CreateEntity("Peak");
     auto& peakMesh = peak.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
     peakMesh.material = Materials::Brass();
     auto& peakT = peak.GetComponent<Transform>();
@@ -333,7 +335,7 @@ void KatamariLayer::OnAttach()
 
     //<--- Torch ---<<
     {
-        auto entity = m_Scene->CreateEntity("Torch");
+        auto entity = m_ActiveScene->CreateEntity("Torch");
         auto& mesh = entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), FancyTorch::Mesh());
         mesh.castShadow = false;
         mesh.material.SetTexture(Material::TextureType::Ambient, FancyTorch::AmbientTexture());
@@ -347,7 +349,7 @@ void KatamariLayer::OnAttach()
 
         //<--- Fire Particles ---<<
         {
-            auto fireParticles = m_Scene->CreateEntity("Torch Fire Particles");
+            auto fireParticles = m_ActiveScene->CreateEntity("Torch Fire Particles");
             fireParticles.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
             fireParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 50, 0 });
             auto& particles = fireParticles.AddComponent<EmitterComponent>();
@@ -375,7 +377,7 @@ void KatamariLayer::OnAttach()
 
         //<--- Smoke Particles ---<<
         {
-            auto smokeParticles = m_Scene->CreateEntity("Torch Smoke Particles");
+            auto smokeParticles = m_ActiveScene->CreateEntity("Torch Smoke Particles");
             smokeParticles.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
             smokeParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 50, 0 });
             auto& particles = smokeParticles.AddComponent<EmitterComponent>();
@@ -402,12 +404,12 @@ void KatamariLayer::OnAttach()
     }
 
     //<--- Systems ---<<
-	m_Scene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
-    m_Scene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
-    m_Scene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
-    m_Scene->RegisterUpdateSystem(CreateRef<TestSystem>());
-    m_Scene->RegisterOneFrame<CollisionBeginEvent>();
-    m_Scene->RegisterOneFrame<CollisionEndEvent>();
+	m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
+    m_ActiveScene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
+    m_ActiveScene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
+    m_ActiveScene->RegisterUpdateSystem(CreateRef<TestSystem>());
+    m_ActiveScene->RegisterOneFrame<CollisionBeginEvent>();
+    m_ActiveScene->RegisterOneFrame<CollisionEndEvent>();
 }
 
 void KatamariLayer::OnEvent(Event& e)
@@ -419,7 +421,7 @@ void KatamariLayer::OnEvent(Event& e)
 
 bool KatamariLayer::OnWindowResized(const WindowResizedEvent& e) const
 {
-    m_Scene->OnViewportResized(e.GetWidth(), e.GetHeight());
+    m_ActiveScene->OnViewportResized(e.GetWidth(), e.GetHeight());
     Renderer::SetViewport(e.GetWidth(), e.GetHeight());
     return false;
 }
@@ -432,12 +434,12 @@ void KatamariLayer::OnUpdate(const float deltaTime)
 
     if (m_Viewport->IsFocused())
     {
-        m_Scene->OnUpdate(deltaTime);
-        m_Scene->OnPhysics(deltaTime);
-        m_Scene->OnLateUpdate(deltaTime);
+        m_ActiveScene->OnUpdate(deltaTime);
+        m_ActiveScene->OnPhysics(deltaTime);
+        m_ActiveScene->OnLateUpdate(deltaTime);
     }
     
-    m_Scene->OnRender();
+    m_ActiveScene->OnRender();
 
     m_Viewport->UpdateViewportTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
 }
@@ -576,26 +578,19 @@ void KatamariLayer::DrawDockSpace()
         if (ImGui::BeginMenu("File"))
         {
             if (ImGui::MenuItem("New Scene", "Ctrl+N"))
-            {
-                //CreateNewScene();
-            }
+	            CreateNewScene();
 
             if (ImGui::MenuItem("Open Scene...", "Ctrl+O"))
-            {
-                //OpenScene();
-            }
+	            OpenScene();
 
             if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
-            {
-                //SaveScene();
-            }
+	            SaveScene();
 
             if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
-            {
-                //SaveSceneAs();
-            }
+	            SaveSceneAs();
 
-            if (ImGui::MenuItem("Exit")) Application::Get().Close();
+            if (ImGui::MenuItem("Exit")) 
+                Application::Get().Close();
 
             ImGui::EndMenu();
         }
@@ -604,4 +599,71 @@ void KatamariLayer::DrawDockSpace()
     }
 
     ImGui::End();
+}
+
+void KatamariLayer::CreateNewScene()
+{
+    m_EditorScene = m_ActiveScene = CreateRef<Scene>();
+    /*m_ActiveScene->OnViewportResized(
+        static_cast<uint32_t>(m_Viewport->GetWidth()),
+        static_cast<uint32_t>(m_Viewport->GetHeight()));*/
+    m_Hierarchy->SetContext(m_ActiveScene);
+    m_EditorScenePath = std::filesystem::path();
+}
+
+void KatamariLayer::OpenScene()
+{
+    const auto filepath = FileDialogs::OpenFile("LevEngine Scene (*.scene)\0*.scene\0");
+    if (!filepath.empty())
+    {
+        OpenScene(filepath);
+    }
+}
+
+void KatamariLayer::OpenScene(const std::filesystem::path& path)
+{
+    if (path.extension().string() != ".scene")
+    {
+        Log::Warning("Failed to open scene. {0} is not a scene file", path.filename().string());
+        return;
+    }
+
+    //if (m_SceneState != SceneState::Edit)
+        //OnSceneStop();
+
+    Ref<Scene> newScene = CreateRef<Scene>();
+    SceneSerializer sceneSerializer(newScene);
+    if (sceneSerializer.Deserialize(path.generic_string()))
+    {
+        m_EditorScene = newScene;
+        /*m_ActiveScene->OnViewportResized(
+            static_cast<uint32_t>(m_Viewport->GetWidth()),
+            static_cast<uint32_t>(m_Viewport->GetHeight()));*/
+        m_Hierarchy->SetContext(m_EditorScene);
+        m_EditorScenePath = path;
+        m_ActiveScene = newScene;
+    }
+}
+
+void KatamariLayer::SaveScene()
+{
+    if (!m_EditorScenePath.empty())
+    {
+	    const SceneSerializer sceneSerializer(m_ActiveScene);
+        sceneSerializer.Serialize(m_EditorScenePath.string());
+    }
+    else
+        SaveSceneAs();
+}
+
+void KatamariLayer::SaveSceneAs()
+{
+    const auto filepath = FileDialogs::SaveFile("LevEngine Scene (*.scene)\0*.scene\0");
+    if (!filepath.empty())
+    {
+	    const SceneSerializer sceneSerializer(m_ActiveScene);
+        sceneSerializer.Serialize(filepath);
+
+        m_EditorScenePath = filepath;
+    }
 }

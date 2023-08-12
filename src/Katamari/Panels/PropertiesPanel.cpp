@@ -3,7 +3,6 @@
 
 #include <imgui.h>
 
-#include "TextureLibrary.h"
 #include "Scene/Entity.h"
 #include "../ComponentDrawers/CameraComponentDrawer.h"
 #include "../ComponentDrawers/TransformDrawer.h"
@@ -98,78 +97,6 @@ namespace LevEngine::Editor
 			component.Mesh = Mesh::CreateCube();
 		}
 	});*/
-
-	/*DrawComponent<SkyboxRendererComponent>("Skybox Renderer", entity, [](auto& component)
-	{
-		ImGui::Button("Skybox textures", ImVec2(100.0f, 0.0f));
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
-			{
-				auto path = (const wchar_t*)payload->Data;
-				const std::filesystem::path skyboxDirectory = std::filesystem::path(g_AssetsPath) / path;
-
-				std::string paths[6];
-				int i = 0;
-
-				for (auto& directoryEntry : std::filesystem::directory_iterator(skyboxDirectory))
-				{
-					if (i == 6) break;
-					if (directoryEntry.is_directory()) continue;
-
-					const auto& texturePath = directoryEntry.path();
-					const std::string filenameString = texturePath.string();
-
-					paths[i] = filenameString;
-					i++;
-				}
-
-				Ref<Texture> texture = Texture::CreateTextureCube(paths);
-
-				if (texture->IsLoaded())
-				{
-					component.Texture = texture;
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
-	});*/
-}
-
-void PropertiesPanel::DrawTexture2D(const std::string& label, std::function<void(const Ref<Texture>&)> onTextureLoaded)
-{
-	ImGui::Button(label.c_str(), ImVec2(100.0f, 0.0f));
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
-		{
-			const auto path = static_cast<const wchar_t*>(payload->Data);
-			const std::filesystem::path texturePath = GUIUtils::AssetsPath / path;
-			const Ref<Texture>& texture = TextureLibrary::GetTexture(texturePath.string());
-
-			if (texture->IsLoaded())
-			{
-				onTextureLoaded(texture);
-			}
-			else
-			{
-				Log::Warning("Could not load texture {0}", texturePath.filename().string());
-			}
-		}
-		ImGui::EndDragDropTarget();
-	}
-}
-template<typename T>
-void PropertiesPanel::DrawAddComponent(const std::string& label) const
-{
-	if (!m_Selection->Get().HasComponent<T>())
-	{
-		if (ImGui::MenuItem(label.c_str()))
-		{
-			m_Selection->Get().AddComponent<T>();
-			ImGui::CloseCurrentPopup();
-		}
-	}
 }
 
 void PropertiesPanel::DrawContent()

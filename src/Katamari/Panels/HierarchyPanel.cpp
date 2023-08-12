@@ -9,6 +9,11 @@ namespace LevEngine::Editor
 {
 	HierarchyPanel::HierarchyPanel(const Ref<Scene>& scene, const Ref<EntitySelection>& selection) : m_Context(scene), m_Selection(selection) { }
 
+	void HierarchyPanel::SetContext(const Ref<Scene>& scene)
+	{
+		m_Context = scene;
+	}
+
 	void HierarchyPanel::DrawContent()
 	{
 		m_Context->ForEachEntity(
