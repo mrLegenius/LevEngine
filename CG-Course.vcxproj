@@ -119,9 +119,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>external\spdlog\include;external;src;external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external\yaml-cpp\include;external\spdlog\include;external;src;external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -137,7 +137,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>external\spdlog\include;external;src;external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -176,7 +176,101 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\binary.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\contrib\graphbuilder.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\contrib\graphbuilderadapter.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\convert.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\depthguard.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\directives.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\emit.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\emitfromevents.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\emitter.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\emitterstate.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\emitterutils.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\exceptions.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\exp.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\memory.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\node.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\nodebuilder.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\nodeevents.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\node_data.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\null.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\ostream_wrapper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\parse.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\parser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\regex_yaml.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\scanner.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\scanscalar.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\scantag.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\scantoken.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\simplekey.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\singledocparser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\stream.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\yaml-cpp\src\tag.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Katamari\Panels\AssetBrowserPanel.cpp" />
+    <ClCompile Include="src\Platform\Windows\PlatformUtils.cpp" />
     <ClCompile Include="src\Scene\Components\Transform\Transform.cpp" />
     <ClCompile Include="src\GUI\GUIUtils.cpp" />
     <ClCompile Include="src\GUI\ImGuiBuild.cpp">
@@ -252,15 +346,79 @@
     <ClCompile Include="src\MySuper3DApp.cpp" />
     <ClCompile Include="src\Kernel\Window.cpp" />
     <ClCompile Include="src\Katamari\Panels\ViewportPanel.cpp" />
+    <ClCompile Include="src\Scene\Serializers\Components\CameraSerializer.cpp" />
+    <ClCompile Include="src\Scene\Serializers\SceneSerializer.cpp" />
+    <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\entt\entt.hpp" />
     <ClInclude Include="external\stb\include\stb_image.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\anchor.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\binary.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\contrib\anchordict.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\contrib\graphbuilder.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\depthguard.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\dll.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\emitfromevents.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\emitter.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\emitterdef.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\emittermanip.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\emitterstyle.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\eventhandler.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\exceptions.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\mark.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\convert.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\detail\impl.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\detail\iterator.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\detail\iterator_fwd.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\detail\memory.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\detail\node.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\detail\node_data.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\detail\node_iterator.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\detail\node_ref.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\emit.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\impl.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\iterator.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\node.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\parse.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\ptr.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\node\type.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\noexcept.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\null.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\ostream_wrapper.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\parser.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\stlemitter.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\traits.h" />
+    <ClInclude Include="external\yaml-cpp\include\yaml-cpp\yaml.h" />
+    <ClInclude Include="external\yaml-cpp\src\collectionstack.h" />
+    <ClInclude Include="external\yaml-cpp\src\contrib\graphbuilderadapter.h" />
+    <ClInclude Include="external\yaml-cpp\src\directives.h" />
+    <ClInclude Include="external\yaml-cpp\src\emitterstate.h" />
+    <ClInclude Include="external\yaml-cpp\src\emitterutils.h" />
+    <ClInclude Include="external\yaml-cpp\src\exp.h" />
+    <ClInclude Include="external\yaml-cpp\src\indentation.h" />
+    <ClInclude Include="external\yaml-cpp\src\nodebuilder.h" />
+    <ClInclude Include="external\yaml-cpp\src\nodeevents.h" />
+    <ClInclude Include="external\yaml-cpp\src\ptr_vector.h" />
+    <ClInclude Include="external\yaml-cpp\src\regeximpl.h" />
+    <ClInclude Include="external\yaml-cpp\src\regex_yaml.h" />
+    <ClInclude Include="external\yaml-cpp\src\scanner.h" />
+    <ClInclude Include="external\yaml-cpp\src\scanscalar.h" />
+    <ClInclude Include="external\yaml-cpp\src\scantag.h" />
+    <ClInclude Include="external\yaml-cpp\src\setting.h" />
+    <ClInclude Include="external\yaml-cpp\src\singledocparser.h" />
+    <ClInclude Include="external\yaml-cpp\src\stream.h" />
+    <ClInclude Include="external\yaml-cpp\src\streamcharsource.h" />
+    <ClInclude Include="external\yaml-cpp\src\stringsource.h" />
+    <ClInclude Include="external\yaml-cpp\src\tag.h" />
+    <ClInclude Include="external\yaml-cpp\src\token.h" />
     <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\EmitterDrawer.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\LightsDrawer.h" />
+    <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxDrawer.h" />
     <ClInclude Include="src\Katamari\Panels\AssetBrowserPanel.h" />
+    <ClInclude Include="src\Kernel\PlatformUtils.h" />
     <ClInclude Include="src\Scene\Components\Camera\CameraComponent.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\CameraComponentDrawer.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\ComponentDrawer.h" />
@@ -371,6 +529,12 @@
     <ClInclude Include="src\Renderer\Buffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Shader.h" />
     <ClInclude Include="src\Kernel\Window.h" />
+    <ClInclude Include="src\Scene\Serializers\Components\CameraSerializer.h" />
+    <ClInclude Include="src\Scene\Serializers\Components\ComponentSerializer.h" />
+    <ClInclude Include="src\Scene\Serializers\Components\TagSerializer.h" />
+    <ClInclude Include="src\Scene\Serializers\Components\TransformSerializer.h" />
+    <ClInclude Include="src\Scene\Serializers\SceneSerializer.h" />
+    <ClInclude Include="src\Scene\Serializers\SerializerUtils.h" />
     <ClInclude Include="src\Scene\System.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />
     <ClInclude Include="src\Katamari\Panels\ViewportPanel.h" />

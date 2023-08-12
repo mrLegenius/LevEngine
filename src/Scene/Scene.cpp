@@ -68,6 +68,8 @@ void Scene::ForEachEntity(const std::function<void(Entity)>& callback)
 {
     m_Registry.each([&](const entt::entity entityID)
     {
+    	if (!m_Registry.valid(entityID)) return;
+          
 	    const auto entity = ConvertEntity(entityID);
 	    callback(entity);
     });

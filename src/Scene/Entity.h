@@ -46,6 +46,14 @@ public:
 	}
 
 	template<typename T>
+	T& GetOrAddComponent()
+	{
+		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
+
+		return m_Handle.get_or_emplace<T>();
+	}
+
+	template<typename T>
 	void RemoveComponent()
 	{
 		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
