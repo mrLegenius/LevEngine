@@ -64,8 +64,9 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
 {
     LEV_PROFILE_FUNCTION();
 
+    //TODO: Fix this mesh layout initialization
     if (!meshRenderer.mesh->VertexBuffer)
-        meshRenderer.mesh->Init(meshRenderer.shader->GetLayout());
+        meshRenderer.mesh->Init(ShaderAssets::DeferredVertexOnly()->GetLayout());
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));

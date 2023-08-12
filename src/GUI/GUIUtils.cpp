@@ -104,7 +104,7 @@ namespace LevEngine
 			setter(value);
 	}
 
-	void GUIUtils::DrawTexture2D(const std::string& label, const Ref<Texture>& texture, const std::function<void(const Ref<Texture>&)>& onTextureLoaded)
+	void GUIUtils::DrawTexture2D(const std::string& label, Ref<Texture>& texture)
 	{
 		ImGui::Text(label.c_str(), ImVec2(100.0f, 0.0f));
 		ImGui::SameLine();
@@ -115,11 +115,17 @@ namespace LevEngine
 			{
 				const auto path = static_cast<const wchar_t*>(payload->Data);
 				const std::filesystem::path texturePath = AssetsPath / path;
-				const Ref<Texture>& texture = TextureLibrary::GetTexture(texturePath.string());
-
-				if (texture->IsLoaded())
+				if (IsAssetTexture(texturePath))
 				{
-					onTextureLoaded(texture);
+					ImGui::EndDragDropTarget();
+					return;
+				}
+				
+				const Ref<Texture>& newTexture = TextureLibrary::GetTexture(texturePath.string());
+
+				if (newTexture->IsLoaded())
+				{
+					texture = newTexture;
 				}
 				else
 				{

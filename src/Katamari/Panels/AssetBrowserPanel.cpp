@@ -12,6 +12,7 @@ namespace LevEngine::Editor
     {
         m_DirectoryIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\DirectoryIcon.png");
         m_FileIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\FileIcon.png");
+        m_MeshIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\MeshIcon.png");
     }
 
     void AssetBrowserPanel::DrawContent()
@@ -50,11 +51,11 @@ namespace LevEngine::Editor
             {
                 icon = m_DirectoryIcon;
             }
-            else if (fileExtension == ".png"
-                || fileExtension == ".jpg"
-                || fileExtension == ".tga")
+            else if (GUIUtils::IsAssetTexture(path))
                 icon = TextureLibrary::GetTexture(path.string());
-            else
+            else if (GUIUtils::IsAssetMesh(path))
+                icon = m_MeshIcon;
+        	else
                 icon = m_FileIcon;
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));

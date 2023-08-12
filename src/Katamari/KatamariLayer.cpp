@@ -151,7 +151,7 @@ void KatamariLayer::OnAttach()
             mesh.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
             mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.2f);
             mesh.GetComponent<Transform>().SetLocalRotation(Vector3{ 90.0f, 0.0f, -90.0f });
-            auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), LavaRockAssets::Mesh());
+            auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(LavaRockAssets::Mesh());
 
             meshRenderer.material.SetAmbientColor(Color::White);
             meshRenderer.material.SetDiffuseColor(Color::White);
@@ -236,7 +236,7 @@ void KatamariLayer::OnAttach()
 
     //<--- Floor ---<<
     auto floor = m_ActiveScene->CreateEntity("Floor");
-    auto& floorMesh = floor.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
+    auto& floorMesh = floor.AddComponent<MeshRendererComponent>(Mesh::CreateCube());
     floorMesh.castShadow = false;
     floorMesh.material.SetTexture(Material::TextureType::Ambient, TextureAssets::Bricks());
     floorMesh.material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Bricks());
@@ -252,7 +252,7 @@ void KatamariLayer::OnAttach()
 
     //<--- Player ---<<
     auto player = m_ActiveScene->CreateEntity("Player");
-    auto& playerMesh = player.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(45));
+    auto& playerMesh = player.AddComponent<MeshRendererComponent>(Mesh::CreateSphere(45));
     playerMesh.material = Materials::Ruby();
 
     auto& playerParticles = player.AddComponent<EmitterComponent>();
@@ -319,7 +319,7 @@ void KatamariLayer::OnAttach()
 
     //<--- Wall ---<<
     auto wall = m_ActiveScene->CreateEntity("Wall");
-    auto& wallMesh = wall.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
+    auto& wallMesh = wall.AddComponent<MeshRendererComponent>(Mesh::CreateCube());
     wallMesh.material = Materials::BlackPlastic();
     auto& wallT = wall.GetComponent<Transform>();
     wallT.SetLocalScale(Vector3(1, 20, 100));
@@ -327,7 +327,7 @@ void KatamariLayer::OnAttach()
 
     //<--- Peak ---<<
     auto peak = m_ActiveScene->CreateEntity("Peak");
-    auto& peakMesh = peak.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateCube());
+    auto& peakMesh = peak.AddComponent<MeshRendererComponent>(Mesh::CreateCube());
     peakMesh.material = Materials::Brass();
     auto& peakT = peak.GetComponent<Transform>();
     peakT.SetLocalScale(Vector3(10, 50, 10));
@@ -336,7 +336,7 @@ void KatamariLayer::OnAttach()
     //<--- Torch ---<<
     {
         auto entity = m_ActiveScene->CreateEntity("Torch");
-        auto& mesh = entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), FancyTorch::Mesh());
+        auto& mesh = entity.AddComponent<MeshRendererComponent>(FancyTorch::Mesh());
         mesh.castShadow = false;
         mesh.material.SetTexture(Material::TextureType::Ambient, FancyTorch::AmbientTexture());
         mesh.material.SetTexture(Material::TextureType::Diffuse, FancyTorch::AmbientTexture());

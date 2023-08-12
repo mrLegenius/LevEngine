@@ -13,7 +13,7 @@ struct Prefabs
 
         mesh.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>());
         mesh.GetComponent<Transform>().SetPositionY(-0.5f);
-        auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), MeshAssets::Log());
+        auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(MeshAssets::Log());
         meshRenderer.material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Log());
         entity.AddComponent<BoxCollider>(Vector3(1, 2, 1));
         auto& transform = entity.GetComponent<Transform>();
@@ -30,7 +30,7 @@ struct Prefabs
     {
         auto entity = scene->CreateEntity("Gear");
         entity.AddComponent<BoxCollider>(Vector3(0.9f, 0.1f, 0.9f));
-        auto& mesh = entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), MeshAssets::Gear());
+        auto& mesh = entity.AddComponent<MeshRendererComponent>(MeshAssets::Gear());
         mesh.material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Gear());
         auto& rb = entity.AddComponent<Rigidbody>();
         auto& transform = entity.GetComponent<Transform>();
@@ -50,7 +50,7 @@ struct Prefabs
 
         mesh.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>());
         mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.075f / 1.5f);
-        auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), MeshAssets::Rock());
+        auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(MeshAssets::Rock());
         meshRenderer.material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Rock());
 
         constexpr auto colliderScale = 3.25f * 1.5f;
@@ -73,12 +73,12 @@ struct Prefabs
         mesh.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>());
         mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.2f);
         mesh.GetComponent<Transform>().SetLocalRotation(Vector3{90.0f, 0.0f, -90.0f});
-        auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), LavaRockAssets::Mesh());
+        auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(LavaRockAssets::Mesh());
 
-        meshRenderer.material.SetAmbientColor(LevEngine::Color::White);
-        meshRenderer.material.SetDiffuseColor(LevEngine::Color::White);
-        meshRenderer.material.SetEmissiveColor(LevEngine::Color::White);
-        meshRenderer.material.SetSpecularColor(LevEngine::Color::White);
+        meshRenderer.material.SetAmbientColor(Color::White);
+        meshRenderer.material.SetDiffuseColor(Color::White);
+        meshRenderer.material.SetEmissiveColor(Color::White);
+        meshRenderer.material.SetSpecularColor(Color::White);
 
         meshRenderer.material.SetTexture(Material::TextureType::Ambient, LavaRockAssets::AmbientTexture());
         meshRenderer.material.SetTexture(Material::TextureType::Diffuse, LavaRockAssets::AmbientTexture());
@@ -102,7 +102,7 @@ struct Prefabs
     {
         auto entity = scene->CreateEntity("Sphere");
         entity.AddComponent<SphereCollider>(2.0f);
-        auto& mesh = entity.AddComponent<MeshRendererComponent>(ShaderAssets::Lit(), Mesh::CreateSphere(6));
+        auto& mesh = entity.AddComponent<MeshRendererComponent>(Mesh::CreateSphere(6));
         mesh.material = Materials::Gold();
         mesh.material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Bricks());
 

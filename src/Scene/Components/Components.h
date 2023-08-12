@@ -36,13 +36,11 @@ namespace LevEngine
 	struct MeshRendererComponent
 	{
 		Ref<Mesh> mesh;
-		Ref<Shader> shader;
 		Material material;
 		bool castShadow = true;
 
 		MeshRendererComponent() = default;
-		MeshRendererComponent(const Ref<Shader>& shader,
-			const Ref<Mesh>& mesh) : mesh(mesh), shader(shader)
+		MeshRendererComponent(const Ref<Mesh>& mesh) : mesh(mesh)
 		{ }
 		MeshRendererComponent(const MeshRendererComponent&) = default;
 	};

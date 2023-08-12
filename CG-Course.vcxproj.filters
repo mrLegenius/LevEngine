@@ -908,6 +908,9 @@
     <ClInclude Include="src\Kernel\PlatformUtils.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="src\Katamari\ComponentDrawers\MeshRendererDrawer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

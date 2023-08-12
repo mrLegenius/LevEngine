@@ -8,6 +8,7 @@
 #include "../ComponentDrawers/TransformDrawer.h"
 #include "../ComponentDrawers/LightsDrawer.h"
 #include "../ComponentDrawers/EmitterDrawer.h"
+#include "../ComponentDrawers/MeshRendererDrawer.h"
 
 namespace LevEngine::Editor
 {
@@ -19,6 +20,7 @@ namespace LevEngine::Editor
 			CreateRef<DirectionalLightDrawer>(),
 			CreateRef<PointLightDrawer>(),
 			CreateRef<EmitterDrawer>(),
+			CreateRef<MeshRendererDrawer>(),
 		};
 	}
 
