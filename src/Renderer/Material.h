@@ -187,7 +187,6 @@ private:
 		}
 	}
 
-
 	using TextureMap = std::map<TextureType, Ref<Texture>>;
 	TextureMap m_Textures;
 

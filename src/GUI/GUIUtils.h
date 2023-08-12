@@ -9,8 +9,13 @@ namespace LevEngine
 		inline static const std::filesystem::path AssetsPath = "resources";
 
 		static bool DrawVector3Control(const std::string& label, Vector3& values, float resetValue = 0.0f, float columnWidth = 100.0f);
-		static void DrawFloatControl(const std::string& label, std::function<float()> getter, std::function<void(float)> setter);
-		static void DrawTexture2D(const std::string& label, Ref<Texture>& texture);
+		static bool DrawVector2Control(const std::string& label, Vector2& values, float resetValue = 0.0f, float columnWidth = 100.0f);
+		static void DrawFloatControl(const std::string& label, const std::function<float()>& getter, const std::function<void(float)>& setter);
+		static void DrawColor3Control(const std::string& label, const std::function<Color()>& getter,
+		                              const std::function<void(Color)>& setter);
+		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
+		static void DrawTexture2D(const std::function<const Ref<Texture>&()>& getter,
+		                          const std::function<void(Ref<Texture>)>& setter, Vector2 size = { 100, 100 });
 
 		static bool IsAssetTexture(const std::filesystem::path& path)
 		{

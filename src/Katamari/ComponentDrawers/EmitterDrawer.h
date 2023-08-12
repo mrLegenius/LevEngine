@@ -45,7 +45,8 @@ namespace LevEngine
 				component.MaxParticles = maxParticles;
 			ImGui::DragFloat("Spawn Rate", &component.Rate);
 
-			GUIUtils::DrawTexture2D("Texture", component.Texture);
+			ImGui::Text("Texture");
+			GUIUtils::DrawTexture2D(component.Texture);
 		}
 	};
 }
