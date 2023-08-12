@@ -108,7 +108,7 @@ namespace LevEngine
 	{
 		ImGui::Text(label.c_str(), ImVec2(100.0f, 0.0f));
 		ImGui::SameLine();
-		ImGui::Image(texture->GetId(), ImVec2(100.0f, 100.0f));
+		ImGui::Image(texture ? texture->GetId() : nullptr, ImVec2(100.0f, 100.0f));
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))

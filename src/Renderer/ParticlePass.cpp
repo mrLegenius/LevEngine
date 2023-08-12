@@ -134,6 +134,12 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 
 		for (uint32_t i = 0; i < textureSlotIndex; i++)
 		{
+			if (!emitter.Texture)
+			{
+				textureIndex = 0;
+				break;
+			}
+
 			if (textureSlots[i]->GetPath() == emitter.Texture->GetPath())
 			{
 				textureIndex = i;
