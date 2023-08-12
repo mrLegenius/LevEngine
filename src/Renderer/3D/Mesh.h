@@ -17,6 +17,9 @@ class Mesh
 	};
 
 public:
+	Mesh() : Mesh("Default Mesh Name") { }
+	explicit Mesh(std::string name) : m_Name(std::move(name)) { }
+
 	static std::shared_ptr<Mesh> CreatePlane(int resolution);
 	static std::shared_ptr<Mesh> CreateSphere(const uint32_t sliceCount);
 	static std::shared_ptr<Mesh> CreateCube();
@@ -25,6 +28,8 @@ public:
 
 	[[nodiscard]] std::shared_ptr<VertexBuffer> CreateVertexBuffer(const BufferLayout&) const;
 	std::shared_ptr<VertexBuffer> CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const;
+
+	[[nodiscard]] const std::string& GetName() const { return m_Name; }
 
 	void Clear()
 	{
@@ -81,5 +86,6 @@ private:
 	std::vector<Vector2> uvs;
 	std::vector<uint32_t> indices;
 	std::vector<Vector3> normals;
+	std::string m_Name;
 };
 }

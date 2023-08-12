@@ -3,11 +3,11 @@
 
 namespace LevEngine
 {
-std::shared_ptr<Mesh> Mesh::CreatePlane(int resolution)
+std::shared_ptr<Mesh> Mesh::CreatePlane(const int resolution)
 {
-	auto mesh = std::make_shared<Mesh>();
+	auto mesh = std::make_shared<Mesh>("Plane");
 
-	float size = 1.f / (resolution - 1);
+	const float size = 1.f / (resolution - 1);
 
 	for (int i = 0; i < resolution; i++)
 	{
@@ -42,7 +42,7 @@ std::shared_ptr<Mesh> Mesh::CreatePlane(int resolution)
 
 std::shared_ptr<Mesh> Mesh::CreateCube()
 {
-	auto mesh = std::make_shared<Mesh>();
+	auto mesh = std::make_shared<Mesh>("Cube");
 
 	constexpr float side = 0.5f;
 
@@ -174,7 +174,7 @@ std::shared_ptr<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 	const auto phiStep = DirectX::XM_PI / stackCount;
 	const auto thetaStep = DirectX::XM_2PI / sliceCount;
 
-	auto mesh = std::make_shared<Mesh>();
+	auto mesh = std::make_shared<Mesh>("Sphere");
 
 	mesh->vertices.emplace_back(Vector3(0, 1, 0));
 	mesh->normals.emplace_back(Vector3(0, 1, 0));

@@ -12,7 +12,7 @@ static std::filesystem::path resources = std::filesystem::path("resources");
 
 static std::string GetShaderPath(const std::string& name) { return (resources / "Shaders" / name).string(); }
 static std::string GetTexturePath(const std::string& name) { return (resources / "Textures" / name).string(); }
-static std::string GetModelPath(const std::string& name) { return (resources / "Models" / name).string(); }
+static std::filesystem::path GetModelPath(const std::string& name) { return (resources / "Models" / name); }
 
 static Ref<SamplerState> GetDefaultClampedSamplerState()
 {
@@ -96,7 +96,7 @@ struct LavaRockAssets
 
 struct FancyTorch
 {
-	static std::string GetAssetPath(const std::string& name) { return (resources / "FancyTorch" / name).string(); }
+	static std::filesystem::path GetAssetPath(const std::string& name) { return (resources / "FancyTorch" / name).string(); }
 
 	static auto Mesh()
 	{
@@ -106,28 +106,28 @@ struct FancyTorch
 
 	static auto AmbientTexture()
 	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_albedo.png"));
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_albedo.png").string());
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto EmissiveTexture()
 	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_gloss.png"));
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_gloss.png").string());
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto SpecularTexture()
 	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_metal.png"));
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_metal.png").string());
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto NormalTexture()
 	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_normal.png"));
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_normal.png").string());
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}

@@ -26,7 +26,7 @@ namespace LevEngine
 		{
 			ImGui::Text("Mesh");
 			ImGui::SameLine();
-			ImGui::Text("Drop mesh here");
+			ImGui::Text(component.mesh ? component.mesh->GetName().c_str() : "None. Drop here");
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
@@ -39,7 +39,7 @@ namespace LevEngine
 						ImGui::EndDragDropTarget();
 						return;
 					}
-					component.mesh = ObjLoader().LoadMesh(texturePath.string());
+					component.mesh = ObjLoader().LoadMesh(texturePath);
 				}
 				ImGui::EndDragDropTarget();
 			}

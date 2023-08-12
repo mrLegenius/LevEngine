@@ -9,7 +9,7 @@ namespace LevEngine
 class ObjLoader
 {
 public:
-	std::shared_ptr<Mesh> LoadMesh(const std::string& path)
+	static std::shared_ptr<Mesh> LoadMesh(const std::filesystem::path& path)
 	{
 		std::vector<Vector3> positions;
 		std::vector<Vector2> uvs;
@@ -21,7 +21,7 @@ public:
 		std::vector<uint32_t> indices;
 
 		std::stringstream ss;
-		std::ifstream file(path);
+		std::ifstream file(path.string());
 		std::string line;
 		std::string prefix;
 
@@ -30,11 +30,11 @@ public:
 
 		if (!file.is_open())
 		{
-			Log::CoreWarning("[ObjLoader] Can't open {0} file", path);
+			Log::CoreWarning("[ObjLoader] Can't open {0} file", path.string());
 			return nullptr;
 		}
 
-		auto mesh = std::make_shared<Mesh>();
+		auto mesh = std::make_shared<Mesh>(path.filename().string());
 
 		int verticesCount = 0;
 
