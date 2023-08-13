@@ -30,13 +30,12 @@ public:
 private:
 	Ref<Scene> m_ActiveScene;
 
-	Ref<Editor::EntitySelection> m_EntitySelection;
 	Ref<Editor::ViewportPanel> m_Viewport;
 	Ref<Editor::HierarchyPanel> m_Hierarchy;
 	Ref<Editor::PropertiesPanel> m_Properties;
 	Ref<Editor::AssetBrowserPanel> m_AssetsBrowser;
 	std::filesystem::path m_EditorScenePath;
-	std::shared_ptr<Scene> m_EditorScene;
+	Ref<Scene> m_EditorScene;
 
 	enum class SceneState
 	{

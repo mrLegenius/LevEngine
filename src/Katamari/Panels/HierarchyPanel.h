@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "PanelBase.h"
-#include "Katamari/EntitySelection.h"
-#include "Scene/Entity.h"
+#include "Scene/Scene.h"
 
 namespace LevEngine::Editor
 {
@@ -9,7 +8,7 @@ namespace LevEngine::Editor
 	{
 	public:
 		HierarchyPanel() = default;
-		HierarchyPanel(const Ref<Scene>& scene, const Ref<EntitySelection>& selection);
+		HierarchyPanel(const Ref<Scene>& scene);
 
 		void SetContext(const Ref<Scene>& scene);
 
@@ -20,7 +19,6 @@ namespace LevEngine::Editor
 		void DrawEntityNode(Entity entity) const;
 
 		Ref<Scene> m_Context = nullptr;
-		Ref<EntitySelection> m_Selection;
 
 		friend class Scene;
 	};

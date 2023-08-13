@@ -216,4 +216,26 @@ namespace LevEngine
 			ImGui::EndDragDropTarget();
 		}
 	}
+
+	void GUIUtils::DrawAsset(const std::string& label, const std::function<bool(const std::filesystem::path&)>& validation, const std::function<void(const std::filesystem::path&)>& onDrop)
+	{
+		if (!label.empty())
+			ImGui::Text(label.c_str());
+
+		if (!ImGui::BeginDragDropTarget()) return;
+
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
+		{
+			const auto path = static_cast<const wchar_t*>(payload->Data);
+			const std::filesystem::path assetPath = AssetsPath / path;
+
+			if (!validation)
+			{
+				ImGui::EndDragDropTarget();
+				return;
+			}
+			onDrop(assetPath);
+		}
+		ImGui::EndDragDropTarget();
+	}
 }

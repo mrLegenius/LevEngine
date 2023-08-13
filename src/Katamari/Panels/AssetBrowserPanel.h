@@ -19,5 +19,6 @@ protected:
         Ref<Texture> m_DirectoryIcon;
         Ref<Texture> m_FileIcon;
         Ref<Texture> m_MeshIcon;
+        Ref<Texture> m_MaterialIcon;
 	};
 }

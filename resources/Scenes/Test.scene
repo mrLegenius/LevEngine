@@ -1,0 +1,129 @@
+Scene: Scene Name
+Entities:
+  - Entity: 6263352345967828078
+    Tag:
+      Tag: Torch Smoke Particles
+    Transform:
+      Position: [0, 50, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 7501152121470897957
+    Tag:
+      Tag: Torch Fire Particles
+    Transform:
+      Position: [0, 50, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 11020664609430088176
+    Tag:
+      Tag: Torch
+    Transform:
+      Position: [10, 0, 10]
+      Rotation: [0, 0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+  - Entity: 5740375704162087909
+    Tag:
+      Tag: Peak
+    Transform:
+      Position: [100, 25, 100]
+      Rotation: [0, 0, 0]
+      Scale: [10, 50, 10]
+  - Entity: 8048317056383823835
+    Tag:
+      Tag: Wall
+    Transform:
+      Position: [150, 10, 50]
+      Rotation: [0, 0, 0]
+      Scale: [1, 20, 100]
+  - Entity: 2926016944810621253
+    Tag:
+      Tag: DirLight
+    Transform:
+      Position: [150, 100, 150]
+      Rotation: [-0.785398185, 0.785398185, 0]
+      Scale: [1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 0.25
+        OrthographicNear: 100
+        OrthographicFar: 1000
+      Main: true
+      FixedAspectRatio: false
+  - Entity: 3851914501346625655
+    Tag:
+      Tag: Skybox
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 8555718934124967099
+    Tag:
+      Tag: Camera
+    Transform:
+      Position: [10.0100002, 17.2077942, 10]
+      Rotation: [-1.56979632, 1.57091558, 0]
+      Scale: [1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+  - Entity: 11871694547798579790
+    Tag:
+      Tag: Player
+    Transform:
+      Position: [10, 7.207798, 10]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 2906781213464643414
+    Tag:
+      Tag: Floor
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [300, 1, 300]
+  - Entity: 8907294978725737845
+    Tag:
+      Tag: LavaRock Smoke Particles
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 2092543999039225867
+    Tag:
+      Tag: LavaRock Fire Particles
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 7386667103733264209
+    Tag:
+      Tag: LavaRockMesh
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [1.57079637, 0, -1.57079637]
+      Scale: [0.200000003, 0.200000003, 0.200000003]
+  - Entity: 4002379243362746705
+    Tag:
+      Tag: LavaRock
+    Transform:
+      Position: [0, 19.4415684, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 15515350089213030939
+    Tag:
+      Tag: Gear
+    Transform:
+      Position: [-7.08622169, 1.7207799, -19.4144154]
+      Rotation: [-0, 0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]

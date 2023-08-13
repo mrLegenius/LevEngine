@@ -17,6 +17,9 @@ namespace LevEngine
 		static void DrawTexture2D(const std::function<const Ref<Texture>&()>& getter,
 		                          const std::function<void(Ref<Texture>)>& setter, Vector2 size = { 100, 100 });
 
+		static void DrawAsset(const std::string& label, const std::function<bool(const std::filesystem::path&)>& validation, const std::function<void
+		                      (const std::filesystem::path&)>& onDrop);
+
 		static bool IsAssetTexture(const std::filesystem::path& path)
 		{
 			const auto extension = path.extension().string();
@@ -29,6 +32,13 @@ namespace LevEngine
 			const auto extension = path.extension().string();
 
 			return extension == ".obj";
+		}
+
+		static bool IsAssetMaterial(const std::filesystem::path& path)
+		{
+			const auto extension = path.extension().string();
+
+			return extension == ".mat";
 		}
 	};
 

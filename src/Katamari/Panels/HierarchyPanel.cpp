@@ -3,11 +3,13 @@
 
 #include <imgui.h>
 
-#include "Scene/Scene.h"
+#include "Katamari/EntitySelection.h"
+#include "Katamari/Selection.h"
+#include "Scene/Components/Components.h"
 
 namespace LevEngine::Editor
 {
-	HierarchyPanel::HierarchyPanel(const Ref<Scene>& scene, const Ref<EntitySelection>& selection) : m_Context(scene), m_Selection(selection) { }
+	HierarchyPanel::HierarchyPanel(const Ref<Scene>& scene) : m_Context(scene) { }
 
 	void HierarchyPanel::SetContext(const Ref<Scene>& scene)
 	{
@@ -23,7 +25,7 @@ namespace LevEngine::Editor
 			});
 
 		if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(0))
-			m_Selection->Set({});
+			Selection::Deselect();
 
 		//Right click on a blank space
 		if (ImGui::BeginPopupContextWindow(nullptr, 1, false))
@@ -39,8 +41,10 @@ namespace LevEngine::Editor
 	{
 		const auto& tag = entity.GetComponent<TagComponent>().tag;
 
+		const auto entitySelection = std::dynamic_pointer_cast<EntitySelection>(Selection::Current());
+
 		const auto flags =
-			(m_Selection->Get() == entity ? ImGuiTreeNodeFlags_Selected : 0)
+			(entitySelection && entitySelection->Get() == entity ? ImGuiTreeNodeFlags_Selected : 0)
 			| ImGuiTreeNodeFlags_OpenOnArrow
 			| ImGuiTreeNodeFlags_SpanAvailWidth;
 
@@ -48,7 +52,10 @@ namespace LevEngine::Editor
 
 		if (ImGui::IsItemClicked())
 		{
-			m_Selection->Set(entity);
+			if (entitySelection)
+				entitySelection->Set(entity);
+			else
+				Selection::Select(CreateRef<EntitySelection>(entity));
 		}
 
 		bool entityDeleted = false;
@@ -68,10 +75,8 @@ namespace LevEngine::Editor
 		if (entityDeleted)
 		{
 			m_Context->DestroyEntity(entity);
-			if (m_Selection->Get() == entity)
-				m_Selection->Set({});
+			Selection::Deselect();
 		}
-
 	}
 }
 

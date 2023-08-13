@@ -1,14 +1,20 @@
 ﻿#pragma once
+#include "Selection.h"
 #include "Scene/Entity.h"
 
 namespace LevEngine::Editor
 {
-	class EntitySelection
+	class EntitySelection final : public Selection
 	{
 	public:
-		[[nodiscard]] Entity Get() const { return m_SelectionContext; }
-		void Set(const Entity entity) { m_SelectionContext = entity; }
+		EntitySelection() = default;
+		explicit EntitySelection(const Entity entity) : m_Entity(entity) { }
+
+		[[nodiscard]] Entity Get() const { return m_Entity; }
+		void Set(const Entity entity) { m_Entity = entity; }
+		void DrawProperties() override;
+
 	private:
-		Entity m_SelectionContext;
+		Entity m_Entity;
 	};
 }

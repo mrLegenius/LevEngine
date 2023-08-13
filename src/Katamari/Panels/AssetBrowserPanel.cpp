@@ -4,7 +4,10 @@
 #include <imgui.h>
 
 #include "TextureLibrary.h"
+#include "Assets/AssetSelection.h"
+#include "Assets/MaterialAsset.h"
 #include "GUI/GUIUtils.h"
+#include "Katamari/Selection.h"
 
 namespace LevEngine::Editor
 {
@@ -13,6 +16,7 @@ namespace LevEngine::Editor
         m_DirectoryIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\DirectoryIcon.png");
         m_FileIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\FileIcon.png");
         m_MeshIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\MeshIcon.png");
+        m_MaterialIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\MaterialIcon.png");
     }
 
     void AssetBrowserPanel::DrawContent()
@@ -55,6 +59,8 @@ namespace LevEngine::Editor
                 icon = TextureLibrary::GetTexture(path.string());
             else if (GUIUtils::IsAssetMesh(path))
                 icon = m_MeshIcon;
+            else if (GUIUtils::IsAssetMaterial(path))
+                icon = m_MaterialIcon;
         	else
                 icon = m_FileIcon;
 
@@ -68,6 +74,36 @@ namespace LevEngine::Editor
                 ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
                 ImGui::EndDragDropSource();
             }
+
+            if (!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+            {
+                ImGui::OpenPopup("Create Asset");
+            }
+
+            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+            {
+                if (!directoryEntry.is_directory())
+                {
+	                if (GUIUtils::IsAssetMaterial(path))
+	                {
+                        Ref<MaterialAsset> asset = CreateRef<MaterialAsset>(path);
+                        asset->Deserialize();
+                        Selection::Select(CreateRef<AssetSelection>(asset));
+	                }
+                }
+            }
+
+            if (ImGui::BeginPopup("Create Asset"))
+            {
+                if (ImGui::Button("Material"))
+                {
+                    MaterialAsset asset{ m_CurrentDirectory / "Material.mat" };
+                    asset.Serialize();
+                }
+
+                ImGui::EndPopup();
+            }
+
 
             ImGui::PopStyleColor();
             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))

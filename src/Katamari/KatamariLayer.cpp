@@ -75,11 +75,10 @@ void KatamariLayer::OnAttach()
     m_IconStop = Texture::Create("resources/Icons/StopButton.png");
 
     m_ActiveScene = CreateRef<Scene>();
-    m_EntitySelection = CreateRef<Editor::EntitySelection>();
 
     m_Viewport = CreateRef<Editor::ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-    m_Hierarchy = CreateRef<Editor::HierarchyPanel>(m_ActiveScene, m_EntitySelection);
-    m_Properties = CreateRef<Editor::PropertiesPanel>(m_EntitySelection);
+    m_Hierarchy = CreateRef<Editor::HierarchyPanel>(m_ActiveScene);
+    m_Properties = CreateRef<Editor::PropertiesPanel>();
     m_AssetsBrowser = CreateRef<Editor::AssetBrowserPanel>();
 
     for (int i = 0; i < 1; i++)
@@ -410,6 +409,8 @@ void KatamariLayer::OnAttach()
     m_ActiveScene->RegisterUpdateSystem(CreateRef<TestSystem>());
     m_ActiveScene->RegisterOneFrame<CollisionBeginEvent>();
     m_ActiveScene->RegisterOneFrame<CollisionEndEvent>();
+
+    Application::Get().GetWindow().EnableCursor();
 }
 
 void KatamariLayer::OnEvent(Event& e)
@@ -430,10 +431,15 @@ void KatamariLayer::OnUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-    //window.DisableCursor();
+    if (Input::IsKeyDown(KeyCode::F1))
+    {
+        Application::Get().GetWindow().EnableCursor();
+	    m_Hierarchy->Focus();
+    }
 
     if (m_Viewport->IsFocused())
     {
+        Application::Get().GetWindow().DisableCursor();
         m_ActiveScene->OnUpdate(deltaTime);
         m_ActiveScene->OnPhysics(deltaTime);
         m_ActiveScene->OnLateUpdate(deltaTime);
