@@ -301,7 +301,7 @@ void KatamariLayer::OnAttach()
 
     //<--- Skybox ---<<
     auto skybox = m_ActiveScene->CreateEntity("Skybox");
-    skybox.AddComponent<SkyboxRendererComponent>(SkyboxAssets::Interstellar());
+    skybox.AddComponent<SkyboxRendererComponent>();
 
     //<--- DirLight ---<<
     auto dirLight = m_ActiveScene->CreateEntity("DirLight");

@@ -336,9 +336,6 @@
     <ClCompile Include="src\TextureLibrary.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scene\Serializers\Components\CameraSerializer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="src\Platform\Windows\PlatformUtils.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -939,6 +936,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxComponentDrawer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Serializers\Components\SkyboxComponentDrawer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

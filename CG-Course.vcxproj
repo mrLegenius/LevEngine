@@ -350,7 +350,6 @@
     <ClCompile Include="src\MySuper3DApp.cpp" />
     <ClCompile Include="src\Kernel\Window.cpp" />
     <ClCompile Include="src\Katamari\Panels\ViewportPanel.cpp" />
-    <ClCompile Include="src\Scene\Serializers\Components\CameraSerializer.cpp" />
     <ClCompile Include="src\Scene\Serializers\SceneSerializer.cpp" />
     <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
     <ClCompile Include="src\TextureLibrary.cpp" />
@@ -542,6 +541,7 @@
     <ClInclude Include="src\Kernel\Window.h" />
     <ClInclude Include="src\Scene\Serializers\Components\CameraSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\Components\ComponentSerializer.h" />
+    <ClInclude Include="src\Scene\Serializers\Components\SkyboxComponentDrawer.h" />
     <ClInclude Include="src\Scene\Serializers\Components\TagSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\Components\TransformSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\SceneSerializer.h" />

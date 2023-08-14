@@ -2,6 +2,7 @@
 #include <string>
 
 #include "OrbitCamera.h"
+#include "Assets/SkyboxAsset.h"
 #include "Kernel/Color.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Renderer/Texture.h"
@@ -47,9 +48,9 @@ namespace LevEngine
 
 	struct SkyboxRendererComponent
 	{
-		Ref<Texture> texture;
+		Ref<SkyboxAsset> skybox;
 
-		SkyboxRendererComponent(const Ref<Texture> texture) : texture(texture) { }
+		SkyboxRendererComponent(const Ref<SkyboxAsset>& skybox) : skybox(skybox) { }
 		SkyboxRendererComponent() = default;
 		SkyboxRendererComponent(const SkyboxRendererComponent&) = default;
 	};

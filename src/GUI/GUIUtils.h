@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "Scene/Entity.h"
+#include "Kernel/Color.h"
+#include "Renderer/Texture.h"
 
 namespace LevEngine
 {

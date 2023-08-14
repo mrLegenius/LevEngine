@@ -27,11 +27,15 @@ void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 	{
 		auto [transform, skybox] = group.get<Transform, SkyboxRendererComponent>(entity);
 
-		if (!skybox.texture) continue;
+		if (!skybox.skybox) continue;
+
+		const auto texture = skybox.skybox->GetTexture();
+
+		if (!texture) continue;
 
 		m_SkyboxPipeline->Bind();
 		
-		skybox.texture->Bind(0, Shader::Type::Pixel);
+		texture->Bind(0, Shader::Type::Pixel);
 
 		const CameraData skyboxCameraData{ Matrix::Identity, params.CameraPerspectiveViewProjectionMatrix, Vector3::Zero };
 		m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
@@ -39,7 +43,7 @@ void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 
 		RenderCommand::DrawIndexed(m_SkyboxMesh->VertexBuffer, m_SkyboxMesh->IndexBuffer);
 
-		skybox.texture->Unbind(0, Shader::Type::Pixel);
+		texture->Unbind(0, Shader::Type::Pixel);
 		m_SkyboxPipeline->Unbind();
 		break;
 	}

@@ -7,6 +7,7 @@
 #include "../Components/Components.h"
 #include "SerializerUtils.h"
 #include "Components/CameraSerializer.h"
+#include "Components/SkyboxComponentDrawer.h"
 #include "Components/TransformSerializer.h"
 #include "Components/TagSerializer.h"
 
@@ -19,6 +20,7 @@ namespace LevEngine
 		{
 			CreateRef<TransformSerializer>(),
 			CreateRef<CameraSerializer>(),
+			CreateRef<SkyboxComponentSerializer>(),
 		};
 
 		m_TagSerializer = CreateRef<TagSerializer>();

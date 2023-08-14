@@ -17,6 +17,7 @@ namespace LevEngine
 		const std::string& GetName() const { return m_Name; }
 		const std::string& GetFullName() const { return m_FullName; }
 		const std::string& GetExtension() const { return m_Extension; }
+		const std::filesystem::path& GetPath() const { return m_Path; }
 
 		void Serialize();
 		bool Deserialize();

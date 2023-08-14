@@ -13,11 +13,12 @@ namespace LevEngine
 
 		void DrawContent(SkyboxRendererComponent& component) override
 		{
-			GUIUtils::DrawAsset("Skybox", GUIUtils::IsAssetSkybox, [&component](const std::filesystem::path& assetPath)
+			GUIUtils::DrawAsset("Skybox", GUIUtils::IsAssetSkybox, 
+				[&component](const std::filesystem::path& assetPath)
 				{
 					const auto asset = CreateRef<SkyboxAsset>(assetPath);
-					asset->Deserialize();
-					component.texture = asset->GetTexture();
+					if (asset->Deserialize())
+						component.skybox = asset;
 				});
 		}
 	};
