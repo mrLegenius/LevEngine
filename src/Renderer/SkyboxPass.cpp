@@ -14,7 +14,7 @@ struct alignas(16) CameraData
 	Vector3 Position;
 };
 
-SkyboxPass::SkyboxPass(Ref<PipelineState> pipeline) : m_SkyboxPipeline(pipeline)
+SkyboxPass::SkyboxPass(const Ref<PipelineState>& pipeline) : m_SkyboxPipeline(pipeline)
 {
 	m_SkyboxMesh = CreateRef<SkyboxMesh>(ShaderAssets::Skybox());
 	m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
@@ -25,9 +25,12 @@ void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 	const auto group = registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
 	for (const auto entity : group)
 	{
-		m_SkyboxPipeline->Bind();
-
 		auto [transform, skybox] = group.get<Transform, SkyboxRendererComponent>(entity);
+
+		if (!skybox.texture) continue;
+
+		m_SkyboxPipeline->Bind();
+		
 		skybox.texture->Bind(0, Shader::Type::Pixel);
 
 		const CameraData skyboxCameraData{ Matrix::Identity, params.CameraPerspectiveViewProjectionMatrix, Vector3::Zero };

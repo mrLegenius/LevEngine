@@ -8,6 +8,7 @@
 #include "ComponentDrawers/EmitterDrawer.h"
 #include "ComponentDrawers/LightsDrawer.h"
 #include "ComponentDrawers/MeshRendererDrawer.h"
+#include "ComponentDrawers/SkyboxComponentDrawer.h"
 
 namespace LevEngine::Editor
 {
@@ -38,6 +39,7 @@ namespace LevEngine::Editor
 			CreateRef<PointLightDrawer>(),
 			CreateRef<EmitterDrawer>(),
 			CreateRef<MeshRendererDrawer>(),
+			CreateRef<SkyboxComponentDrawer>(),
 		};
 
 		if (ImGui::Button("Add Component"))

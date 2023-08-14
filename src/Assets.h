@@ -12,6 +12,7 @@ static std::filesystem::path resources = std::filesystem::path("resources");
 
 static std::string GetShaderPath(const std::string& name) { return (resources / "Shaders" / name).string(); }
 static std::string GetTexturePath(const std::string& name) { return (resources / "Textures" / name).string(); }
+static std::string GetSkyboxPath(const std::string& name) { return (resources / "Skyboxes" / name).string(); }
 static std::filesystem::path GetModelPath(const std::string& name) { return (resources / "Models" / name); }
 
 static Ref<SamplerState> GetDefaultClampedSamplerState()
@@ -402,12 +403,12 @@ namespace SkyboxAssets
 	inline auto LightBlue()
     {
         static std::string paths[6] = {
-            GetTexturePath("LightBlueSkybox/left.png"), //left
-            GetTexturePath("LightBlueSkybox/right.png"), //right
-        	GetTexturePath("LightBlueSkybox/bottom.png"), //bottom
-            GetTexturePath("LightBlueSkybox/top.png"), //top
-            GetTexturePath("LightBlueSkybox/back.png"), //back
-            GetTexturePath("LightBlueSkybox/front.png"), //front
+            GetSkyboxPath("SpaceBlue/left.png"), //left
+            GetSkyboxPath("SpaceBlue/right.png"), //right
+        	GetSkyboxPath("SpaceBlue/bottom.png"), //bottom
+            GetSkyboxPath("SpaceBlue/top.png"), //top
+            GetSkyboxPath("SpaceBlue/back.png"), //back
+            GetSkyboxPath("SpaceBlue/front.png"), //front
         };
 
         static auto texture = Texture::CreateTextureCube(paths);
@@ -419,12 +420,12 @@ namespace SkyboxAssets
 	inline auto Lake()
 	{
 		static std::string paths[6] = {
-			GetTexturePath("LakeSkybox/left.jpg"), //left
-			GetTexturePath("LakeSkybox/right.jpg"), //right
-			GetTexturePath("LakeSkybox/bottom.jpg"), //bottom
-			GetTexturePath("LakeSkybox/top.jpg"), //top
-			GetTexturePath("LakeSkybox/back.jpg"), //back
-			GetTexturePath("LakeSkybox/front.jpg"), //front
+			GetSkyboxPath("Lake/left.jpg"), //left
+			GetSkyboxPath("Lake/right.jpg"), //right
+			GetSkyboxPath("Lake/bottom.jpg"), //bottom
+			GetSkyboxPath("Lake/top.jpg"), //top
+			GetSkyboxPath("Lake/back.jpg"), //back
+			GetSkyboxPath("Lake/front.jpg"), //front
 		};
 
 		static auto texture = Texture::CreateTextureCube(paths);
@@ -436,12 +437,12 @@ namespace SkyboxAssets
 	inline auto Interstellar()
 	{
 		static std::string paths[6] = {
-			GetTexturePath("Skyboxes/Interstellar/left.png"), //left
-			GetTexturePath("Skyboxes/Interstellar/right.png"), //right
-			GetTexturePath("Skyboxes/Interstellar/bottom.png"), //bottom
-			GetTexturePath("Skyboxes/Interstellar/top.png"), //top
-			GetTexturePath("Skyboxes/Interstellar/back.png"), //back
-			GetTexturePath("Skyboxes/Interstellar/front.png"), //front
+			GetSkyboxPath("Interstellar/left.png"), //left
+			GetSkyboxPath("Interstellar/right.png"), //right
+			GetSkyboxPath("Interstellar/bottom.png"), //bottom
+			GetSkyboxPath("Interstellar/top.png"), //top
+			GetSkyboxPath("Interstellar/back.png"), //back
+			GetSkyboxPath("Interstellar/front.png"), //front
 		};
 
 		static auto texture = Texture::CreateTextureCube(paths);

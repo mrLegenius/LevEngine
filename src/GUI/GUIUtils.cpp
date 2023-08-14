@@ -229,7 +229,7 @@ namespace LevEngine
 			const auto path = static_cast<const wchar_t*>(payload->Data);
 			const std::filesystem::path assetPath = AssetsPath / path;
 
-			if (!validation)
+			if (!validation(path))
 			{
 				ImGui::EndDragDropTarget();
 				return;

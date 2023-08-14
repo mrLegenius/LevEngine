@@ -53,9 +53,7 @@ namespace LevEngine::Editor
             ImGui::PushID(filenameString.c_str());
             Ref<Texture> icon = nullptr;
             if (directoryEntry.is_directory())
-            {
-                icon = m_DirectoryIcon;
-            }
+	            icon = m_DirectoryIcon;
             else if (GUIUtils::IsAssetTexture(path))
                 icon = TextureLibrary::GetTexture(path.string());
             else if (GUIUtils::IsAssetMesh(path))

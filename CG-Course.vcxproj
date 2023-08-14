@@ -425,6 +425,7 @@
     <ClInclude Include="src\Katamari\ComponentDrawers\EmitterDrawer.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\LightsDrawer.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\MeshRendererDrawer.h" />
+    <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxComponentDrawer.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxDrawer.h" />
     <ClInclude Include="src\Katamari\Selection.h" />
     <ClInclude Include="src\Katamari\Panels\AssetBrowserPanel.h" />

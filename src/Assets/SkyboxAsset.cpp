@@ -79,7 +79,7 @@ namespace LevEngine
 		InitTexture();
 	}
 
-	void SkyboxAsset::Serialize(YAML::Emitter& out)
+	void SkyboxAsset::SerializeData(YAML::Emitter& out)
 	{
 		out << YAML::Key << "Left" << YAML::Value << m_Left;
 		out << YAML::Key << "Right" << YAML::Value << m_Right;
@@ -89,7 +89,7 @@ namespace LevEngine
 		out << YAML::Key << "Front" << YAML::Value << m_Front;
 	}
 
-	bool SkyboxAsset::Deserialize(YAML::Node& node)
+	bool SkyboxAsset::DeserializeData(YAML::Node& node)
 	{
 		m_Left = node["Left"].as<std::string>();
 		m_Right = node["Right"].as<std::string>();

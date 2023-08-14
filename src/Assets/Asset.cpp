@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "Asset.h"
 
-#include "yaml-cpp/exceptions.h"
 #include "yaml-cpp/node/node.h"
 #include "yaml-cpp/node/parse.h"
 
@@ -12,7 +11,7 @@ namespace LevEngine
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 
-		Serialize(out);
+		SerializeData(out);
 
 		out << YAML::EndMap;
 
@@ -33,9 +32,9 @@ namespace LevEngine
 		try
 		{
 			YAML::Node data = YAML::LoadFile(m_Path.string());
-			return Deserialize(data);
+			return DeserializeData(data);
 		}
-		catch (YAML::ParserException& e)
+		catch (std::exception& e)
 		{
 			Log::CoreWarning(e.what());
 			return false;

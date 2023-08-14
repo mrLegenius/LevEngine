@@ -938,6 +938,9 @@
     <ClInclude Include="src\Assets\SkyboxAsset.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxComponentDrawer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

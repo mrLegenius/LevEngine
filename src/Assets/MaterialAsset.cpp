@@ -11,7 +11,7 @@
 
 namespace LevEngine
 {
-	void MaterialAsset::Serialize(YAML::Emitter& out)
+	void MaterialAsset::SerializeData(YAML::Emitter& out)
 	{
 		out << YAML::Key << "AmbientColor" << YAML::Value << material.GetAmbientColor();
 		out << YAML::Key << "DiffuseColor" << YAML::Value << material.GetDiffuseColor();
@@ -29,7 +29,7 @@ namespace LevEngine
 			out << YAML::Key << "Offset" + std::to_string(i) << YAML::Value << material.GetTextureOffset(type);
 		}
 	}
-	bool MaterialAsset::Deserialize(YAML::Node& node)
+	bool MaterialAsset::DeserializeData(YAML::Node& node)
 	{
 		material = {};
 

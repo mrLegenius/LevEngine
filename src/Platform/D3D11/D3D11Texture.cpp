@@ -1835,6 +1835,18 @@ D3D11Texture::D3D11Texture(const std::string paths[6])
     for (int i = 0; i < 6; ++i)
         data[i] = stbi_load(paths[i].c_str(), &width, &height, &channels, 4);
 
+    bool failed = false;
+    for (int i = 0; i < 6; ++i)
+    {
+	    if (data[i] == nullptr)
+	    {
+            failed = true;
+            Log::CoreWarning("Failed to load texture at {0} location", paths[i]);
+	    }
+    }
+
+    if (failed) return;
+
     m_IsLoaded = true;
     m_Width = width;
     m_Height = height;
