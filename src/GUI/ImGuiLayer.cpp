@@ -47,6 +47,7 @@ namespace LevEngine
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
+		style.FrameRounding = 10;
 
 		SetDarkThemeColors();
 
@@ -79,11 +80,19 @@ namespace LevEngine
 	{
 	}
 
-
+#define IntToFloat(x) ((x) / 255.0f)
 	void ImGuiLayer::SetDarkThemeColors()
 	{
+		constexpr auto DarkBlue = ImVec4{ IntToFloat(21), IntToFloat(24), IntToFloat(31), 1.0f };
+		constexpr auto Blue = ImVec4{ IntToFloat(39), IntToFloat(46), IntToFloat(54), 1.0f };
+		constexpr auto Cyan = ImVec4{ IntToFloat(67), IntToFloat(217), IntToFloat(232), 1.0f };
+
+		constexpr auto DarkOrange = ImVec4{ IntToFloat(207), IntToFloat(56), IntToFloat(25), 1.0f };
+		constexpr auto LightOrange = ImVec4{ IntToFloat(235), IntToFloat(93), IntToFloat(19), 1.0f };
+		constexpr auto WhiteOrange = ImVec4{ IntToFloat(231), IntToFloat(116), IntToFloat(62), 1.0f };
+
 		auto& colors = ImGui::GetStyle().Colors;
-		colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
+		colors[ImGuiCol_WindowBg] = DarkBlue;
 
 		// Headers
 		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
@@ -91,21 +100,21 @@ namespace LevEngine
 		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 
 		// Buttons
-		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		colors[ImGuiCol_Button] = LightOrange;
 		colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
 		colors[ImGuiCol_ButtonActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 
 		// Frame BG
-		colors[ImGuiCol_FrameBg] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
-		colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_FrameBg] = Blue;
+		colors[ImGuiCol_FrameBgHovered] = WhiteOrange;
+		colors[ImGuiCol_FrameBgActive] = DarkOrange;
 
 		// Tabs
-		colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.3805f, 0.381f, 1.0f };
-		colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
-		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		colors[ImGuiCol_Tab] = LightOrange;
+		colors[ImGuiCol_TabHovered] = LightOrange;
+		colors[ImGuiCol_TabActive] = WhiteOrange;
+		colors[ImGuiCol_TabUnfocused] = DarkOrange;
+		colors[ImGuiCol_TabUnfocusedActive] = DarkOrange;
 
 		// Title
 		colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };

@@ -19,10 +19,12 @@ namespace LevEngine::Editor
 		virtual std::string GetName() = 0;
 		virtual void DrawContent() = 0;
 
-		ImGuiWindow* m_Window;
+		ImGuiWindow* m_Window{};
 
 		bool m_Focused = false;
 		bool m_Hovered = false;
+
+		Vector2 m_WindowPadding{};
 	};
 }
 

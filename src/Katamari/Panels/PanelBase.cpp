@@ -7,7 +7,7 @@ namespace LevEngine::Editor
 {
 	void Panel::Render()
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(m_WindowPadding.x, m_WindowPadding.y));
 		ImGui::Begin(GetName().c_str());
 
 		m_Window = ImGui::GetCurrentWindow();
