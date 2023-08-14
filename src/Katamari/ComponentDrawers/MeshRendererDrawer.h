@@ -8,7 +8,7 @@
 
 namespace LevEngine
 {
-	class MeshRendererDrawer final : public ComponentDrawer<MeshRendererComponent>
+	class MeshRendererDrawer final : public ComponentDrawer<MeshRendererComponent, MeshRendererDrawer>
 	{
 	protected:
 		std::string GetLabel() const override { return "Mesh Renderer"; }

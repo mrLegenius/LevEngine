@@ -30,17 +30,7 @@ namespace LevEngine::Editor
 		ImGui::SameLine();
 		ImGui::PushItemWidth(-1);
 
-		//TODO: Find a way to define them implicitly
-		static std::vector<Ref<IComponentDrawer>> componentDrawers =
-		{
-			CreateRef<TransformDrawer>(),
-			CreateRef<CameraComponentDrawer>(),
-			CreateRef<DirectionalLightDrawer>(),
-			CreateRef<PointLightDrawer>(),
-			CreateRef<EmitterDrawer>(),
-			CreateRef<MeshRendererDrawer>(),
-			CreateRef<SkyboxComponentDrawer>(),
-		};
+		static auto& componentDrawers = ClassCollection<IComponentDrawer>::Instance();
 
 		if (ImGui::Button("Add Component"))
 			ImGui::OpenPopup("AddComponent");

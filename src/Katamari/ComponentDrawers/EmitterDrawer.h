@@ -4,7 +4,7 @@
 
 namespace LevEngine
 {
-	class EmitterDrawer final : public ComponentDrawer<EmitterComponent>
+	class EmitterDrawer final : public ComponentDrawer<EmitterComponent, EmitterDrawer>
 	{
 	protected:
 		[[nodiscard]] std::string GetLabel() const override { return "Emitter"; }

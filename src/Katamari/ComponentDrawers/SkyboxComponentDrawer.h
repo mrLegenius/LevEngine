@@ -6,7 +6,7 @@
 
 namespace LevEngine
 {
-	class SkyboxComponentDrawer final : public ComponentDrawer<SkyboxRendererComponent>
+	class SkyboxComponentDrawer final : public ComponentDrawer<SkyboxRendererComponent, SkyboxComponentDrawer>
 	{
 	protected:
 		std::string GetLabel() const override { return "Skybox Renderer"; }

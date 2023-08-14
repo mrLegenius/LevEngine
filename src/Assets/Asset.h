@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "yaml-cpp/emitter.h"
+#include <yaml-cpp/yaml.h>
 
 namespace LevEngine
 {

@@ -4,7 +4,7 @@
 
 namespace LevEngine
 {
-	class CameraComponentDrawer final : public ComponentDrawer<CameraComponent>
+	class CameraComponentDrawer final : public ComponentDrawer<CameraComponent, CameraComponentDrawer>
 	{
 	protected:
 		[[nodiscard]] std::string GetLabel() const override { return "Camera"; }

@@ -4,12 +4,12 @@
 
 namespace LevEngine
 {
-	class CameraSerializer final : public ComponentSerializer<CameraComponent>
+	class CameraSerializer final : public ComponentSerializer<CameraComponent, CameraSerializer>
 	{
 	protected:
 		const char* GetKey() override { return "Camera"; }
 
-		void Serialize(YAML::Emitter& out, const CameraComponent& component) override
+		void SerializeData(YAML::Emitter& out, const CameraComponent& component) override
 		{
 			auto& camera = component.camera;
 			out << YAML::Key << "Camera" << YAML::Value;
@@ -28,7 +28,7 @@ namespace LevEngine
 			out << YAML::Key << "Main" << YAML::Value << component.isMain;
 			out << YAML::Key << "FixedAspectRatio" << YAML::Value << component.fixedAspectRatio;
 		}
-		void Deserialize(YAML::Node& node, CameraComponent& component) override
+		void DeserializeData(YAML::Node& node, CameraComponent& component) override
 		{
 			auto& camera = component.camera;
 			auto cameraProps = node["Camera"];

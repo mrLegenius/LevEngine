@@ -9,13 +9,13 @@ namespace LevEngine
 	protected:
 		const char* GetKey() override { return "Transform"; }
 
-		void Serialize(YAML::Emitter& out, const Transform& component) override
+		void SerializeData(YAML::Emitter& out, const Transform& component) override
 		{
 			out << YAML::Key << "Position" << YAML::Value << component.GetLocalPosition();
 			out << YAML::Key << "Rotation" << YAML::Value << component.GetLocalRotation();
 			out << YAML::Key << "Scale" << YAML::Value << component.GetLocalScale();
 		}
-		void Deserialize(YAML::Node& node, Transform& component) override
+		void DeserializeData(YAML::Node& node, Transform& component) override
 		{
 			component.SetLocalPosition(node["Position"].as<Vector3>());
 			component.SetLocalRotationRadians(node["Rotation"].as<Vector3>());

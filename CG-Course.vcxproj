@@ -428,6 +428,7 @@
     <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxDrawer.h" />
     <ClInclude Include="src\Katamari\Selection.h" />
     <ClInclude Include="src\Katamari\Panels\AssetBrowserPanel.h" />
+    <ClInclude Include="src\Kernel\ClassCollection.h" />
     <ClInclude Include="src\Kernel\PlatformUtils.h" />
     <ClInclude Include="src\Scene\Components\Camera\CameraComponent.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\CameraComponentDrawer.h" />
@@ -542,7 +543,6 @@
     <ClInclude Include="src\Scene\Serializers\Components\CameraSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\Components\ComponentSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\Components\SkyboxComponentDrawer.h" />
-    <ClInclude Include="src\Scene\Serializers\Components\TagSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\Components\TransformSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\SceneSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.h" />

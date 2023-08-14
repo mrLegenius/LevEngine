@@ -4,7 +4,6 @@
 #include <imgui.h>
 
 #include "TextureLibrary.h"
-#include "yaml-cpp/node/node.h"
 
 namespace LevEngine
 {

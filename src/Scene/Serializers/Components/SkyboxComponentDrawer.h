@@ -4,17 +4,17 @@
 
 namespace LevEngine
 {
-	class SkyboxComponentSerializer final : public ComponentSerializer<SkyboxRendererComponent>
+	class SkyboxComponentSerializer final : public ComponentSerializer<SkyboxRendererComponent, SkyboxComponentSerializer>
 	{
 	protected:
 		const char* GetKey() override { return "Transform"; }
 
-		void Serialize(YAML::Emitter& out, const SkyboxRendererComponent& component) override
+		void SerializeData(YAML::Emitter& out, const SkyboxRendererComponent& component) override
 		{
 			if (component.skybox)
 				out << YAML::Key << "Skybox" << YAML::Value << component.skybox->GetPath().string();
 		}
-		void Deserialize(YAML::Node& node, SkyboxRendererComponent& component) override
+		void DeserializeData(YAML::Node& node, SkyboxRendererComponent& component) override
 		{
 			const auto skybox = node["Skybox"];
 

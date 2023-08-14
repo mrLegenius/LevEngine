@@ -911,9 +911,6 @@
     <ClInclude Include="src\Scene\Serializers\Components\CameraSerializer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scene\Serializers\Components\TagSerializer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\Kernel\PlatformUtils.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -939,6 +936,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\Serializers\Components\SkyboxComponentDrawer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kernel\ClassCollection.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,6 +4,8 @@
 
 #include "Scene/Entity.h"
 
+#include "Kernel/ClassCollection.h"
+
 namespace LevEngine
 {
 	class IComponentSerializer
@@ -14,7 +16,7 @@ namespace LevEngine
 		virtual void Deserialize(YAML::Node& node, Entity entity) = 0;
 	};
 
-	template<typename T>
+	template<typename TComponent, class TSerializer>
 	class ComponentSerializer : public IComponentSerializer
 	{
 	public:
@@ -22,14 +24,14 @@ namespace LevEngine
 
 		void Serialize(YAML::Emitter& out, Entity entity) override
 		{
-			if (!entity.HasComponent<T>()) return;
+			if (!entity.HasComponent<TComponent>()) return;
 
-			const T& component = entity.GetComponent<T>();
+			const TComponent& component = entity.GetComponent<TComponent>();
 
 			out << YAML::Key << GetKey();
 			out << YAML::BeginMap;
 
-			Serialize(out, component);
+			SerializeData(out, component);
 
 			out << YAML::EndMap;
 		}
@@ -39,14 +41,17 @@ namespace LevEngine
 			auto componentProps = node[GetKey()];
 			if (!componentProps) return;
 
-			auto& component = entity.GetOrAddComponent<T>();
-			Deserialize(componentProps, component);
+			auto& component = entity.GetOrAddComponent<TComponent>();
+			DeserializeData(componentProps, component);
 		}
 
 	protected:
 		virtual const char* GetKey() = 0;
-		virtual void Serialize(YAML::Emitter& out, const T& component) = 0;
-		virtual void Deserialize(YAML::Node& node, T& component) = 0;
+		virtual void SerializeData(YAML::Emitter& out, const TComponent& component) = 0;
+		virtual void DeserializeData(YAML::Node& node, TComponent& component) = 0;
+
+	private:
+		static inline ClassRegister<IComponentSerializer, TSerializer> s_ClassRegister;
 	};
 }
 

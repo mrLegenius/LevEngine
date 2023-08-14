@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include "Components/ComponentSerializer.h"
-#include "Components/TagSerializer.h"
 #include "Scene/Scene.h"
+#include "yaml-cpp/emitter.h"
 
 namespace LevEngine
 {
@@ -19,9 +18,6 @@ namespace LevEngine
 		bool DeserializeRuntime(const std::string& filepath);
 	private:
 		Ref<Scene> m_Scene;
-		Ref<TagSerializer> m_TagSerializer;
-
-		std::vector<Ref<IComponentSerializer>> m_Serializers;
 	};
 }
 

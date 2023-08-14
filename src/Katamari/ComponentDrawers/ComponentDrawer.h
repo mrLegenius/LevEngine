@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include "Kernel/ClassCollection.h"
 #include "Scene/Entity.h"
 
 namespace LevEngine
@@ -13,7 +14,7 @@ namespace LevEngine
 		virtual void DrawAddComponent(Entity entity) = 0;
 	};
 
-	template<typename T>
+	template<typename TComponent, class TDrawer>
 	class ComponentDrawer : public IComponentDrawer
 	{
 	public:
@@ -21,20 +22,20 @@ namespace LevEngine
 
 		void Draw(Entity entity) override
 		{
-			if (!entity.HasComponent<T>()) return;
+			if (!entity.HasComponent<TComponent>()) return;
 
 			constexpr ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
 				| ImGuiTreeNodeFlags_AllowItemOverlap
 				| ImGuiTreeNodeFlags_Framed
 				| ImGuiTreeNodeFlags_FramePadding;
 
-			auto& component = entity.GetComponent<T>();
+			auto& component = entity.GetComponent<TComponent>();
 			const auto contentRegionAvail = ImGui::GetContentRegionAvail();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
 			const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 			ImGui::Separator();
-			const bool opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(),
+			const bool opened = ImGui::TreeNodeEx((void*)typeid(TComponent).hash_code(),
 				treeNodeFlags, GetLabel().c_str());
 			ImGui::PopStyleVar();
 
@@ -65,16 +66,16 @@ namespace LevEngine
 			}
 
 			if (removeComponent)
-				entity.RemoveComponent<T>();
+				entity.RemoveComponent<TComponent>();
 		}
 
 		void DrawAddComponent(Entity entity) override
 		{
-			if (IsRemovable() && !entity.HasComponent<T>())
+			if (IsRemovable() && !entity.HasComponent<TComponent>())
 			{
 				if (ImGui::MenuItem(GetLabel().c_str()))
 				{
-					entity.AddComponent<T>();
+					entity.AddComponent<TComponent>();
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -84,6 +85,9 @@ namespace LevEngine
 		[[nodiscard]] virtual std::string GetLabel() const = 0;
 		[[nodiscard]] virtual bool IsRemovable() const { return true; }
 
-		virtual void DrawContent(T& component) = 0;
+		virtual void DrawContent(TComponent& component) = 0;
+
+	private:
+		static inline ClassRegister<IComponentDrawer, TDrawer> s_ClassRegister;
 	};
 }

@@ -1,5 +1,4 @@
 #pragma once
-#include <yaml-cpp/yaml.h>
 
 #include "Asset.h"
 #include "Renderer/Material.h"

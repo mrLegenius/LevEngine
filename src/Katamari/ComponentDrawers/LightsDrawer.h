@@ -3,7 +3,7 @@
 
 namespace LevEngine
 {
-	class DirectionalLightDrawer final : public ComponentDrawer<DirectionalLightComponent>
+	class DirectionalLightDrawer final : public ComponentDrawer<DirectionalLightComponent, DirectionalLightDrawer>
 	{
 	protected:
 		std::string GetLabel() const override { return "Directional Light"; }
@@ -14,7 +14,7 @@ namespace LevEngine
 		}
 	};
 
-	class PointLightDrawer final : public ComponentDrawer<PointLightComponent>
+	class PointLightDrawer final : public ComponentDrawer<PointLightComponent, PointLightDrawer>
 	{
 	protected:
 		std::string GetLabel() const override { return "Point Light"; }

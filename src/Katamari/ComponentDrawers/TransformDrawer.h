@@ -6,7 +6,7 @@
 
 namespace LevEngine
 {
-	class TransformDrawer final : public ComponentDrawer<Transform>
+	class TransformDrawer final : public ComponentDrawer<Transform, TransformDrawer>
 	{
 	protected:
 		std::string GetLabel() const override { return "Transform"; }

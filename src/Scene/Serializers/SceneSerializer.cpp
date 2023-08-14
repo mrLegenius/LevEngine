@@ -5,25 +5,14 @@
 #include "../Entity.h"
 #include "Kernel/Asserts.h"
 #include "../Components/Components.h"
-#include "SerializerUtils.h"
-#include "Components/CameraSerializer.h"
-#include "Components/SkyboxComponentDrawer.h"
-#include "Components/TransformSerializer.h"
-#include "Components/TagSerializer.h"
+#include "Components/ComponentSerializer.h"
+#include "Kernel/ClassCollection.h"
 
 namespace LevEngine
 {
 	SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
 		: m_Scene(scene)
 	{
-		m_Serializers = 
-		{
-			CreateRef<TransformSerializer>(),
-			CreateRef<CameraSerializer>(),
-			CreateRef<SkyboxComponentSerializer>(),
-		};
-
-		m_TagSerializer = CreateRef<TagSerializer>();
 	}
 
 	void SceneSerializer::SerializeEntity(YAML::Emitter& out, Entity entity) const
@@ -34,9 +23,9 @@ namespace LevEngine
 
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
-		m_TagSerializer->Serialize(out, entity);
+		out << YAML::Key << "Tag" << YAML::Value << entity.GetComponent<TagComponent>().tag;
 
-		for (const auto serializer : m_Serializers)
+		for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
 			serializer->Serialize(out, entity);
 
 		out << YAML::EndMap;
@@ -64,11 +53,6 @@ namespace LevEngine
 		fout << out.c_str();
 	}
 
-	void SceneSerializer::SerializeRuntime(const std::string& filepath)
-	{
-		LEV_NOT_IMPLEMENTED
-	}
-
 	bool SceneSerializer::Deserialize(const std::string& filepath)
 	{
 		YAML::Node data;
@@ -94,24 +78,26 @@ namespace LevEngine
 		for (auto entity : entities)
 		{
 			auto uuid = entity["Entity"].as<uint64_t>();
-
-			std::string name = m_TagSerializer->Deserialize(entity);
+			auto name = entity["Tag"].as<std::string>();
 
 			Log::Trace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
 
 			Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
 
-			for (const auto serializer : m_Serializers)
+			for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
 				serializer->Deserialize(entity, deserializedEntity);
 		}
 
 		return true;
 	}
 
+	void SceneSerializer::SerializeRuntime(const std::string& filepath)
+	{
+		LEV_NOT_IMPLEMENTED
+	}
+
 	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
 	{
 		LEV_NOT_IMPLEMENTED
-
-			return false;
 	}
 }
