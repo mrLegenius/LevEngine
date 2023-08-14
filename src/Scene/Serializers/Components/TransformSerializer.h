@@ -4,7 +4,7 @@
 
 namespace LevEngine
 {
-	class TransformSerializer final : public ComponentSerializer<Transform>
+	class TransformSerializer final : public ComponentSerializer<Transform, TransformSerializer>
 	{
 	protected:
 		const char* GetKey() override { return "Transform"; }
