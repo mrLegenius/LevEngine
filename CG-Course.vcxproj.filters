@@ -354,6 +354,9 @@
     <ClCompile Include="src\Assets\MaterialAsset.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Assets\SkyboxAsset.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\D3D11\D3D11Shader.h">
@@ -930,6 +933,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Assets\AssetSelection.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SkyboxAsset.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

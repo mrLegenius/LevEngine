@@ -40,6 +40,13 @@ namespace LevEngine
 
 			return extension == ".mat";
 		}
+
+		static bool IsAssetSkybox(const std::filesystem::path& path)
+		{
+			const auto extension = path.extension().string();
+
+			return extension == ".skybox";
+		}
 	};
 
 }

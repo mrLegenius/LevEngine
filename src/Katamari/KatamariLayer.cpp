@@ -452,10 +452,8 @@ void KatamariLayer::OnUpdate(const float deltaTime)
 
 void KatamariLayer::OnGUIRender()
 {
-    static bool show_demo_window = true;
 
-    if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
+	ImGui::ShowDemoWindow(nullptr);
 
     LEV_PROFILE_FUNCTION();
 
