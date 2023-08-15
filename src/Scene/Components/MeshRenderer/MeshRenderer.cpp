@@ -1,10 +1,12 @@
-﻿#pragma once
-#include "Scene/Components/Components.h"
-#include "GUI/GUIUtils.h"
-#include "Math/Math.h"
-#include "ComponentDrawer.h"
+﻿#include "pch.h"
+#include "MeshRenderer.h"
+
+#include <imgui.h>
+
 #include "Assets/MaterialAsset.h"
+#include "GUI/GUIUtils.h"
 #include "Katamari/ObjLoader.h"
+#include "../ComponentDrawer.h"
 
 namespace LevEngine
 {
@@ -26,8 +28,8 @@ namespace LevEngine
 		{
 			ImGui::Text("Mesh");
 			ImGui::SameLine();
-			GUIUtils::DrawAsset(mesh ? mesh->GetName().c_str() : "None. Drop here", 
-				GUIUtils::IsAssetMesh, 
+			GUIUtils::DrawAsset(mesh ? mesh->GetName().c_str() : "None. Drop here",
+				GUIUtils::IsAssetMesh,
 				[&mesh](const auto& path) { mesh = ObjLoader().LoadMesh(path); });
 		}
 
@@ -38,10 +40,10 @@ namespace LevEngine
 			GUIUtils::DrawAsset("Drop here",
 				GUIUtils::IsAssetMaterial,
 				[&material](const auto& path) {
-					MaterialAsset asset{path};
+					MaterialAsset asset{ path };
 					asset.Deserialize();
 					material = asset.material;
-			});
+				});
 		}
 	};
 }

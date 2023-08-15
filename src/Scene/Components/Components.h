@@ -1,18 +1,17 @@
 #pragma once
-#include <string>
+#include "Kernel/UUID.h"
 
 #include "OrbitCamera.h"
-#include "Assets/SkyboxAsset.h"
-#include "Kernel/Color.h"
-#include "Renderer/Camera/SceneCamera.h"
-#include "Renderer/Texture.h"
-#include "Renderer/3D/Mesh.h"
-#include "Renderer/Shader.h"
-#include "Kernel/UUID.h"
+
+#include "Camera/Camera.h"
+#include "Emitter/EmitterComponent.h"
+#include "Lights/Lights.h"
+#include "MeshRenderer/MeshRenderer.h"
+#include "SkyboxRenderer/SkyboxRenderer.h"
+#include "Transform/Transform.h"
+
 #include "Physics/Components/Collider.h"
 #include "Physics/Components/Rigidbody.h"
-#include "Renderer/Material.h"
-#include "Transform/Transform.h"
 
 namespace LevEngine
 {
@@ -32,91 +31,6 @@ namespace LevEngine
 		TagComponent(const TagComponent&) = default;
 		explicit TagComponent(std::string other)
 			: tag(std::move(other)) { }
-	};
-
-	struct MeshRendererComponent
-	{
-		Ref<Mesh> mesh;
-		Material material;
-		bool castShadow = true;
-
-		MeshRendererComponent() = default;
-		MeshRendererComponent(const Ref<Mesh>& mesh) : mesh(mesh)
-		{ }
-		MeshRendererComponent(const MeshRendererComponent&) = default;
-	};
-
-	struct SkyboxRendererComponent
-	{
-		Ref<SkyboxAsset> skybox;
-
-		SkyboxRendererComponent(const Ref<SkyboxAsset>& skybox) : skybox(skybox) { }
-		SkyboxRendererComponent() = default;
-		SkyboxRendererComponent(const SkyboxRendererComponent&) = default;
-	};
-
-	struct DirectionalLightComponent
-	{
-		Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
-
-		DirectionalLightComponent() = default;
-		DirectionalLightComponent(const DirectionalLightComponent&) = default;
-	};
-
-	struct PointLightComponent
-	{
-		Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
-
-		float Range = 10.0f;
-		float Smoothness = 0.75f;
-		float Intensity = 1.0f;
-
-		PointLightComponent() = default;
-		PointLightComponent(const PointLightComponent&) = default;
-	};
-
-	struct CameraComponent
-	{
-		SceneCamera camera;
-		bool isMain = true;
-		bool fixedAspectRatio = false;
-
-		CameraComponent() = default;
-		CameraComponent(const CameraComponent&) = default;
-	};
-
-	struct EmitterComponent
-	{
-		struct BirthParams
-		{
-			bool RandomVelocity = false;
-			Vector3 Velocity = Vector3::Zero;
-			Vector3 VelocityB = Vector3::Zero;
-
-			bool RandomStartPosition = false;
-			Vector3 Position = Vector3::Zero;
-			Vector3 PositionB = Vector3::Zero;
-
-			bool RandomStartColor = false;
-			Color StartColor;
-			Color StartColorB;
-			Color EndColor = Color{ 1, 1, 1, 1 };
-
-			bool RandomStartSize = false;
-			float StartSize = 0.1f;
-			float StartSizeB = 0.1f;
-			float EndSize = 0.1f;
-
-			bool RandomStartLifeTime = false;
-			float LifeTime = 1;
-			float LifeTimeB = 1;
-			float GravityScale = 0;
-		};
-
-		uint32_t MaxParticles = 10000;
-		float Rate;
-		BirthParams Birth;
-		Ref<Texture> Texture;
 	};
 
 	template<typename... Component>

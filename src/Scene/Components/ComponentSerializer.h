@@ -1,27 +1,25 @@
 ﻿#pragma once
-#include <yaml-cpp/emitter.h>
 #include <yaml-cpp/yaml.h>
 
+#include "Kernel/ClassCollection.h"
 #include "Scene/Entity.h"
 
-#include "Kernel/ClassCollection.h"
+// ReSharper disable once CppUnusedIncludeDirective
+#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
 	class IComponentSerializer
 	{
 	public:
-		virtual ~IComponentSerializer() = default;
 		virtual void Serialize(YAML::Emitter& out, Entity entity) = 0;
 		virtual void Deserialize(YAML::Node& node, Entity entity) = 0;
 	};
 
-	template<typename TComponent, class TSerializer>
+	template<class TComponent, class TSerializer>
 	class ComponentSerializer : public IComponentSerializer
 	{
 	public:
-		~ComponentSerializer() override = default;
-
 		void Serialize(YAML::Emitter& out, Entity entity) override
 		{
 			if (!entity.HasComponent<TComponent>()) return;

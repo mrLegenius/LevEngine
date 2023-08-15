@@ -3,12 +3,8 @@
 
 #include <imgui.h>
 
-#include "ComponentDrawers/TransformDrawer.h"
-#include "ComponentDrawers/CameraComponentDrawer.h"
-#include "ComponentDrawers/EmitterDrawer.h"
-#include "ComponentDrawers/LightsDrawer.h"
-#include "ComponentDrawers/MeshRendererDrawer.h"
-#include "ComponentDrawers/SkyboxComponentDrawer.h"
+#include "Kernel/ClassCollection.h"
+#include "Scene/Components/ComponentDrawer.h"
 
 namespace LevEngine::Editor
 {

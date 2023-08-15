@@ -1,12 +1,10 @@
 ﻿#include "pch.h"
 #include "SceneSerializer.h"
-#include <yaml-cpp/yaml.h>
 
 #include "../Entity.h"
-#include "Kernel/Asserts.h"
 #include "../Components/Components.h"
-#include "Components/ComponentSerializer.h"
 #include "Kernel/ClassCollection.h"
+#include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
 {
@@ -22,7 +20,6 @@ namespace LevEngine
 		out << YAML::BeginMap;
 
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
-
 		out << YAML::Key << "Tag" << YAML::Value << entity.GetComponent<TagComponent>().tag;
 
 		for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())

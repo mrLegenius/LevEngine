@@ -1,13 +1,32 @@
-﻿#pragma once
-#include "ComponentSerializer.h"
-#include "../SerializerUtils.h"
+﻿#include "pch.h"
+#include "SkyboxRenderer.h"
+
+#include "../ComponentDrawer.h"
+#include "../ComponentSerializer.h"
 
 namespace LevEngine
 {
+	class SkyboxComponentDrawer final : public ComponentDrawer<SkyboxRendererComponent, SkyboxComponentDrawer>
+	{
+	protected:
+		std::string GetLabel() const override { return "Skybox Renderer"; }
+
+		void DrawContent(SkyboxRendererComponent& component) override
+		{
+			GUIUtils::DrawAsset("Skybox", GUIUtils::IsAssetSkybox,
+				[&component](const std::filesystem::path& assetPath)
+				{
+					const auto asset = CreateRef<SkyboxAsset>(assetPath);
+					if (asset->Deserialize())
+						component.skybox = asset;
+				});
+		}
+	};
+
 	class SkyboxComponentSerializer final : public ComponentSerializer<SkyboxRendererComponent, SkyboxComponentSerializer>
 	{
 	protected:
-		const char* GetKey() override { return "Transform"; }
+		const char* GetKey() override { return "Skybox Renderer"; }
 
 		void SerializeData(YAML::Emitter& out, const SkyboxRendererComponent& component) override
 		{

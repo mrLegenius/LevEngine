@@ -6,7 +6,6 @@
 #include "TextureLibrary.h"
 #include "GUI/GUIUtils.h"
 #include "Renderer/Material.h"
-#include "yaml-cpp/emitter.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine

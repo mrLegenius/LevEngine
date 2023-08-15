@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Scene/Scene.h"
-#include "yaml-cpp/emitter.h"
+#include <yaml-cpp/yaml.h>
 
 namespace LevEngine
 {

@@ -1,9 +1,6 @@
 ﻿#include "pch.h"
 #include "Asset.h"
 
-#include "yaml-cpp/node/node.h"
-#include "yaml-cpp/node/parse.h"
-
 namespace LevEngine
 {
 	void Asset::Serialize()

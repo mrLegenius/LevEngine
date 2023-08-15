@@ -1,131 +1,92 @@
 Scene: Scene Name
 Entities:
-  - Entity: 4037001721799562458
-    Tag:
-      Tag: Torch Smoke Particles
+  - Entity: 14316158730015350950
+    Tag: Torch Smoke Particles
     Transform:
       Position: [0, 50, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 7263487291692306458
-    Tag:
-      Tag: Torch Fire Particles
+  - Entity: 18430904504055906055
+    Tag: Torch Fire Particles
     Transform:
       Position: [0, 50, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 9169210906063106574
-    Tag:
-      Tag: Torch
+  - Entity: 12954091190601245606
+    Tag: Torch
     Transform:
       Position: [10, 0, 10]
       Rotation: [0, 0, 0]
       Scale: [0.100000001, 0.100000001, 0.100000001]
-  - Entity: 3913930923988303815
-    Tag:
-      Tag: Peak
+  - Entity: 13088103477878911210
+    Tag: Peak
     Transform:
       Position: [100, 25, 100]
       Rotation: [0, 0, 0]
       Scale: [10, 50, 10]
-  - Entity: 9487636282816806814
-    Tag:
-      Tag: Wall
+  - Entity: 1364364427965330599
+    Tag: Wall
     Transform:
       Position: [150, 10, 50]
       Rotation: [0, 0, 0]
       Scale: [1, 20, 100]
-  - Entity: 11631258066437005937
-    Tag:
-      Tag: DirLight
+  - Entity: 12371300505267043251
+    Tag: DirLight
     Transform:
       Position: [150, 100, 150]
       Rotation: [-0.785398185, 0.785398185, 0]
       Scale: [1, 1, 1]
-    Camera:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 0.25
-        OrthographicNear: 100
-        OrthographicFar: 1000
-      Main: true
-      FixedAspectRatio: false
-  - Entity: 13375705898794894571
-    Tag:
-      Tag: Skybox
+  - Entity: 1227181641920409369
+    Tag: Skybox
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
+  - Entity: 15688248016758385028
+    Tag: Camera
     Transform:
-      Skybox: resources\Skyboxes\Lake\Lake.skybox
-  - Entity: 7222129448698317104
-    Tag:
-      Tag: Camera
-    Transform:
-      Position: [47.969101, 9.18226719, 24.5407429]
-      Rotation: [-0.280693322, -1.3787123, -1.55080926e-08]
+      Position: [10.0100002, 17.7323818, 10]
+      Rotation: [-1.56979632, 1.57091558, 0]
       Scale: [1, 1, 1]
-    Camera:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Main: true
-      FixedAspectRatio: false
-  - Entity: 6284598191356925439
-    Tag:
-      Tag: Player
+  - Entity: 13261304529314370448
+    Tag: Player
     Transform:
-      Position: [74.1148148, 1.50309062, 19.4558792]
-      Rotation: [0.478405178, 0.123014592, -0.074400194]
+      Position: [10, 7.73238611, 10]
+      Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 6186132876276368382
-    Tag:
-      Tag: Floor
+  - Entity: 10443814451071611000
+    Tag: Floor
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [300, 1, 300]
-  - Entity: 9179903765343073526
-    Tag:
-      Tag: LavaRock Smoke Particles
+  - Entity: 1032697754280323907
+    Tag: LavaRock Smoke Particles
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 5166242288196566679
-    Tag:
-      Tag: LavaRock Fire Particles
+  - Entity: 13738117657129405666
+    Tag: LavaRock Fire Particles
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 14383576329742034741
-    Tag:
-      Tag: LavaRockMesh
+  - Entity: 18188333113885235452
+    Tag: LavaRockMesh
     Transform:
       Position: [0, 0, 0]
       Rotation: [1.57079637, 0, -1.57079637]
       Scale: [0.200000003, 0.200000003, 0.200000003]
-  - Entity: 14204798735983066500
-    Tag:
-      Tag: LavaRock
+  - Entity: 3764854372494175466
+    Tag: LavaRock
     Transform:
-      Position: [0, 2.50061798, 0]
+      Position: [0, 19.5464745, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 16734816148803742941
-    Tag:
-      Tag: Gear
+  - Entity: 3242136831139489581
+    Tag: Gear
     Transform:
-      Position: [6.19809914, 0.600309074, -18.7068443]
+      Position: [-12.3001394, 1.77323854, -8.86314774]
       Rotation: [-0, 0, 0]
       Scale: [0.100000001, 0.100000001, 0.100000001]

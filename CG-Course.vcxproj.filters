@@ -354,6 +354,21 @@
     <ClCompile Include="src\Assets\SkyboxAsset.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scene\Components\Lights\Lights.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\Emitter\EmitterComponent.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\Camera\Camera.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\MeshRenderer\MeshRenderer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\SkyboxRenderer\SkyboxRenderer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\D3D11\D3D11Shader.h">
@@ -692,7 +707,7 @@
     <ClInclude Include="src\Katamari\Panels\ViewportPanel.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scene\Components\Camera\CameraComponent.h">
+    <ClInclude Include="src\Scene\Components\Camera\Camera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="external\yaml-cpp\include\yaml-cpp\anchor.h">
@@ -872,28 +887,16 @@
     <ClInclude Include="external\yaml-cpp\src\token.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Katamari\ComponentDrawers\EmitterDrawer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Katamari\ComponentDrawers\LightsDrawer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxDrawer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Katamari\Panels\AssetBrowserPanel.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Katamari\ComponentDrawers\CameraComponentDrawer.h">
+    <ClInclude Include="src\Scene\Components\ComponentDrawer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Katamari\ComponentDrawers\ComponentDrawer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Katamari\ComponentDrawers\TransformDrawer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Scene\Serializers\Components\ComponentSerializer.h">
+    <ClInclude Include="src\Scene\Components\ComponentSerializer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\Serializers\SceneSerializer.h">
@@ -902,19 +905,10 @@
     <ClInclude Include="src\TextureLibrary.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scene\Serializers\Components\TransformSerializer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scene\Serializers\Components\CameraSerializer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\Kernel\PlatformUtils.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Katamari\ComponentDrawers\MeshRendererDrawer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Assets\MaterialAsset.h">
@@ -932,13 +926,19 @@
     <ClInclude Include="src\Assets\SkyboxAsset.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxComponentDrawer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Scene\Serializers\Components\SkyboxComponentDrawer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\Kernel\ClassCollection.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\Lights\Lights.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\Emitter\EmitterComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\MeshRenderer\MeshRenderer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\SkyboxRenderer\SkyboxRenderer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
