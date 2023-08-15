@@ -7,6 +7,7 @@
 #include "GUI/GUIUtils.h"
 #include "Katamari/ObjLoader.h"
 #include "../ComponentDrawer.h"
+#include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
 {
@@ -47,3 +48,21 @@ namespace LevEngine
 		}
 	};
 }
+
+class MeshRendererSerializer final : public ComponentSerializer<MeshRendererComponent, MeshRendererSerializer>
+{
+protected:
+	const char* GetKey() override { return "MeshRenderer"; }
+
+	void SerializeData(YAML::Emitter& out, const MeshRendererComponent& component) override
+	{
+		//EXAMPLE
+		// out << YAML::Key << "Field Name" << YAML::Value << component.field;
+	}
+
+	void DeserializeData(YAML::Node& node, MeshRendererComponent& component) override
+	{
+		//EXAMPLE
+		//component.field = node["Field Name"].as<float>();
+	}
+};

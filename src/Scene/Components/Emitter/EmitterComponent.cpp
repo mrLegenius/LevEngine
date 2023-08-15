@@ -56,6 +56,8 @@ namespace LevEngine
 	class EmitterComponentSerializer final : public ComponentSerializer<EmitterComponent, EmitterComponentSerializer>
 	{
 	protected:
+		const char* GetKey() override { return "Emitter"; }
+
 		void SerializeData(YAML::Emitter& out, const EmitterComponent& component) override
 		{
 			auto& birth = component.Birth;
