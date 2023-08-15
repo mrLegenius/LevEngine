@@ -31,7 +31,7 @@ void Transform::SetParent(Transform* value, const bool keepWorldTransform)
 	SetWorldScale(scale);
 }
 
-class TransformDrawer final : public ComponentDrawer<Transform, TransformDrawer>
+class TransformDrawer final : public ComponentDrawer<Transform, TransformDrawer, -1000>
 {
 protected:
 	std::string GetLabel() const override { return "Transform"; }

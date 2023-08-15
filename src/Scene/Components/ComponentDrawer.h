@@ -14,7 +14,7 @@ namespace LevEngine
 		virtual void DrawAddComponent(Entity entity) = 0;
 	};
 
-	template<typename TComponent, class TDrawer>
+	template<typename TComponent, class TDrawer, int Order = 1000>
 	class ComponentDrawer : public IComponentDrawer
 	{
 	public:
@@ -88,6 +88,6 @@ namespace LevEngine
 		virtual void DrawContent(TComponent& component) = 0;
 
 	private:
-		static inline ClassRegister<IComponentDrawer, TDrawer> s_ClassRegister;
+		static inline OrderedClassRegister<IComponentDrawer, TDrawer, Order> s_ClassRegister;
 	};
 }
