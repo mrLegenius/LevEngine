@@ -283,6 +283,7 @@ void Renderer::LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, 
 			using namespace entt::literals;
 			registry.ctx().emplace_as<Entity>("mainCameraEntity"_hs, Entity(entt::handle(registry, entity)));
 			mainCamera = &camera.camera;
+			transform.RecalculateModel();
 			cameraTransform = &transform;
 			return;
 		}
@@ -299,20 +300,15 @@ RenderParams Renderer::CreateRenderParams(SceneCamera* mainCamera, const Transfo
 	return { *mainCamera, cameraPosition, cameraViewMatrix, perspectiveViewProjectionMatrix };
 }
 
-void Renderer::Render(entt::registry& registry)
+void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform)
 {
-    LEV_PROFILE_FUNCTION();
+	LEV_PROFILE_FUNCTION();
 
-    SceneCamera* mainCamera = nullptr;
-	Transform* cameraTransform = nullptr;
+	if (!mainCamera) return;
 
 	RecalculateAllTransforms(registry);
 
-	LocateCamera(registry, mainCamera, cameraTransform);
-
-    if (!mainCamera) return;
-
-    const auto renderParams = CreateRenderParams(mainCamera, cameraTransform);
+	const auto renderParams = CreateRenderParams(mainCamera, cameraTransform);
 
 	//TODO: Maybe move to its own pass?
 	DirectionalLightSystem(registry);
@@ -322,17 +318,29 @@ void Renderer::Render(entt::registry& registry)
 	//TODO: Maybe move to its own pass?
 	Renderer3D::SetCameraBuffer(renderParams.Camera, renderParams.CameraViewMatrix, renderParams.CameraPosition);
 
-    switch (RenderSettings::RenderTechnique)
-    {
-    case RenderTechniqueType::Forward:
+	switch (RenderSettings::RenderTechnique)
+	{
+	case RenderTechniqueType::Forward:
 		s_ForwardTechnique->Process(registry, renderParams);
 		break;
-    case RenderTechniqueType::Deferred:
+	case RenderTechniqueType::Deferred:
 		s_DeferredTechnique->Process(registry, renderParams);
 		break;
-    case RenderTechniqueType::ForwardPlus:
+	case RenderTechniqueType::ForwardPlus:
 		LEV_NOT_IMPLEMENTED
-    }
+	}
+}
+
+void Renderer::Render(entt::registry& registry)
+{
+    LEV_PROFILE_FUNCTION();
+
+    SceneCamera* mainCamera = nullptr;
+	Transform* cameraTransform = nullptr;
+
+	LocateCamera(registry, mainCamera, cameraTransform);
+
+	Render(registry, mainCamera, cameraTransform);
 }
 
 void DirectionalLightSystem(entt::registry& registry)

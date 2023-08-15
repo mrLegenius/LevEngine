@@ -1,6 +1,8 @@
 #pragma once
 #include <set>
 
+#include "yaml-cpp/src/exp.h"
+
 struct Transform
 {
 	Transform()

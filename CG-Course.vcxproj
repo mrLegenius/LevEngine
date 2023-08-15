@@ -272,6 +272,7 @@
     <ClCompile Include="src\Assets\Asset.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\SkyboxAsset.cpp" />
+    <ClCompile Include="src\Katamari\EditorCamera.cpp" />
     <ClCompile Include="src\Katamari\EntitySelection.cpp" />
     <ClCompile Include="src\Katamari\Panels\AssetBrowserPanel.cpp" />
     <ClCompile Include="src\Katamari\Selection.cpp" />
@@ -429,6 +430,7 @@
     <ClInclude Include="src\Assets\MaterialAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxDrawer.h" />
+    <ClInclude Include="src\Katamari\EditorCamera.h" />
     <ClInclude Include="src\Katamari\Selection.h" />
     <ClInclude Include="src\Katamari\Panels\AssetBrowserPanel.h" />
     <ClInclude Include="src\Kernel\ClassCollection.h" />

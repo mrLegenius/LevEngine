@@ -35,6 +35,11 @@ void Scene::OnRender()
     Renderer::Render(m_Registry);
 }
 
+void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
+{
+    Renderer::Render(m_Registry, mainCamera, cameraTransform);
+}
+
 void Scene::OnLateUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();

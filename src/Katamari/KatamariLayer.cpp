@@ -293,7 +293,7 @@ void KatamariLayer::OnUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-    if (Input::IsKeyDown(KeyCode::F1))
+    if (Input::IsKeyDown(KeyCode::Escape))
     {
         Application::Get().GetWindow().EnableCursor();
 	    m_Hierarchy->Focus();
@@ -305,9 +305,12 @@ void KatamariLayer::OnUpdate(const float deltaTime)
         m_ActiveScene->OnUpdate(deltaTime);
         m_ActiveScene->OnPhysics(deltaTime);
         m_ActiveScene->OnLateUpdate(deltaTime);
+
+        m_Viewport->UpdateCamera(deltaTime);
     }
-    
-    m_ActiveScene->OnRender();
+
+    auto& camera = m_Viewport->GetCamera();
+	m_ActiveScene->OnRender(&camera, &camera.GetTransform());
 
     m_Viewport->UpdateViewportTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
 }

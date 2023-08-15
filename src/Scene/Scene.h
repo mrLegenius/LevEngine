@@ -20,6 +20,7 @@ public:
 	void OnPhysics(float deltaTime);
 	void OnLateUpdate(float deltaTime);
 	void OnRender();
+	void OnRender(SceneCamera* mainCamera, const Transform* cameraTransform);
 
 	void OnViewportResized(uint32_t width, uint32_t height);
 

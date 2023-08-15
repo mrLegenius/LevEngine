@@ -1,5 +1,6 @@
 #pragma once
 #include "PanelBase.h"
+#include "Katamari/EditorCamera.h"
 #include "Renderer/Texture.h"
 
 namespace LevEngine::Editor
@@ -13,6 +14,14 @@ namespace LevEngine::Editor
 
 			m_Size.x = renderTexture->GetWidth();
 			m_Size.y = renderTexture->GetHeight();
+		}
+
+		[[nodiscard]] EditorCamera& GetCamera() { return m_Camera; }
+		void UpdateCamera(const float deltaTime)
+		{
+			m_Camera.SetViewportSize(m_Size.x, m_Size.y);
+			m_Camera.OnUpdate(deltaTime);
+			m_Camera.UpdateView();
 		}
 
 		void UpdateViewportTexture(const Ref<Texture>& renderTexture) const
@@ -37,6 +46,8 @@ namespace LevEngine::Editor
 		Vector2 m_Bounds[2];
 
 		Ref<Texture> m_Texture;
+
+		EditorCamera m_Camera{60, 0.001, 10000, Vector3{0, 10, -10}};
 	};
 }
 
