@@ -194,7 +194,7 @@ namespace LevEngine
 	void GUIUtils::DrawTexture2D( const std::function<const Ref<Texture>&()>& getter, const std::function<void(Ref<Texture>)>& setter, const Vector2 size)
 	{
 		const auto texture = getter();
-		ImGui::Image(texture ? texture->GetId() : nullptr, ImVec2(size.x, size.y));
+		ImGui::Image(texture ? texture->GetId() : nullptr, ImVec2(size.x, size.y), ImVec2{0, 1}, ImVec2{1, 0});
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
