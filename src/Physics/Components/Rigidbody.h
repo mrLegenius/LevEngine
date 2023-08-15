@@ -4,7 +4,6 @@
 
 namespace LevEngine
 {
-
 static Vector3 gravity = Vector3(0, -9.8f, 0);
 
 enum class BodyType
@@ -94,5 +93,7 @@ public:
 		inverseInteriaTensor = invOrientation * Matrix::CreateScale(inverseInertia) * orientation;
 	}
 };
+
+
 }
 

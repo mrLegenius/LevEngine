@@ -60,12 +60,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 
 		KeyPressedEvent event(keyCode, 0);
 		data->eventCallback(event);
-
-		if (static_cast<unsigned int>(wparam) == 27)
-		{
-			WindowClosedEvent closeEvent;
-			data->eventCallback(closeEvent);
-		}
 		return 0;
 	}
 	case WM_LBUTTONDOWN:
@@ -286,10 +280,6 @@ void Window::HandleInput()
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-
-		// If windows signals to end the application then exit out.
-		if (msg.message == WM_QUIT)
-			Close();
 	}
 }
 

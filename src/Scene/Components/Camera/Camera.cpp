@@ -41,7 +41,7 @@ namespace LevEngine
 			{
 				GUIUtils::DrawFloatControl("Orthographic size", BindGetter(&SceneCamera::GetOrthographicSize, &camera), BindSetter(&SceneCamera::SetOrthographicSize, &camera));
 				GUIUtils::DrawFloatControl("Near clip", BindGetter(&SceneCamera::GetOrthographicNear, &camera), BindSetter(&SceneCamera::SetOrthographicNear, &camera));
-				GUIUtils::DrawFloatControl("Far clip", BindGetter(&SceneCamera::GetOrthographicFar, &camera), BindSetter(&SceneCamera::SetOrthographicNear, &camera));
+				GUIUtils::DrawFloatControl("Far clip", BindGetter(&SceneCamera::GetOrthographicFar, &camera), BindSetter(&SceneCamera::SetOrthographicFar, &camera));
 			}
 			else if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 			{

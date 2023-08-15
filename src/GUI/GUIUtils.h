@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Assets/Asset.h"
 #include "Kernel/Color.h"
 #include "Renderer/Texture.h"
 
@@ -11,6 +12,7 @@ namespace LevEngine
 
 		static bool DrawVector3Control(const std::string& label, Vector3& values, float resetValue = 0.0f, float columnWidth = 100.0f);
 		static bool DrawVector2Control(const std::string& label, Vector2& values, float resetValue = 0.0f, float columnWidth = 100.0f);
+		static void DrawFloatControl(const std::string& label, float& value);
 		static void DrawFloatControl(const std::string& label, const std::function<float()>& getter, const std::function<void(float)>& setter);
 		static void DrawColor3Control(const std::string& label, const std::function<Color()>& getter,
 		                              const std::function<void(Color)>& setter);
@@ -20,6 +22,9 @@ namespace LevEngine
 
 		static void DrawAsset(const std::string& label, const std::function<bool(const std::filesystem::path&)>& validation, const std::function<void
 		                      (const std::filesystem::path&)>& onDrop);
+		static void DrawAsset(const std::string& label, const Ref<Asset>& asset,
+		                      const std::function<bool(const std::filesystem::path&)>& validation,
+		                      const std::function<void(const std::filesystem::path&)>& onDrop);
 
 		static bool IsAssetTexture(const std::filesystem::path& path)
 		{

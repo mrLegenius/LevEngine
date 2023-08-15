@@ -262,7 +262,7 @@ void KatamariLayer::OnAttach()
     auto& lightCamera = dirLight.AddComponent<CameraComponent>();
     lightCamera.camera.SetProjectionType(SceneCamera::ProjectionType::Orthographic);
     lightCamera.camera.SetOrthographic(0.25f, 100.0f, 1000.0f);
-    lightCamera.isMain = true;
+    lightCamera.isMain = false;
 
     //<--- Systems ---<<
 	m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
@@ -508,6 +508,13 @@ void KatamariLayer::OpenScene(const std::filesystem::path& path)
         m_Hierarchy->SetContext(m_EditorScene);
         m_EditorScenePath = path;
         m_ActiveScene = newScene;
+
+        m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
+        m_ActiveScene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
+        m_ActiveScene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
+        m_ActiveScene->RegisterUpdateSystem(CreateRef<TestSystem>());
+        m_ActiveScene->RegisterOneFrame<CollisionBeginEvent>();
+        m_ActiveScene->RegisterOneFrame<CollisionEndEvent>();
     }
 }
 

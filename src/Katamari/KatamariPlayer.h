@@ -5,6 +5,8 @@
 #include "Scene/Components/Components.h"
 #include "Scene/Entity.h"
 #include "Physics/Events/CollisionBeginEvent.h"
+#include "Scene/Components/ComponentDrawer.h"
+#include "Scene/Components/ComponentSerializer.h"
 
 using namespace LevEngine;
 
@@ -13,6 +15,32 @@ struct KatamariPlayerComponent
     int s;
     KatamariPlayerComponent() = default;
     KatamariPlayerComponent(const KatamariPlayerComponent&) = default;
+};
+
+class KatamariPlayerSerializer final : public ComponentSerializer<KatamariPlayerComponent, KatamariPlayerSerializer>
+{
+protected:
+	const char* GetKey() override { return "Katamari Player"; }
+
+	void SerializeData(YAML::Emitter& out, const KatamariPlayerComponent& component) override
+	{
+        out << YAML::Key << "s" << YAML::Value << component.s;
+	}
+
+	void DeserializeData(YAML::Node& node, KatamariPlayerComponent& component) override
+	{
+        component.s = node["s"].as<int>();
+	}
+};
+
+class KatamariPlayerDrawer final : public ComponentDrawer<KatamariPlayerComponent, KatamariPlayerDrawer>
+{
+protected:
+	std::string GetLabel() const override { return "Katamari Player"; }
+
+	void DrawContent(KatamariPlayerComponent& component) override
+	{
+	}
 };
 
 class KatamariPlayerSystem : public System

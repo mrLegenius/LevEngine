@@ -96,32 +96,34 @@ namespace LevEngine
 		void DeserializeData(YAML::Node& node, EmitterComponent& component) override
 		{
 			auto& birth = component.Birth;
-			auto birthProps = node["Birth"];
+			const auto birthProps = node["Birth"];
 
-			birth.RandomVelocity = node["RandomVelocity"].as<bool>();
-			birth.Velocity = node["Velocity"].as<Vector3>();
-			birth.VelocityB = node["VelocityB"].as<Vector3>();
+			if (birthProps)
+			{
+				birth.RandomVelocity = birthProps["RandomVelocity"].as<bool>();
+				birth.Velocity = birthProps["Velocity"].as<Vector3>();
+				birth.VelocityB = birthProps["VelocityB"].as<Vector3>();
 
-			birth.RandomStartPosition = node["RandomStartPosition"].as<bool>();
-			birth.Position = node["Position"].as<Vector3>();
-			birth.PositionB = node["PositionB"].as<Vector3>();
+				birth.RandomStartPosition = birthProps["RandomStartPosition"].as<bool>();
+				birth.Position = birthProps["Position"].as<Vector3>();
+				birth.PositionB = birthProps["PositionB"].as<Vector3>();
 
-			birth.RandomStartColor = node["RandomStartColor"].as<bool>();
-			birth.StartColor = node["StartColor"].as<Color>();
-			birth.StartColorB = node["StartColorB"].as<Color>();
-			birth.EndColor = node["EndColor"].as<Color>();
+				birth.RandomStartColor = birthProps["RandomStartColor"].as<bool>();
+				birth.StartColor = birthProps["StartColor"].as<Color>();
+				birth.StartColorB = birthProps["StartColorB"].as<Color>();
+				birth.EndColor = birthProps["EndColor"].as<Color>();
 
-			birth.RandomStartSize = node["RandomStartSize"].as<bool>();
-			birth.StartSize = node["StartSize"].as<float>();
-			birth.StartSizeB = node["StartSizeB"].as<float>();
-			birth.EndSize = node["EndSize"].as<float>();
+				birth.RandomStartSize = birthProps["RandomStartSize"].as<bool>();
+				birth.StartSize = birthProps["StartSize"].as<float>();
+				birth.StartSizeB = birthProps["StartSizeB"].as<float>();
+				birth.EndSize = birthProps["EndSize"].as<float>();
 
-			birth.RandomStartLifeTime = node["RandomStartLifeTime"].as<bool>();
-			birth.LifeTime = node["LifeTime"].as<float>();
-			birth.LifeTimeB = node["LifeTimeB"].as<float>();
+				birth.RandomStartLifeTime = birthProps["RandomStartLifeTime"].as<bool>();
+				birth.LifeTime = birthProps["LifeTime"].as<float>();
+				birth.LifeTimeB = birthProps["LifeTimeB"].as<float>();
 
-			birth.GravityScale = node["GravityScale"].as<float>();
-
+				birth.GravityScale = birthProps["GravityScale"].as<float>();
+			}
 			component.Texture = TextureLibrary::GetTexture(node["Texture"].as<std::string>());
 			component.MaxParticles = node["MaxParticles"].as<int>();
 			component.Rate = node["Rate"].as<float>();

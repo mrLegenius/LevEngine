@@ -57,7 +57,7 @@ namespace LevEngine
 		{
 			data = YAML::LoadFile(filepath);
 		}
-		catch (YAML::ParserException& e)
+		catch (std::exception& e)
 		{
 			Log::CoreWarning(e.what());
 			return false;

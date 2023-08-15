@@ -27,18 +27,14 @@ namespace LevEngine
 	private:
 		static void DrawMesh(Ref<Mesh>& mesh)
 		{
-			ImGui::Text("Mesh");
-			ImGui::SameLine();
-			GUIUtils::DrawAsset(mesh ? mesh->GetName().c_str() : "None. Drop here",
+			GUIUtils::DrawAsset( "Mesh",
 				GUIUtils::IsAssetMesh,
 				[&mesh](const auto& path) { mesh = ObjLoader().LoadMesh(path); });
 		}
 
 		static void DrawMaterial(Ref<MaterialAsset>& material)
 		{
-			ImGui::Text("Material");
-			ImGui::SameLine();
-			GUIUtils::DrawAsset("Drop here",
+			GUIUtils::DrawAsset("Material", material,
 				GUIUtils::IsAssetMaterial,
 				[&material](const auto& path) {
 					const Ref<MaterialAsset> asset = CreateRef<MaterialAsset>(path);

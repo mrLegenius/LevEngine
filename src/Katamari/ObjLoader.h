@@ -34,7 +34,7 @@ public:
 			return nullptr;
 		}
 
-		auto mesh = std::make_shared<Mesh>(path.filename().string());
+		auto mesh = std::make_shared<Mesh>(path);
 
 		int verticesCount = 0;
 

@@ -167,6 +167,11 @@ namespace LevEngine
 		return changed;
 	}
 
+	void GUIUtils::DrawFloatControl(const std::string& label, float& value)
+	{
+		DrawFloatControl(label, [&value] {return value; }, [&value](const float& newValue) {value = newValue; });
+	}
+
 	void GUIUtils::DrawFloatControl(const std::string& label, const std::function<float()>& getter, const std::function<void(float)>& setter)
 	{
 		auto value = getter();
@@ -219,9 +224,18 @@ namespace LevEngine
 
 	void GUIUtils::DrawAsset(const std::string& label, const std::function<bool(const std::filesystem::path&)>& validation, const std::function<void(const std::filesystem::path&)>& onDrop)
 	{
-		if (!label.empty())
-			ImGui::Text(label.c_str());
+		DrawAsset(label, nullptr, validation, onDrop);
+	}
 
+	void GUIUtils::DrawAsset(const std::string& label, const Ref<Asset>& asset, const std::function<bool(const std::filesystem::path&)>& validation, const std::function<void(const std::filesystem::path&)>& onDrop)
+	{
+		if (!label.empty())
+		{
+			ImGui::Text(label.c_str());
+			ImGui::SameLine();
+		}
+		
+		ImGui::Text(asset ? asset->GetName().c_str() : "None");
 		if (!ImGui::BeginDragDropTarget()) return;
 
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
@@ -229,7 +243,7 @@ namespace LevEngine
 			const auto path = static_cast<const wchar_t*>(payload->Data);
 			const std::filesystem::path assetPath = AssetsPath / path;
 
-			if (!validation(path))
+			if (validation && !validation(path))
 			{
 				ImGui::EndDragDropTarget();
 				return;
