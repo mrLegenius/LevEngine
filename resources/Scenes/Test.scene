@@ -1,92 +1,168 @@
 Scene: Scene Name
 Entities:
-  - Entity: 14316158730015350950
-    Tag: Torch Smoke Particles
-    Transform:
-      Position: [0, 50, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 18430904504055906055
-    Tag: Torch Fire Particles
-    Transform:
-      Position: [0, 50, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 12954091190601245606
-    Tag: Torch
-    Transform:
-      Position: [10, 0, 10]
-      Rotation: [0, 0, 0]
-      Scale: [0.100000001, 0.100000001, 0.100000001]
-  - Entity: 13088103477878911210
-    Tag: Peak
-    Transform:
-      Position: [100, 25, 100]
-      Rotation: [0, 0, 0]
-      Scale: [10, 50, 10]
-  - Entity: 1364364427965330599
-    Tag: Wall
-    Transform:
-      Position: [150, 10, 50]
-      Rotation: [0, 0, 0]
-      Scale: [1, 20, 100]
-  - Entity: 12371300505267043251
+  - Entity: 7752626537811144804
     Tag: DirLight
+    Camera:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 0.25
+        OrthographicNear: 100
+        OrthographicFar: 1000
+      Main: true
+      FixedAspectRatio: false
+    Directional Light:
+      Color: [0.899999976, 0.899999976, 0.899999976, 1]
     Transform:
       Position: [150, 100, 150]
       Rotation: [-0.785398185, 0.785398185, 0]
       Scale: [1, 1, 1]
-  - Entity: 1227181641920409369
+  - Entity: 3529173064327422833
     Tag: Skybox
+    Skybox Renderer:
+      {}
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 15688248016758385028
+  - Entity: 9014037732421638390
     Tag: Camera
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
     Transform:
-      Position: [10.0100002, 17.7323818, 10]
+      Position: [10.0100002, 17.8423729, 10]
       Rotation: [-1.56979632, 1.57091558, 0]
       Scale: [1, 1, 1]
-  - Entity: 13261304529314370448
+  - Entity: 5799866325545130925
     Tag: Player
+    Emitter:
+      Birth:
+        RandomVelocity: false
+        Velocity: [0, 0, 0]
+        VelocityB: [0, 0, 0]
+        RandomStartPosition: true
+        Position: [-1, -1, -1]
+        PositionB: [1, 1, 1]
+        RandomStartColor: true
+        StartColor: [1, 1, 1, 0.5]
+        StartColorB: [1, 1, 1, 1]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.5
+        StartSizeB: 0.75
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.5
+        LifeTimeB: 1
+        GravityScale: 0
+      Texture: resources\Textures\smoke.png
+      MaxParticles: 10000
+      Rate: 2
+    Point Light:
+      Color: [1, 0, 0, 1]
+      Range: 10
+      Smoothness: 0.75
+      Intensity: 1
+    MeshRenderer:
+      Mesh: Sphere
+      Material: resources\Material.mat
+      Cast Shadow: true
     Transform:
-      Position: [10, 7.73238611, 10]
+      Position: [10, 7.84237719, 10]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 10443814451071611000
+  - Entity: 2254991995135623985
     Tag: Floor
+    MeshRenderer:
+      Mesh: Cube
+      Material: ""
+      Cast Shadow: false
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [300, 1, 300]
-  - Entity: 1032697754280323907
+  - Entity: 2113554993320313098
     Tag: LavaRock Smoke Particles
+    Emitter:
+      Birth:
+        RandomVelocity: false
+        Velocity: [0, 10, 0]
+        VelocityB: [0, 0, 0]
+        RandomStartPosition: true
+        Position: [-2, -0.5, -2]
+        PositionB: [2, 0.5, 2]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.5
+        StartSizeB: 1
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.5
+        LifeTimeB: 1
+        GravityScale: 0
+      Texture: resources\Textures\smoke.png
+      MaxParticles: 10000
+      Rate: 1
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 13738117657129405666
+  - Entity: 16061688272058739066
     Tag: LavaRock Fire Particles
+    Emitter:
+      Birth:
+        RandomVelocity: false
+        Velocity: [0, 5, 0]
+        VelocityB: [0, 0, 0]
+        RandomStartPosition: true
+        Position: [-3, -0.5, -2.5]
+        PositionB: [3, 0.5, 2.5]
+        RandomStartColor: false
+        StartColor: [1, 0.699999988, 0, 1]
+        StartColorB: [0, 0, 0, 0]
+        EndColor: [0.5, 0, 0, 0]
+        RandomStartSize: true
+        StartSize: 0.5
+        StartSizeB: 1
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.5
+        LifeTimeB: 1
+        GravityScale: 0
+      Texture: resources\Textures\fire.png
+      MaxParticles: 10000
+      Rate: 5
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 18188333113885235452
+  - Entity: 2574384422923701557
     Tag: LavaRockMesh
+    MeshRenderer:
+      Mesh: lava_rock.obj
+      Material: resources\Material.mat
+      Cast Shadow: true
     Transform:
       Position: [0, 0, 0]
       Rotation: [1.57079637, 0, -1.57079637]
       Scale: [0.200000003, 0.200000003, 0.200000003]
-  - Entity: 3764854372494175466
+  - Entity: 5243637710802536427
     Tag: LavaRock
     Transform:
-      Position: [0, 19.5464745, 0]
+      Position: [0, 19.5684776, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 3242136831139489581
-    Tag: Gear
-    Transform:
-      Position: [-12.3001394, 1.77323854, -8.86314774]
-      Rotation: [-0, 0, 0]
-      Scale: [0.100000001, 0.100000001, 0.100000001]

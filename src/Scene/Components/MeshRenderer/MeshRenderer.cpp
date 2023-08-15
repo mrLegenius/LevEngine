@@ -34,16 +34,16 @@ namespace LevEngine
 				[&mesh](const auto& path) { mesh = ObjLoader().LoadMesh(path); });
 		}
 
-		static void DrawMaterial(Material& material)
+		static void DrawMaterial(Ref<MaterialAsset>& material)
 		{
 			ImGui::Text("Material");
 			ImGui::SameLine();
 			GUIUtils::DrawAsset("Drop here",
 				GUIUtils::IsAssetMaterial,
 				[&material](const auto& path) {
-					MaterialAsset asset{ path };
-					asset.Deserialize();
-					material = asset.material;
+					const Ref<MaterialAsset> asset = CreateRef<MaterialAsset>(path);
+					asset->Deserialize();
+					material = asset;
 				});
 		}
 	};
@@ -56,13 +56,20 @@ protected:
 
 	void SerializeData(YAML::Emitter& out, const MeshRendererComponent& component) override
 	{
-		//EXAMPLE
-		// out << YAML::Key << "Field Name" << YAML::Value << component.field;
+		out << YAML::Key << "Mesh" << YAML::Value << component.mesh->GetPath().string();
+		out << YAML::Key << "Material" << YAML::Value << component.material->GetPath().string();
+		out << YAML::Key << "Cast Shadow" << YAML::Value << component.castShadow;
 	}
 
 	void DeserializeData(YAML::Node& node, MeshRendererComponent& component) override
 	{
-		//EXAMPLE
-		//component.field = node["Field Name"].as<float>();
+		component.mesh = ObjLoader::LoadMesh(std::filesystem::path(node["Mesh"].as<std::string>()));
+		auto materialPath = std::filesystem::path(node["Material"].as<std::string>());
+
+		const Ref<MaterialAsset> materialAsset = CreateRef<MaterialAsset>(materialPath);
+		materialAsset->Deserialize();
+		component.material = materialAsset;
+
+		component.castShadow = node["Cast Shadow"].as<bool>();
 	}
 };

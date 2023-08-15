@@ -10,7 +10,6 @@
 #include "../Assets.h"
 #include "Physics/Physics.h"
 #include "KatamariPlayer.h"
-#include "../Prefabs.h"
 #include "Kernel/PlatformUtils.h"
 #include "Math/Random.h"
 #include "Physics/Components/CollisionEvent.h"
@@ -83,46 +82,6 @@ void KatamariLayer::OnAttach()
 
     for (int i = 0; i < 1; i++)
     {
-        auto go = Prefabs::Gear(m_ActiveScene);
-        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Float(-20, 20), 2, Random::Float(-20, 20)));
-
-        auto& particles = go.AddComponent<EmitterComponent>();
-        particles.Rate = 1;
-        particles.Texture = TextureAssets::Particle();
-        particles.MaxParticles = 10000;
-        particles.Birth.GravityScale = 5;
-
-        particles.Birth.RandomVelocity = true;
-        particles.Birth.Velocity = Vector3{ -10, 20, -10 };
-        particles.Birth.VelocityB = Vector3{ 10, 20, 10 };
-
-        particles.Birth.RandomStartColor = true;
-        particles.Birth.StartColor = Color{ 0.06, 0.37, 0.611, 1 };
-        particles.Birth.StartColorB = Color{ 0.11, 0.64, 0.925, 1 };
-        particles.Birth.EndColor = Color{ 0.83, 0.945, 0.976, 0 };
-
-        particles.Birth.RandomStartSize = true;
-        particles.Birth.StartSize = 0.2f;
-        particles.Birth.StartSizeB = 0.5f;
-        particles.Birth.EndSize = 0.1f;
-
-        particles.Birth.RandomStartPosition = true;
-        particles.Birth.Position = Vector3{ -1, 0, -1 };
-        particles.Birth.PositionB = Vector3{ 1, 0, 1 };
-
-        particles.Birth.RandomStartLifeTime = true;
-        particles.Birth.LifeTime = 0.5;
-        particles.Birth.LifeTimeB = 5;
-    }
-
-    for (int i = 0; i < 0; i++)
-    {
-	   	auto go = Prefabs::Log(m_ActiveScene);
-        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Float(-100, 100), 1, Random::Float(-100, 100)));
-    }
-
-    for (int i = 0; i < 1; i++)
-    {
         auto entity = m_ActiveScene->CreateEntity("LavaRock");
         auto& transform = entity.GetComponent<Transform>();
 
@@ -151,17 +110,17 @@ void KatamariLayer::OnAttach()
             mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.2f);
             mesh.GetComponent<Transform>().SetLocalRotation(Vector3{ 90.0f, 0.0f, -90.0f });
             auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(LavaRockAssets::Mesh());
+            meshRenderer.material = CreateRef<MaterialAsset>("");
+            meshRenderer.material->material.SetAmbientColor(Color::White);
+            meshRenderer.material->material.SetDiffuseColor(Color::White);
+            meshRenderer.material->material.SetEmissiveColor(Color::White);
+            meshRenderer.material->material.SetSpecularColor(Color::White);
 
-            meshRenderer.material.SetAmbientColor(Color::White);
-            meshRenderer.material.SetDiffuseColor(Color::White);
-            meshRenderer.material.SetEmissiveColor(Color::White);
-            meshRenderer.material.SetSpecularColor(Color::White);
-
-            meshRenderer.material.SetTexture(Material::TextureType::Ambient, LavaRockAssets::AmbientTexture());
-            meshRenderer.material.SetTexture(Material::TextureType::Diffuse, LavaRockAssets::AmbientTexture());
-            meshRenderer.material.SetTexture(Material::TextureType::Emissive, LavaRockAssets::EmissiveTexture());
-            meshRenderer.material.SetTexture(Material::TextureType::Specular, LavaRockAssets::SpecularTexture());
-            meshRenderer.material.SetTexture(Material::TextureType::Normal, LavaRockAssets::NormalTexture());
+            meshRenderer.material->material.SetTexture(Material::TextureType::Ambient, LavaRockAssets::AmbientTexture());
+            meshRenderer.material->material.SetTexture(Material::TextureType::Diffuse, LavaRockAssets::AmbientTexture());
+            meshRenderer.material->material.SetTexture(Material::TextureType::Emissive, LavaRockAssets::EmissiveTexture());
+            meshRenderer.material->material.SetTexture(Material::TextureType::Specular, LavaRockAssets::SpecularTexture());
+            meshRenderer.material->material.SetTexture(Material::TextureType::Normal, LavaRockAssets::NormalTexture());
         }
 
         //<--- Fire Particles ---<<
@@ -220,27 +179,15 @@ void KatamariLayer::OnAttach()
         
     }
 
-    for (int i = 0; i < 0; i++)
-    {
-        auto go = Prefabs::Sphere(m_ActiveScene);
-        auto& light = go.AddComponent<PointLightComponent>();
-        const auto color = Color(
-            Random::Float(0, 100) / 100.0f,
-            Random::Float(0, 100) / 100.0f,
-            Random::Float(0, 100) / 100.0f);
-
-        light.color = color;
-        go.GetComponent<Transform>().SetWorldPosition(Vector3(Random::Float(-50, 50), 3, Random::Float(-50, 50)));
-    }
-
     //<--- Floor ---<<
     auto floor = m_ActiveScene->CreateEntity("Floor");
     auto& floorMesh = floor.AddComponent<MeshRendererComponent>(Mesh::CreateCube());
     floorMesh.castShadow = false;
-    floorMesh.material.SetTexture(Material::TextureType::Ambient, TextureAssets::Bricks());
-    floorMesh.material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Bricks());
-    floorMesh.material.SetTextureTiling(Material::TextureType::Ambient, Vector2{16, 16});
-    floorMesh.material.SetTextureTiling(Material::TextureType::Diffuse, Vector2{16, 16});
+    floorMesh.material = CreateRef<MaterialAsset>("");
+    floorMesh.material->material.SetTexture(Material::TextureType::Ambient, TextureAssets::Bricks());
+    floorMesh.material->material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Bricks());
+    floorMesh.material->material.SetTextureTiling(Material::TextureType::Ambient, Vector2{16, 16});
+    floorMesh.material->material.SetTextureTiling(Material::TextureType::Diffuse, Vector2{16, 16});
 
 	floor.GetComponent<Transform>().SetLocalScale(Vector3(300, 1.0f, 300));
     floor.GetComponent<Transform>().SetWorldRotation(Vector3(0, 0, 0));
@@ -252,7 +199,8 @@ void KatamariLayer::OnAttach()
     //<--- Player ---<<
     auto player = m_ActiveScene->CreateEntity("Player");
     auto& playerMesh = player.AddComponent<MeshRendererComponent>(Mesh::CreateSphere(45));
-    playerMesh.material = Materials::Ruby();
+    playerMesh.material = CreateRef<MaterialAsset>("");
+    playerMesh.material->material = Materials::Ruby();
 
     auto& playerParticles = player.AddComponent<EmitterComponent>();
     playerParticles.Rate = 2;
@@ -307,7 +255,7 @@ void KatamariLayer::OnAttach()
     auto dirLight = m_ActiveScene->CreateEntity("DirLight");
     auto& dirLightTransform = dirLight.GetComponent<Transform>();
     dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
-    dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150)); 
+    dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150));
     auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
     dirLightComponent.color = Color{ 0.9f, 0.9f, 0.9f };
 
@@ -315,92 +263,6 @@ void KatamariLayer::OnAttach()
     lightCamera.camera.SetProjectionType(SceneCamera::ProjectionType::Orthographic);
     lightCamera.camera.SetOrthographic(0.25f, 100.0f, 1000.0f);
     lightCamera.isMain = true;
-
-    //<--- Wall ---<<
-    auto wall = m_ActiveScene->CreateEntity("Wall");
-    auto& wallMesh = wall.AddComponent<MeshRendererComponent>(Mesh::CreateCube());
-    wallMesh.material = Materials::BlackPlastic();
-    auto& wallT = wall.GetComponent<Transform>();
-    wallT.SetLocalScale(Vector3(1, 20, 100));
-    wallT.SetWorldPosition(Vector3(150, 10, 50));
-
-    //<--- Peak ---<<
-    auto peak = m_ActiveScene->CreateEntity("Peak");
-    auto& peakMesh = peak.AddComponent<MeshRendererComponent>(Mesh::CreateCube());
-    peakMesh.material = Materials::Brass();
-    auto& peakT = peak.GetComponent<Transform>();
-    peakT.SetLocalScale(Vector3(10, 50, 10));
-    peakT.SetWorldPosition(Vector3(100, 25, 100));
-
-    //<--- Torch ---<<
-    {
-        auto entity = m_ActiveScene->CreateEntity("Torch");
-        auto& mesh = entity.AddComponent<MeshRendererComponent>(FancyTorch::Mesh());
-        mesh.castShadow = false;
-        mesh.material.SetTexture(Material::TextureType::Ambient, FancyTorch::AmbientTexture());
-        mesh.material.SetTexture(Material::TextureType::Diffuse, FancyTorch::AmbientTexture());
-        mesh.material.SetTexture(Material::TextureType::Specular, FancyTorch::SpecularTexture());
-        mesh.material.SetTexture(Material::TextureType::Normal, FancyTorch::NormalTexture());
-
-        entity.GetComponent<Transform>().SetWorldPosition(Vector3(10.f, 0.0f, 10.0f));
-        entity.GetComponent<Transform>().SetLocalScale(Vector3(0.1f,0.1f, 0.1f));
-        entity.GetComponent<Transform>().SetWorldRotation(Vector3(0, 0, 0));
-
-        //<--- Fire Particles ---<<
-        {
-            auto fireParticles = m_ActiveScene->CreateEntity("Torch Fire Particles");
-            fireParticles.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
-            fireParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 50, 0 });
-            auto& particles = fireParticles.AddComponent<EmitterComponent>();
-            particles.Rate = 1;
-            particles.Texture = TextureAssets::Fire();
-            particles.MaxParticles = 100;
-            particles.Birth.Velocity = Vector3{ 0, 5, 0 };
-
-            particles.Birth.StartColor = Color{ 1.0f, 0.7f, 0.0f, 1.0f };
-            particles.Birth.EndColor = Color{ 0.5, 0, 0, 0 };
-
-            particles.Birth.RandomStartSize = true;
-            particles.Birth.StartSize = 0.2f;
-            particles.Birth.StartSizeB = 0.5f;
-            particles.Birth.EndSize = 0.1f;
-
-            particles.Birth.RandomStartPosition = true;
-            particles.Birth.Position = Vector3{ -0.5, -0.5, -0.5 };
-            particles.Birth.PositionB = Vector3{ 0.5, 0.5, 0.5 };
-
-            particles.Birth.RandomStartLifeTime = true;
-            particles.Birth.LifeTime = 0.5;
-            particles.Birth.LifeTimeB = 1;
-        }
-
-        //<--- Smoke Particles ---<<
-        {
-            auto smokeParticles = m_ActiveScene->CreateEntity("Torch Smoke Particles");
-            smokeParticles.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
-            smokeParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 50, 0 });
-            auto& particles = smokeParticles.AddComponent<EmitterComponent>();
-            particles.Rate = 1;
-            particles.Texture = TextureAssets::Smoke();
-            particles.Birth.Velocity = Vector3{ 0, 6, 0 };
-
-            particles.Birth.StartColor = Color{ 0xFFFFFFFF };
-            particles.Birth.EndColor = Color{ 0xFFFFFF00 };
-
-            particles.Birth.RandomStartSize = true;
-            particles.Birth.StartSize = 0.1f;
-            particles.Birth.StartSizeB = 0.3f;
-            particles.Birth.EndSize = 0.05f;
-
-            particles.Birth.RandomStartPosition = true;
-            particles.Birth.Position = Vector3{ -0.3, -0.5, -0.3 };
-            particles.Birth.PositionB = Vector3{ 0.3, 0.5, 0.3 };
-
-            particles.Birth.RandomStartLifeTime = true;
-            particles.Birth.LifeTime = 0.5;
-            particles.Birth.LifeTimeB = 1;
-        }
-    }
 
     //<--- Systems ---<<
 	m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());

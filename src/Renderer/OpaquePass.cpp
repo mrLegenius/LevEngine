@@ -37,12 +37,16 @@ namespace LevEngine
         {
             auto [transform, meshRenderer] = view.get<Transform, MeshRendererComponent>(entity);
 
+            if (!meshRenderer.mesh) continue;
+
             if (!meshRenderer.mesh->VertexBuffer)
                 meshRenderer.mesh->Init(shader->GetLayout());
 
-            meshRenderer.material.Bind(shader);
+            if (!meshRenderer.material) continue;
+
+            meshRenderer.material->material.Bind(shader);
             Renderer3D::DrawMesh(transform.GetModel(), meshRenderer);
-            meshRenderer.material.Unbind(shader);
+            meshRenderer.material->material.Unbind(shader);
         }
     }
 

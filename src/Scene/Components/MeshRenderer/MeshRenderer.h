@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/Material.h"
+#include "Assets/MaterialAsset.h"
 #include "Renderer/3D/Mesh.h"
 
 namespace LevEngine
@@ -7,7 +7,7 @@ namespace LevEngine
 	struct MeshRendererComponent
 	{
 		Ref<Mesh> mesh;
-		Material material;
+		Ref<MaterialAsset> material;
 		bool castShadow = true;
 
 		MeshRendererComponent() = default;

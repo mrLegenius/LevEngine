@@ -18,7 +18,7 @@ class Mesh
 
 public:
 	Mesh() : Mesh("Default Mesh Name") { }
-	explicit Mesh(std::string name) : m_Name(std::move(name)) { }
+	explicit Mesh(std::filesystem::path path) : m_Name(path.stem().string()), m_Path(std::move(path)) { }
 
 	static std::shared_ptr<Mesh> CreatePlane(int resolution);
 	static std::shared_ptr<Mesh> CreateSphere(const uint32_t sliceCount);
@@ -78,6 +78,8 @@ public:
 		delete[] meshVertexBuffer;
 	}
 
+	[[nodiscard]] const std::filesystem::path& GetPath() const { return m_Path; }
+
 	Ref<IndexBuffer> IndexBuffer;
 	Ref<VertexBuffer> VertexBuffer;
 
@@ -87,5 +89,6 @@ private:
 	std::vector<uint32_t> indices;
 	std::vector<Vector3> normals;
 	std::string m_Name;
+	std::filesystem::path m_Path;
 };
 }
