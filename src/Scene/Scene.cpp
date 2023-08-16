@@ -71,13 +71,13 @@ void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
 
 void Scene::ForEachEntity(const std::function<void(Entity)>& callback)
 {
-    m_Registry.each([&](const entt::entity entityID)
-    {
-    	if (!m_Registry.valid(entityID)) return;
-          
-	    const auto entity = ConvertEntity(entityID);
-	    callback(entity);
-    });
+	for (const auto entityId : m_Registry.storage<entt::entity>())
+	{
+        if (!m_Registry.valid(entityId)) continue;
+
+        const auto entity = ConvertEntity(entityId);
+        callback(entity);
+	}
 }
 
 Entity Scene::CreateEntity(const std::string& name)
@@ -111,96 +111,11 @@ void Scene::DestroyEntity(const Entity entity)
     m_Registry.destroy(entity);
 }
 
-//template<typename... Component>
-//static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
-//{
-//    /*int dummy[]{ 0, ([&]()
-//        {
-//            auto view = src.view<Component>();
-//    for (auto srcEntity : view)
-//    {
-//        entt::entity dstEntity = enttMap.at(src.get<IDComponent>(srcEntity).ID);
-//
-//        auto& srcComponent = src.get<Component>(srcEntity);
-//        dst.emplace_or_replace<Component>(dstEntity, srcComponent);
-//    }
-//        }())... };*/
-//}
-
-//template<typename... Component>
-//static void CopyComponent(ComponentGroup<Component...>, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
-//{
-//    CopyComponent<Component...>(dst, src, enttMap);
-//}
-
-template<typename... Component>
-static void CopyComponentIfExists(Entity dst, Entity src)
-{
-    /*([&]()
-        {
-            if (src.HasComponent<Component>())
-            dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
-        }(), ...);*/
-}
-
-template<typename... Component>
-static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Entity src)
-{
-    CopyComponentIfExists<Component...>(dst, src);
-}
-
-//Ref<Scene> Scene::Copy(Ref<Scene> other)
-//{
-//    Ref<Scene> newScene = CreateRef<Scene>();
-//
-//    newScene->m_ViewportWidth = other->m_ViewportWidth;
-//    newScene->m_ViewportHeight = other->m_ViewportHeight;
-//
-//    auto& srcSceneRegistry = other->m_Registry;
-//    auto& dstSceneRegistry = newScene->m_Registry;
-//    std::unordered_map<UUID, entt::entity> enttMap;
-//
-//    // Create entities in new scene
-//    auto idView = srcSceneRegistry.view<IDComponent>();
-//    for (auto e : idView)
-//    {
-//        UUID uuid = srcSceneRegistry.get<IDComponent>(e).ID;
-//        const auto& name = srcSceneRegistry.get<TagComponent>(e).tag;
-//        Entity newEntity = newScene->CreateEntity(uuid, name);
-//        enttMap[uuid] = static_cast<entt::entity>(newEntity);
-//    }
-//
-//    for(auto &&curr: registry.storage()) {
-//        if(auto &storage = curr.second; storage.contains(src)) {
-//            storage.push(dst, storage.value(src));
-//        }
-//    }
-//    // Copy components (except IDComponent and TagComponent)
-//    //CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
-//
-//    return newScene;
-//}
-
-
 void Scene::DuplicateEntity(Entity entity)
 {
     LEV_PROFILE_FUNCTION();
 
-    Entity newEntity = CreateEntity(entity.GetName());
-    CopyComponentIfExists(AllComponents{}, newEntity, entity);
-}
-
-Entity Scene::GetMainCameraEntity()
-{
-    LEV_PROFILE_FUNCTION();
-
-    auto view = m_Registry.view<CameraComponent>();
-    for (auto entity : view)
-    {
-        const auto& camera = view.get<CameraComponent>(entity);
-        if (camera.isMain)
-            return Entity(entt::handle(m_Registry, entity));
-    }
-    return { };
+    //Entity newEntity = CreateEntity(entity.GetName());
+    //CopyComponentIfExists(AllComponents{}, newEntity, entity);
 }
 }

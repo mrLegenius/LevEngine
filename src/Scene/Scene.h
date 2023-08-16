@@ -31,11 +31,9 @@ public:
 
 	void DestroyEntity(Entity entity);
 
-	//static Ref<Scene> Copy(Ref<Scene> other);
 	void DuplicateEntity(Entity entity);
 
 	void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
-	Entity GetMainCameraEntity();
 
 	void RegisterUpdateSystem(Ref<System> system)
 	{
@@ -52,6 +50,7 @@ public:
 	{
 		m_EventSystems.emplace_back(new EventSystem<T>);
 	}
+
 private:
 	entt::registry m_Registry;
 	uint32_t m_ViewportWidth = 0;
