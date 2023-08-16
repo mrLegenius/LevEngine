@@ -52,19 +52,24 @@ protected:
 
 	void SerializeData(YAML::Emitter& out, const MeshRendererComponent& component) override
 	{
-		out << YAML::Key << "Mesh" << YAML::Value << component.mesh->GetPath().string();
+		if (component.mesh)
+			out << YAML::Key << "Mesh" << YAML::Value << component.mesh->GetPath().string();
 		out << YAML::Key << "Material" << YAML::Value << component.material->GetPath().string();
 		out << YAML::Key << "Cast Shadow" << YAML::Value << component.castShadow;
 	}
 
 	void DeserializeData(YAML::Node& node, MeshRendererComponent& component) override
 	{
-		component.mesh = ObjLoader::LoadMesh(std::filesystem::path(node["Mesh"].as<std::string>()));
-		auto materialPath = std::filesystem::path(node["Material"].as<std::string>());
+		if (const auto data = node["Mesh"]; data)
+			component.mesh = ObjLoader::LoadMesh(std::filesystem::path(data.as<std::string>()));
 
-		const Ref<MaterialAsset> materialAsset = CreateRef<MaterialAsset>(materialPath);
-		materialAsset->Deserialize();
-		component.material = materialAsset;
+		if (const auto data = node["Material"]; data)
+		{
+			auto materialPath = std::filesystem::path(data.as<std::string>());
+			const Ref<MaterialAsset> materialAsset = CreateRef<MaterialAsset>(materialPath);
+			materialAsset->Deserialize();
+			component.material = materialAsset;
+		}
 
 		component.castShadow = node["Cast Shadow"].as<bool>();
 	}
