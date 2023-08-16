@@ -39,8 +39,11 @@ namespace LevEngine
 
             if (!meshRenderer.mesh) continue;
 
-            if (!meshRenderer.mesh->VertexBuffer)
-                meshRenderer.mesh->Init(shader->GetLayout());
+            auto mesh = meshRenderer.mesh->GetMesh();
+            if (!mesh) continue;
+
+            if (!mesh->VertexBuffer)
+                mesh->Init(shader->GetLayout());
 
             if (!meshRenderer.material) continue;
 

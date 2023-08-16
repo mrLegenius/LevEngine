@@ -25,22 +25,20 @@ namespace LevEngine
 		}
 
 	private:
-		static void DrawMesh(Ref<Mesh>& mesh)
+		static void DrawMesh(Ref<MeshAsset>& mesh)
 		{
-			GUIUtils::DrawAsset( "Mesh",
+			GUIUtils::DrawAsset("Mesh",
+				mesh,
 				GUIUtils::IsAssetMesh,
-				[&mesh](const auto& path) { mesh = ObjLoader().LoadMesh(path); });
+				[&mesh](const auto& path) { mesh = CreateRef<MeshAsset>(path); });
 		}
 
 		static void DrawMaterial(Ref<MaterialAsset>& material)
 		{
-			GUIUtils::DrawAsset("Material", material,
+			GUIUtils::DrawAsset("Material",
+				material,
 				GUIUtils::IsAssetMaterial,
-				[&material](const auto& path) {
-					const Ref<MaterialAsset> asset = CreateRef<MaterialAsset>(path);
-					asset->Deserialize();
-					material = asset;
-				});
+				[&material](const auto& path) { material = CreateRef<MaterialAsset>(path);});
 		}
 	};
 }
@@ -61,12 +59,15 @@ protected:
 	void DeserializeData(YAML::Node& node, MeshRendererComponent& component) override
 	{
 		if (const auto data = node["Mesh"]; data)
-			component.mesh = ObjLoader::LoadMesh(std::filesystem::path(data.as<std::string>()));
+		{
+			auto assetPath = std::filesystem::path(data.as<std::string>());
+			component.mesh = CreateRef<MeshAsset>(assetPath);
+		}
 
 		if (const auto data = node["Material"]; data)
 		{
-			auto materialPath = std::filesystem::path(data.as<std::string>());
-			const Ref<MaterialAsset> materialAsset = CreateRef<MaterialAsset>(materialPath);
+			auto assetPath = std::filesystem::path(data.as<std::string>());
+			const Ref<MaterialAsset> materialAsset = CreateRef<MaterialAsset>(assetPath);
 			materialAsset->Deserialize();
 			component.material = materialAsset;
 		}

@@ -66,15 +66,19 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
 
     if (!meshRenderer.mesh) return;
 
+    const auto mesh = meshRenderer.mesh->GetMesh();
+
+    if (!mesh) return;
+
     //TODO: Fix this mesh layout initialization
-    if (!meshRenderer.mesh->VertexBuffer)
-        meshRenderer.mesh->Init(ShaderAssets::DeferredVertexOnly()->GetLayout());
+    if (!mesh->VertexBuffer)
+        mesh->Init(ShaderAssets::DeferredVertexOnly()->GetLayout());
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
     m_ModelConstantBuffer->Bind(Shader::Type::Vertex);
 
-    RenderCommand::DrawIndexed(meshRenderer.mesh->VertexBuffer, meshRenderer.mesh->IndexBuffer);
+    RenderCommand::DrawIndexed(mesh->VertexBuffer, mesh->IndexBuffer);
 }
 
 void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)

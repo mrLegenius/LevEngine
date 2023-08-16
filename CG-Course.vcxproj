@@ -271,6 +271,7 @@
     </ClCompile>
     <ClCompile Include="src\Assets\Asset.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
+    <ClCompile Include="src\Assets\MeshAsset.cpp" />
     <ClCompile Include="src\Assets\SkyboxAsset.cpp" />
     <ClCompile Include="src\Katamari\EditorCamera.cpp" />
     <ClCompile Include="src\Katamari\EntitySelection.cpp" />
@@ -428,6 +429,7 @@
     <ClInclude Include="src\Assets\Asset.h" />
     <ClInclude Include="src\Assets\AssetSelection.h" />
     <ClInclude Include="src\Assets\MaterialAsset.h" />
+    <ClInclude Include="src\Assets\MeshAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Katamari\ComponentDrawers\SkyboxDrawer.h" />
     <ClInclude Include="src\Katamari\EditorCamera.h" />

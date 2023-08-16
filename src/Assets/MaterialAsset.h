@@ -10,7 +10,10 @@ class MaterialAsset final : public Asset
 public:
 	Material material;
 
-	explicit MaterialAsset(const std::filesystem::path& path) : Asset(path) { }
+	explicit MaterialAsset(const std::filesystem::path& path) : Asset(path)
+	{
+		Deserialize();
+	}
 
 	void DrawProperties() override;
 

@@ -21,7 +21,7 @@ public:
 	explicit Mesh(std::filesystem::path path) : m_Name(path.stem().string()), m_Path(std::move(path)) { }
 
 	static std::shared_ptr<Mesh> CreatePlane(int resolution);
-	static std::shared_ptr<Mesh> CreateSphere(const uint32_t sliceCount);
+	static std::shared_ptr<Mesh> CreateSphere(uint32_t sliceCount);
 	static std::shared_ptr<Mesh> CreateCube();
 
 	std::shared_ptr<IndexBuffer> CreateIndexBuffer() const;
@@ -40,11 +40,11 @@ public:
 	}
 
 	[[nodiscard]] uint32_t GetVerticesCount() const { return vertices.size(); }
-	[[nodiscard]] Vector3 GetVertex(uint32_t index) const { return vertices[index]; }
+	[[nodiscard]] Vector3 GetVertex(const uint32_t index) const { return vertices[index]; }
 	void AddVertex(const Vector3& value) { vertices.emplace_back(value); }
 
 	[[nodiscard]] uint32_t GetIndicesCount() const { return indices.size(); }
-	[[nodiscard]] uint32_t GetIndex(uint32_t index) const { return indices[index]; }
+	[[nodiscard]] uint32_t GetIndex(const uint32_t index) const { return indices[index]; }
 	void AddTriangle(const Vector3& value)
 	{
 		indices.emplace_back(value.x);
@@ -54,10 +54,10 @@ public:
 
 	void AddIndex(const uint32_t& value) { indices.emplace_back(value); }
 
-	[[nodiscard]] Vector2 GetUV(uint32_t index) const { return uvs[index]; }
+	[[nodiscard]] Vector2 GetUV(const uint32_t index) const { return uvs[index]; }
 	void AddUV(const Vector2& value) { uvs.emplace_back(value); }
 
-	[[nodiscard]] Vector3 GetNormal(uint32_t index) const { return normals[index]; }
+	[[nodiscard]] Vector3 GetNormal(const uint32_t index) const { return normals[index]; }
 	void AddNormal(const Vector3& value) { normals.emplace_back(value); }
 	void Init(const BufferLayout& layout)
 	{

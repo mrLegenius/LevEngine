@@ -1,0 +1,66 @@
+Scene: Scene Name
+Entities:
+  - Entity: 15392721754015773208
+    Tag: Directional Light
+    Camera:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 9
+        OrthographicNear: 2
+        OrthographicFar: 10000
+      Main: false
+      FixedAspectRatio: false
+    Directional Light:
+      Color: [1, 1, 1, 1]
+    Transform:
+      Position: [0, 5.69999981, 0]
+      Rotation: [-0.246091425, 4.57625341, -0.869173944]
+      Scale: [1, 1, 1]
+  - Entity: 3352402856425678934
+    Tag: Torch
+    MeshRenderer:
+      Mesh: resources\FancyTorch\FancyTorch.obj
+      Material: resources\FancyTorch\FancyTorch.mat
+      Cast Shadow: true
+    Transform:
+      Position: [0, 9.39999962, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.5, 0.5, 0.5]
+  - Entity: 3609519582529224002
+    Tag: Camera
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 13631027794021233931
+    Tag: Skybox
+    Skybox Renderer:
+      Skybox: resources\Skyboxes\SpaceBloody\SpaceBloody.skybox
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 8940989960097836712
+    Tag: Floor
+    MeshRenderer:
+      Mesh: resources\Models\cube.obj
+      Material: resources\Material.mat
+      Cast Shadow: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [300, 1, 300]

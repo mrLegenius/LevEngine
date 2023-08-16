@@ -241,9 +241,9 @@ std::shared_ptr<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 	return mesh;
 }
 
-std::shared_ptr<IndexBuffer> Mesh::CreateIndexBuffer() const
+Ref<IndexBuffer> Mesh::CreateIndexBuffer() const
 {
-	auto indicesCount = GetIndicesCount();
+	const auto indicesCount = GetIndicesCount();
 	const auto indices = new uint32_t[indicesCount];
 	for (uint32_t i = 0; i < indicesCount; i++)
 		indices[i] = GetIndex(i);
@@ -254,9 +254,9 @@ std::shared_ptr<IndexBuffer> Mesh::CreateIndexBuffer() const
 	return indexBuffer;
 }
 
-std::shared_ptr<VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout) const
+Ref<VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout) const
 {
-	auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
+	const auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
 	auto vertexBuffer = VertexBuffer::Create(vertexBufferSize);
 
 	vertexBuffer->SetLayout(bufferLayout);
@@ -266,7 +266,7 @@ std::shared_ptr<VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& buffe
 
 std::shared_ptr<VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const
 {
-	auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
+	const auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
 	auto vertexBuffer = VertexBuffer::Create(data, vertexBufferSize);
 
 	vertexBuffer->SetLayout(bufferLayout);
