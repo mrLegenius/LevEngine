@@ -85,7 +85,7 @@ namespace LevEngine::Editor
                 }
             }
 
-            if (!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+            if (ImGui::IsWindowHovered() && !ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
             {
                 ImGui::OpenPopup("Create Asset");
             }

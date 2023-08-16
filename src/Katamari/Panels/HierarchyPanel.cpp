@@ -18,6 +18,8 @@ namespace LevEngine::Editor
 
 	void HierarchyPanel::DrawContent()
 	{
+		LEV_PROFILE_FUNCTION()
+
 		m_Context->ForEachEntity(
 			[&](const Entity entity)
 			{
@@ -39,6 +41,8 @@ namespace LevEngine::Editor
 
 	void HierarchyPanel::DrawEntityNode(Entity entity) const
 	{
+		LEV_PROFILE_FUNCTION()
+
 		const auto& tag = entity.GetComponent<TagComponent>().tag;
 
 		const auto entitySelection = std::dynamic_pointer_cast<EntitySelection>(Selection::Current());

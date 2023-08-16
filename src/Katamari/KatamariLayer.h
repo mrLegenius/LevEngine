@@ -15,14 +15,16 @@ class KatamariLayer final : public Layer
 public:
 	void OnAttach() override;
 	void OnUpdate(float deltaTime) override;
+	void OnScenePlay();
+	void OnSceneStop();
 	void DrawToolbar();
 	void DrawStatusbar();
 	void DrawDockSpace();
 	void CreateNewScene();
 	void OpenScene();
 	void OpenScene(const std::filesystem::path& path);
-	void SaveScene();
-	void SaveSceneAs();
+	bool SaveScene();
+	bool SaveSceneAs();
 	void OnEvent(Event& event) override;
 	bool OnWindowResized(const WindowResizedEvent& e) const;
 	void OnGUIRender() override;
@@ -35,7 +37,6 @@ private:
 	Ref<Editor::PropertiesPanel> m_Properties;
 	Ref<Editor::AssetBrowserPanel> m_AssetsBrowser;
 	std::filesystem::path m_EditorScenePath;
-	Ref<Scene> m_EditorScene;
 
 	enum class SceneState
 	{
