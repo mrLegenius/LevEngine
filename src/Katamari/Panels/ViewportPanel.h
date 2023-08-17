@@ -89,7 +89,7 @@ namespace LevEngine::Editor
 
 		Ref<Texture> m_Texture;
 
-		EditorCamera m_Camera{60, 0.001, 10000, Vector3{0, 10, -10}};
+		EditorCamera m_Camera{30.0f, 0.1f, 1000.0f, Vector3{0, 10, -10}};
 
 		int m_GizmoType = -1;
 	};
