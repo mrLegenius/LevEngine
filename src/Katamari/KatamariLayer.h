@@ -26,6 +26,7 @@ public:
 	bool SaveScene();
 	bool SaveSceneAs();
 	void OnEvent(Event& event) override;
+	bool OnKeyPressed(KeyPressedEvent& event);
 	bool OnWindowResized(const WindowResizedEvent& e) const;
 	void OnGUIRender() override;
 

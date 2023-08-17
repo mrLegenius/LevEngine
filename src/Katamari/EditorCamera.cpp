@@ -25,27 +25,35 @@ namespace LevEngine
 		const auto delta = (mouse - m_InitialMousePosition) * rotationSpeed * deltaTime;
 		m_InitialMousePosition = mouse;
 
-		if (Input::IsKeyDown(KeyCode::A))
-			m_Transform.MoveLeft(deltaTime * m_MoveSpeed);
-		else if (Input::IsKeyDown(KeyCode::D))
-			m_Transform.MoveRight(deltaTime * m_MoveSpeed);
+		if (Input::IsMouseButtonDown(MouseButton::Right))
+		{
+			auto rotation = m_Transform.GetRotationDegrees();
 
-		if (Input::IsKeyDown(KeyCode::W))
-			m_Transform.MoveForward(deltaTime * m_MoveSpeed);
-		else if (Input::IsKeyDown(KeyCode::S))
-			m_Transform.MoveBackward(deltaTime * m_MoveSpeed);
+			if (Input::IsKeyDown(KeyCode::Q))
+				rotation.z += deltaTime * rotationSpeed;
+			else if (Input::IsKeyDown(KeyCode::E))
+				rotation.z -= deltaTime * rotationSpeed;
 
-		auto rotation = m_Transform.GetRotationDegrees();
+			rotation.y -= delta.x;
+			rotation.x -= delta.y;
 
-		if (Input::IsKeyDown(KeyCode::Q))
-			rotation.z += deltaTime * rotationSpeed;
-		else if (Input::IsKeyDown(KeyCode::E))
-			rotation.z -= deltaTime * rotationSpeed;
+			m_Transform.SetWorldRotation(rotation);
 
-		rotation.y -= delta.x;
-		rotation.x -= delta.y;
+			if (Input::IsKeyDown(KeyCode::A))
+				m_Transform.MoveLeft(deltaTime * m_MoveSpeed);
+			else if (Input::IsKeyDown(KeyCode::D))
+				m_Transform.MoveRight(deltaTime * m_MoveSpeed);
 
-		m_Transform.SetWorldRotation(rotation);
+			if (Input::IsKeyDown(KeyCode::W))
+				m_Transform.MoveForward(deltaTime * m_MoveSpeed);
+			else if (Input::IsKeyDown(KeyCode::S))
+				m_Transform.MoveBackward(deltaTime * m_MoveSpeed);
+
+			if (Input::IsKeyDown(KeyCode::E))
+				m_Transform.MoveUp(deltaTime * m_MoveSpeed);
+			else if (Input::IsKeyDown(KeyCode::Q))
+				m_Transform.MoveDown(deltaTime * m_MoveSpeed);
+		}
 
 		Zoom(deltaTime * zoomSensitivity * Input::GetMouseWheelOffset());
 	}

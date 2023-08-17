@@ -48,5 +48,17 @@ namespace LevEngine
 
 		template<typename T>
 		constexpr static T ToRadians(const T value) { return value * DegToRad; }
+
+		static bool DecomposeTransform(Matrix& transform,
+		                               Vector3& outPosition,
+		                               Vector3& outRotation,
+		                               Vector3& outScale)
+		{
+			Quaternion rotation;
+			const auto success = transform.Decompose(outScale, rotation, outPosition);
+			outRotation = rotation.ToEuler();
+
+			return success;
+		}
 	};
 }

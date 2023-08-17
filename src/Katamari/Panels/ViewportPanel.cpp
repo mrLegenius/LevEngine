@@ -3,12 +3,19 @@
 
 #include <imgui.h>
 
+#include "imguizmo/ImGuizmo.h"
+#include "Input/Input.h"
+#include "Katamari/EntitySelection.h"
+#include "Katamari/Selection.h"
 #include "Kernel/Application.h"
 
 namespace LevEngine::Editor
 {
 	void ViewportPanel::DrawContent()
 	{
+        if (!m_Focused)
+            m_Camera.ResetInitialMousePosition();
+
         const auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
         const auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
         const auto viewportOffset = ImGui::GetWindowPos();
@@ -39,46 +46,46 @@ namespace LevEngine::Editor
         }
 
         //Gizmos
-    //Entity selectedEntity = m_Hierarchy.GetSelectedEntity();
-    //if (selectedEntity && m_GizmoType != -1)
-    //{
-    //    ImGuizmo::SetOrthographic(false);
-    //    ImGuizmo::SetDrawlist();
+        const auto& entitySelection = std::dynamic_pointer_cast<EntitySelection>(Selection::Current());
 
-    //    ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+        if (!entitySelection) return;
 
-    //    glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
-    //    const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+        Entity selectedEntity = entitySelection->Get();
+        if (selectedEntity && m_GizmoType != -1)
+        {
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
 
-    //    auto& tc = selectedEntity.GetComponent<TransformComponent>();
-    //    glm::mat4 model = tc.GetModel();
+            ImGuizmo::SetRect(m_Bounds[0].x, m_Bounds[0].y, m_Bounds[1].x - m_Bounds[0].x, m_Bounds[1].y - m_Bounds[0].y);
 
-    //    const bool snap = Input::IsKeyDown(KeyCode::LeftControl);
-    //    const float snapValue = m_GizmoType == ImGuizmo::OPERATION::ROTATE ? 5.0f : 0.5f;
+            Matrix cameraView = m_Camera.GetTransform().GetModel().Invert();
+            const Matrix& cameraProjection = m_Camera.GetProjection();
 
-    //    float snapValues[3] = { snapValue, snapValue, snapValue };
+            auto& tc = selectedEntity.GetComponent<Transform>();
+            Matrix model = tc.GetModel();
 
+            const bool snap = Input::IsKeyDown(KeyCode::LeftControl);
+            const float snapValue = m_GizmoType == ImGuizmo::OPERATION::ROTATE ? 5.0f : 0.5f;
 
-    //    ImGuizmo::Manipulate(glm::value_ptr(cameraView),
-    //        glm::value_ptr(cameraProjection),
-    //        static_cast<ImGuizmo::OPERATION>(m_GizmoType),
-    //        ImGuizmo::LOCAL,
-    //        glm::value_ptr(model),
-    //        nullptr,
-    //        snap ? snapValues : nullptr);
+            const float snapValues[3] = { snapValue, snapValue, snapValue };
 
-    //    if (ImGuizmo::IsUsing())
-    //    {
-    //        glm::vec3 position, rotation, scale;
-    //        Math::DecomposeTransform(model, position, rotation, scale);
+            ImGuizmo::Manipulate(&cameraView._11,
+                &cameraProjection._11,
+                static_cast<ImGuizmo::OPERATION>(m_GizmoType),
+                ImGuizmo::LOCAL,
+                &model._11,
+                nullptr,
+                snap ? snapValues : nullptr);
 
-    //        tc.position = position;
+            if (ImGuizmo::IsUsing())
+            {
+                Vector3 position, rotation, scale;
+                Math::DecomposeTransform(model, position, rotation, scale);
 
-    //        //Adding delta rotation to avoid Gimbal lock
-    //        tc.rotation += rotation - tc.rotation;
-
-    //        tc.scale = scale;
-    //    }
-    //}
+                tc.SetLocalPosition(position);
+                tc.SetLocalScale(scale);
+                tc.SetLocalRotationRadians(tc.GetLocalRotation() + (rotation - tc.GetLocalRotation())); //Adding delta rotation to avoid Gimbal lock
+            }
+        }
 	}
 }

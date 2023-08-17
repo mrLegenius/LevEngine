@@ -6,7 +6,7 @@
 
 #include "imgui/backends/imgui_impl_win32.h"
 #include "imgui/backends/imgui_impl_dx11.h"
-//#include "ImGuizmo.h" TODO: Add ImGuizmo
+#include "imguizmo/ImGuizmo.h"
 
 #include <d3d11.h>
 #include <tchar.h>
@@ -129,7 +129,7 @@ namespace LevEngine
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
-		//ImGuizmo::BeginFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End()

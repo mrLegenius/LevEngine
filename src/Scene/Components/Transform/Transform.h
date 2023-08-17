@@ -139,15 +139,26 @@ struct Transform
 		SetLocalPosition(position - dir * value);
 	}
 
+	void MoveRight(const float value)
+	{
+		const auto dir = GetRightDirection();
+		SetLocalPosition(position + dir * value);
+	}
 	void MoveLeft(const float value)
 	{
 		const auto dir = GetRightDirection();
 		SetLocalPosition(position - dir * value);
 	}
-	void MoveRight(const float value)
+
+	void MoveUp(const float value)
 	{
-		const auto dir = GetRightDirection();
+		const auto dir = GetUpDirection();
 		SetLocalPosition(position + dir * value);
+	}
+	void MoveDown(const float value)
+	{
+		const auto dir = GetUpDirection();
+		SetLocalPosition(position - dir * value);
 	}
 
 	Vector3 GetUpDirection() const

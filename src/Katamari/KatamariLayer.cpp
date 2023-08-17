@@ -275,11 +275,58 @@ void KatamariLayer::OnAttach()
     Application::Get().GetWindow().EnableCursor();
 }
 
-void KatamariLayer::OnEvent(Event& e)
+void KatamariLayer::OnEvent(Event& event)
 {
-    EventDispatcher dispatcher{ e };
-
+    EventDispatcher dispatcher{ event };
+    dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(KatamariLayer::OnKeyPressed));
     dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(KatamariLayer::OnWindowResized));
+}
+
+bool KatamariLayer::OnKeyPressed(KeyPressedEvent& event)
+{
+    //Shortcuts
+    if (event.GetRepeatCount() > 0)
+        return false;
+
+    const bool control = Input::IsKeyDown(KeyCode::LeftControl) ||
+        Input::IsKeyDown(KeyCode::RightControl);
+    const bool shift = Input::IsKeyDown(KeyCode::LeftShift) ||
+        Input::IsKeyDown(KeyCode::RightShift);
+    const bool alt = Input::IsKeyDown(KeyCode::LeftAlt) ||
+        Input::IsKeyDown(KeyCode::RightAlt);
+
+    switch (event.GetKeyCode())
+    {
+
+    case KeyCode::N:
+    {
+        if (control) { CreateNewScene(); }
+        break;
+    }
+    case KeyCode::O:
+    {
+        if (control) { OpenScene(); }
+        break;
+    }
+    case KeyCode::S:
+    {
+        if (control && shift) { SaveSceneAs(); }
+        else if (control) { SaveScene(); }
+        break;
+    }
+    case KeyCode::D:
+    {
+        //if (control)
+            //OnDuplicateEntity();
+
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    return m_Viewport->OnKeyPressed(event);
 }
 
 bool KatamariLayer::OnWindowResized(const WindowResizedEvent& e) const

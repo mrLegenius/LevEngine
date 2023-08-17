@@ -16,10 +16,14 @@ namespace LevEngine
 		[[nodiscard]] const Transform& GetTransform() const { return m_Transform; }
 		void UpdateView() { m_Transform.RecalculateModel(); }
 
+		void ResetInitialMousePosition()
+		{
+			m_InitialMousePosition = Vector2{ 0.0f, 0.0f };
+		}
+
 	private:
 
 		float m_MoveSpeed = 10.0f;
-		Matrix m_ViewMatrix;
 
 		Transform m_Transform;
 

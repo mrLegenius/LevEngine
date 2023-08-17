@@ -152,6 +152,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="external\imguizmo\GraphEditor.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\imguizmo\ImCurveEdit.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\imguizmo\ImGradient.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\imguizmo\ImGuizmo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\imguizmo\ImSequencer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="external\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -365,6 +380,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\entt\entt.hpp" />
+    <ClInclude Include="external\imguizmo\GraphEditor.h" />
+    <ClInclude Include="external\imguizmo\ImCurveEdit.h" />
+    <ClInclude Include="external\imguizmo\ImGradient.h" />
+    <ClInclude Include="external\imguizmo\ImGuizmo.h" />
+    <ClInclude Include="external\imguizmo\ImSequencer.h" />
+    <ClInclude Include="external\imguizmo\ImZoomSlider.h" />
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="external\yaml-cpp\include\yaml-cpp\anchor.h" />
     <ClInclude Include="external\yaml-cpp\include\yaml-cpp\binary.h" />
