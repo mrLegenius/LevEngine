@@ -1,0 +1,3 @@
+[submodule "external/imguizmo"]
+	path = external/imguizmo
+	url = https://github.com/mrLegenius/ImGuizmo
