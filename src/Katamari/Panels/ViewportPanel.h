@@ -23,7 +23,8 @@ namespace LevEngine::Editor
 		void UpdateCamera(const float deltaTime)
 		{
 			m_Camera.SetViewportSize(m_Size.x, m_Size.y);
-			m_Camera.OnUpdate(deltaTime);
+			if (m_Focused)
+				m_Camera.OnUpdate(deltaTime);
 			m_Camera.UpdateView();
 		}
 

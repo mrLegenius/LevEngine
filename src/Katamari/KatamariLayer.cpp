@@ -350,11 +350,7 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     {
     case SceneState::Edit:
     {
-        if (m_Viewport->IsFocused())
-        {
-            m_Viewport->UpdateCamera(deltaTime);
-        }
-
+        m_Viewport->UpdateCamera(deltaTime);
         auto& camera = m_Viewport->GetCamera();
         m_ActiveScene->OnRender(&camera, &camera.GetTransform());
         break;
@@ -362,13 +358,11 @@ void KatamariLayer::OnUpdate(const float deltaTime)
     case SceneState::Play:
     {
         if (m_Viewport->IsFocused())
-        {
-            Application::Get().GetWindow().DisableCursor();
-            m_ActiveScene->OnUpdate(deltaTime);
-            m_ActiveScene->OnPhysics(deltaTime);
-            m_ActiveScene->OnLateUpdate(deltaTime);
-        }
+	        Application::Get().GetWindow().DisableCursor();
 
+        m_ActiveScene->OnUpdate(deltaTime);
+        m_ActiveScene->OnPhysics(deltaTime);
+        m_ActiveScene->OnLateUpdate(deltaTime);
         m_ActiveScene->OnRender();
         break;
     }
