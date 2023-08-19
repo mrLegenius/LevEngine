@@ -22,6 +22,9 @@ namespace LevEngine
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 		out << YAML::Key << "Tag" << YAML::Value << entity.GetComponent<TagComponent>().tag;
 
+		if (auto parent = entity.GetComponent<Transform>().GetParent())
+			out << YAML::Key << "Parent" << YAML::Value << parent.GetUUID();
+
 		for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
 			serializer->Serialize(out, entity);
 
@@ -36,7 +39,6 @@ namespace LevEngine
 		out << YAML::Key << "Scene" << YAML::Value << "Scene Name";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
-		//TODO: Restore all entities parent/children relationship
 		m_Scene->ForEachEntity(
 			[&](auto entity)
 			{
@@ -72,10 +74,19 @@ namespace LevEngine
 		auto entities = data["Entities"];
 		if (!entities) return true;
 
+		std::unordered_map<UUID, Entity> entitiesMap;
+		std::unordered_map<UUID, UUID> relationships;
+
 		for (auto entity : entities)
 		{
 			auto uuid = entity["Entity"].as<uint64_t>();
 			auto name = entity["Tag"].as<std::string>();
+
+			if (auto parent = entity["Parent"])
+			{
+				auto parentUuid = UUID(parent.as<uint64_t>());
+				relationships.emplace(uuid, parentUuid);
+			}
 
 			Log::Trace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
 
@@ -83,6 +94,16 @@ namespace LevEngine
 
 			for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
 				serializer->Deserialize(entity, deserializedEntity);
+
+			entitiesMap.try_emplace(uuid, deserializedEntity);
+		}
+
+		for (auto& [uuid, entity] : entitiesMap)
+		{
+			if (!entity) continue;
+
+			auto& transform = entity.GetComponent<Transform>();
+			transform.SetParent(entitiesMap[relationships[uuid]], false);
 		}
 
 		return true;
