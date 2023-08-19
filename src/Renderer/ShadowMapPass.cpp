@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "ShadowMapPass.h"
 #include "RenderCommand.h"
+#include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/Transform/Transform.h"
+
 namespace LevEngine
 {
 std::vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const

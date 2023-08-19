@@ -1,11 +1,16 @@
 #pragma once
-#include <set>
+#include "Scene/Entity.h"
 
-#include "yaml-cpp/src/exp.h"
-
+namespace LevEngine
+{
 struct Transform
 {
 	Transform()
+	{
+		ForceRecalculateModel();
+	}
+
+	Transform(const Entity entity) : entity(entity)
 	{
 		ForceRecalculateModel();
 	}
@@ -21,20 +26,34 @@ struct Transform
 		Vector3 localPos = position;
 		if (parent)
 		{
-			localPos *= parent->GetWorldScale();
-			localPos = Vector3::Transform(localPos, parent->GetWorldOrientation());
-			localPos += parent->GetWorldPosition();
+			const auto& parentTransform = parent.GetComponent<Transform>();
+
+			localPos *= parentTransform.GetWorldScale();
+			localPos = Vector3::Transform(localPos, parentTransform.GetWorldOrientation());
+			localPos += parentTransform.GetWorldPosition();
 		}
 		return localPos;
 	}
 
 	[[nodiscard]] Vector3 GetWorldScale() const
 	{
-		return parent ? parent->GetWorldScale() * scale : scale;
+		if (parent)
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			return scale * parentTransform.GetWorldScale();
+		}
+
+		return scale;
 	}
 	[[nodiscard]] Vector3 GetWorldRotation() const
 	{
-		return parent ? (GetLocalOrientation() * parent->GetWorldOrientation()).ToEuler() : rotation;
+		if (parent)
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			return (GetLocalOrientation() * parentTransform.GetWorldOrientation()).ToEuler();
+		}
+
+		return rotation;
 	}
 
 	[[nodiscard]] Vector3 GetRotationDegrees() const
@@ -46,10 +65,18 @@ struct Transform
 		return rot;
 	}
 
-	const std::set<Transform*>& GetChildren() const { return children; }
+	[[nodiscard]] const std::vector<Entity>& GetChildren() const { return children; }
 	[[nodiscard]] uint32_t GetChildrenCount() const { return children.size(); }
 
-	void SetParent(Transform* value, bool keepWorldTransform = true);
+	[[nodiscard]] Entity GetParent() const { return parent; }
+	void RemoveChild(const Entity entity)
+	{
+		const auto it = std::find(children.begin(), children.end(), entity);
+		if (it != children.end())
+			children.erase(it);
+	}
+	void SetParent(Entity value, bool keepWorldTransform = true);
+
 	void SetLocalPosition(const Vector3 value) { position = value; }
 	void SetWorldPosition(const Vector3 value)
 	{
@@ -57,8 +84,10 @@ struct Transform
 
 		if (parent)
 		{
-			position -= parent->GetWorldPosition();
-			auto rot = parent->GetWorldOrientation();
+			const auto& parentTransform = parent.GetComponent<Transform>();
+
+			position -= parentTransform.GetWorldPosition();
+			auto rot = parentTransform.GetWorldOrientation();
 			rot.Conjugate();
 			position = Vector3::Transform(position, rot);
 		}
@@ -74,7 +103,11 @@ struct Transform
 		rotation = newRotation;
 
 		if (parent)
-			rotation -= parent->GetWorldRotation();
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			rotation -= parentTransform.GetWorldRotation();
+			rotation -= parentTransform.GetWorldRotation();
+		}
 	}
 
 	void SetWorldRotation(const Quaternion value)
@@ -82,7 +115,11 @@ struct Transform
 		rotation = value.ToEuler();
 
 		if (parent)
-			rotation -= parent->GetWorldRotation();
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			rotation -= parentTransform.GetWorldRotation();
+		}
+			
 	}
 
 	void SetLocalRotation(const Vector3 value)
@@ -114,7 +151,8 @@ struct Transform
 	{
 		if (parent)
 		{
-			const auto parentScale = parent->GetWorldScale();
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			const auto parentScale = parentTransform.GetWorldScale();
 			scale.x = DirectX::XMScalarNearEqual(parentScale.x, 0, 0.0001f) ? 0 : value.x / parentScale.x;
 			scale.y = DirectX::XMScalarNearEqual(parentScale.y, 0, 0.0001f) ? 0 : value.y / parentScale.y;
 			scale.z = DirectX::XMScalarNearEqual(parentScale.z, 0, 0.0001f) ? 0 : value.z / parentScale.z;
@@ -161,33 +199,33 @@ struct Transform
 		SetLocalPosition(position - dir * value);
 	}
 
-	Vector3 GetUpDirection() const
+	[[nodiscard]] Vector3 GetUpDirection() const
 	{
 		Vector3 dir = XMVector3Rotate(Vector3::Up, GetWorldOrientation());
 		dir.Normalize();
 		return dir;
 	}
 
-	Vector3 GetRightDirection() const
+	[[nodiscard]] Vector3 GetRightDirection() const
 	{
 		Vector3 dir = XMVector3Rotate(Vector3::Right, GetWorldOrientation());
 		dir.Normalize();
 		return dir;
 	}
 
-	Vector3 GetForwardDirection() const
+	[[nodiscard]] Vector3 GetForwardDirection() const
 	{
 		Vector3 dir = XMVector3Rotate(Vector3::Forward, GetWorldOrientation());
 		dir.Normalize();
 		return dir;
 	}
 
-	Quaternion GetWorldOrientation() const
+	[[nodiscard]] Quaternion GetWorldOrientation() const
 	{
 		return Quaternion::CreateFromYawPitchRoll(GetWorldRotation());
 	}
 
-	Quaternion GetLocalOrientation() const
+	[[nodiscard]] Quaternion GetLocalOrientation() const
 	{
 		return Quaternion::CreateFromYawPitchRoll(rotation);
 	}
@@ -199,8 +237,8 @@ struct Transform
 	void RecalculateModel()
 	{
 		const auto worldPosition = GetWorldPosition();
-		const auto worldRotation = GetWorldPosition();
-		const auto worldScale = GetWorldPosition();
+		const auto worldRotation = GetWorldRotation();
+		const auto worldScale = GetWorldScale();
 
 		if (worldPosition == prevPosition && worldRotation == prevRotation && worldScale == prevScale && parent != prevParent) return;
 
@@ -221,9 +259,9 @@ struct Transform
 
 private:
 
-	std::set<Transform*> children;
+	std::vector<Entity> children;
 
-	Transform* parent = nullptr;
+	Entity parent{};
 
 	Matrix model = Matrix::Identity;
 
@@ -234,7 +272,8 @@ private:
 	Vector3 prevPosition = Vector3::Zero;
 	Vector3 prevRotation = Vector3::Zero;
 	Vector3 prevScale = Vector3::One;
-	Transform* prevParent;
+	Entity prevParent{};
+	Entity entity{};
 };
-
+}
 

@@ -8,19 +8,19 @@ class Entity
 {
 public:
 	Entity() = default;
-	Entity(entt::handle handle) : m_Handle(handle) { }
+	Entity(const entt::handle handle) : m_Handle(handle) { }
 
 	~Entity() = default;
 
 	template<typename T>
-	bool HasComponent()
+	bool HasComponent() const
 	{
 		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
 		return m_Handle.any_of<T>();
 	}
 
 	template<typename T, typename ... Args>
-	T& AddComponent(Args&& ... args)
+	T& AddComponent(Args&& ... args) const
 	{
 		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
 		LEV_CORE_ASSERT(!HasComponent<T>(), "Entity already has this component");
@@ -30,14 +30,14 @@ public:
 	}
 
 	template<typename T, typename... Args>
-	T& AddOrReplaceComponent(Args&&... args)
+	T& AddOrReplaceComponent(Args&&... args) const
 	{
 		T& component = m_Handle.emplace_or_replace<T>(std::forward<Args>(args)...);
 		return component;
 	}
 
 	template<typename T>
-	T& GetComponent()
+	T& GetComponent() const
 	{
 		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
 		LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
@@ -46,7 +46,7 @@ public:
 	}
 
 	template<typename T>
-	T& GetOrAddComponent()
+	T& GetOrAddComponent() const
 	{
 		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
 
@@ -54,12 +54,12 @@ public:
 	}
 
 	template<typename T>
-	void RemoveComponent()
+	void RemoveComponent() const
 	{
 		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
 		LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
 
-		m_Handle.remove<T>();
+		auto _ = m_Handle.remove<T>();
 	}
 
 	template <typename T>
@@ -68,7 +68,7 @@ public:
 	UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 	const std::string& GetName() { return GetComponent<TagComponent>().tag; }
 
-	operator bool() const { return m_Handle.entity() != entt::null; }
+	operator bool() const { return m_Handle.entity() != entt::null && m_Handle.valid(); }
 	operator uint32_t() const { return static_cast<uint32_t>(m_Handle.entity()); }
 	operator entt::entity() const { return m_Handle.entity(); }
 
@@ -80,6 +80,15 @@ public:
 	{
 		return !(*this == other);
 	}
+
+	template<typename  T>
+	Entity GetOtherEntity(const T& component)
+	{
+		auto& registry = *m_Handle.registry();
+		const auto entity = entt::to_entity(registry, component);
+		return Entity{ entt::handle{registry, entity} };
+	}
+
 private:
 	entt::handle m_Handle;
 };

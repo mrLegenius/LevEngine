@@ -3,6 +3,8 @@
 #include "RenderTechnique.h"
 #include "RenderSettings.h"
 #include "Scene/Components/Components.h"
+#include "Scene/Components/Lights/Lights.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 
 namespace LevEngine
 {

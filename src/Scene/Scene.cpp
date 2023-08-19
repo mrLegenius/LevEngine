@@ -4,9 +4,9 @@
 #include "Physics/Physics.h"
 #include "Renderer/Renderer.h"
 
-#include "Assets.h"
 #include "Entity.h"
 #include "Components/Components.h"
+#include "Components/Camera/Camera.h"
 
 namespace LevEngine
 {
@@ -93,7 +93,7 @@ Entity Scene::CreateEntity(UUID uuid, const std::string& name)
 
     auto entity = Entity(entt::handle{ m_Registry, m_Registry.create() });
     entity.AddComponent<IDComponent>(uuid);
-    entity.AddComponent<Transform>();
+    entity.AddComponent<Transform>(entity);
     entity.AddComponent<TagComponent>(name);
 
     return entity;
@@ -108,7 +108,24 @@ void Scene::DestroyEntity(const Entity entity)
 {
     LEV_PROFILE_FUNCTION();
 
-    m_Registry.destroy(entity);
+    std::vector<Entity> entitiesToDestroy;
+
+    auto& parentTransform = entity.GetComponent<Transform>();
+    parentTransform.SetParent(Entity{});
+
+    GetAllChildren(entity, entitiesToDestroy);
+
+    m_Registry.destroy(entitiesToDestroy.begin(), entitiesToDestroy.end());
+}
+
+void Scene::GetAllChildren(Entity entity, std::vector<Entity>& entities)
+{
+	const auto& parentTransform = entity.GetComponent<Transform>();
+
+	for (const auto child : parentTransform.GetChildren())
+		GetAllChildren(child, entities);
+
+	entities.emplace(entities.begin(), entity);
 }
 
 void Scene::DuplicateEntity(Entity entity)
@@ -117,5 +134,11 @@ void Scene::DuplicateEntity(Entity entity)
 
     //Entity newEntity = CreateEntity(entity.GetName());
     //CopyComponentIfExists(AllComponents{}, newEntity, entity);
+}
+
+Entity Scene::GetEntityBy(Transform* value)
+{
+	const auto entity = entt::to_entity(m_Registry, *value);
+    return ConvertEntity(entity);
 }
 }

@@ -30,6 +30,7 @@ public:
 	Entity CreateEntity(UUID uuid, const std::string& name);
 
 	void DestroyEntity(Entity entity);
+	static void GetAllChildren(Entity entity, std::vector<Entity>& entities);
 
 	void DuplicateEntity(Entity entity);
 
@@ -50,6 +51,8 @@ public:
 	{
 		m_EventSystems.emplace_back(new EventSystem<T>);
 	}
+
+	Entity GetEntityBy(Transform* value);
 
 private:
 	entt::registry m_Registry;

@@ -4,6 +4,7 @@
 #include "TextureLibrary.h"
 #include "../ComponentDrawer.h"
 #include "../ComponentSerializer.h"
+#include "GUI/GUIUtils.h"
 
 namespace LevEngine
 {

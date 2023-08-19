@@ -1,8 +1,7 @@
 #pragma once
 #include "Scene/System.h"
-#include "../Assets.h"
 #include "../Input/Input.h"
-#include "Scene/Components/Components.h"
+#include "Scene/Components/Transform/Transform.h"
 #include "Scene/Entity.h"
 #include "Physics/Events/CollisionBeginEvent.h"
 #include "Scene/Components/ComponentDrawer.h"
@@ -84,9 +83,9 @@ class KatamariCollisionSystem : public System
 public:
     void Update(float deltaTime, entt::registry& registry) override
     {
-        auto view = registry.view<KatamariPlayerComponent, CollisionBeginEvent, Rigidbody, SphereCollider>();
+	    const auto view = registry.view<KatamariPlayerComponent, CollisionBeginEvent, Rigidbody, SphereCollider>();
         int count = 0;
-        for (auto entity : view)
+        for (const auto entity : view)
         {
             count++;
             auto [transform, collision, rigidbody, collider] = registry.get<Transform, CollisionBeginEvent, Rigidbody, SphereCollider>(entity);
@@ -95,8 +94,8 @@ public:
             auto& otherTransform = collision.other.GetComponent<Transform>();
             if (otherRigidbody.bodyType == BodyType::Static) return;
 
-            auto size = collider.radius;
-            auto otherSize = Math::MaxElement(otherTransform.GetWorldScale());
+            const auto size = collider.radius;
+            const auto otherSize = Math::MaxElement(otherTransform.GetWorldScale());
             
             if (size <= otherSize) return;
 
@@ -104,7 +103,7 @@ public:
 
             otherRigidbody.enabled = false;
             
-            otherTransform.SetParent(&transform);
+            otherTransform.SetParent(Entity{ entt::handle{registry, entity} });
         }
     }
 };

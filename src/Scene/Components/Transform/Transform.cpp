@@ -3,16 +3,31 @@
 
 #include "../ComponentDrawer.h"
 #include "../ComponentSerializer.h"
+#include "GUI/GUIUtils.h"
 
-void Transform::SetParent(Transform* value, const bool keepWorldTransform)
+namespace LevEngine
 {
+void Transform::SetParent(Entity value, const bool keepWorldTransform)
+{
+	if (entity == value)
+	{
+		Log::CoreWarning("{0} is trying to set itself as a parent", value.GetName());
+		return;
+	}
+
 	if (parent == value) return;
 
 	if (parent)
-		parent->children.erase(this);
+	{
+		auto& parentTransform = parent.GetComponent<Transform>();
+		parentTransform.RemoveChild(entity);
+	}
 
 	if (value)
-		value->children.insert(this);
+	{
+		auto& newParentTransform = value.GetComponent<Transform>();
+		newParentTransform.children.emplace_back(entity);
+	}
 
 	if (!keepWorldTransform)
 	{
@@ -71,3 +86,4 @@ protected:
 		component.SetLocalScale(node["Scale"].as<Vector3>());
 	}
 };
+}

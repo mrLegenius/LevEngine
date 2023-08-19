@@ -21,10 +21,18 @@ namespace LevEngine::Editor
 		LEV_PROFILE_FUNCTION()
 
 		m_Context->ForEachEntity(
-			[&](const Entity entity)
+			[&](Entity entity)
 			{
-				DrawEntityNode(entity);
+				if (!entity.GetComponent<Transform>().GetParent())
+					DrawEntityNode(entity);
 			});
+
+		for (const auto toDelete : m_EntitiesToDelete)
+		{
+			m_Context->DestroyEntity(toDelete);
+			Selection::Deselect();
+		}
+		m_EntitiesToDelete.clear();
 
 		if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(0))
 			Selection::Deselect();
@@ -39,7 +47,7 @@ namespace LevEngine::Editor
 		}
 	}
 
-	void HierarchyPanel::DrawEntityNode(Entity entity) const
+	void HierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		LEV_PROFILE_FUNCTION()
 
@@ -62,24 +70,27 @@ namespace LevEngine::Editor
 				Selection::Select(CreateRef<EntitySelection>(entity));
 		}
 
-		bool entityDeleted = false;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
-				entityDeleted = true;
+				m_EntitiesToDelete.emplace(m_EntitiesToDelete.begin(), entity);
 
 			ImGui::EndPopup();
 		}
 
 		if (opened)
 		{
-			ImGui::TreePop();
+			auto& children = entity.GetComponent<Transform>().GetChildren();
+
+			for (const auto child : children)
+			{
+				DrawEntityNode(child);
+			}
 		}
 
-		if (entityDeleted)
+		if (opened)
 		{
-			m_Context->DestroyEntity(entity);
-			Selection::Deselect();
+			ImGui::TreePop();
 		}
 	}
 }

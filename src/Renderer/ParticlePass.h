@@ -5,6 +5,8 @@
 #include "RenderPass.h"
 #include "entt/entt.hpp"
 #include "Scene/Components/Components.h"
+#include "Scene/Components/Emitter/EmitterComponent.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {

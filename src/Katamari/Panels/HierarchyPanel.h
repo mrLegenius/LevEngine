@@ -16,9 +16,11 @@ namespace LevEngine::Editor
 		std::string GetName() override { return "Hierarchy"; }
 		void DrawContent() override;
 	private:
-		void DrawEntityNode(Entity entity) const;
+		void DrawEntityNode(Entity entity);
 
 		Ref<Scene> m_Context = nullptr;
+
+		std::vector<Entity> m_EntitiesToDelete;
 
 		friend class Scene;
 	};

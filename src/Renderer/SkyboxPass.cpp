@@ -2,8 +2,8 @@
 #include "SkyboxPass.h"
 
 #include "RenderCommand.h"
-#include "Kernel/Application.h"
-#include "Scene/Components/Components.h"
+#include "Scene/Components/SkyboxRenderer/SkyboxRenderer.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {

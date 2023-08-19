@@ -3,7 +3,6 @@
 
 #include "Assets.h"
 #include "Kernel/Time.h"
-#include "Kernel/Application.h"
 #include "RenderCommand.h"
 #include "RenderSettings.h"
 #include "Math/Random.h"
@@ -14,7 +13,7 @@ namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
 
-void BindTextureArray(Ref<D3D11Texture>* textures, const uint32_t count)
+void BindTextureArray(const Ref<D3D11Texture>* textures, const uint32_t count)
 {
 	auto** srv = new ID3D11ShaderResourceView *[count];
 	for (int i = 0; i < count; ++i)
@@ -37,7 +36,7 @@ ParticlePass::ParticlePass(const Ref<PipelineState>& pipelineState, const Ref<Te
 	m_EmitterData = ConstantBuffer::Create(sizeof Emitter, 2);
 	m_RandomData = ConstantBuffer::Create(sizeof RandomGPUData, 3);
 
-	auto particles = new GPUParticleData[RenderSettings::MaxParticles];
+	const auto particles = new GPUParticleData[RenderSettings::MaxParticles];
 	auto indices = new uint32_t[RenderSettings::MaxParticles];
 
 	for (int i = 0; i < RenderSettings::MaxParticles; ++i)
@@ -58,8 +57,6 @@ ParticlePass::ParticlePass(const Ref<PipelineState>& pipelineState, const Ref<Te
 
 	delete[] particles;
 	delete[] indices;
-
-	srand(time(nullptr));
 }
 
 ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex)

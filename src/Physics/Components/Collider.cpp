@@ -1,4 +1,7 @@
 ﻿#include "pch.h"
+#include "Collider.h"
+
+#include "GUI/GUIUtils.h"
 #include "Scene/Components/ComponentDrawer.h"
 #include "Scene/Components/ComponentSerializer.h"
 

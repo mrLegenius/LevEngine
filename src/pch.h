@@ -15,6 +15,9 @@
 #include <array>
 #include <unordered_map>
 #include <unordered_set>
+#include <set>
+
+#include <imgui.h>
 
 #include "Debugging/Profiler.h"
 
@@ -22,6 +25,7 @@
 #include "Kernel/Logger.h"
 #include "Kernel/Asserts.h"
 #include "Kernel/PointerUtils.h"
+#include "Kernel/UUID.h"
 
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"

@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 #include "Rigidbody.h"
+
+#include "GUI/GUIUtils.h"
 #include "Scene/Components/ComponentDrawer.h"
 #include "Scene/Components/ComponentSerializer.h"
 

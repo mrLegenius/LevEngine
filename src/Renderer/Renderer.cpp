@@ -10,6 +10,7 @@
 #include "SkyboxPass.h"
 #include "Kernel/Application.h"
 #include "Scene/Entity.h"
+#include "Scene/Components/Camera/Camera.h"
 
 namespace LevEngine
 {

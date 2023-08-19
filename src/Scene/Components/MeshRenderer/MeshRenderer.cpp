@@ -1,13 +1,9 @@
 ﻿#include "pch.h"
 #include "MeshRenderer.h"
 
-#include <imgui.h>
-
-#include "Assets/MaterialAsset.h"
 #include "GUI/GUIUtils.h"
-#include "Katamari/ObjLoader.h"
 #include "../ComponentDrawer.h"
-#include "Scene/Components/ComponentSerializer.h"
+#include "../ComponentSerializer.h"
 
 namespace LevEngine
 {
@@ -41,7 +37,7 @@ namespace LevEngine
 				[&material](const auto& path) { material = CreateRef<MaterialAsset>(path);});
 		}
 	};
-}
+
 
 class MeshRendererSerializer final : public ComponentSerializer<MeshRendererComponent, MeshRendererSerializer>
 {
@@ -75,3 +71,4 @@ protected:
 		component.castShadow = node["Cast Shadow"].as<bool>();
 	}
 };
+}

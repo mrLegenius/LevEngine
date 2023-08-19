@@ -16,6 +16,7 @@
 #include "Physics/Events/CollisionEndEvent.h"
 #include "Renderer/Material.h"
 #include "Renderer/Renderer.h"
+#include "Scene/Components/Camera/Camera.h"
 #include "Scene/Serializers/SceneSerializer.h"
 
 void OnKatamariCollided(Entity me, Entity other)
@@ -36,7 +37,7 @@ void OnKatamariCollided(Entity me, Entity other)
 
     otherRigidbody.enabled = false;
 
-    otherTransform.SetParent(&myTransform);
+    otherTransform.SetParent(me);
 }
 
 class TestSystem : public System
@@ -80,189 +81,172 @@ void KatamariLayer::OnAttach()
     m_Properties = CreateRef<Editor::PropertiesPanel>();
     m_AssetsBrowser = CreateRef<Editor::AssetBrowserPanel>();
 
- //   for (int i = 0; i < 1; i++)
- //   {
- //       auto entity = m_ActiveScene->CreateEntity("LavaRock");
- //       auto& transform = entity.GetComponent<Transform>();
+    for (int i = 0; i < 1; i++)
+    {
+        auto entity = m_ActiveScene->CreateEntity("LavaRock");
+        auto& transform = entity.GetComponent<Transform>();
 
- //       //<--- Transform ---<<
- //       {
- //           transform.SetLocalScale(Vector3::One);
- //           transform.SetWorldPosition(Vector3(10 * i, 20, 0));
- //       }
+        //<--- Transform ---<<
+        {
+            transform.SetLocalScale(Vector3::One);
+            transform.SetWorldPosition(Vector3(10 * i, 20, 0));
+        }
 
- //       //<--- Physics ---<<
- //       {
- //           constexpr auto colliderScale = 2.0f;
- //           entity.AddComponent<BoxCollider>(Vector3(colliderScale, colliderScale, colliderScale));
- //           auto& rb = entity.AddComponent<Rigidbody>();
+        //<--- Physics ---<<
+        {
+            constexpr auto colliderScale = 2.0f;
+            entity.AddComponent<BoxCollider>(Vector3(colliderScale, colliderScale, colliderScale));
+            auto& rb = entity.AddComponent<Rigidbody>();
 
- //           rb.gravityScale = 2;
- //           rb.mass = 100.0f;
- //           rb.InitCubeInertia(transform);
- //       }
+            rb.gravityScale = 2;
+            rb.mass = 100.0f;
+            rb.InitCubeInertia(transform);
+        }
 
- //       //<--- Mesh ---<<
- //       {
- //           auto mesh = m_ActiveScene->CreateEntity("LavaRockMesh");
+        //<--- Mesh ---<<
+        {
+            auto mesh = m_ActiveScene->CreateEntity("LavaRockMesh");
 
- //           mesh.GetComponent<Transform>().SetParent(&entity.GetComponent<Transform>(), false);
- //           mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.2f);
- //           mesh.GetComponent<Transform>().SetLocalRotation(Vector3{ 90.0f, 0.0f, -90.0f });
- //           auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(LavaRockAssets::Mesh());
- //           meshRenderer.material = CreateRef<MaterialAsset>("");
- //           meshRenderer.material->material.SetAmbientColor(Color::White);
- //           meshRenderer.material->material.SetDiffuseColor(Color::White);
- //           meshRenderer.material->material.SetEmissiveColor(Color::White);
- //           meshRenderer.material->material.SetSpecularColor(Color::White);
+            mesh.GetComponent<Transform>().SetParent(entity, false);
+            mesh.GetComponent<Transform>().SetLocalScale(Vector3::One * 0.2f);
+            mesh.GetComponent<Transform>().SetLocalRotation(Vector3{ 90.0f, 0.0f, -90.0f });
+            /*auto& meshRenderer = mesh.AddComponent<MeshRendererComponent>(LavaRockAssets::Mesh());
+            meshRenderer.material = CreateRef<MaterialAsset>("");
+            meshRenderer.material->material.SetAmbientColor(Color::White);
+            meshRenderer.material->material.SetDiffuseColor(Color::White);
+            meshRenderer.material->material.SetEmissiveColor(Color::White);
+            meshRenderer.material->material.SetSpecularColor(Color::White);
 
- //           meshRenderer.material->material.SetTexture(Material::TextureType::Ambient, LavaRockAssets::AmbientTexture());
- //           meshRenderer.material->material.SetTexture(Material::TextureType::Diffuse, LavaRockAssets::AmbientTexture());
- //           meshRenderer.material->material.SetTexture(Material::TextureType::Emissive, LavaRockAssets::EmissiveTexture());
- //           meshRenderer.material->material.SetTexture(Material::TextureType::Specular, LavaRockAssets::SpecularTexture());
- //           meshRenderer.material->material.SetTexture(Material::TextureType::Normal, LavaRockAssets::NormalTexture());
- //       }
+            meshRenderer.material->material.SetTexture(Material::TextureType::Ambient, LavaRockAssets::AmbientTexture());
+            meshRenderer.material->material.SetTexture(Material::TextureType::Diffuse, LavaRockAssets::AmbientTexture());
+            meshRenderer.material->material.SetTexture(Material::TextureType::Emissive, LavaRockAssets::EmissiveTexture());
+            meshRenderer.material->material.SetTexture(Material::TextureType::Specular, LavaRockAssets::SpecularTexture());
+            meshRenderer.material->material.SetTexture(Material::TextureType::Normal, LavaRockAssets::NormalTexture());*/
+        }
 
- //       //<--- Fire Particles ---<<
- //       {
- //           auto fireParticles = m_ActiveScene->CreateEntity("LavaRock Fire Particles");
- //           fireParticles.GetComponent<Transform>().SetParent(&transform, false);
- //           fireParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 0, 0 });
- //           auto& particles = fireParticles.AddComponent<EmitterComponent>();
- //           particles.Rate = 5;
- //           particles.Texture = TextureAssets::Fire();
- //           particles.MaxParticles = 10000;
- //           particles.Birth.Velocity = Vector3{ 0, 5, 0 };
+        //<--- Fire Particles ---<<
+        {
+            auto fireParticles = m_ActiveScene->CreateEntity("LavaRock Fire Particles");
+            fireParticles.GetComponent<Transform>().SetParent(entity, false);
+            fireParticles.GetComponent<Transform>().SetLocalPosition(Vector3{ 0, 0, 0 });
+            auto& particles = fireParticles.AddComponent<EmitterComponent>();
+            particles.Rate = 5;
+            particles.Texture = TextureAssets::Fire();
+            particles.MaxParticles = 10000;
+            particles.Birth.Velocity = Vector3{ 0, 5, 0 };
 
- //           particles.Birth.StartColor = Color{ 1.0f, 0.7f, 0.0f, 1.0f };
- //           particles.Birth.EndColor = Color{ 0.5, 0, 0, 0 };
+            particles.Birth.StartColor = Color{ 1.0f, 0.7f, 0.0f, 1.0f };
+            particles.Birth.EndColor = Color{ 0.5, 0, 0, 0 };
 
- //           particles.Birth.RandomStartSize = true;
- //           particles.Birth.StartSize = 0.5f;
- //           particles.Birth.StartSizeB = 1.0f;
- //           particles.Birth.EndSize = 0.1f;
+            particles.Birth.RandomStartSize = true;
+            particles.Birth.StartSize = 0.5f;
+            particles.Birth.StartSizeB = 1.0f;
+            particles.Birth.EndSize = 0.1f;
 
- //           particles.Birth.RandomStartPosition = true;
- //           particles.Birth.Position = Vector3{ -3, -0.5, -2.5 };
- //           particles.Birth.PositionB = Vector3{ 3, 0.5, 2.5 };
+            particles.Birth.RandomStartPosition = true;
+            particles.Birth.Position = Vector3{ -3, -0.5, -2.5 };
+            particles.Birth.PositionB = Vector3{ 3, 0.5, 2.5 };
 
- //           particles.Birth.RandomStartLifeTime = true;
- //           particles.Birth.LifeTime = 0.5;
- //           particles.Birth.LifeTimeB = 1;
- //       }
+            particles.Birth.RandomStartLifeTime = true;
+            particles.Birth.LifeTime = 0.5;
+            particles.Birth.LifeTimeB = 1;
+        }
 
- //       //<--- Smoke Particles ---<<
- //       {
- //           auto smokeParticles = m_ActiveScene->CreateEntity("LavaRock Smoke Particles");
- //           smokeParticles.GetComponent<Transform>().SetParent(&transform, false);
- //           auto& particles = smokeParticles.AddComponent<EmitterComponent>();
- //           particles.Rate = 1;
- //           particles.Texture = TextureAssets::Smoke();
- //           particles.Birth.Velocity = Vector3{ 0, 10, 0 };
+        //<--- Smoke Particles ---<<
+        {
+            auto smokeParticles = m_ActiveScene->CreateEntity("LavaRock Smoke Particles");
+            smokeParticles.GetComponent<Transform>().SetParent(entity, false);
+            auto& particles = smokeParticles.AddComponent<EmitterComponent>();
+            particles.Rate = 1;
+            particles.Texture = TextureAssets::Smoke();
+            particles.Birth.Velocity = Vector3{ 0, 10, 0 };
 
- //           particles.Birth.StartColor = Color{ 0xFFFFFFFF };
- //           particles.Birth.EndColor = Color{ 0xFFFFFF00 };
+            particles.Birth.StartColor = Color{ 0xFFFFFFFF };
+            particles.Birth.EndColor = Color{ 0xFFFFFF00 };
 
- //           particles.Birth.RandomStartSize = true;
- //           particles.Birth.StartSize = 0.5f;
- //           particles.Birth.StartSizeB = 1.0f;
- //           particles.Birth.EndSize = 0.1f;
+            particles.Birth.RandomStartSize = true;
+            particles.Birth.StartSize = 0.5f;
+            particles.Birth.StartSizeB = 1.0f;
+            particles.Birth.EndSize = 0.1f;
 
- //           particles.Birth.RandomStartPosition = true;
- //           particles.Birth.Position = Vector3{ -2, -0.5, -2 };
- //           particles.Birth.PositionB = Vector3{ 2, 0.5, 2 };
+            particles.Birth.RandomStartPosition = true;
+            particles.Birth.Position = Vector3{ -2, -0.5, -2 };
+            particles.Birth.PositionB = Vector3{ 2, 0.5, 2 };
 
- //           particles.Birth.RandomStartLifeTime = true;
- //           particles.Birth.LifeTime = 0.5;
- //           particles.Birth.LifeTimeB = 1;
- //       }
- //       
- //   }
+            particles.Birth.RandomStartLifeTime = true;
+            particles.Birth.LifeTime = 0.5;
+            particles.Birth.LifeTimeB = 1;
+        }
+        
+    }
 
- //   //<--- Floor ---<<
- //   auto floor = m_ActiveScene->CreateEntity("Floor");
- //   auto& floorMesh = floor.AddComponent<MeshRendererComponent>(Mesh::CreateCube());
- //   floorMesh.castShadow = false;
- //   floorMesh.material = CreateRef<MaterialAsset>("");
- //   floorMesh.material->material.SetTexture(Material::TextureType::Ambient, TextureAssets::Bricks());
- //   floorMesh.material->material.SetTexture(Material::TextureType::Diffuse, TextureAssets::Bricks());
- //   floorMesh.material->material.SetTextureTiling(Material::TextureType::Ambient, Vector2{16, 16});
- //   floorMesh.material->material.SetTextureTiling(Material::TextureType::Diffuse, Vector2{16, 16});
+    ////<--- Player ---<<
+    //auto player = m_ActiveScene->CreateEntity("Player");
+    //auto& playerMesh = player.AddComponent<MeshRendererComponent>(Mesh::CreateSphere(45));
+    //playerMesh.material = CreateRef<MaterialAsset>("");
+    //playerMesh.material->material = Materials::Ruby();
 
-	//floor.GetComponent<Transform>().SetLocalScale(Vector3(300, 1.0f, 300));
- //   floor.GetComponent<Transform>().SetWorldRotation(Vector3(0, 0, 0));
- //   auto& floorRigibody = floor.AddComponent<Rigidbody>();
- //   floorRigibody.bodyType = BodyType::Static;
- //   auto& floorCollider = floor.AddComponent<BoxCollider>();
- //   floorCollider.extents = Vector3(150, 0.5f, 150);
+    //auto& playerParticles = player.AddComponent<EmitterComponent>();
+    //playerParticles.Rate = 2;
+    //playerParticles.Texture = TextureAssets::Smoke();
+    //playerParticles.MaxParticles = 10000;
+    //playerParticles.Birth.Velocity = Vector3{ 0, 0, 0 };
+    //playerParticles.Birth.GravityScale = 0;
 
- //   //<--- Player ---<<
- //   auto player = m_ActiveScene->CreateEntity("Player");
- //   auto& playerMesh = player.AddComponent<MeshRendererComponent>(Mesh::CreateSphere(45));
- //   playerMesh.material = CreateRef<MaterialAsset>("");
- //   playerMesh.material->material = Materials::Ruby();
+    //playerParticles.Birth.RandomStartColor = true;
+    //playerParticles.Birth.StartColor = Color{ 1, 1, 1, 0.5 };
+    //playerParticles.Birth.StartColorB = Color{ 1, 1, 1, 1 };
+    //playerParticles.Birth.EndColor = Color{ 1, 1, 1, 0 };
 
- //   auto& playerParticles = player.AddComponent<EmitterComponent>();
- //   playerParticles.Rate = 2;
- //   playerParticles.Texture = TextureAssets::Smoke();
- //   playerParticles.MaxParticles = 10000;
- //   playerParticles.Birth.Velocity = Vector3{ 0, 0, 0 };
- //   playerParticles.Birth.GravityScale = 0;
+    //playerParticles.Birth.RandomStartSize = true;
+    //playerParticles.Birth.StartSize = 0.5f;
+    //playerParticles.Birth.StartSizeB = 0.75f;
+    //playerParticles.Birth.EndSize = 0.1f;
 
- //   playerParticles.Birth.RandomStartColor = true;
- //   playerParticles.Birth.StartColor = Color{ 1, 1, 1, 0.5 };
- //   playerParticles.Birth.StartColorB = Color{ 1, 1, 1, 1 };
- //   playerParticles.Birth.EndColor = Color{ 1, 1, 1, 0 };
+    //playerParticles.Birth.RandomStartPosition = true;
+    //playerParticles.Birth.Position = Vector3{ -1, -1, -1 };
+    //playerParticles.Birth.PositionB = Vector3{ 1, 1, 1 };
+   
+    //playerParticles.Birth.RandomStartLifeTime = true;
+    //playerParticles.Birth.LifeTime = 0.5;
+    //playerParticles.Birth.LifeTimeB = 1;
 
- //   playerParticles.Birth.RandomStartSize = true;
- //   playerParticles.Birth.StartSize = 0.5f;
- //   playerParticles.Birth.StartSizeB = 0.75f;
- //   playerParticles.Birth.EndSize = 0.1f;
+    //auto& playerTransform = player.GetComponent<Transform>();
+    //playerTransform.SetLocalPosition(Vector3::One * 10);
+    //auto& playerRb = player.AddComponent<Rigidbody>();
+    //playerRb.gravityScale = 10;
+    //playerRb.angularDamping = 0.9f;
+    //playerRb.InitSphereInertia(playerTransform);
+    //player.AddComponent<SphereCollider>();
+    //auto& p = player.AddComponent<KatamariPlayerComponent>();
+    //auto& events = player.AddComponent<CollisionEvents>();
+    //events.onCollisionBegin.connect<&OnKatamariCollided>();
+    //auto& playerLight = player.AddComponent<PointLightComponent>();
+    //playerLight.color = Color(1.0f, 0.0f, 0.0f);
 
- //   playerParticles.Birth.RandomStartPosition = true;
- //   playerParticles.Birth.Position = Vector3{ -1, -1, -1 };
- //   playerParticles.Birth.PositionB = Vector3{ 1, 1, 1 };
- //  
- //   playerParticles.Birth.RandomStartLifeTime = true;
- //   playerParticles.Birth.LifeTime = 0.5;
- //   playerParticles.Birth.LifeTimeB = 1;
+    ////<--- Camera ---<<
+    //auto camera = m_ActiveScene->CreateEntity("Camera");
+    //camera.AddComponent<OrbitCamera>().SetTarget(playerTransform);
+    //camera.AddComponent<CameraComponent>();
+    //camera.GetComponent<Transform>().SetWorldPosition(Vector3{ 50, 100, 200 });
+    //camera.GetComponent<Transform>().SetWorldRotation(Vector3{ -30, 15, 0 });
 
- //   auto& playerTransform = player.GetComponent<Transform>();
- //   playerTransform.SetLocalPosition(Vector3::One * 10);
- //   auto& playerRb = player.AddComponent<Rigidbody>();
- //   playerRb.gravityScale = 10;
- //   playerRb.angularDamping = 0.9f;
- //   playerRb.InitSphereInertia(playerTransform);
- //   player.AddComponent<SphereCollider>();
- //   auto& p = player.AddComponent<KatamariPlayerComponent>();
- //   auto& events = player.AddComponent<CollisionEvents>();
- //   events.onCollisionBegin.connect<&OnKatamariCollided>();
- //   auto& playerLight = player.AddComponent<PointLightComponent>();
- //   playerLight.color = Color(1.0f, 0.0f, 0.0f);
+    ////<--- Skybox ---<<
+    //auto skybox = m_ActiveScene->CreateEntity("Skybox");
+    //skybox.AddComponent<SkyboxRendererComponent>();
 
- //   //<--- Camera ---<<
- //   auto camera = m_ActiveScene->CreateEntity("Camera");
- //   camera.AddComponent<OrbitCamera>().SetTarget(playerTransform);
- //   camera.AddComponent<CameraComponent>();
- //   camera.GetComponent<Transform>().SetWorldPosition(Vector3{ 50, 100, 200 });
- //   camera.GetComponent<Transform>().SetWorldRotation(Vector3{ -30, 15, 0 });
+    ////<--- DirLight ---<<
+    //auto dirLight = m_ActiveScene->CreateEntity("DirLight");
+    //auto& dirLightTransform = dirLight.GetComponent<Transform>();
+    //dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
+    //dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150));
+    //auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
+    //dirLightComponent.color = Color{ 0.9f, 0.9f, 0.9f };
 
- //   //<--- Skybox ---<<
- //   auto skybox = m_ActiveScene->CreateEntity("Skybox");
- //   skybox.AddComponent<SkyboxRendererComponent>();
-
- //   //<--- DirLight ---<<
- //   auto dirLight = m_ActiveScene->CreateEntity("DirLight");
- //   auto& dirLightTransform = dirLight.GetComponent<Transform>();
- //   dirLightTransform.SetLocalRotation(Vector3(-45, 45, 0));
- //   dirLightTransform.SetWorldPosition(Vector3(150, 100.00f, 150));
- //   auto& dirLightComponent = dirLight.AddComponent<DirectionalLightComponent>();
- //   dirLightComponent.color = Color{ 0.9f, 0.9f, 0.9f };
-
- //   auto& lightCamera = dirLight.AddComponent<CameraComponent>();
- //   lightCamera.camera.SetProjectionType(SceneCamera::ProjectionType::Orthographic);
- //   lightCamera.camera.SetOrthographic(0.25f, 100.0f, 1000.0f);
- //   lightCamera.isMain = false;
+    //auto& lightCamera = dirLight.AddComponent<CameraComponent>();
+    //lightCamera.camera.SetProjectionType(SceneCamera::ProjectionType::Orthographic);
+    //lightCamera.camera.SetOrthographic(0.25f, 100.0f, 1000.0f);
+    //lightCamera.isMain = false;
 
     //<--- Systems ---<<
 	m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
