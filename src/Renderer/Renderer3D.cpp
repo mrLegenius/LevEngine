@@ -106,7 +106,7 @@ void Renderer3D::AddPointLights(const Vector4& positionViewSpace, const Vector3&
     pointLightData.Color = static_cast<Vector3>(pointLight.color);
     pointLightData.Range = pointLight.Range;
     pointLightData.Intensity = pointLight.Intensity;
-    pointLightData.Smoothness = pointLight.Smoothness;
+    pointLightData.Smoothness =  1 - pointLight.Smoothness;
 
     s_LightningData.PointLightsCount++;
 }

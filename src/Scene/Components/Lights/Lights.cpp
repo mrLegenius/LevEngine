@@ -26,9 +26,9 @@ namespace LevEngine
 		{
 			ImGui::ColorEdit3("Color", component.color.Raw());
 
-			ImGui::DragFloat("Range", &component.Range);
-			ImGui::DragFloat("Intensity", &component.Intensity);
-			ImGui::DragFloat("Smoothness", &component.Smoothness);
+			ImGui::DragFloat("Range", &component.Range, 0.1f, 0.0f, std::numeric_limits<float>::max());
+			ImGui::DragFloat("Intensity", &component.Intensity, 0.1f, 0.0f, std::numeric_limits<float>::max());
+			ImGui::DragFloat("Smoothness", &component.Smoothness, 0.1f, 0.0f, 1.0f);
 		}
 	};
 
