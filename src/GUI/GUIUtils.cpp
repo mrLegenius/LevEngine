@@ -5,7 +5,6 @@
 #include <imgui_internal.h>
 
 #include "TextureLibrary.h"
-#include "Scene/Entity.h"
 
 namespace LevEngine
 {
@@ -167,15 +166,15 @@ namespace LevEngine
 		return changed;
 	}
 
-	void GUIUtils::DrawFloatControl(const std::string& label, float& value)
+	void GUIUtils::DrawFloatControl(const std::string& label, float& value, const float speed, const float min, const float max)
 	{
-		DrawFloatControl(label, [&value] {return value; }, [&value](const float& newValue) {value = newValue; });
+		DrawFloatControl(label, [&value] {return value; }, [&value](const float& newValue) {value = newValue; }, speed, min, max);
 	}
 
-	void GUIUtils::DrawFloatControl(const std::string& label, const std::function<float()>& getter, const std::function<void(float)>& setter)
+	void GUIUtils::DrawFloatControl(const std::string& label, const std::function<float()>& getter, const std::function<void(float)>& setter, const float speed, const float min, const float max)
 	{
 		auto value = getter();
-		if (ImGui::DragFloat(label.c_str(), &value))
+		if (ImGui::DragFloat(label.c_str(), &value, speed, min, max))
 			setter(value);
 	}
 

@@ -13,8 +13,9 @@ namespace LevEngine
 
 		static bool DrawVector3Control(const std::string& label, Vector3& values, float resetValue = 0.0f, float columnWidth = 100.0f);
 		static bool DrawVector2Control(const std::string& label, Vector2& values, float resetValue = 0.0f, float columnWidth = 100.0f);
-		static void DrawFloatControl(const std::string& label, float& value);
-		static void DrawFloatControl(const std::string& label, const std::function<float()>& getter, const std::function<void(float)>& setter);
+		static void DrawFloatControl(const std::string& label, float& value, float speed = 1, float min = 0, float max = 0);
+		static void DrawFloatControl(const std::string& label, const std::function<float()>& getter, const std::function<void(float)>& setter,
+			float speed = 1, float min = 0, float max = 0);
 		static void DrawColor3Control(const std::string& label, const std::function<Color()>& getter,
 		                              const std::function<void(Color)>& setter);
 		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
