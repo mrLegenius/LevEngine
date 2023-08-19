@@ -15,14 +15,14 @@ namespace LevEngine
 			Vector3 PositionB = Vector3::Zero;
 
 			bool RandomStartColor = false;
-			Color StartColor;
-			Color StartColorB;
+			Color StartColor = Color{ 1, 1, 1, 1 };
+			Color StartColorB = Color{ 1, 1, 1, 1 };
 			Color EndColor = Color{ 1, 1, 1, 1 };
 
 			bool RandomStartSize = false;
-			float StartSize = 0.1f;
-			float StartSizeB = 0.1f;
-			float EndSize = 0.1f;
+			float StartSize = 1.0f;
+			float StartSizeB = 1.0f;
+			float EndSize = 1.0f;
 
 			bool RandomStartLifeTime = false;
 			float LifeTime = 1;
@@ -31,8 +31,12 @@ namespace LevEngine
 		};
 
 		uint32_t MaxParticles = 10000;
-		float Rate;
+		float Rate = 1.0f;
 		BirthParams Birth;
 		Ref<Texture> Texture;
+
+	private:
+		float Timer = 0.0f;
+		friend class ParticlePass;
 	};
 }

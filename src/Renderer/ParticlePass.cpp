@@ -167,12 +167,21 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 		m_RandomData->Bind(Shader::Type::Compute);
 
 		//<--- Emit ---<<
-		
+
+		emitter.Timer += deltaTime;
+		auto interval = 1 / emitter.Rate;
+		auto particlesToEmit = 0;
+		if (emitter.Timer > interval)
+		{
+			particlesToEmit++;
+			emitter.Timer -= interval;
+		}
+
 		ShaderAssets::ParticlesEmitter()->Bind();
 		const uint32_t deadParticlesCount = m_DeadBuffer->GetCounterValue();
-		auto particlesToEmit = std::min(deadParticlesCount, static_cast<uint32_t>(emitter.Rate));
+		particlesToEmit = std::min(deadParticlesCount, static_cast<uint32_t>(particlesToEmit));
 		if (particlesToEmit > 0)
-				context->Dispatch(particlesToEmit, 1, 1);
+			context->Dispatch(particlesToEmit, 1, 1);
 	}
 
 	//<--- Simulate ---<<
