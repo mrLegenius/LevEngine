@@ -60,7 +60,7 @@ namespace LevEngine
 		GUIUtils::DrawColor3Control("Specular", BindGetter(&Material::GetSpecularColor, &material), BindSetter(&Material::SetSpecularColor, &material));
 		GUIUtils::DrawColor3Control("Emissive", BindGetter(&Material::GetEmissiveColor, &material), BindSetter(&Material::SetEmissiveColor, &material));
 
-		GUIUtils::DrawFloatControl("Shininess", BindGetter(&Material::GetShininess, &material), BindSetter(&Material::SetShininess, &material));
+		GUIUtils::DrawFloatControl("Shininess", BindGetter(&Material::GetShininess, &material), BindSetter(&Material::SetShininess, &material), 1.0f, 1.0f, 128.0f);
 
 		DrawMaterialTexture("Ambient", material, Material::TextureType::Ambient);
 		DrawMaterialTexture("Diffuse", material, Material::TextureType::Diffuse);
