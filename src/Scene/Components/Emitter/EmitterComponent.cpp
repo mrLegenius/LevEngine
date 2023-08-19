@@ -26,28 +26,28 @@ namespace LevEngine
 				GUIUtils::DrawVector3Control("Initial Position B", component.Birth.PositionB);
 
 			ImGui::Checkbox("Random Initial Color", &component.Birth.RandomStartColor);
-			ImGui::ColorEdit3("Initial Color", component.Birth.StartColor.Raw());
+			ImGui::ColorEdit4("Initial Color", component.Birth.StartColor.Raw());
 			if (component.Birth.RandomStartColor)
-				ImGui::ColorEdit3("Initial Color B", component.Birth.StartColorB.Raw());
-			ImGui::ColorEdit3("End Color", component.Birth.EndColor.Raw());
+				ImGui::ColorEdit4("Initial Color B", component.Birth.StartColorB.Raw());
+			ImGui::ColorEdit4("End Color", component.Birth.EndColor.Raw());
 
 			ImGui::Checkbox("Random Initial Size", &component.Birth.RandomStartSize);
-			ImGui::DragFloat("Initial Size", &component.Birth.StartSize);
+			ImGui::DragFloat("Initial Size", &component.Birth.StartSize, 0.1, 0, std::numeric_limits<float>::max());
 			if (component.Birth.RandomStartSize)
-				ImGui::DragFloat("Initial Size B", &component.Birth.StartSizeB);
-			ImGui::DragFloat("End Size", &component.Birth.EndSize);
+				ImGui::DragFloat("Initial Size B", &component.Birth.StartSizeB, 0.1, 0, std::numeric_limits<float>::max());
+			ImGui::DragFloat("End Size", &component.Birth.EndSize, 0.1, 0, std::numeric_limits<float>::max());
 
 			ImGui::Checkbox("Random Initial Life Time", &component.Birth.RandomStartLifeTime);
-			ImGui::DragFloat("Initial Life Time", &component.Birth.LifeTime);
+			ImGui::DragFloat("Initial Life Time", &component.Birth.LifeTime, 0.1, 0, std::numeric_limits<float>::max());
 			if (component.Birth.RandomStartLifeTime)
-				ImGui::DragFloat("Initial Life Time B", &component.Birth.LifeTimeB);
+				ImGui::DragFloat("Initial Life Time B", &component.Birth.LifeTimeB, 0.1, 0, std::numeric_limits<float>::max());
 
 			ImGui::DragFloat("Gravity Scale", &component.Birth.GravityScale);
 
 			int maxParticles = static_cast<int>(component.MaxParticles);
-			if (ImGui::DragInt("Max Particles", &maxParticles))
+			if (ImGui::DragInt("Max Particles", &maxParticles, 1, 1, std::numeric_limits<int>::max()))
 				component.MaxParticles = maxParticles;
-			ImGui::DragFloat("Spawn Rate", &component.Rate);
+			ImGui::DragFloat("Spawn Rate", &component.Rate, 0.1, 0, std::numeric_limits<float>::max());
 
 			ImGui::Text("Texture");
 			GUIUtils::DrawTexture2D(component.Texture);
