@@ -8,6 +8,7 @@ namespace LevEngine
 	struct GUIUtils
 	{
 		static constexpr const char* AssetPayload = "ASSETS_BROWSER_ITEM";
+		static constexpr const char* EntityPayload = "ENTITY";
 		inline static const std::filesystem::path AssetsPath = "resources";
 
 		static bool DrawVector3Control(const std::string& label, Vector3& values, float resetValue = 0.0f, float columnWidth = 100.0f);

@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 
+#include "GUI/GUIUtils.h"
 #include "Katamari/EntitySelection.h"
 #include "Katamari/Selection.h"
 #include "Scene/Components/Components.h"
@@ -68,6 +69,26 @@ namespace LevEngine::Editor
 				entitySelection->Set(entity);
 			else
 				Selection::Select(CreateRef<EntitySelection>(entity));
+		}
+
+		if (ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload(GUIUtils::EntityPayload, &entity, sizeof(Entity));
+			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::EntityPayload))
+			{
+				const auto draggedEntity = *static_cast<Entity*>(payload->Data);
+
+				if (entity != draggedEntity)
+				{
+					draggedEntity.GetComponent<Transform>().SetParent(entity);
+				}
+			}
+			ImGui::EndDragDropTarget();
 		}
 
 		if (ImGui::BeginPopupContextItem())
