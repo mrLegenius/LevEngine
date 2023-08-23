@@ -366,7 +366,7 @@
     <ClInclude Include="src\Renderer\CPUAccess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11Context.h">
+    <ClInclude Include="src\Platform\D3D11\D3D11RendererContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\D3D11\D3D11RenderCommands.h">
@@ -582,6 +582,9 @@
     <ClInclude Include="src\Renderer\RenderCommands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer\RendererContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input\Input.cpp">
@@ -776,7 +779,7 @@
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11Context.cpp">
+    <ClCompile Include="src\Platform\D3D11\D3D11RendererContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\D3D11\D3D11RenderCommands.cpp">
@@ -930,6 +933,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\RenderCommands.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\RendererContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

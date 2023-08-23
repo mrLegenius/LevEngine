@@ -276,9 +276,10 @@
     <ClInclude Include="src\Renderer\ClearFlags.h" />
     <ClInclude Include="src\Renderer\ClearPass.h" />
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
+    <ClInclude Include="src\Renderer\RendererContext.h" />
     <ClInclude Include="src\Renderer\CopyTexturePass.h" />
     <ClInclude Include="src\Renderer\CPUAccess.h" />
-    <ClInclude Include="src\Renderer\D3D11Context.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RendererContext.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderCommands.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ShadowMap.h" />
     <ClInclude Include="src\Renderer\DeferredLightingPass.h" />
@@ -537,8 +538,9 @@
     <ClCompile Include="src\Renderer\CascadeShadowMap.cpp" />
     <ClCompile Include="src\Renderer\ClearPass.cpp" />
     <ClCompile Include="src\Renderer\ConstantBuffer.cpp" />
+    <ClCompile Include="src\Renderer\RendererContext.cpp" />
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />
-    <ClCompile Include="src\Renderer\D3D11Context.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11RendererContext.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderCommands.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11ShadowMap.cpp" />
     <ClCompile Include="src\Renderer\DeferredLightingPass.cpp" />

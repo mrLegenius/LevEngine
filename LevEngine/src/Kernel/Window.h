@@ -4,7 +4,7 @@
 #include <string>
 #include <Windows.h>
 
-#include "../Renderer/D3D11Context.h"
+#include "../Renderer/RendererContext.h"
 #include "../Events/Event.h"
 #include <memory>
 
@@ -49,7 +49,7 @@ public:
 	void EnableCursor();
 	void DisableCursor();
 
-	[[nodiscard]] D3D11Context* GetContext() const { return m_Context; }
+	[[nodiscard]] const Ref<RendererContext>& GetContext() const { return m_Context; }
 
 	[[nodiscard]] bool IsVSync() const;
 
@@ -69,7 +69,7 @@ private:
 	virtual void Close();
 
 	HWND m_Window = nullptr;
-	D3D11Context* m_Context = nullptr;
+	Ref<RendererContext> m_Context = nullptr;
 	bool m_CursorEnabled = true;
 
 public:

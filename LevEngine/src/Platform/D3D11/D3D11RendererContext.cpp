@@ -2,22 +2,23 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
-#include "D3D11Context.h"
+#include "D3D11RendererContext.h"
 
-#include "Texture.h"
+#include "Renderer/Texture.h"
 #include "Platform/D3D11/D3D11Texture.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxguid.lib")
+
 namespace LevEngine
 {
 ID3D11DeviceContext* context;
 Microsoft::WRL::ComPtr<ID3D11Device> device;
 IDXGISwapChain* swapChain;
 
-D3D11Context::~D3D11Context()
+D3D11RendererContext::~D3D11RendererContext()
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -27,7 +28,7 @@ D3D11Context::~D3D11Context()
 	if (swapChain) swapChain->Release();
 }
 
-void D3D11Context::Init(const uint32_t width, const uint32_t height, const HWND window)
+void D3D11RendererContext::Init(const uint32_t width, const uint32_t height, const HWND window)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -88,7 +89,7 @@ void D3D11Context::Init(const uint32_t width, const uint32_t height, const HWND 
 	m_RenderTarget->AttachTexture(AttachmentPoint::DepthStencil, depthStencilTexture);
 }
 
-void D3D11Context::SwapBuffers()
+void D3D11RendererContext::SwapBuffers()
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -102,7 +103,7 @@ void D3D11Context::SwapBuffers()
 	swapChain->Present(0, /*DXGI_PRESENT_DO_NOT_WAIT*/ 0);
 }
 
-void D3D11Context::ResizeBackBuffer(uint16_t width, uint16_t height)
+void D3D11RendererContext::ResizeBackBuffer(uint16_t width, uint16_t height)
 {
 	// If either the width or the height are 0, make them 1.
 	width = Math::Max<uint32_t>(width, 1);

@@ -260,7 +260,7 @@ void Window::Init(const WindowAttributes& attributes)
 	if (res == FALSE)
 		Log::CoreError("Error while registering raw input devices. Error code {0}", GetLastError());
 
-	m_Context = new D3D11Context();
+	m_Context = RendererContext::Create();
 	m_Context->Init(attributes.width, attributes.height, m_Window);
 
 	SetVSync(true);
