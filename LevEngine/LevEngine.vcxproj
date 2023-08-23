@@ -266,6 +266,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11StructuredBuffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Texture.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11VertexBuffer.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
     <ClInclude Include="src\Renderer\3D\SkyboxMesh.h" />
     <ClInclude Include="src\Renderer\BitonicSort.h" />
@@ -531,6 +532,7 @@
     <ClCompile Include="src\Platform\D3D11\D3D11Texture.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11VertexBuffer.cpp" />
     <ClCompile Include="src\Platform\Windows\PlatformUtils.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
     <ClCompile Include="src\Renderer\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\BlendState.cpp" />

@@ -1,12 +1,7 @@
 #pragma once
 
-#include <functional>
-#include <string>
-#include <Windows.h>
-
 #include "../Renderer/RendererContext.h"
 #include "../Events/Event.h"
-#include <memory>
 
 namespace LevEngine
 {
@@ -29,10 +24,9 @@ class Window
 public:
 	using EventCallbackFn = std::function<void(Event&)>;
 
-	explicit Window(const WindowAttributes& attributes);
-	~Window();
+	virtual ~Window() = default;
 
-	void HandleInput();
+	virtual void HandleInput() = 0;
 	void Update() const;
 
 	[[nodiscard]] unsigned int GetWidth() const { return m_Data.width; }
@@ -43,32 +37,29 @@ public:
 		m_Data.eventCallback = callback;
 	}
 
-	void SetWindowTitle(std::string& title);
-	void SetVSync(bool enabled);
+	virtual void SetWindowTitle(std::string& title) = 0;
+	void SetVSync(const bool enabled) { m_Data.vSync = enabled; }
+	[[nodiscard]] bool IsVSync() const { return m_Data.vSync; }
 
 	void EnableCursor();
 	void DisableCursor();
 
 	[[nodiscard]] const Ref<RendererContext>& GetContext() const { return m_Context; }
 
-	[[nodiscard]] bool IsVSync() const;
+	[[nodiscard]] virtual void* GetNativeWindow() const = 0;
 
-	[[nodiscard]] void* GetNativeWindow() const { return m_Window; }
+	static Scope<Window> Create(const WindowAttributes& attributes = WindowAttributes());
 
-	static std::unique_ptr<Window> Create(const WindowAttributes& attributes = WindowAttributes());
+protected:
+	virtual void ConfineCursor() const = 0;
+	virtual void FreeCursor() const = 0;
 
-private:
+	virtual void ShowCursor() const = 0;
+	virtual void HideCursor() const = 0;
 
-	void ConfineCursor() const;
-	void FreeCursor() const;
+	virtual void Init(const WindowAttributes& attributes) = 0;
+	virtual void Close() = 0;
 
-	void ShowCursor() const;
-	void HideCursor() const;
-
-	virtual void Init(const WindowAttributes& attributes);
-	virtual void Close();
-
-	HWND m_Window = nullptr;
 	Ref<RendererContext> m_Context = nullptr;
 	bool m_CursorEnabled = true;
 
