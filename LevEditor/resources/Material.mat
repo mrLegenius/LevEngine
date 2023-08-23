@@ -1,0 +1,20 @@
+AmbientColor: [1, 1, 1, 1]
+DiffuseColor: [1, 1, 1, 1]
+SpecularColor: [1, 1, 1, 1]
+EmissiveColor: [1, 1, 1, 1]
+Shininess: 3
+Texture0: resources\Textures\coin.png
+Tiling0: [7.30000019, 3.29999995]
+Offset0: [0.899999976, 2.5999999]
+Texture1: resources\Textures\bricks.jpg
+Tiling1: [4.0999999, 4.5]
+Offset1: [0.300000012, 1.70000005]
+Texture2: resources\Textures\coin.png
+Tiling2: [5.4000001, 4.30000019]
+Offset2: [4.4000001, 1]
+Texture3: resources\Textures\coin.png
+Tiling3: [2.9000001, 2.20000005]
+Offset3: [1, 2]
+Texture4: resources\Textures\bricks.jpg
+Tiling4: [2.29999995, 3.5999999]
+Offset4: [3.4000001, 1]
