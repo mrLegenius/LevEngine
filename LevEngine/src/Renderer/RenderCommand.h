@@ -1,7 +1,6 @@
 #pragma once
-#include <cstdint>
+#include "RenderCommands.h"
 
-#include "D3D11RendererAPI.h"
 namespace LevEngine
 {
 class RenderCommand
@@ -19,17 +18,12 @@ public:
 		s_RendererAPI->DrawFullScreenQuad();
 	}
 
-	static void SetLineWidth(float width)
-	{
-		//s_RendererAPI->SetLineWidth(width);
-	}
-
 	static void DrawPointList(const uint32_t count)
 	{
 		s_RendererAPI->DrawPointList(count);
 	}
 
 private:
-	static D3D11RendererAPI* s_RendererAPI;
+	static inline Ref<RenderCommands> s_RendererAPI = RenderCommands::Create();
 };
 }

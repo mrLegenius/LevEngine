@@ -369,10 +369,10 @@
     <ClInclude Include="src\Renderer\D3D11Context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11RendererAPI.h">
+    <ClInclude Include="src\Platform\D3D11\D3D11RenderCommands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\D3D11ShadowMap.h">
+    <ClInclude Include="src\Platform\D3D11\D3D11ShadowMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\DeferredLightingPass.h">
@@ -579,6 +579,9 @@
     <ClInclude Include="src\Physics\Physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer\RenderCommands.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input\Input.cpp">
@@ -776,10 +779,10 @@
     <ClCompile Include="src\Renderer\D3D11Context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11RendererAPI.cpp">
+    <ClCompile Include="src\Platform\D3D11\D3D11RenderCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\D3D11ShadowMap.cpp">
+    <ClCompile Include="src\Platform\D3D11\D3D11ShadowMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\DeferredLightingPass.cpp">
@@ -804,9 +807,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\RasterizerState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\RenderCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\Renderer.cpp">
@@ -927,6 +927,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Physics\Physics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\RenderCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
