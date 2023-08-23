@@ -74,6 +74,7 @@ namespace LevEngine
 			break;
 		default:
 			LEV_THROW("Unknown Skybox Side")
+			break;
 		}
 
 		InitTexture();

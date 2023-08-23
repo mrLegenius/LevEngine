@@ -34,6 +34,7 @@ static DXGI_FORMAT ParseShaderDataTypeToD3D11DataType(const ShaderDataType type)
 	case ShaderDataType::Bool: return DXGI_FORMAT_R8_UINT;
 	default:
 		LEV_THROW("Unknown ShaderDataType")
+		break;
 	}
 }
 

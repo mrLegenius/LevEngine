@@ -18,6 +18,7 @@ namespace LevEngine
 			return CreateRef<D3D11Shader>(filepath, shaderTypes);
 		default:
 			LEV_THROW("Unknown Renderer API")
+			break;
 		}
 	}
 
@@ -33,6 +34,7 @@ namespace LevEngine
 			return CreateRef<D3D11Shader>(filepath);
 		default:
 			LEV_THROW("Unknown Renderer API")
+			break;
 		}
 	}
 }

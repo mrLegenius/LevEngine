@@ -18,6 +18,7 @@ namespace LevEngine
 			return CreateRef<D3D11Texture>(path);
 		default:
 			LEV_THROW("Unknown Renderer API")
+			break;
 		}
 	}
 
@@ -34,6 +35,7 @@ namespace LevEngine
 			return D3D11Texture::CreateTexture2D(width, height, slices, format, cpuAccess, uav);
 		default:
 			LEV_THROW("Unknown Renderer API")
+			break;
 		}
 	}
 
@@ -49,6 +51,7 @@ namespace LevEngine
 			return CreateRef<D3D11Texture>(paths);
 		default:
 			LEV_THROW("Unknown Renderer API")
+			break;
 		}
 	}
 }

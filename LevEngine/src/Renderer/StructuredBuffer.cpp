@@ -24,6 +24,7 @@ namespace LevEngine
 			return CreateRef<D3D11StructuredBuffer>(data, count, stride, cpuAccess, uav, uavType);
 		default:
 			LEV_THROW("Unknown Renderer API")
+			break;
 		}
 	}
 }

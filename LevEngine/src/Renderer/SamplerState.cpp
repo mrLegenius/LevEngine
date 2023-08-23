@@ -18,6 +18,7 @@ namespace LevEngine
 			return CreateRef<D3D11SamplerState>();
 		default:
 			LEV_THROW("Unknown Renderer API")
+			break;
 		}
 	}
 }

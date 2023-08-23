@@ -27,5 +27,5 @@ constexpr void Assert(Condition condition, FormatString& format, Args&&...args)
 #define LEV_ASSERT(x, ...)
 #define LEV_CORE_ASSERT(x, ...)
 #define LEV_NOT_IMPLEMENTED
-#define LEV_THROW
+#define LEV_THROW(...) { Log::CoreError("Exception: {0}", __VA_ARGS__); throw std::exception(); }
 #endif

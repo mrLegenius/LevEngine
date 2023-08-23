@@ -20,7 +20,7 @@ namespace LevEngine
 		case RendererAPI::D3D11:
 			return CreateRef<D3D11BlendState>();
 		default:
-			LEV_THROW("Unknown Renderer API")
+			LEV_THROW("Unknown Renderer API");
 		}
 	}
 }

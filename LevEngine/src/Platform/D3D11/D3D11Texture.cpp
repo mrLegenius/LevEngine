@@ -2049,6 +2049,7 @@ ID3D11Resource* D3D11Texture::GetTextureResource() const
 		return m_Texture3D;
 	default:
 		LEV_THROW("Unknown texture dimension")
+        break;
 	}
 }
 
@@ -2292,6 +2293,7 @@ void D3D11Texture::Resize(uint16_t width, uint16_t height, uint16_t depth)
 		break;
 	default:
 		LEV_THROW("Unknown texture dimension")
+        break;
 	}
 }
 
@@ -2356,6 +2358,7 @@ Ref<Texture> D3D11Texture::Clone()
         LEV_NOT_IMPLEMENTED
     default:
         LEV_THROW("Unknown texture dimension")
+        break;
     }
     
     CopyFrom(other);

@@ -184,6 +184,7 @@ private:
 			return m_Data.NormalProperties;
 		default:
 			LEV_THROW("Unknown texture type of material")
+			break;
 		}
 	}
 

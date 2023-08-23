@@ -17,7 +17,7 @@ Ref<ConstantBuffer> ConstantBuffer::Create(uint32_t size, uint32_t slot)
 	case RendererAPI::D3D11:
 		return CreateRef<D3D11ConstantBuffer>(size, slot);
 	default:
-		LEV_THROW("Unknown Renderer API")
+		LEV_THROW("Unknown Renderer API");
 	}
 }
 }

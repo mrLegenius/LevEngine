@@ -19,6 +19,7 @@ inline D3D11_FILL_MODE ConvertFillMode(const FillMode fillMode)
         return D3D11_FILL_SOLID;
     default:
         LEV_THROW("Unknown fill mode")
+    	break;
     }
 }
 
@@ -37,6 +38,7 @@ inline D3D11_CULL_MODE ConvertCullMode(const CullMode cullMode)
         return D3D11_CULL_BACK;
     default:
         LEV_THROW("Unknown cull mode")
+    	break;
     }
 }
 
@@ -50,6 +52,7 @@ bool ConvertFrontFace(const FrontFace frontFace)
         return true;
     default:
         LEV_THROW("Unknown front face winding order")
+        break;
     }
 }
 

@@ -329,6 +329,7 @@ void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const T
 		break;
 	case RenderTechniqueType::ForwardPlus:
 		LEV_NOT_IMPLEMENTED
+		break;
 	}
 }
 
