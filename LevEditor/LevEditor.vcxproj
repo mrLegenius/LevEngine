@@ -90,7 +90,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\AssetSelection.h" />
     <ClInclude Include="src\EditorCamera.h" />
     <ClInclude Include="src\EntitySelection.h" />
