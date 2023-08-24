@@ -57,15 +57,6 @@ struct Transform
 		return rotation;
 	}
 
-	[[nodiscard]] Vector3 GetRotationDegrees() const
-	{
-		auto rot = rotation;
-		rot.x = DirectX::XMConvertToDegrees(rot.x);
-		rot.y = DirectX::XMConvertToDegrees(rot.y);
-		rot.z = DirectX::XMConvertToDegrees(rot.z);
-		return rot;
-	}
-
 	[[nodiscard]] const std::vector<Entity>& GetChildren() const { return children; }
 	[[nodiscard]] uint32_t GetChildrenCount() const { return children.size(); }
 
@@ -96,17 +87,11 @@ struct Transform
 
 	void SetWorldRotation(const Vector3 value)
 	{
-		auto newRotation = value;
-		newRotation.x = DirectX::XMConvertToRadians(newRotation.x);
-		newRotation.y = DirectX::XMConvertToRadians(newRotation.y);
-		newRotation.z = DirectX::XMConvertToRadians(newRotation.z);
-
-		rotation = newRotation;
+		rotation = value;
 
 		if (parent)
 		{
 			const auto& parentTransform = parent.GetComponent<Transform>();
-			rotation -= parentTransform.GetWorldRotation();
 			rotation -= parentTransform.GetWorldRotation();
 		}
 	}
@@ -124,16 +109,6 @@ struct Transform
 	}
 
 	void SetLocalRotation(const Vector3 value)
-	{
-		auto newRotation = value;
-		newRotation.x = DirectX::XMConvertToRadians(newRotation.x);
-		newRotation.y = DirectX::XMConvertToRadians(newRotation.y);
-		newRotation.z = DirectX::XMConvertToRadians(newRotation.z);
-
-		rotation = newRotation;
-	}
-
-	void SetLocalRotationRadians(const Vector3 value)
 	{
 		rotation = value;
 	}

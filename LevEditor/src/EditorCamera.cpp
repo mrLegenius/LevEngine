@@ -23,7 +23,7 @@ namespace LevEngine
 
 		if (Input::IsMouseButtonDown(MouseButton::Right))
 		{
-			auto rotation = m_Transform.GetRotationDegrees();
+			auto rotation = m_Transform.GetLocalRotation() * Math::RadToDeg;
 
 			if (Input::IsKeyDown(KeyCode::Q))
 				rotation.z += deltaTime * rotationSpeed;
@@ -33,7 +33,7 @@ namespace LevEngine
 			rotation.y -= delta.x;
 			rotation.x -= delta.y;
 
-			m_Transform.SetWorldRotation(rotation);
+			m_Transform.SetWorldRotation(rotation * Math::DegToRad);
 
 			if (Input::IsKeyDown(KeyCode::A))
 				m_Transform.MoveLeft(deltaTime * m_MoveSpeed);

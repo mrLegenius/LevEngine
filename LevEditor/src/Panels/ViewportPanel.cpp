@@ -79,9 +79,9 @@ namespace LevEngine::Editor
                 Vector3 position, rotation, scale;
                 Math::DecomposeTransform(model, position, rotation, scale);
 
-                tc.SetLocalPosition(position);
-                tc.SetLocalScale(scale);
-                tc.SetLocalRotationRadians(tc.GetLocalRotation() + (rotation - tc.GetLocalRotation())); //Adding delta rotation to avoid Gimbal lock
+                tc.SetWorldPosition(position);
+                tc.SetWorldScale(scale);
+                tc.SetWorldRotation(tc.GetLocalRotation() + (rotation - tc.GetLocalRotation())); //Adding delta rotation to avoid Gimbal lock
             }
         }
 	}
