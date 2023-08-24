@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "levpch.h"
 #include "Transform.h"
 
 #include "../ComponentDrawer.h"
@@ -60,7 +60,7 @@ protected:
 
 		Vector3 rotation = Math::ToDegrees(component.GetLocalRotation());
 		if (GUIUtils::DrawVector3Control("Rotation", rotation))
-			component.SetLocalRotationRadians(Math::ToRadians(rotation));
+			component.SetLocalRotation(Math::ToRadians(rotation));
 
 		auto scale = component.GetLocalScale();
 		if (GUIUtils::DrawVector3Control("Scale", scale, 1.0f))
@@ -82,7 +82,7 @@ protected:
 	void DeserializeData(YAML::Node& node, Transform& component) override
 	{
 		component.SetLocalPosition(node["Position"].as<Vector3>());
-		component.SetLocalRotationRadians(node["Rotation"].as<Vector3>());
+		component.SetLocalRotation(node["Rotation"].as<Vector3>());
 		component.SetLocalScale(node["Scale"].as<Vector3>());
 	}
 };
