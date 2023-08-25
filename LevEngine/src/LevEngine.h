@@ -118,6 +118,7 @@
 // -- Assets -----------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+#include "Assets/AssetDatabase.h"
 #include "Assets/Asset.h"
 #include "Assets.h"
 #include "Assets/MaterialAsset.h"

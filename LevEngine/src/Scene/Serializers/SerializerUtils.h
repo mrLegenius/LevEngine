@@ -1,5 +1,8 @@
 ﻿#pragma once
 #include <yaml-cpp/yaml.h>
+
+#include "Assets/Asset.h"
+#include "Assets/AssetDatabase.h"
 #include "Kernel/Color.h"
 #include "Math/Math.h"
 
@@ -114,4 +117,37 @@ namespace LevEngine
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vector3& v);
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vector4& v);
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Color& c);
+
+	inline void SerializeAsset(YAML::Emitter& out, const std::string& nodeName, const Ref<Asset>& asset)
+	{
+		if (!asset) return;
+
+		try
+		{
+			out << YAML::Key << nodeName << YAML::Value << asset->GetUUID();
+		}
+		catch (std::exception& e)
+		{
+			Log::CoreWarning("Failed to serialize asset {0}. {1}", nodeName, e.what());
+		}
+	}
+
+	template<class T>
+	const Ref<T>& DeserializeAsset(YAML::Node&& node)
+	{
+		static_assert(std::is_base_of_v<Asset, T>, "T must be Asset");
+
+		if (!node) return nullptr;
+
+		try
+		{
+			const UUID assetUUID = node.as<std::uint64_t>();
+			return AssetDatabase::GetAsset<T>(assetUUID);
+		}
+		catch (std::exception& e)
+		{
+			Log::CoreWarning("Failed to deserialize asset. {0}", e.what());
+			return nullptr;
+		}
+	}
 }

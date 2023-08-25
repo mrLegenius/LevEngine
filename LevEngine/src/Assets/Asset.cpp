@@ -16,7 +16,6 @@ namespace LevEngine
 		{
 			std::ofstream fout(m_Path);
 			fout << out.c_str();
-			fout.close();
 		}
 		catch (std::exception& e)
 		{
@@ -36,5 +35,7 @@ namespace LevEngine
 			Log::CoreWarning(e.what());
 			return false;
 		}
+
+		m_Deserialized = true;
 	}
 }

@@ -19,7 +19,10 @@ void Material::Bind(const Ref<Shader>& shader)
 	}
 
 	for (auto [textureType, texture] : m_Textures)
-		texture->Bind(static_cast<uint32_t>(textureType), shader->GetType());
+	{
+		if (texture)
+			texture->Bind(static_cast<uint32_t>(textureType), shader->GetType());
+	}
 
 	m_ConstantBuffer->Bind(shader->GetType());
 }
@@ -27,6 +30,9 @@ void Material::Bind(const Ref<Shader>& shader)
 void Material::Unbind(const Ref<Shader>& shader)
 {
 	for (auto [textureType, texture] : m_Textures)
-		texture->Unbind(static_cast<uint32_t>(textureType), shader->GetType());
+	{
+		if (texture)
+			texture->Unbind(static_cast<uint32_t>(textureType), shader->GetType());
+	}
 }
 }

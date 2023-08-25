@@ -9,12 +9,11 @@ namespace LevEngine
 	class MeshAsset final : public Asset
 	{
 	public:
-		explicit MeshAsset(const std::filesystem::path& path) : Asset(path)
+		explicit MeshAsset(const std::filesystem::path& path, const UUID uuid) : Asset(path, uuid)
 		{
-			if (GUIUtils::IsAssetMesh(path))
-				m_Mesh = ObjLoader::LoadMesh(path);
+			m_Mesh = ObjLoader::LoadMesh(path);
 		}
-		explicit MeshAsset(const Ref<Mesh>& mesh, const std::string& name) : Asset(name), m_Mesh(mesh)
+		explicit MeshAsset(const Ref<Mesh>& mesh, const std::string& name) : Asset(name, UUID()), m_Mesh(mesh)
 		{
 
 		}

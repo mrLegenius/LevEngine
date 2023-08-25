@@ -1,15 +1,19 @@
-AmbientColor: [0, 0, 0, 1]
+AmbientColor: [1, 1, 1, 1]
 DiffuseColor: [1, 1, 1, 1]
-SpecularColor: [0, 0, 0, 1]
+SpecularColor: [1, 1, 1, 1]
 EmissiveColor: [0, 0, 0, 1]
-Shininess: 2
+Shininess: 94
+Texture0: resources\FancyTorch\FancyTorchIron_albedo.png
 Tiling0: [1, 1]
 Offset0: [0, 0]
 Tiling1: [1, 1]
 Offset1: [0, 0]
+Texture2: resources\FancyTorch\FancyTorchIron_albedo.png
 Tiling2: [1, 1]
 Offset2: [0, 0]
+Texture3: resources\FancyTorch\FancyTorchIron_gloss.png
 Tiling3: [1, 1]
 Offset3: [0, 0]
+Texture4: resources\FancyTorch\FancyTorchIron_normal.png
 Tiling4: [1, 1]
 Offset4: [0, 0]

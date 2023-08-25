@@ -1,5 +1,17 @@
 Scene: Scene Name
 Entities:
+  - Entity: 6507700503830715917
+    Tag: Point Light
+    Parent: 3352402856425678934
+    Transform:
+      Position: [0, 45.2639999, 0]
+      Rotation: [0, 0, 0]
+      Scale: [10, 10, 10]
+    Point Light:
+      Color: [0.884169877, 0.368899524, 0.0341378339, 1]
+      Range: 9.10000038
+      Smoothness: 0.5
+      Intensity: 1.39999998
   - Entity: 2440918126693032813
     Tag: Smoke Particles
     Parent: 3352402856425678934
@@ -33,9 +45,9 @@ Entities:
   - Entity: 15392721754015773208
     Tag: Directional Light
     Transform:
-      Position: [0, 5.69999981, 0]
-      Rotation: [-0.246091425, 4.57625341, -0.869173944]
-      Scale: [1, 1, 1]
+      Position: [-4.61883545, 11.7034178, -2.41830444]
+      Rotation: [-0.924305916, -2.2127285, -2.29241395]
+      Scale: [0.999945402, 0.999966264, 0.999982893]
     Camera:
       Camera:
         ProjectionType: 1
@@ -48,16 +60,16 @@ Entities:
       Main: false
       FixedAspectRatio: false
     Directional Light:
-      Color: [1, 1, 1, 1]
+      Color: [0.200895414, 0.177680701, 0.33590734, 1]
   - Entity: 3352402856425678934
     Tag: Torch
     Transform:
-      Position: [0, 2.92032623, 0]
+      Position: [0.0712279528, 2.92038727, -0.0886228979]
       Rotation: [0, 0, 0]
       Scale: [0.100000001, 0.100000001, 0.100000001]
     MeshRenderer:
-      Mesh: resources\FancyTorch\FancyTorch.obj
-      Material: resources\FancyTorch\FancyTorch.mat
+      Mesh: 17632389977203314860
+      Material: 8838899374217920014
       Cast Shadow: true
   - Entity: 3609519582529224002
     Tag: Camera
@@ -83,7 +95,7 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Skybox Renderer:
-      Skybox: resources\Skyboxes\SpaceBloody\SpaceBloody.skybox
+      {}
   - Entity: 8940989960097836712
     Tag: Floor
     Transform:
@@ -91,14 +103,14 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [300, 1, 300]
     MeshRenderer:
-      Mesh: resources\Models\cube.obj
-      Material: resources\Material.mat
+      Mesh: 6362171717149004471
+      Material: 4036009546899407346
       Cast Shadow: true
   - Entity: 15749311956304931436
     Tag: Fire Particles
     Parent: 3352402856425678934
     Transform:
-      Position: [0, 45.0060005, 0]
+      Position: [0, 45.6629982, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Emitter:

@@ -10,7 +10,6 @@ namespace LevEngine
 	{
 		static constexpr const char* AssetPayload = "ASSETS_BROWSER_ITEM";
 		static constexpr const char* EntityPayload = "ENTITY";
-		inline static const std::filesystem::path AssetsPath = "resources";
 
 		static bool DrawVector3Control(const std::string& label, Vector3& values, float resetValue = 0.0f, float columnWidth = 100.0f);
 		static bool DrawVector2Control(const std::string& label, Vector2& values, float resetValue = 0.0f, float columnWidth = 100.0f);
@@ -28,34 +27,6 @@ namespace LevEngine
 		static void DrawAsset(const std::string& label, const Ref<Asset>& asset,
 		                      const std::function<bool(const std::filesystem::path&)>& validation,
 		                      const std::function<void(const std::filesystem::path&)>& onDrop);
-
-		static bool IsAssetTexture(const std::filesystem::path& path)
-		{
-			const auto extension = path.extension().string();
-
-			return extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".tga";
-		}
-
-		static bool IsAssetMesh(const std::filesystem::path& path)
-		{
-			const auto extension = path.extension().string();
-
-			return extension == ".obj";
-		}
-
-		static bool IsAssetMaterial(const std::filesystem::path& path)
-		{
-			const auto extension = path.extension().string();
-
-			return extension == ".mat";
-		}
-
-		static bool IsAssetSkybox(const std::filesystem::path& path)
-		{
-			const auto extension = path.extension().string();
-
-			return extension == ".skybox";
-		}
 	};
 
 }

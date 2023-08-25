@@ -60,6 +60,8 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
+        AssetDatabase::ProcessAllAssets();
+
         m_IconPlay = Texture::Create("resources/Icons/PlayButton.png");
         m_IconStop = Texture::Create("resources/Icons/StopButton.png");
 

@@ -4,6 +4,7 @@
 #include "GUI/GUIUtils.h"
 #include "../ComponentDrawer.h"
 #include "../ComponentSerializer.h"
+#include "Assets/AssetDatabase.h"
 
 namespace LevEngine
 {
@@ -27,16 +28,16 @@ namespace LevEngine
 		{
 			GUIUtils::DrawAsset("Mesh",
 				mesh,
-				GUIUtils::IsAssetMesh,
-				[&mesh](const auto& path) { mesh = CreateRef<MeshAsset>(path); });
+				AssetDatabase::IsAssetMesh,
+				[&mesh](const auto& path) { mesh = AssetDatabase::GetAsset<MeshAsset>(path); });
 		}
 
 		static void DrawMaterial(Ref<MaterialAsset>& material)
 		{
 			GUIUtils::DrawAsset("Material",
 				material,
-				GUIUtils::IsAssetMaterial,
-				[&material](const auto& path) { material = CreateRef<MaterialAsset>(path);});
+				AssetDatabase::IsAssetMaterial,
+				[&material](const auto& path) { material = AssetDatabase::GetAsset<MaterialAsset>(path);});
 		}
 	};
 
@@ -48,27 +49,16 @@ protected:
 
 	void SerializeData(YAML::Emitter& out, const MeshRendererComponent& component) override
 	{
-		if (component.mesh)
-			out << YAML::Key << "Mesh" << YAML::Value << component.mesh->GetPath().string();
-		out << YAML::Key << "Material" << YAML::Value << component.material->GetPath().string();
+		SerializeAsset(out, "Mesh", component.mesh);
+		SerializeAsset(out, "Material", component.material);
+
 		out << YAML::Key << "Cast Shadow" << YAML::Value << component.castShadow;
 	}
 
 	void DeserializeData(YAML::Node& node, MeshRendererComponent& component) override
 	{
-		if (const auto data = node["Mesh"]; data)
-		{
-			auto assetPath = std::filesystem::path(data.as<std::string>());
-			component.mesh = CreateRef<MeshAsset>(assetPath);
-		}
-
-		if (const auto data = node["Material"]; data)
-		{
-			auto assetPath = std::filesystem::path(data.as<std::string>());
-			const Ref<MaterialAsset> materialAsset = CreateRef<MaterialAsset>(assetPath);
-			materialAsset->Deserialize();
-			component.material = materialAsset;
-		}
+		component.mesh = DeserializeAsset<MeshAsset>(node["Mesh"]);
+		component.material = DeserializeAsset<MaterialAsset>(node["Material"]);
 
 		component.castShadow = node["Cast Shadow"].as<bool>();
 	}

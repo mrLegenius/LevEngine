@@ -3,6 +3,7 @@
 
 #include "../ComponentDrawer.h"
 #include "../ComponentSerializer.h"
+#include "Assets/AssetDatabase.h"
 #include "GUI/GUIUtils.h"
 
 namespace LevEngine
@@ -16,10 +17,10 @@ namespace LevEngine
 
 		void DrawContent(SkyboxRendererComponent& component) override
 		{
-			GUIUtils::DrawAsset("Skybox", component.skybox,GUIUtils::IsAssetSkybox,
+			GUIUtils::DrawAsset("Skybox", component.skybox, AssetDatabase::IsAssetSkybox,
 				[&component](const std::filesystem::path& assetPath)
 				{
-					const auto asset = CreateRef<SkyboxAsset>(assetPath);
+					const auto asset = AssetDatabase::GetAsset<SkyboxAsset>(assetPath);
 					if (asset->Deserialize())
 						component.skybox = asset;
 				});
@@ -33,20 +34,11 @@ namespace LevEngine
 
 		void SerializeData(YAML::Emitter& out, const SkyboxRendererComponent& component) override
 		{
-			if (component.skybox)
-				out << YAML::Key << "Skybox" << YAML::Value << component.skybox->GetPath().string();
+			SerializeAsset(out, "Skybox", component.skybox);
 		}
 		void DeserializeData(YAML::Node& node, SkyboxRendererComponent& component) override
 		{
-			const auto skybox = node["Skybox"];
-
-			if (!skybox) return;
-
-			std::filesystem::path assetPath = skybox.as<std::string>();
-			const auto skyboxAsset = CreateRef<SkyboxAsset>(assetPath);
-
-			if (skyboxAsset->Deserialize())
-				component.skybox = skyboxAsset;
+			component.skybox = DeserializeAsset<SkyboxAsset>(node["Skybox"]);
 		}
 	};
 }

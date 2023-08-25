@@ -208,6 +208,7 @@
     <ClInclude Include="external\yaml-cpp\src\token.h" />
     <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Assets\Asset.h" />
+    <ClInclude Include="src\Assets\AssetDatabase.h" />
     <ClInclude Include="src\Assets\MaterialAsset.h" />
     <ClInclude Include="src\Assets\MeshAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
@@ -497,6 +498,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Assets\Asset.cpp" />
+    <ClCompile Include="src\Assets\AssetDatabase.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\MeshAsset.cpp" />
     <ClCompile Include="src\Assets\SkyboxAsset.cpp" />

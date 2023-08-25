@@ -5,6 +5,7 @@
 #include <imgui_internal.h>
 
 #include "TextureLibrary.h"
+#include "Assets/AssetDatabase.h"
 
 namespace LevEngine
 {
@@ -194,13 +195,21 @@ namespace LevEngine
 	{
 		const auto texture = getter();
 		ImGui::Image(texture ? texture->GetId() : nullptr, ImVec2(size.x, size.y), ImVec2{0, 1}, ImVec2{1, 0});
+		if (texture && ImGui::BeginPopupContextItem("Texture2D"))
+		{
+			if (ImGui::MenuItem("Clear"))
+				setter(nullptr);
+
+			ImGui::EndPopup();
+		}
+
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
 			{
 				const auto path = static_cast<const wchar_t*>(payload->Data);
-				const std::filesystem::path texturePath = AssetsPath / path;
-				if (!IsAssetTexture(texturePath))
+				const std::filesystem::path texturePath = AssetDatabase::AssetsRoot / path;
+				if (!AssetDatabase::IsAssetTexture(texturePath))
 				{
 					ImGui::EndDragDropTarget();
 					return;
@@ -240,7 +249,7 @@ namespace LevEngine
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
 		{
 			const auto path = static_cast<const wchar_t*>(payload->Data);
-			const std::filesystem::path assetPath = AssetsPath / path;
+			const std::filesystem::path assetPath = AssetDatabase::AssetsRoot / path;
 
 			if (validation && !validation(path))
 			{

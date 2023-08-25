@@ -8,7 +8,7 @@
 
 namespace LevEngine::Editor
 {
-    AssetBrowserPanel::AssetBrowserPanel() : m_CurrentDirectory(GUIUtils::AssetsPath)
+    AssetBrowserPanel::AssetBrowserPanel() : m_CurrentDirectory(AssetDatabase::AssetsRoot)
     {
         m_DirectoryIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\DirectoryIcon.png");
         m_FileIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\FileIcon.png");
@@ -19,7 +19,7 @@ namespace LevEngine::Editor
 
     void AssetBrowserPanel::DrawContent()
     {
-        if (m_CurrentDirectory != GUIUtils::AssetsPath)
+        if (m_CurrentDirectory != AssetDatabase::AssetsRoot)
         {
             if (ImGui::Button("<"))
 	            m_CurrentDirectory = m_CurrentDirectory.parent_path();
@@ -46,17 +46,19 @@ namespace LevEngine::Editor
             std::string stemString = path.stem().string();
             std::string fileExtension = path.extension().string();
 
+            if (fileExtension == ".meta") continue;
+
             ImGui::PushID(filenameString.c_str());
             Ref<Texture> icon = nullptr;
             if (directoryEntry.is_directory())
 	            icon = m_DirectoryIcon;
-            else if (GUIUtils::IsAssetTexture(path))
+            else if (AssetDatabase::IsAssetTexture(path))
                 icon = TextureLibrary::GetTexture(path.string());
-            else if (GUIUtils::IsAssetMesh(path))
+            else if (AssetDatabase::IsAssetMesh(path))
                 icon = m_MeshIcon;
-            else if (GUIUtils::IsAssetMaterial(path))
+            else if (AssetDatabase::IsAssetMaterial(path))
                 icon = m_MaterialIcon;
-        	else if (GUIUtils::IsAssetSkybox(path))
+        	else if (AssetDatabase::IsAssetSkybox(path))
                 icon = m_SkyboxIcon;
 			else
 				icon = m_FileIcon;
@@ -66,7 +68,7 @@ namespace LevEngine::Editor
 
             if (ImGui::BeginDragDropSource())
             {
-                auto relativePath = std::filesystem::relative(path, GUIUtils::AssetsPath);
+                auto relativePath = std::filesystem::relative(path, AssetDatabase::AssetsRoot);
                 const wchar_t* itemPath = relativePath.c_str();
                 ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
                 ImGui::EndDragDropSource();
@@ -76,8 +78,8 @@ namespace LevEngine::Editor
             {
                 if (!directoryEntry.is_directory())
                 {
-                    SetAssetSelection<MaterialAsset>(GUIUtils::IsAssetMaterial, path);
-                    SetAssetSelection<SkyboxAsset>(GUIUtils::IsAssetSkybox, path);
+                    SetAssetSelection<MaterialAsset>(AssetDatabase::IsAssetMaterial, path);
+                    SetAssetSelection<SkyboxAsset>(AssetDatabase::IsAssetSkybox, path);
                 }
             }
 
@@ -128,8 +130,7 @@ namespace LevEngine::Editor
 
         if (ImGui::MenuItem(label.c_str()))
         {
-	        const Ref<Asset> asset = CreateRef<AssetType>(m_CurrentDirectory / defaultName);
-            asset->Serialize();
+	        const Ref<Asset> asset = AssetDatabase::CreateAsset<AssetType>(m_CurrentDirectory / defaultName);
             Selection::Select(CreateRef<AssetSelection>(asset));
         }
     }
@@ -141,8 +142,7 @@ namespace LevEngine::Editor
 
         if (validator(path))
         {
-            Ref<Asset> asset = CreateRef<AssetType>(path);
-            asset->Deserialize();
+            Ref<Asset> asset = AssetDatabase::GetAsset<AssetType>(path);
             Selection::Select(CreateRef<AssetSelection>(asset));
         }
     }
