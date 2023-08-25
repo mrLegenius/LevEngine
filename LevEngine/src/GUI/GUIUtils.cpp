@@ -179,6 +179,24 @@ namespace LevEngine
 			setter(value);
 	}
 
+	void GUIUtils::DrawIntControl(const std::string& label, 
+		const std::function<int()>& getter,
+		const std::function<void(int)>& setter,
+		const int speed, const int min, const int max)
+	{
+		auto value = getter();
+		if (ImGui::DragInt(label.c_str(), &value, speed, min, max))
+			setter(value);
+	}
+
+	void GUIUtils::DrawCheckBox(const char* label, const std::function<bool()>& getter,
+	                            const std::function<void(bool)>& setter)
+	{
+		auto value = getter();
+		if (ImGui::Checkbox(label, &value))
+			setter(value);
+	}
+
 	void GUIUtils::DrawColor3Control(const std::string& label, const std::function<Color()>& getter, const std::function<void(Color)>& setter)
 	{
 		auto value = getter();

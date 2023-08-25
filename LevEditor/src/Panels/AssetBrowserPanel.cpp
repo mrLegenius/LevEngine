@@ -93,8 +93,10 @@ namespace LevEngine::Editor
             {
                 if (!directoryEntry.is_directory())
                 {
-                    SetAssetSelection<MaterialAsset>(AssetDatabase::IsAssetMaterial, path);
-                    SetAssetSelection<SkyboxAsset>(AssetDatabase::IsAssetSkybox, path);
+                    if (const auto& asset = AssetDatabase::GetAsset(path))
+                        Selection::Select(CreateRef<AssetSelection>(asset));
+                    else
+                        Selection::Deselect();
                 }
             }
 
@@ -131,8 +133,6 @@ namespace LevEngine::Editor
         }
 
         ImGui::Columns(1);
-
-        // TODO: status bar
     }
 
     template <typename AssetType>
@@ -143,18 +143,6 @@ namespace LevEngine::Editor
         if (ImGui::MenuItem(label.c_str()))
         {
 	        const Ref<Asset> asset = AssetDatabase::CreateAsset<AssetType>(m_CurrentDirectory / defaultName);
-            Selection::Select(CreateRef<AssetSelection>(asset));
-        }
-    }
-
-    template <typename AssetType>
-    void AssetBrowserPanel::SetAssetSelection(const std::function<bool(const std::filesystem::path&)>& validator, const std::filesystem::path& path) const
-    {
-        static_assert(std::is_base_of_v<Asset, AssetType>, "AssetType must derive from Asset");
-
-        if (validator(path))
-        {
-            Ref<Asset> asset = AssetDatabase::GetAsset<AssetType>(path);
             Selection::Select(CreateRef<AssetSelection>(asset));
         }
     }

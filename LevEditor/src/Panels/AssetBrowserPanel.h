@@ -15,9 +15,6 @@ namespace LevEngine::Editor
     private:
         template<typename Asset>
         void DrawCreateMenu(const std::string& label, const std::string& defaultName) const;
-        template <class AssetType>
-        void SetAssetSelection(const std::function<bool(const std::filesystem::path&)>& validator,
-                               const std::filesystem::path& path) const;
 
         std::filesystem::path m_CurrentDirectory;
 

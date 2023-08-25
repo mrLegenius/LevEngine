@@ -80,6 +80,18 @@ namespace LevEngine
 			return std::dynamic_pointer_cast<T>(asset);
 		}
 
+		[[nodiscard]] static const Ref<Asset>& GetAsset(const std::filesystem::path& path)
+		{
+			const auto assetIt = m_AssetsByPath.find(path);
+			if (assetIt == m_AssetsByPath.end())
+			{
+				Log::CoreWarning("Asset in {0} is not found", path.string());
+				return nullptr;
+			}
+
+			return assetIt->second;
+		}
+
 		template<class T>
 		[[nodiscard]] static const Ref<T>& GetAsset(const UUID uuid)
 		{

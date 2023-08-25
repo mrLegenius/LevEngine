@@ -104,7 +104,7 @@ namespace LevEngine
             m_CompareFunc = compareFunc;
             m_IsDirty = true;
         }
-        [[nodiscard]] CompareFunc GetCompareFunc() const
+        [[nodiscard]] CompareFunc GetCompareFunction() const
         {
             return m_CompareFunc;
         }

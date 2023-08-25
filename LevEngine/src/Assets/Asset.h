@@ -10,6 +10,7 @@ namespace LevEngine
 			: m_Name(path.stem().string())
 			, m_FullName(path.filename().string())
 			, m_Extension(path.extension().string())
+			, m_MetaPath(path.string().append(".meta"))
 			, m_Path(std::move(path))
 			, m_UUID(uuid) { }
 
@@ -30,9 +31,14 @@ namespace LevEngine
 	protected:
 		virtual void SerializeData(YAML::Emitter& out) = 0;
 		virtual bool DeserializeData(YAML::Node& node) = 0;
+
+		virtual void SerializeMeta(YAML::Emitter& out) { }
+		virtual bool DeserializeMeta(YAML::Node& node) { return true; }
+
 		std::string m_Name;
 		std::string m_FullName;
 		std::string m_Extension;
+		std::filesystem::path m_MetaPath;
 		std::filesystem::path m_Path;
 		UUID m_UUID;
 		bool m_Deserialized = false;
