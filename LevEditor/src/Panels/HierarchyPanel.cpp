@@ -4,6 +4,7 @@
 #include <imgui.h>
 
 #include "EntitySelection.h"
+#include "GUI/GUIUtils.h"
 
 namespace LevEngine::Editor
 {

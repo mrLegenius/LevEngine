@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Asset.h"
-#include "GUI/GUIUtils.h"
 #include "ObjLoader.h"
 #include "Renderer/3D/Mesh.h"
 

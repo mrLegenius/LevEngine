@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Assets/Asset.h"
+#include "Assets/AssetDatabase.h"
 #include "Kernel/Color.h"
-#include "Math/Math.h"
 #include "Renderer/Texture.h"
 
 namespace LevEngine
@@ -20,13 +20,43 @@ namespace LevEngine
 		                              const std::function<void(Color)>& setter);
 		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
 		static void DrawTexture2D(const std::function<const Ref<Texture>&()>& getter,
-		                          const std::function<void(Ref<Texture>)>& setter, Vector2 size = { 100, 100 });
+		                          const std::function<void(Ref<Texture>)>& setter, Vector2 size = { 32, 32 });
 
-		static void DrawAsset(const std::string& label, const std::function<bool(const std::filesystem::path&)>& validation, const std::function<void
-		                      (const std::filesystem::path&)>& onDrop);
-		static void DrawAsset(const std::string& label, const Ref<Asset>& asset,
-		                      const std::function<bool(const std::filesystem::path&)>& validation,
-		                      const std::function<void(const std::filesystem::path&)>& onDrop);
+		template<class T>
+		static void DrawAsset(const std::string& label, Ref<T>* assetPtr)
+		{
+			static_assert(std::is_base_of_v<Asset, T>, "T must derive from Asset");
+
+			const auto& asset = *assetPtr;
+
+			if (!label.empty())
+			{
+				ImGui::Text(label.c_str());
+				ImGui::SameLine();
+			}
+
+			ImGui::Text(asset ? asset->GetName().c_str() : "None");
+
+			if (asset && ImGui::BeginPopupContextItem("Asset"))
+			{
+				if (ImGui::MenuItem("Clear"))
+					*assetPtr = nullptr;
+
+				ImGui::EndPopup();
+			}
+
+			if (!ImGui::BeginDragDropTarget()) return;
+
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
+			{
+				const auto path = static_cast<const wchar_t*>(payload->Data);
+				const std::filesystem::path assetPath = AssetDatabase::AssetsRoot / path;
+
+				if (const auto& newAsset = AssetDatabase::GetAsset<T>(assetPath))
+					*assetPtr = newAsset;
+			}
+			ImGui::EndDragDropTarget();
+		}
 	};
 
 }

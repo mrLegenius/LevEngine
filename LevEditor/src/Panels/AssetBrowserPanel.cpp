@@ -5,6 +5,7 @@
 
 #include "AssetSelection.h"
 #include "Selection.h"
+#include "GUI/GUIUtils.h"
 
 namespace LevEngine::Editor
 {

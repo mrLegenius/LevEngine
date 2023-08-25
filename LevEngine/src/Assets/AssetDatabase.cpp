@@ -20,7 +20,7 @@ namespace LevEngine
 					directories.push(directoryEntry.path());
 				else if (directoryEntry.path().extension() != ".meta")
 				{
-					UUID uuid = UUID();
+					auto uuid = UUID();
 					auto filepath = directoryEntry.path();
 					auto pathString = directoryEntry.path().string();
 					pathString.append(".meta");
@@ -33,27 +33,12 @@ namespace LevEngine
 						}
 						else
 						{
-							YAML::Emitter out;
-								
-							out << YAML::BeginMap;
-							out << YAML::Key << "UUID" << YAML::Value << uuid;
-							out << data;
-							out << YAML::EndMap;
-
-							auto fout = std::ofstream{ pathString };
-							fout << out.c_str();
+							CreateMeta(pathString, uuid, &data);
 						}
 					}
 					else 
 					{
-						YAML::Emitter out;
-
-						out << YAML::BeginMap;
-						out << YAML::Key << "UUID" << YAML::Value << uuid;
-						out << YAML::EndMap;
-
-						auto fout = std::ofstream{ pathString };
-						fout << out.c_str();
+						CreateMeta(pathString, uuid);
 					}
 
 					Ref<Asset> asset = CreateAsset(filepath, uuid);

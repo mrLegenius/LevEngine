@@ -3,6 +3,7 @@
 #include "MaterialAsset.h"
 #include "MeshAsset.h"
 #include "SkyboxAsset.h"
+#include "TextureAsset.h"
 
 namespace LevEngine
 {
@@ -43,19 +44,20 @@ namespace LevEngine
 
 		[[nodiscard]] static Ref<Asset> CreateAsset(const std::filesystem::path& path, UUID uuid)
 		{
-			//if (IsAssetTexture(path))
-				//return CreateRef<TextureAsset>(path);
+			if (IsAssetTexture(path))
+				return CreateRef<TextureAsset>(path, uuid);
+
 			if (IsAssetMaterial(path))
 				return CreateRef<MaterialAsset>(path, uuid);
-			else if (IsAssetSkybox(path))
+
+			if (IsAssetSkybox(path))
 				return CreateRef<SkyboxAsset>(path, uuid);
-			else if (IsAssetMesh(path))
+
+			if (IsAssetMesh(path))
 				return CreateRef<MeshAsset>(path, uuid);
-			else
-			{
-				Log::CoreTrace("{0} is unsupported format", path.extension());
-				return nullptr;
-			}
+
+			Log::CoreTrace("{0} is unsupported format", path.extension());
+			return nullptr;
 		}
 
 		template<class T>
@@ -70,14 +72,7 @@ namespace LevEngine
 
 			const std::string metaPath = path.string() + ".meta";
 
-			YAML::Emitter out;
-
-			out << YAML::BeginMap;
-			out << YAML::Key << "UUID" << YAML::Value << uuid;
-			out << YAML::EndMap;
-
-			auto fout = std::ofstream{ metaPath };
-			fout << out.c_str();
+			CreateMeta(metaPath, uuid);
 
 			m_Assets.emplace(uuid, asset);
 			m_AssetsByPath.emplace(path, asset);
@@ -93,21 +88,11 @@ namespace LevEngine
 			const auto assetIt = m_Assets.find(uuid);
 			if (assetIt == m_Assets.end())
 			{
-				Log::CoreError("Asset with {0} is not found", static_cast<std::uint64_t>(uuid));
-				return nullptr;
-			}
-			const auto asset = assetIt->second;
-			auto assetT = std::dynamic_pointer_cast<T>(asset);
-			if (!assetT)
-			{
-				Log::CoreError("Asset with {0} uuid is not {1}", static_cast<std::uint64_t>(uuid), typeid(T).name());
+				Log::CoreWarning("Asset with {0} is not found", static_cast<std::uint64_t>(uuid));
 				return nullptr;
 			}
 
-			if (!asset->IsDeserialized())
-				asset->Deserialize();
-
-			return assetT;
+			return GetAsset<T>(assetIt->second);
 		}
 
 		template<class T>
@@ -118,15 +103,26 @@ namespace LevEngine
 			const auto assetIt = m_AssetsByPath.find(path);
 			if (assetIt == m_AssetsByPath.end())
 			{
-				Log::CoreError("Asset in {0} is not found", path.string());
+				Log::CoreWarning("Asset in {0} is not found", path.string());
 				return nullptr;
 			}
 
-			const auto asset = assetIt->second;
+			return GetAsset<T>(assetIt->second);
+		}
+
+	private:
+		static inline std::unordered_map<UUID, Ref<Asset>> m_Assets;
+		static inline std::unordered_map<std::filesystem::path, Ref<Asset>> m_AssetsByPath;
+
+		template<class T>
+		[[nodiscard]] static const Ref<T>& GetAsset(const Ref<Asset>& asset)
+		{
+			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
+
 			auto assetT = std::dynamic_pointer_cast<T>(asset);
 			if (!assetT)
 			{
-				Log::CoreError("Asset in {0} is not {1}", path.string(), typeid(T).name());
+				Log::CoreWarning("Asset ({0}) in {1} is not {2}", asset->GetUUID(), asset->GetPath(), typeid(T).name());
 				return nullptr;
 			}
 
@@ -136,8 +132,17 @@ namespace LevEngine
 			return assetT;
 		}
 
-	private:
-		static inline std::unordered_map<UUID, Ref<Asset>> m_Assets;
-		static inline std::unordered_map<std::filesystem::path, Ref<Asset>> m_AssetsByPath;
+		static void CreateMeta(const std::filesystem::path& path, const UUID uuid, const YAML::Node* extraInfo = nullptr)
+		{
+			YAML::Emitter out;
+
+			out << YAML::BeginMap;
+			out << YAML::Key << "UUID" << YAML::Value << uuid;
+			if (extraInfo) out << *extraInfo;
+			out << YAML::EndMap;
+
+			auto fout = std::ofstream{ path };
+			fout << out.c_str();
+		}
 	};
 }

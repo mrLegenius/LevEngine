@@ -17,27 +17,10 @@ namespace LevEngine
 
 		void DrawContent(MeshRendererComponent& component) override
 		{
-			DrawMesh(component.mesh);
-			DrawMaterial(component.material);
+			GUIUtils::DrawAsset<MeshAsset>("Mesh", &component.mesh);
+			GUIUtils::DrawAsset<MaterialAsset>("Material", &component.material);
 
 			ImGui::Checkbox("Cast shadows", &component.castShadow);
-		}
-
-	private:
-		static void DrawMesh(Ref<MeshAsset>& mesh)
-		{
-			GUIUtils::DrawAsset("Mesh",
-				mesh,
-				AssetDatabase::IsAssetMesh,
-				[&mesh](const auto& path) { mesh = AssetDatabase::GetAsset<MeshAsset>(path); });
-		}
-
-		static void DrawMaterial(Ref<MaterialAsset>& material)
-		{
-			GUIUtils::DrawAsset("Material",
-				material,
-				AssetDatabase::IsAssetMaterial,
-				[&material](const auto& path) { material = AssetDatabase::GetAsset<MaterialAsset>(path);});
 		}
 	};
 
