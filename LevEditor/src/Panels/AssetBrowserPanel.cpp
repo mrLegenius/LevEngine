@@ -123,7 +123,7 @@ namespace LevEngine::Editor
                     m_CurrentDirectory /= path.filename();
 
             }
-            ImGui::TextWrapped(stemString.c_str());
+            ImGui::Text(stemString.c_str());
 
             ImGui::NextColumn();
 
