@@ -209,7 +209,7 @@ namespace LevEngine
 		DrawTexture2D([&texture] { return texture; }, [&texture](const Ref<Texture>& newTexture) { texture = newTexture; }, size);
 	}
 
-	void GUIUtils::DrawTexture2D(const std::string& label, Ref<TextureAsset>* assetPtr)
+	void GUIUtils::DrawTextureAsset(const std::string& label, Ref<TextureAsset>* assetPtr)
 	{
 		DrawAsset(label, assetPtr);
 		if (*assetPtr && (*assetPtr)->GetTexture())

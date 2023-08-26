@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Asset.h"
+#include "TextureAsset.h"
 #include "Renderer/Texture.h"
 
 namespace LevEngine
@@ -23,8 +24,6 @@ namespace LevEngine
 
 		[[nodiscard]] const Ref<Texture>& GetTexture() const { return m_Texture; }
 
-		void SetTexture(Side side, std::string path);
-
 	protected:
 		void SerializeData(YAML::Emitter& out) override;
 		void DeserializeData(YAML::Node& node) override;
@@ -33,12 +32,12 @@ namespace LevEngine
 
 		Ref<Texture> m_Texture;
 
-		std::string m_Left;
-		std::string m_Right;
-		std::string m_Bottom;
-		std::string m_Top;
-		std::string m_Back;
-		std::string m_Front;
+		Ref<TextureAsset> m_Left;
+		Ref<TextureAsset> m_Right;
+		Ref<TextureAsset> m_Bottom;
+		Ref<TextureAsset> m_Top;
+		Ref<TextureAsset> m_Back;
+		Ref<TextureAsset> m_Front;
 	};
 }
 

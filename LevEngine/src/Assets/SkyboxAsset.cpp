@@ -1,115 +1,62 @@
 ﻿#include "levpch.h"
 #include "SkyboxAsset.h"
-
-#include <imgui.h>
-
-#include "TextureLibrary.h"
 #include "GUI/GUIUtils.h"
+#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
 	void SkyboxAsset::DrawProperties()
 	{
-		ImGui::Text("Left");
-		ImGui::SameLine();
-		GUIUtils::DrawTexture2D(
-			[this] { return TextureLibrary::GetTexture(m_Left); }, 
-			[this](const Ref<Texture>& texture) { SetTexture(Side::Left, texture->GetPath()); });
-
-		ImGui::Text("Right");
-		ImGui::SameLine();
-		GUIUtils::DrawTexture2D(
-			[this] { return TextureLibrary::GetTexture(m_Right); }, 
-			[this](const Ref<Texture>& texture) { SetTexture(Side::Right, texture->GetPath()); });
-
-		ImGui::Text("Bottom");
-		ImGui::SameLine();
-		GUIUtils::DrawTexture2D(
-			[this] { return TextureLibrary::GetTexture(m_Bottom); },
-			[this](const Ref<Texture>& texture) { SetTexture(Side::Bottom, texture->GetPath()); });
-
-		ImGui::Text("Top");
-		ImGui::SameLine();
-		GUIUtils::DrawTexture2D(
-			[this] { return TextureLibrary::GetTexture(m_Top); },
-			[this](const Ref<Texture>& texture) { SetTexture(Side::Top, texture->GetPath()); });
-
-		ImGui::Text("Back");
-		ImGui::SameLine();
-		GUIUtils::DrawTexture2D(
-			[this] { return TextureLibrary::GetTexture(m_Back); }, 
-			[this](const Ref<Texture>& texture) { SetTexture(Side::Back, texture->GetPath()); });
-
-		ImGui::Text("Front");
-		ImGui::SameLine();
-		GUIUtils::DrawTexture2D(
-			[this] { return TextureLibrary::GetTexture(m_Front); }, 
-			[this](const Ref<Texture>& texture) { SetTexture(Side::Front, texture->GetPath()); });
-	}
-
-	void SkyboxAsset::SetTexture(const Side side, std::string path)
-	{
-		switch (side)
-		{
-		case Side::Left:
-			m_Left = std::move(path);
-			break;
-		case Side::Right:
-			m_Right = std::move(path);
-			break;
-		case Side::Bottom:
-			m_Bottom = std::move(path);
-			break;
-		case Side::Top:
-			m_Top = std::move(path);
-			break;
-		case Side::Back:
-			m_Back = std::move(path);
-			break;
-		case Side::Front:
-			m_Front = std::move(path);
-			break;
-		default:
-			LEV_THROW("Unknown Skybox Side")
-			break;
-		}
-
-		InitTexture();
+		GUIUtils::DrawTextureAsset("Left", &m_Left);
+		GUIUtils::DrawTextureAsset("Right", &m_Right);
+		GUIUtils::DrawTextureAsset("Bottom", &m_Bottom);
+		GUIUtils::DrawTextureAsset("Top", &m_Top);
+		GUIUtils::DrawTextureAsset("Back", &m_Back);
+		GUIUtils::DrawTextureAsset("Front", &m_Front);
 	}
 
 	void SkyboxAsset::SerializeData(YAML::Emitter& out)
 	{
-		out << YAML::Key << "Left" << YAML::Value << m_Left;
-		out << YAML::Key << "Right" << YAML::Value << m_Right;
-		out << YAML::Key << "Bottom" << YAML::Value << m_Bottom;
-		out << YAML::Key << "Top" << YAML::Value << m_Top;
-		out << YAML::Key << "Back" << YAML::Value << m_Back;
-		out << YAML::Key << "Front" << YAML::Value << m_Front;
+		SerializeAsset(out, "Left", m_Left);
+		SerializeAsset(out, "Right", m_Right);
+		SerializeAsset(out, "Bottom", m_Bottom);
+		SerializeAsset(out, "Top", m_Top);
+		SerializeAsset(out, "Back", m_Back);
+		SerializeAsset(out, "Front", m_Front);
 	}
 
 	void SkyboxAsset::DeserializeData(YAML::Node& node)
 	{
-		m_Left = node["Left"].as<std::string>();
-		m_Right = node["Right"].as<std::string>();
-		m_Bottom = node["Bottom"].as<std::string>();
-		m_Top = node["Top"].as<std::string>();
-		m_Back = node["Back"].as<std::string>();
-		m_Front = node["Front"].as<std::string>();
+		DeserializeAsset<TextureAsset>(node["Left"]);
+
+		m_Left = DeserializeAsset<TextureAsset>(node["Left"]);
+		m_Right = DeserializeAsset<TextureAsset>(node["Right"]);
+		m_Bottom = DeserializeAsset<TextureAsset>(node["Bottom"]);
+		m_Top = DeserializeAsset<TextureAsset>(node["Top"]);
+		m_Back = DeserializeAsset<TextureAsset>(node["Back"]);
+		m_Front = DeserializeAsset<TextureAsset>(node["Front"]);
 
 		InitTexture();
 	}
 
 	void SkyboxAsset::InitTexture()
 	{
-		if (m_Left.empty()
-		 || m_Right.empty()
-		 || m_Bottom.empty()
-		 || m_Top.empty()
-		 || m_Back.empty()
-		 || m_Front.empty())
+		if (!m_Left
+		 || !m_Right
+		 || !m_Bottom
+		 || !m_Top
+		 || !m_Back
+		 || !m_Front)
 			return;
 
-		const std::string paths[6] = { m_Left, m_Right, m_Bottom, m_Top, m_Back, m_Front };
+		const std::string paths[6] = {
+			m_Left->GetTexture()->GetPath(),
+			m_Right->GetTexture()->GetPath(),
+			m_Bottom->GetTexture()->GetPath(),
+			m_Top->GetTexture()->GetPath(),
+			m_Back->GetTexture()->GetPath(),
+			m_Front->GetTexture()->GetPath() };
+
 		m_Texture = Texture::CreateTextureCube(paths);
 	}
 }

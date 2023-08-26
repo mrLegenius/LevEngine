@@ -1,121 +1,5 @@
 Scene: Scene Name
 Entities:
-  - Entity: 13773411262065640480
-    Tag: Cart
-    Transform:
-      Position: [-1.5, 1.5, 3.20000005]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 5]
-    MeshRenderer:
-      Mesh: 13106315551063960128
-      Material: 4036009546899407346
-      Cast Shadow: true
-  - Entity: 6507700503830715917
-    Tag: Point Light
-    Parent: 3352402856425678934
-    Transform:
-      Position: [0, 45.2639999, 0]
-      Rotation: [0, 0, 0]
-      Scale: [10, 10, 10]
-    Point Light:
-      Color: [0.884169877, 0.368899524, 0.0341378339, 1]
-      Range: 9.10000038
-      Smoothness: 0.5
-      Intensity: 1.39999998
-  - Entity: 2440918126693032813
-    Tag: Smoke Particles
-    Parent: 3352402856425678934
-    Transform:
-      Position: [0, 37.5029984, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [10, 10, 10]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-0.200000003, 0, -0.200000003]
-        PositionB: [0.200000003, 0, 0.200000003]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.200000003
-        StartSizeB: 0.5
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.400000006
-        LifeTimeB: 1
-        GravityScale: 0
-      Texture: 8196646840874663791
-      MaxParticles: 100
-      Rate: 50
-  - Entity: 15392721754015773208
-    Tag: Directional Light
-    Transform:
-      Position: [-4.61883545, 11.7034178, -2.41830444]
-      Rotation: [-0.924305916, -2.2127285, -2.29241395]
-      Scale: [0.999945402, 0.999966264, 0.999982893]
-    Camera:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 9
-        OrthographicNear: 2
-        OrthographicFar: 10000
-      Main: false
-      FixedAspectRatio: false
-    Directional Light:
-      Color: [0.200895414, 0.177680701, 0.33590734, 1]
-  - Entity: 3352402856425678934
-    Tag: Torch
-    Transform:
-      Position: [0.0712279528, 2.92038727, -0.0886228979]
-      Rotation: [0, 0, 0]
-      Scale: [0.100000001, 0.100000001, 0.100000001]
-    MeshRenderer:
-      Mesh: 17632389977203314860
-      Material: 8838899374217920014
-      Cast Shadow: true
-  - Entity: 3609519582529224002
-    Tag: Camera
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Camera:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 5
-        OrthographicNear: 9.99999975e-05
-        OrthographicFar: 487.200012
-      Main: true
-      FixedAspectRatio: false
-  - Entity: 13631027794021233931
-    Tag: Skybox
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Skybox Renderer:
-      Skybox: 3339433341381827521
-  - Entity: 8940989960097836712
-    Tag: Floor
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [10, 1, 10]
-    MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 4036009546899407346
-      Cast Shadow: true
   - Entity: 15749311956304931436
     Tag: Fire Particles
     Parent: 3352402856425678934
@@ -146,3 +30,119 @@ Entities:
       Texture: 788160533914043389
       MaxParticles: 100
       Rate: 50
+  - Entity: 8940989960097836712
+    Tag: Floor
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [10, 1, 10]
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 4036009546899407346
+      Cast Shadow: true
+  - Entity: 13631027794021233931
+    Tag: Skybox
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Skybox Renderer:
+      Skybox: 3339433341381827521
+  - Entity: 3609519582529224002
+    Tag: Camera
+    Transform:
+      Position: [0, 20, -25]
+      Rotation: [-0.551524043, 3.14159274, 0]
+      Scale: [1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 5
+        OrthographicNear: 9.99999975e-05
+        OrthographicFar: 487.200012
+      Main: true
+      FixedAspectRatio: false
+  - Entity: 3352402856425678934
+    Tag: Torch
+    Transform:
+      Position: [0.0712279528, 2.92038727, -0.0886228979]
+      Rotation: [0, 0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    MeshRenderer:
+      Mesh: 17632389977203314860
+      Material: 8838899374217920014
+      Cast Shadow: true
+  - Entity: 15392721754015773208
+    Tag: Directional Light
+    Transform:
+      Position: [-4.61883545, 11.7034178, -2.41830444]
+      Rotation: [-0.924305916, -2.2127285, -2.29241395]
+      Scale: [0.999945402, 0.999966264, 0.999982893]
+    Camera:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 9
+        OrthographicNear: 2
+        OrthographicFar: 10000
+      Main: false
+      FixedAspectRatio: false
+    Directional Light:
+      Color: [0.200895414, 0.177680701, 0.33590734, 1]
+  - Entity: 2440918126693032813
+    Tag: Smoke Particles
+    Parent: 3352402856425678934
+    Transform:
+      Position: [0, 37.5029984, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [10, 10, 10]
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-0.200000003, 0, -0.200000003]
+        PositionB: [0.200000003, 0, 0.200000003]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.200000003
+        StartSizeB: 0.5
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.400000006
+        LifeTimeB: 1
+        GravityScale: 0
+      Texture: 8196646840874663791
+      MaxParticles: 100
+      Rate: 50
+  - Entity: 6507700503830715917
+    Tag: Point Light
+    Parent: 3352402856425678934
+    Transform:
+      Position: [0, 45.2639999, 0]
+      Rotation: [0, 0, 0]
+      Scale: [10, 10, 10]
+    Point Light:
+      Color: [0.884169877, 0.368899524, 0.0341378339, 1]
+      Range: 9.10000038
+      Smoothness: 0.5
+      Intensity: 1.39999998
+  - Entity: 13773411262065640480
+    Tag: Cart
+    Transform:
+      Position: [-1.5, 1.5, 3.20000005]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 5]
+    MeshRenderer:
+      Mesh: 13106315551063960128
+      Material: 4036009546899407346
+      Cast Shadow: true
