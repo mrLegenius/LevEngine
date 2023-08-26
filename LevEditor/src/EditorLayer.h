@@ -1,6 +1,7 @@
 #pragma once
 #include "Events/ApplicationEvent.h"
 #include "Panels/AssetBrowserPanel.h"
+#include "Panels/GamePanel.h"
 #include "Panels/HierarchyPanel.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/ViewportPanel.h"
@@ -34,6 +35,8 @@ private:
 	Ref<HierarchyPanel> m_Hierarchy;
 	Ref<PropertiesPanel> m_Properties;
 	Ref<AssetBrowserPanel> m_AssetsBrowser;
+	Ref<GamePanel> m_Game;
+
 	std::filesystem::path m_EditorScenePath;
 
 	enum class SceneState

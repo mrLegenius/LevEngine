@@ -12,6 +12,7 @@ namespace LevEngine::Editor
 
 		[[nodiscard]] bool IsFocused() const { return m_Focused; }
 		[[nodiscard]] bool IsHovered() const { return m_Hovered; }
+		[[nodiscard]] bool IsActive() const { return m_Active; }
 
 		void Focus() const { ImGui::FocusWindow(m_Window); }
 
@@ -23,6 +24,7 @@ namespace LevEngine::Editor
 
 		bool m_Focused = false;
 		bool m_Hovered = false;
+		bool m_Active = false;
 
 		Vector2 m_WindowPadding{};
 	};

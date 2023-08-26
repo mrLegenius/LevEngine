@@ -96,6 +96,7 @@
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\KatamariPlayer.h" />
     <ClInclude Include="src\Panels\AssetBrowserPanel.h" />
+    <ClInclude Include="src\Panels\GamePanel.h" />
     <ClInclude Include="src\Panels\HierarchyPanel.h" />
     <ClInclude Include="src\Panels\PanelBase.h" />
     <ClInclude Include="src\Panels\PropertiesPanel.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="src\Selection.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Panels\GamePanel.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

@@ -64,7 +64,7 @@ namespace LevEngine::Editor
 			return false;
 		}
 
-		void UpdateViewportTexture(const Ref<Texture>& renderTexture) const
+		void UpdateTexture(const Ref<Texture>& renderTexture) const
 		{
 			const auto targetWidth = renderTexture->GetWidth();
 			const auto targetHeight = renderTexture->GetHeight();

@@ -68,10 +68,10 @@ namespace LevEngine::Editor
         m_ActiveScene = CreateRef<Scene>();
 
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+        m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Hierarchy = CreateRef<HierarchyPanel>(m_ActiveScene);
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
-
 
         //<--- Systems ---<<
         //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
@@ -157,27 +157,36 @@ namespace LevEngine::Editor
 
         switch (m_SceneState)
         {
-        case SceneState::Edit:
+	        case SceneState::Edit:
+	        {
+	            break;
+	        }
+	        case SceneState::Play:
+	        {
+	            if (m_Viewport->IsFocused() || m_Game->IsFocused())
+	                Application::Get().GetWindow().DisableCursor();
+
+	            m_ActiveScene->OnUpdate(deltaTime);
+	            m_ActiveScene->OnPhysics(deltaTime);
+	            m_ActiveScene->OnLateUpdate(deltaTime);
+
+	            break;
+	        }
+        }
+
+        if (m_Viewport->IsActive())
         {
             m_Viewport->UpdateCamera(deltaTime);
             auto& camera = m_Viewport->GetCamera();
             m_ActiveScene->OnRender(&camera, &camera.GetTransform());
-            break;
+            m_Viewport->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         }
-        case SceneState::Play:
+
+        if (m_Game->IsActive())
         {
-            if (m_Viewport->IsFocused())
-                Application::Get().GetWindow().DisableCursor();
-
-            m_ActiveScene->OnUpdate(deltaTime);
-            m_ActiveScene->OnPhysics(deltaTime);
-            m_ActiveScene->OnLateUpdate(deltaTime);
             m_ActiveScene->OnRender();
-            break;
+            m_Game->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         }
-        }
-
-        m_Viewport->UpdateViewportTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
     }
 
     void EditorLayer::OnGUIRender()
@@ -191,6 +200,7 @@ namespace LevEngine::Editor
         m_Hierarchy->Render();
         m_Properties->Render();
         m_AssetsBrowser->Render();
+        m_Game->Render();
         //DrawStatistics();
         DrawToolbar();
         DrawStatusbar();
@@ -427,7 +437,7 @@ namespace LevEngine::Editor
     {
         if (!SaveScene()) return;
 
-        m_Viewport->Focus();
+        m_Game->Focus();
         m_SceneState = SceneState::Play;
         Selection::Deselect();
     }
