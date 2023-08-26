@@ -594,6 +594,9 @@
     <ClInclude Include="src\Assets\TextureAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Assets\DefaultAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input\Input.cpp">

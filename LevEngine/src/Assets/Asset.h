@@ -42,7 +42,7 @@ namespace LevEngine
 	protected:
 		virtual void DrawProperties() { }
 
-		[[nodiscard]] virtual bool DoSerializeData() const { return true; }
+		[[nodiscard]] virtual bool OverrideDataFile() const { return true; }
 		virtual void SerializeData(YAML::Emitter& out) = 0;
 		virtual void DeserializeData(YAML::Node& node) = 0;
 

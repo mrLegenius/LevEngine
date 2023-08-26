@@ -18,7 +18,7 @@ namespace LevEngine
 		void DrawProperties() override;
 
 	protected:
-		[[nodiscard]] bool DoSerializeData() const override { return false; }
+		[[nodiscard]] bool OverrideDataFile() const override { return false; }
 
 		void SerializeMeta(YAML::Emitter& out) override;
 		void DeserializeMeta(YAML::Node& out) override;

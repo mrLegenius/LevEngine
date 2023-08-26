@@ -209,6 +209,7 @@
     <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Assets\Asset.h" />
     <ClInclude Include="src\Assets\AssetDatabase.h" />
+    <ClInclude Include="src\Assets\DefaultAsset.h" />
     <ClInclude Include="src\Assets\MaterialAsset.h" />
     <ClInclude Include="src\Assets\MeshAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />

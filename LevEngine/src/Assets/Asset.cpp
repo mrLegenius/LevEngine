@@ -16,14 +16,14 @@ namespace LevEngine
 
 	void Asset::SerializeData()
 	{
-		if (!DoSerializeData()) return;
-
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 
 		SerializeData(out);
 
 		out << YAML::EndMap;
+
+		if (!OverrideDataFile()) return;
 
 		try
 		{
@@ -68,7 +68,12 @@ namespace LevEngine
 
 	bool Asset::DeserializeData()
 	{
-		if (!DoSerializeData()) return true;
+		if (!OverrideDataFile())
+		{
+			YAML::Node data{};
+			DeserializeData(data);
+			return true;
+		}
 
 		try
 		{

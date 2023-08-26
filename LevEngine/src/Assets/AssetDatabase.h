@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Asset.h"
+#include "DefaultAsset.h"
 #include "MaterialAsset.h"
 #include "MeshAsset.h"
 #include "SkyboxAsset.h"
@@ -57,8 +58,7 @@ namespace LevEngine
 			if (IsAssetMesh(path))
 				return CreateRef<MeshAsset>(path, uuid);
 
-			Log::CoreTrace("{0} is unsupported format", path.extension());
-			return nullptr;
+			return CreateRef<DefaultAsset>(path, uuid);
 		}
 
 		template<class T>

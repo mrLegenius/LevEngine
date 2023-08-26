@@ -19,7 +19,7 @@ namespace LevEngine
 
 		[[nodiscard]] const Ref<Mesh>& GetMesh() const { return m_Mesh; }
 	protected:
-		bool DoSerializeData() const override { return false; }
+		bool OverrideDataFile() const override { return false; }
 
 		void SerializeData(YAML::Emitter& out) override { }
 		void DeserializeData(YAML::Node& node) override
