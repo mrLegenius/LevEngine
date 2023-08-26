@@ -6,7 +6,7 @@
 class LetEditor : public Application
 {
 public:
-	LetEditor() : Application("LevEditor", 1280, 720)
+	LetEditor() : Application("LevEditor", 1600, 900)
 	{
 		PushLayer(new Editor::EditorLayer);
 	}
