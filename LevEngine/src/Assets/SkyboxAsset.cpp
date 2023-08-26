@@ -45,9 +45,6 @@ namespace LevEngine
 		GUIUtils::DrawTexture2D(
 			[this] { return TextureLibrary::GetTexture(m_Front); }, 
 			[this](const Ref<Texture>& texture) { SetTexture(Side::Front, texture->GetPath()); });
-
-		if (ImGui::Button("Save"))
-			Asset::Serialize();
 	}
 
 	void SkyboxAsset::SetTexture(const Side side, std::string path)
@@ -90,7 +87,7 @@ namespace LevEngine
 		out << YAML::Key << "Front" << YAML::Value << m_Front;
 	}
 
-	bool SkyboxAsset::DeserializeData(YAML::Node& node)
+	void SkyboxAsset::DeserializeData(YAML::Node& node)
 	{
 		m_Left = node["Left"].as<std::string>();
 		m_Right = node["Right"].as<std::string>();
@@ -100,8 +97,6 @@ namespace LevEngine
 		m_Front = node["Front"].as<std::string>();
 
 		InitTexture();
-
-		return true;
 	}
 
 	void SkyboxAsset::InitTexture()

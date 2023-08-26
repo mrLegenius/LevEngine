@@ -12,7 +12,9 @@ namespace LevEngine
 			, m_Extension(path.extension().string())
 			, m_MetaPath(path.string().append(".meta"))
 			, m_Path(std::move(path))
-			, m_UUID(uuid) { }
+			, m_UUID(uuid)
+		{
+		}
 
 		virtual ~Asset() = default;
 
@@ -25,15 +27,19 @@ namespace LevEngine
 
 		void Serialize();
 		bool Deserialize();
+		void SerializeMeta();
 
-		virtual void DrawProperties() = 0;
+		void DrawEditor();
 
 	protected:
+		virtual void DrawProperties() { }
+
+		[[nodiscard]] virtual bool DoSerializeData() const { return true; }
 		virtual void SerializeData(YAML::Emitter& out) = 0;
-		virtual bool DeserializeData(YAML::Node& node) = 0;
+		virtual void DeserializeData(YAML::Node& node) = 0;
 
 		virtual void SerializeMeta(YAML::Emitter& out) { }
-		virtual bool DeserializeMeta(YAML::Node& node) { return true; }
+		virtual void DeserializeMeta(YAML::Node& node) { }
 
 		std::string m_Name;
 		std::string m_FullName;
@@ -42,5 +48,10 @@ namespace LevEngine
 		std::filesystem::path m_Path;
 		UUID m_UUID;
 		bool m_Deserialized = false;
+
+	private:
+		void SerializeData();
+		bool DeserializeData();
+		bool DeserializeMeta();
 	};
 }

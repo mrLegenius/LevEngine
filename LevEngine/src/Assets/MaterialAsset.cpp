@@ -28,7 +28,7 @@ namespace LevEngine
 			out << YAML::Key << "Offset" + std::to_string(i) << YAML::Value << material.GetTextureOffset(type);
 		}
 	}
-	bool MaterialAsset::DeserializeData(YAML::Node& node)
+	void MaterialAsset::DeserializeData(YAML::Node& node)
 	{
 		material = {};
 
@@ -49,8 +49,6 @@ namespace LevEngine
 			material.SetTextureTiling(type, node["Tiling" + std::to_string(i)].as<Vector2>());
 			material.SetTextureOffset(type, node["Offset" + std::to_string(i)].as<Vector2>());
 		}
-
-		return true;
 	}
 
 	void MaterialAsset::DrawProperties()
@@ -67,9 +65,6 @@ namespace LevEngine
 		DrawMaterialTexture("Specular", material, Material::TextureType::Specular);
 		DrawMaterialTexture("Normal", material, Material::TextureType::Normal);
 		DrawMaterialTexture("Emissive", material, Material::TextureType::Emissive);
-
-		if (ImGui::Button("Save"))
-			Serialize();
 	}
 	void MaterialAsset::DrawMaterialTexture(const std::string& label, Material& material,
 	                                        Material::TextureType textureType)

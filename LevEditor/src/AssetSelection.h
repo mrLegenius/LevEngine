@@ -16,7 +16,7 @@ namespace LevEngine
 		void DrawProperties() override
 		{
 			if (m_Asset)
-				m_Asset->DrawProperties();
+				m_Asset->DrawEditor();
 		}
 
 	private:

@@ -19,7 +19,7 @@ public:
 
 protected:
 	void SerializeData(YAML::Emitter& out) override;
-	bool DeserializeData(YAML::Node& node) override;
+	void DeserializeData(YAML::Node& node) override;
 
 private:
 	static void DrawMaterialTexture(const std::string& label, Material& material, Material::TextureType textureType);

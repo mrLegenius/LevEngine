@@ -27,7 +27,7 @@ namespace LevEngine
 
 	protected:
 		void SerializeData(YAML::Emitter& out) override;
-		bool DeserializeData(YAML::Node& node) override;
+		void DeserializeData(YAML::Node& node) override;
 	private:
 		void InitTexture();
 

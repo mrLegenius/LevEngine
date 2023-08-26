@@ -24,6 +24,8 @@ namespace LevEngine
 					auto filepath = directoryEntry.path();
 					auto pathString = directoryEntry.path().string();
 					pathString.append(".meta");
+
+					bool needToGenerateMeta = false;
 					if (std::filesystem::exists(pathString))
 					{
 						YAML::Node data = YAML::LoadFile(pathString);
@@ -33,15 +35,18 @@ namespace LevEngine
 						}
 						else
 						{
-							CreateMeta(pathString, uuid, &data);
+							needToGenerateMeta = true;
 						}
 					}
 					else 
 					{
-						CreateMeta(pathString, uuid);
+						needToGenerateMeta = true;
 					}
 
 					Ref<Asset> asset = CreateAsset(filepath, uuid);
+
+					if (needToGenerateMeta)
+						asset->SerializeMeta();
 
 					m_Assets.emplace(uuid, asset);
 					m_AssetsByPath.emplace(filepath, asset);

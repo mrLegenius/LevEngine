@@ -89,14 +89,15 @@ namespace LevEngine
 				return nullptr;
 			}
 
-			return assetIt->second;
+			const auto& asset = assetIt->second;
+			if (!asset->IsDeserialized())
+				asset->Deserialize();
+
+			return asset;
 		}
 
-		template<class T>
-		[[nodiscard]] static const Ref<T>& GetAsset(const UUID uuid)
+		[[nodiscard]] static const Ref<Asset>& GetAsset(const UUID uuid)
 		{
-			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
-
 			const auto assetIt = m_Assets.find(uuid);
 			if (assetIt == m_Assets.end())
 			{
@@ -104,7 +105,20 @@ namespace LevEngine
 				return nullptr;
 			}
 
-			return GetAsset<T>(assetIt->second);
+			const auto& asset = assetIt->second;
+			if (!asset->IsDeserialized())
+				asset->Deserialize();
+
+			return asset;
+		}
+
+
+		template<class T>
+		[[nodiscard]] static const Ref<T>& GetAsset(const UUID uuid)
+		{
+			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
+
+			return GetAsset<T>(GetAsset(uuid));
 		}
 
 		template<class T>
@@ -112,14 +126,7 @@ namespace LevEngine
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
 
-			const auto assetIt = m_AssetsByPath.find(path);
-			if (assetIt == m_AssetsByPath.end())
-			{
-				Log::CoreWarning("Asset in {0} is not found", path.string());
-				return nullptr;
-			}
-
-			return GetAsset<T>(assetIt->second);
+			return GetAsset<T>(GetAsset(path));
 		}
 
 	private:
@@ -137,9 +144,6 @@ namespace LevEngine
 				Log::CoreWarning("Asset ({0}) in {1} is not {2}", asset->GetUUID(), asset->GetPath(), typeid(T).name());
 				return nullptr;
 			}
-
-			if (!asset->IsDeserialized())
-				asset->Deserialize();
 
 			return assetT;
 		}

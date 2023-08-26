@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <imgui.h>
-
 #include "Asset.h"
 #include "TextureLibrary.h"
 #include "Renderer/Texture.h"
@@ -12,9 +10,7 @@ namespace LevEngine
 	public:
 		TextureAsset(const std::filesystem::path& path, const UUID& uuid) : Asset(path, uuid)
 		{
-			m_Texture = TextureLibrary::GetTexture(path.string());
 			m_SamplerState = SamplerState::Create();
-			m_Texture->AttachSampler(m_SamplerState);
 		}
 
 		[[nodiscard]] const Ref<Texture>& GetTexture() const { return m_Texture; }
@@ -22,15 +18,17 @@ namespace LevEngine
 		void DrawProperties() override;
 
 	protected:
-		void SerializeMeta(YAML::Emitter& out) override { }
-		bool DeserializeMeta(YAML::Node& out) override
-		{
+		[[nodiscard]] bool DoSerializeData() const override { return false; }
 
-			return true;
-		}
+		void SerializeMeta(YAML::Emitter& out) override;
+		void DeserializeMeta(YAML::Node& out) override;
 
 		void SerializeData(YAML::Emitter& out) override { }
-		bool DeserializeData(YAML::Node& node) override { return true; }
+		void DeserializeData(YAML::Node& node) override
+		{
+			m_Texture = TextureLibrary::GetTexture(m_Path.string());
+			m_Texture->AttachSampler(m_SamplerState);
+		}
 		
 	private:
 		Ref<Texture> m_Texture;
