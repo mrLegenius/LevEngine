@@ -5,6 +5,41 @@
 
 namespace LevEngine
 {
+	void AssetDatabase::ImportAsset(const std::filesystem::path& path)
+	{
+		if (!path.has_extension()) return;
+
+		auto uuid = UUID();
+		auto pathString = path.string();
+		pathString.append(".meta");
+
+		bool needToGenerateMeta = false;
+		if (std::filesystem::exists(pathString))
+		{
+			YAML::Node data = YAML::LoadFile(pathString);
+			if (const auto uuidData = data["UUID"])
+			{
+				uuid = uuidData.as<uint64_t>();
+			}
+			else
+			{
+				needToGenerateMeta = true;
+			}
+		}
+		else 
+		{
+			needToGenerateMeta = true;
+		}
+
+		Ref<Asset> asset = CreateAsset(path, uuid);
+
+		if (needToGenerateMeta)
+			asset->SerializeMeta();
+
+		m_Assets.try_emplace(uuid, asset);
+		m_AssetsByPath.try_emplace(path, asset);
+	}
+
 	void AssetDatabase::ProcessAllAssets()
 	{
 		std::queue<std::filesystem::path> directories;
@@ -16,41 +51,12 @@ namespace LevEngine
 
 			for (auto& directoryEntry : std::filesystem::directory_iterator(directory))
 			{
+				auto path = directoryEntry.path();
+
 				if (directoryEntry.is_directory())
-					directories.push(directoryEntry.path());
-				else if (directoryEntry.path().extension() != ".meta")
-				{
-					auto uuid = UUID();
-					auto filepath = directoryEntry.path();
-					auto pathString = directoryEntry.path().string();
-					pathString.append(".meta");
-
-					bool needToGenerateMeta = false;
-					if (std::filesystem::exists(pathString))
-					{
-						YAML::Node data = YAML::LoadFile(pathString);
-						if (auto uuidData = data["UUID"])
-						{
-							uuid = uuidData.as<uint64_t>();
-						}
-						else
-						{
-							needToGenerateMeta = true;
-						}
-					}
-					else 
-					{
-						needToGenerateMeta = true;
-					}
-
-					Ref<Asset> asset = CreateAsset(filepath, uuid);
-
-					if (needToGenerateMeta)
-						asset->SerializeMeta();
-
-					m_Assets.emplace(uuid, asset);
-					m_AssetsByPath.emplace(filepath, asset);
-				}
+					directories.push(path);
+				else if (path.extension() != ".meta")
+					ImportAsset(path);
 			}
 		} while (!directories.empty());
 	}

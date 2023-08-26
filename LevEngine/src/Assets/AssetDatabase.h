@@ -12,6 +12,7 @@ namespace LevEngine
 	public:
 		inline static const std::filesystem::path AssetsRoot = "resources";
 
+		static void ImportAsset(const std::filesystem::path& path);
 		static void ProcessAllAssets();
 
 		static bool IsAssetTexture(const std::filesystem::path& path)

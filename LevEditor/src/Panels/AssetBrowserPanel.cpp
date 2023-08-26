@@ -80,6 +80,7 @@ namespace LevEngine::Editor
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton(icon->GetId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+            ImGui::PopStyleColor();
 
             if (ImGui::BeginDragDropSource())
             {
@@ -91,8 +92,11 @@ namespace LevEngine::Editor
 
             if (ImGui::BeginPopupContextItem())
             {
-                if (ImGui::MenuItem("Delete Asset"))
+                if (ImGui::MenuItem("Delete"))
                     AssetDatabase::DeleteAsset(AssetDatabase::GetAsset(path));
+
+                if (ImGui::MenuItem("Reimport"))
+                    AssetDatabase::ImportAsset(path);
 
                 ImGui::EndPopup();
             }
@@ -121,7 +125,6 @@ namespace LevEngine::Editor
                 ImGui::EndPopup();
             }
 
-            ImGui::PopStyleColor();
             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
             {
                 if (directoryEntry.is_directory())
