@@ -179,7 +179,7 @@ namespace LevEngine
 			setter(value);
 	}
 
-	void GUIUtils::DrawIntControl(const std::string& label, 
+	void GUIUtils::DrawIntControl(const std::string& label,
 		const std::function<int()>& getter,
 		const std::function<void(int)>& setter,
 		const int speed, const int min, const int max)
@@ -190,7 +190,7 @@ namespace LevEngine
 	}
 
 	void GUIUtils::DrawCheckBox(const char* label, const std::function<bool()>& getter,
-	                            const std::function<void(bool)>& setter)
+		const std::function<void(bool)>& setter)
 	{
 		auto value = getter();
 		if (ImGui::Checkbox(label, &value))
@@ -207,6 +207,16 @@ namespace LevEngine
 	void GUIUtils::DrawTexture2D(Ref<Texture>& texture, const Vector2 size)
 	{
 		DrawTexture2D([&texture] { return texture; }, [&texture](const Ref<Texture>& newTexture) { texture = newTexture; }, size);
+	}
+
+	void GUIUtils::DrawTexture2D(const std::string& label, Ref<TextureAsset>* assetPtr)
+	{
+		DrawAsset(label, assetPtr);
+		if (*assetPtr && (*assetPtr)->GetTexture())
+		{
+			ImGui::SameLine();
+			ImGui::Image((*assetPtr)->GetTexture()->GetId(), ImVec2(32, 32), ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		}
 	}
 
 	void GUIUtils::DrawTexture2D( const std::function<const Ref<Texture>&()>& getter, const std::function<void(Ref<Texture>)>& setter, const Vector2 size)

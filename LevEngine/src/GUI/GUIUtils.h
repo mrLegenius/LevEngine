@@ -23,6 +23,7 @@ namespace LevEngine
 		static void DrawColor3Control(const std::string& label, const std::function<Color()>& getter,
 		                              const std::function<void(Color)>& setter);
 		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
+		static void DrawTexture2D(const std::string& label, Ref<TextureAsset>* assetPtr);
 		static void DrawTexture2D(const std::function<const Ref<Texture>&()>& getter,
 		                          const std::function<void(Ref<Texture>)>& setter, Vector2 size = { 32, 32 });
 
@@ -37,10 +38,12 @@ namespace LevEngine
 
 			if (!label.empty())
 			{
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text(label.c_str());
 				ImGui::SameLine();
 			}
 
+			ImGui::AlignTextToFramePadding();
 			ImGui::Text(asset ? asset->GetName().c_str() : "None");
 
 			if (asset && ImGui::BeginPopupContextItem("Asset"))

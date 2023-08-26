@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Assets/TextureAsset.h"
 #include "Renderer/Texture.h"
 namespace LevEngine
 {
@@ -35,7 +36,7 @@ namespace LevEngine
 		uint32_t MaxParticles = 10000;
 		float Rate = 1.0f;
 		BirthParams Birth;
-		Ref<Texture> Texture;
+		Ref<TextureAsset> Texture;
 
 	private:
 		float Timer = 0.0f;

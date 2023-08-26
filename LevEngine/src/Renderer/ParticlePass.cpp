@@ -129,15 +129,16 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 
 		int textureIndex = -1.0f;
 
+		auto texture = emitter.Texture ? emitter.Texture->GetTexture() : nullptr;
 		for (uint32_t i = 0; i < textureSlotIndex; i++)
 		{
-			if (!emitter.Texture)
+			if (!texture)
 			{
 				textureIndex = 0;
 				break;
 			}
 
-			if (textureSlots[i]->GetPath() == emitter.Texture->GetPath())
+			if (textureSlots[i]->GetPath() == texture->GetPath())
 			{
 				textureIndex = i;
 				break;
@@ -153,7 +154,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 			else
 			{
 				textureIndex = textureSlotIndex;
-				textureSlots[textureSlotIndex] = emitter.Texture;
+				textureSlots[textureSlotIndex] = texture;
 				textureSlotIndex++;
 			}
 		}

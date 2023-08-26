@@ -51,8 +51,7 @@ namespace LevEngine
 				component.MaxParticles = maxParticles;
 			ImGui::DragFloat("Spawn Rate", &component.Rate, 0.1, 0, std::numeric_limits<float>::max());
 
-			ImGui::Text("Texture");
-			GUIUtils::DrawTexture2D(component.Texture);
+			GUIUtils::DrawTexture2D("Texture", &component.Texture);
 		}
 	};
 
@@ -92,7 +91,7 @@ namespace LevEngine
 
 			out << YAML::EndMap;
 
-			out << YAML::Key << "Texture" << YAML::Value << component.Texture->GetPath();
+			SerializeAsset(out, "Texture", component.Texture);
 			out << YAML::Key << "MaxParticles" << YAML::Value << component.MaxParticles;
 			out << YAML::Key << "Rate" << YAML::Value << component.Rate;
 		}
@@ -127,7 +126,7 @@ namespace LevEngine
 
 				birth.GravityScale = birthProps["GravityScale"].as<float>();
 			}
-			component.Texture = TextureLibrary::GetTexture(node["Texture"].as<std::string>());
+			component.Texture = DeserializeAsset<TextureAsset>(node["Texture"]);
 			component.MaxParticles = node["MaxParticles"].as<int>();
 			component.Rate = node["Rate"].as<float>();
 		}
