@@ -6,12 +6,12 @@ namespace LevEngine
 	class Asset
 	{
 	public:
-		explicit Asset(std::filesystem::path path, const UUID uuid)
+		explicit Asset(const std::filesystem::path& path, const UUID uuid)
 			: m_Name(path.stem().string())
 			, m_FullName(path.filename().string())
 			, m_Extension(path.extension().string())
 			, m_MetaPath(path.string().append(".meta"))
-			, m_Path(std::move(path))
+			, m_Path(path)
 			, m_UUID(uuid)
 		{
 		}
@@ -30,6 +30,14 @@ namespace LevEngine
 		void SerializeMeta();
 
 		void DrawEditor();
+		void Rename(const std::filesystem::path& path)
+		{
+			m_Name = path.stem().string();
+			m_FullName = path.filename().string();
+			m_Extension = path.extension().string();
+			m_MetaPath = path.string().append(".meta");
+			m_Path = path;
+		}
 
 	protected:
 		virtual void DrawProperties() { }

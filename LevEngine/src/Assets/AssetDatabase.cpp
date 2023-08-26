@@ -54,4 +54,21 @@ namespace LevEngine
 			}
 		} while (!directories.empty());
 	}
+
+	void AssetDatabase::RenameAsset(const Ref<Asset>& asset, const std::string& name)
+	{
+		if (asset->GetName() == name) return;
+
+		const auto directory = asset->GetPath().parent_path();
+		const auto newPath = directory / (name + asset->GetExtension());
+
+		m_AssetsByPath.erase(asset->GetPath());
+		std::filesystem::rename(asset->GetPath(), newPath);
+		std::filesystem::rename(
+			asset->GetPath().string().append(".meta"), 
+			newPath.string().append(".meta"));
+
+		asset->Rename(newPath);
+		m_AssetsByPath.emplace(newPath, asset);
+	}
 }

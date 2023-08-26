@@ -5,18 +5,7 @@ namespace LevEngine
 {
 	void Asset::DrawEditor()
 	{
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text(m_Name.c_str());
-
-		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 64);
-		if (ImGui::Button("Save", ImVec2{ 64, 24 }))
-			Serialize();
-
-		ImGui::Separator();
-
-		ImGui::BeginChild("asset_properties");
 		DrawProperties();
-		ImGui::EndChild();
 	}
 
 	void Asset::Serialize()

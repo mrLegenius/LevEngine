@@ -129,6 +129,8 @@ namespace LevEngine
 			return GetAsset<T>(GetAsset(path));
 		}
 
+		static void RenameAsset(const Ref<Asset>& asset, const std::string& name);
+
 	private:
 		static inline std::unordered_map<UUID, Ref<Asset>> m_Assets;
 		static inline std::unordered_map<std::filesystem::path, Ref<Asset>> m_AssetsByPath;
