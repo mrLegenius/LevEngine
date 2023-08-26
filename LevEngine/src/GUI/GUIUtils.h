@@ -24,6 +24,7 @@ namespace LevEngine
 		                              const std::function<void(Color)>& setter);
 		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
 		static void DrawTextureAsset(const std::string& label, Ref<TextureAsset>* assetPtr);
+		static bool DrawTextureAsset(Ref<TextureAsset>* assetPtr, Vector2 size);
 		static void DrawTexture2D(const std::function<const Ref<Texture>&()>& getter,
 		                          const std::function<void(Ref<Texture>)>& setter, Vector2 size = { 32, 32 });
 

@@ -149,10 +149,10 @@ private:
 
 	struct alignas(16) GPUData
 	{
-		alignas(16) Vector3 Ambient = Vector3{ 0, 0, 0 }; //<--- 16 ---<<
+		alignas(16) Vector3 Ambient = Vector3{ 1, 1, 1 }; //<--- 16 ---<<
 		alignas(16) Vector3 Emissive = Vector3{ 0, 0, 0 }; //<--- 16 ---<<
 		alignas(16) Vector3 Diffuse = Vector3{ 1,1, 1 }; //<--- 16 ---<<
-		alignas(16) Vector3 Specular = Vector3{ 0, 0, 0 }; //<--- 16 ---<<
+		alignas(16) Vector3 Specular = Vector3{ 1, 1, 1 }; //<--- 16 ---<<
 
 		TextureProperties AmbientProperties; //<--- 16 ---<<
 		TextureProperties EmissiveProperties; //<--- 16 ---<<

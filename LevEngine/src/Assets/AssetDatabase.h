@@ -141,6 +141,7 @@ namespace LevEngine
 		[[nodiscard]] static const Ref<T>& GetAsset(const Ref<Asset>& asset)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
+			if (!asset) return nullptr;
 
 			auto assetT = std::dynamic_pointer_cast<T>(asset);
 			if (!assetT)

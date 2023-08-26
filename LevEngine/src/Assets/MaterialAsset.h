@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Asset.h"
+#include "TextureAsset.h"
 #include "Renderer/Material.h"
 
 namespace LevEngine
@@ -22,6 +23,12 @@ protected:
 	void DeserializeData(YAML::Node& node) override;
 
 private:
-	static void DrawMaterialTexture(const std::string& label, Material& material, Material::TextureType textureType);
+	static void DrawMaterialTexture(const std::string& label, Material& material, Material::TextureType textureType, Ref<TextureAsset>& textureAsset);
+
+	Ref<TextureAsset> m_Ambient;
+	Ref<TextureAsset> m_Diffuse;
+	Ref<TextureAsset> m_Emissive;
+	Ref<TextureAsset> m_Specular;
+	Ref<TextureAsset> m_Normal;
 };
 }

@@ -2,11 +2,9 @@ AmbientColor: [1, 1, 1, 1]
 DiffuseColor: [1, 1, 1, 1]
 SpecularColor: [1, 1, 1, 1]
 EmissiveColor: [0, 0, 0, 1]
-Shininess: 94
-Ambient: 17779076323608464492
-Diffuse: 17779076323608464492
-Specular: 8103310135644218415
-Normal: 7629591492990474127
+Shininess: 2
+Ambient: 15974819093409437674
+Diffuse: 15974819093409437674
 Tiling0: [1, 1]
 Offset0: [0, 0]
 Tiling1: [1, 1]

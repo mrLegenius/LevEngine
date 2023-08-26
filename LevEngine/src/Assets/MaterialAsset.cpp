@@ -19,11 +19,15 @@ namespace LevEngine
 
 		out << YAML::Key << "Shininess" << YAML::Value << material.GetShininess();
 
+		SerializeAsset(out, "Ambient", m_Ambient);
+		SerializeAsset(out, "Diffuse", m_Diffuse);
+		SerializeAsset(out, "Emissive", m_Emissive);
+		SerializeAsset(out, "Specular", m_Specular);
+		SerializeAsset(out, "Normal", m_Normal);
+
 		for (int i = 0; i <= static_cast<int>(Material::TextureType::Normal); ++i)
 		{
 			const auto type = static_cast<Material::TextureType>(i);
-			if (material.GetTexture(type))
-				out << YAML::Key << "Texture" + std::to_string(i) << YAML::Value << material.GetTexture(type)->GetPath();
 			out << YAML::Key << "Tiling" + std::to_string(i) << YAML::Value << material.GetTextureTiling(type);
 			out << YAML::Key << "Offset" + std::to_string(i) << YAML::Value << material.GetTextureOffset(type);
 		}
@@ -38,14 +42,30 @@ namespace LevEngine
 		material.SetEmissiveColor(node["EmissiveColor"].as<Color>());
 		material.SetShininess(node["Shininess"].as<float>());
 
+		m_Ambient = DeserializeAsset<TextureAsset>(node["Ambient"]);
+		m_Diffuse = DeserializeAsset<TextureAsset>(node["Diffuse"]);
+		m_Emissive = DeserializeAsset<TextureAsset>(node["Emissive"]);
+		m_Specular = DeserializeAsset<TextureAsset>(node["Specular"]);
+		m_Normal = DeserializeAsset<TextureAsset>(node["Normal"]);
+
+		if (m_Ambient)
+			material.SetTexture(Material::TextureType::Ambient, m_Ambient->GetTexture());
+
+		if (m_Diffuse)
+			material.SetTexture(Material::TextureType::Diffuse, m_Diffuse->GetTexture());
+
+		if (m_Emissive)
+			material.SetTexture(Material::TextureType::Emissive, m_Emissive->GetTexture());
+
+		if (m_Specular)
+			material.SetTexture(Material::TextureType::Specular, m_Specular->GetTexture());
+
+		if (m_Normal)
+			material.SetTexture(Material::TextureType::Normal, m_Normal->GetTexture());
+
 		for (int i = 0; i <= static_cast<int>(Material::TextureType::Normal); ++i)
 		{
 			const auto type = static_cast<Material::TextureType>(i);
-			if (node["Texture" + std::to_string(i)])
-			{
-				auto texturePathString = node["Texture" + std::to_string(i)].as<std::string>();
-				material.SetTexture(type, TextureLibrary::GetTexture(texturePathString));
-			}
 			material.SetTextureTiling(type, node["Tiling" + std::to_string(i)].as<Vector2>());
 			material.SetTextureOffset(type, node["Offset" + std::to_string(i)].as<Vector2>());
 		}
@@ -60,14 +80,14 @@ namespace LevEngine
 
 		GUIUtils::DrawFloatControl("Shininess", BindGetter(&Material::GetShininess, &material), BindSetter(&Material::SetShininess, &material), 1.0f, 1.0f, 128.0f);
 
-		DrawMaterialTexture("Ambient", material, Material::TextureType::Ambient);
-		DrawMaterialTexture("Diffuse", material, Material::TextureType::Diffuse);
-		DrawMaterialTexture("Specular", material, Material::TextureType::Specular);
-		DrawMaterialTexture("Normal", material, Material::TextureType::Normal);
-		DrawMaterialTexture("Emissive", material, Material::TextureType::Emissive);
+		DrawMaterialTexture("Ambient", material, Material::TextureType::Ambient, m_Ambient);
+		DrawMaterialTexture("Diffuse", material, Material::TextureType::Diffuse, m_Diffuse);
+		DrawMaterialTexture("Specular", material, Material::TextureType::Specular, m_Specular);
+		DrawMaterialTexture("Normal", material, Material::TextureType::Normal, m_Normal);
+		DrawMaterialTexture("Emissive", material, Material::TextureType::Emissive, m_Emissive);
 	}
 	void MaterialAsset::DrawMaterialTexture(const std::string& label, Material& material,
-	                                        Material::TextureType textureType)
+	                                        Material::TextureType textureType, Ref<TextureAsset>& textureAsset)
 	{
 		ImGui::PushID(static_cast<int>(textureType));
 		ImGui::BeginTable("##texture_props", 2);
@@ -78,11 +98,11 @@ namespace LevEngine
 			ImGui::Text(label.c_str());
 
 			auto tiling = material.GetTextureTiling(textureType);
-			if (GUIUtils::DrawVector2Control("Tiling", tiling, 1))
+			if (GUIUtils::DrawVector2Control("Tiling", tiling, 1, 75))
 				material.SetTextureTiling(textureType, tiling);
 
 			auto offset = material.GetTextureOffset(textureType);
-			if (GUIUtils::DrawVector2Control("Offset", offset))
+			if (GUIUtils::DrawVector2Control("Offset", offset, 0, 75))
 				material.SetTextureOffset(textureType, offset);
 		}
 		ImGui::EndGroup();
@@ -90,8 +110,8 @@ namespace LevEngine
 
 		ImGui::TableNextColumn();
 
-		GUIUtils::DrawTexture2D([&material, textureType] {return material.GetTexture(textureType); },
-		                        [&material, textureType](const Ref<Texture>& texture) { material.SetTexture(textureType, texture); }, Vector2(size.y, size.y));
+		if (GUIUtils::DrawTextureAsset(&textureAsset, Vector2(size.y, size.y)))
+			material.SetTexture(textureType, textureAsset ? textureAsset->GetTexture() : nullptr);
 
 		ImGui::EndTable();
 		ImGui::PopID();

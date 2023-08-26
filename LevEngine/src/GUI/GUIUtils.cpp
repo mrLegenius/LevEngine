@@ -219,6 +219,42 @@ namespace LevEngine
 		}
 	}
 
+	bool GUIUtils::DrawTextureAsset(Ref<TextureAsset>* assetPtr, const Vector2 size)
+	{
+		auto changed = false;
+		const auto& asset = *assetPtr;
+
+		const auto& texture = asset ? asset->GetTexture() : nullptr;
+		ImGui::Image(texture ? texture->GetId() : nullptr, ImVec2(size.x, size.y), ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		if (asset && ImGui::BeginPopupContextItem("Asset"))
+		{
+			if (ImGui::MenuItem("Clear"))
+			{
+				*assetPtr = nullptr;
+				changed = true;
+			}
+			ImGui::EndPopup();
+		}
+
+		if (!ImGui::BeginDragDropTarget()) return changed;
+
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
+		{
+			const auto path = static_cast<const wchar_t*>(payload->Data);
+			const std::filesystem::path assetPath = AssetDatabase::AssetsRoot / path;
+
+			if (const auto& newAsset = AssetDatabase::GetAsset<TextureAsset>(assetPath))
+			{
+				*assetPtr = newAsset;
+				changed = true;
+			}
+		}
+		ImGui::EndDragDropTarget();
+
+		return changed;
+	}
+
 	void GUIUtils::DrawTexture2D( const std::function<const Ref<Texture>&()>& getter, const std::function<void(Ref<Texture>)>& setter, const Vector2 size)
 	{
 		const auto texture = getter();
