@@ -89,6 +89,14 @@ namespace LevEngine::Editor
                 ImGui::EndDragDropSource();
             }
 
+            if (ImGui::BeginPopupContextItem())
+            {
+                if (ImGui::MenuItem("Delete Asset"))
+                    AssetDatabase::DeleteAsset(AssetDatabase::GetAsset(path));
+
+                ImGui::EndPopup();
+            }
+
             if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
             {
                 if (!directoryEntry.is_directory())
@@ -100,12 +108,7 @@ namespace LevEngine::Editor
                 }
             }
 
-            if (ImGui::IsWindowHovered() && !ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-            {
-                ImGui::OpenPopup("Create Asset");
-            }
-
-            if (ImGui::BeginPopup("Create Asset"))
+            if (ImGui::BeginPopupContextWindow("Create Asset", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
             {
                 if (ImGui::BeginMenu("Create"))
                 {

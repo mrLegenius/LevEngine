@@ -130,6 +130,7 @@ namespace LevEngine
 		}
 
 		static void RenameAsset(const Ref<Asset>& asset, const std::string& name);
+		static void DeleteAsset(const Ref<Asset>& asset);
 
 	private:
 		static inline std::unordered_map<UUID, Ref<Asset>> m_Assets;

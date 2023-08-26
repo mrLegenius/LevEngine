@@ -71,4 +71,18 @@ namespace LevEngine
 		asset->Rename(newPath);
 		m_AssetsByPath.emplace(newPath, asset);
 	}
+
+	void AssetDatabase::DeleteAsset(const Ref<Asset>& asset)
+	{
+		if (asset == nullptr) return;
+
+		const auto path = asset->GetPath();
+		const auto uuid = asset->GetUUID();
+
+		std::filesystem::remove(path);
+		std::filesystem::remove(path.string().append(".meta"));
+
+		m_AssetsByPath.erase(path);
+		m_Assets.erase(uuid);
+	}
 }
