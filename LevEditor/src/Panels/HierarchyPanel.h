@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "PanelBase.h"
+#include "Panel.h"
 #include "Scene/Scene.h"
 
 namespace LevEngine::Editor

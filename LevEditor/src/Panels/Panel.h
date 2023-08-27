@@ -26,7 +26,7 @@ namespace LevEngine::Editor
 		bool m_Hovered = false;
 		bool m_Active = false;
 
-		Vector2 m_WindowPadding{};
+		Vector2 m_WindowPadding{ 10, 5};
 	};
 }
 

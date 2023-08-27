@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "PanelBase.h"
+#include "Panel.h"
 
 #include <imgui.h>
 

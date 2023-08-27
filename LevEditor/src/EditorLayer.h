@@ -1,6 +1,7 @@
 #pragma once
 #include "Events/ApplicationEvent.h"
 #include "Panels/AssetBrowserPanel.h"
+#include "Panels/ConsolePanel.h"
 #include "Panels/GamePanel.h"
 #include "Panels/HierarchyPanel.h"
 #include "Panels/PropertiesPanel.h"
@@ -36,6 +37,7 @@ private:
 	Ref<PropertiesPanel> m_Properties;
 	Ref<AssetBrowserPanel> m_AssetsBrowser;
 	Ref<GamePanel> m_Game;
+	Ref<ConsolePanel> m_Console;
 
 	std::filesystem::path m_EditorScenePath;
 

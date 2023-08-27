@@ -1,11 +1,15 @@
 ﻿#pragma once
-#include "PanelBase.h"
+#include "Panel.h"
 
 namespace LevEngine::Editor
 {
 	class GamePanel final : public Panel
 	{
 	public:
+		GamePanel()
+		{
+			m_WindowPadding = Vector2{ 0, 0 };
+		}
 		explicit GamePanel(const Ref<Texture>& renderTexture)
 		{
 			m_Texture = renderTexture->Clone();

@@ -1,5 +1,5 @@
 #pragma once
-#include "PanelBase.h"
+#include "Panel.h"
 #include "imguizmo/ImGuizmo.h"
 #include "EditorCamera.h"
 
@@ -8,6 +8,11 @@ namespace LevEngine::Editor
 	class ViewportPanel final : public Panel
 	{
 	public:
+		ViewportPanel()
+		{
+			m_WindowPadding = Vector2{ 0, 0 };
+		}
+
 		explicit ViewportPanel(const Ref<Texture>& renderTexture)
 		{
 			m_Texture = renderTexture->Clone();

@@ -60,6 +60,11 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
+        m_Console = CreateRef<ConsolePanel>();
+        Log::Logger::AddLogHandler(m_Console);
+
+        Log::CoreError("Really long text Really long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long textReally long text");
+
         AssetDatabase::ProcessAllAssets();
 
         m_IconPlay = Texture::Create("resources/Icons/PlayButton.png");
@@ -72,6 +77,7 @@ namespace LevEngine::Editor
         m_Hierarchy = CreateRef<HierarchyPanel>(m_ActiveScene);
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
+
 
         //<--- Systems ---<<
         //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
@@ -201,6 +207,7 @@ namespace LevEngine::Editor
         m_Properties->Render();
         m_AssetsBrowser->Render();
         m_Game->Render();
+        m_Console->Render();
         //DrawStatistics();
         DrawToolbar();
         DrawStatusbar();

@@ -24,7 +24,7 @@
     <ClInclude Include="src\Panels\HierarchyPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\PanelBase.h">
+    <ClInclude Include="src\Panels\Panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\PropertiesPanel.h">
@@ -57,6 +57,9 @@
     <ClInclude Include="src\Panels\GamePanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\ConsolePanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\LevEditor.cpp">
@@ -68,7 +71,7 @@
     <ClCompile Include="src\Panels\HierarchyPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Panels\PanelBase.cpp">
+    <ClCompile Include="src\Panels\Panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Panels\PropertiesPanel.cpp">
@@ -93,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Panels\GamePanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\ConsolePanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

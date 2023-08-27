@@ -14,6 +14,12 @@ namespace LevEngine::Log
 		static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return m_CoreLogger; }
 		static std::shared_ptr<spdlog::logger>& GetLogger() { return m_Logger; }
 
+		static void AddLogHandler(const std::shared_ptr<spdlog::sinks::sink>& handler)
+		{
+			m_CoreLogger->sinks().push_back(handler);
+			m_Logger->sinks().push_back(handler);
+		}
+
 	private:
 		static std::shared_ptr<spdlog::logger> m_CoreLogger;
 		static std::shared_ptr<spdlog::logger> m_Logger;
