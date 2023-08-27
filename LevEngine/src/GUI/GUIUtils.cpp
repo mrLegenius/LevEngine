@@ -9,6 +9,19 @@
 
 namespace LevEngine
 {
+#define IntToFloat(x) ((x) / 255.0f)
+	constexpr auto redDark = ImVec4{ IntToFloat(75), IntToFloat(10), IntToFloat(10), 1.0f };
+	constexpr auto redRegular = ImVec4{ IntToFloat(140), IntToFloat(20), IntToFloat(20), 1.0f };
+	constexpr auto redLight = ImVec4{ IntToFloat(200), IntToFloat(30), IntToFloat(30), 1.0f };
+
+	constexpr auto greenDark = ImVec4{ IntToFloat(10), IntToFloat(75), IntToFloat(10), 1.0f };
+	constexpr auto greenRegular = ImVec4{ IntToFloat(20), IntToFloat(140), IntToFloat(20), 1.0f };
+	constexpr auto greenLight = ImVec4{ IntToFloat(30), IntToFloat(200), IntToFloat(30), 1.0f };
+
+	constexpr auto blueDark = ImVec4{ IntToFloat(10), IntToFloat(10), IntToFloat(75), 1.0f };
+	constexpr auto blueRegular = ImVec4{ IntToFloat(20), IntToFloat(20), IntToFloat(140), 1.0f };
+	constexpr auto blueLight = ImVec4{ IntToFloat(30), IntToFloat(30), IntToFloat(200), 1.0f };
+
 	bool GUIUtils::DrawVector3Control(const std::string& label, Vector3& values, const float resetValue, const float labelWidth)
 	{
 		// -- Init -------------------------------------------------------
@@ -32,9 +45,9 @@ namespace LevEngine
 		bool changed = false;
 
 		// -- X Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Button, redDark);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redRegular);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, redLight);
 		ImGui::PushFont(boldFont);
 
 		if (ImGui::Button("X", buttonSize))
@@ -52,9 +65,9 @@ namespace LevEngine
 		ImGui::SameLine();
 
 		// -- Y Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 0.3f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Button, greenDark);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, greenRegular);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, greenLight);
 		ImGui::PushFont(boldFont);
 
 		if (ImGui::Button("Y", buttonSize))
@@ -72,9 +85,9 @@ namespace LevEngine
 		ImGui::SameLine();
 
 		// -- Z Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.35f, 0.9f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Button, blueDark);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, blueRegular);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, blueLight);
 		ImGui::PushFont(boldFont);
 
 		if (ImGui::Button("Z", buttonSize))
@@ -121,9 +134,9 @@ namespace LevEngine
 		bool changed = false;
 
 		// -- X Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Button, redDark);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redRegular);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, redLight);
 		ImGui::PushFont(boldFont);
 
 		if (ImGui::Button("X", buttonSize))
@@ -141,9 +154,9 @@ namespace LevEngine
 		ImGui::SameLine();
 
 		// -- Y Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 0.3f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Button, greenDark);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, greenRegular);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, greenLight);
 		ImGui::PushFont(boldFont);
 
 		if (ImGui::Button("Y", buttonSize))
