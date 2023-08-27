@@ -11,8 +11,8 @@ namespace LevEngine
 		static constexpr const char* AssetPayload = "ASSETS_BROWSER_ITEM";
 		static constexpr const char* EntityPayload = "ENTITY";
 
-		static bool DrawVector3Control(const std::string& label, Vector3& values, float resetValue = 0.0f, float columnWidth = 100.0f);
-		static bool DrawVector2Control(const std::string& label, Vector2& values, float resetValue = 0.0f, float columnWidth = 100.0f);
+		static bool DrawVector3Control(const std::string& label, Vector3& values, float resetValue = 0.0f, float labelWidth = 100.0f);
+		static bool DrawVector2Control(const std::string& label, Vector2& values, float resetValue = 0.0f, float labelWidth = 100.0f);
 		static void DrawFloatControl(const std::string& label, float& value, float speed = 1, float min = 0, float max = 0);
 		static void DrawFloatControl(const std::string& label, const std::function<float()>& getter, const std::function<void(float)>& setter,
 			float speed = 1, float min = 0, float max = 0);

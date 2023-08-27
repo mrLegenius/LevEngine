@@ -83,43 +83,96 @@ namespace LevEngine
 #define IntToFloat(x) ((x) / 255.0f)
 	void ImGuiLayer::SetDarkThemeColors()
 	{
-		constexpr auto DarkBlue = ImVec4{ IntToFloat(21), IntToFloat(24), IntToFloat(31), 1.0f };
-		constexpr auto Blue = ImVec4{ IntToFloat(39), IntToFloat(46), IntToFloat(54), 1.0f };
-		constexpr auto Cyan = ImVec4{ IntToFloat(67), IntToFloat(217), IntToFloat(232), 1.0f };
+		constexpr auto darkBackground = ImVec4{ IntToFloat(25), IntToFloat(25), IntToFloat(25), 1.0f };
+		constexpr auto lightBackground = ImVec4{ IntToFloat(40), IntToFloat(40), IntToFloat(40), 1.0f };
 
-		constexpr auto DarkOrange = ImVec4{ IntToFloat(207), IntToFloat(56), IntToFloat(25), 1.0f };
-		constexpr auto LightOrange = ImVec4{ IntToFloat(235), IntToFloat(93), IntToFloat(19), 1.0f };
-		constexpr auto WhiteOrange = ImVec4{ IntToFloat(231), IntToFloat(116), IntToFloat(62), 1.0f };
+		constexpr auto elementDark = ImVec4{ IntToFloat(77), IntToFloat(51), IntToFloat(11), 1.0f };
+		constexpr auto elementRegular = ImVec4{ IntToFloat(140), IntToFloat(94), IntToFloat(20), 1.0f };
+		constexpr auto elementLight = ImVec4{ IntToFloat(204), IntToFloat(137), IntToFloat(29), 1.0f };
+		constexpr auto white = ImVec4{ IntToFloat(255), IntToFloat(255), IntToFloat(255), 1.0f };
+		constexpr auto gray = ImVec4{ IntToFloat(128), IntToFloat(128), IntToFloat(128), 1.0f };
 
 		auto& colors = ImGui::GetStyle().Colors;
-		colors[ImGuiCol_WindowBg] = DarkBlue;
+		colors[ImGuiCol_WindowBg] = lightBackground;
+		colors[ImGuiCol_ChildBg] = lightBackground;
+		colors[ImGuiCol_PopupBg] = lightBackground;
 
-		// Headers
-		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
-		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_Border] = darkBackground;
+		colors[ImGuiCol_BorderShadow] = darkBackground;
 
-		// Buttons
-		colors[ImGuiCol_Button] = LightOrange;
-		colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
-		colors[ImGuiCol_ButtonActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_MenuBarBg] = darkBackground;
 
-		// Frame BG
-		colors[ImGuiCol_FrameBg] = Blue;
-		colors[ImGuiCol_FrameBgHovered] = WhiteOrange;
-		colors[ImGuiCol_FrameBgActive] = DarkOrange;
-
-		// Tabs
-		colors[ImGuiCol_Tab] = LightOrange;
-		colors[ImGuiCol_TabHovered] = LightOrange;
-		colors[ImGuiCol_TabActive] = WhiteOrange;
-		colors[ImGuiCol_TabUnfocused] = DarkOrange;
-		colors[ImGuiCol_TabUnfocusedActive] = DarkOrange;
+		// Resize grip in lower-right and lower-left corners of windows.
+		colors[ImGuiCol_ResizeGrip] = elementDark;
+		colors[ImGuiCol_ResizeGripHovered] = elementRegular;
+		colors[ImGuiCol_ResizeGripActive] = elementLight;
 
 		// Title
-		colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_TitleBg] = darkBackground;
+		colors[ImGuiCol_TitleBgActive] = darkBackground;
+		colors[ImGuiCol_TitleBgCollapsed] = darkBackground;
+
+		//Scrollbar
+		colors[ImGuiCol_ScrollbarBg] = darkBackground;
+		colors[ImGuiCol_ScrollbarGrab] = elementDark;
+		colors[ImGuiCol_ScrollbarGrabHovered] = elementRegular;
+		colors[ImGuiCol_ScrollbarGrabActive] = elementLight;
+
+		// Header colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
+		colors[ImGuiCol_Header] = elementRegular;
+		colors[ImGuiCol_HeaderHovered] = elementLight;
+		colors[ImGuiCol_HeaderActive] = elementLight;
+
+		// Buttons
+		colors[ImGuiCol_Button] = elementDark;
+		colors[ImGuiCol_ButtonHovered] = elementRegular;
+		colors[ImGuiCol_ButtonActive] = elementLight;
+
+		// Background of checkbox, radio button, plot, slider, text input
+		colors[ImGuiCol_FrameBg] = darkBackground;
+		colors[ImGuiCol_FrameBgHovered] = elementDark;
+		colors[ImGuiCol_FrameBgActive] = elementRegular;
+
+		colors[ImGuiCol_CheckMark] = white;
+		colors[ImGuiCol_SliderGrab] = elementRegular;
+		colors[ImGuiCol_SliderGrabActive] = elementLight;
+
+		//Separator
+		colors[ImGuiCol_Separator] = elementDark;
+		colors[ImGuiCol_SeparatorHovered] = elementRegular;
+		colors[ImGuiCol_SeparatorActive] = elementLight;
+
+		// Tabs
+		colors[ImGuiCol_Tab] = elementDark;
+		colors[ImGuiCol_TabHovered] = elementRegular;
+		colors[ImGuiCol_TabActive] = elementLight;
+		colors[ImGuiCol_TabUnfocused] = elementDark;
+		colors[ImGuiCol_TabUnfocusedActive] = elementRegular;
+
+		//Docking
+		colors[ImGuiCol_DockingPreview] = elementDark;
+		colors[ImGuiCol_DockingEmptyBg] = darkBackground;
+
+		//Plots
+		colors[ImGuiCol_PlotLines] = elementDark;
+		colors[ImGuiCol_PlotLinesHovered] = elementRegular;
+		colors[ImGuiCol_PlotHistogram] = elementDark;
+		colors[ImGuiCol_PlotHistogramHovered] = elementRegular;
+
+		//Tables
+		colors[ImGuiCol_TableHeaderBg] = darkBackground;
+		colors[ImGuiCol_TableBorderStrong] = elementRegular;
+		colors[ImGuiCol_TableBorderLight] = elementLight;
+		colors[ImGuiCol_TableRowBg] = elementDark;
+		colors[ImGuiCol_TableRowBgAlt] = elementDark;
+
+		//Drag Drop Target
+		colors[ImGuiCol_DragDropTarget] = elementLight;
+
+		//Text
+		colors[ImGuiCol_Text] = white;
+		colors[ImGuiCol_TextDisabled] = gray;
+		colors[ImGuiCol_TextSelectedBg] = elementDark;
 	}
 
 	void ImGuiLayer::Begin()

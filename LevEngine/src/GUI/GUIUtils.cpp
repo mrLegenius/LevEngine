@@ -9,7 +9,7 @@
 
 namespace LevEngine
 {
-	bool GUIUtils::DrawVector3Control(const std::string& label, Vector3& values, const float resetValue, const float columnWidth)
+	bool GUIUtils::DrawVector3Control(const std::string& label, Vector3& values, const float resetValue, const float labelWidth)
 	{
 		// -- Init -------------------------------------------------------
 		const ImGuiIO& io = ImGui::GetIO();
@@ -17,8 +17,8 @@ namespace LevEngine
 
 		ImGui::PushID(label.c_str());
 
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Columns(2, nullptr, false);
+		ImGui::SetColumnWidth(0, labelWidth);
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
@@ -88,9 +88,9 @@ namespace LevEngine
 
 		ImGui::SameLine();
 		changed |= ImGui::DragFloat("##Z", &values.z, 0.1f);
-		ImGui::PopItemWidth();
 
 		// -- Reset ------------------------------------------------------
+		ImGui::PopItemWidth();
 		ImGui::PopStyleVar();
 		ImGui::Columns();
 		ImGui::PopID();
@@ -98,7 +98,7 @@ namespace LevEngine
 		return changed;
 	}
 
-	bool GUIUtils::DrawVector2Control(const std::string& label, Vector2& values, const float resetValue, const float columnWidth)
+	bool GUIUtils::DrawVector2Control(const std::string& label, Vector2& values, const float resetValue, const float labelWidth)
 	{
 		// -- Init -------------------------------------------------------
 		const ImGuiIO& io = ImGui::GetIO();
@@ -106,8 +106,8 @@ namespace LevEngine
 
 		ImGui::PushID(label.c_str());
 
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Columns(2, nullptr, false);
+		ImGui::SetColumnWidth(0, labelWidth);
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
@@ -157,9 +157,9 @@ namespace LevEngine
 
 		ImGui::SameLine();
 		changed |= ImGui::DragFloat("##Y", &values.y, 0.1f);
-		ImGui::PopItemWidth();
 
 		// -- Reset ------------------------------------------------------
+		ImGui::PopItemWidth();
 		ImGui::PopStyleVar();
 		ImGui::Columns();
 		ImGui::PopID();
