@@ -35,13 +35,11 @@ namespace LevEngine::Editor
 
         ImGui::PushItemWidth(-300);
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 400);
-        //ImGui::SameLine();
         ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 128);
         ImGui::PopItemWidth();
 
         ImGui::PushItemWidth(-100);
-        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 150);
-        //ImGui::SameLine();
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 175);
         ImGui::SliderFloat("Padding", &padding, 0, 32);
         ImGui::PopItemWidth();
 
@@ -90,6 +88,7 @@ namespace LevEngine::Editor
                 ImGui::EndDragDropSource();
             }
 
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 5 });
             if (ImGui::BeginPopupContextItem())
             {
                 if (ImGui::MenuItem("Delete"))
@@ -100,6 +99,7 @@ namespace LevEngine::Editor
 
                 ImGui::EndPopup();
             }
+            ImGui::PopStyleVar();
 
             if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
             {
@@ -111,7 +111,7 @@ namespace LevEngine::Editor
                         Selection::Deselect();
                 }
             }
-
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 5 });
             if (ImGui::BeginPopupContextWindow("Create Asset", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
             {
                 if (ImGui::BeginMenu("Create"))
@@ -124,6 +124,7 @@ namespace LevEngine::Editor
 
                 ImGui::EndPopup();
             }
+            ImGui::PopStyleVar();
 
             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
             {

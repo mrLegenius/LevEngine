@@ -47,7 +47,19 @@ namespace LevEngine
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
+
+		//Spacing
+		style.ItemSpacing = ImVec2{ 10.0f, 5.0f };
+		style.ItemInnerSpacing = ImVec2{ 5.0f, 5.0f };
+		style.FramePadding = ImVec2{ 5.0f, 2.0f };
+
+		//Rounding
 		style.FrameRounding = 10;
+		style.GrabRounding = 10;
+		style.TabRounding = 10;
+		style.PopupRounding = 10;
+		style.ChildRounding = 10;
+		style.ScrollbarRounding = 10;
 
 		SetDarkThemeColors();
 
