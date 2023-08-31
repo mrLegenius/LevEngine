@@ -1,7 +1,8 @@
 #pragma once
+#include "ConstantBuffer.h"
 #include "RenderPass.h"
 #include "PipelineState.h"
-#include "3D/SkyboxMesh.h"
+#include "3D/Mesh.h"
 
 namespace LevEngine
 {
@@ -14,7 +15,7 @@ public:
 private:
 
 	Ref<PipelineState> m_SkyboxPipeline;
-	Ref<SkyboxMesh> m_SkyboxMesh;
+	Ref<Mesh> m_SkyboxMesh;
 	Ref<ConstantBuffer> m_CameraConstantBuffer;
 };
 }

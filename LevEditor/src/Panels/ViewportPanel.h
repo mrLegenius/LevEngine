@@ -1,6 +1,5 @@
 #pragma once
 #include "Panel.h"
-#include "imguizmo/ImGuizmo.h"
 #include "EditorCamera.h"
 #include "Gizmo.h"
 

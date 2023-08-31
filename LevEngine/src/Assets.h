@@ -146,12 +146,6 @@ namespace ShaderAssets
         if (shader) return shader;
 
         shader = Shader::Create(GetShaderPath("Lit.hlsl"));
-        shader->SetLayout({
-        { ShaderDataType::Float3, "POSITION" },
-        { ShaderDataType::Float3, "NORMAL" },
-        { ShaderDataType::Float2, "UV" },
-            });
-
         return shader;
     }
 
@@ -163,11 +157,6 @@ namespace ShaderAssets
         if (shader) return shader;
 
         shader = Shader::Create(GetShaderPath("Unlit.hlsl"));
-        shader->SetLayout({
-        { ShaderDataType::Float3, "POSITION" },
-		{ ShaderDataType::Float3, "NORMAL" },
-		{ ShaderDataType::Float2, "UV" },
-        });
 
         return shader;
 	}
@@ -180,7 +169,6 @@ namespace ShaderAssets
 	    if (shader) return shader;
 
 	    shader = Shader::Create(GetShaderPath("Skybox.hlsl"));
-        shader->SetLayout({{ ShaderDataType::Float3, "POSITION" }});
 
         return shader;
     }
@@ -193,11 +181,6 @@ namespace ShaderAssets
         if (shader) return shader;
 
         shader = Shader::Create(GetShaderPath("ShadowPass.hlsl"));
-        shader->SetLayout({
-        { ShaderDataType::Float3, "POSITION" },
-        { ShaderDataType::Float3, "NORMAL" },
-        { ShaderDataType::Float2, "UV" },
-        });
 
         return shader;
     }
@@ -210,11 +193,6 @@ namespace ShaderAssets
         if (shader) return shader;
 
         shader = Shader::Create(GetShaderPath("CascadeShadowPass.hlsl"), Shader::Type::Vertex | Shader::Type::Geometry);
-        shader->SetLayout({
-        { ShaderDataType::Float3, "POSITION" },
-        { ShaderDataType::Float3, "NORMAL" },
-        { ShaderDataType::Float2, "UV" },
-            });
 
         return shader;
     }
@@ -227,11 +205,6 @@ namespace ShaderAssets
 		if (shader) return shader;
 
 		shader = Shader::Create(GetShaderPath("GBufferPass.hlsl"));
-		shader->SetLayout({
-		{ ShaderDataType::Float3, "POSITION" },
-		{ ShaderDataType::Float3, "NORMAL" },
-		{ ShaderDataType::Float2, "UV" },
-			});
 
 		return shader;
 	}
@@ -244,12 +217,6 @@ namespace ShaderAssets
 		if (shader) return shader;
 
 		shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"), Shader::Type::Vertex);
-		shader->SetLayout({
-		{ ShaderDataType::Float3, "POSITION" },
-		{ ShaderDataType::Float3, "NORMAL" },
-		{ ShaderDataType::Float2, "UV" },
-			});
-
 		return shader;
 	}
 
@@ -261,11 +228,6 @@ namespace ShaderAssets
 		if (shader) return shader;
 
 		shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"));
-		shader->SetLayout({
-		{ ShaderDataType::Float3, "POSITION" },
-		{ ShaderDataType::Float3, "NORMAL" },
-		{ ShaderDataType::Float2, "UV" },
-			});
 
 		return shader;
 	}
@@ -278,11 +240,6 @@ namespace ShaderAssets
 		if (shader) return shader;
 
 		shader = Shader::Create(GetShaderPath("ForwardQuadRender.hlsl"));
-		shader->SetLayout({
-		{ ShaderDataType::Float3, "POSITION" },
-		{ ShaderDataType::Float3, "NORMAL" },
-		{ ShaderDataType::Float2, "UV" },
-			});
 
 		return shader;
 	}

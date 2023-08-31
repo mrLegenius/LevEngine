@@ -6,7 +6,7 @@ struct VS_IN
 {
 	float3 pos : POSITION;
 	float3 normal : NORMAL;
-	float2 uv : UV;
+    float2 uv : TEXCOORD;
 };
 
 struct PS_IN

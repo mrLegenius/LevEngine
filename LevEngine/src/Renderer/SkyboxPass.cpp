@@ -16,7 +16,7 @@ struct alignas(16) CameraData
 
 SkyboxPass::SkyboxPass(const Ref<PipelineState>& pipeline) : m_SkyboxPipeline(pipeline)
 {
-	m_SkyboxMesh = CreateRef<SkyboxMesh>(ShaderAssets::Skybox());
+	m_SkyboxMesh = Mesh::CreateCube();
 	m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
 }
 
@@ -25,7 +25,8 @@ void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 	const auto group = registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
 	for (const auto entity : group)
 	{
-		auto [transform, skybox] = group.get<Transform, SkyboxRendererComponent>(entity);
+		Transform transform = group.get<Transform>(entity);
+		SkyboxRendererComponent skybox = group.get<SkyboxRendererComponent>(entity);
 
 		if (!skybox.skybox) continue;
 
@@ -41,7 +42,9 @@ void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 		m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
 		m_CameraConstantBuffer->Bind(Shader::Type::Vertex);
 
-		RenderCommand::DrawIndexed(m_SkyboxMesh->VertexBuffer, m_SkyboxMesh->IndexBuffer);
+		m_SkyboxMesh->Bind(m_SkyboxPipeline->GetShader(Shader::Type::Vertex));
+
+		RenderCommand::DrawIndexed(m_SkyboxMesh->IndexBuffer);
 
 		texture->Unbind(0, Shader::Type::Pixel);
 		m_SkyboxPipeline->Unbind();

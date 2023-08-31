@@ -110,7 +110,7 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
     {
         auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
         if (mesh.castShadow)
-            Renderer3D::DrawMesh(transform.GetModel(), mesh);
+            Renderer3D::DrawMesh(transform.GetModel(), mesh, ShaderAssets::CascadeShadowPass());
     }
 }
 

@@ -8,7 +8,7 @@ namespace LevEngine
 extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
-D3D11VertexBuffer::D3D11VertexBuffer(const uint32_t size) : VertexBuffer(size)
+D3D11VertexBuffer::D3D11VertexBuffer(const uint32_t count, const uint32_t stride) : VertexBuffer(count, stride)
 {
 	D3D11_BUFFER_DESC vertexBufDesc;
 
@@ -17,14 +17,14 @@ D3D11VertexBuffer::D3D11VertexBuffer(const uint32_t size) : VertexBuffer(size)
 	vertexBufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vertexBufDesc.MiscFlags = 0;
 	vertexBufDesc.StructureByteStride = 0;
-	vertexBufDesc.ByteWidth = size;
+	vertexBufDesc.ByteWidth = count * stride;
 
 	const auto res = device->CreateBuffer(&vertexBufDesc, nullptr, &m_Buffer);
 
 	LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create Vertex Buffer")
 }
 
-D3D11VertexBuffer::D3D11VertexBuffer(const float* vertices, const uint32_t size) : VertexBuffer(size)
+D3D11VertexBuffer::D3D11VertexBuffer(const float* data, const uint32_t count, const uint32_t stride) : VertexBuffer(count, stride)
 {
 	D3D11_BUFFER_DESC vertexBufDesc = {};
 	vertexBufDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -32,10 +32,10 @@ D3D11VertexBuffer::D3D11VertexBuffer(const float* vertices, const uint32_t size)
 	vertexBufDesc.CPUAccessFlags = 0;
 	vertexBufDesc.MiscFlags = 0;
 	vertexBufDesc.StructureByteStride = 0;
-	vertexBufDesc.ByteWidth = size;
+	vertexBufDesc.ByteWidth = count * stride;
 
 	D3D11_SUBRESOURCE_DATA vertexData = {};
-	vertexData.pSysMem = vertices;
+	vertexData.pSysMem = data;
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
@@ -50,12 +50,12 @@ D3D11VertexBuffer::~D3D11VertexBuffer()
 		m_Buffer->Release();
 }
 
-void D3D11VertexBuffer::Bind() const
+void D3D11VertexBuffer::Bind(const uint32_t slot) const
 {
-	const UINT strides[] = { m_Layout.GetStride() };
-	constexpr UINT offsets[] = { 0 };
+	const uint32_t strides[] = { m_Stride };
+	constexpr uint32_t offsets[] = { 0 };
 
-	context->IASetVertexBuffers(0, 1, &m_Buffer, strides, offsets);
+	context->IASetVertexBuffers(slot, 1, &m_Buffer, strides, offsets);
 }
 
 void D3D11VertexBuffer::Unbind() const

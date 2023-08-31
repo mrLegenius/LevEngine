@@ -5,7 +5,7 @@ namespace LevEngine
 {
 std::shared_ptr<Mesh> Mesh::CreatePlane(const int resolution)
 {
-	auto mesh = std::make_shared<Mesh>("Plane");
+	auto mesh = std::make_shared<Mesh>();
 
 	const float size = 1.f / (resolution - 1);
 
@@ -37,12 +37,14 @@ std::shared_ptr<Mesh> Mesh::CreatePlane(const int resolution)
 		}
 	}
 
+	mesh->Init();
+
 	return mesh;
 }
 
 std::shared_ptr<Mesh> Mesh::CreateCube()
 {
-	auto mesh = std::make_shared<Mesh>("Cube");
+	auto mesh = std::make_shared<Mesh>();
 
 	constexpr float side = 0.5f;
 
@@ -163,6 +165,8 @@ std::shared_ptr<Mesh> Mesh::CreateCube()
 	mesh->AddTriangle(Vector3(20, 21, 22));
 	mesh->AddTriangle(Vector3(20, 22, 23));
 
+	mesh->Init();
+
 	return mesh;
 }
 
@@ -174,7 +178,7 @@ std::shared_ptr<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 	const auto phiStep = DirectX::XM_PI / stackCount;
 	const auto thetaStep = DirectX::XM_2PI / sliceCount;
 
-	auto mesh = std::make_shared<Mesh>("Sphere");
+	auto mesh = std::make_shared<Mesh>();
 
 	mesh->vertices.emplace_back(Vector3(0, 1, 0));
 	mesh->normals.emplace_back(Vector3(0, 1, 0));
@@ -238,6 +242,8 @@ std::shared_ptr<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 		mesh->AddTriangle(triangle);
 	}
 
+	mesh->Init();
+
 	return mesh;
 }
 
@@ -252,25 +258,5 @@ Ref<IndexBuffer> Mesh::CreateIndexBuffer() const
 	delete[] indices;
 
 	return indexBuffer;
-}
-
-Ref<VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout) const
-{
-	const auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
-	auto vertexBuffer = VertexBuffer::Create(vertexBufferSize);
-
-	vertexBuffer->SetLayout(bufferLayout);
-
-	return vertexBuffer;
-}
-
-std::shared_ptr<VertexBuffer> Mesh::CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const
-{
-	const auto vertexBufferSize = GetVerticesCount() * bufferLayout.GetStride();
-	auto vertexBuffer = VertexBuffer::Create(data, vertexBufferSize);
-
-	vertexBuffer->SetLayout(bufferLayout);
-
-	return vertexBuffer;
 }
 }

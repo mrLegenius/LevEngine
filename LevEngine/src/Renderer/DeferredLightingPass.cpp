@@ -34,11 +34,11 @@ namespace LevEngine
 			m_LightIndexBuffer->Bind(Shader::Type::Pixel);
 
 			m_Pipeline1->Bind();
-			Renderer3D::RenderSphere(model);
+			Renderer3D::RenderSphere(model, m_Pipeline1->GetShader(Shader::Type::Vertex));
 			m_Pipeline1->Unbind();
 
 			m_Pipeline2->Bind();
-			Renderer3D::RenderSphere(model);
+			Renderer3D::RenderSphere(model, m_Pipeline2->GetShader(Shader::Type::Vertex));
 			m_Pipeline2->Unbind();
 
 			m_LightParams.LightIndex++;

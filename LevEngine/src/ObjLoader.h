@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -35,7 +36,7 @@ public:
 			return nullptr;
 		}
 
-		auto mesh = std::make_shared<Mesh>(path);
+		auto mesh = std::make_shared<Mesh>();
 
 		int verticesCount = 0;
 
@@ -159,6 +160,8 @@ public:
 
 		for (uint32_t index : indices)
 			mesh->AddIndex(index);
+
+		mesh->Init();
 
 		return mesh;
 	}

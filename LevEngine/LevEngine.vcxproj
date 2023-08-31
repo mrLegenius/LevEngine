@@ -271,10 +271,9 @@
     <ClInclude Include="src\Platform\D3D11\D3D11VertexBuffer.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
-    <ClInclude Include="src\Renderer\3D\SkyboxMesh.h" />
     <ClInclude Include="src\Renderer\BitonicSort.h" />
     <ClInclude Include="src\Renderer\BlendState.h" />
-    <ClInclude Include="src\Renderer\Buffer.h" />
+    <ClInclude Include="src\Renderer\BufferBinding.h" />
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="src\Renderer\CascadeShadowMap.h" />
     <ClInclude Include="src\Renderer\ClearFlags.h" />

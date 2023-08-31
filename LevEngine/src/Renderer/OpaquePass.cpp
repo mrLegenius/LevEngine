@@ -36,20 +36,17 @@ namespace LevEngine
         const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
         for (const auto entity : view)
         {
-            auto [transform, meshRenderer] = view.get<Transform, MeshRendererComponent>(entity);
+            Transform transform = view.get<Transform>(entity);
+            MeshRendererComponent meshRenderer = view.get<MeshRendererComponent>(entity);
 
             if (!meshRenderer.mesh) continue;
 
-            auto mesh = meshRenderer.mesh->GetMesh();
+            const auto mesh = meshRenderer.mesh->GetMesh();
             if (!mesh) continue;
-
-            if (!mesh->VertexBuffer)
-                mesh->Init(shader->GetLayout());
-
             if (!meshRenderer.material) continue;
 
             meshRenderer.material->material.Bind(shader);
-            Renderer3D::DrawMesh(transform.GetModel(), meshRenderer);
+            Renderer3D::DrawMesh(transform.GetModel(), meshRenderer, shader);
             meshRenderer.material->material.Unbind(shader);
         }
     }

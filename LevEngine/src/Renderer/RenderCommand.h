@@ -7,10 +7,9 @@ class RenderCommand
 {
 public:
 	static void DrawIndexed(
-		const Ref<VertexBuffer>& vertexBuffer,
 		const Ref<IndexBuffer>& indexBuffer)
 	{
-		s_RendererAPI->DrawIndexed(vertexBuffer, indexBuffer);
+		s_RendererAPI->DrawIndexed(indexBuffer);
 	}
 
 	static void DrawFullScreenQuad()

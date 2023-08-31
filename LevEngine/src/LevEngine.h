@@ -65,7 +65,6 @@
 #include "Renderer/RenderCommand.h"
 
 #include "Renderer/BlendState.h"
-#include "Renderer/Buffer.h"
 #include "Renderer/CascadeShadowMap.h"
 #include "Renderer/ClearFlags.h"
 #include "Renderer/ConstantBuffer.h"
@@ -91,7 +90,6 @@
 #include "Renderer/Camera/SceneCamera.h"
 
 #include "Renderer/3D/Mesh.h"
-#include "Renderer/3D/SkyboxMesh.h"
 
 // /////////////////////////////////////////////////////////
 // -- Components -------------------------------------------

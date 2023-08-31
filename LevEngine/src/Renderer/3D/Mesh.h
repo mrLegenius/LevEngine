@@ -1,9 +1,11 @@
 #pragma once
-#include <filesystem>
+#include <map>
 
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
+#include "Renderer/BufferBinding.h"
 #include "Renderer/IndexBuffer.h"
+#include "Renderer/Shader.h"
 #include "Renderer/VertexBuffer.h"
 
 namespace LevEngine
@@ -18,19 +20,13 @@ class Mesh
 	};
 
 public:
-	Mesh() : Mesh("Default Mesh Name") { }
-	explicit Mesh(std::filesystem::path path) : m_Name(path.stem().string()), m_Path(std::move(path)) { }
+	Mesh() = default;
 
 	static std::shared_ptr<Mesh> CreatePlane(int resolution);
 	static std::shared_ptr<Mesh> CreateSphere(uint32_t sliceCount);
 	static std::shared_ptr<Mesh> CreateCube();
 
 	std::shared_ptr<IndexBuffer> CreateIndexBuffer() const;
-
-	[[nodiscard]] std::shared_ptr<VertexBuffer> CreateVertexBuffer(const BufferLayout&) const;
-	std::shared_ptr<VertexBuffer> CreateVertexBuffer(const BufferLayout& bufferLayout, float* data) const;
-
-	[[nodiscard]] const std::string& GetName() const { return m_Name; }
 
 	void Clear()
 	{
@@ -60,36 +56,60 @@ public:
 
 	[[nodiscard]] Vector3 GetNormal(const uint32_t index) const { return normals[index]; }
 	void AddNormal(const Vector3& value) { normals.emplace_back(value); }
-	void Init(const BufferLayout& layout)
+	void AddVertexBuffer(const BufferBinding& binding, const Ref<VertexBuffer>& buffer)
+	{
+		m_VertexBuffers[binding] = buffer;
+	}
+
+	[[nodiscard]] const std::map<BufferBinding, Ref<VertexBuffer>>& GetVertexBuffers() const
+	{
+		return m_VertexBuffers;
+	}
+
+	void Init()
 	{
 		IndexBuffer = CreateIndexBuffer();
 
-		const auto verticesCount = GetVerticesCount();
-		const auto meshVertexBuffer = new MeshVertex[verticesCount];
-
-		for (uint32_t i = 0; i < verticesCount; i++)
+		if (vertices.size())
 		{
-			meshVertexBuffer[i].Position = GetVertex(i);
-			meshVertexBuffer[i].Normal = GetNormal(i);
-			meshVertexBuffer[i].UV = GetUV(i);
+			const auto buffer = VertexBuffer::Create(&vertices[0].x, vertices.size(), sizeof Vector3);
+			AddVertexBuffer(BufferBinding("POSITION", 0), buffer);
 		}
 
-		VertexBuffer = CreateVertexBuffer(layout, reinterpret_cast<float*>(meshVertexBuffer));
+		if (normals.size())
+		{
+			const auto buffer = VertexBuffer::Create(&normals[0].x, normals.size(), sizeof Vector3);
+			AddVertexBuffer(BufferBinding("NORMAL", 0), buffer);
+		}
 
-		delete[] meshVertexBuffer;
+		if (uvs.size())
+		{
+			const auto buffer = VertexBuffer::Create(&uvs[0].x, uvs.size(), sizeof Vector2);
+			AddVertexBuffer(BufferBinding("TEXCOORD", 0), buffer);
+		}
 	}
 
-	[[nodiscard]] const std::filesystem::path& GetPath() const { return m_Path; }
+	void Bind(const Ref<Shader>& shader) const
+	{
+		for (auto [binding, buffer] : m_VertexBuffers)
+		{
+			if (shader->HasSemantic(binding))
+			{
+				const uint32_t slotId = shader->GetSlotIdBySemantic(binding);
+				// Bind the vertex buffer to a particular slot ID.
+				buffer->Bind(slotId);
+			}
+		}
+	}
 
 	Ref<IndexBuffer> IndexBuffer;
-	Ref<VertexBuffer> VertexBuffer;
 
 private:
+	std::map<BufferBinding, Ref<VertexBuffer>> m_VertexBuffers;
+
 	std::vector<Vector3> vertices;
 	std::vector<Vector2> uvs;
 	std::vector<uint32_t> indices;
 	std::vector<Vector3> normals;
-	std::string m_Name;
-	std::filesystem::path m_Path;
 };
 }

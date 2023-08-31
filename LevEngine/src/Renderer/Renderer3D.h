@@ -44,12 +44,12 @@ public:
 
 	static void SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 
-	static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer);
+	static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader);
 
 	static void SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight);
 	static void AddPointLights(const Vector4& positionViewSpace, const Vector3& position, const PointLightComponent& pointLight);
 	static void UpdateLights();
-	static void RenderSphere(const Matrix& model);
+	static void RenderSphere(const Matrix& model, const Ref<Shader>& shader);
 
 private:
 	static Ref<ConstantBuffer> m_ModelConstantBuffer;

@@ -17,26 +17,7 @@ bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath);
 bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath);
 bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepath);
 
-static DXGI_FORMAT ParseShaderDataTypeToD3D11DataType(const ShaderDataType type)
-{
-	switch (type) {
-	case ShaderDataType::None: return DXGI_FORMAT_UNKNOWN;
-	case ShaderDataType::Float: return DXGI_FORMAT_R32_FLOAT;
-	case ShaderDataType::Float2: return DXGI_FORMAT_R32G32_FLOAT;
-	case ShaderDataType::Float3: return DXGI_FORMAT_R32G32B32_FLOAT;
-	case ShaderDataType::Float4:
-	case ShaderDataType::Mat3:
-	case ShaderDataType::Mat4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
-	case ShaderDataType::Int: return DXGI_FORMAT_R32_SINT;
-	case ShaderDataType::Int2: return DXGI_FORMAT_R32G32_SINT;
-	case ShaderDataType::Int3: return DXGI_FORMAT_R32G32B32_SINT;
-	case ShaderDataType::Int4: return DXGI_FORMAT_R32G32B32A32_SINT;
-	case ShaderDataType::Bool: return DXGI_FORMAT_R8_UINT;
-	default:
-		LEV_THROW("Unknown ShaderDataType")
-		break;
-	}
-}
+DXGI_FORMAT GetDXGIFormat(const D3D11_SIGNATURE_PARAMETER_DESC& paramDesc);
 
 D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, Type::Vertex | Type::Pixel) { }
 D3D11Shader::D3D11Shader(const std::string& filepath, const Type shaderTypes) : Shader(filepath)
@@ -54,6 +35,7 @@ D3D11Shader::D3D11Shader(const std::string& filepath, const Type shaderTypes) : 
 	{
 		auto result = CreateVertexShader(m_VertexShader, m_VertexBC, filepath);
 		LEV_CORE_ASSERT(result, "Can't create vertex shader")
+		CreateInputLayout();
 	}
 
 	if (shaderTypes & Type::Pixel)
@@ -234,33 +216,158 @@ bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepa
 	return true;
 }
 
-void D3D11Shader::SetLayout(const BufferLayout& layout)
+void D3D11Shader::CreateInputLayout()
 {
-	LEV_PROFILE_FUNCTION();
+	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> pReflector;
+	auto result = D3DReflect(m_VertexBC->GetBufferPointer(), m_VertexBC->GetBufferSize(), IID_ID3D11ShaderReflection, &pReflector);
+	LEV_ASSERT(SUCCEEDED(result), "Failed to get shader reflection")
 
-	m_Layout = layout;
-	const auto& elements = layout.GetElements();
-	auto* input = new D3D11_INPUT_ELEMENT_DESC[elements.size()];
+	// Query input parameters and build the input layout
+	D3D11_SHADER_DESC shaderDescription;
+	result = pReflector->GetDesc(&shaderDescription);
+	LEV_ASSERT(SUCCEEDED(result), "Failed to get shader description from shader reflector")
 
-	for (uint32_t i = 0; i < elements.size(); i++)
+	m_InputSemantics.clear();
+
+	const uint32_t numInputParameters = shaderDescription.InputParameters;
+	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements;
+	for (uint32_t i = 0; i < numInputParameters; ++i)
 	{
-		input[i] = D3D11_INPUT_ELEMENT_DESC{
-			elements[i].name.c_str(),
-			0,
-			ParseShaderDataTypeToD3D11DataType(elements[i].type),
-			0,
-			i == 0 ? 0 : D3D11_APPEND_ALIGNED_ELEMENT,
-			D3D11_INPUT_PER_VERTEX_DATA,
-			0 };
+		D3D11_INPUT_ELEMENT_DESC inputElement;
+		D3D11_SIGNATURE_PARAMETER_DESC parameterSignature;
+
+		pReflector->GetInputParameterDesc(i, &parameterSignature);
+
+		inputElement.SemanticName = parameterSignature.SemanticName;
+		inputElement.SemanticIndex = parameterSignature.SemanticIndex;
+		inputElement.InputSlot = i; // TODO: If using interleaved arrays, then the input slot should be 0.  If using packed arrays, the input slot will vary.
+		inputElement.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+		inputElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA; // TODO: Figure out how to deal with per-instance data? .. Maybe just use structured buffers to store per-instance data and use the SV_InstanceID as an index in the structured buffer.
+		inputElement.InstanceDataStepRate = 0;
+		inputElement.Format = GetDXGIFormat(parameterSignature);
+
+		LEV_ASSERT(inputElement.Format != DXGI_FORMAT_UNKNOWN, "Wrong shadet input format");
+
+		inputElements.push_back(inputElement);
+
+		m_InputSemantics.emplace(BufferBinding(inputElement.SemanticName, inputElement.SemanticIndex), i);
 	}
 
-	device->CreateInputLayout(
-		input,
-		elements.size(),
-		m_VertexBC->GetBufferPointer(),
-		m_VertexBC->GetBufferSize(),
-		&m_InputLayout);
+	if (inputElements.size() > 0)
+	{
+		result = device->CreateInputLayout(inputElements.data(), 
+			static_cast<UINT>(inputElements.size()), 
+			m_VertexBC->GetBufferPointer(), 
+			m_VertexBC->GetBufferSize(),
+			&m_InputLayout);
 
-	delete[] input;
+		LEV_ASSERT(SUCCEEDED(result), "Failed to create input layout")
+	}
+}
+
+bool D3D11Shader::HasSemantic(const BufferBinding& binding)
+{
+	const auto it = m_InputSemantics.find(binding);
+	return it != m_InputSemantics.end();
+}
+
+uint32_t D3D11Shader::GetSlotIdBySemantic(const BufferBinding& binding)
+{
+	const auto it = m_InputSemantics.find(binding);
+	if (it != m_InputSemantics.end())
+		return it->second;
+
+	LEV_THROW("Failed to get binding in shader")
+}
+
+DXGI_FORMAT GetDXGIFormat(const D3D11_SIGNATURE_PARAMETER_DESC& paramDesc)
+{
+	DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
+	if (paramDesc.Mask == 1) // 1 component
+	{
+		switch (paramDesc.ComponentType)
+		{
+		case D3D_REGISTER_COMPONENT_UINT32:
+		{
+			format = DXGI_FORMAT_R32_UINT;
+		}
+		break;
+		case D3D_REGISTER_COMPONENT_SINT32:
+		{
+			format = DXGI_FORMAT_R32_SINT;
+		}
+		break;
+		case D3D_REGISTER_COMPONENT_FLOAT32:
+		{
+			format = DXGI_FORMAT_R32_FLOAT;
+		}
+		break;
+		}
+	}
+	else if (paramDesc.Mask <= 3) // 2 components
+	{
+		switch (paramDesc.ComponentType)
+		{
+		case D3D_REGISTER_COMPONENT_UINT32:
+		{
+			format = DXGI_FORMAT_R32G32_UINT;
+		}
+		break;
+		case D3D_REGISTER_COMPONENT_SINT32:
+		{
+			format = DXGI_FORMAT_R32G32_SINT;
+		}
+		break;
+		case D3D_REGISTER_COMPONENT_FLOAT32:
+		{
+			format = DXGI_FORMAT_R32G32_FLOAT;
+		}
+		break;
+		}
+	}
+	else if (paramDesc.Mask <= 7) // 3 components
+	{
+		switch (paramDesc.ComponentType)
+		{
+		case D3D_REGISTER_COMPONENT_UINT32:
+		{
+			format = DXGI_FORMAT_R32G32B32_UINT;
+		}
+		break;
+		case D3D_REGISTER_COMPONENT_SINT32:
+		{
+			format = DXGI_FORMAT_R32G32B32_SINT;
+		}
+		break;
+		case D3D_REGISTER_COMPONENT_FLOAT32:
+		{
+			format = DXGI_FORMAT_R32G32B32_FLOAT;
+		}
+		break;
+		}
+	}
+	else if (paramDesc.Mask <= 15) // 4 components
+	{
+		switch (paramDesc.ComponentType)
+		{
+		case D3D_REGISTER_COMPONENT_UINT32:
+		{
+			format = DXGI_FORMAT_R32G32B32A32_UINT;
+		}
+		break;
+		case D3D_REGISTER_COMPONENT_SINT32:
+		{
+			format = DXGI_FORMAT_R32G32B32A32_SINT;
+		}
+		break;
+		case D3D_REGISTER_COMPONENT_FLOAT32:
+		{
+			format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		}
+		break;
+		}
+	}
+
+	return format;
 }
 }

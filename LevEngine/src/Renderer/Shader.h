@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Buffer.h"
+#include "BufferBinding.h"
 #include "Kernel/PointerUtils.h"
 
 namespace LevEngine
@@ -23,8 +23,8 @@ namespace LevEngine
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		virtual void SetLayout(const BufferLayout& layout) = 0;
-		[[nodiscard]] const BufferLayout& GetLayout() const { return m_Layout; }
+		[[nodiscard]] virtual bool HasSemantic(const BufferBinding& binding) = 0;
+		[[nodiscard]] virtual uint32_t GetSlotIdBySemantic(const BufferBinding& binding) = 0;
 
 		[[nodiscard]] Type GetType() const { return m_Type; }
 
@@ -36,8 +36,6 @@ namespace LevEngine
 		std::string m_Name;
 
 		Type m_Type;
-
-		BufferLayout m_Layout;
 	};
 
 	inline Shader::Type operator|(const Shader::Type a, const Shader::Type b)

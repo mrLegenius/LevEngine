@@ -60,7 +60,7 @@ void Renderer3D::SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMa
     m_ScreenToViewParamsConstantBuffer->Bind(Shader::Type::Pixel);
 }
 
-void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer)
+void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -70,15 +70,13 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
 
     if (!mesh) return;
 
-    //TODO: Fix this mesh layout initialization
-    if (!mesh->VertexBuffer)
-        mesh->Init(ShaderAssets::DeferredVertexOnly()->GetLayout());
+    mesh->Bind(shader);
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
     m_ModelConstantBuffer->Bind(Shader::Type::Vertex);
 
-    RenderCommand::DrawIndexed(mesh->VertexBuffer, mesh->IndexBuffer);
+    RenderCommand::DrawIndexed(mesh->IndexBuffer);
 }
 
 void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)
@@ -120,21 +118,20 @@ void Renderer3D::UpdateLights()
     s_LightningData.PointLightsCount = 0;
 }
 
-void Renderer3D::RenderSphere(const Matrix& model)
+void Renderer3D::RenderSphere(const Matrix& model, const Ref<Shader>& shader)
 {
     LEV_PROFILE_FUNCTION();
 
     static Ref<Mesh> mesh;
     if (mesh == nullptr)
-    {
-        mesh = Mesh::CreateSphere(30);
-        mesh->Init(ShaderAssets::DeferredVertexOnly()->GetLayout());
-    }
+	    mesh = Mesh::CreateSphere(30);
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
     m_ModelConstantBuffer->Bind(Shader::Type::Vertex);
 
-    RenderCommand::DrawIndexed(mesh->VertexBuffer, mesh->IndexBuffer);
+    mesh->Bind(shader);
+
+    RenderCommand::DrawIndexed(mesh->IndexBuffer);
 }
 }

@@ -6,7 +6,7 @@
 
 namespace LevEngine
 {
-	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	Ref<VertexBuffer> VertexBuffer::Create(const uint32_t size, const uint32_t stride)
 	{
 		switch (RenderSettings::RendererAPI)
 		{
@@ -15,14 +15,14 @@ namespace LevEngine
 		case RendererAPI::OpenGL:
 			LEV_NOT_IMPLEMENTED
 		case RendererAPI::D3D11:
-			return CreateRef<D3D11VertexBuffer>(size);
+			return CreateRef<D3D11VertexBuffer>(size, stride);
 		default:
 			LEV_THROW("Unknown Renderer API")
 			break;
 		}
 	}
 
-	Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, uint32_t size)
+	Ref<VertexBuffer> VertexBuffer::Create(const float* vertices, const uint32_t size, const uint32_t stride)
 	{
 		switch (RenderSettings::RendererAPI)
 		{
@@ -31,7 +31,7 @@ namespace LevEngine
 		case RendererAPI::OpenGL:
 			LEV_NOT_IMPLEMENTED
 		case RendererAPI::D3D11:
-			return CreateRef<D3D11VertexBuffer>(vertices, size);
+			return CreateRef<D3D11VertexBuffer>(vertices, size, stride);
 		default:
 			LEV_THROW("Unknown Renderer API")
 			break;

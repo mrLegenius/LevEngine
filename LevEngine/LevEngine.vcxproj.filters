@@ -333,9 +333,6 @@
     <ClInclude Include="src\Renderer\3D\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\3D\SkyboxMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -343,9 +340,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\BlendState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\CascadeShadowMap.h">
@@ -595,6 +589,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Assets\DefaultAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\BufferBinding.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
