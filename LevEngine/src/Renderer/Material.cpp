@@ -1,13 +1,11 @@
 ﻿#include "levpch.h"
 #include "Material.h"
 
-#include "RenderSettings.h"
-
 namespace LevEngine
 {
 Material::Material()
 {
-	m_ConstantBuffer = ConstantBuffer::Create(sizeof GPUData, RenderSettings::MaterialSlot);
+	m_ConstantBuffer = ConstantBuffer::Create(sizeof GPUData);
 }
 
 void Material::Bind(const Ref<Shader>& shader)
@@ -24,7 +22,7 @@ void Material::Bind(const Ref<Shader>& shader)
 			texture->Bind(static_cast<uint32_t>(textureType), shader->GetType());
 	}
 
-	m_ConstantBuffer->Bind(shader->GetType());
+	shader->GetShaderParameterByName("MaterialConstantBuffer").Set(m_ConstantBuffer);
 }
 
 void Material::Unbind(const Ref<Shader>& shader)

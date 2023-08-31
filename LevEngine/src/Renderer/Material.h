@@ -196,6 +196,6 @@ private:
 
 	GPUData m_Data{};
 
-	bool m_IsDirty;
+	bool m_IsDirty{};
 };
 }
