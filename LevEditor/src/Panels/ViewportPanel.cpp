@@ -37,7 +37,7 @@ namespace LevEngine::Editor
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
             {
                 const wchar_t* path = (const wchar_t*)payload->Data;
-                //OpenScene(std::filesystem::path(g_AssetsPath) / path);
+                //OpenScene(std::filesystem::path(AssetDatabase::AssetsRoot) / path);
             }
             ImGui::EndDragDropTarget();
         }
@@ -47,8 +47,8 @@ namespace LevEngine::Editor
 
         if (!entitySelection) return;
 
-        Entity selectedEntity = entitySelection->Get();
-        if (selectedEntity && m_GizmoType != -1)
+        const Entity selectedEntity = entitySelection->Get();
+        if (selectedEntity && Gizmo::Tool != Gizmo::ToolType::None)
         {
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
@@ -62,13 +62,13 @@ namespace LevEngine::Editor
             Matrix model = tc.GetModel();
 
             const bool snap = Input::IsKeyDown(KeyCode::LeftControl);
-            const float snapValue = m_GizmoType == ImGuizmo::OPERATION::ROTATE ? 5.0f : 0.5f;
+            const float snapValue = Gizmo::Tool == Gizmo::ToolType::Rotate ? 5.0f : 0.5f;
 
             const float snapValues[3] = { snapValue, snapValue, snapValue };
 
             ImGuizmo::Manipulate(&cameraView._11,
                 &cameraProjection._11,
-                static_cast<ImGuizmo::OPERATION>(m_GizmoType),
+                static_cast<ImGuizmo::OPERATION>(Gizmo::Tool),
                 ImGuizmo::LOCAL,
                 &model._11,
                 nullptr,

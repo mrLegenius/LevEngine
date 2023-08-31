@@ -60,6 +60,9 @@
     <ClInclude Include="src\Panels\ConsolePanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Gizmo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\LevEditor.cpp">
@@ -99,6 +102,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Panels\ConsolePanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gizmo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

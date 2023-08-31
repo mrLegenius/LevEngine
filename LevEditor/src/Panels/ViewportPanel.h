@@ -2,6 +2,7 @@
 #include "Panel.h"
 #include "imguizmo/ImGuizmo.h"
 #include "EditorCamera.h"
+#include "Gizmo.h"
 
 namespace LevEngine::Editor
 {
@@ -43,22 +44,22 @@ namespace LevEngine::Editor
             {
             case KeyCode::Q:
             {
-                m_GizmoType = -1;
+				Gizmo::Tool = Gizmo::ToolType::None;
                 break;
             }
             case KeyCode::W:
             {
-                m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				Gizmo::Tool = Gizmo::ToolType::Translate;
                 break;
             }
             case KeyCode::E:
             {
-                m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				Gizmo::Tool = Gizmo::ToolType::Rotate;
                 break;
             }
             case KeyCode::R:
             {
-                m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				Gizmo::Tool = Gizmo::ToolType::Scale;
                 break;
             }
 
@@ -93,8 +94,6 @@ namespace LevEngine::Editor
 		Ref<Texture> m_Texture;
 
 		EditorCamera m_Camera{30.0f, 0.1f, 1000.0f, Vector3{0, 10, -10}};
-
-		int m_GizmoType = -1;
 	};
 }
 

@@ -218,6 +218,11 @@ namespace LevEngine::Editor
 
     void EditorLayer::DrawToolbar()
     {
+        static auto selectIcon = Texture::Create("resources/Icons/Select.png");
+        static auto translateIcon = Texture::Create("resources/Icons/Translate.png");
+        static auto rotationIcon = Texture::Create("resources/Icons/Rotate.png");
+        static auto scaleIcon = Texture::Create("resources/Icons/Scale.png");
+
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuBarHeight));
         ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarSize));
@@ -243,10 +248,65 @@ namespace LevEngine::Editor
 
         ImGui::Begin("##toolbar", nullptr, windowFlags);
 
-        float size = ImGui::GetWindowHeight() - 4.0f;
-        Ref<Texture> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+        constexpr auto padding = 4;
+        float size = 20;
 
+        ImGui::SetCursorPosX(10);
+        ImGui::SetCursorPosY(padding);
+
+        ImGui::BeginTable("tools", 4, 0, ImVec2(0, 0), size * 4);
+        
+        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
+        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
+        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
+        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
+
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_none", Gizmo::Tool == Gizmo::ToolType::None, 0, ImVec2(size, size)))
+                Gizmo::Tool = Gizmo::ToolType::None;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            ImGui::Image(selectIcon->GetId(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
+        }
+
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_translate", Gizmo::Tool == Gizmo::ToolType::Translate, 0, ImVec2(size, size)))
+                Gizmo::Tool = Gizmo::ToolType::Translate;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            ImGui::Image(translateIcon->GetId(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
+        }
+
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_rotate", Gizmo::Tool == Gizmo::ToolType::Rotate, 0, ImVec2(size, size)))
+                Gizmo::Tool = Gizmo::ToolType::Rotate;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            ImGui::Image(rotationIcon->GetId(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
+        }
+
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_scale", Gizmo::Tool == Gizmo::ToolType::Scale, 0, ImVec2(size, size)))
+                Gizmo::Tool = Gizmo::ToolType::Scale;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            ImGui::Image(scaleIcon->GetId(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
+        }
+
+        ImGui::EndTable();
+
+        size = ImGui::GetWindowHeight() - 4.0f;
+        const Ref<Texture> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+        ImGui::SetCursorPosY(padding / 2);
         if (ImGui::ImageButton(icon->GetId(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
         {
             if (m_SceneState == SceneState::Edit)
