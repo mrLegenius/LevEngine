@@ -2,7 +2,7 @@
 #include "ClearFlags.h"
 #include "CPUAccess.h"
 #include "SamplerState.h"
-#include "Shader.h"
+#include "ShaderType.h"
 #include "Math/Vector4.h"
 
 namespace LevEngine
@@ -134,8 +134,8 @@ namespace LevEngine
 
 		virtual void Clear(ClearFlags clearFlags = ClearFlags::All, const Vector4& color = Vector4::Zero, float depth = 1.0f, uint8_t stencil = 0) = 0;
 
-		virtual void Bind(uint32_t slot, Shader::Type type) const = 0;
-		virtual void Unbind(uint32_t slot, Shader::Type type) const = 0;
+		virtual void Bind(uint32_t slot, ShaderType type) const = 0;
+		virtual void Unbind(uint32_t slot, ShaderType type) const = 0;
 
 		[[nodiscard]] virtual bool IsLoaded() const = 0;
 

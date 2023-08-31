@@ -192,7 +192,7 @@ namespace ShaderAssets
         static Ref<Shader> shader;
         if (shader) return shader;
 
-        shader = Shader::Create(GetShaderPath("CascadeShadowPass.hlsl"), Shader::Type::Vertex | Shader::Type::Geometry);
+        shader = Shader::Create(GetShaderPath("CascadeShadowPass.hlsl"), ShaderType::Vertex | ShaderType::Geometry);
 
         return shader;
     }
@@ -216,7 +216,7 @@ namespace ShaderAssets
 		static Ref<Shader> shader;
 		if (shader) return shader;
 
-		shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"), Shader::Type::Vertex);
+		shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"), ShaderType::Vertex);
 		return shader;
 	}
 
@@ -251,7 +251,7 @@ namespace ShaderAssets
 		static Ref<Shader> shader;
 		if (shader) return shader;
 
-		shader = Shader::Create(GetShaderPath("Particles/Particles.hlsl"), Shader::Type::Vertex | Shader::Type::Geometry | Shader::Type::Pixel);
+		shader = Shader::Create(GetShaderPath("Particles/Particles.hlsl"), ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
 
 		return shader;
 	}
@@ -263,7 +263,7 @@ namespace ShaderAssets
 		static Ref<Shader> shader;
 		if (shader) return shader;
 
-		shader = Shader::Create(GetShaderPath("Particles/ParticlesCompute.hlsl"), Shader::Type::Compute);
+		shader = Shader::Create(GetShaderPath("Particles/ParticlesCompute.hlsl"), ShaderType::Compute);
 
 		return shader;
 	}
@@ -275,7 +275,7 @@ namespace ShaderAssets
 		static Ref<Shader> shader;
 		if (shader) return shader;
 
-		shader = Shader::Create(GetShaderPath("Particles/ParticlesEmitter.hlsl"), Shader::Type::Compute);
+		shader = Shader::Create(GetShaderPath("Particles/ParticlesEmitter.hlsl"), ShaderType::Compute);
 
 		return shader;
 	}
@@ -287,7 +287,7 @@ namespace ShaderAssets
 		static Ref<Shader> shader;
 		if (shader) return shader;
 
-		shader = Shader::Create(GetShaderPath("Particles/BitonicSort.hlsl"), Shader::Type::Compute);
+		shader = Shader::Create(GetShaderPath("Particles/BitonicSort.hlsl"), ShaderType::Compute);
 
 		return shader;
 	}
@@ -299,7 +299,7 @@ namespace ShaderAssets
 		static Ref<Shader> shader;
 		if (shader) return shader;
 
-		shader = Shader::Create(GetShaderPath("Particles/BitonicTranspose.hlsl"), Shader::Type::Compute);
+		shader = Shader::Create(GetShaderPath("Particles/BitonicTranspose.hlsl"), ShaderType::Compute);
 
 		return shader;
 	}

@@ -12,7 +12,9 @@ public:
 	~D3D11ConstantBuffer() override;
 
 	void SetData(const void* data, uint32_t size = 0) const override;
-	void Bind(Shader::Type shaderType) override;
+	void Bind(ShaderType shaderType) override;
+	void Bind(uint32_t slot, ShaderType shaderType) override;
+	void Unbind(uint32_t slot, ShaderType shaderType) override;
 
 private:
 	ID3D11Buffer* m_Buffer = nullptr;

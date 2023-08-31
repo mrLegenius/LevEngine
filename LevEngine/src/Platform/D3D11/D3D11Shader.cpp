@@ -12,15 +12,14 @@ extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target);
-bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const std::string& filepath);
 bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath);
 bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath);
 bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepath);
 
 DXGI_FORMAT GetDXGIFormat(const D3D11_SIGNATURE_PARAMETER_DESC& paramDesc);
 
-D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, Type::Vertex | Type::Pixel) { }
-D3D11Shader::D3D11Shader(const std::string& filepath, const Type shaderTypes) : Shader(filepath)
+D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, ShaderType::Vertex | ShaderType::Pixel) { }
+D3D11Shader::D3D11Shader(const std::string& filepath, const ShaderType shaderTypes) : Shader(filepath)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -31,26 +30,25 @@ D3D11Shader::D3D11Shader(const std::string& filepath, const Type shaderTypes) : 
 	const auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
 	m_Name = filepath.substr(lastSlash, count);
 
-	if (shaderTypes & Type::Vertex)
+	if (shaderTypes & ShaderType::Vertex)
 	{
-		auto result = CreateVertexShader(m_VertexShader, m_VertexBC, filepath);
+		auto result = CreateVertexShader(m_VertexShader, filepath);
 		LEV_CORE_ASSERT(result, "Can't create vertex shader")
-		CreateInputLayout();
 	}
 
-	if (shaderTypes & Type::Pixel)
+	if (shaderTypes & ShaderType::Pixel)
 	{
 		auto result = CreatePixelShader(m_PixelShader, filepath);
 		LEV_CORE_ASSERT(result, "Can't create pixel shader")
 	}
 
-	if (shaderTypes & Type::Geometry)
+	if (shaderTypes & ShaderType::Geometry)
 	{
 		auto result = CreateGeometryShader(m_GeometryShader, filepath);
 		LEV_CORE_ASSERT(result, "Can't create geometry shader")
 	}
 
-	if (shaderTypes & Type::Compute)
+	if (shaderTypes & ShaderType::Compute)
 	{
 		auto result = CreateComputeShader(m_ComputeShader, filepath);
 		LEV_CORE_ASSERT(result, "Can't create compute shader")
@@ -69,34 +67,45 @@ D3D11Shader::~D3D11Shader()
 		m_GeometryShader->Release();
 	if (m_ComputeShader)
 		m_ComputeShader->Release();
-
-	if (m_InputLayout)
-		m_VertexBC->Release();
 	if (m_InputLayout)
 		m_InputLayout->Release();
 }
 
 void D3D11Shader::Bind() const
 {
+	for (const auto [_, parameter] : m_ShaderParameters)
+		parameter->Bind();
+
 	if (m_VertexShader)
+	{
 		context->VSSetShader(m_VertexShader, nullptr, 0);
+		context->IASetInputLayout(m_InputLayout);
+	}
 	if (m_PixelShader)
 		context->PSSetShader(m_PixelShader, nullptr, 0);
 	if (m_GeometryShader)
 		context->GSSetShader(m_GeometryShader, nullptr, 0);
 	if (m_ComputeShader)
 		context->CSSetShader(m_ComputeShader, nullptr, 0);
-	if (m_InputLayout)
-		context->IASetInputLayout(m_InputLayout);
+	
 }
 
 void D3D11Shader::Unbind() const
 {
-	context->VSSetShader(nullptr, nullptr, 0);
-	context->PSSetShader(nullptr, nullptr, 0);
-	context->GSSetShader(nullptr, nullptr, 0);
-	context->CSSetShader(nullptr, nullptr, 0);
-	context->IASetInputLayout(nullptr);
+	for (const auto [_, parameter] : m_ShaderParameters)
+		parameter->Bind();
+
+	if (m_VertexShader)
+	{
+		context->VSSetShader(nullptr, nullptr, 0);
+		context->IASetInputLayout(nullptr);
+	}
+	if (m_PixelShader)
+		context->PSSetShader(nullptr, nullptr, 0);
+	if (m_GeometryShader)
+		context->GSSetShader(nullptr, nullptr, 0);
+	if (m_ComputeShader)
+		context->CSSetShader(nullptr, nullptr, 0);
 }
 
 bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target)
@@ -148,9 +157,11 @@ bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SH
 	return true;
 }
 
-bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const std::string& filepath)
+bool D3D11Shader::CreateVertexShader(ID3D11VertexShader*& shader, const std::string& filepath)
 {
 	LEV_PROFILE_FUNCTION();
+
+	ID3DBlob* vertexBC;
 
 	if (!CreateShader(vertexBC, filepath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSMain", "vs_5_0"))
 		return false;
@@ -160,10 +171,13 @@ bool CreateVertexShader(ID3D11VertexShader*& shader, ID3DBlob*& vertexBC, const 
 		vertexBC->GetBufferSize(),
 		nullptr, &shader);
 
+	CreateInputLayout(vertexBC);
+	CreateShaderParams(ShaderType::Vertex, vertexBC);
+
 	return true;
 }
 
-bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath)
+bool D3D11Shader::CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -177,10 +191,12 @@ bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath)
 		pixelBC->GetBufferSize(),
 		nullptr, &shader);
 
+	CreateShaderParams(ShaderType::Pixel, pixelBC);
+
 	return true;
 }
 
-bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath)
+bool D3D11Shader::CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -195,10 +211,12 @@ bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& file
 		geometryBC->GetBufferSize(),
 		nullptr, &shader);
 
+	CreateShaderParams(ShaderType::Geometry, geometryBC);
+
 	return true;
 }
 
-bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepath)
+bool D3D11Shader::CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepath)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -213,13 +231,15 @@ bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepa
 		blob->GetBufferSize(),
 		nullptr, &shader);
 
+	CreateShaderParams(ShaderType::Compute, blob);
+
 	return true;
 }
 
-void D3D11Shader::CreateInputLayout()
+void D3D11Shader::CreateInputLayout(ID3DBlob* vertexBlob)
 {
 	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> pReflector;
-	auto result = D3DReflect(m_VertexBC->GetBufferPointer(), m_VertexBC->GetBufferSize(), IID_ID3D11ShaderReflection, &pReflector);
+	auto result = D3DReflect(vertexBlob->GetBufferPointer(), vertexBlob->GetBufferSize(), IID_ID3D11ShaderReflection, &pReflector);
 	LEV_ASSERT(SUCCEEDED(result), "Failed to get shader reflection")
 
 	// Query input parameters and build the input layout
@@ -257,12 +277,68 @@ void D3D11Shader::CreateInputLayout()
 	{
 		result = device->CreateInputLayout(inputElements.data(), 
 			static_cast<UINT>(inputElements.size()), 
-			m_VertexBC->GetBufferPointer(), 
-			m_VertexBC->GetBufferSize(),
+			vertexBlob->GetBufferPointer(), 
+			vertexBlob->GetBufferSize(),
 			&m_InputLayout);
 
 		LEV_ASSERT(SUCCEEDED(result), "Failed to create input layout")
 	}
+}
+void D3D11Shader::CreateShaderParams(ShaderType shaderType, ID3DBlob* blob)
+{
+	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflector;
+	auto result = D3DReflect(blob->GetBufferPointer(), blob->GetBufferSize(), IID_ID3D11ShaderReflection, &reflector);
+	LEV_ASSERT(SUCCEEDED(result), "Failed to get shader reflection")
+
+		// Query input parameters and build the input layout
+	D3D11_SHADER_DESC shaderDescription;
+	result = reflector->GetDesc(&shaderDescription);
+	LEV_ASSERT(SUCCEEDED(result), "Failed to get shader description from shader reflector")
+
+	// Query Resources that are bound to the shader.
+	for (UINT i = 0; i < shaderDescription.BoundResources; ++i)
+	{
+		D3D11_SHADER_INPUT_BIND_DESC bindDesc;
+		reflector->GetResourceBindingDesc(i, &bindDesc);
+		std::string resourceName = bindDesc.Name;
+
+		/*ShaderParameter::Type parameterType = ShaderParameter::Type::Invalid;
+
+		switch (bindDesc.Type)
+		{
+		case D3D_SIT_TEXTURE:
+			parameterType = ShaderParameter::Type::Texture;
+			break;
+		case D3D_SIT_SAMPLER:
+			parameterType = ShaderParameter::Type::Sampler;
+			break;
+		case D3D_SIT_CBUFFER:
+		case D3D_SIT_STRUCTURED:
+			parameterType = ShaderParameter::Type::Buffer;
+			break;
+		case D3D_SIT_UAV_RWSTRUCTURED:
+			parameterType = ShaderParameter::Type::RWBuffer;
+			break;
+		case D3D_SIT_UAV_RWTYPED:
+			parameterType = ShaderParameter::Type::RWTexture;
+			break;
+		}*/
+
+		// Create an empty shader parameter that should be filled-in by the application.
+		Ref<ShaderParameter> shaderParameter = CreateRef<ShaderParameter>(resourceName, bindDesc.BindPoint, shaderType);
+		m_ShaderParameters.emplace(resourceName, shaderParameter);
+	}
+}
+
+ShaderParameter& D3D11Shader::GetShaderParameterByName(const std::string& name) const
+{
+	const auto it = m_ShaderParameters.find(name);
+	if (it != m_ShaderParameters.end())
+		return *it->second;
+
+	static ShaderParameter invalid;
+
+	return invalid;
 }
 
 bool D3D11Shader::HasSemantic(const BufferBinding& binding)

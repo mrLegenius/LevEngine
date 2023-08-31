@@ -306,6 +306,8 @@
     <ClInclude Include="src\Renderer\RenderTechnique.h" />
     <ClInclude Include="src\Renderer\SamplerState.h" />
     <ClInclude Include="src\Renderer\Shader.h" />
+    <ClInclude Include="src\Renderer\ShaderParameter.h" />
+    <ClInclude Include="src\Renderer\ShaderType.h" />
     <ClInclude Include="src\Renderer\ShadowMapPass.h" />
     <ClInclude Include="src\Renderer\SkyboxPass.h" />
     <ClInclude Include="src\Renderer\StructuredBuffer.h" />
@@ -563,6 +565,7 @@
     <ClCompile Include="src\Renderer\RenderTarget.cpp" />
     <ClCompile Include="src\Renderer\SamplerState.cpp" />
     <ClCompile Include="src\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Renderer\ShaderParameter.cpp" />
     <ClCompile Include="src\Renderer\ShadowMapPass.cpp" />
     <ClCompile Include="src\Renderer\SkyboxPass.cpp" />
     <ClCompile Include="src\Renderer\StructuredBuffer.cpp" />

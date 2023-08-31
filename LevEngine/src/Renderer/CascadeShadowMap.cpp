@@ -46,7 +46,7 @@ CascadeShadowMap::CascadeShadowMap(const uint32_t width, const uint32_t height)
 
 void CascadeShadowMap::Bind(const uint32_t slot) const
 {
-    m_Texture->Bind(slot, Shader::Type::Pixel);
+    m_Texture->Bind(slot, ShaderType::Pixel);
 }
 
 void CascadeShadowMap::SetRenderTarget() const

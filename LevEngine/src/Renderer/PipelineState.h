@@ -5,13 +5,14 @@
 #include "DepthStencilState.h"
 #include "RasterizerState.h"
 #include "RenderTarget.h"
+#include "Shader.h"
 
 namespace LevEngine
 {
 class PipelineState
 {
 public:
-    using ShaderMap = std::map<Shader::Type, Ref<Shader>>;
+    using ShaderMap = std::map<ShaderType, Ref<Shader>>;
 
     PipelineState()
     {
@@ -22,11 +23,11 @@ public:
         m_RasterizerState = RasterizerState::Create();
     }
 
-    void SetShader(const Shader::Type type, const Ref<Shader>& shader)
+    void SetShader(const ShaderType type, const Ref<Shader>& shader)
     {
         m_Shaders[type] = shader;
     }
-    [[nodiscard]] Ref<Shader> GetShader(const Shader::Type type) const
+    [[nodiscard]] Ref<Shader> GetShader(const ShaderType type) const
     {
         LEV_PROFILE_FUNCTION();
 

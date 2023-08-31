@@ -6,7 +6,7 @@
 
 namespace LevEngine
 {
-	Ref<Shader> Shader::Create(const std::string& filepath, Type shaderTypes)
+	Ref<Shader> Shader::Create(const std::string& filepath, ShaderType shaderTypes)
 	{
 		switch (RenderSettings::RendererAPI)
 		{

@@ -111,8 +111,8 @@ void Renderer::Init()
 		s_GBufferPipeline = CreateRef<PipelineState>();
 		s_GBufferPipeline->SetRenderTarget(s_GBufferRenderTarget);
 		s_GBufferPipeline->GetRasterizerState().SetCullMode(CullMode::Back);
-		s_GBufferPipeline->SetShader(Shader::Type::Vertex, ShaderAssets::GBufferPass());
-		s_GBufferPipeline->SetShader(Shader::Type::Pixel, ShaderAssets::GBufferPass());
+		s_GBufferPipeline->SetShader(ShaderType::Vertex, ShaderAssets::GBufferPass());
+		s_GBufferPipeline->SetShader(ShaderType::Pixel, ShaderAssets::GBufferPass());
 	}
 
 	{
@@ -135,7 +135,7 @@ void Renderer::Init()
 
 		m_PositionalLightPipeline1->GetDepthStencilState()->SetStencilMode(stencilMode);
 
-		m_PositionalLightPipeline1->SetShader(Shader::Type::Vertex, ShaderAssets::DeferredVertexOnly());
+		m_PositionalLightPipeline1->SetShader(ShaderType::Vertex, ShaderAssets::DeferredVertexOnly());
 	}
 
 	{
@@ -159,8 +159,8 @@ void Renderer::Init()
 		stencilMode.BackFace = faceOperation;
 
 		m_PositionalLightPipeline2->GetDepthStencilState()->SetStencilMode(stencilMode);
-		m_PositionalLightPipeline2->SetShader(Shader::Type::Vertex, ShaderAssets::DeferredPointLight());
-		m_PositionalLightPipeline2->SetShader(Shader::Type::Pixel, ShaderAssets::DeferredPointLight());
+		m_PositionalLightPipeline2->SetShader(ShaderType::Vertex, ShaderAssets::DeferredPointLight());
+		m_PositionalLightPipeline2->SetShader(ShaderType::Pixel, ShaderAssets::DeferredPointLight());
 	}
 
 	{
@@ -168,8 +168,8 @@ void Renderer::Init()
 
 		s_OpaquePipeline = CreateRef<PipelineState>();
 		s_OpaquePipeline->GetRasterizerState().SetCullMode(CullMode::Back);
-		s_OpaquePipeline->SetShader(Shader::Type::Vertex, ShaderAssets::Lit());
-		s_OpaquePipeline->SetShader(Shader::Type::Vertex, ShaderAssets::Lit());
+		s_OpaquePipeline->SetShader(ShaderType::Vertex, ShaderAssets::Lit());
+		s_OpaquePipeline->SetShader(ShaderType::Vertex, ShaderAssets::Lit());
 		s_OpaquePipeline->SetRenderTarget(mainRenderTarget);
 	}
 
@@ -181,8 +181,8 @@ void Renderer::Init()
 		s_SkyboxPipeline->GetRasterizerState().SetCullMode(CullMode::None);
 		s_SkyboxPipeline->GetRasterizerState().SetDepthClipEnabled(false);
 		s_SkyboxPipeline->GetDepthStencilState()->SetDepthMode(DepthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual });
-		s_SkyboxPipeline->SetShader(Shader::Type::Vertex, ShaderAssets::Skybox());
-		s_SkyboxPipeline->SetShader(Shader::Type::Pixel, ShaderAssets::Skybox());
+		s_SkyboxPipeline->SetShader(ShaderType::Vertex, ShaderAssets::Skybox());
+		s_SkyboxPipeline->SetShader(ShaderType::Pixel, ShaderAssets::Skybox());
 	}
 
 	{

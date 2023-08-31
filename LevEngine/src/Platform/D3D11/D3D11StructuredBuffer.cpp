@@ -124,7 +124,7 @@ D3D11StructuredBuffer::~D3D11StructuredBuffer()
 		m_UnorderedAccessView->Release();
 }
 
-bool D3D11StructuredBuffer::Bind(const unsigned id, const Shader::Type shaderType, const bool readWrite, const uint32_t counterValue)
+bool D3D11StructuredBuffer::Bind(const unsigned id, const ShaderType shaderType, const bool readWrite, const uint32_t counterValue)
 {
     if (m_IsDirty)
     {
@@ -138,16 +138,16 @@ bool D3D11StructuredBuffer::Bind(const unsigned id, const Shader::Type shaderTyp
 
         switch (shaderType)
         {
-        case Shader::Type::Vertex:
+        case ShaderType::Vertex:
             context->VSSetShaderResources(id, 1, srv);
             break;
-        case Shader::Type::Geometry:
+        case ShaderType::Geometry:
             context->GSSetShaderResources(id, 1, srv);
             break;
-        case Shader::Type::Pixel:
+        case ShaderType::Pixel:
             context->PSSetShaderResources(id, 1, srv);
             break;
-        case Shader::Type::Compute:
+        case ShaderType::Compute:
             context->CSSetShaderResources(id, 1, srv);
             break;
         }
@@ -157,7 +157,7 @@ bool D3D11StructuredBuffer::Bind(const unsigned id, const Shader::Type shaderTyp
         ID3D11UnorderedAccessView* uav[] = { m_UnorderedAccessView };
         switch (shaderType)
         {
-        case Shader::Type::Compute:
+        case ShaderType::Compute:
 	        const auto counter = counterValue;
             context->CSSetUnorderedAccessViews(id, 1, uav, &counter);
             break;
@@ -167,7 +167,7 @@ bool D3D11StructuredBuffer::Bind(const unsigned id, const Shader::Type shaderTyp
     return true;
 }
 
-void D3D11StructuredBuffer::Unbind(const unsigned id, const Shader::Type shaderType, const bool readWrite) const
+void D3D11StructuredBuffer::Unbind(const unsigned id, const ShaderType shaderType, const bool readWrite) const
 {
     ID3D11UnorderedAccessView* uav[] = { nullptr };
     ID3D11ShaderResourceView* srv[] = { nullptr };
@@ -176,16 +176,16 @@ void D3D11StructuredBuffer::Unbind(const unsigned id, const Shader::Type shaderT
     {
         switch (shaderType)
         {
-        case Shader::Type::Vertex:
+        case ShaderType::Vertex:
             context->VSSetShaderResources(id, 1, srv);
             break;
-        case Shader::Type::Geometry:
+        case ShaderType::Geometry:
             context->GSSetShaderResources(id, 1, srv);
             break;
-        case Shader::Type::Pixel:
+        case ShaderType::Pixel:
             context->PSSetShaderResources(id, 1, srv);
             break;
-        case Shader::Type::Compute:
+        case ShaderType::Compute:
             context->CSSetShaderResources(id, 1, srv);
             break;
         }
@@ -194,7 +194,7 @@ void D3D11StructuredBuffer::Unbind(const unsigned id, const Shader::Type shaderT
     {
         switch (shaderType)
         {
-        case Shader::Type::Compute:
+        case ShaderType::Compute:
             uint32_t counterZero = 0;
             context->CSSetUnorderedAccessViews(id, 1, uav, &counterZero);
             break;

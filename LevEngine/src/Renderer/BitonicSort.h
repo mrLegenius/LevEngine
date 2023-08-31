@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "ConstantBuffer.h"
+#include "Shader.h"
 #include "StructuredBuffer.h"
 
 namespace LevEngine

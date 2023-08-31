@@ -594,6 +594,12 @@
     <ClInclude Include="src\Renderer\BufferBinding.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer\ShaderParameter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\ShaderType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input\Input.cpp">
@@ -954,6 +960,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Assets\TextureAsset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\ShaderParameter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

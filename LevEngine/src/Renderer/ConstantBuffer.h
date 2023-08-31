@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Shader.h"
+#include "ShaderType.h"
 
 namespace LevEngine
 {
@@ -15,7 +15,9 @@ public:
 	virtual void SetData(const void* data, uint32_t size) const = 0;
 	void SetData(const void* data) const { SetData(data, 0); }
 
-	virtual void Bind(Shader::Type shaderType) = 0;
+	virtual void Bind(ShaderType shaderType) = 0;
+	virtual void Bind(uint32_t slot, ShaderType shaderType) = 0;
+	virtual void Unbind(uint32_t slot, ShaderType shaderType) = 0;
 protected:
 	uint32_t m_Size;
 	uint32_t m_Slot;

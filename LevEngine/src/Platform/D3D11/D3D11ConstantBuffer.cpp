@@ -40,15 +40,32 @@ void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size) const
 	context->Unmap(m_Buffer, 0);
 }
 
-void D3D11ConstantBuffer::Bind(const Shader::Type shaderType)
+void D3D11ConstantBuffer::Bind(const ShaderType shaderType)
 {
-	if (shaderType & Shader::Type::Vertex)
-		context->VSSetConstantBuffers(m_Slot, 1, &m_Buffer);
-	if (shaderType & Shader::Type::Pixel)
-		context->PSSetConstantBuffers(m_Slot, 1, &m_Buffer);
-	if (shaderType & Shader::Type::Geometry)
-		context->GSSetConstantBuffers(m_Slot, 1, &m_Buffer);
-	if (shaderType & Shader::Type::Compute)
-		context->CSSetConstantBuffers(m_Slot, 1, &m_Buffer);
+	Bind(m_Slot, shaderType);
+}
+
+void D3D11ConstantBuffer::Bind(const uint32_t slot, const ShaderType shaderType)
+{
+	if (shaderType & ShaderType::Vertex)
+		context->VSSetConstantBuffers(slot, 1, &m_Buffer);
+	if (shaderType & ShaderType::Pixel)
+		context->PSSetConstantBuffers(slot, 1, &m_Buffer);
+	if (shaderType & ShaderType::Geometry)
+		context->GSSetConstantBuffers(slot, 1, &m_Buffer);
+	if (shaderType & ShaderType::Compute)
+		context->CSSetConstantBuffers(slot, 1, &m_Buffer);
+}
+
+void D3D11ConstantBuffer::Unbind(uint32_t slot, const ShaderType shaderType)
+{
+	if (shaderType & ShaderType::Vertex)
+		context->VSSetConstantBuffers(slot, 0, nullptr);
+	if (shaderType & ShaderType::Pixel)
+		context->PSSetConstantBuffers(slot, 0, nullptr);
+	if (shaderType & ShaderType::Geometry)
+		context->GSSetConstantBuffers(slot, 0, nullptr);
+	if (shaderType & ShaderType::Compute)
+		context->CSSetConstantBuffers(slot, 0, nullptr);
 }
 }

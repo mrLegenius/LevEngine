@@ -53,11 +53,11 @@ void Renderer3D::SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMa
 
     const CameraData cameraData{  viewMatrix, viewProjection, position };
     m_CameraConstantBuffer->SetData(&cameraData);
-    m_CameraConstantBuffer->Bind(Shader::Type::Vertex | Shader::Type::Pixel);
+    m_CameraConstantBuffer->Bind(ShaderType::Vertex | ShaderType::Pixel);
 
     const ScreenToViewParams params{ camera.GetProjection().Invert(), Vector2{width, height} };
     m_ScreenToViewParamsConstantBuffer->SetData(&params);
-    m_ScreenToViewParamsConstantBuffer->Bind(Shader::Type::Pixel);
+    m_ScreenToViewParamsConstantBuffer->Bind(ShaderType::Pixel);
 }
 
 void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader)
@@ -74,7 +74,7 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
-    m_ModelConstantBuffer->Bind(Shader::Type::Vertex);
+    m_ModelConstantBuffer->Bind(ShaderType::Vertex);
 
     RenderCommand::DrawIndexed(mesh->IndexBuffer);
 }
@@ -114,7 +114,7 @@ void Renderer3D::UpdateLights()
     LEV_PROFILE_FUNCTION();
 
     m_LightningConstantBuffer->SetData(&s_LightningData);
-    m_LightningConstantBuffer->Bind(Shader::Type::Pixel);
+    m_LightningConstantBuffer->Bind(ShaderType::Pixel);
     s_LightningData.PointLightsCount = 0;
 }
 
@@ -128,7 +128,7 @@ void Renderer3D::RenderSphere(const Matrix& model, const Ref<Shader>& shader)
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
-    m_ModelConstantBuffer->Bind(Shader::Type::Vertex);
+    m_ModelConstantBuffer->Bind(ShaderType::Vertex);
 
     mesh->Bind(shader);
 

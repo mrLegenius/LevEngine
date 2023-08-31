@@ -9,10 +9,10 @@ namespace LevEngine
 {
 	bool DeferredLightingPass::Begin(entt::registry& registry, RenderParams& params)
 	{
-		m_DiffuseTexture->Bind(1, Shader::Type::Pixel);
-		m_SpecularTexture->Bind(2, Shader::Type::Pixel);
-		m_NormalTexture->Bind(3, Shader::Type::Pixel);
-		m_DepthTexture->Bind(4, Shader::Type::Pixel);
+		m_DiffuseTexture->Bind(1, ShaderType::Pixel);
+		m_SpecularTexture->Bind(2, ShaderType::Pixel);
+		m_NormalTexture->Bind(3, ShaderType::Pixel);
+		m_DepthTexture->Bind(4, ShaderType::Pixel);
 
 		return RenderPass::Begin(registry, params);
 	}
@@ -31,14 +31,14 @@ namespace LevEngine
 				* Matrix::CreateTranslation(worldPosition);
 
 			m_LightIndexBuffer->SetData(&m_LightParams);
-			m_LightIndexBuffer->Bind(Shader::Type::Pixel);
+			m_LightIndexBuffer->Bind(ShaderType::Pixel);
 
 			m_Pipeline1->Bind();
-			Renderer3D::RenderSphere(model, m_Pipeline1->GetShader(Shader::Type::Vertex));
+			Renderer3D::RenderSphere(model, m_Pipeline1->GetShader(ShaderType::Vertex));
 			m_Pipeline1->Unbind();
 
 			m_Pipeline2->Bind();
-			Renderer3D::RenderSphere(model, m_Pipeline2->GetShader(Shader::Type::Vertex));
+			Renderer3D::RenderSphere(model, m_Pipeline2->GetShader(ShaderType::Vertex));
 			m_Pipeline2->Unbind();
 
 			m_LightParams.LightIndex++;
@@ -47,10 +47,10 @@ namespace LevEngine
 
 	void DeferredLightingPass::End(entt::registry& registry, RenderParams& params)
 	{
-		m_DiffuseTexture->Unbind(1, Shader::Type::Pixel);
-		m_SpecularTexture->Unbind(2, Shader::Type::Pixel);
-		m_NormalTexture->Unbind(3, Shader::Type::Pixel);
-		m_DepthTexture->Unbind(4, Shader::Type::Pixel);
+		m_DiffuseTexture->Unbind(1, ShaderType::Pixel);
+		m_SpecularTexture->Unbind(2, ShaderType::Pixel);
+		m_NormalTexture->Unbind(3, ShaderType::Pixel);
+		m_DepthTexture->Unbind(4, ShaderType::Pixel);
 	}
 }
 

@@ -13,8 +13,8 @@ public:
 
     ~D3D11StructuredBuffer() override;
 
-    bool Bind(unsigned id, Shader::Type shaderType, bool readWrite, uint32_t counterValue = -1) override;
-    void Unbind(unsigned id, Shader::Type shaderType, bool readWrite) const override;
+    bool Bind(unsigned id, ShaderType shaderType, bool readWrite, uint32_t counterValue = -1) override;
+    void Unbind(unsigned id, ShaderType shaderType, bool readWrite) const override;
 
     void Clear() const override;
 

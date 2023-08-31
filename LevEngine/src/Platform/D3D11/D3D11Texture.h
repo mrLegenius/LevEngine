@@ -22,8 +22,8 @@ public:
 
 	[[nodiscard]] bool IsLoaded() const override { return m_IsLoaded; }
 
-	void Bind(uint32_t slot, Shader::Type type) const override;
-	void Unbind(uint32_t slot, Shader::Type type) const override;
+	void Bind(uint32_t slot, ShaderType type) const override;
+	void Unbind(uint32_t slot, ShaderType type) const override;
 	void Clear(ClearFlags clearFlags, const Vector4& color, float depth, uint8_t stencil) override;
 
 	ID3D11Resource* GetTextureResource() const;

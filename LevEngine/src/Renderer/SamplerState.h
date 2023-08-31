@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "Shader.h"
+#include "Kernel/PointerUtils.h"
+#include "ShaderType.h"
 #include "Kernel/Color.h"
 #include "Math/Math.h"
 
@@ -57,9 +58,9 @@ namespace LevEngine
         static Ref<SamplerState> Create();
 
         // Bind this sampler state to the ID for a specific shader type.
-        virtual void Bind(uint32_t slot, Shader::Type shaderType) = 0;
+        virtual void Bind(uint32_t slot, ShaderType shaderType) = 0;
         // Unbind the sampler state.
-        virtual void Unbind(uint32_t slot, Shader::Type shaderType) = 0;
+        virtual void Unbind(uint32_t slot, ShaderType shaderType) = 0;
 
         void SetFilter(MinFilter minFilter, MagFilter magFilter, MipFilter mipFilter)
         {

@@ -35,18 +35,17 @@ void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 		if (!texture) continue;
 
 		m_SkyboxPipeline->Bind();
-		
-		texture->Bind(0, Shader::Type::Pixel);
 
 		const CameraData skyboxCameraData{ Matrix::Identity, params.CameraPerspectiveViewProjectionMatrix, Vector3::Zero };
 		m_CameraConstantBuffer->SetData(&skyboxCameraData, sizeof CameraData);
-		m_CameraConstantBuffer->Bind(Shader::Type::Vertex);
 
-		m_SkyboxMesh->Bind(m_SkyboxPipeline->GetShader(Shader::Type::Vertex));
+		m_SkyboxPipeline->GetShader(ShaderType::Pixel)->GetShaderParameterByName("tex").Set(texture);
+		m_SkyboxPipeline->GetShader(ShaderType::Vertex)->GetShaderParameterByName("CameraConstantBuffer").Set(m_CameraConstantBuffer);
+
+		m_SkyboxMesh->Bind(m_SkyboxPipeline->GetShader(ShaderType::Vertex));
 
 		RenderCommand::DrawIndexed(m_SkyboxMesh->IndexBuffer);
 
-		texture->Unbind(0, Shader::Type::Pixel);
 		m_SkyboxPipeline->Unbind();
 		break;
 	}

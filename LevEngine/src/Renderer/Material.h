@@ -2,6 +2,7 @@
 #include <map>
 
 #include "ConstantBuffer.h"
+#include "Shader.h"
 #include "Texture.h"
 #include "Kernel/Color.h"
 

@@ -110,7 +110,7 @@ namespace LevEngine
 		}
 	}
 
-	void D3D11SamplerState::Bind(const uint32_t slot, const Shader::Type shaderType)
+	void D3D11SamplerState::Bind(const uint32_t slot, const ShaderType shaderType)
 	{
 		if (m_IsDirty || m_SamplerState == nullptr)
 		{
@@ -140,27 +140,27 @@ namespace LevEngine
 
 		ID3D11SamplerState* pSamplers[] = { m_SamplerState };
 
-		if (shaderType & Shader::Type::Vertex)
+		if (shaderType & ShaderType::Vertex)
 			context->VSSetSamplers(slot, 1, pSamplers);
-		if (shaderType & Shader::Type::Pixel)
+		if (shaderType & ShaderType::Pixel)
 			context->PSSetSamplers(slot, 1, pSamplers);
-		if (shaderType & Shader::Type::Geometry)
+		if (shaderType & ShaderType::Geometry)
 			context->GSSetSamplers(slot, 1, pSamplers);
-		if (shaderType & Shader::Type::Compute)
+		if (shaderType & ShaderType::Compute)
 			context->CSSetSamplers(slot, 1, pSamplers);
 	}
 
-	void D3D11SamplerState::Unbind(const uint32_t slot, const Shader::Type shaderType)
+	void D3D11SamplerState::Unbind(const uint32_t slot, const ShaderType shaderType)
 	{
 		ID3D11SamplerState* pSamplers[] = { nullptr };
 
-		if (shaderType & Shader::Type::Vertex)
+		if (shaderType & ShaderType::Vertex)
 			context->VSSetSamplers(slot, 1, pSamplers);
-		if (shaderType & Shader::Type::Pixel)
+		if (shaderType & ShaderType::Pixel)
 			context->PSSetSamplers(slot, 1, pSamplers);
-		if (shaderType & Shader::Type::Geometry)
+		if (shaderType & ShaderType::Geometry)
 			context->GSSetSamplers(slot, 1, pSamplers);
-		if (shaderType & Shader::Type::Compute)
+		if (shaderType & ShaderType::Compute)
 			context->CSSetSamplers(slot, 1, pSamplers);
 	}
 }

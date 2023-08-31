@@ -26,13 +26,13 @@ namespace LevEngine
 
         const CameraData cameraData{ params.CameraViewMatrix, viewProjection, params.CameraPosition };
         m_CameraConstantBuffer->SetData(&cameraData);
-        m_CameraConstantBuffer->Bind(Shader::Type::Vertex | Shader::Type::Pixel);
+        m_CameraConstantBuffer->Bind(ShaderType::Vertex | ShaderType::Pixel);
         return RenderPass::Begin(registry, params);
     }
 
     void OpaquePass::Process(entt::registry& registry, RenderParams& params)
     {
-	    const auto shader = m_PipelineState->GetShader(Shader::Type::Vertex);
+	    const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
         const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
         for (const auto entity : view)
         {

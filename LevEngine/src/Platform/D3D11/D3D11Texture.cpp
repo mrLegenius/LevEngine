@@ -1968,18 +1968,18 @@ D3D11Texture::~D3D11Texture()
     if (m_UnorderedAccessView) m_UnorderedAccessView->Release();
 }
 
-void D3D11Texture::Bind(const uint32_t slot, const Shader::Type type) const
+void D3D11Texture::Bind(const uint32_t slot, const ShaderType type) const
 {
     LEV_PROFILE_FUNCTION();
 
     //TODO: Fix compute shader binding (uav)
-    if (type & Shader::Type::Vertex)
+    if (type & ShaderType::Vertex)
         context->VSSetShaderResources(slot, 1, &m_ShaderResourceView);
-    if (type & Shader::Type::Pixel)
+    if (type & ShaderType::Pixel)
         context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
-    if (type & Shader::Type::Geometry)
+    if (type & ShaderType::Geometry)
         context->GSSetShaderResources(slot, 1, &m_ShaderResourceView);
-    if (type & Shader::Type::Compute)
+    if (type & ShaderType::Compute)
     {
         context->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
         context->CSSetUnorderedAccessViews(slot, 1, &m_UnorderedAccessView, nullptr);
@@ -1989,20 +1989,20 @@ void D3D11Texture::Bind(const uint32_t slot, const Shader::Type type) const
         m_SamplerState->Bind(slot, type);
 }
 
-void D3D11Texture::Unbind(const uint32_t slot, const Shader::Type type) const
+void D3D11Texture::Unbind(const uint32_t slot, const ShaderType type) const
 {
     LEV_PROFILE_FUNCTION();
 
     ID3D11ShaderResourceView* srv[] = { nullptr };
     ID3D11UnorderedAccessView* uav[] = { nullptr };
 
-    if (type & Shader::Type::Vertex)
+    if (type & ShaderType::Vertex)
         context->VSSetShaderResources(slot, 1, srv);
-    if (type & Shader::Type::Pixel)
+    if (type & ShaderType::Pixel)
         context->PSSetShaderResources(slot, 1, srv);
-    if (type & Shader::Type::Geometry)
+    if (type & ShaderType::Geometry)
         context->GSSetShaderResources(slot, 1, srv);
-    if (type & Shader::Type::Compute)
+    if (type & ShaderType::Compute)
     {
         context->CSSetShaderResources(slot, 1, srv);
         context->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
