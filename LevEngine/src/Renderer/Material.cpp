@@ -22,7 +22,13 @@ void Material::Bind(const Ref<Shader>& shader)
 			texture->Bind(static_cast<uint32_t>(textureType), shader->GetType());
 	}
 
-	shader->GetShaderParameterByName("MaterialConstantBuffer").Set(m_ConstantBuffer);
+	auto parameter = shader->GetShaderParameterByName("MaterialConstantBuffer");
+
+	if (parameter.IsValid())
+	{
+		parameter.Set(m_ConstantBuffer);
+		parameter.Bind();
+	}
 }
 
 void Material::Unbind(const Ref<Shader>& shader)
@@ -32,5 +38,9 @@ void Material::Unbind(const Ref<Shader>& shader)
 		if (texture)
 			texture->Unbind(static_cast<uint32_t>(textureType), shader->GetType());
 	}
+
+	const auto parameter = shader->GetShaderParameterByName("MaterialConstantBuffer");
+	if (parameter.IsValid())
+		parameter.Unbind();
 }
 }

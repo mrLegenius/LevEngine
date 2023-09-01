@@ -30,9 +30,11 @@ PS_OUT PSMain(PS_IN input)
 	PS_OUT result;
 	float3 normal;
 
+    float2 textureUV = ApplyTextureProperties(input.uv, material.tiling, material.offset);
+	
 	if (material.hasNormalTexture)
 	{
-        float3 texNormal = normalTexture.Sample(normalTextureSampler, ApplyTextureProperties(input.uv, material.normalProperties)).rgb;
+        float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
 		normal = normalize(texNormal * 2.0 - 1.0);
 	}
 	else
@@ -42,10 +44,10 @@ PS_OUT PSMain(PS_IN input)
 
 	result.Normal = float4(normal, 0.0f);
 
-	float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, input.uv, material.emissiveProperties);
-    float3 ambient = CombineColorAndTexture(material.ambient, ambientTexture, ambientTextureSampler, material.hasAmbientTexture, input.uv, material.ambientProperties) * globalAmbient;
+    float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, textureUV);
+    float3 ambient = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, textureUV) * globalAmbient;
 
-    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, input.uv, material.diffuseProperties);
+    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, textureUV);
 	
 	float cascade = GetCascadeIndex(input.depth);
 	float4 fragPosLightSpace = mul(float4(input.fragPos, 1.0f), lightViewProjection[cascade]);
@@ -57,7 +59,7 @@ PS_OUT PSMain(PS_IN input)
 	
 	float3 specular = 0;
 	if (material.shininess > 1.0f)
-        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, input.uv, material.specularProperties);
+        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, textureUV);
 
 	result.LightAccumulation = float4(ambient + emissive + (diffuse * lit.diffuse) + (specular * lit.specular), 1.0f);
 

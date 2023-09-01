@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "IndexBuffer.h"
-#include "VertexBuffer.h"
+#include "ShaderType.h"
 
 namespace LevEngine
 {

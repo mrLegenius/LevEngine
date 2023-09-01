@@ -35,36 +35,29 @@ struct PointLight
 	float intensity;
 };
 
-struct TextureProperties
-{
-    float2 tiling;
-    float2 offset;
-};
-
 struct Material
 {
     float3 ambient; //<--- 16 ---<<
     float3 emissive; //<--- 16 ---<<
     float3 diffuse; //<--- 16 ---<<
     float3 specular; //<--- 16 ---<<
-
-    TextureProperties ambientProperties; //<--- 16 ---<<
-    TextureProperties emissiveProperties; //<--- 16 ---<<
-    TextureProperties diffuseProperties; //<--- 16 ---<<
-    TextureProperties specularProperties; //<--- 16 ---<<
-    TextureProperties normalProperties; //<--- 16 ---<<
 	
 	//<--- 16 ---<<
-    bool hasAmbientTexture;
+    float2 tiling;
+    float2 offset;
+	//<--- 16 ---<<
+	
+	//<--- 16 ---<<
 	bool hasEmissiveTexture;
 	bool hasDiffuseTexture;
     bool hasSpecularTexture;
+    bool hasNormalTexture;
 	//<--- 16 ---<<
 
-	//<--- 8 ---<<
-	bool hasNormalTexture;
+	//<--- 4 ---<<
+
     float shininess;
-	//<--- 8 ---<<
+	//<--- 4 ---<<
 };
 
 cbuffer CameraConstantBuffer : register(b0)
@@ -104,9 +97,6 @@ cbuffer ScreenToViewParams : register(b5)
 	float4x4 CameraInverseProjection;
 	float2 ScreenDimensions;
 }
-
-Texture2D ambientTexture : register(t0);
-SamplerState ambientTextureSampler : register(s0);
 
 Texture2D emissiveTexture : register(t1);
 SamplerState emissiveTextureSampler : register(s1);
@@ -278,18 +268,17 @@ LightingResult CalcPointLightInViewSpace(PointLight light, float3 normal, float3
     return result;
 }
 
-float2 ApplyTextureProperties(float2 uv, TextureProperties props)
+float2 ApplyTextureProperties(float2 uv, float2 tiling, float2 offset)
 {
-    return uv * props.tiling + props.offset;
+    return uv * tiling + offset;
 }
 
-float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv, TextureProperties properties)
+float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv)
 {
     float3 result = color;
     if (hasTexture)
     {
-        float2 finalUV = ApplyTextureProperties(uv, properties);
-        float3 texColor = tex.Sample(sampl, finalUV);
+        float3 texColor = tex.Sample(sampl, uv);
         if (any(result.rgb))
         {
             result *= texColor;

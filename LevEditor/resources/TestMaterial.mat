@@ -3,15 +3,5 @@ DiffuseColor: [1, 1, 1, 1]
 SpecularColor: [1, 1, 1, 1]
 EmissiveColor: [0, 0, 0, 1]
 Shininess: 3
-Texture0: resources\Textures\bricks.jpg
-Tiling0: [1, 1]
-Offset0: [0, 0]
-Tiling1: [4.0999999, 4.5]
-Offset1: [0.300000012, 1.70000005]
-Texture2: resources\Textures\bricks.jpg
-Tiling2: [1, 1]
-Offset2: [0, 0]
-Tiling3: [1, 1]
-Offset3: [0, 0]
-Tiling4: [1, 1]
-Offset4: [0, 0]
+Tiling: [1, 1]
+Offset: [0, 0]

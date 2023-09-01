@@ -25,7 +25,6 @@ protected:
 private:
 	static void DrawMaterialTexture(const std::string& label, Material& material, Material::TextureType textureType, Ref<TextureAsset>& textureAsset);
 
-	Ref<TextureAsset> m_Ambient;
 	Ref<TextureAsset> m_Diffuse;
 	Ref<TextureAsset> m_Emissive;
 	Ref<TextureAsset> m_Specular;

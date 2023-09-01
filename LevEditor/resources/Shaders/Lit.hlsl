@@ -22,10 +22,12 @@ LightingResult CalcLighting(float3 fragPos, float3 normal, float depth);
 float4 PSMain(PS_IN input) : SV_Target
 {
 	float3 normal;
+	
+    float2 textureUV = ApplyTextureProperties(input.uv, material.tiling, material.offset);
 		
 	if (material.hasNormalTexture)
 	{
-		float3 texNormal = normalTexture.Sample(normalTextureSampler, input.uv).rgb;
+        float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
 		normal = normalize(texNormal * 2.0 - 1.0);
 	}
 	else
@@ -35,13 +37,13 @@ float4 PSMain(PS_IN input) : SV_Target
 
 	LightingResult lit = CalcLighting(input.fragPos, normal, input.depth);
 
-    float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, input.uv, material.emissiveProperties);
-    float3 ambient = CombineColorAndTexture(material.ambient, ambientTexture, ambientTextureSampler, material.hasAmbientTexture, input.uv, material.ambientProperties) * globalAmbient;
-    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, input.uv, material.diffuseProperties) * lit.diffuse;
+    float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, textureUV);
+    float3 ambient = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, textureUV) * globalAmbient;
+    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, textureUV) * lit.diffuse;
 
 	float3 specular = 0;
 	if (material.shininess > 1.0f)
-        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, input.uv, material.specularProperties) * lit.specular;
+        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, textureUV) * lit.specular;
 
 	float3 finalColor = (emissive + ambient + diffuse + specular);
 

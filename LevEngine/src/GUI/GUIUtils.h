@@ -23,7 +23,7 @@ namespace LevEngine
 		static void DrawColor3Control(const std::string& label, const std::function<Color()>& getter,
 		                              const std::function<void(Color)>& setter);
 		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
-		static void DrawTextureAsset(const std::string& label, Ref<TextureAsset>* assetPtr);
+		static bool DrawTextureAsset(const std::string& label, Ref<TextureAsset>* assetPtr);
 		static bool DrawTextureAsset(Ref<TextureAsset>* assetPtr, Vector2 size);
 		static void DrawTexture2D(const std::function<const Ref<Texture>&()>& getter,
 		                          const std::function<void(Ref<Texture>)>& setter, Vector2 size = { 32, 32 });
@@ -31,11 +31,12 @@ namespace LevEngine
 		static void DrawCheckBox(const char* label, const std::function<bool()>& getter, const std::function<void(bool)>& setter);
 
 		template<class T>
-		static void DrawAsset(const std::string& label, Ref<T>* assetPtr)
+		static bool DrawAsset(const std::string& label, Ref<T>* assetPtr)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must derive from Asset");
 
 			const auto& asset = *assetPtr;
+			auto changed = false;
 
 			if (!label.empty())
 			{
@@ -50,12 +51,15 @@ namespace LevEngine
 			if (asset && ImGui::BeginPopupContextItem("Asset"))
 			{
 				if (ImGui::MenuItem("Clear"))
+				{
 					*assetPtr = nullptr;
+					changed = true;
+				}
 
 				ImGui::EndPopup();
 			}
 
-			if (!ImGui::BeginDragDropTarget()) return;
+			if (!ImGui::BeginDragDropTarget()) return changed;
 
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
 			{
@@ -63,9 +67,14 @@ namespace LevEngine
 				const std::filesystem::path assetPath = AssetDatabase::AssetsRoot / path;
 
 				if (const auto& newAsset = AssetDatabase::GetAsset<T>(assetPath))
+				{
 					*assetPtr = newAsset;
+					changed = true;
+				}
 			}
 			ImGui::EndDragDropTarget();
+
+			return changed;
 		}
 
 		template<class T>

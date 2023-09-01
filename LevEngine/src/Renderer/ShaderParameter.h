@@ -25,6 +25,7 @@ namespace LevEngine
 
 		void Bind() const;
 		void Unbind() const;
+		bool IsValid() const { return !m_Name.empty(); }
 
 	private:
 		std::weak_ptr<Texture> m_Texture;

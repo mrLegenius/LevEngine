@@ -3,15 +3,6 @@ DiffuseColor: [1, 1, 1, 1]
 SpecularColor: [1, 1, 1, 1]
 EmissiveColor: [0, 0, 0, 1]
 Shininess: 2
-Ambient: 15974819093409437674
 Diffuse: 15974819093409437674
-Tiling0: [1, 1]
-Offset0: [0, 0]
-Tiling1: [1, 1]
-Offset1: [0, 0]
-Tiling2: [1, 1]
-Offset2: [0, 0]
-Tiling3: [1, 1]
-Offset3: [0, 0]
-Tiling4: [1, 1]
-Offset4: [0, 0]
+Tiling: [5, 5]
+Offset: [0, 0]
