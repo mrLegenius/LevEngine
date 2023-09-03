@@ -46,7 +46,5 @@ private:
 		Edit = 0, Play = 1
 	};
 	SceneState m_SceneState = SceneState::Edit;
-
-	Ref<Texture> m_IconPlay, m_IconStop;
 };
 }

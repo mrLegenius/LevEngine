@@ -65,9 +65,6 @@ namespace LevEngine::Editor
 
         AssetDatabase::ProcessAllAssets();
 
-        m_IconPlay = Texture::Create("resources/Icons/PlayButton.png");
-        m_IconStop = Texture::Create("resources/Icons/StopButton.png");
-
         m_ActiveScene = CreateRef<Scene>();
 
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
@@ -221,6 +218,10 @@ namespace LevEngine::Editor
         static auto rotationIcon = Texture::Create("resources/Icons/Rotate.png");
         static auto scaleIcon = Texture::Create("resources/Icons/Scale.png");
 
+        static auto iconPlay = Texture::Create("resources/Icons/PlayButton.png");
+        static auto iconStop = Texture::Create("resources/Icons/StopButton.png");
+
+
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuBarHeight));
         ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarSize));
@@ -302,7 +303,7 @@ namespace LevEngine::Editor
         ImGui::EndTable();
 
         size = ImGui::GetWindowHeight() - 4.0f;
-        const Ref<Texture> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+        const Ref<Texture> icon = m_SceneState == SceneState::Edit ? iconPlay : iconStop;
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
         ImGui::SetCursorPosY(padding / 2);
         if (ImGui::ImageButton(icon->GetId(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
