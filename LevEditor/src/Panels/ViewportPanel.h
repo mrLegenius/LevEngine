@@ -24,6 +24,8 @@ namespace LevEngine::Editor
 		[[nodiscard]] EditorCamera& GetCamera() { return m_Camera; }
 		void UpdateCamera(const float deltaTime)
 		{
+			if (Math::IsZero(m_Size.x) || Math::IsZero(m_Size.y)) return;
+
 			m_Camera.SetViewportSize(m_Size.x, m_Size.y);
 			if (m_Focused)
 				m_Camera.OnUpdate(deltaTime);
