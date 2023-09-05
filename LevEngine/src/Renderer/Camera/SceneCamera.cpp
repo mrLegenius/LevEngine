@@ -59,9 +59,9 @@ void SceneCamera::SetViewportSize(const uint32_t width, const uint32_t height)
 
 void SceneCamera::RecalculateProjection()
 {
-	if (m_ViewportHeight != 0)
+	if (m_ProjectionType == ProjectionType::Orthographic && m_ViewportHeight != 0)
 	{
-		const float height = m_OrthographicSize * m_ViewportHeight;
+		const float height = m_OrthographicSize * static_cast<float>(m_ViewportHeight);
 		const float width = m_AspectRatio * height;
 
 		m_OrthographicProjection = Matrix::CreateOrthographic(width, height, m_OrthographicNear, m_OrthographicFar);
