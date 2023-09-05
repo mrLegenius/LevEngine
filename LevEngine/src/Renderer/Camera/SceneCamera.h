@@ -9,7 +9,6 @@ public:
 	enum class ProjectionType { Perspective = 0, Orthographic = 1 };
 
 	SceneCamera();
-	SceneCamera(float fov, float aspectRatio, float nearClip, float farClip);
 	virtual ~SceneCamera() = default;
 	void SetViewportSize(uint32_t width, uint32_t height);
 

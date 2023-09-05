@@ -141,8 +141,13 @@ namespace LevEngine::Editor
 
     bool EditorLayer::OnWindowResized(const WindowResizedEvent& e) const
     {
+        const auto height = e.GetHeight();
+        const auto width = e.GetWidth();
+        
+        if (width == 0 || height == 0) return false;
+
         m_ActiveScene->OnViewportResized(e.GetWidth(), e.GetHeight());
-        Renderer::SetViewport(e.GetWidth(), e.GetHeight());
+        Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
         return false;
     }
 
