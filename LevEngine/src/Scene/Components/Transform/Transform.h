@@ -77,11 +77,21 @@ struct Transform
 		if (parent)
 		{
 			const auto& parentTransform = parent.GetComponent<Transform>();
-
+			
 			position -= parentTransform.GetWorldPosition();
 			auto rot = parentTransform.GetWorldOrientation();
 			rot.Conjugate();
 			position = Vector3::Transform(position, rot);
+
+			const auto parentScale =  parentTransform.GetWorldScale();
+			if (!Math::IsZero(parentScale.x))
+				position.x /= parentScale.x;
+
+			if (!Math::IsZero(parentScale.y))
+				position.y /= parentScale.y;
+
+			if (!Math::IsZero(parentScale.z))
+				position.z /= parentScale.z;
 		}
 	}
 

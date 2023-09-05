@@ -55,7 +55,7 @@ namespace LevEngine::Editor
 
             ImGuizmo::SetRect(m_Bounds[0].x, m_Bounds[0].y, m_Bounds[1].x - m_Bounds[0].x, m_Bounds[1].y - m_Bounds[0].y);
 
-            Matrix cameraView = m_Camera.GetTransform().GetModel().Invert();
+            const Matrix cameraView = m_Camera.GetTransform().GetModel().Invert();
             const Matrix& cameraProjection = m_Camera.GetProjection();
 
             auto& tc = selectedEntity.GetComponent<Transform>();
@@ -66,22 +66,21 @@ namespace LevEngine::Editor
 
             const float snapValues[3] = { snapValue, snapValue, snapValue };
 
-            ImGuizmo::Manipulate(&cameraView._11,
+            if (ImGuizmo::Manipulate(&cameraView._11,
                 &cameraProjection._11,
                 static_cast<ImGuizmo::OPERATION>(Gizmo::Tool),
                 ImGuizmo::LOCAL,
                 &model._11,
                 nullptr,
-                snap ? snapValues : nullptr);
-
-            if (ImGuizmo::IsUsing())
+                snap ? snapValues : nullptr))
             {
                 Vector3 position, rotation, scale;
                 Math::DecomposeTransform(model, position, rotation, scale);
 
                 tc.SetWorldPosition(position);
                 tc.SetWorldScale(scale);
-                tc.SetWorldRotation(tc.GetLocalRotation() + (rotation - tc.GetLocalRotation())); //Adding delta rotation to avoid Gimbal lock
+                tc.SetWorldRotation(tc.GetWorldRotation() + (rotation - tc.GetWorldRotation())); //Adding delta rotation to avoid Gimbal lock
+                tc.RecalculateModel();
             }
         }
 	}
