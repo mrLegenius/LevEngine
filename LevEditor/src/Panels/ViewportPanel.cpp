@@ -74,12 +74,13 @@ namespace LevEngine::Editor
                 nullptr,
                 snap ? snapValues : nullptr))
             {
-                Vector3 position, rotation, scale;
+                Vector3 position, scale;
+                Quaternion rotation;
                 Math::DecomposeTransform(model, position, rotation, scale);
 
                 tc.SetWorldPosition(position);
                 tc.SetWorldScale(scale);
-                tc.SetWorldRotation(tc.GetWorldRotation() + (rotation - tc.GetWorldRotation())); //Adding delta rotation to avoid Gimbal lock
+                tc.SetWorldRotation(rotation);
                 tc.RecalculateModel();
             }
         }

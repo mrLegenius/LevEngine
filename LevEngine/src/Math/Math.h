@@ -57,14 +57,10 @@ namespace LevEngine
 
 		static bool DecomposeTransform(Matrix& transform,
 		                               Vector3& outPosition,
-		                               Vector3& outRotation,
+		                               Quaternion& outRotation,
 		                               Vector3& outScale)
 		{
-			Quaternion rotation;
-			const auto success = transform.Decompose(outScale, rotation, outPosition);
-			outRotation = rotation.ToEuler();
-
-			return success;
+			return  transform.Decompose(outScale, outRotation, outPosition);
 		}
 	};
 }

@@ -83,7 +83,7 @@ public:
 
 	void UpdateInertiaTensor(const Transform& transform)
 	{
-		Quaternion q = transform.GetLocalOrientation();
+		Quaternion q = transform.GetLocalRotation();
 
 		const Matrix orientation = Matrix::CreateFromQuaternion(q);
 

@@ -20,7 +20,7 @@ struct Transform
 
 	[[nodiscard]] Vector3 GetLocalPosition() const { return position; }
 	[[nodiscard]] Vector3 GetLocalScale() const { return scale; }
-	[[nodiscard]] Vector3 GetLocalRotation() const { return rotation; }
+	[[nodiscard]] Quaternion GetLocalRotation() const { return rotation; }
 
 	[[nodiscard]] Vector3 GetWorldPosition() const
 	{
@@ -30,7 +30,7 @@ struct Transform
 			const auto& parentTransform = parent.GetComponent<Transform>();
 
 			localPos *= parentTransform.GetWorldScale();
-			localPos = Vector3::Transform(localPos, parentTransform.GetWorldOrientation());
+			localPos = Vector3::Transform(localPos, parentTransform.GetWorldRotation());
 			localPos += parentTransform.GetWorldPosition();
 		}
 		return localPos;
@@ -46,12 +46,12 @@ struct Transform
 
 		return scale;
 	}
-	[[nodiscard]] Vector3 GetWorldRotation() const
+	[[nodiscard]] Quaternion GetWorldRotation() const
 	{
 		if (parent)
 		{
 			const auto& parentTransform = parent.GetComponent<Transform>();
-			return (GetLocalOrientation() * parentTransform.GetWorldOrientation()).ToEuler();
+			return rotation * parentTransform.GetWorldRotation();
 		}
 
 		return rotation;
@@ -79,7 +79,7 @@ struct Transform
 			const auto& parentTransform = parent.GetComponent<Transform>();
 			
 			position -= parentTransform.GetWorldPosition();
-			auto rot = parentTransform.GetWorldOrientation();
+			auto rot = parentTransform.GetWorldRotation();
 			rot.Conjugate();
 			position = Vector3::Transform(position, rot);
 
@@ -95,37 +95,20 @@ struct Transform
 		}
 	}
 
-	void SetWorldRotation(const Vector3 value)
-	{
-		rotation = value;
-
-		if (parent)
-		{
-			const auto& parentTransform = parent.GetComponent<Transform>();
-			rotation -= parentTransform.GetWorldRotation();
-		}
-	}
-
 	void SetWorldRotation(const Quaternion value)
 	{
-		rotation = value.ToEuler();
+		rotation = value;
 
 		if (parent)
 		{
 			const auto& parentTransform = parent.GetComponent<Transform>();
-			rotation -= parentTransform.GetWorldRotation();
+			rotation /= parentTransform.GetWorldRotation();
 		}
-			
-	}
-
-	void SetLocalRotation(const Vector3 value)
-	{
-		rotation = value;
 	}
 
 	void SetLocalRotation(const Quaternion value)
 	{
-		rotation = value.ToEuler();
+		rotation = value;
 	}
 
 	void SetLocalScale(const Vector3 value)
@@ -187,33 +170,23 @@ struct Transform
 
 	[[nodiscard]] Vector3 GetUpDirection() const
 	{
-		Vector3 dir = XMVector3Rotate(Vector3::Up, GetWorldOrientation());
+		Vector3 dir = XMVector3Rotate(Vector3::Up, GetWorldRotation());
 		dir.Normalize();
 		return dir;
 	}
 
 	[[nodiscard]] Vector3 GetRightDirection() const
 	{
-		Vector3 dir = XMVector3Rotate(Vector3::Right, GetWorldOrientation());
+		Vector3 dir = XMVector3Rotate(Vector3::Right, GetWorldRotation());
 		dir.Normalize();
 		return dir;
 	}
 
 	[[nodiscard]] Vector3 GetForwardDirection() const
 	{
-		Vector3 dir = XMVector3Rotate(Vector3::Forward, GetWorldOrientation());
+		Vector3 dir = XMVector3Rotate(Vector3::Forward, GetWorldRotation());
 		dir.Normalize();
 		return dir;
-	}
-
-	[[nodiscard]] Quaternion GetWorldOrientation() const
-	{
-		return Quaternion::CreateFromYawPitchRoll(GetWorldRotation());
-	}
-
-	[[nodiscard]] Quaternion GetLocalOrientation() const
-	{
-		return Quaternion::CreateFromYawPitchRoll(rotation);
 	}
 
 	void SetPositionX(const float x) { position.x = x; }
@@ -239,7 +212,7 @@ struct Transform
 	void ForceRecalculateModel()
 	{
 		model = Matrix::CreateScale(GetWorldScale()) *
-			Matrix::CreateFromQuaternion(GetWorldOrientation()) *
+			Matrix::CreateFromQuaternion(GetWorldRotation()) *
 			Matrix::CreateTranslation(GetWorldPosition());
 	}
 
@@ -252,11 +225,11 @@ private:
 	Matrix model = Matrix::Identity;
 
 	Vector3 position = Vector3::Zero;
-	Vector3 rotation = Vector3::Zero;
+	Quaternion rotation = Quaternion::Identity;
 	Vector3 scale = Vector3::One;
 
 	Vector3 prevPosition = Vector3::Zero;
-	Vector3 prevRotation = Vector3::Zero;
+	Quaternion prevRotation = Quaternion::Identity;
 	Vector3 prevScale = Vector3::One;
 	Entity prevParent{};
 	Entity entity{};

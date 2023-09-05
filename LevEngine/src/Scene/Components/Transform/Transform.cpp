@@ -36,7 +36,7 @@ void Transform::SetParent(Entity value, const bool keepWorldTransform)
 	}
 
 	const auto position = GetWorldPosition();
-	const auto rotation = GetWorldOrientation();
+	const auto rotation = GetWorldRotation();
 	const auto scale = GetWorldScale();
 
 	parent = value;
@@ -58,9 +58,9 @@ protected:
 		if (GUIUtils::DrawVector3Control("Position", position))
 			component.SetLocalPosition(position);
 
-		Vector3 rotation = Math::ToDegrees(component.GetLocalRotation());
+		Vector3 rotation = Math::ToDegrees(component.GetLocalRotation().ToEuler());
 		if (GUIUtils::DrawVector3Control("Rotation", rotation))
-			component.SetLocalRotation(Math::ToRadians(rotation));
+			component.SetLocalRotation(Quaternion::CreateFromYawPitchRoll(Math::ToRadians(rotation)));
 
 		auto scale = component.GetLocalScale();
 		if (GUIUtils::DrawVector3Control("Scale", scale, 1.0f))
@@ -76,13 +76,13 @@ protected:
 	void SerializeData(YAML::Emitter& out, const Transform& component) override
 	{
 		out << YAML::Key << "Position" << YAML::Value << component.GetLocalPosition();
-		out << YAML::Key << "Rotation" << YAML::Value << component.GetLocalRotation();
+		out << YAML::Key << "Rotation" << YAML::Value << component.GetLocalRotation().ToEuler();
 		out << YAML::Key << "Scale" << YAML::Value << component.GetLocalScale();
 	}
 	void DeserializeData(YAML::Node& node, Transform& component) override
 	{
 		component.SetLocalPosition(node["Position"].as<Vector3>());
-		component.SetLocalRotation(node["Rotation"].as<Vector3>());
+		component.SetLocalRotation(Quaternion::CreateFromYawPitchRoll(node["Rotation"].as<Vector3>()));
 		component.SetLocalScale(node["Scale"].as<Vector3>());
 	}
 };

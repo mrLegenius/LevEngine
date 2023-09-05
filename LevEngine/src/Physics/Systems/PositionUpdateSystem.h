@@ -25,7 +25,7 @@ inline void UpdatePositionSystem(const float deltaTime, entt::registry& registry
         rigidbody.velocity *= frameDamping;
 
         //Angular movement
-        Quaternion orientation = transform.GetLocalOrientation();
+        Quaternion orientation = transform.GetLocalRotation();
 
         orientation += orientation * Quaternion(rigidbody.angularVelocity * deltaTime * 0.5f, 0.0f);
         orientation.Normalize();
