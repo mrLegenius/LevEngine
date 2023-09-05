@@ -101,7 +101,7 @@ namespace LevEngine::Editor
             }
             ImGui::PopStyleVar();
 
-            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
             {
                 if (!directoryEntry.is_directory())
                 {
