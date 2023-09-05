@@ -131,6 +131,7 @@ namespace LevEngine
 		}
 
 		static void RenameAsset(const Ref<Asset>& asset, const std::string& name);
+		static void MoveAsset(const Ref<Asset>& asset, const std::filesystem::path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
 
 	private:

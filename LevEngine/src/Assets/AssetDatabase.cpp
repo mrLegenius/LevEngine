@@ -78,6 +78,40 @@ namespace LevEngine
 		m_AssetsByPath.emplace(newPath, asset);
 	}
 
+	void AssetDatabase::MoveAsset(const Ref<Asset>& asset, const std::filesystem::path& directory)
+	{
+		const auto currentDirectory = asset->GetPath().parent_path();
+
+		if (currentDirectory == directory) return;
+		if (directory.has_extension()) return;
+
+		const auto oldPath = asset->GetPath();
+		const auto newPath = directory / asset->GetFullName();
+
+		if (exists(newPath))
+		{
+			Log::CoreWarning("Failed to move asset. Asset '{0}' already exists in {1}", asset->GetName(), directory);
+			return;
+		}
+
+		try
+		{
+			std::filesystem::rename(oldPath, newPath);
+			std::filesystem::rename(
+				oldPath.string().append(".meta"),
+				newPath.string().append(".meta"));
+		}
+		catch (std::filesystem::filesystem_error& e)
+		{
+			Log::CoreWarning("Failed to move asset. Error: {0}", e.what());
+			return;
+		}
+
+		asset->Rename(newPath);
+		m_AssetsByPath.emplace(newPath, asset);
+		m_AssetsByPath.erase(oldPath);
+	}
+
 	void AssetDatabase::DeleteAsset(const Ref<Asset>& asset)
 	{
 		if (asset == nullptr) return;

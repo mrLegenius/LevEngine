@@ -80,6 +80,21 @@ namespace LevEngine::Editor
             ImGui::ImageButton(icon->GetId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
             ImGui::PopStyleColor();
 
+            if (directoryEntry.is_directory())
+            {
+                if (ImGui::BeginDragDropTarget())
+                {
+	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
+	                {
+	                    const auto assetPathPayload = static_cast<const wchar_t*>(payload->Data);
+	                    const std::filesystem::path assetPath = AssetDatabase::AssetsRoot / assetPathPayload;
+
+                        AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath), path);
+	                }
+	                ImGui::EndDragDropTarget();
+                }
+            }
+
             if (ImGui::BeginDragDropSource())
             {
                 auto relativePath = std::filesystem::relative(path, AssetDatabase::AssetsRoot);

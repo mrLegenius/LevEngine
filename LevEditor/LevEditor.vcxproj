@@ -95,7 +95,6 @@
     <ClInclude Include="src\EntitySelection.h" />
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Gizmo.h" />
-    <ClInclude Include="src\KatamariPlayer.h" />
     <ClInclude Include="src\Panels\AssetBrowserPanel.h" />
     <ClInclude Include="src\Panels\ConsolePanel.h" />
     <ClInclude Include="src\Panels\GamePanel.h" />
