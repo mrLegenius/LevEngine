@@ -70,7 +70,7 @@ namespace LevEngine::Editor
 			return false;
 		}
 
-		void UpdateTexture(const Ref<Texture>& renderTexture) const
+		void UpdateTexture(const Ref<Texture>& renderTexture)
 		{
 			const auto targetWidth = renderTexture->GetWidth();
 			const auto targetHeight = renderTexture->GetHeight();
@@ -78,6 +78,7 @@ namespace LevEngine::Editor
 			if (targetWidth != m_Texture->GetWidth() || targetHeight != m_Texture->GetHeight())
 			{
 				m_Texture->Resize(targetWidth, targetHeight);
+				m_Camera.SetViewportSize(targetWidth, targetHeight);
 			}
 
 			m_Texture->CopyFrom(renderTexture);
@@ -95,7 +96,7 @@ namespace LevEngine::Editor
 
 		Ref<Texture> m_Texture;
 
-		EditorCamera m_Camera{90.0f, 0.1f, 1000.0f, Vector3{0, 10, -10}};
+		EditorCamera m_Camera{60.0f, 0.1f, 1000.0f, Vector3{0, 10, -10}};
 	};
 }
 
