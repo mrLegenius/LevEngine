@@ -11,6 +11,7 @@ class Renderer
 {
 public:
 	static void Init();
+	static void Clear();
 	static void RecalculateAllTransforms(entt::registry& registry);
 	static void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
 	static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);

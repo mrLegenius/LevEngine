@@ -257,7 +257,11 @@ void Renderer::SetViewport(const float width, const float height)
 void DirectionalLightSystem(entt::registry& registry);
 void PointLightsSystem(entt::registry& registry, const RenderParams& params);
 
-
+void Renderer::Clear()
+{
+	Application::Get().GetWindow().GetContext()->GetRenderTarget()->Clear(ClearFlags::All);
+}
+	
 void Renderer::RecalculateAllTransforms(entt::registry& registry)
 {
 	LEV_PROFILE_FUNCTION();
@@ -305,7 +309,11 @@ void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const T
 {
 	LEV_PROFILE_FUNCTION();
 
-	if (!mainCamera) return;
+	if (!mainCamera)
+	{
+		Clear();
+		return;
+	}
 
 	RecalculateAllTransforms(registry);
 
