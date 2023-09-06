@@ -78,7 +78,6 @@ namespace LevEngine::Editor
 			if (targetWidth != m_Texture->GetWidth() || targetHeight != m_Texture->GetHeight())
 			{
 				m_Texture->Resize(targetWidth, targetHeight);
-				m_Camera.SetViewportSize(m_Size.x, m_Size.y);
 			}
 
 			m_Texture->CopyFrom(renderTexture);
