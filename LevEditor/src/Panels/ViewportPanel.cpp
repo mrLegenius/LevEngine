@@ -25,11 +25,19 @@ namespace LevEngine::Editor
 
         m_Size = Vector2{ viewportSize.x, viewportSize.y };
 
+	    float left = 0.5f * (1 - viewportSize.x / m_Texture->GetWidth());
+	    float bottom = 0.5f * (1 - viewportSize.y / m_Texture->GetHeight());
+	    ImVec2 leftBottom = ImVec2{left, bottom};
+
+	    float right = 0.5f * (1 + viewportSize.x / m_Texture->GetWidth());
+	    float top = 0.5f * (1 + viewportSize.y / m_Texture->GetHeight());
+	    ImVec2 rightTop = ImVec2{right, top};
+	    
         ImGui::Image(
             m_Texture->GetId(),
             viewportSize,
-            ImVec2(0, 0),
-            ImVec2(1, 1)
+            leftBottom,
+            rightTop
         );
 
         if (ImGui::BeginDragDropTarget())

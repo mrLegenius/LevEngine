@@ -19,14 +19,13 @@ namespace LevEngine::Editor
 
 			m_Size.x = renderTexture->GetWidth();
 			m_Size.y = renderTexture->GetHeight();
+
+			m_Camera.SetViewportSize(m_Size.x, m_Size.y);
 		}
 
 		[[nodiscard]] EditorCamera& GetCamera() { return m_Camera; }
 		void UpdateCamera(const float deltaTime)
 		{
-			if (Math::IsZero(m_Size.x) || Math::IsZero(m_Size.y)) return;
-
-			m_Camera.SetViewportSize(m_Size.x, m_Size.y);
 			if (m_Focused)
 				m_Camera.OnUpdate(deltaTime);
 			m_Camera.UpdateView();
@@ -77,7 +76,10 @@ namespace LevEngine::Editor
 			const auto targetHeight = renderTexture->GetHeight();
 
 			if (targetWidth != m_Texture->GetWidth() || targetHeight != m_Texture->GetHeight())
+			{
 				m_Texture->Resize(targetWidth, targetHeight);
+				m_Camera.SetViewportSize(m_Size.x, m_Size.y);
+			}
 
 			m_Texture->CopyFrom(renderTexture);
 		}
@@ -94,7 +96,7 @@ namespace LevEngine::Editor
 
 		Ref<Texture> m_Texture;
 
-		EditorCamera m_Camera{30.0f, 0.1f, 1000.0f, Vector3{0, 10, -10}};
+		EditorCamera m_Camera{90.0f, 0.1f, 1000.0f, Vector3{0, 10, -10}};
 	};
 }
 
