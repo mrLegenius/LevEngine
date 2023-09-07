@@ -11,7 +11,7 @@ namespace LevEngine
 class ObjLoader
 {
 public:
-	static std::shared_ptr<Mesh> LoadMesh(const std::filesystem::path& path)
+	static Ref<Mesh> LoadMesh(const std::filesystem::path& path)
 	{
 		std::vector<Vector3> positions;
 		std::vector<Vector2> uvs;
@@ -36,7 +36,7 @@ public:
 			return nullptr;
 		}
 
-		auto mesh = std::make_shared<Mesh>();
+		auto mesh = CreateRef<Mesh>();
 
 		int verticesCount = 0;
 

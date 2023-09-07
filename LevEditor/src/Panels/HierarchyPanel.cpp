@@ -52,7 +52,7 @@ namespace LevEngine::Editor
 
 		const auto& tag = entity.GetComponent<TagComponent>().tag;
 
-		const auto entitySelection = std::dynamic_pointer_cast<EntitySelection>(Selection::Current());
+		const auto entitySelection = CastRef<EntitySelection>(Selection::Current());
 
 		const auto flags =
 			(entitySelection && entitySelection->Get() == entity ? ImGuiTreeNodeFlags_Selected : 0)

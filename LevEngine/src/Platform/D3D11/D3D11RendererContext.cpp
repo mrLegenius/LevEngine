@@ -96,7 +96,7 @@ void D3D11RendererContext::SwapBuffers()
 	m_RenderTarget->Bind();
 
 	// Copy the render target's color buffer to the swap chain's back buffer.
-	const Ref<D3D11Texture> colorBuffer = std::dynamic_pointer_cast<D3D11Texture>(m_RenderTarget->GetTexture(AttachmentPoint::Color0));
+	const Ref<D3D11Texture> colorBuffer = CastRef<D3D11Texture>(m_RenderTarget->GetTexture(AttachmentPoint::Color0));
 	if (colorBuffer)
 		context->CopyResource(m_BackBuffer, colorBuffer->GetTextureResource());
 

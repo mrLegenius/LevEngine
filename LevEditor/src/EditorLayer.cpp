@@ -60,7 +60,8 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
-        m_Console = CreateRef<ConsolePanel>();
+        //spdlog uses shared_ptr so we use here as well
+        m_Console = std::make_shared<ConsolePanel>();
         Log::Logger::AddLogHandler(m_Console);
 
         AssetDatabase::ProcessAllAssets();

@@ -22,11 +22,11 @@ class Mesh
 public:
 	Mesh() = default;
 
-	static std::shared_ptr<Mesh> CreatePlane(int resolution);
-	static std::shared_ptr<Mesh> CreateSphere(uint32_t sliceCount);
-	static std::shared_ptr<Mesh> CreateCube();
+	static Ref<Mesh> CreatePlane(int resolution);
+	static Ref<Mesh> CreateSphere(uint32_t sliceCount);
+	static Ref<Mesh> CreateCube();
 
-	std::shared_ptr<IndexBuffer> CreateIndexBuffer() const;
+	Ref<IndexBuffer> CreateIndexBuffer() const;
 
 	void Clear()
 	{

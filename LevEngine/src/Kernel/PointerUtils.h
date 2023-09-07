@@ -47,5 +47,19 @@ constexpr Ref<T> CreateRef(std::initializer_list<List> list)
 {
 	return Ref<T>{ new T(list) };
 }
+
+template<class TDerived, class TBase>
+constexpr Ref<TDerived> CastRef(Ref<TBase> ptr)
+{
+	static_assert(std::is_base_of_v<TBase, TDerived>, "TDerived must be derived from TBase");
+	return std::dynamic_pointer_cast<TDerived>(ptr);
+}
+#pragma endregion
+
+#pragma region Weak
+
+	template<typename T>
+	using Weak = std::weak_ptr<T>;
+	
 #pragma endregion
 }

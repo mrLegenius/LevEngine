@@ -37,7 +37,7 @@ private:
 	Ref<PropertiesPanel> m_Properties;
 	Ref<AssetBrowserPanel> m_AssetsBrowser;
 	Ref<GamePanel> m_Game;
-	Ref<ConsolePanel> m_Console;
+	std::shared_ptr<ConsolePanel> m_Console;
 
 	std::filesystem::path m_EditorScenePath;
 

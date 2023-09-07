@@ -13,7 +13,7 @@ extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 inline Ref<D3D11Texture> ConvertTextureToD3D11Texture(const Ref<Texture>& texture)
 {
-    return std::dynamic_pointer_cast<D3D11Texture>(texture);
+    return CastRef<D3D11Texture>(texture);
 }
 
 void D3D11RenderTarget::Bind()
@@ -31,7 +31,7 @@ void D3D11RenderTarget::Bind()
 
     for (uint8_t i = 0; i < 8; i++)
     {
-	    if (const std::shared_ptr<D3D11Texture> texture = ConvertTextureToD3D11Texture(m_Textures[i]))
+	    if (const Ref<D3D11Texture> texture = ConvertTextureToD3D11Texture(m_Textures[i]))
 		    renderTargetViews[numRTVs++] = texture->GetRenderTargetView();
     }
 
@@ -42,7 +42,7 @@ void D3D11RenderTarget::Bind()
 
     for (uint8_t i = 0; i < 8; i++)
     {
-        std::shared_ptr<StructuredBufferDX11> rwbuffer = m_StructuredBuffers[i];
+        Ref<StructuredBufferDX11> rwbuffer = m_StructuredBuffers[i];
         if (rwbuffer)
 	        uavViews[numUAVs++] = rwbuffer->GetUnorderedAccessView();
     }

@@ -28,10 +28,10 @@ namespace LevEngine
 		bool IsValid() const { return !m_Name.empty(); }
 
 	private:
-		std::weak_ptr<Texture> m_Texture;
-		std::weak_ptr<SamplerState> m_SamplerState;
-		std::weak_ptr<ConstantBuffer> m_ConstantBuffer;
-		std::weak_ptr<StructuredBuffer> m_StructuredBuffer;
+		Weak<Texture> m_Texture;
+		Weak<SamplerState> m_SamplerState;
+		Weak<ConstantBuffer> m_ConstantBuffer;
+		Weak<StructuredBuffer> m_StructuredBuffer;
 
 		std::string m_Name;
 		uint32_t m_SlotId;

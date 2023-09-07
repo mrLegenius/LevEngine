@@ -2301,7 +2301,7 @@ void D3D11Texture::CopyFrom(const Ref<Texture> sourceTexture)
 {
     LEV_PROFILE_FUNCTION();
 
-	const std::shared_ptr<D3D11Texture> srcTexture = std::dynamic_pointer_cast<D3D11Texture>(sourceTexture);
+	const Ref<D3D11Texture> srcTexture = CastRef<D3D11Texture>(sourceTexture);
 
     if (srcTexture && srcTexture.get() != this)
     {

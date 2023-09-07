@@ -51,7 +51,7 @@ namespace LevEngine::Editor
         }
 
         //Gizmos
-        const auto& entitySelection = std::dynamic_pointer_cast<EntitySelection>(Selection::Current());
+        const auto& entitySelection = CastRef<EntitySelection>(Selection::Current());
 
         if (!entitySelection) return;
 
