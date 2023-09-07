@@ -463,6 +463,7 @@
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
+    <ClInclude Include="src\DataTypes\String.h" />
     <ClInclude Include="src\ObjLoader.h" />
     <ClInclude Include="src\levpch.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />

@@ -23,6 +23,10 @@
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 
+// -- Data Types -------------------------------------------
+
+#include "DataTypes/String.h"
+
 // -- GUI --------------------------------------------------
 
 #include "GUI/ImGuiLayer.h"
