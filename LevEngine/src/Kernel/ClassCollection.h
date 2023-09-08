@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "DataTypes/Vector.h"
-#include "Kernel/PointerUtils.h"
+#include "DataTypes/Pointers.h"
 
 namespace LevEngine
 {

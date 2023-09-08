@@ -5,6 +5,7 @@
 #include "MeshAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
+#include "DataTypes/UnorderedMap.h"
 
 namespace LevEngine
 {
@@ -135,8 +136,8 @@ namespace LevEngine
 		static void DeleteAsset(const Ref<Asset>& asset);
 
 	private:
-		static inline std::unordered_map<UUID, Ref<Asset>> m_Assets;
-		static inline std::unordered_map<std::filesystem::path, Ref<Asset>> m_AssetsByPath;
+		static inline UnorderedMap<UUID, Ref<Asset>> m_Assets;
+		static inline UnorderedMap<std::filesystem::path, Ref<Asset>> m_AssetsByPath;
 
 		template<class T>
 		[[nodiscard]] static const Ref<T>& GetAsset(const Ref<Asset>& asset)

@@ -9,7 +9,7 @@
 
 #include "Kernel/Asserts.h"
 #include "Kernel/Color.h"
-#include "Kernel/PointerUtils.h"
+#include "DataTypes/Pointers.h"
 #include "Kernel/PlatformUtils.h"
 #include "Kernel/Utils.h"
 #include "Kernel/UUID.h"

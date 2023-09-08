@@ -1,9 +1,9 @@
 #pragma once
-#include <map>
 
 #include "ConstantBuffer.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "DataTypes/Map.h"
 #include "Kernel/Color.h"
 
 namespace LevEngine
@@ -149,7 +149,7 @@ private:
 		float Shininess = 2;
 	};
 
-	using TextureMap = std::map<TextureType, Ref<Texture>>;
+	using TextureMap = Map<TextureType, Ref<Texture>>;
 	TextureMap m_Textures;
 
 	Ref<ConstantBuffer> m_ConstantBuffer;

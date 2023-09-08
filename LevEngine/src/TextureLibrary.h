@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "DataTypes/UnorderedMap.h"
 #include "Renderer/Texture.h"
 
 namespace LevEngine
@@ -17,6 +18,6 @@ namespace LevEngine
 		}
 
 	private:
-		static std::unordered_map<std::string, Ref<Texture>> m_TextureMap;
+		static inline UnorderedMap<std::string, Ref<Texture>> m_TextureMap;
 	};
 }

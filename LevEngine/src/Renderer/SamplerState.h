@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Kernel/PointerUtils.h"
+#include "DataTypes/Pointers.h"
 #include "ShaderType.h"
 #include "Kernel/Color.h"
 #include "Math/Math.h"

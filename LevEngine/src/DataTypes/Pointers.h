@@ -1,4 +1,6 @@
 #pragma once
+#include "EASTL/shared_ptr.h"
+#include "EASTL/unique_ptr.h"
 
 #pragma region Scope
 namespace LevEngine

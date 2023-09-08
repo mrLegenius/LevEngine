@@ -2,7 +2,7 @@
 #include "BufferBinding.h"
 #include "ShaderParameter.h"
 #include "ShaderType.h"
-#include "Kernel/PointerUtils.h"
+#include "DataTypes/Pointers.h"
 
 namespace LevEngine
 {

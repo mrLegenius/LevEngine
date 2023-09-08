@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include "KeyCodes.h"
 #include "MouseButtonCodes.h"
+#include "DataTypes/UnorderedMap.h"
 
 namespace LevEngine
 {
@@ -33,10 +34,10 @@ private:
 		Down,
 	};
 
-	static std::unordered_map<KeyCode, State> s_CurrentKeyStates;
-	static std::unordered_map<KeyCode, State> s_PreviousKeyStates;
-	static std::unordered_map<MouseButton, State> s_ButtonStates;
-	static std::unordered_map<MouseButton, State> s_PreviousButtonStates;
+	static UnorderedMap<KeyCode, State> s_CurrentKeyStates;
+	static UnorderedMap<KeyCode, State> s_PreviousKeyStates;
+	static UnorderedMap<MouseButton, State> s_ButtonStates;
+	static UnorderedMap<MouseButton, State> s_PreviousButtonStates;
 
 	static float s_MousePositionX;
 	static float s_MousePositionY;

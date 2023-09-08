@@ -430,6 +430,9 @@
     <ClInclude Include="src\Assets\MeshAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Assets\TextureAsset.h" />
+    <ClInclude Include="src\DataTypes\Map.h" />
+    <ClInclude Include="src\DataTypes\Pointers.h" />
+    <ClInclude Include="src\DataTypes\UnorderedMap.h" />
     <ClInclude Include="src\DataTypes\Vector.h" />
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\EntryPoint.h" />
@@ -450,7 +453,6 @@
     <ClInclude Include="src\Kernel\LayerStack.h" />
     <ClInclude Include="src\Kernel\Logger.h" />
     <ClInclude Include="src\Kernel\PlatformUtils.h" />
-    <ClInclude Include="src\Kernel\PointerUtils.h" />
     <ClInclude Include="src\Kernel\Time.h" />
     <ClInclude Include="src\Kernel\Timestep.h" />
     <ClInclude Include="src\Kernel\Utils.h" />

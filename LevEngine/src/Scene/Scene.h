@@ -3,7 +3,7 @@
 
 #include "System.h"
 #include "Components/Transform/Transform.h"
-#include "Kernel/PointerUtils.h"
+#include "DataTypes/Pointers.h"
 #include "Kernel/UUID.h"
 #include "Physics/Physics.h"
 #include "Renderer/Camera/SceneCamera.h"

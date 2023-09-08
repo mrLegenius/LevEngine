@@ -3,10 +3,10 @@
 
 namespace LevEngine
 {
-std::unordered_map<KeyCode, Input::State> Input::s_CurrentKeyStates;
-std::unordered_map<KeyCode, Input::State> Input::s_PreviousKeyStates;
-std::unordered_map<MouseButton, Input::State> Input::s_ButtonStates;
-std::unordered_map<MouseButton, Input::State> Input::s_PreviousButtonStates;
+UnorderedMap<KeyCode, Input::State> Input::s_CurrentKeyStates;
+UnorderedMap<KeyCode, Input::State> Input::s_PreviousKeyStates;
+UnorderedMap<MouseButton, Input::State> Input::s_ButtonStates;
+UnorderedMap<MouseButton, Input::State> Input::s_PreviousButtonStates;
 float Input::s_MousePositionX;
 float Input::s_MousePositionY;
 float Input::s_MousePreviousX;

@@ -1,5 +1,7 @@
 #pragma once
 #include <d3d11.h>
+
+#include "DataTypes/Map.h"
 #include "Renderer/Shader.h"
 
 namespace LevEngine
@@ -34,7 +36,7 @@ private:
 
 	ID3D11InputLayout* m_InputLayout = nullptr;
 
-	std::map<BufferBinding, uint32_t> m_InputSemantics;
-	std::map<std::string, Ref<ShaderParameter>> m_ShaderParameters;
+	Map<BufferBinding, uint32_t> m_InputSemantics;
+	Map<std::string, Ref<ShaderParameter>> m_ShaderParameters;
 };
 }

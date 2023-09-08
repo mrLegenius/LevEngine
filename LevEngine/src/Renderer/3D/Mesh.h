@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 
+#include "DataTypes/Map.h"
 #include "DataTypes/Vector.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
@@ -62,7 +63,7 @@ public:
 		m_VertexBuffers[binding] = buffer;
 	}
 
-	[[nodiscard]] const std::map<BufferBinding, Ref<VertexBuffer>>& GetVertexBuffers() const
+	[[nodiscard]] const Map<BufferBinding, Ref<VertexBuffer>>& GetVertexBuffers() const
 	{
 		return m_VertexBuffers;
 	}
@@ -106,7 +107,7 @@ public:
 	Ref<IndexBuffer> IndexBuffer;
 
 private:
-	std::map<BufferBinding, Ref<VertexBuffer>> m_VertexBuffers;
+	Map<BufferBinding, Ref<VertexBuffer>> m_VertexBuffers;
 
 	Vector<Vector3> vertices;
 	Vector<Vector2> uvs;
