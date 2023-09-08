@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "DataTypes/Vector.h"
 #include "Kernel/PointerUtils.h"
 
 namespace LevEngine
@@ -32,7 +33,7 @@ namespace LevEngine
 	private:
 		ClassCollection() = default;
 
-		std::vector<Ref<TBase>> m_Classes;
+		Vector<Ref<TBase>> m_Classes;
 	};
 
 
@@ -86,7 +87,7 @@ namespace LevEngine
 	private:
 		OrderedClassCollection() = default;
 
-		std::vector<std::pair<Ref<TBase>, int>> m_Classes;
+		Vector<std::pair<Ref<TBase>, int>> m_Classes;
 	};
 
 	template<class TBase, class TDerived, int Order>

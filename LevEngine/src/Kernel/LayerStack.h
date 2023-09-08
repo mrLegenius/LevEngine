@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <vector>
 #include "Layer.h"
+#include "DataTypes/Vector.h"
+
 namespace LevEngine
 {
 class LayerStack
@@ -14,11 +16,11 @@ public:
 	void PopLayer(const Layer* layer);
 	void PopOverlay(const Layer* overlay);
 
-	std::vector<Layer*>::iterator begin() { return m_Layers.begin(); }
-	std::vector<Layer*>::iterator end() { return m_Layers.end(); }
+	Vector<Layer*>::iterator begin() { return m_Layers.begin(); }
+	Vector<Layer*>::iterator end() { return m_Layers.end(); }
 
 private:
-	std::vector<Layer*> m_Layers;
+	Vector<Layer*> m_Layers;
 	unsigned int m_LayerInsertIndex = 0;
 };
 }

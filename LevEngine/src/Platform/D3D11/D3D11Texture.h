@@ -2,6 +2,7 @@
 #include <dxgiformat.h>
 #include <d3d11.h>
 
+#include "DataTypes/Vector.h"
 #include "Renderer/ClearFlags.h"
 #include "Renderer/CPUAccess.h"
 #include "Renderer/Texture.h"
@@ -94,7 +95,7 @@ protected:
 
 	bool m_IsTransparent{};
 
-	typedef std::vector<uint8_t> ColorBuffer;
+	typedef Vector<uint8_t> ColorBuffer;
 	ColorBuffer m_Buffer{};
 
 	bool m_IsLoaded = false;

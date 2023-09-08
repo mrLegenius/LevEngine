@@ -430,6 +430,7 @@
     <ClInclude Include="src\Assets\MeshAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Assets\TextureAsset.h" />
+    <ClInclude Include="src\DataTypes\Vector.h" />
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\EntryPoint.h" />
     <ClInclude Include="src\Events\ApplicationEvent.h" />

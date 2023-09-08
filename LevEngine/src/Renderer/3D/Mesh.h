@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 
+#include "DataTypes/Vector.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Renderer/BufferBinding.h"
@@ -107,9 +108,9 @@ public:
 private:
 	std::map<BufferBinding, Ref<VertexBuffer>> m_VertexBuffers;
 
-	std::vector<Vector3> vertices;
-	std::vector<Vector2> uvs;
-	std::vector<uint32_t> indices;
-	std::vector<Vector3> normals;
+	Vector<Vector3> vertices;
+	Vector<Vector2> uvs;
+	Vector<uint32_t> indices;
+	Vector<Vector3> normals;
 };
 }

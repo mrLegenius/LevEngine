@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 
+#include "DataTypes/Vector.h"
 #include "Renderer/RenderSettings.h"
 
 namespace LevEngine
@@ -250,7 +251,7 @@ void D3D11Shader::CreateInputLayout(ID3DBlob* vertexBlob)
 	m_InputSemantics.clear();
 
 	const uint32_t numInputParameters = shaderDescription.InputParameters;
-	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements;
+	Vector<D3D11_INPUT_ELEMENT_DESC> inputElements;
 	for (uint32_t i = 0; i < numInputParameters; ++i)
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement;

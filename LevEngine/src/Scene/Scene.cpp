@@ -108,7 +108,7 @@ void Scene::DestroyEntity(const Entity entity)
 {
     LEV_PROFILE_FUNCTION();
 
-    std::vector<Entity> entitiesToDestroy;
+    Vector<Entity> entitiesToDestroy;
 
     auto& parentTransform = entity.GetComponent<Transform>();
     parentTransform.SetParent(Entity{});
@@ -118,7 +118,7 @@ void Scene::DestroyEntity(const Entity entity)
     m_Registry.destroy(entitiesToDestroy.begin(), entitiesToDestroy.end());
 }
 
-void Scene::GetAllChildren(Entity entity, std::vector<Entity>& entities)
+void Scene::GetAllChildren(Entity entity, Vector<Entity>& entities)
 {
 	const auto& parentTransform = entity.GetComponent<Transform>();
 

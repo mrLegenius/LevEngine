@@ -34,7 +34,7 @@ private:
     Ref<CascadeShadowMap> m_CascadeShadowMap = nullptr;
     Ref<ConstantBuffer> m_ShadowMapConstantBuffer;
 
-    std::vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const;
-    Matrix GetCascadeProjection(const Matrix& lightView, std::vector<Vector4> frustrumCorners) const;
+    Vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const;
+    Matrix GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustrumCorners) const;
 };
 }

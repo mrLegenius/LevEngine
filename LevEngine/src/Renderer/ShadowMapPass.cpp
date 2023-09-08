@@ -6,12 +6,12 @@
 
 namespace LevEngine
 {
-std::vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const
+Vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const
 {
     const auto viewProj = view * proj;
     const auto inv = viewProj.Invert();
 
-    std::vector<Vector4> corners;
+    Vector<Vector4> corners;
     corners.reserve(8);
     for (uint32_t x = 0; x < 2; ++x)
         for (uint32_t y = 0; y < 2; ++y)
@@ -29,7 +29,7 @@ std::vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, c
     return corners;
 }
 
-Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, std::vector<Vector4> frustrumCorners) const
+Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustrumCorners) const
 {
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();

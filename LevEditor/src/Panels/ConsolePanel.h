@@ -49,7 +49,7 @@ namespace LevEngine::Editor
 			Color color;
 			std::string message;
 		};
-		std::vector<Item> m_Items;
+		Vector<Item> m_Items;
 		std::unordered_map<spdlog::level::level_enum, Color> m_Colors;
 		ImGuiTextFilter m_Filter;
 	};

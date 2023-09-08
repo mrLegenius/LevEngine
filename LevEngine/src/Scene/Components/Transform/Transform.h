@@ -1,4 +1,5 @@
 #pragma once
+#include "DataTypes/Vector.h"
 #include "Scene/Entity.h"
 #include "Math/Math.h"
 
@@ -57,7 +58,7 @@ struct Transform
 		return rotation;
 	}
 
-	[[nodiscard]] const std::vector<Entity>& GetChildren() const { return children; }
+	[[nodiscard]] const Vector<Entity>& GetChildren() const { return children; }
 	[[nodiscard]] uint32_t GetChildrenCount() const { return children.size(); }
 
 	[[nodiscard]] Entity GetParent() const { return parent; }
@@ -218,7 +219,7 @@ struct Transform
 
 private:
 
-	std::vector<Entity> children;
+	Vector<Entity> children;
 
 	Entity parent{};
 

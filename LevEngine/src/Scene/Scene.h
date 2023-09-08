@@ -31,7 +31,7 @@ public:
 	Entity CreateEntity(UUID uuid, const std::string& name);
 
 	void DestroyEntity(Entity entity);
-	static void GetAllChildren(Entity entity, std::vector<Entity>& entities);
+	static void GetAllChildren(Entity entity, Vector<Entity>& entities);
 
 	Entity DuplicateEntity(Entity entity);
 	Entity DuplicateEntity(Entity entity, Entity parent);
@@ -65,8 +65,8 @@ private:
 
 	Entity ConvertEntity(entt::entity entity);
 
-	std::vector<Ref<System>> m_UpdateSystems;
-	std::vector<Ref<System>> m_LateUpdateSystems;
-	std::vector<Ref<System>> m_EventSystems;
+	Vector<Ref<System>> m_UpdateSystems;
+	Vector<Ref<System>> m_LateUpdateSystems;
+	Vector<Ref<System>> m_EventSystems;
 };
 }

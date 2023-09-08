@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 
+#include "DataTypes/Vector.h"
 #include "Renderer/RasterizerState.h"
 
 namespace LevEngine
@@ -17,7 +18,7 @@ public:
 
 private:
     ID3D11RasterizerState* m_RasterizerState = nullptr;
-    std::vector<D3D11_RECT> m_d3dRects;
-    std::vector<D3D11_VIEWPORT> m_d3dViewports;
+    Vector<D3D11_RECT> m_d3dRects;
+    Vector<D3D11_VIEWPORT> m_d3dViewports;
 };
 }

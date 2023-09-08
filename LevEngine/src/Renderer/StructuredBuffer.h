@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "CPUAccess.h"
 #include "ShaderType.h"
+#include "DataTypes/Vector.h"
 
 namespace LevEngine
 {
@@ -41,7 +42,7 @@ namespace LevEngine
 
 
         // The system data buffer
-        typedef std::vector<uint8_t> BufferType;
+        typedef Vector<uint8_t> BufferType;
         BufferType m_Data;
 
         UINT m_Stride{};

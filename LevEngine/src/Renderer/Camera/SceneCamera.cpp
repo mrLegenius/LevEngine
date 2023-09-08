@@ -26,9 +26,9 @@ void SceneCamera::SetPerspective(const float fov, const float nearClip, const fl
 	RecalculateProjection();
 }
 
-std::vector<Matrix> SceneCamera::GetSplitPerspectiveProjections(const float* distances, const int count) const
+Vector<Matrix> SceneCamera::GetSplitPerspectiveProjections(const float* distances, const int count) const
 {
-	std::vector<Matrix> projections;
+	Vector<Matrix> projections;
 
 	float min = m_PerspectiveNear;
 

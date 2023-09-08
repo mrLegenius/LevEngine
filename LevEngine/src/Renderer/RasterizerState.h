@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "DataTypes/Vector.h"
 #include "Renderer/Viewport.h"
 #include "Renderer/Rect.h"
 
@@ -89,12 +90,12 @@ namespace LevEngine
             m_Viewports[0] = viewport;
             m_ViewportsDirty = true;
         }
-        void SetViewports(const std::vector<Viewport>& viewports)
+        void SetViewports(const Vector<Viewport>& viewports)
         {
             m_Viewports = viewports;
             m_ViewportsDirty = true;
         }
-        [[nodiscard]] const std::vector<Viewport>& GetViewports() const
+        [[nodiscard]] const Vector<Viewport>& GetViewports() const
         {
             return m_Viewports;
         }
@@ -114,12 +115,12 @@ namespace LevEngine
             m_ScissorRects[0] = rect;
             m_ScissorRectsDirty = true;
         }
-        void SetScissorRects(const std::vector<Rect>& rects)
+        void SetScissorRects(const Vector<Rect>& rects)
         {
             m_ScissorRects = rects;
             m_ScissorRectsDirty = true;
         }
-        [[nodiscard]] const std::vector<Rect>& GetScissorRects() const
+        [[nodiscard]] const Vector<Rect>& GetScissorRects() const
         {
             return m_ScissorRects;
         }
@@ -192,10 +193,10 @@ namespace LevEngine
 
         uint8_t m_ForcedSampleCount = 0;
 
-        typedef std::vector<Rect> RectList;
+        typedef Vector<Rect> RectList;
         RectList m_ScissorRects;
 
-        typedef std::vector<Viewport> ViewportList;
+        typedef Vector<Viewport> ViewportList;
         ViewportList m_Viewports;
 
         bool m_StateDirty = true;

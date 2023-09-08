@@ -22,7 +22,7 @@ namespace LevEngine::Editor
 
 		Ref<Scene> m_Context = nullptr;
 
-		std::vector<Entity> m_EntitiesToDelete;
+		Vector<Entity> m_EntitiesToDelete;
 
 		friend class Scene;
 	};

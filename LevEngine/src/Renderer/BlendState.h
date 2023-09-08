@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "DataTypes/Vector.h"
 #include "Math/Math.h"
 
 namespace LevEngine
@@ -168,12 +169,12 @@ namespace LevEngine
             m_Dirty = true;
         }
         // Use this method to set all blend modes at once. Only the first 8 are considered.
-        void SetBlendModes(const std::vector<BlendMode>& blendModes)
+        void SetBlendModes(const Vector<BlendMode>& blendModes)
         {
             m_BlendModes = blendModes;
             m_Dirty = true;
         }
-        const std::vector<BlendMode>& GetBlendModes() const { return m_BlendModes; }
+        const Vector<BlendMode>& GetBlendModes() const { return m_BlendModes; }
 
         void SetAlphaCoverage(const bool enabled)
         {
@@ -231,7 +232,7 @@ namespace LevEngine
         virtual void Unbind() = 0;
     protected:
 
-        typedef std::vector<BlendMode> BlendModeList;
+        typedef Vector<BlendMode> BlendModeList;
 
         BlendModeList m_BlendModes{};
 

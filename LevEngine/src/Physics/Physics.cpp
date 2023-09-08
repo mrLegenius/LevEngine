@@ -2,6 +2,7 @@
 #include "Physics.h"
 
 #include "Components/CollisionEvent.h"
+#include "DataTypes/Vector.h"
 #include "Scene/Entity.h"
 #include "Systems/ForcesClearSystem.h"
 #include "Systems/PositionUpdateSystem.h"
@@ -242,7 +243,7 @@ void UpdateCollisionList(entt::registry& registry)
 {
 	LEV_PROFILE_FUNCTION();
 
-	std::vector<entity_pair> pairsToDelete;
+	Vector<entity_pair> pairsToDelete;
 
 	for (auto [pair, frames] : collisions)
 	{
