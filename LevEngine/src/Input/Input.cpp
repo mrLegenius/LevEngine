@@ -66,12 +66,12 @@ float Input::GetMouseWheelOffset()
 	return s_MouseWheelOffset;
 }
 
-std::pair<float, float> Input::GetMousePosition()
+Pair<float, float> Input::GetMousePosition()
 {
 	return { s_MousePositionX, s_MousePositionY };
 }
 
-std::pair<float, float> Input::GetMouseDelta()
+Pair<float, float> Input::GetMouseDelta()
 {
 	return { s_MousePositionX - s_MousePreviousX, s_MousePositionY - s_MousePreviousY };
 }

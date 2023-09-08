@@ -3,6 +3,7 @@
 
 #include "Components/CollisionEvent.h"
 #include "DataTypes/Map.h"
+#include "DataTypes/Pair.h"
 #include "DataTypes/Vector.h"
 #include "Scene/Entity.h"
 #include "Systems/ForcesClearSystem.h"
@@ -187,7 +188,7 @@ Entity ConvertEntity(const entt::entity entity, entt::registry& registry)
 }
 
 static float dTOffset = 0;
-using entity_pair = std::pair<entt::entity, entt::entity>;
+using entity_pair = Pair<entt::entity, entt::entity>;
 Map<entity_pair, int> collisions;
 
 void Physics::Process(entt::registry& registry, float deltaTime)

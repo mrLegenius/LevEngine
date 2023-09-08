@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include "KeyCodes.h"
 #include "MouseButtonCodes.h"
+#include "DataTypes/Pair.h"
 #include "DataTypes/UnorderedMap.h"
 
 namespace LevEngine
@@ -22,8 +23,8 @@ public:
 	static bool IsMouseButtonUp(MouseButton button);
 
 	static float GetMouseWheelOffset();
-	static std::pair<float, float> GetMousePosition();
-	static std::pair<float, float> GetMouseDelta();
+	static Pair<float, float> GetMousePosition();
+	static Pair<float, float> GetMouseDelta();
 	static float GetMouseX();
 	static float GetMouseY();
 
