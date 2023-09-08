@@ -3,6 +3,8 @@
 
 #include "AssetDatabase.h"
 
+#include "DataTypes/Queue.h"
+
 namespace LevEngine
 {
 	void AssetDatabase::ImportAsset(const std::filesystem::path& path)
@@ -42,7 +44,7 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
-		std::queue<std::filesystem::path> directories;
+		Queue<std::filesystem::path> directories;
 		directories.push(AssetsRoot);
 		do
 		{
