@@ -39,7 +39,7 @@ namespace LevEngine::Editor
         m_Bounds[0] = Vector2{ viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
         m_Bounds[1] = Vector2{ viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
-        Application::Get().GetImGuiLayer()->BlockEvents(!m_Focused && !m_Hovered);
+        //Application::Get().GetImGuiLayer()->BlockEvents(!m_Focused && !m_Hovered);
 
         const ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
