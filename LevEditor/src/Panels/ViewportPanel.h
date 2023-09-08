@@ -31,7 +31,7 @@ namespace LevEngine::Editor
 			m_Camera.UpdateView();
 		}
 
-		bool OnKeyPressed(KeyPressedEvent& event)
+		bool OnKeyPressed(KeyPressedEvent& event) override
 		{
             //Shortcuts
             if (event.GetRepeatCount() > 0)
@@ -62,7 +62,6 @@ namespace LevEngine::Editor
 				Gizmo::Tool = Gizmo::ToolType::Scale;
                 break;
             }
-
             default:
                 break;
             }

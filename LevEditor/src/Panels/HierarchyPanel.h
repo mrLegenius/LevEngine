@@ -12,6 +12,8 @@ namespace LevEngine::Editor
 
 		void SetContext(const Ref<Scene>& scene);
 
+		bool OnKeyPressed(KeyPressedEvent& e) override;
+
 	protected:
 		std::string GetName() override { return "Hierarchy"; }
 		void DrawContent() override;

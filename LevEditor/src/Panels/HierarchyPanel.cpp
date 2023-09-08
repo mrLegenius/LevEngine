@@ -15,6 +15,24 @@ namespace LevEngine::Editor
 		m_Context = scene;
 	}
 
+	bool HierarchyPanel::OnKeyPressed(KeyPressedEvent& e)
+	{
+		if (e.GetRepeatCount() > 0) return false;
+
+		if (e.GetKeyCode() == KeyCode::Delete)
+		{
+		if (const auto& entitySelection = Selection::CurrentAs<EntitySelection>())
+		{
+			if (entitySelection->Get())
+			{
+				m_Context->DestroyEntity(entitySelection->Get());
+				Selection::Deselect();
+			}
+		}
+		}
+		return false;
+	}
+
 	void HierarchyPanel::DrawContent()
 	{
 		LEV_PROFILE_FUNCTION()
@@ -52,7 +70,7 @@ namespace LevEngine::Editor
 
 		const auto& tag = entity.GetComponent<TagComponent>().tag;
 
-		const auto entitySelection = CastRef<EntitySelection>(Selection::Current());
+		const auto entitySelection = Selection::CurrentAs<EntitySelection>();
 
 		const auto flags =
 			(entitySelection && entitySelection->Get() == entity ? ImGuiTreeNodeFlags_Selected : 0)
@@ -91,7 +109,7 @@ namespace LevEngine::Editor
 
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Delete Entity"))
+			if (ImGui::MenuItem("Delete Entity", "delete"))
 				m_EntitiesToDelete.emplace(m_EntitiesToDelete.begin(), entity);
 
 			ImGui::EndPopup();

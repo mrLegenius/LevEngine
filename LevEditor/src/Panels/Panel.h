@@ -16,6 +16,8 @@ namespace LevEngine::Editor
 
 		void Focus() const { ImGui::FocusWindow(m_Window); }
 
+		virtual bool OnKeyPressed(KeyPressedEvent& e) { return false; }
+
 	protected:
 		virtual std::string GetName() = 0;
 		virtual void DrawContent() = 0;

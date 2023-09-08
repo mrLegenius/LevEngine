@@ -137,6 +137,7 @@ namespace LevEngine::Editor
             break;
         }
 
+        m_Hierarchy->OnKeyPressed(event);
         return m_Viewport->OnKeyPressed(event);
     }
 
