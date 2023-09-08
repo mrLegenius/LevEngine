@@ -33,7 +33,8 @@ public:
 	void DestroyEntity(Entity entity);
 	static void GetAllChildren(Entity entity, std::vector<Entity>& entities);
 
-	void DuplicateEntity(Entity entity);
+	Entity DuplicateEntity(Entity entity);
+	Entity DuplicateEntity(Entity entity, Entity parent);
 
 	void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 

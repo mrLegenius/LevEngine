@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include "EntitySelection.h"
 #include "Selection.h"
 
 namespace LevEngine::Editor
@@ -93,6 +94,14 @@ namespace LevEngine::Editor
         dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResized));
     }
 
+    void EditorLayer::OnDuplicateEntity() const
+    {
+        if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
+        {
+            m_ActiveScene->DuplicateEntity(entitySelection->Get());
+        }
+    }
+
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
     {
         //Shortcuts
@@ -127,8 +136,8 @@ namespace LevEngine::Editor
         }
         case KeyCode::D:
         {
-            //if (control)
-                //OnDuplicateEntity();
+            if (control)
+                OnDuplicateEntity();
 
             break;
         }

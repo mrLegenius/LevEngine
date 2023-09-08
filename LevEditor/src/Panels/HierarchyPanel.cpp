@@ -109,8 +109,10 @@ namespace LevEngine::Editor
 
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Delete Entity", "delete"))
+			if (ImGui::MenuItem("Delete", "delete"))
 				m_EntitiesToDelete.emplace(m_EntitiesToDelete.begin(), entity);
+			if (ImGui::MenuItem("Duplicate", "ctrl+D"))
+				m_Context->DuplicateEntity(entity);
 
 			ImGui::EndPopup();
 		}
