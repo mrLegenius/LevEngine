@@ -12,7 +12,7 @@ namespace LevEngine
 	class RigidbodyDrawer final : public ComponentDrawer<Rigidbody, RigidbodyDrawer>
 	{
 	protected:
-		std::string GetLabel() const override { return "Rigidbody"; }
+		String GetLabel() const override { return "Rigidbody"; }
 
 		void DrawContent(Rigidbody& component) override
 		{

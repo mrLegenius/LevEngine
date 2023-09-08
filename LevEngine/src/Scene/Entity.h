@@ -65,8 +65,8 @@ public:
 	template <typename T>
 	void AddScript();
 
-	UUID GetUUID() { return GetComponent<IDComponent>().ID; }
-	const std::string& GetName() { return GetComponent<TagComponent>().tag; }
+	UUID GetUUID() const { return GetComponent<IDComponent>().ID; }
+	const String& GetName() const { return GetComponent<TagComponent>().tag; }
 
 	operator bool() const { return m_Handle.entity() != entt::null && m_Handle.valid(); }
 	operator uint32_t() const { return static_cast<uint32_t>(m_Handle.entity()); }

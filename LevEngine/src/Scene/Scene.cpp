@@ -80,14 +80,14 @@ void Scene::ForEachEntity(const std::function<void(Entity)>& callback)
 	}
 }
 
-Entity Scene::CreateEntity(const std::string& name)
+Entity Scene::CreateEntity(const String& name)
 {
     LEV_PROFILE_FUNCTION();
 
     return CreateEntity(UUID(), name);
 }
 
-Entity Scene::CreateEntity(UUID uuid, const std::string& name)
+Entity Scene::CreateEntity(UUID uuid, const String& name)
 {
     LEV_PROFILE_FUNCTION();
 

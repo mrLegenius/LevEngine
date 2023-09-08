@@ -55,9 +55,9 @@ namespace LevEngine::Editor
         for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
         {
             const auto& path = directoryEntry.path();
-            std::string filenameString = path.filename().string();
-            std::string stemString = path.stem().string();
-            std::string fileExtension = path.extension().string();
+            String filenameString = path.filename().string().c_str();
+            String stemString = path.stem().string().c_str();
+            String fileExtension = path.extension().string().c_str();
 
             if (fileExtension == ".meta") continue;
 
@@ -66,7 +66,7 @@ namespace LevEngine::Editor
             if (directoryEntry.is_directory())
 	            icon = m_DirectoryIcon;
             else if (AssetDatabase::IsAssetTexture(path))
-                icon = TextureLibrary::GetTexture(path.string());
+                icon = TextureLibrary::GetTexture(path.string().c_str());
             else if (AssetDatabase::IsAssetMesh(path))
                 icon = m_MeshIcon;
             else if (AssetDatabase::IsAssetMaterial(path))
@@ -158,13 +158,13 @@ namespace LevEngine::Editor
     }
 
     template <typename AssetType>
-    void AssetBrowserPanel::DrawCreateMenu(const std::string& label, const std::string& defaultName) const
+    void AssetBrowserPanel::DrawCreateMenu(const String& label, const String& defaultName) const
     {
         static_assert(std::is_base_of_v<Asset, AssetType>, "AssetType must derive from Asset");
 
         if (ImGui::MenuItem(label.c_str()))
         {
-	        const Ref<Asset> asset = AssetDatabase::CreateAsset<AssetType>(m_CurrentDirectory / defaultName);
+	        const Ref<Asset> asset = AssetDatabase::CreateAsset<AssetType>(m_CurrentDirectory / defaultName.c_str());
             Selection::Select(CreateRef<AssetSelection>(asset));
         }
     }

@@ -12,7 +12,7 @@ namespace LevEngine
 	class CameraComponentDrawer final : public ComponentDrawer<CameraComponent, CameraComponentDrawer>
 	{
 	protected:
-		[[nodiscard]] std::string GetLabel() const override { return "Camera"; }
+		[[nodiscard]] String GetLabel() const override { return "Camera"; }
 
 		void DrawContent(CameraComponent& component) override
 		{

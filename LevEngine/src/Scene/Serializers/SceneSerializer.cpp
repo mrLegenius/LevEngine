@@ -20,7 +20,7 @@ namespace LevEngine
 		out << YAML::BeginMap;
 
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
-		out << YAML::Key << "Tag" << YAML::Value << entity.GetComponent<TagComponent>().tag;
+		out << YAML::Key << "Tag" << YAML::Value << entity.GetComponent<TagComponent>().tag.c_str();
 
 		if (auto parent = entity.GetComponent<Transform>().GetParent())
 			out << YAML::Key << "Parent" << YAML::Value << parent.GetUUID();
@@ -31,7 +31,7 @@ namespace LevEngine
 		out << YAML::EndMap;
 	}
 
-	void SceneSerializer::Serialize(const std::string& filepath) const
+	void SceneSerializer::Serialize(const String& filepath) const
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
@@ -48,16 +48,16 @@ namespace LevEngine
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
-		std::ofstream fout(filepath);
+		std::ofstream fout(filepath.c_str());
 		fout << out.c_str();
 	}
 
-	bool SceneSerializer::Deserialize(const std::string& filepath)
+	bool SceneSerializer::Deserialize(const String& filepath)
 	{
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(filepath);
+			data = YAML::LoadFile(filepath.c_str());
 		}
 		catch (std::exception& e)
 		{
@@ -68,7 +68,7 @@ namespace LevEngine
 		if (!data["Scene"])
 			return false;
 
-		auto sceneName = data["Scene"].as<std::string>();
+		auto sceneName = data["Scene"].as<String>();
 		Log::Trace("Deserializing scene '{0}'", sceneName);
 
 		auto entities = data["Entities"];
@@ -80,7 +80,7 @@ namespace LevEngine
 		for (auto entity : entities)
 		{
 			auto uuid = entity["Entity"].as<uint64_t>();
-			auto name = entity["Tag"].as<std::string>();
+			auto name = entity["Tag"].as<String>();
 
 			if (auto parent = entity["Parent"])
 			{
@@ -109,12 +109,12 @@ namespace LevEngine
 		return true;
 	}
 
-	void SceneSerializer::SerializeRuntime(const std::string& filepath)
+	void SceneSerializer::SerializeRuntime(const String& filepath)
 	{
 		LEV_NOT_IMPLEMENTED
 	}
 
-	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
+	bool SceneSerializer::DeserializeRuntime(const String& filepath)
 	{
 		LEV_NOT_IMPLEMENTED
 	}

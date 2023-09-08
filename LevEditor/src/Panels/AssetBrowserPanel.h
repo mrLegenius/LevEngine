@@ -9,12 +9,12 @@ namespace LevEngine::Editor
         AssetBrowserPanel();
 
     protected:
-        std::string GetName() override { return "Asset Browser"; }
+        String GetName() override { return "Asset Browser"; }
         void DrawContent() override;
 
     private:
         template<typename Asset>
-        void DrawCreateMenu(const std::string& label, const std::string& defaultName) const;
+        void DrawCreateMenu(const String& label, const String& defaultName) const;
 
         std::filesystem::path m_CurrentDirectory;
 

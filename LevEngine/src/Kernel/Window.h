@@ -7,14 +7,14 @@ namespace LevEngine
 {
 struct WindowAttributes
 {
-	std::string title;
+	String title;
 	uint32_t width;
 	uint32_t height;
 
-	explicit WindowAttributes(std::string title = "LevEngine",
+	explicit WindowAttributes(String title = "LevEngine",
 		const unsigned int width = 1280,
 		const unsigned int height = 720)
-		: title(std::move(title)),
+		: title(Move(title)),
 		width(width),
 		height(height) { }
 };
@@ -37,7 +37,7 @@ public:
 		m_Data.eventCallback = callback;
 	}
 
-	virtual void SetWindowTitle(std::string& title) = 0;
+	virtual void SetWindowTitle(String& title) = 0;
 	void SetVSync(const bool enabled) { m_Data.vSync = enabled; }
 	[[nodiscard]] bool IsVSync() const { return m_Data.vSync; }
 
@@ -66,7 +66,7 @@ protected:
 public:
 	struct WindowData
 	{
-		std::string title;
+		String title;
 		unsigned int width = 0;
 		unsigned int height = 0;
 

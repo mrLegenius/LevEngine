@@ -2,6 +2,7 @@
 #include "Asset.h"
 #include "ObjLoader.h"
 #include "Renderer/3D/Mesh.h"
+#include "DataTypes/String.h"
 
 namespace LevEngine
 {
@@ -9,11 +10,6 @@ namespace LevEngine
 	{
 	public:
 		explicit MeshAsset(const std::filesystem::path& path, const UUID uuid) : Asset(path, uuid) { }
-
-		explicit MeshAsset(const Ref<Mesh>& mesh, const std::string& name) : Asset(name, UUID()), m_Mesh(mesh)
-		{
-			m_Deserialized = true;
-		}
 
 		void DrawProperties() override { }
 
@@ -24,7 +20,7 @@ namespace LevEngine
 		void SerializeData(YAML::Emitter& out) override { }
 		void DeserializeData(YAML::Node& node) override
 		{
-			m_Mesh = ObjLoader::LoadMesh(m_Path);
+			m_Mesh = ObjLoader::LoadMesh(m_Path.c_str());
 		}
 
 	private:

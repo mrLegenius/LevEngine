@@ -15,7 +15,7 @@ namespace LevEngine::Editor
 		bool OnKeyPressed(KeyPressedEvent& e) override;
 
 	protected:
-		std::string GetName() override { return "Hierarchy"; }
+		String GetName() override { return "Hierarchy"; }
 		void DrawContent() override;
 	private:
 		void DrawEntityNode(Entity entity);

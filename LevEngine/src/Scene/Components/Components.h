@@ -12,11 +12,11 @@ namespace LevEngine
 
 	struct TagComponent
 	{
-		std::string tag;
+		String tag;
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
-		explicit TagComponent(std::string other)
-			: tag(std::move(other)) { }
+		explicit TagComponent(String other)
+			: tag(Move(other)) { }
 	};
 }

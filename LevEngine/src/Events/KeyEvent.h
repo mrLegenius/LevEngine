@@ -24,11 +24,11 @@ public:
 
 	[[nodiscard]] int GetRepeatCount() const { return m_RepeatCount; }
 
-	[[nodiscard]] std::string ToString() const override
+	[[nodiscard]] String ToString() const override
 	{
 		std::stringstream ss;
 		ss << "KeyPressedEvent: " << static_cast<int>(m_Keycode) << " (" << m_RepeatCount << " repeats)";
-		return ss.str();
+		return ss.str().c_str();
 	}
 
 	EVENT_CLASS_TYPE(KeyPressed)
@@ -43,11 +43,11 @@ public:
 	KeyTypedEvent(const KeyCode keycode)
 		: KeyEvent(keycode) { }
 
-	[[nodiscard]] std::string ToString() const override
+	[[nodiscard]] String ToString() const override
 	{
 		std::stringstream ss;
 		ss << "KeyTypedEvent: " << static_cast<int>(m_Keycode);
-		return ss.str();
+		return ss.str().c_str();
 	}
 
 	EVENT_CLASS_TYPE(KeyTyped)
@@ -59,11 +59,11 @@ public:
 	explicit KeyReleasedEvent(const KeyCode keycode)
 		: KeyEvent(keycode) { }
 
-	[[nodiscard]] std::string ToString() const override
+	[[nodiscard]] String ToString() const override
 	{
 		std::stringstream ss;
 		ss << "KeyReleasedEvent: " << static_cast<int>(m_Keycode);
-		return ss.str();
+		return ss.str().c_str();
 	}
 
 	EVENT_CLASS_TYPE(KeyReleased)

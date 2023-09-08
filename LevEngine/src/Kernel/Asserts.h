@@ -3,6 +3,7 @@
 #ifdef LEV_DEBUG
 #define LEV_ENABLE_ASSERTS 1
 #endif
+#include "DataTypes/String.h"
 
 #if LEV_ENABLE_ASSERTS
 #define LEV_ASSERT(x, ...) { if(!(x)) { Log::Error("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
@@ -16,7 +17,7 @@ constexpr void Assert(Condition condition, FormatString& format, Args&&...args)
 {
 	if (condition) return;
 
-	std::string title = "Assertion Failed: ";
+	String title = "Assertion Failed: ";
 	title.append(format);
 
 	LevEngine::Log::Error(title, std::forward<Args>(args)...);

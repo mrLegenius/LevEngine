@@ -49,7 +49,7 @@ namespace LevEngine
 		 || !m_Front)
 			return;
 
-		const std::string paths[6] = {
+		const String paths[6] = {
 			m_Left->GetTexture()->GetPath(),
 			m_Right->GetTexture()->GetPath(),
 			m_Bottom->GetTexture()->GetPath(),

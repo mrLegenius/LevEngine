@@ -1698,7 +1698,7 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint
 	return texture;
 }
 
-D3D11Texture::D3D11Texture(const std::string& path) : Texture(path)
+D3D11Texture::D3D11Texture(const String& path) : Texture(path)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -1822,7 +1822,7 @@ D3D11Texture::D3D11Texture(const std::string& path) : Texture(path)
     stbi_image_free(data);
 }
 
-D3D11Texture::D3D11Texture(const std::string paths[6])
+D3D11Texture::D3D11Texture(const String paths[6])
 {
     LEV_PROFILE_FUNCTION();
 

@@ -87,7 +87,7 @@ namespace LevEngine::Editor
 		[[nodiscard]] float GetHeight() const { return m_Size.y; }
 
 	protected:
-		std::string GetName() override { return "Viewport"; }
+		String GetName() override { return "Viewport"; }
 		void DrawContent() override;
 	private:
 		Vector2 m_Size{ 0.0f };

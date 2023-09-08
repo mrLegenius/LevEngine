@@ -20,7 +20,7 @@ namespace LevEngine::Editor
 			m_Colors.emplace(spdlog::level::critical, Color::Red);
 		}
 	protected:
-		std::string GetName() override { return "Console"; }
+		String GetName() override { return "Console"; }
 		void DrawContent() override;
 
 	private:
@@ -37,7 +37,7 @@ namespace LevEngine::Editor
 			const auto& message = fmt::to_string(formatted);
 
 			const auto color = m_Colors[msg.level];
-			m_Items.push_back({color, message});
+			m_Items.push_back({color, message.c_str()});
 		}
 		void flush_() override
 		{
@@ -47,10 +47,10 @@ namespace LevEngine::Editor
 		struct Item
 		{
 			Color color;
-			std::string message;
+			String message;
 		};
 		Vector<Item> m_Items;
-		std::unordered_map<spdlog::level::level_enum, Color> m_Colors;
+		UnorderedMap<spdlog::level::level_enum, Color> m_Colors;
 		ImGuiTextFilter m_Filter;
 	};
 }

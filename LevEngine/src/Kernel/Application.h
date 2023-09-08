@@ -14,7 +14,7 @@ namespace LevEngine
 class Application
 {
 public:
-	explicit Application(const std::string& name = "My3DApp", uint32_t width = 800, uint32_t height = 800);
+	explicit Application(const String& name = "My3DApp", uint32_t width = 800, uint32_t height = 800);
 	~Application();
 
 	void Run();

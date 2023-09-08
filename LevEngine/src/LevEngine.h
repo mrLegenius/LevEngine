@@ -9,7 +9,6 @@
 
 #include "Kernel/Asserts.h"
 #include "Kernel/Color.h"
-#include "DataTypes/Pointers.h"
 #include "Kernel/PlatformUtils.h"
 #include "Kernel/Utils.h"
 #include "Kernel/UUID.h"
@@ -25,7 +24,13 @@
 
 // -- Data Types -------------------------------------------
 
+#include "DataTypes/Map.h"
+#include "DataTypes/Pair.h"
+#include "DataTypes/Pointers.h"
+#include "DataTypes/Queue.h"
 #include "DataTypes/String.h"
+#include "DataTypes/UnorderedMap.h"
+#include "DataTypes/Vector.h"
 
 // -- GUI --------------------------------------------------
 

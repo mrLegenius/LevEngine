@@ -14,8 +14,8 @@ class D3D11Texture : public Texture
 public:
 	D3D11Texture() = default;
 	static Ref<D3D11Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format, CPUAccess cpuAccess = CPUAccess::None, bool uav = false);
-	explicit D3D11Texture(const std::string& path);
-	explicit D3D11Texture(const std::string paths[6]);
+	explicit D3D11Texture(const String& path);
+	explicit D3D11Texture(const String paths[6]);
 	~D3D11Texture() override;
 
 	[[nodiscard]] uint16_t GetWidth() const override { return m_Width; }

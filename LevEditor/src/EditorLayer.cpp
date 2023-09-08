@@ -441,7 +441,7 @@ namespace LevEngine::Editor
         const auto filepath = FileDialogs::OpenFile("LevEngine Scene (*.scene)\0*.scene\0");
         if (!filepath.empty())
         {
-            OpenScene(filepath);
+            OpenScene(filepath.c_str());
         }
     }
 
@@ -458,7 +458,7 @@ namespace LevEngine::Editor
 
         const Ref<Scene>& newScene = CreateRef<Scene>();
         SceneSerializer sceneSerializer(newScene);
-        if (sceneSerializer.Deserialize(path.generic_string()))
+        if (sceneSerializer.Deserialize(path.generic_string().c_str()))
         {
             Selection::Deselect();
             m_EditorScenePath = path;
@@ -486,7 +486,7 @@ namespace LevEngine::Editor
         if (!m_EditorScenePath.empty())
         {
             const SceneSerializer sceneSerializer(m_ActiveScene);
-            sceneSerializer.Serialize(m_EditorScenePath.string());
+            sceneSerializer.Serialize(m_EditorScenePath.string().c_str());
 
             return true;
         }
@@ -508,7 +508,7 @@ namespace LevEngine::Editor
             const SceneSerializer sceneSerializer(m_ActiveScene);
             sceneSerializer.Serialize(filepath);
 
-            m_EditorScenePath = filepath;
+            m_EditorScenePath = filepath.c_str();
             return true;
         }
 

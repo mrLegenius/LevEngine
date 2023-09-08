@@ -1,16 +1,18 @@
 ﻿#pragma once
 #include <yaml-cpp/yaml.h>
 
+#include "DataTypes/String.h"
+
 namespace LevEngine
 {
 	class Asset
 	{
 	public:
 		explicit Asset(const std::filesystem::path& path, const UUID uuid)
-			: m_Name(path.stem().string())
-			, m_FullName(path.filename().string())
-			, m_Extension(path.extension().string())
-			, m_MetaPath(path.string().append(".meta"))
+			: m_Name(path.stem().string().c_str())
+			, m_FullName(path.filename().string().c_str())
+			, m_Extension(path.extension().string().c_str())
+			, m_MetaPath(path.string().append(".meta").c_str())
 			, m_Path(path)
 			, m_UUID(uuid)
 		{
@@ -18,9 +20,9 @@ namespace LevEngine
 
 		virtual ~Asset() = default;
 
-		[[nodiscard]] const std::string& GetName() const { return m_Name; }
-		[[nodiscard]] const std::string& GetFullName() const { return m_FullName; }
-		[[nodiscard]] const std::string& GetExtension() const { return m_Extension; }
+		[[nodiscard]] const String& GetName() const { return m_Name; }
+		[[nodiscard]] const String& GetFullName() const { return m_FullName; }
+		[[nodiscard]] const String& GetExtension() const { return m_Extension; }
 		[[nodiscard]] const std::filesystem::path& GetPath() const { return m_Path; }
 		[[nodiscard]] const UUID& GetUUID() const { return m_UUID; }
 		[[nodiscard]] bool IsDeserialized() const { return m_Deserialized; }
@@ -32,10 +34,10 @@ namespace LevEngine
 		void DrawEditor();
 		void Rename(const std::filesystem::path& path)
 		{
-			m_Name = path.stem().string();
-			m_FullName = path.filename().string();
-			m_Extension = path.extension().string();
-			m_MetaPath = path.string().append(".meta");
+			m_Name = path.stem().string().c_str();
+			m_FullName = path.filename().string().c_str();
+			m_Extension = path.extension().string().c_str();
+			m_MetaPath = path.string().append(".meta").c_str();
 			m_Path = path;
 		}
 
@@ -49,9 +51,9 @@ namespace LevEngine
 		virtual void SerializeMeta(YAML::Emitter& out) { }
 		virtual void DeserializeMeta(YAML::Node& node) { }
 
-		std::string m_Name;
-		std::string m_FullName;
-		std::string m_Extension;
+		String m_Name;
+		String m_FullName;
+		String m_Extension;
 		std::filesystem::path m_MetaPath;
 		std::filesystem::path m_Path;
 		UUID m_UUID;

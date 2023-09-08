@@ -27,8 +27,8 @@ public:
 
 	void ForEachEntity(const std::function<void(Entity)>& callback);
 
-	Entity CreateEntity(const std::string& name = "Entity");
-	Entity CreateEntity(UUID uuid, const std::string& name);
+	Entity CreateEntity(const String& name = "Entity");
+	Entity CreateEntity(UUID uuid, const String& name);
 
 	void DestroyEntity(Entity entity);
 	static void GetAllChildren(Entity entity, Vector<Entity>& entities);

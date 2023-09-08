@@ -14,11 +14,11 @@ public:
 	[[nodiscard]] float GetX() const { return m_MouseX; }
 	[[nodiscard]] float GetY() const { return m_MouseY; }
 
-	[[nodiscard]] std::string ToString() const override
+	[[nodiscard]] String ToString() const override
 	{
 		std::stringstream ss;
 		ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
-		return ss.str();
+		return ss.str().c_str();
 	}
 
 	EVENT_CLASS_TYPE(MouseMoved)
@@ -38,11 +38,11 @@ public:
 	[[nodiscard]] float GetXOffset() const { return m_XOffset; }
 	[[nodiscard]] float GetYOffset() const { return m_YOffset; }
 
-	[[nodiscard]] std::string ToString() const override
+	[[nodiscard]] String ToString() const override
 	{
 		std::stringstream ss;
 		ss << "MouseScrolledEvent: " << m_XOffset << ", " << m_YOffset;
-		return ss.str();
+		return ss.str().c_str();
 	}
 
 	EVENT_CLASS_TYPE(MouseScrolled)
@@ -70,11 +70,11 @@ public:
 	explicit MouseButtonPressedEvent(const MouseButton button)
 		: MouseButtonEvent(button) { }
 
-	[[nodiscard]] std::string ToString() const override
+	[[nodiscard]] String ToString() const override
 	{
 		std::stringstream ss;
 		ss << "MouseButtonPressedEvent: " << static_cast<int>(m_Button);
-		return ss.str();
+		return ss.str().c_str();
 	}
 
 	EVENT_CLASS_TYPE(MouseButtonPressed)
@@ -86,11 +86,11 @@ public:
 	explicit MouseButtonReleasedEvent(const MouseButton button)
 		: MouseButtonEvent(button) { }
 
-	[[nodiscard]] std::string ToString() const override
+	[[nodiscard]] String ToString() const override
 	{
 		std::stringstream ss;
 		ss << "MouseButtonReleasedEvent: " << static_cast<int>(m_Button);
-		return ss.str();
+		return ss.str().c_str();
 	}
 
 	EVENT_CLASS_TYPE(MouseButtonReleased)

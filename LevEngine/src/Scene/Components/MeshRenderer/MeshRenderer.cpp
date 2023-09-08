@@ -13,7 +13,7 @@ namespace LevEngine
 	class MeshRendererDrawer final : public ComponentDrawer<MeshRendererComponent, MeshRendererDrawer>
 	{
 	protected:
-		std::string GetLabel() const override { return "Mesh Renderer"; }
+		String GetLabel() const override { return "Mesh Renderer"; }
 
 		void DrawContent(MeshRendererComponent& component) override
 		{

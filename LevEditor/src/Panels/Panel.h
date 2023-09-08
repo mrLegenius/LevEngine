@@ -19,7 +19,7 @@ namespace LevEngine::Editor
 		virtual bool OnKeyPressed(KeyPressedEvent& e) { return false; }
 
 	protected:
-		virtual std::string GetName() = 0;
+		virtual String GetName() = 0;
 		virtual void DrawContent() = 0;
 
 		ImGuiWindow* m_Window{};

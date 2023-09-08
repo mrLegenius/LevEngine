@@ -2,6 +2,8 @@
 #include <sstream>
 
 #include "Event.h" 
+#include "DataTypes/String.h"
+
 namespace LevEngine
 {
 class WindowResizedEvent : public Event
@@ -13,11 +15,11 @@ public:
 	[[nodiscard]] unsigned int GetWidth() const { return m_Width; }
 	[[nodiscard]] unsigned int GetHeight() const { return m_Height; }
 
-	[[nodiscard]] std::string ToString() const override
+	[[nodiscard]] String ToString() const override
 	{
 		std::stringstream ss;
 		ss << "WindowResizedEvent: " << m_Width << ", " << m_Height;
-		return ss.str();
+		return ss.str().c_str();
 	}
 
 	EVENT_CLASS_TYPE(WindowResize)

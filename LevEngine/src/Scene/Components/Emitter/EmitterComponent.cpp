@@ -13,7 +13,7 @@ namespace LevEngine
 	class EmitterDrawer final : public ComponentDrawer<EmitterComponent, EmitterDrawer>
 	{
 	protected:
-		[[nodiscard]] std::string GetLabel() const override { return "Emitter"; }
+		[[nodiscard]] String GetLabel() const override { return "Emitter"; }
 
 		void DrawContent(EmitterComponent& component) override
 		{

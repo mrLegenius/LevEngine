@@ -10,8 +10,8 @@ namespace LevEngine
 	public:
 		ShaderParameter() = default;
 
-		ShaderParameter(std::string name, const uint32_t slotId, const ShaderType shaderType)
-			: m_Name(std::move(name))
+		ShaderParameter(String name, const uint32_t slotId, const ShaderType shaderType)
+			: m_Name(Move(name))
 			, m_SlotId(slotId)
 			, m_ShaderType(shaderType)
 		{
@@ -33,7 +33,7 @@ namespace LevEngine
 		Weak<ConstantBuffer> m_ConstantBuffer;
 		Weak<StructuredBuffer> m_StructuredBuffer;
 
-		std::string m_Name;
+		String m_Name;
 		uint32_t m_SlotId;
 		ShaderType m_ShaderType;
 	};

@@ -72,9 +72,10 @@ namespace LevEngine
 			auto asset = CreateAsset(path, uuid);
 			asset->Serialize();
 
-			const std::string metaPath = path.string() + ".meta";
+			String metaPath = path.string().c_str();
+			metaPath += ".meta";
 
-			CreateMeta(metaPath, uuid);
+			CreateMeta(metaPath.c_str(), uuid);
 
 			m_Assets.emplace(uuid, asset);
 			m_AssetsByPath.emplace(path, asset);
@@ -131,7 +132,7 @@ namespace LevEngine
 			return GetAsset<T>(GetAsset(path));
 		}
 
-		static void RenameAsset(const Ref<Asset>& asset, const std::string& name);
+		static void RenameAsset(const Ref<Asset>& asset, const String& name);
 		static void MoveAsset(const Ref<Asset>& asset, const std::filesystem::path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
 

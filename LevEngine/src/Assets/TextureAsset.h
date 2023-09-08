@@ -26,7 +26,7 @@ namespace LevEngine
 		void SerializeData(YAML::Emitter& out) override { }
 		void DeserializeData(YAML::Node& node) override
 		{
-			m_Texture = TextureLibrary::GetTexture(m_Path.string());
+			m_Texture = TextureLibrary::GetTexture(m_Path.string().c_str());
 			m_Texture->AttachSampler(m_SamplerState);
 		}
 		

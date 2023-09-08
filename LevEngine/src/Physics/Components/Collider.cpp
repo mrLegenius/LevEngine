@@ -13,7 +13,7 @@ namespace LevEngine
 	class SphereColliderDrawer final : public ComponentDrawer<SphereCollider, SphereColliderDrawer>
 	{
 	protected:
-		std::string GetLabel() const override { return "Sphere Collider"; }
+		String GetLabel() const override { return "Sphere Collider"; }
 
 		void DrawContent(SphereCollider& component) override
 		{
@@ -43,7 +43,7 @@ namespace LevEngine
 	class BoxColliderDrawer final : public ComponentDrawer<BoxCollider, BoxColliderDrawer>
 	{
 	protected:
-		std::string GetLabel() const override { return "Box Collider"; }
+		String GetLabel() const override { return "Box Collider"; }
 
 		void DrawContent(BoxCollider& component) override
 		{

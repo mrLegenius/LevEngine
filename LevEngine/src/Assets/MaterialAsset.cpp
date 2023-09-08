@@ -80,7 +80,7 @@ namespace LevEngine
 		if (GUIUtils::DrawVector2Control("Offset", offset, 0, 100))
 			material.SetTextureOffset(offset);
 	}
-	void MaterialAsset::DrawMaterialTexture(const std::string& label, Material& material,
+	void MaterialAsset::DrawMaterialTexture(const String& label, Material& material,
 	                                        Material::TextureType textureType, Ref<TextureAsset>& textureAsset)
 	{
 		ImGui::PushID(static_cast<int>(textureType));

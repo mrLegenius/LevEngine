@@ -6,7 +6,7 @@
 
 namespace LevEngine
 {
-	Ref<Texture> Texture::Create(const std::string& path)
+	Ref<Texture> Texture::Create(const String& path)
 	{
 		switch (RenderSettings::RendererAPI)
 		{
@@ -39,7 +39,7 @@ namespace LevEngine
 		}
 	}
 
-	Ref<Texture> Texture::CreateTextureCube(const std::string paths[6])
+	Ref<Texture> Texture::CreateTextureCube(const String paths[6])
 	{
 		switch (RenderSettings::RendererAPI)
 		{

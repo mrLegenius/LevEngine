@@ -23,7 +23,7 @@ protected:
 	void DeserializeData(YAML::Node& node) override;
 
 private:
-	static void DrawMaterialTexture(const std::string& label, Material& material, Material::TextureType textureType, Ref<TextureAsset>& textureAsset);
+	static void DrawMaterialTexture(const String& label, Material& material, Material::TextureType textureType, Ref<TextureAsset>& textureAsset);
 
 	Ref<TextureAsset> m_Diffuse;
 	Ref<TextureAsset> m_Emissive;

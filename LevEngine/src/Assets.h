@@ -12,10 +12,10 @@ using namespace LevEngine;
 
 static std::filesystem::path resources = std::filesystem::path("resources");
 
-static std::string GetShaderPath(const std::string& name) { return (resources / "Shaders" / name).string(); }
-static std::string GetTexturePath(const std::string& name) { return (resources / "Textures" / name).string(); }
-static std::string GetSkyboxPath(const std::string& name) { return (resources / "Skyboxes" / name).string(); }
-static std::filesystem::path GetModelPath(const std::string& name) { return (resources / "Models" / name); }
+static String GetShaderPath(const String& name) { return (resources / "Shaders" / name.c_str()).string().c_str(); }
+static String GetTexturePath(const String& name) { return (resources / "Textures" / name.c_str()).string().c_str(); }
+static String GetSkyboxPath(const String& name) { return (resources / "Skyboxes" / name.c_str()).string().c_str(); }
+static std::filesystem::path GetModelPath(const String& name) { return (resources / "Models" / name.c_str()); }
 
 static Ref<SamplerState> GetDefaultClampedSamplerState()
 {
@@ -99,7 +99,7 @@ struct LavaRockAssets
 
 struct FancyTorch
 {
-	static std::filesystem::path GetAssetPath(const std::string& name) { return (resources / "FancyTorch" / name).string(); }
+	static std::filesystem::path GetAssetPath(const String& name) { return (resources / "FancyTorch" / name.c_str()).string(); }
 
 	static auto Mesh()
 	{
@@ -109,28 +109,28 @@ struct FancyTorch
 
 	static auto AmbientTexture()
 	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_albedo.png").string());
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_albedo.png").string().c_str());
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto EmissiveTexture()
 	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_gloss.png").string());
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_gloss.png").string().c_str());
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto SpecularTexture()
 	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_metal.png").string());
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_metal.png").string().c_str());
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 
 	static auto NormalTexture()
 	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_normal.png").string());
+		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_normal.png").string().c_str());
 		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
@@ -361,7 +361,7 @@ namespace SkyboxAssets
 {
 	inline auto LightBlue()
     {
-        static std::string paths[6] = {
+        static String paths[6] = {
             GetSkyboxPath("SpaceBlue/left.png"), //left
             GetSkyboxPath("SpaceBlue/right.png"), //right
         	GetSkyboxPath("SpaceBlue/bottom.png"), //bottom
@@ -378,7 +378,7 @@ namespace SkyboxAssets
 
 	inline auto Lake()
 	{
-		static std::string paths[6] = {
+		static String paths[6] = {
 			GetSkyboxPath("Lake/left.jpg"), //left
 			GetSkyboxPath("Lake/right.jpg"), //right
 			GetSkyboxPath("Lake/bottom.jpg"), //bottom
@@ -395,7 +395,7 @@ namespace SkyboxAssets
 
 	inline auto Interstellar()
 	{
-		static std::string paths[6] = {
+		static String paths[6] = {
 			GetSkyboxPath("Interstellar/left.png"), //left
 			GetSkyboxPath("Interstellar/right.png"), //right
 			GetSkyboxPath("Interstellar/bottom.png"), //bottom

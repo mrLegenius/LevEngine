@@ -11,11 +11,11 @@ namespace LevEngine
 		~SceneSerializer() = default;
 
 		void SerializeEntity(YAML::Emitter& out, Entity entity) const;
-		void Serialize(const std::string& filepath) const;
-		void SerializeRuntime(const std::string& filepath);
+		void Serialize(const String& filepath) const;
+		void SerializeRuntime(const String& filepath);
 
-		bool Deserialize(const std::string& filepath);
-		bool DeserializeRuntime(const std::string& filepath);
+		bool Deserialize(const String& filepath);
+		bool DeserializeRuntime(const String& filepath);
 	private:
 		Ref<Scene> m_Scene;
 	};

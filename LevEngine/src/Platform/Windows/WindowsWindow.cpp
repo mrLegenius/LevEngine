@@ -278,7 +278,7 @@ namespace LevEngine
 		}
 	}
 
-	void WindowsWindow::SetWindowTitle(std::string& title)
+	void WindowsWindow::SetWindowTitle(String& title)
 	{
 		LEV_PROFILE_FUNCTION();
 
