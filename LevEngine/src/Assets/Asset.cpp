@@ -105,7 +105,7 @@ namespace LevEngine
 		catch (YAML::BadConversion&)
 		{
 			Log::CoreWarning("Meta of '{0}' asset is corrupted. Regenerating...", m_Name);
-			SerializeData();
+			SerializeMeta();
 
 			return false;
 		}
