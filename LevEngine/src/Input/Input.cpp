@@ -40,7 +40,7 @@ bool Input::IsKeyUp(const KeyCode keycode)
 bool Input::IsMouseButtonPressed(const MouseButton button)
 {
 	const bool isDown = s_PreviousButtonStates[button] == State::Down;
-	const bool stateChanged = s_PreviousButtonStates[button] != s_PreviousButtonStates[button];
+	const bool stateChanged = s_ButtonStates[button] != s_PreviousButtonStates[button];
 
 	return stateChanged && isDown;
 }
