@@ -71,11 +71,14 @@ namespace LevEngine::Editor
 		const auto& tag = entity.GetComponent<TagComponent>().tag;
 
 		const auto entitySelection = Selection::CurrentAs<EntitySelection>();
-
-		const auto flags =
+		
+		auto flags =
 			(entitySelection && entitySelection->Get() == entity ? ImGuiTreeNodeFlags_Selected : 0)
 			| ImGuiTreeNodeFlags_OpenOnArrow
 			| ImGuiTreeNodeFlags_SpanAvailWidth;
+
+		if (entity.GetComponent<Transform>().GetChildrenCount() == 0)
+			flags |= ImGuiTreeNodeFlags_Leaf;
 
 		const bool opened = ImGui::TreeNodeEx((void*)static_cast<uint32_t>(entity), flags, tag.c_str());
 
