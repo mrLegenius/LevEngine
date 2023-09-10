@@ -67,15 +67,12 @@ namespace LevEngine::Editor
 
         AssetDatabase::ProcessAllAssets();
 
-        m_ActiveScene = CreateRef<Scene>();
-
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-        m_Hierarchy = CreateRef<HierarchyPanel>(m_ActiveScene);
+        m_Hierarchy = CreateRef<HierarchyPanel>(SceneManager::GetActiveScene());
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
-
-
+        
         //<--- Systems ---<<
         //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
         //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
@@ -98,7 +95,7 @@ namespace LevEngine::Editor
     {
         if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
         {
-            m_ActiveScene->DuplicateEntity(entitySelection->Get());
+            SceneManager::GetActiveScene()->DuplicateEntity(entitySelection->Get());
         }
     }
 
@@ -157,7 +154,7 @@ namespace LevEngine::Editor
         
         if (width == 0 || height == 0) return false;
 
-        m_ActiveScene->OnViewportResized(e.GetWidth(), e.GetHeight());
+        SceneManager::GetActiveScene()->OnViewportResized(e.GetWidth(), e.GetHeight());
         Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
         return false;
     }
@@ -172,6 +169,8 @@ namespace LevEngine::Editor
             m_Hierarchy->Focus();
         }
 
+        const auto& activeScene = SceneManager::GetActiveScene();
+        
         switch (m_SceneState)
         {
 	        case SceneState::Edit:
@@ -183,9 +182,9 @@ namespace LevEngine::Editor
 	            if (m_Viewport->IsFocused() || m_Game->IsFocused())
 	                Application::Get().GetWindow().DisableCursor();
 
-	            m_ActiveScene->OnUpdate(deltaTime);
-	            m_ActiveScene->OnPhysics(deltaTime);
-	            m_ActiveScene->OnLateUpdate(deltaTime);
+	            activeScene->OnUpdate(deltaTime);
+	            activeScene->OnPhysics(deltaTime);
+	            activeScene->OnLateUpdate(deltaTime);
 
 	            break;
 	        }
@@ -195,13 +194,13 @@ namespace LevEngine::Editor
         {
             m_Viewport->UpdateCamera(deltaTime);
             auto& camera = m_Viewport->GetCamera();
-            m_ActiveScene->OnRender(&camera, &camera.GetTransform());
+            activeScene->OnRender(&camera, &camera.GetTransform());
             m_Viewport->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         }
 
         if (m_Game->IsActive())
         {
-            m_ActiveScene->OnRender();
+            activeScene->OnRender();
             m_Game->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         }
     }
@@ -428,11 +427,10 @@ namespace LevEngine::Editor
 
     void EditorLayer::CreateNewScene()
     {
-        m_ActiveScene = CreateRef<Scene>();
         /*m_ActiveScene->OnViewportResized(
             static_cast<uint32_t>(m_Viewport->GetWidth()),
             static_cast<uint32_t>(m_Viewport->GetHeight()));*/
-        m_Hierarchy->SetContext(m_ActiveScene);
+        m_Hierarchy->SetContext(SceneManager::LoadEmptyScene());
         m_EditorScenePath = Path();
     }
 
@@ -455,23 +453,12 @@ namespace LevEngine::Editor
 
         if (m_SceneState != SceneState::Edit)
             OnSceneStop();
-
-        const Ref<Scene>& newScene = CreateRef<Scene>();
-        SceneSerializer sceneSerializer(newScene);
-        if (sceneSerializer.Deserialize(path.generic_string().c_str()))
+        
+        if (SceneManager::LoadScene(path))
         {
             Selection::Deselect();
             m_EditorScenePath = path;
-            m_ActiveScene = newScene;
-            m_Hierarchy->SetContext(newScene);
-
-            //TODO: Move this to scene start
-            //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
-            //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
-            //m_ActiveScene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
-            //m_ActiveScene->RegisterUpdateSystem(CreateRef<TestSystem>());
-            //m_ActiveScene->RegisterOneFrame<CollisionBeginEvent>();
-            //m_ActiveScene->RegisterOneFrame<CollisionEndEvent>();
+            m_Hierarchy->SetContext(SceneManager::GetActiveScene());
         }
     }
 
@@ -485,9 +472,7 @@ namespace LevEngine::Editor
 
         if (!m_EditorScenePath.empty())
         {
-            const SceneSerializer sceneSerializer(m_ActiveScene);
-            sceneSerializer.Serialize(m_EditorScenePath.string().c_str());
-
+            SceneManager::SaveScene(m_EditorScenePath.string().c_str());
             return true;
         }
 
@@ -505,8 +490,7 @@ namespace LevEngine::Editor
         const auto filepath = FileDialogs::SaveFile("LevEngine Scene (*.scene)\0*.scene\0");
         if (!filepath.empty())
         {
-            const SceneSerializer sceneSerializer(m_ActiveScene);
-            sceneSerializer.Serialize(filepath);
+            SceneManager::SaveScene(filepath);
 
             m_EditorScenePath = filepath.c_str();
             return true;

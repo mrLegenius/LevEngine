@@ -53,9 +53,12 @@
 #include "Scene/Scene.h"
 #include "Scene/Entity.h"
 #include "Scene/System.h"
+#include "Scene/SceneManager.h"
 
 #include "Scene/Serializers/SceneSerializer.h"
 #include "Scene/Serializers/SerializerUtils.h"
+
+
 
 // -- Math -------------------------------------------------
 

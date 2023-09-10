@@ -549,6 +549,7 @@
     <ClInclude Include="src\Scene\Components\Transform\Transform.h" />
     <ClInclude Include="src\Scene\Entity.h" />
     <ClInclude Include="src\Scene\Scene.h" />
+    <ClInclude Include="src\Scene\SceneManager.h" />
     <ClInclude Include="src\Scene\Serializers\SceneSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.h" />
     <ClInclude Include="src\Scene\System.h" />
@@ -844,6 +845,7 @@
     <ClCompile Include="src\Scene\Components\Transform\Transform.cpp" />
     <ClCompile Include="src\Scene\Entity.cpp" />
     <ClCompile Include="src\Scene\Scene.cpp" />
+    <ClCompile Include="src\Scene\SceneManager.cpp" />
     <ClCompile Include="src\Scene\Serializers\SceneSerializer.cpp" />
     <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
     <ClCompile Include="src\TextureLibrary.cpp" />

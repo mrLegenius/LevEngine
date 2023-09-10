@@ -31,8 +31,6 @@ public:
 	void OnGUIRender() override;
 
 private:
-	Ref<Scene> m_ActiveScene;
-
 	Ref<ViewportPanel> m_Viewport;
 	Ref<HierarchyPanel> m_Hierarchy;
 	Ref<PropertiesPanel> m_Properties;
