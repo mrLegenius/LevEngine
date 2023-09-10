@@ -7,6 +7,7 @@
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
+#include "FMOD/LevFmod.h"
 #include "GUI/ImGuiLayer.h"
 
 namespace LevEngine
@@ -45,6 +46,8 @@ private:
 	float m_LastFrameTime = 0.0f;
 	bool m_Minimized = false;
 	ImGuiLayer* m_ImGuiLayer;
+
+	LevFmod::LevFmod* m_fmod;
 
 	static Application* s_Instance;
 };

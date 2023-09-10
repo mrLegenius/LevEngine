@@ -11,6 +11,7 @@
 #include "../Events/MouseEvent.h"
 #include "../Input/Input.h"
 #include "../Events/Event.h"
+#include "Assets/AssetDatabase.h"
 #include "Math/Random.h"
 
 namespace LevEngine
@@ -30,6 +31,12 @@ Application::Application(const std::string& name, const uint32_t width, const ui
 	Renderer::Init();
 	Random::Init();
 
+	m_fmod = new LevFmod::LevFmod();
+	m_fmod->Init(1024, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_VOL0_BECOMES_VIRTUAL);
+
+	m_fmod->LoadBank((AssetDatabase::AssetsRoot / "Audio/Desktop/Master.bank").string(), FMOD_STUDIO_LOAD_BANK_NORMAL);
+	m_fmod->LoadBank((AssetDatabase::AssetsRoot / "Audio/Desktop/Master.strings.bank").string(), FMOD_STUDIO_LOAD_BANK_NORMAL);
+
 	m_ImGuiLayer = new ImGuiLayer;
 	PushOverlay(m_ImGuiLayer);
 
@@ -39,6 +46,9 @@ Application::Application(const std::string& name, const uint32_t width, const ui
 Application::~Application()
 {
 	Renderer::Shutdown();
+	
+	m_fmod->~LevFmod();
+	m_fmod = nullptr;
 }
 
 void Application::Run()
@@ -96,6 +106,8 @@ void Application::Run()
 
 		Input::Reset();
 		m_Window->Update();
+
+		m_fmod->Update();
 	}
 }
 
@@ -164,6 +176,12 @@ bool Application::OnWindowResized(WindowResizedEvent& e)
 bool Application::OnKeyPressed(KeyPressedEvent& e)
 {
 	Input::OnKeyPressed(e.GetKeyCode());
+
+	if (e.GetKeyCode() == KeyCode::Space)
+	{
+		m_fmod->PlayOneShot("event:/TestMusic", nullptr);	
+	}
+	
 	return false;
 }
 
