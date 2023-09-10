@@ -69,7 +69,7 @@ namespace LevEngine::Editor
 
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-        m_Hierarchy = CreateRef<HierarchyPanel>(SceneManager::GetActiveScene());
+        m_Hierarchy = CreateRef<HierarchyPanel>();
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
         
@@ -430,8 +430,8 @@ namespace LevEngine::Editor
         /*m_ActiveScene->OnViewportResized(
             static_cast<uint32_t>(m_Viewport->GetWidth()),
             static_cast<uint32_t>(m_Viewport->GetHeight()));*/
-        m_Hierarchy->SetContext(SceneManager::LoadEmptyScene());
         m_EditorScenePath = Path();
+        SceneManager::LoadEmptyScene();
     }
 
     void EditorLayer::OpenScene()
@@ -458,7 +458,6 @@ namespace LevEngine::Editor
         {
             Selection::Deselect();
             m_EditorScenePath = path;
-            m_Hierarchy->SetContext(SceneManager::GetActiveScene());
         }
     }
 

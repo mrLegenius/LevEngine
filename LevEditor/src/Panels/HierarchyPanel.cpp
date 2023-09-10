@@ -8,15 +8,13 @@
 
 namespace LevEngine::Editor
 {
-	HierarchyPanel::HierarchyPanel(const Ref<Scene>& scene) : m_Context(scene) { }
-
-	void HierarchyPanel::SetContext(const Ref<Scene>& scene)
-	{
-		m_Context = scene;
-	}
-
 	bool HierarchyPanel::OnKeyPressed(KeyPressedEvent& e)
 	{
+		LEV_PROFILE_FUNCTION()
+		
+		const auto& activeScene = SceneManager::GetActiveScene();
+		if (activeScene) return false;
+		
 		if (e.GetRepeatCount() > 0) return false;
 
 		if (e.GetKeyCode() == KeyCode::Delete)
@@ -25,7 +23,7 @@ namespace LevEngine::Editor
 		{
 			if (entitySelection->Get())
 			{
-				m_Context->DestroyEntity(entitySelection->Get());
+				activeScene->DestroyEntity(entitySelection->Get());
 				Selection::Deselect();
 			}
 		}
@@ -36,8 +34,12 @@ namespace LevEngine::Editor
 	void HierarchyPanel::DrawContent()
 	{
 		LEV_PROFILE_FUNCTION()
+		
+		const auto& activeScene = SceneManager::GetActiveScene();
 
-		m_Context->ForEachEntity(
+		if (!activeScene) return;
+		
+		activeScene->ForEachEntity(
 			[&](Entity entity)
 			{
 				if (!entity.GetComponent<Transform>().GetParent())
@@ -46,7 +48,7 @@ namespace LevEngine::Editor
 
 		for (const auto toDelete : m_EntitiesToDelete)
 		{
-			m_Context->DestroyEntity(toDelete);
+			activeScene->DestroyEntity(toDelete);
 			Selection::Deselect();
 		}
 		m_EntitiesToDelete.clear();
@@ -58,7 +60,7 @@ namespace LevEngine::Editor
 		if (ImGui::BeginPopupContextWindow(nullptr, 1, false))
 		{
 			if (ImGui::MenuItem("Create New Entity"))
-				m_Context->CreateEntity("New Entity");
+				activeScene->CreateEntity("New Entity");
 
 			ImGui::EndPopup();
 		}
@@ -68,6 +70,8 @@ namespace LevEngine::Editor
 	{
 		LEV_PROFILE_FUNCTION()
 
+		const auto& activeScene = SceneManager::GetActiveScene();
+		
 		const auto& tag = entity.GetComponent<TagComponent>().tag;
 
 		const auto entitySelection = Selection::CurrentAs<EntitySelection>();
@@ -115,7 +119,7 @@ namespace LevEngine::Editor
 			if (ImGui::MenuItem("Delete", "delete"))
 				m_EntitiesToDelete.emplace(m_EntitiesToDelete.begin(), entity);
 			if (ImGui::MenuItem("Duplicate", "ctrl+D"))
-				m_Context->DuplicateEntity(entity);
+				activeScene->DuplicateEntity(entity);
 
 			ImGui::EndPopup();
 		}
