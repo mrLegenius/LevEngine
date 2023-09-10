@@ -2,4 +2,4 @@
 #include "EASTL/vector.h"
 
 template<class T>
-using Vector = std::vector<T>;
+using Vector = eastl::vector<T>;

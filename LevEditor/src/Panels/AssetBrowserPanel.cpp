@@ -160,7 +160,7 @@ namespace LevEngine::Editor
     template <typename AssetType>
     void AssetBrowserPanel::DrawCreateMenu(const String& label, const String& defaultName) const
     {
-        static_assert(std::is_base_of_v<Asset, AssetType>, "AssetType must derive from Asset");
+        static_assert(eastl::is_base_of_v<Asset, AssetType>, "AssetType must derive from Asset");
 
         if (ImGui::MenuItem(label.c_str()))
         {

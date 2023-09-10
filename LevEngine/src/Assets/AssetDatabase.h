@@ -99,7 +99,7 @@ namespace LevEngine
 			return asset;
 		}
 
-		[[nodiscard]] static const Ref<Asset>& GetAsset(const UUID uuid)
+		[[nodiscard]] static Ref<Asset> GetAsset(const UUID uuid)
 		{
 			const auto assetIt = m_Assets.find(uuid);
 			if (assetIt == m_Assets.end())
@@ -117,7 +117,7 @@ namespace LevEngine
 
 
 		template<class T>
-		[[nodiscard]] static const Ref<T>& GetAsset(const UUID uuid)
+		[[nodiscard]] static Ref<T> GetAsset(const UUID uuid)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
 

@@ -2,4 +2,4 @@
 #include "EASTL/map.h"
 
 template<class TKey, class TValue>
-using Map = std::map<TKey, TValue>;
+using Map = eastl::map<TKey, TValue>;

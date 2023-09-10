@@ -151,7 +151,7 @@ namespace LevEngine
 	}
 
 	template<class T>
-	const Ref<T>& DeserializeAsset(YAML::Node&& node)
+	Ref<T> DeserializeAsset(YAML::Node&& node)
 	{
 		static_assert(std::is_base_of_v<Asset, T>, "T must be Asset");
 
