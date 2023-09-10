@@ -259,7 +259,7 @@ namespace LevEngine
 			const auto path = static_cast<const wchar_t*>(payload->Data);
 			const Path assetPath = AssetDatabase::AssetsRoot / path;
 
-			if (const auto& newAsset = AssetDatabase::GetAsset<TextureAsset>(assetPath))
+			if (const auto newAsset = AssetDatabase::GetAsset<TextureAsset>(assetPath))
 			{
 				*assetPtr = newAsset;
 				changed = true;
@@ -294,7 +294,7 @@ namespace LevEngine
 					return;
 				}
 
-				const Ref<Texture>& newTexture = TextureLibrary::GetTexture(texturePath.string().c_str());
+				const Ref<Texture> newTexture = TextureLibrary::GetTexture(texturePath.string().c_str());
 
 				if (newTexture->IsLoaded())
 				{

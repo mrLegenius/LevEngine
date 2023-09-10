@@ -7,7 +7,7 @@ namespace LevEngine
 	class TextureLibrary
 	{
 	public:
-		static const Ref<Texture>& GetTexture(const String& path)
+		static Ref<Texture> GetTexture(const String& path)
 		{
 			if (const auto texture = m_TextureMap.find(path); texture != m_TextureMap.end())
 				return texture->second;

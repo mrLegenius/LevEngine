@@ -83,7 +83,7 @@ namespace LevEngine
 			return CastRef<T>(asset);
 		}
 
-		[[nodiscard]] static const Ref<Asset>& GetAsset(const Path& path)
+		[[nodiscard]] static Ref<Asset> GetAsset(const Path& path)
 		{
 			const auto assetIt = m_AssetsByPath.find(path);
 			if (assetIt == m_AssetsByPath.end())
@@ -125,7 +125,7 @@ namespace LevEngine
 		}
 
 		template<class T>
-		[[nodiscard]] static const Ref<T>& GetAsset(const Path& path)
+		[[nodiscard]] static Ref<T> GetAsset(const Path& path)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
 
@@ -141,9 +141,9 @@ namespace LevEngine
 		static inline UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
 
 		template<class T>
-		[[nodiscard]] static const Ref<T>& GetAsset(const Ref<Asset>& asset)
+		[[nodiscard]] static Ref<T> GetAsset(const Ref<Asset>& asset)
 		{
-			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
+			static_assert(std::is_base_of_v<Asset, T>, "T must be an asset");
 			if (!asset) return nullptr;
 
 			auto assetT = CastRef<T>(asset);
