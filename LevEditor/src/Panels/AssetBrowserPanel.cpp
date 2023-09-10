@@ -54,13 +54,17 @@ namespace LevEngine::Editor
 
         for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
         {
-            const auto& path = directoryEntry.path();
+            const Path& path = directoryEntry.path();
             String filenameString = path.filename().string().c_str();
             String stemString = path.stem().string().c_str();
             String fileExtension = path.extension().string().c_str();
-
+            
             if (fileExtension == ".meta") continue;
-
+            
+            Ref<Asset> asset = nullptr;
+            if (!directoryEntry.is_directory())
+                asset = AssetDatabase::GetAsset(path);
+            
             ImGui::PushID(filenameString.c_str());
             Ref<Texture> icon = nullptr;
             if (directoryEntry.is_directory())
@@ -115,17 +119,7 @@ namespace LevEngine::Editor
                 ImGui::EndPopup();
             }
             ImGui::PopStyleVar();
-
-            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-            {
-                if (!directoryEntry.is_directory())
-                {
-                    if (const auto& asset = AssetDatabase::GetAsset(path))
-                        Selection::Select(CreateRef<AssetSelection>(asset));
-                    else
-                        Selection::Deselect();
-                }
-            }
+            
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 5 });
             if (ImGui::BeginPopupContextWindow("Create Asset", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
             {
@@ -145,7 +139,13 @@ namespace LevEngine::Editor
             {
                 if (directoryEntry.is_directory())
                     m_CurrentDirectory /= path.filename();
-
+                else
+                {
+                    if (const auto& selectedAsset = AssetDatabase::GetAsset(path))
+                        Selection::Select(CreateRef<AssetSelection>(selectedAsset));
+                    else
+                        Selection::Deselect();
+                }
             }
             ImGui::Text(stemString.c_str());
 
