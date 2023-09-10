@@ -27,11 +27,13 @@ namespace LevEngine::Editor
 
 	    float left = 0.5f * (1 - viewportSize.x / m_Texture->GetWidth());
 	    float bottom = 0.5f * (1 - viewportSize.y / m_Texture->GetHeight());
-	    ImVec2 leftBottom = ImVec2{left, bottom};
+
+	    //TODO: Fix Viewport panel resizing
+	    ImVec2 leftBottom = ImVec2{0, 0}; //{left, bottom}; 
 
 	    float right = 0.5f * (1 + viewportSize.x / m_Texture->GetWidth());
 	    float top = 0.5f * (1 + viewportSize.y / m_Texture->GetHeight());
-	    ImVec2 rightTop = ImVec2{right, top};
+	    ImVec2 rightTop = ImVec2{ 1, 1 }; //{right, top};
 	    
         ImGui::Image(
             m_Texture->GetId(),
