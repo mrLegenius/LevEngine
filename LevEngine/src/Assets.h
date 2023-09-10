@@ -4,18 +4,19 @@
 
 #include "TextureLibrary.h"
 #include "ObjLoader.h"
+#include "DataTypes/Path.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Material.h"
 #include "Renderer/Shader.h"
 
 using namespace LevEngine;
 
-static std::filesystem::path resources = std::filesystem::path("resources");
+static Path resources = Path("resources");
 
 static String GetShaderPath(const String& name) { return (resources / "Shaders" / name.c_str()).string().c_str(); }
 static String GetTexturePath(const String& name) { return (resources / "Textures" / name.c_str()).string().c_str(); }
 static String GetSkyboxPath(const String& name) { return (resources / "Skyboxes" / name.c_str()).string().c_str(); }
-static std::filesystem::path GetModelPath(const String& name) { return (resources / "Models" / name.c_str()); }
+static Path GetModelPath(const String& name) { return (resources / "Models" / name.c_str()); }
 
 static Ref<SamplerState> GetDefaultClampedSamplerState()
 {
@@ -99,7 +100,7 @@ struct LavaRockAssets
 
 struct FancyTorch
 {
-	static std::filesystem::path GetAssetPath(const String& name) { return (resources / "FancyTorch" / name.c_str()).string(); }
+	static Path GetAssetPath(const String& name) { return (resources / "FancyTorch" / name.c_str()).string(); }
 
 	static auto Mesh()
 	{

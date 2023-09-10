@@ -1,5 +1,4 @@
 ﻿#include "levpch.h"
-#include <queue>
 
 #include "AssetDatabase.h"
 
@@ -7,7 +6,7 @@
 
 namespace LevEngine
 {
-	void AssetDatabase::ImportAsset(const std::filesystem::path& path)
+	void AssetDatabase::ImportAsset(const Path& path)
 	{
 		if (!path.has_extension()) return;
 
@@ -44,7 +43,7 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
-		Queue<std::filesystem::path> directories;
+		Queue<Path> directories;
 		directories.push(AssetsRoot);
 		do
 		{
@@ -80,7 +79,7 @@ namespace LevEngine
 		m_AssetsByPath.emplace(newPath, asset);
 	}
 
-	void AssetDatabase::MoveAsset(const Ref<Asset>& asset, const std::filesystem::path& directory)
+	void AssetDatabase::MoveAsset(const Ref<Asset>& asset, const Path& directory)
 	{
 		const auto currentDirectory = asset->GetPath().parent_path();
 

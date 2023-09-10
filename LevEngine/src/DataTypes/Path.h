@@ -1,28 +1,15 @@
 #pragma once
-#include "EA    "
 
-using String = eastl::string;
-
-template <typename T>
-typename eastl::remove_reference<T>::type&&
-Move(T&& x) noexcept
-{
-    return eastl::move(x);
-}
+using Path = std::filesystem::path;
 
 template <>
-struct std::hash<eastl::string>
+struct eastl::hash<std::filesystem::path>
 {
-    std::size_t operator()(const eastl::string& k) const noexcept
+    std::size_t operator()(const std::filesystem::path& k) const noexcept
     {
         using std::size_t;
-        using std::hash;
-        using std::string;
- 
-        // Compute individual hash values for first,
-        // second and third and combine them usisdng XOR
-        // and bit shifting:
-        
-        return eastl::hash<eastl::string>()(k);
+        using eastl::hash;
+        using eastl::string;
+        return std::hash<std::filesystem::path>()(k);
     }
 };

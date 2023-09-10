@@ -12,40 +12,40 @@ namespace LevEngine
 	class AssetDatabase
 	{
 	public:
-		inline static const std::filesystem::path AssetsRoot = "resources";
+		inline static const Path AssetsRoot = "resources";
 
-		static void ImportAsset(const std::filesystem::path& path);
+		static void ImportAsset(const Path& path);
 		static void ProcessAllAssets();
 
-		static bool IsAssetTexture(const std::filesystem::path& path)
+		static bool IsAssetTexture(const Path& path)
 		{
 			const auto extension = path.extension().string();
 
 			return extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".tga";
 		}
 
-		static bool IsAssetMesh(const std::filesystem::path& path)
+		static bool IsAssetMesh(const Path& path)
 		{
 			const auto extension = path.extension().string();
 
 			return extension == ".obj";
 		}
 
-		static bool IsAssetMaterial(const std::filesystem::path& path)
+		static bool IsAssetMaterial(const Path& path)
 		{
 			const auto extension = path.extension().string();
 
 			return extension == ".mat";
 		}
 
-		static bool IsAssetSkybox(const std::filesystem::path& path)
+		static bool IsAssetSkybox(const Path& path)
 		{
 			const auto extension = path.extension().string();
 
 			return extension == ".skybox";
 		}
 
-		[[nodiscard]] static Ref<Asset> CreateAsset(const std::filesystem::path& path, UUID uuid)
+		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid)
 		{
 			if (IsAssetTexture(path))
 				return CreateRef<TextureAsset>(path, uuid);
@@ -63,7 +63,7 @@ namespace LevEngine
 		}
 
 		template<class T>
-		[[nodiscard]] static Ref<T> CreateAsset(const std::filesystem::path& path)
+		[[nodiscard]] static Ref<T> CreateAsset(const Path& path)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must derive from Asset");
 
@@ -83,7 +83,7 @@ namespace LevEngine
 			return CastRef<T>(asset);
 		}
 
-		[[nodiscard]] static const Ref<Asset>& GetAsset(const std::filesystem::path& path)
+		[[nodiscard]] static const Ref<Asset>& GetAsset(const Path& path)
 		{
 			const auto assetIt = m_AssetsByPath.find(path);
 			if (assetIt == m_AssetsByPath.end())
@@ -125,7 +125,7 @@ namespace LevEngine
 		}
 
 		template<class T>
-		[[nodiscard]] static const Ref<T>& GetAsset(const std::filesystem::path& path)
+		[[nodiscard]] static const Ref<T>& GetAsset(const Path& path)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
 
@@ -133,12 +133,12 @@ namespace LevEngine
 		}
 
 		static void RenameAsset(const Ref<Asset>& asset, const String& name);
-		static void MoveAsset(const Ref<Asset>& asset, const std::filesystem::path& directory);
+		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
 
 	private:
 		static inline UnorderedMap<UUID, Ref<Asset>> m_Assets;
-		static inline UnorderedMap<std::filesystem::path, Ref<Asset>> m_AssetsByPath;
+		static inline UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
 
 		template<class T>
 		[[nodiscard]] static const Ref<T>& GetAsset(const Ref<Asset>& asset)
@@ -156,7 +156,7 @@ namespace LevEngine
 			return assetT;
 		}
 
-		static void CreateMeta(const std::filesystem::path& path, const UUID uuid, const YAML::Node* extraInfo = nullptr)
+		static void CreateMeta(const Path& path, const UUID uuid, const YAML::Node* extraInfo = nullptr)
 		{
 			YAML::Emitter out;
 

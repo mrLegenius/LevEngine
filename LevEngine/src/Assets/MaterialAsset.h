@@ -11,7 +11,7 @@ class MaterialAsset final : public Asset
 public:
 	Material material;
 
-	explicit MaterialAsset(const std::filesystem::path& path, const UUID uuid) : Asset(path, uuid)
+	explicit MaterialAsset(const Path& path, const UUID uuid) : Asset(path, uuid)
 	{
 		Deserialize();
 	}

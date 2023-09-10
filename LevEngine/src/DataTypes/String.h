@@ -18,10 +18,6 @@ struct std::hash<eastl::string>
         using std::size_t;
         using std::hash;
         using std::string;
- 
-        // Compute individual hash values for first,
-        // second and third and combine them usisdng XOR
-        // and bit shifting:
         
         return eastl::hash<eastl::string>()(k);
     }

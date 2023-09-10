@@ -16,7 +16,7 @@ namespace LevEngine::Editor
         template<typename Asset>
         void DrawCreateMenu(const String& label, const String& defaultName) const;
 
-        std::filesystem::path m_CurrentDirectory;
+        Path m_CurrentDirectory;
 
         Ref<Texture> m_DirectoryIcon;
         Ref<Texture> m_FileIcon;

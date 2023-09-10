@@ -45,7 +45,7 @@ namespace LevEngine::Editor
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
             {
                 const wchar_t* path = (const wchar_t*)payload->Data;
-                //OpenScene(std::filesystem::path(AssetDatabase::AssetsRoot) / path);
+                //OpenScene(Path(AssetDatabase::AssetsRoot) / path);
             }
             ImGui::EndDragDropTarget();
         }

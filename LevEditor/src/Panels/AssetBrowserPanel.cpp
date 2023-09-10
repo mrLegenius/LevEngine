@@ -87,7 +87,7 @@ namespace LevEngine::Editor
 	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
 	                {
 	                    const auto assetPathPayload = static_cast<const wchar_t*>(payload->Data);
-	                    const std::filesystem::path assetPath = AssetDatabase::AssetsRoot / assetPathPayload;
+	                    const Path assetPath = AssetDatabase::AssetsRoot / assetPathPayload;
 
                         AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath), path);
 	                }

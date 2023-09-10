@@ -26,6 +26,7 @@
 
 #include "DataTypes/Map.h"
 #include "DataTypes/Pair.h"
+#include "DataTypes/Path.h"
 #include "DataTypes/Pointers.h"
 #include "DataTypes/Queue.h"
 #include "DataTypes/String.h"

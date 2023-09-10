@@ -1,9 +1,9 @@
 #pragma once
 #include <filesystem>
 #include <fstream>
-#include <iostream>
-#include <memory>
 #include <sstream>
+
+#include "DataTypes/Path.h"
 #include "Renderer/3D/Mesh.h"
 
 namespace LevEngine
@@ -11,7 +11,7 @@ namespace LevEngine
 class ObjLoader
 {
 public:
-	static Ref<Mesh> LoadMesh(const std::filesystem::path& path)
+	static Ref<Mesh> LoadMesh(const Path& path)
 	{
 		Vector<Vector3> positions;
 		Vector<Vector2> uvs;

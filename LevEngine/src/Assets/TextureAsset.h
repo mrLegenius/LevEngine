@@ -8,7 +8,7 @@ namespace LevEngine
 	class TextureAsset final : public Asset
 	{
 	public:
-		TextureAsset(const std::filesystem::path& path, const UUID& uuid) : Asset(path, uuid)
+		TextureAsset(const Path& path, const UUID& uuid) : Asset(path, uuid)
 		{
 			m_SamplerState = SamplerState::Create();
 		}

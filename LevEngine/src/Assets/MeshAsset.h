@@ -9,7 +9,7 @@ namespace LevEngine
 	class MeshAsset final : public Asset
 	{
 	public:
-		explicit MeshAsset(const std::filesystem::path& path, const UUID uuid) : Asset(path, uuid) { }
+		explicit MeshAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
 
 		void DrawProperties() override { }
 

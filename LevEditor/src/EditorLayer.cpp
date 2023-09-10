@@ -433,7 +433,7 @@ namespace LevEngine::Editor
             static_cast<uint32_t>(m_Viewport->GetWidth()),
             static_cast<uint32_t>(m_Viewport->GetHeight()));*/
         m_Hierarchy->SetContext(m_ActiveScene);
-        m_EditorScenePath = std::filesystem::path();
+        m_EditorScenePath = Path();
     }
 
     void EditorLayer::OpenScene()
@@ -445,7 +445,7 @@ namespace LevEngine::Editor
         }
     }
 
-    void EditorLayer::OpenScene(const std::filesystem::path& path)
+    void EditorLayer::OpenScene(const Path& path)
     {
         if (path.extension().string() != ".scene")
         {

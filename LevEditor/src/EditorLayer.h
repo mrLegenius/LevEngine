@@ -21,7 +21,7 @@ public:
 	void DrawDockSpace();
 	void CreateNewScene();
 	void OpenScene();
-	void OpenScene(const std::filesystem::path& path);
+	void OpenScene(const Path& path);
 	bool SaveScene();
 	bool SaveSceneAs();
 	void OnEvent(Event& event) override;
@@ -40,7 +40,7 @@ private:
 	Ref<GamePanel> m_Game;
 	std::shared_ptr<ConsolePanel> m_Console;
 
-	std::filesystem::path m_EditorScenePath;
+	Path m_EditorScenePath;
 
 	enum class SceneState
 	{

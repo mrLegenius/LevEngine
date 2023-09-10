@@ -6,7 +6,7 @@ namespace LevEngine
 	class DefaultAsset final : public Asset
 	{
 	public:
-		explicit DefaultAsset(const std::filesystem::path& path, const UUID uuid) : Asset(path, uuid) { }
+		explicit DefaultAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
 
 		void DrawProperties() override { }
 

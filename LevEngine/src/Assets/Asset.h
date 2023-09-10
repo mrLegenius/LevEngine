@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <yaml-cpp/yaml.h>
 
+#include "DataTypes/Path.h"
 #include "DataTypes/String.h"
 
 namespace LevEngine
@@ -8,7 +9,7 @@ namespace LevEngine
 	class Asset
 	{
 	public:
-		explicit Asset(const std::filesystem::path& path, const UUID uuid)
+		explicit Asset(const Path& path, const UUID uuid)
 			: m_Name(path.stem().string().c_str())
 			, m_FullName(path.filename().string().c_str())
 			, m_Extension(path.extension().string().c_str())
@@ -23,7 +24,7 @@ namespace LevEngine
 		[[nodiscard]] const String& GetName() const { return m_Name; }
 		[[nodiscard]] const String& GetFullName() const { return m_FullName; }
 		[[nodiscard]] const String& GetExtension() const { return m_Extension; }
-		[[nodiscard]] const std::filesystem::path& GetPath() const { return m_Path; }
+		[[nodiscard]] const Path& GetPath() const { return m_Path; }
 		[[nodiscard]] const UUID& GetUUID() const { return m_UUID; }
 		[[nodiscard]] bool IsDeserialized() const { return m_Deserialized; }
 
@@ -32,7 +33,7 @@ namespace LevEngine
 		void SerializeMeta();
 
 		void DrawEditor();
-		void Rename(const std::filesystem::path& path)
+		void Rename(const Path& path)
 		{
 			m_Name = path.stem().string().c_str();
 			m_FullName = path.filename().string().c_str();
@@ -54,8 +55,8 @@ namespace LevEngine
 		String m_Name;
 		String m_FullName;
 		String m_Extension;
-		std::filesystem::path m_MetaPath;
-		std::filesystem::path m_Path;
+		Path m_MetaPath;
+		Path m_Path;
 		UUID m_UUID;
 		bool m_Deserialized = false;
 

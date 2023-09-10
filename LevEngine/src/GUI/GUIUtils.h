@@ -64,7 +64,7 @@ namespace LevEngine
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
 			{
 				const auto path = static_cast<const wchar_t*>(payload->Data);
-				const std::filesystem::path assetPath = AssetDatabase::AssetsRoot / path;
+				const Path assetPath = AssetDatabase::AssetsRoot / path;
 
 				if (const auto& newAsset = AssetDatabase::GetAsset<T>(assetPath))
 				{
