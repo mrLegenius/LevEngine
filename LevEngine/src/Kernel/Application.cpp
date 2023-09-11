@@ -34,8 +34,8 @@ Application::Application(const String& name, const uint32_t width, const uint32_
 	m_fmod = new LevFmod::LevFmod();
 	m_fmod->Init(1024, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_VOL0_BECOMES_VIRTUAL);
 
-	m_fmod->LoadBank((AssetDatabase::AssetsRoot / "Audio/Desktop/Master.bank").string(), FMOD_STUDIO_LOAD_BANK_NORMAL);
-	m_fmod->LoadBank((AssetDatabase::AssetsRoot / "Audio/Desktop/Master.strings.bank").string(), FMOD_STUDIO_LOAD_BANK_NORMAL);
+	m_fmod->LoadBank(String((AssetDatabase::AssetsRoot / "Audio/Desktop/Master.bank").string().c_str()), FMOD_STUDIO_LOAD_BANK_NORMAL);
+	m_fmod->LoadBank((AssetDatabase::AssetsRoot / "Audio/Desktop/Master.strings.bank").string().c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL);
 
 	m_ImGuiLayer = new ImGuiLayer;
 	PushOverlay(m_ImGuiLayer);

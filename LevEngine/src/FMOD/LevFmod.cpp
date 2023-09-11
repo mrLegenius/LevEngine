@@ -71,7 +71,7 @@ namespace LevEngine::LevFmod
         // not implemented
     }
 
-    void LevFmod::PlayOneShot(const std::string& eventName, const Entity* entity)
+    void LevFmod::PlayOneShot(const String& eventName, const Entity* entity)
     {
         FMOD::Studio::EventInstance *instance = CreateInstance(eventName, true, nullptr);
         if (instance) {
@@ -136,7 +136,7 @@ namespace LevEngine::LevFmod
         delete &eventInfo;
     }
 
-    std::string LevFmod::LoadBank(const std::string& pathToBank, int flags)
+    String LevFmod::LoadBank(const String& pathToBank, int flags)
     {
         if (m_banks.count(pathToBank)) return pathToBank; // bank is already loaded
         FMOD::Studio::Bank *bank = nullptr;
@@ -148,7 +148,7 @@ namespace LevEngine::LevFmod
         return pathToBank;
     }
 
-    FMOD::Studio::EventInstance* LevFmod::CreateInstance(std::string eventPath, bool isOneShot, Entity* entity)
+    FMOD::Studio::EventInstance* LevFmod::CreateInstance(String eventPath, bool isOneShot, Entity* entity)
     {
         if (!m_eventDescriptions.count(eventPath)) {
             FMOD::Studio::EventDescription *desc = nullptr;

@@ -3,6 +3,7 @@
 #include "fmod_studio.hpp"
 #include "fmod_errors.h"
 #include "../Kernel/Logger.h"
+#include "DataTypes/UnorderedMap.h"
 
 
 namespace LevEngine
@@ -41,7 +42,7 @@ namespace LevEngine::LevFmod
         void ClearChannelRefs();
         void SetListenerAttributes();
 
-        void PlayOneShot(const std::string &eventName, const Entity *entity);
+        void PlayOneShot(const String &eventName, const Entity *entity);
 
         FMOD_3D_ATTRIBUTES Get3DAttributes(FMOD_VECTOR pos, FMOD_VECTOR up, FMOD_VECTOR forward, FMOD_VECTOR vel);
         FMOD_VECTOR ToFmodVector(DirectX::SimpleMath::Vector3 vec);
@@ -50,18 +51,18 @@ namespace LevEngine::LevFmod
         void ReleaseOneEvent(FMOD::Studio::EventInstance *eventInstance);
 
         /* Bank functions */
-        std::string LoadBank(const std::string &pathToBank, int flags);
-        void UnloadBank(const std::string &pathToBank);
+        String LoadBank(const String &pathToBank, int flags);
+        void UnloadBank(const String &pathToBank);
 
     private:
-        FMOD::Studio::EventInstance *CreateInstance(std::string eventPath, bool isOneShot, Entity *entity);
+        FMOD::Studio::EventInstance *CreateInstance(String eventPath, bool isOneShot, Entity *entity);
         FMOD::Studio::EventInstance *CreateInstance(const FMOD::Studio::EventDescription *eventDesc, bool isOneShot,
                                                     Entity *entity);
 
         inline int CheckErrors(FMOD_RESULT result) const
         {
             if (result != FMOD_OK) {
-                const std::string err = std::string("FMOD Sound System: ") + std::string(FMOD_ErrorString(result));
+                const String err = String("FMOD Sound System: ") + String(FMOD_ErrorString(result));
                 Log::Error(err);
                 return 0;
             }
@@ -71,9 +72,9 @@ namespace LevEngine::LevFmod
         FMOD::Studio::System *m_system;
         FMOD::System *m_coreSystem;
         LevFmod* m_singleton;
-        std::unordered_map<std::string, FMOD::Studio::EventDescription *> m_eventDescriptions;
-        std::unordered_map<uint64_t, FMOD::Studio::EventInstance *> m_events;
-        std::unordered_map<std::string, FMOD::Studio::Bank *> m_banks;
+        UnorderedMap<String, FMOD::Studio::EventDescription *> m_eventDescriptions;
+        UnorderedMap<uint64_t, FMOD::Studio::EventInstance *> m_events;
+        UnorderedMap<String, FMOD::Studio::Bank *> m_banks;
     };
 }
 
