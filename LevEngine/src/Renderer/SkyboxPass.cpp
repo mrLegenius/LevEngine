@@ -30,7 +30,7 @@ void SkyboxPass::Process(entt::registry& registry, RenderParams& params)
 
 		if (!skybox.skybox) continue;
 
-		const auto texture = skybox.skybox->GetTexture();
+		const auto& texture = skybox.skybox->GetTexture();
 
 		if (!texture) continue;
 

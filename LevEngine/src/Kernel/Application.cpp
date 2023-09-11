@@ -18,7 +18,7 @@ namespace LevEngine
 {
 Application* Application::s_Instance = nullptr;
 
-Application::Application(const std::string& name, const uint32_t width, const uint32_t height)
+Application::Application(const String& name, const uint32_t width, const uint32_t height)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -73,8 +73,8 @@ void Application::Run()
 
 			totalTime -= 1.0f;
 
-			std::string text("FPS: ");
-			text.append(std::to_string(fps));
+			String text("FPS: ");
+			text.append(std::to_string(fps).c_str());
 			m_Window->SetWindowTitle(text);
 
 			frameCount = 0;

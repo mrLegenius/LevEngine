@@ -7,7 +7,7 @@
 
 namespace LevEngine
 {
-std::unique_ptr<Window> Window::Create(const WindowAttributes& attributes)
+Scope<Window> Window::Create(const WindowAttributes& attributes)
 {
 	LEV_PROFILE_FUNCTION();
 

@@ -19,7 +19,7 @@ namespace LevEngine::Editor
         m_Bounds[0] = Vector2{ viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
         m_Bounds[1] = Vector2{ viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
-        Application::Get().GetImGuiLayer()->BlockEvents(!m_Focused && !m_Hovered);
+        //Application::Get().GetImGuiLayer()->BlockEvents(!m_Focused && !m_Hovered);
 
         const ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
@@ -27,11 +27,13 @@ namespace LevEngine::Editor
 
 	    float left = 0.5f * (1 - viewportSize.x / m_Texture->GetWidth());
 	    float bottom = 0.5f * (1 - viewportSize.y / m_Texture->GetHeight());
-	    ImVec2 leftBottom = ImVec2{left, bottom};
+
+	    //TODO: Fix Viewport panel resizing
+	    ImVec2 leftBottom = ImVec2{0, 0}; //{left, bottom}; 
 
 	    float right = 0.5f * (1 + viewportSize.x / m_Texture->GetWidth());
 	    float top = 0.5f * (1 + viewportSize.y / m_Texture->GetHeight());
-	    ImVec2 rightTop = ImVec2{right, top};
+	    ImVec2 rightTop = ImVec2{ 1, 1 }; //{right, top};
 	    
         ImGui::Image(
             m_Texture->GetId(),
@@ -45,13 +47,13 @@ namespace LevEngine::Editor
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
             {
                 const wchar_t* path = (const wchar_t*)payload->Data;
-                //OpenScene(std::filesystem::path(AssetDatabase::AssetsRoot) / path);
+                SceneManager::LoadScene(Path(AssetDatabase::AssetsRoot) / path);
             }
             ImGui::EndDragDropTarget();
         }
 
         //Gizmos
-        const auto& entitySelection = std::dynamic_pointer_cast<EntitySelection>(Selection::Current());
+        const auto& entitySelection = CastRef<EntitySelection>(Selection::Current());
 
         if (!entitySelection) return;
 

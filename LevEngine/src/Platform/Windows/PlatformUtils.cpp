@@ -8,7 +8,7 @@
 
 namespace LevEngine
 {
-	std::string FileDialogs::OpenFile(const char* filter)
+	String FileDialogs::OpenFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
@@ -22,10 +22,10 @@ namespace LevEngine
 		ofn.nFilterIndex = 1;
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
-		return GetOpenFileNameA(&ofn) == TRUE ? ofn.lpstrFile : std::string();
+		return GetOpenFileNameA(&ofn) == TRUE ? ofn.lpstrFile : String();
 	}
 
-	std::string FileDialogs::SaveFile(const char* filter)
+	String FileDialogs::SaveFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
@@ -39,6 +39,6 @@ namespace LevEngine
 		ofn.nFilterIndex = 1;
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
-		return GetSaveFileNameA(&ofn) == TRUE ? ofn.lpstrFile : std::string();
+		return GetSaveFileNameA(&ofn) == TRUE ? ofn.lpstrFile : String();
 	}
 }

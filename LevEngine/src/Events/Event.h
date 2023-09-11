@@ -2,6 +2,9 @@
 #include <ostream>
 #include <string>
 #include <functional>
+
+#include "DataTypes/String.h"
+
 namespace LevEngine
 {
 enum class EventType
@@ -35,7 +38,7 @@ public:
 	virtual EventType GetEventType() const = 0;
 	virtual const char* GetName() const = 0;
 	virtual int GetCategoryFlags() const = 0;
-	virtual std::string ToString() const { return GetName(); }
+	virtual String ToString() const { return GetName(); }
 	bool IsInCategory(EventCategory category) const
 	{
 		return GetCategoryFlags() & static_cast<int>(category);
@@ -67,6 +70,6 @@ private:
 
 inline std::ostream& operator<<(std::ostream& os, const Event& e)
 {
-	return os << e.ToString();
+	return os << e.ToString().c_str();
 }
 }

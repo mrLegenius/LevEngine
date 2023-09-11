@@ -8,18 +8,38 @@
 
 namespace LevEngine::Editor
 {
-	HierarchyPanel::HierarchyPanel(const Ref<Scene>& scene) : m_Context(scene) { }
-
-	void HierarchyPanel::SetContext(const Ref<Scene>& scene)
+	bool HierarchyPanel::OnKeyPressed(KeyPressedEvent& e)
 	{
-		m_Context = scene;
+		LEV_PROFILE_FUNCTION()
+		
+		const auto& activeScene = SceneManager::GetActiveScene();
+		if (activeScene) return false;
+		
+		if (e.GetRepeatCount() > 0) return false;
+
+		if (e.GetKeyCode() == KeyCode::Delete)
+		{
+		if (const auto& entitySelection = Selection::CurrentAs<EntitySelection>())
+		{
+			if (entitySelection->Get())
+			{
+				activeScene->DestroyEntity(entitySelection->Get());
+				Selection::Deselect();
+			}
+		}
+		}
+		return false;
 	}
 
 	void HierarchyPanel::DrawContent()
 	{
 		LEV_PROFILE_FUNCTION()
+		
+		const auto& activeScene = SceneManager::GetActiveScene();
 
-		m_Context->ForEachEntity(
+		if (!activeScene) return;
+		
+		activeScene->ForEachEntity(
 			[&](Entity entity)
 			{
 				if (!entity.GetComponent<Transform>().GetParent())
@@ -28,7 +48,7 @@ namespace LevEngine::Editor
 
 		for (const auto toDelete : m_EntitiesToDelete)
 		{
-			m_Context->DestroyEntity(toDelete);
+			activeScene->DestroyEntity(toDelete);
 			Selection::Deselect();
 		}
 		m_EntitiesToDelete.clear();
@@ -40,7 +60,7 @@ namespace LevEngine::Editor
 		if (ImGui::BeginPopupContextWindow(nullptr, 1, false))
 		{
 			if (ImGui::MenuItem("Create New Entity"))
-				m_Context->CreateEntity("New Entity");
+				activeScene->CreateEntity("New Entity");
 
 			ImGui::EndPopup();
 		}
@@ -50,14 +70,19 @@ namespace LevEngine::Editor
 	{
 		LEV_PROFILE_FUNCTION()
 
+		const auto& activeScene = SceneManager::GetActiveScene();
+		
 		const auto& tag = entity.GetComponent<TagComponent>().tag;
 
-		const auto entitySelection = std::dynamic_pointer_cast<EntitySelection>(Selection::Current());
-
-		const auto flags =
+		const auto entitySelection = Selection::CurrentAs<EntitySelection>();
+		
+		auto flags =
 			(entitySelection && entitySelection->Get() == entity ? ImGuiTreeNodeFlags_Selected : 0)
 			| ImGuiTreeNodeFlags_OpenOnArrow
 			| ImGuiTreeNodeFlags_SpanAvailWidth;
+
+		if (entity.GetComponent<Transform>().GetChildrenCount() == 0)
+			flags |= ImGuiTreeNodeFlags_Leaf;
 
 		const bool opened = ImGui::TreeNodeEx((void*)static_cast<uint32_t>(entity), flags, tag.c_str());
 
@@ -91,8 +116,10 @@ namespace LevEngine::Editor
 
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Delete Entity"))
+			if (ImGui::MenuItem("Delete", "delete"))
 				m_EntitiesToDelete.emplace(m_EntitiesToDelete.begin(), entity);
+			if (ImGui::MenuItem("Duplicate", "ctrl+D"))
+				activeScene->DuplicateEntity(entity);
 
 			ImGui::EndPopup();
 		}

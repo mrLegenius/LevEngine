@@ -22,7 +22,7 @@ namespace LevEngine
 	constexpr auto blueRegular = ImVec4{ IntToFloat(20), IntToFloat(20), IntToFloat(140), 1.0f };
 	constexpr auto blueLight = ImVec4{ IntToFloat(30), IntToFloat(30), IntToFloat(200), 1.0f };
 
-	bool GUIUtils::DrawVector3Control(const std::string& label, Vector3& values, const float resetValue, const float labelWidth)
+	bool GUIUtils::DrawVector3Control(const String& label, Vector3& values, const float resetValue, const float labelWidth)
 	{
 		// -- Init -------------------------------------------------------
 		const ImGuiIO& io = ImGui::GetIO();
@@ -111,7 +111,7 @@ namespace LevEngine
 		return changed;
 	}
 
-	bool GUIUtils::DrawVector2Control(const std::string& label, Vector2& values, const float resetValue, const float labelWidth)
+	bool GUIUtils::DrawVector2Control(const String& label, Vector2& values, const float resetValue, const float labelWidth)
 	{
 		// -- Init -------------------------------------------------------
 		const ImGuiIO& io = ImGui::GetIO();
@@ -180,19 +180,19 @@ namespace LevEngine
 		return changed;
 	}
 
-	void GUIUtils::DrawFloatControl(const std::string& label, float& value, const float speed, const float min, const float max)
+	void GUIUtils::DrawFloatControl(const String& label, float& value, const float speed, const float min, const float max)
 	{
 		DrawFloatControl(label, [&value] {return value; }, [&value](const float& newValue) {value = newValue; }, speed, min, max);
 	}
 
-	void GUIUtils::DrawFloatControl(const std::string& label, const std::function<float()>& getter, const std::function<void(float)>& setter, const float speed, const float min, const float max)
+	void GUIUtils::DrawFloatControl(const String& label, const std::function<float()>& getter, const std::function<void(float)>& setter, const float speed, const float min, const float max)
 	{
 		auto value = getter();
 		if (ImGui::DragFloat(label.c_str(), &value, speed, min, max))
 			setter(value);
 	}
 
-	void GUIUtils::DrawIntControl(const std::string& label,
+	void GUIUtils::DrawIntControl(const String& label,
 		const std::function<int()>& getter,
 		const std::function<void(int)>& setter,
 		const int speed, const int min, const int max)
@@ -210,7 +210,7 @@ namespace LevEngine
 			setter(value);
 	}
 
-	void GUIUtils::DrawColor3Control(const std::string& label, const std::function<Color()>& getter, const std::function<void(Color)>& setter)
+	void GUIUtils::DrawColor3Control(const String& label, const std::function<Color()>& getter, const std::function<void(Color)>& setter)
 	{
 		auto value = getter();
 		if (ImGui::ColorEdit3(label.c_str(), value.Raw()))
@@ -222,7 +222,7 @@ namespace LevEngine
 		DrawTexture2D([&texture] { return texture; }, [&texture](const Ref<Texture>& newTexture) { texture = newTexture; }, size);
 	}
 
-	bool GUIUtils::DrawTextureAsset(const std::string& label, Ref<TextureAsset>* assetPtr)
+	bool GUIUtils::DrawTextureAsset(const String& label, Ref<TextureAsset>* assetPtr)
 	{
 		const bool changed = DrawAsset(label, assetPtr);
 		if (*assetPtr && (*assetPtr)->GetTexture())
@@ -257,9 +257,9 @@ namespace LevEngine
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
 		{
 			const auto path = static_cast<const wchar_t*>(payload->Data);
-			const std::filesystem::path assetPath = AssetDatabase::AssetsRoot / path;
+			const Path assetPath = AssetDatabase::AssetsRoot / path;
 
-			if (const auto& newAsset = AssetDatabase::GetAsset<TextureAsset>(assetPath))
+			if (const auto newAsset = AssetDatabase::GetAsset<TextureAsset>(assetPath))
 			{
 				*assetPtr = newAsset;
 				changed = true;
@@ -287,14 +287,14 @@ namespace LevEngine
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
 			{
 				const auto path = static_cast<const wchar_t*>(payload->Data);
-				const std::filesystem::path texturePath = AssetDatabase::AssetsRoot / path;
+				const Path texturePath = AssetDatabase::AssetsRoot / path;
 				if (!AssetDatabase::IsAssetTexture(texturePath))
 				{
 					ImGui::EndDragDropTarget();
 					return;
 				}
 
-				const Ref<Texture>& newTexture = TextureLibrary::GetTexture(texturePath.string());
+				const Ref<Texture> newTexture = TextureLibrary::GetTexture(texturePath.string().c_str());
 
 				if (newTexture->IsLoaded())
 				{

@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
 
+#include "DataTypes/Map.h"
+#include "DataTypes/Vector.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Renderer/BufferBinding.h"
@@ -22,11 +24,11 @@ class Mesh
 public:
 	Mesh() = default;
 
-	static std::shared_ptr<Mesh> CreatePlane(int resolution);
-	static std::shared_ptr<Mesh> CreateSphere(uint32_t sliceCount);
-	static std::shared_ptr<Mesh> CreateCube();
+	static Ref<Mesh> CreatePlane(int resolution);
+	static Ref<Mesh> CreateSphere(uint32_t sliceCount);
+	static Ref<Mesh> CreateCube();
 
-	std::shared_ptr<IndexBuffer> CreateIndexBuffer() const;
+	Ref<IndexBuffer> CreateIndexBuffer() const;
 
 	void Clear()
 	{
@@ -61,7 +63,7 @@ public:
 		m_VertexBuffers[binding] = buffer;
 	}
 
-	[[nodiscard]] const std::map<BufferBinding, Ref<VertexBuffer>>& GetVertexBuffers() const
+	[[nodiscard]] const Map<BufferBinding, Ref<VertexBuffer>>& GetVertexBuffers() const
 	{
 		return m_VertexBuffers;
 	}
@@ -105,11 +107,11 @@ public:
 	Ref<IndexBuffer> IndexBuffer;
 
 private:
-	std::map<BufferBinding, Ref<VertexBuffer>> m_VertexBuffers;
+	Map<BufferBinding, Ref<VertexBuffer>> m_VertexBuffers;
 
-	std::vector<Vector3> vertices;
-	std::vector<Vector2> uvs;
-	std::vector<uint32_t> indices;
-	std::vector<Vector3> normals;
+	Vector<Vector3> vertices;
+	Vector<Vector2> uvs;
+	Vector<uint32_t> indices;
+	Vector<Vector3> normals;
 };
 }

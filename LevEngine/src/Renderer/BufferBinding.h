@@ -8,7 +8,7 @@ namespace LevEngine
     {
         BufferBinding() : Index(0) { }
 
-        BufferBinding(const std::string& name, const unsigned int index) : Name(name) , Index(index) { }
+        BufferBinding(const String& name, const unsigned int index) : Name(name) , Index(index) { }
 
         // Provide the < operator for STL containers.
         bool operator<(const BufferBinding& rhs) const
@@ -23,7 +23,7 @@ namespace LevEngine
             return false;
         }
 
-        std::string Name;
+        String Name;
         unsigned int Index;
     };
 }

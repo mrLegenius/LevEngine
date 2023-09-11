@@ -12,6 +12,25 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 namespace LevEngine
 {
+	WPARAM MapLeftRightKeys(const WPARAM virtualKey, const LPARAM lParam)
+	{
+		const UINT scancode = (lParam & 0x00ff0000) >> 16;
+		const int extended  = (lParam & 0x01000000) != 0;
+
+		switch (virtualKey) {
+		case VK_SHIFT:
+			return MapVirtualKey(scancode, MAPVK_VSC_TO_VK_EX);
+		case VK_CONTROL:
+			return extended ? VK_RCONTROL : VK_LCONTROL;
+		case VK_MENU:
+			return extended ? VK_RMENU : VK_LMENU;
+		default:
+			// not a key we map from generic to left/right specialized
+			//  just return it.
+			return virtualKey;
+		}
+	}
+	
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) noexcept
 	{
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam))
@@ -54,10 +73,9 @@ namespace LevEngine
 		}
 		case WM_KEYDOWN:
 		{
-			const auto keyCode = static_cast<KeyCode>(wparam);
-
+			const auto keyCode = static_cast<KeyCode>(MapLeftRightKeys(wparam, lparam));
 			KeyPressedEvent event(keyCode, 0);
-			data->eventCallback(event);
+			data->eventCallback(event);	
 			return 0;
 		}
 		case WM_LBUTTONDOWN:
@@ -98,7 +116,7 @@ namespace LevEngine
 		}
 		case WM_KEYUP:
 		{
-			const auto keyCode = static_cast<KeyCode>(wparam);
+			const auto keyCode = static_cast<KeyCode>(MapLeftRightKeys(wparam, lparam));
 
 			KeyReleasedEvent event(keyCode);
 			data->eventCallback(event);
@@ -260,7 +278,7 @@ namespace LevEngine
 		}
 	}
 
-	void WindowsWindow::SetWindowTitle(std::string& title)
+	void WindowsWindow::SetWindowTitle(String& title)
 	{
 		LEV_PROFILE_FUNCTION();
 

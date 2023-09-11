@@ -161,6 +161,6 @@ private:
 	using U32 = uint_least32_t;
 	using Engine = std::mt19937;
 
-	static std::unique_ptr<Engine> generator;
+	static inline Scope<Engine> generator;
 };
 }

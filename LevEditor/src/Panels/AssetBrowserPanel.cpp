@@ -54,19 +54,23 @@ namespace LevEngine::Editor
 
         for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
         {
-            const auto& path = directoryEntry.path();
-            std::string filenameString = path.filename().string();
-            std::string stemString = path.stem().string();
-            std::string fileExtension = path.extension().string();
-
+            const Path& path = directoryEntry.path();
+            String filenameString = path.filename().string().c_str();
+            String stemString = path.stem().string().c_str();
+            String fileExtension = path.extension().string().c_str();
+            
             if (fileExtension == ".meta") continue;
-
+            
+            Ref<Asset> asset = nullptr;
+            if (!directoryEntry.is_directory())
+                asset = AssetDatabase::GetAsset(path);
+            
             ImGui::PushID(filenameString.c_str());
             Ref<Texture> icon = nullptr;
             if (directoryEntry.is_directory())
 	            icon = m_DirectoryIcon;
             else if (AssetDatabase::IsAssetTexture(path))
-                icon = TextureLibrary::GetTexture(path.string());
+                icon = TextureLibrary::GetTexture(path.string().c_str());
             else if (AssetDatabase::IsAssetMesh(path))
                 icon = m_MeshIcon;
             else if (AssetDatabase::IsAssetMaterial(path))
@@ -87,7 +91,7 @@ namespace LevEngine::Editor
 	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
 	                {
 	                    const auto assetPathPayload = static_cast<const wchar_t*>(payload->Data);
-	                    const std::filesystem::path assetPath = AssetDatabase::AssetsRoot / assetPathPayload;
+	                    const Path assetPath = AssetDatabase::AssetsRoot / assetPathPayload;
 
                         AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath), path);
 	                }
@@ -115,17 +119,7 @@ namespace LevEngine::Editor
                 ImGui::EndPopup();
             }
             ImGui::PopStyleVar();
-
-            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-            {
-                if (!directoryEntry.is_directory())
-                {
-                    if (const auto& asset = AssetDatabase::GetAsset(path))
-                        Selection::Select(CreateRef<AssetSelection>(asset));
-                    else
-                        Selection::Deselect();
-                }
-            }
+            
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 5 });
             if (ImGui::BeginPopupContextWindow("Create Asset", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
             {
@@ -145,7 +139,13 @@ namespace LevEngine::Editor
             {
                 if (directoryEntry.is_directory())
                     m_CurrentDirectory /= path.filename();
-
+                else
+                {
+                    if (const auto& selectedAsset = AssetDatabase::GetAsset(path))
+                        Selection::Select(CreateRef<AssetSelection>(selectedAsset));
+                    else
+                        Selection::Deselect();
+                }
             }
             ImGui::Text(stemString.c_str());
 
@@ -158,13 +158,13 @@ namespace LevEngine::Editor
     }
 
     template <typename AssetType>
-    void AssetBrowserPanel::DrawCreateMenu(const std::string& label, const std::string& defaultName) const
+    void AssetBrowserPanel::DrawCreateMenu(const String& label, const String& defaultName) const
     {
-        static_assert(std::is_base_of_v<Asset, AssetType>, "AssetType must derive from Asset");
+        static_assert(eastl::is_base_of_v<Asset, AssetType>, "AssetType must derive from Asset");
 
         if (ImGui::MenuItem(label.c_str()))
         {
-	        const Ref<Asset> asset = AssetDatabase::CreateAsset<AssetType>(m_CurrentDirectory / defaultName);
+	        const Ref<Asset> asset = AssetDatabase::CreateAsset<AssetType>(m_CurrentDirectory / defaultName.c_str());
             Selection::Select(CreateRef<AssetSelection>(asset));
         }
     }

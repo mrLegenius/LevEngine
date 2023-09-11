@@ -15,7 +15,7 @@ namespace LevEngine
 class Application
 {
 public:
-	explicit Application(const std::string& name = "My3DApp", uint32_t width = 800, uint32_t height = 800);
+	explicit Application(const String& name = "My3DApp", uint32_t width = 800, uint32_t height = 800);
 	~Application();
 
 	void Run();
@@ -38,7 +38,7 @@ private:
 	bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
 	bool OnMouseScrolled(MouseScrolledEvent& e);
 
-	std::unique_ptr<Window> m_Window;
+	Scope<Window> m_Window;
 	bool m_IsRunning = true;
 
 	LayerStack m_LayerStack;

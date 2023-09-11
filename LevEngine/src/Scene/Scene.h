@@ -3,7 +3,7 @@
 
 #include "System.h"
 #include "Components/Transform/Transform.h"
-#include "Kernel/PointerUtils.h"
+#include "DataTypes/Pointers.h"
 #include "Kernel/UUID.h"
 #include "Physics/Physics.h"
 #include "Renderer/Camera/SceneCamera.h"
@@ -27,13 +27,14 @@ public:
 
 	void ForEachEntity(const std::function<void(Entity)>& callback);
 
-	Entity CreateEntity(const std::string& name = "Entity");
-	Entity CreateEntity(UUID uuid, const std::string& name);
+	Entity CreateEntity(const String& name = "Entity");
+	Entity CreateEntity(UUID uuid, const String& name);
 
 	void DestroyEntity(Entity entity);
-	static void GetAllChildren(Entity entity, std::vector<Entity>& entities);
+	static void GetAllChildren(Entity entity, Vector<Entity>& entities);
 
-	void DuplicateEntity(Entity entity);
+	Entity DuplicateEntity(Entity entity);
+	Entity DuplicateEntity(Entity entity, Entity parent);
 
 	void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 
@@ -64,8 +65,8 @@ private:
 
 	Entity ConvertEntity(entt::entity entity);
 
-	std::vector<Ref<System>> m_UpdateSystems;
-	std::vector<Ref<System>> m_LateUpdateSystems;
-	std::vector<Ref<System>> m_EventSystems;
+	Vector<Ref<System>> m_UpdateSystems;
+	Vector<Ref<System>> m_LateUpdateSystems;
+	Vector<Ref<System>> m_EventSystems;
 };
 }

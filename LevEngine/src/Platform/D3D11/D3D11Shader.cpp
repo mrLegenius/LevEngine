@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 
+#include "DataTypes/Vector.h"
 #include "Renderer/RenderSettings.h"
 
 namespace LevEngine
@@ -12,22 +13,22 @@ extern ID3D11DeviceContext* context;
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target);
-bool CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath);
-bool CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath);
-bool CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepath);
+bool CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath);
+bool CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath);
+bool CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath);
 
 DXGI_FORMAT GetDXGIFormat(const D3D11_SIGNATURE_PARAMETER_DESC& paramDesc);
 
-D3D11Shader::D3D11Shader(const std::string& filepath) : D3D11Shader(filepath, ShaderType::Vertex | ShaderType::Pixel) { }
-D3D11Shader::D3D11Shader(const std::string& filepath, const ShaderType shaderTypes) : Shader(filepath)
+D3D11Shader::D3D11Shader(const String& filepath) : D3D11Shader(filepath, ShaderType::Vertex | ShaderType::Pixel) { }
+D3D11Shader::D3D11Shader(const String& filepath, const ShaderType shaderTypes) : Shader(filepath)
 {
 	LEV_PROFILE_FUNCTION();
 
 	auto lastSlash = filepath.find_last_of("/\\");
-	lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+	lastSlash = lastSlash == String::npos ? 0 : lastSlash + 1;
 	const auto lastDot = filepath.rfind('.');
 
-	const auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+	const auto count = lastDot == String::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
 	m_Name = filepath.substr(lastSlash, count);
 
 	if (shaderTypes & ShaderType::Vertex)
@@ -108,7 +109,7 @@ void D3D11Shader::Unbind() const
 		context->CSSetShader(nullptr, nullptr, 0);
 }
 
-bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target)
+bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -157,7 +158,7 @@ bool CreateShader(ID3DBlob*& shaderBC, const std::string& shaderFilepath, D3D_SH
 	return true;
 }
 
-bool D3D11Shader::CreateVertexShader(ID3D11VertexShader*& shader, const std::string& filepath)
+bool D3D11Shader::CreateVertexShader(ID3D11VertexShader*& shader, const String& filepath)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -177,7 +178,7 @@ bool D3D11Shader::CreateVertexShader(ID3D11VertexShader*& shader, const std::str
 	return true;
 }
 
-bool D3D11Shader::CreatePixelShader(ID3D11PixelShader*& shader, const std::string& filepath)
+bool D3D11Shader::CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -196,7 +197,7 @@ bool D3D11Shader::CreatePixelShader(ID3D11PixelShader*& shader, const std::strin
 	return true;
 }
 
-bool D3D11Shader::CreateGeometryShader(ID3D11GeometryShader*& shader, const std::string& filepath)
+bool D3D11Shader::CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -216,7 +217,7 @@ bool D3D11Shader::CreateGeometryShader(ID3D11GeometryShader*& shader, const std:
 	return true;
 }
 
-bool D3D11Shader::CreateComputeShader(ID3D11ComputeShader*& shader, const std::string& filepath)
+bool D3D11Shader::CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -250,7 +251,7 @@ void D3D11Shader::CreateInputLayout(ID3DBlob* vertexBlob)
 	m_InputSemantics.clear();
 
 	const uint32_t numInputParameters = shaderDescription.InputParameters;
-	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElements;
+	Vector<D3D11_INPUT_ELEMENT_DESC> inputElements;
 	for (uint32_t i = 0; i < numInputParameters; ++i)
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement;
@@ -300,7 +301,7 @@ void D3D11Shader::CreateShaderParams(ShaderType shaderType, ID3DBlob* blob)
 	{
 		D3D11_SHADER_INPUT_BIND_DESC bindDesc;
 		reflector->GetResourceBindingDesc(i, &bindDesc);
-		std::string resourceName = bindDesc.Name;
+		String resourceName = bindDesc.Name;
 
 		/*ShaderParameter::Type parameterType = ShaderParameter::Type::Invalid;
 
@@ -330,7 +331,7 @@ void D3D11Shader::CreateShaderParams(ShaderType shaderType, ID3DBlob* blob)
 	}
 }
 
-ShaderParameter& D3D11Shader::GetShaderParameterByName(const std::string& name) const
+ShaderParameter& D3D11Shader::GetShaderParameterByName(const String& name) const
 {
 	const auto it = m_ShaderParameters.find(name);
 	if (it != m_ShaderParameters.end())

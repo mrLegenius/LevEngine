@@ -14,7 +14,7 @@ namespace LevEngine
 		[[nodiscard]] void* GetNativeWindow() const override { return m_Window; }
 		void Init(const WindowAttributes& attributes) override;
 		void HandleInput() override;
-		void SetWindowTitle(std::string& title) override;
+		void SetWindowTitle(String& title) override;
 
 	protected:
 		void ConfineCursor() const override;

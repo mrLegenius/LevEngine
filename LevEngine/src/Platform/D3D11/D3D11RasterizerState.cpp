@@ -56,9 +56,9 @@ bool ConvertFrontFace(const FrontFace frontFace)
     }
 }
 
-std::vector<D3D11_RECT> TranslateRects(const std::vector<Rect>& rects)
+Vector<D3D11_RECT> TranslateRects(const Vector<Rect>& rects)
 {
-    std::vector<D3D11_RECT> result(rects.size());
+    Vector<D3D11_RECT> result(rects.size());
     for (unsigned int i = 0; i < rects.size(); i++)
     {
         auto& [left, top, right, bottom] = result[i];
@@ -73,9 +73,9 @@ std::vector<D3D11_RECT> TranslateRects(const std::vector<Rect>& rects)
     return result;
 }
 
-std::vector<D3D11_VIEWPORT> TranslateViewports(const std::vector<Viewport>& viewports)
+Vector<D3D11_VIEWPORT> TranslateViewports(const Vector<Viewport>& viewports)
 {
-    std::vector<D3D11_VIEWPORT> result(viewports.size());
+    Vector<D3D11_VIEWPORT> result(viewports.size());
     for (unsigned int i = 0; i < viewports.size(); i++)
     {
         D3D11_VIEWPORT& d3dViewport = result[i];

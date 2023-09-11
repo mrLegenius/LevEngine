@@ -5,46 +5,47 @@
 #include "MeshAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
+#include "DataTypes/UnorderedMap.h"
 
 namespace LevEngine
 {
 	class AssetDatabase
 	{
 	public:
-		inline static const std::filesystem::path AssetsRoot = "resources";
+		inline static const Path AssetsRoot = "resources";
 
-		static void ImportAsset(const std::filesystem::path& path);
+		static void ImportAsset(const Path& path);
 		static void ProcessAllAssets();
 
-		static bool IsAssetTexture(const std::filesystem::path& path)
+		static bool IsAssetTexture(const Path& path)
 		{
 			const auto extension = path.extension().string();
 
 			return extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".tga";
 		}
 
-		static bool IsAssetMesh(const std::filesystem::path& path)
+		static bool IsAssetMesh(const Path& path)
 		{
 			const auto extension = path.extension().string();
 
 			return extension == ".obj";
 		}
 
-		static bool IsAssetMaterial(const std::filesystem::path& path)
+		static bool IsAssetMaterial(const Path& path)
 		{
 			const auto extension = path.extension().string();
 
 			return extension == ".mat";
 		}
 
-		static bool IsAssetSkybox(const std::filesystem::path& path)
+		static bool IsAssetSkybox(const Path& path)
 		{
 			const auto extension = path.extension().string();
 
 			return extension == ".skybox";
 		}
 
-		[[nodiscard]] static Ref<Asset> CreateAsset(const std::filesystem::path& path, UUID uuid)
+		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid)
 		{
 			if (IsAssetTexture(path))
 				return CreateRef<TextureAsset>(path, uuid);
@@ -62,7 +63,7 @@ namespace LevEngine
 		}
 
 		template<class T>
-		[[nodiscard]] static Ref<T> CreateAsset(const std::filesystem::path& path)
+		[[nodiscard]] static Ref<T> CreateAsset(const Path& path)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must derive from Asset");
 
@@ -71,17 +72,18 @@ namespace LevEngine
 			auto asset = CreateAsset(path, uuid);
 			asset->Serialize();
 
-			const std::string metaPath = path.string() + ".meta";
+			String metaPath = path.string().c_str();
+			metaPath += ".meta";
 
-			CreateMeta(metaPath, uuid);
+			CreateMeta(metaPath.c_str(), uuid);
 
 			m_Assets.emplace(uuid, asset);
 			m_AssetsByPath.emplace(path, asset);
 
-			return std::dynamic_pointer_cast<T>(asset);
+			return CastRef<T>(asset);
 		}
 
-		[[nodiscard]] static const Ref<Asset>& GetAsset(const std::filesystem::path& path)
+		[[nodiscard]] static Ref<Asset> GetAsset(const Path& path)
 		{
 			const auto assetIt = m_AssetsByPath.find(path);
 			if (assetIt == m_AssetsByPath.end())
@@ -97,7 +99,7 @@ namespace LevEngine
 			return asset;
 		}
 
-		[[nodiscard]] static const Ref<Asset>& GetAsset(const UUID uuid)
+		[[nodiscard]] static Ref<Asset> GetAsset(const UUID uuid)
 		{
 			const auto assetIt = m_Assets.find(uuid);
 			if (assetIt == m_Assets.end())
@@ -115,7 +117,7 @@ namespace LevEngine
 
 
 		template<class T>
-		[[nodiscard]] static const Ref<T>& GetAsset(const UUID uuid)
+		[[nodiscard]] static Ref<T> GetAsset(const UUID uuid)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
 
@@ -123,28 +125,28 @@ namespace LevEngine
 		}
 
 		template<class T>
-		[[nodiscard]] static const Ref<T>& GetAsset(const std::filesystem::path& path)
+		[[nodiscard]] static Ref<T> GetAsset(const Path& path)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
 
 			return GetAsset<T>(GetAsset(path));
 		}
 
-		static void RenameAsset(const Ref<Asset>& asset, const std::string& name);
-		static void MoveAsset(const Ref<Asset>& asset, const std::filesystem::path& directory);
+		static void RenameAsset(const Ref<Asset>& asset, const String& name);
+		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
 
 	private:
-		static inline std::unordered_map<UUID, Ref<Asset>> m_Assets;
-		static inline std::unordered_map<std::filesystem::path, Ref<Asset>> m_AssetsByPath;
+		static inline UnorderedMap<UUID, Ref<Asset>> m_Assets;
+		static inline UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
 
 		template<class T>
-		[[nodiscard]] static const Ref<T>& GetAsset(const Ref<Asset>& asset)
+		[[nodiscard]] static Ref<T> GetAsset(const Ref<Asset>& asset)
 		{
-			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
+			static_assert(std::is_base_of_v<Asset, T>, "T must be an asset");
 			if (!asset) return nullptr;
 
-			auto assetT = std::dynamic_pointer_cast<T>(asset);
+			auto assetT = CastRef<T>(asset);
 			if (!assetT)
 			{
 				Log::CoreWarning("Asset ({0}) in {1} is not {2}", asset->GetUUID(), asset->GetPath(), typeid(T).name());
@@ -154,7 +156,7 @@ namespace LevEngine
 			return assetT;
 		}
 
-		static void CreateMeta(const std::filesystem::path& path, const UUID uuid, const YAML::Node* extraInfo = nullptr)
+		static void CreateMeta(const Path& path, const UUID uuid, const YAML::Node* extraInfo = nullptr)
 		{
 			YAML::Emitter out;
 

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "DataTypes/Vector.h"
 #include "Math/Math.h"
 
 namespace LevEngine
@@ -67,7 +68,7 @@ public:
 	void SetPerspectiveFar(const float farClip) { m_PerspectiveFar = farClip; RecalculateProjection(); }
 	[[nodiscard]] float GetPerspectiveFar() const { return m_PerspectiveFar; }
 
-	[[nodiscard]] std::vector<Matrix> GetSplitPerspectiveProjections(const float* distances, int count) const;
+	[[nodiscard]] Vector<Matrix> GetSplitPerspectiveProjections(const float* distances, int count) const;
 
 protected:
 	float m_FieldOfView = DirectX::XMConvertToRadians(45.0f);

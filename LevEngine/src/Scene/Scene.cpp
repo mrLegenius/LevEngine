@@ -80,14 +80,14 @@ void Scene::ForEachEntity(const std::function<void(Entity)>& callback)
 	}
 }
 
-Entity Scene::CreateEntity(const std::string& name)
+Entity Scene::CreateEntity(const String& name)
 {
     LEV_PROFILE_FUNCTION();
 
     return CreateEntity(UUID(), name);
 }
 
-Entity Scene::CreateEntity(UUID uuid, const std::string& name)
+Entity Scene::CreateEntity(UUID uuid, const String& name)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -108,7 +108,7 @@ void Scene::DestroyEntity(const Entity entity)
 {
     LEV_PROFILE_FUNCTION();
 
-    std::vector<Entity> entitiesToDestroy;
+    Vector<Entity> entitiesToDestroy;
 
     auto& parentTransform = entity.GetComponent<Transform>();
     parentTransform.SetParent(Entity{});
@@ -118,7 +118,7 @@ void Scene::DestroyEntity(const Entity entity)
     m_Registry.destroy(entitiesToDestroy.begin(), entitiesToDestroy.end());
 }
 
-void Scene::GetAllChildren(Entity entity, std::vector<Entity>& entities)
+void Scene::GetAllChildren(Entity entity, Vector<Entity>& entities)
 {
 	const auto& parentTransform = entity.GetComponent<Transform>();
 
@@ -128,12 +128,39 @@ void Scene::GetAllChildren(Entity entity, std::vector<Entity>& entities)
 	entities.emplace(entities.begin(), entity);
 }
 
-void Scene::DuplicateEntity(Entity entity)
+Entity Scene::DuplicateEntity(const Entity entity)
+{
+    return DuplicateEntity(entity, entity.GetComponent<Transform>().GetParent());
+}
+    
+Entity Scene::DuplicateEntity(const Entity entity, const Entity parent)
 {
     LEV_PROFILE_FUNCTION();
+    
+    const entt::entity newEntity = m_Registry.create();
 
-    //Entity newEntity = CreateEntity(entity.GetName());
-    //CopyComponentIfExists(AllComponents{}, newEntity, entity);
+    //Copy component by component
+    for(auto &&curr: m_Registry.storage())
+        if(auto &storage = curr.second; storage.contains(entity))
+            storage.push(newEntity, storage.value(entity));
+
+    //Assign new UUID
+    m_Registry.replace<IDComponent>(newEntity, UUID());
+
+    //Restore transform
+    auto duplicatedEntity = ConvertEntity(newEntity);
+    Transform& transform = m_Registry.replace<Transform>(newEntity, duplicatedEntity);
+    const Transform& oldTransform = entity.GetComponent<Transform>();
+    transform.SetWorldPosition(oldTransform.GetWorldPosition());
+    transform.SetWorldRotation(oldTransform.GetWorldRotation());
+    transform.SetWorldScale(oldTransform.GetWorldScale());
+    transform.SetParent(parent);
+
+    //Copy all children
+    for (const auto child : oldTransform.GetChildren())
+        DuplicateEntity(child, duplicatedEntity);
+
+    return duplicatedEntity;
 }
 
 Entity Scene::GetEntityBy(Transform* value)

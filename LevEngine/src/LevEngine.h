@@ -9,7 +9,6 @@
 
 #include "Kernel/Asserts.h"
 #include "Kernel/Color.h"
-#include "Kernel/PointerUtils.h"
 #include "Kernel/PlatformUtils.h"
 #include "Kernel/Utils.h"
 #include "Kernel/UUID.h"
@@ -22,6 +21,17 @@
 
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
+
+// -- Data Types -------------------------------------------
+
+#include "DataTypes/Map.h"
+#include "DataTypes/Pair.h"
+#include "DataTypes/Path.h"
+#include "DataTypes/Pointers.h"
+#include "DataTypes/Queue.h"
+#include "DataTypes/String.h"
+#include "DataTypes/UnorderedMap.h"
+#include "DataTypes/Vector.h"
 
 // -- GUI --------------------------------------------------
 
@@ -43,9 +53,12 @@
 #include "Scene/Scene.h"
 #include "Scene/Entity.h"
 #include "Scene/System.h"
+#include "Scene/SceneManager.h"
 
 #include "Scene/Serializers/SceneSerializer.h"
 #include "Scene/Serializers/SerializerUtils.h"
+
+
 
 // -- Math -------------------------------------------------
 

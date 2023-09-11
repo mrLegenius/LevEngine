@@ -8,7 +8,7 @@ namespace LevEngine
 	class TextureAsset final : public Asset
 	{
 	public:
-		TextureAsset(const std::filesystem::path& path, const UUID& uuid) : Asset(path, uuid)
+		TextureAsset(const Path& path, const UUID& uuid) : Asset(path, uuid)
 		{
 			m_SamplerState = SamplerState::Create();
 		}
@@ -26,7 +26,7 @@ namespace LevEngine
 		void SerializeData(YAML::Emitter& out) override { }
 		void DeserializeData(YAML::Node& node) override
 		{
-			m_Texture = TextureLibrary::GetTexture(m_Path.string());
+			m_Texture = TextureLibrary::GetTexture(m_Path.string().c_str());
 			m_Texture->AttachSampler(m_SamplerState);
 		}
 		

@@ -2,6 +2,7 @@
 #include "spdlog/spdlog.h"
 
 //Able to log custom classes
+#include "DataTypes/String.h"
 #include "spdlog/fmt/ostr.h"
 
 namespace LevEngine::Log
@@ -92,5 +93,13 @@ namespace LevEngine::Log
 		Logger::GetLogger()->critical(format, std::forward<Args>(args)...);
 	}
 #pragma endregion 
+}
 
+namespace fmt
+{
+	template <> struct fmt::formatter<eastl::string> : formatter<std::string> {
+		auto format(eastl::string c, format_context& ctx) {
+			return formatter<std::string>::format(c.c_str(), ctx);
+		}
+	};
 }

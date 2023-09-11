@@ -29,8 +29,9 @@
 
 #include "Kernel/Utils.h"
 #include "Kernel/Asserts.h"
-#include "Kernel/PointerUtils.h"
 #include "Kernel/UUID.h"
+
+#include "DataTypes/Pointers.h"
 
 #ifdef LEV_PLATFORM_WINDOWS
 	#include <Windows.h>

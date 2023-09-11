@@ -20,6 +20,6 @@ namespace LevEngine
 		void End();
 		void BlockEvents(bool value);
 	private:
-		bool m_IsBlockingEvents = true;
+		bool m_IsBlockingEvents = false;
 	};
 }

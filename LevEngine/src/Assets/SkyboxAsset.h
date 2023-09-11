@@ -18,7 +18,7 @@ namespace LevEngine
 			Front
 		};
 
-		explicit SkyboxAsset(const std::filesystem::path& path, const UUID uuid) : Asset(path, uuid) { }
+		explicit SkyboxAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
 
 		void DrawProperties() override;
 

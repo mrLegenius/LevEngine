@@ -33,7 +33,7 @@ namespace LevEngine::Editor
 		[[nodiscard]] float GetHeight() const { return m_Size.y; }
 
 	protected:
-		std::string GetName() override { return "Game"; }
+		String GetName() override { return "Game"; }
 		void DrawContent() override;
 	private:
 		Vector2 m_Size{ 0.0f };

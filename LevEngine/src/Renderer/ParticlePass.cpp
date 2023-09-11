@@ -21,7 +21,7 @@ void BindTextureArray(const Ref<D3D11Texture>* textures, const uint32_t count)
 
 	auto ss = new ID3D11SamplerState* [count];
 	for (int i = 0; i < count; ++i)
-		ss[i] = std::dynamic_pointer_cast<D3D11SamplerState>(textures[i]->GetSamplerState())->GetSamplerState();
+		ss[i] = CastRef<D3D11SamplerState>(textures[i]->GetSamplerState())->GetSamplerState();
 
 	context->PSSetShaderResources(0, count, srv);
 	context->PSSetSamplers(0, count, ss);

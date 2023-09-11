@@ -1,9 +1,9 @@
 #pragma once
 #include <filesystem>
 #include <fstream>
-#include <iostream>
-#include <memory>
 #include <sstream>
+
+#include "DataTypes/Path.h"
 #include "Renderer/3D/Mesh.h"
 
 namespace LevEngine
@@ -11,16 +11,16 @@ namespace LevEngine
 class ObjLoader
 {
 public:
-	static std::shared_ptr<Mesh> LoadMesh(const std::filesystem::path& path)
+	static Ref<Mesh> LoadMesh(const Path& path)
 	{
-		std::vector<Vector3> positions;
-		std::vector<Vector2> uvs;
-		std::vector<Vector3> normals;
+		Vector<Vector3> positions;
+		Vector<Vector2> uvs;
+		Vector<Vector3> normals;
 
-		std::vector<uint32_t> position_indices;
-		std::vector<uint32_t> uv_indices;
-		std::vector<uint32_t> normal_indices;
-		std::vector<uint32_t> indices;
+		Vector<uint32_t> position_indices;
+		Vector<uint32_t> uv_indices;
+		Vector<uint32_t> normal_indices;
+		Vector<uint32_t> indices;
 
 		std::stringstream ss;
 		std::ifstream file(path.string());
@@ -36,7 +36,7 @@ public:
 			return nullptr;
 		}
 
-		auto mesh = std::make_shared<Mesh>();
+		auto mesh = CreateRef<Mesh>();
 
 		int verticesCount = 0;
 

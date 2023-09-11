@@ -31,7 +31,7 @@ namespace LevEngine::Editor
 			m_Camera.UpdateView();
 		}
 
-		bool OnKeyPressed(KeyPressedEvent& event)
+		bool OnKeyPressed(KeyPressedEvent& event) override
 		{
             //Shortcuts
             if (event.GetRepeatCount() > 0)
@@ -62,7 +62,6 @@ namespace LevEngine::Editor
 				Gizmo::Tool = Gizmo::ToolType::Scale;
                 break;
             }
-
             default:
                 break;
             }
@@ -88,7 +87,7 @@ namespace LevEngine::Editor
 		[[nodiscard]] float GetHeight() const { return m_Size.y; }
 
 	protected:
-		std::string GetName() override { return "Viewport"; }
+		String GetName() override { return "Viewport"; }
 		void DrawContent() override;
 	private:
 		Vector2 m_Size{ 0.0f };

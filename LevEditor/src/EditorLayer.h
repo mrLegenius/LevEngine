@@ -21,25 +21,24 @@ public:
 	void DrawDockSpace();
 	void CreateNewScene();
 	void OpenScene();
-	void OpenScene(const std::filesystem::path& path);
+	void OpenScene(const Path& path);
 	bool SaveScene();
 	bool SaveSceneAs();
 	void OnEvent(Event& event) override;
+	void OnDuplicateEntity() const;
 	bool OnKeyPressed(KeyPressedEvent& event);
 	bool OnWindowResized(const WindowResizedEvent& e) const;
 	void OnGUIRender() override;
 
 private:
-	Ref<Scene> m_ActiveScene;
-
 	Ref<ViewportPanel> m_Viewport;
 	Ref<HierarchyPanel> m_Hierarchy;
 	Ref<PropertiesPanel> m_Properties;
 	Ref<AssetBrowserPanel> m_AssetsBrowser;
 	Ref<GamePanel> m_Game;
-	Ref<ConsolePanel> m_Console;
+	std::shared_ptr<ConsolePanel> m_Console;
 
-	std::filesystem::path m_EditorScenePath;
+	Path m_EditorScenePath;
 
 	enum class SceneState
 	{

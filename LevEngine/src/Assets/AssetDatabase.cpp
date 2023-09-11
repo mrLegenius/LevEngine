@@ -1,11 +1,12 @@
 ﻿#include "levpch.h"
-#include <queue>
 
 #include "AssetDatabase.h"
 
+#include "DataTypes/Queue.h"
+
 namespace LevEngine
 {
-	void AssetDatabase::ImportAsset(const std::filesystem::path& path)
+	void AssetDatabase::ImportAsset(const Path& path)
 	{
 		if (!path.has_extension()) return;
 
@@ -42,7 +43,7 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
-		std::queue<std::filesystem::path> directories;
+		Queue<Path> directories;
 		directories.push(AssetsRoot);
 		do
 		{
@@ -61,24 +62,24 @@ namespace LevEngine
 		} while (!directories.empty());
 	}
 
-	void AssetDatabase::RenameAsset(const Ref<Asset>& asset, const std::string& name)
+	void AssetDatabase::RenameAsset(const Ref<Asset>& asset, const String& name)
 	{
 		if (asset->GetName() == name) return;
 
 		const auto directory = asset->GetPath().parent_path();
-		const auto newPath = directory / (name + asset->GetExtension());
+		const auto newPath = directory / (name + asset->GetExtension()).c_str();
 
 		m_AssetsByPath.erase(asset->GetPath());
 		std::filesystem::rename(asset->GetPath(), newPath);
 		std::filesystem::rename(
-			asset->GetPath().string().append(".meta"), 
-			newPath.string().append(".meta"));
+			asset->GetPath().string().append(".meta").c_str(), 
+			newPath.string().append(".meta").c_str());
 
 		asset->Rename(newPath);
 		m_AssetsByPath.emplace(newPath, asset);
 	}
 
-	void AssetDatabase::MoveAsset(const Ref<Asset>& asset, const std::filesystem::path& directory)
+	void AssetDatabase::MoveAsset(const Ref<Asset>& asset, const Path& directory)
 	{
 		const auto currentDirectory = asset->GetPath().parent_path();
 
@@ -86,7 +87,7 @@ namespace LevEngine
 		if (directory.has_extension()) return;
 
 		const auto oldPath = asset->GetPath();
-		const auto newPath = directory / asset->GetFullName();
+		const auto newPath = directory / asset->GetFullName().c_str();
 
 		if (exists(newPath))
 		{

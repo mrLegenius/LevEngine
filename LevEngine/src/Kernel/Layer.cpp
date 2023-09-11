@@ -2,7 +2,7 @@
 #include "Layer.h"
 namespace LevEngine
 {
-Layer::Layer(std::string name) : m_Name(std::move(name))
+Layer::Layer(String name) : m_Name(Move(name))
 {
 }
 }

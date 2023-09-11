@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Texture.h"
+#include "DataTypes/Vector.h"
 #include "Math/Math.h"
 
 namespace LevEngine
@@ -76,7 +77,7 @@ namespace LevEngine
 	    [[nodiscard]] virtual bool IsValid() const = 0;
 
     protected:
-        typedef std::vector<Ref<Texture>> TextureList;
+        typedef Vector<Ref<Texture>> TextureList;
         TextureList m_Textures{};
 
         // The width in pixels of textures associated to this render target.

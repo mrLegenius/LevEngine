@@ -49,7 +49,7 @@ void Transform::SetParent(Entity value, const bool keepWorldTransform)
 class TransformDrawer final : public ComponentDrawer<Transform, TransformDrawer, -1000>
 {
 protected:
-	std::string GetLabel() const override { return "Transform"; }
+	String GetLabel() const override { return "Transform"; }
 	bool IsRemovable() const override { return false; }
 
 	void DrawContent(Transform& component) override

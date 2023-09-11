@@ -13,13 +13,13 @@ namespace LevEngine
 class ClearPass : public RenderPass
 {
 public:
-	explicit ClearPass(const std::shared_ptr<RenderTarget>& renderTarget,
+	explicit ClearPass(const Ref<RenderTarget>& renderTarget,
 	                   ClearFlags clearFlags = ClearFlags::All,
 	                   const Vector4& color = Vector4::Zero,
 	                   float depth = 1.0f,
 	                   uint8_t stencil = 0);
 
-    explicit ClearPass(const std::shared_ptr<Texture>& texture,
+    explicit ClearPass(const Ref<Texture>& texture,
                        ClearFlags clearFlags = ClearFlags::All,
                        const Vector4& color = Vector4::Zero,
                        float depth = 1.0f,
@@ -30,8 +30,8 @@ public:
     void Process(entt::registry&, RenderParams&) override;
 
 private:
-    std::shared_ptr<RenderTarget> m_RenderTarget;
-    std::shared_ptr<Texture> m_Texture;
+    Ref<RenderTarget> m_RenderTarget;
+    Ref<Texture> m_Texture;
     ClearFlags m_ClearFlags;
     Vector4 m_ClearColor;
     float m_ClearDepth;

@@ -3,10 +3,10 @@
 
 namespace LevEngine
 {
-std::unordered_map<KeyCode, Input::State> Input::s_CurrentKeyStates;
-std::unordered_map<KeyCode, Input::State> Input::s_PreviousKeyStates;
-std::unordered_map<MouseButton, Input::State> Input::s_ButtonStates;
-std::unordered_map<MouseButton, Input::State> Input::s_PreviousButtonStates;
+UnorderedMap<KeyCode, Input::State> Input::s_CurrentKeyStates;
+UnorderedMap<KeyCode, Input::State> Input::s_PreviousKeyStates;
+UnorderedMap<MouseButton, Input::State> Input::s_ButtonStates;
+UnorderedMap<MouseButton, Input::State> Input::s_PreviousButtonStates;
 float Input::s_MousePositionX;
 float Input::s_MousePositionY;
 float Input::s_MousePreviousX;
@@ -40,7 +40,7 @@ bool Input::IsKeyUp(const KeyCode keycode)
 bool Input::IsMouseButtonPressed(const MouseButton button)
 {
 	const bool isDown = s_PreviousButtonStates[button] == State::Down;
-	const bool stateChanged = s_PreviousButtonStates[button] != s_PreviousButtonStates[button];
+	const bool stateChanged = s_ButtonStates[button] != s_PreviousButtonStates[button];
 
 	return stateChanged && isDown;
 }
@@ -66,12 +66,12 @@ float Input::GetMouseWheelOffset()
 	return s_MouseWheelOffset;
 }
 
-std::pair<float, float> Input::GetMousePosition()
+Pair<float, float> Input::GetMousePosition()
 {
 	return { s_MousePositionX, s_MousePositionY };
 }
 
-std::pair<float, float> Input::GetMouseDelta()
+Pair<float, float> Input::GetMouseDelta()
 {
 	return { s_MousePositionX - s_MousePreviousX, s_MousePositionY - s_MousePreviousY };
 }

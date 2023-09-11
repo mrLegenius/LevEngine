@@ -205,7 +205,7 @@ void D3D11StructuredBuffer::Unbind(const unsigned id, const ShaderType shaderTyp
 
 void D3D11StructuredBuffer::Copy(const Ref<D3D11StructuredBuffer> other)
 {
-	const std::shared_ptr<D3D11StructuredBuffer> srcBuffer = other;
+	const Ref<D3D11StructuredBuffer> srcBuffer = other;
 
     if (srcBuffer->m_IsDirty)
     {

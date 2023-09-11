@@ -109,6 +109,24 @@ namespace YAML
 			return true;
 		}
 	};
+
+	template<>
+	struct convert<eastl::string>
+	{
+		static Node encode(const eastl::string& rhs)
+		{
+			Node node;
+			const std::string str = rhs.c_str();
+			node.push_back(str);
+			return node;
+		}
+
+		static bool decode(const Node& node, eastl::string& rhs)
+		{
+			rhs = node.as<std::string>().c_str();
+			return true;
+		}
+	};
 }
 
 namespace LevEngine
@@ -118,13 +136,13 @@ namespace LevEngine
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vector4& v);
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Color& c);
 
-	inline void SerializeAsset(YAML::Emitter& out, const std::string& nodeName, const Ref<Asset>& asset)
+	inline void SerializeAsset(YAML::Emitter& out, const String& nodeName, const Ref<Asset>& asset)
 	{
 		if (!asset) return;
 
 		try
 		{
-			out << YAML::Key << nodeName << YAML::Value << asset->GetUUID();
+			out << YAML::Key << nodeName.c_str() << YAML::Value << asset->GetUUID();
 		}
 		catch (std::exception& e)
 		{
@@ -133,7 +151,7 @@ namespace LevEngine
 	}
 
 	template<class T>
-	const Ref<T>& DeserializeAsset(YAML::Node&& node)
+	Ref<T> DeserializeAsset(YAML::Node&& node)
 	{
 		static_assert(std::is_base_of_v<Asset, T>, "T must be Asset");
 

@@ -30,7 +30,7 @@ public:
 	}
 
 private:
-	using PassList = std::vector<Ref<RenderPass>>;
+	using PassList = Vector<Ref<RenderPass>>;
 
 	PassList m_PassList;
 };

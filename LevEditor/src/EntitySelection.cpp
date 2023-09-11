@@ -16,7 +16,7 @@ namespace LevEngine::Editor
 
 			if (ImGui::InputText("##Tag", buffer, sizeof buffer))
 			{
-				tag = std::string(buffer);
+				tag = String(buffer);
 			}
 		}
 

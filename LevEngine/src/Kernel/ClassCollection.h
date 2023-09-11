@@ -1,5 +1,7 @@
 ﻿#pragma once
-#include "Kernel/PointerUtils.h"
+#include "DataTypes/Pair.h"
+#include "DataTypes/Vector.h"
+#include "DataTypes/Pointers.h"
 
 namespace LevEngine
 {
@@ -32,7 +34,7 @@ namespace LevEngine
 	private:
 		ClassCollection() = default;
 
-		std::vector<Ref<TBase>> m_Classes;
+		Vector<Ref<TBase>> m_Classes;
 	};
 
 
@@ -61,9 +63,9 @@ namespace LevEngine
 		template<class TDerived, int Order>
 		void Register()
 		{
-			static_assert(std::is_base_of_v<TBase, TDerived>, "TDerived must derive from TBase");
+			static_assert(eastl::is_base_of_v<TBase, TDerived>, "TDerived must derive from TBase");
 
-			auto element = std::make_pair(CreateRef<TDerived>(), Order);
+			auto element = MakePair(CreateRef<TDerived>(), Order);
 
 			for (auto it = m_Classes.begin(); it != m_Classes.end(); ++it)
 			{
@@ -86,7 +88,7 @@ namespace LevEngine
 	private:
 		OrderedClassCollection() = default;
 
-		std::vector<std::pair<Ref<TBase>, int>> m_Classes;
+		Vector<Pair<Ref<TBase>, int>> m_Classes;
 	};
 
 	template<class TBase, class TDerived, int Order>
@@ -94,7 +96,7 @@ namespace LevEngine
 	public:
 		OrderedClassRegister()
 		{
-			static_assert(std::is_base_of_v<TBase, TDerived>, "TDerived must derive from TBase to be registered");
+			static_assert(eastl::is_base_of_v<TBase, TDerived>, "TDerived must derive from TBase to be registered");
 			OrderedClassCollection<TBase>::Instance().template Register<TDerived, Order>();
 		}
 	};

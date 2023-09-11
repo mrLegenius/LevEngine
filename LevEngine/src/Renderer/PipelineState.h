@@ -6,13 +6,14 @@
 #include "RasterizerState.h"
 #include "RenderTarget.h"
 #include "Shader.h"
+#include "DataTypes/Map.h"
 
 namespace LevEngine
 {
 class PipelineState
 {
 public:
-    using ShaderMap = std::map<ShaderType, Ref<Shader>>;
+    using ShaderMap = Map<ShaderType, Ref<Shader>>;
 
     PipelineState()
     {

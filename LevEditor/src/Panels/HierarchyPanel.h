@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Panel.h"
-#include "Scene/Scene.h"
 
 namespace LevEngine::Editor
 {
@@ -8,20 +7,15 @@ namespace LevEngine::Editor
 	{
 	public:
 		HierarchyPanel() = default;
-		HierarchyPanel(const Ref<Scene>& scene);
-
-		void SetContext(const Ref<Scene>& scene);
+		
+		bool OnKeyPressed(KeyPressedEvent& e) override;
 
 	protected:
-		std::string GetName() override { return "Hierarchy"; }
+		String GetName() override { return "Hierarchy"; }
 		void DrawContent() override;
 	private:
 		void DrawEntityNode(Entity entity);
-
-		Ref<Scene> m_Context = nullptr;
-
-		std::vector<Entity> m_EntitiesToDelete;
-
-		friend class Scene;
+		
+		Vector<Entity> m_EntitiesToDelete;
 	};
 }
