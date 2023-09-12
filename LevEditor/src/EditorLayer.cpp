@@ -30,33 +30,7 @@ namespace LevEngine::Editor
         otherTransform.SetParent(me);*/
     }
 
-    class TestSystem : public System
-    {
-        void Update(float deltaTime, entt::registry& registry) override
-        {
-            auto view = registry.view<Transform, DirectionalLightComponent, CameraComponent>();
-
-            for (auto entity : view)
-            {
-                auto [transform, light, camera] = view.get<Transform, DirectionalLightComponent, CameraComponent>(entity);
-
-                /* auto rot = transform.GetLocalRotation();
-                 auto mouseDelta = Input::GetMouseDelta();
-                 rot.x += mouseDelta.second / 180;
-                 rot.y += mouseDelta.first / 180;
-                 transform.SetLocalRotationRadians(rot);*/
-
-                float delta = 0;
-                if (Input::IsKeyDown(KeyCode::Q))
-                    delta = 0.001f;
-                else if (Input::IsKeyDown(KeyCode::E))
-                    delta = -0.001f;
-
-                auto ortho = camera.camera.GetOrthographicSize();
-                camera.camera.SetOrthographicSize(ortho + delta);
-            }
-        }
-    };
+    
     void EditorLayer::OnAttach()
     {
         LEV_PROFILE_FUNCTION();
@@ -179,9 +153,6 @@ namespace LevEngine::Editor
 	        }
 	        case SceneState::Play:
 	        {
-	            if (m_Viewport->IsFocused() || m_Game->IsFocused())
-	                Application::Get().GetWindow().DisableCursor();
-
 	            activeScene->OnUpdate(deltaTime);
 	            activeScene->OnPhysics(deltaTime);
 	            activeScene->OnLateUpdate(deltaTime);
