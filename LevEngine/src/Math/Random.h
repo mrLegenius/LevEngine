@@ -157,6 +157,22 @@ struct Random
 
 #pragma endregion
 
+#pragma region Quaternion
+	
+	/**
+	 * \return Quaternion from random yaw pitch roll
+	 */
+	static Quaternion Rotation()
+	{
+		const float x = Float(-180.0f, 180.0f);
+		const float y = Float(-180.0f, 180.0f);
+		const float z = Float(-180.0f, 180.0f);
+
+		return Quaternion::CreateFromYawPitchRoll(x, y, z);
+	}
+	
+#pragma endregion
+	
 private:
 	using U32 = uint_least32_t;
 	using Engine = std::mt19937;
