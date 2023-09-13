@@ -36,6 +36,7 @@
 // -- GUI --------------------------------------------------
 
 #include "GUI/ImGuiLayer.h"
+#include "GUI/GUI.h"
 
 // -- Time -------------------------------------------------
 
@@ -57,8 +58,6 @@
 
 #include "Scene/Serializers/SceneSerializer.h"
 #include "Scene/Serializers/SerializerUtils.h"
-
-
 
 // -- Math -------------------------------------------------
 
