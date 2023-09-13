@@ -104,6 +104,11 @@ Entity Scene::ConvertEntity(const entt::entity entity)
     return Entity(entt::handle(m_Registry, entity));
 }
 
+void Scene::DestroyEntity(const entt::entity entity)
+{
+    DestroyEntity(ConvertEntity(entity));
+}
+    
 void Scene::DestroyEntity(const Entity entity)
 {
     LEV_PROFILE_FUNCTION();

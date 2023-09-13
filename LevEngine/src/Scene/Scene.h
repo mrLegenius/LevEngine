@@ -30,6 +30,7 @@ public:
 	Entity CreateEntity(const String& name = "Entity");
 	Entity CreateEntity(UUID uuid, const String& name);
 
+	void DestroyEntity(entt::entity entity);
 	void DestroyEntity(Entity entity);
 	static void GetAllChildren(Entity entity, Vector<Entity>& entities);
 
