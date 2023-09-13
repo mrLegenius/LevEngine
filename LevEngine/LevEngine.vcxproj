@@ -444,6 +444,7 @@
     <ClInclude Include="src\Events\Event.h" />
     <ClInclude Include="src\Events\KeyEvent.h" />
     <ClInclude Include="src\Events\MouseEvent.h" />
+    <ClInclude Include="src\GUI\GUI.h" />
     <ClInclude Include="src\GUI\GUIUtils.h" />
     <ClInclude Include="src\GUI\ImGuiLayer.h" />
     <ClInclude Include="src\Input\Input.h" />
@@ -772,6 +773,7 @@
     <ClCompile Include="src\Assets\SkyboxAsset.cpp" />
     <ClCompile Include="src\Assets\TextureAsset.cpp" />
     <ClCompile Include="src\DataTypes\EASTL.cpp" />
+    <ClCompile Include="src\GUI\GUI.cpp" />
     <ClCompile Include="src\GUI\GUIUtils.cpp" />
     <ClCompile Include="src\GUI\ImGuiBuild.cpp" />
     <ClCompile Include="src\GUI\ImGuiLayer.cpp" />
