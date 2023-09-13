@@ -3,7 +3,6 @@
 #include <filesystem>
 
 #include "TextureLibrary.h"
-#include "ObjLoader.h"
 #include "DataTypes/Path.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Material.h"
@@ -15,127 +14,6 @@ static Path resources = Path("resources");
 
 static String GetShaderPath(const String& name) { return (resources / "Shaders" / name.c_str()).string().c_str(); }
 static String GetTexturePath(const String& name) { return (resources / "Textures" / name.c_str()).string().c_str(); }
-static String GetSkyboxPath(const String& name) { return (resources / "Skyboxes" / name.c_str()).string().c_str(); }
-static Path GetModelPath(const String& name) { return (resources / "Models" / name.c_str()); }
-
-static Ref<SamplerState> GetDefaultClampedSamplerState()
-{
-	static Ref<SamplerState> sampler;
-
-	if (sampler) return sampler;
-
-	sampler = SamplerState::Create();
-	sampler->SetFilter(SamplerState::MinFilter::Linear, SamplerState::MagFilter::Linear, SamplerState::MipFilter::Linear);
-	sampler->SetWrapMode(SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp);
-	sampler->SetCompareFunction(SamplerState::CompareFunc::Never);
-	sampler->SetCompareMode(SamplerState::CompareMode::None);
-	sampler->SetMinLOD(-FLT_MAX);
-	sampler->SetMaxLOD(FLT_MAX);
-	sampler->SetMaxAnisotropy(1);
-	sampler->EnableAnisotropicFiltering(false);
-	sampler->SetBorderColor({ 1, 1, 1, 1 });
-	sampler->SetLODBias(0);
-
-	return sampler;
-}
-
-static Ref<SamplerState> GetDefaultWrappedSamplerState()
-{
-	static Ref<SamplerState> sampler;
-
-	if (sampler) return sampler;
-
-	sampler = SamplerState::Create();
-	sampler->SetFilter(SamplerState::MinFilter::Linear, SamplerState::MagFilter::Linear, SamplerState::MipFilter::Linear);
-	sampler->SetWrapMode(SamplerState::WrapMode::Repeat, SamplerState::WrapMode::Repeat, SamplerState::WrapMode::Repeat);
-	sampler->SetCompareFunction(SamplerState::CompareFunc::Never);
-	sampler->SetCompareMode(SamplerState::CompareMode::None);
-	sampler->SetMinLOD(-FLT_MAX);
-	sampler->SetMaxLOD(FLT_MAX);
-	sampler->SetMaxAnisotropy(1);
-	sampler->EnableAnisotropicFiltering(false);
-	sampler->SetBorderColor({ 1, 1, 1, 1 });
-	sampler->SetLODBias(0);
-
-	return sampler;
-}
-
-struct LavaRockAssets
-{
-	static auto Mesh()
-	{
-		static auto mesh = ObjLoader().LoadMesh(GetModelPath("lava_rock.obj"));
-		return mesh;
-	}
-
-	static auto AmbientTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/ambient.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-	static auto EmissiveTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/emissive.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-	static auto SpecularTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/specular.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-
-	static auto NormalTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/normal.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-};
-
-struct FancyTorch
-{
-	static Path GetAssetPath(const String& name) { return (resources / "FancyTorch" / name.c_str()).string(); }
-
-	static auto Mesh()
-	{
-		static auto mesh = ObjLoader().LoadMesh(GetAssetPath("FancyTorch.obj"));
-		return mesh;
-	}
-
-	static auto AmbientTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_albedo.png").string().c_str());
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-	static auto EmissiveTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_gloss.png").string().c_str());
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-	static auto SpecularTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_metal.png").string().c_str());
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-	static auto NormalTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_normal.png").string().c_str());
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-};
 
 namespace ShaderAssets
 {
@@ -304,145 +182,19 @@ namespace ShaderAssets
 
 		return shader;
 	}
-};
+}
 
 namespace TextureAssets
 {
-    inline Ref<Texture> Bricks()
-    {
-        static auto texture = TextureLibrary::GetTexture(GetTexturePath("bricks.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-        return texture;
-    }
-
 	inline Ref<Texture> Particle()
 	{
 		static auto texture = TextureLibrary::GetTexture(GetTexturePath("particle.png"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
-	}
-
-	inline Ref<Texture> Smoke()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("smoke.png"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-    inline Ref<Texture> Log()
-    {
-        static auto texture = TextureLibrary::GetTexture(GetTexturePath("log.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-        return texture;
-    }
-
-    inline Ref<Texture> Gear()
-    {
-        static auto texture = TextureLibrary::GetTexture(GetTexturePath("gear.png"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-        return texture;
-    }
-
-    inline Ref<Texture> Rock()
-    {
-        static auto texture = TextureLibrary::GetTexture(GetTexturePath("rock.tga"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-        return texture;
-    }
-
-	inline Ref<Texture> Fire()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("fire.png"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-};
-
-namespace SkyboxAssets
-{
-	inline auto LightBlue()
-    {
-        static String paths[6] = {
-            GetSkyboxPath("SpaceBlue/left.png"), //left
-            GetSkyboxPath("SpaceBlue/right.png"), //right
-        	GetSkyboxPath("SpaceBlue/bottom.png"), //bottom
-            GetSkyboxPath("SpaceBlue/top.png"), //top
-            GetSkyboxPath("SpaceBlue/back.png"), //back
-            GetSkyboxPath("SpaceBlue/front.png"), //front
-        };
-
-        static auto texture = Texture::CreateTextureCube(paths);
-		texture->AttachSampler(GetDefaultClampedSamplerState());
-
-        return texture;
-    }
-
-	inline auto Lake()
-	{
-		static String paths[6] = {
-			GetSkyboxPath("Lake/left.jpg"), //left
-			GetSkyboxPath("Lake/right.jpg"), //right
-			GetSkyboxPath("Lake/bottom.jpg"), //bottom
-			GetSkyboxPath("Lake/top.jpg"), //top
-			GetSkyboxPath("Lake/back.jpg"), //back
-			GetSkyboxPath("Lake/front.jpg"), //front
-		};
-
-		static auto texture = Texture::CreateTextureCube(paths);
-		texture->AttachSampler(GetDefaultClampedSamplerState());
-
-		return texture;
-	}
-
-	inline auto Interstellar()
-	{
-		static String paths[6] = {
-			GetSkyboxPath("Interstellar/left.png"), //left
-			GetSkyboxPath("Interstellar/right.png"), //right
-			GetSkyboxPath("Interstellar/bottom.png"), //bottom
-			GetSkyboxPath("Interstellar/top.png"), //top
-			GetSkyboxPath("Interstellar/back.png"), //back
-			GetSkyboxPath("Interstellar/front.png"), //front
-		};
-
-		static auto texture = Texture::CreateTextureCube(paths);
-		texture->AttachSampler(GetDefaultClampedSamplerState());
-
-		return texture;
-	}
-};
-
-namespace MeshAssets
-{
-	inline auto Log()
-	{
-        static auto mesh = ObjLoader().LoadMesh(GetModelPath("log.obj"));
-        return mesh;
-	}
-
-    inline auto Gear()
-    {
-        static auto mesh = ObjLoader().LoadMesh(GetModelPath("gear.obj"));
-        return mesh;
-    }
-
-    inline auto Rock()
-    {
-        static auto mesh = ObjLoader().LoadMesh(GetModelPath("rock.obj"));
-        return mesh;
-    }
-
-    inline auto Cube()
-	{
-        static auto mesh = Mesh::CreateCube();
-        return mesh;
 	}
 }
 
 struct Materials
 {
-	using Color = LevEngine::Color;
-
 	static Material Emerald()
 	{
 		const auto ambient = Color( 0.0215f, 0.1745f, 0.0215f);
