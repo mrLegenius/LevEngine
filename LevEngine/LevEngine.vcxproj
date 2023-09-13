@@ -474,7 +474,7 @@
     <ClInclude Include="src\ObjLoader.h" />
     <ClInclude Include="src\levpch.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
-    <ClInclude Include="src\Physics\Components\CollisionEvent.h" />
+    <ClInclude Include="src\Physics\Components\CollisionEvents.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
     <ClInclude Include="src\Physics\Events\CollisionBeginEvent.h" />
     <ClInclude Include="src\Physics\Events\CollisionEndEvent.h" />

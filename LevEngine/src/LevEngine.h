@@ -123,7 +123,14 @@
 // -- Physics ----------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-//#include "Physics/Events/CollisionBeginEvent.h"
+#include "Physics/Events/CollisionBeginEvent.h"
+#include "Physics/Events/CollisionEndEvent.h"
+
+#include "Physics/Components/Collider.h"
+#include "Physics/Components/CollisionEvents.h"
+#include "Physics/Components/Rigidbody.h"
+
+#include "Physics/Physics.h"
 
 // /////////////////////////////////////////////////////////
 // -- Assets -----------------------------------------------
