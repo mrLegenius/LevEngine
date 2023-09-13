@@ -64,7 +64,7 @@ void Application::Run()
 			totalTime -= 1.0f;
 
 			String text("FPS: ");
-			text.append(std::to_string(fps).c_str());
+			text.append(ToString(fps));
 			m_Window->SetWindowTitle(text);
 
 			frameCount = 0;
