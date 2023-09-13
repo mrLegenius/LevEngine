@@ -10,6 +10,9 @@ Move(T&& x) noexcept
     return eastl::move(x);
 }
 
+inline String ToString(const float value) { return std::to_string(value).c_str(); }
+inline String ToString(const int value) { return std::to_string(value).c_str(); }
+
 template <>
 struct std::hash<eastl::string>
 {
