@@ -1,4 +1,5 @@
 #pragma once
+#include "DataTypes/Utility.h"
 
 namespace LevEngine
 {

@@ -3,6 +3,7 @@
 #include "CPUAccess.h"
 #include "SamplerState.h"
 #include "ShaderType.h"
+#include "DataTypes/Utility.h"
 #include "Math/Vector4.h"
 
 namespace LevEngine

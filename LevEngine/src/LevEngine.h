@@ -32,6 +32,7 @@
 #include "DataTypes/String.h"
 #include "DataTypes/UnorderedMap.h"
 #include "DataTypes/Vector.h"
+#include "DataTypes/Utility.h"
 
 // -- GUI --------------------------------------------------
 
