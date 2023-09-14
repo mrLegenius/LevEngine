@@ -3,11 +3,11 @@
 // -- Core -------------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+#include "Kernel/Logger.h"
+#include "Kernel/Asserts.h"
 #include "Kernel/Application.h"
 #include "Kernel/Layer.h"
-#include "Kernel/Logger.h"
 
-#include "Kernel/Asserts.h"
 #include "Kernel/Color.h"
 #include "Kernel/PlatformUtils.h"
 #include "Kernel/Utils.h"
