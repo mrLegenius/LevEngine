@@ -34,7 +34,10 @@ namespace LevEngine::Editor
 
     void EditorLayer::OpenProject()
     {
-        OpenScene(Project::GetStartScene());
+        const String& path = FileDialogs::OpenFile("LevProject (*.levproject)\0*.levproject\0");
+
+        if(!Project::Load(path.c_str()))
+            NewProject();
     }
 
     void EditorLayer::NewProject()
@@ -54,21 +57,21 @@ namespace LevEngine::Editor
         Log::Logger::AddLogHandler(m_Console);
 
         AssetDatabase::ProcessAllAssets();
-        
-        auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
+
+        const auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
         if (commandLineArgs.Count > 1)
         {
             const auto projectFilePath = commandLineArgs[1];
 
             if (!Project::Load(projectFilePath))
-                NewProject();
-            
-            OpenProject();
+                OpenProject();
         }
         else
         {
-            NewProject();
+            OpenProject();
         }
+
+        OpenScene(Project::GetStartScene());
 
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
