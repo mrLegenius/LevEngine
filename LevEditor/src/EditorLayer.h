@@ -12,12 +12,15 @@ namespace LevEngine::Editor
 class EditorLayer final : public Layer
 {
 public:
+	void OpenProject();
+	void NewProject();
 	void OnAttach() override;
 	void OnUpdate(float deltaTime) override;
 	void OnScenePlay();
 	void OnSceneStop();
 	void DrawToolbar();
 	void DrawStatusbar();
+	void SetCurrentSceneAsStartScene() const;
 	void DrawDockSpace();
 	void CreateNewScene();
 	void OpenScene();
@@ -37,9 +40,7 @@ private:
 	Ref<AssetBrowserPanel> m_AssetsBrowser;
 	Ref<GamePanel> m_Game;
 	std::shared_ptr<ConsolePanel> m_Console;
-
-	Path m_EditorScenePath;
-
+	
 	enum class SceneState
 	{
 		Edit = 0, Play = 1

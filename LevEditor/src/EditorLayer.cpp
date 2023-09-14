@@ -5,6 +5,7 @@
 #include <imgui_internal.h>
 
 #include "EntitySelection.h"
+#include "Project.h"
 #include "Selection.h"
 
 namespace LevEngine::Editor
@@ -30,7 +31,20 @@ namespace LevEngine::Editor
         otherTransform.SetParent(me);*/
     }
 
-    
+
+    void EditorLayer::OpenProject()
+    {
+        OpenScene(Project::GetStartScene());
+    }
+
+    void EditorLayer::NewProject()
+    {
+        const String& path = FileDialogs::SaveFile("LevProject (*.levproject)\0*.levproject\0");
+
+        if(!Project::CreateNew(path.c_str()))
+            LEV_THROW("Failed to create new project")
+    }
+
     void EditorLayer::OnAttach()
     {
         LEV_PROFILE_FUNCTION();
@@ -40,6 +54,21 @@ namespace LevEngine::Editor
         Log::Logger::AddLogHandler(m_Console);
 
         AssetDatabase::ProcessAllAssets();
+        
+        auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
+        if (commandLineArgs.Count > 1)
+        {
+            const auto projectFilePath = commandLineArgs[1];
+
+            if (!Project::Load(projectFilePath))
+                NewProject();
+            
+            OpenProject();
+        }
+        else
+        {
+            NewProject();
+        }
 
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
@@ -335,6 +364,18 @@ namespace LevEngine::Editor
         ImGui::End();
     }
 
+    void EditorLayer::SetCurrentSceneAsStartScene() const
+    {
+        if (!SceneManager::GetActiveScene())
+        {
+            Log::CoreWarning("There is no active scene");
+            return;
+        }
+
+        Project::SetStartScene(SceneManager::GetActiveScenePath());
+        Project::Save();
+    }
+
     void EditorLayer::DrawDockSpace()
     {
         LEV_PROFILE_FUNCTION();
@@ -384,6 +425,9 @@ namespace LevEngine::Editor
                 if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
                     SaveSceneAs();
 
+                if (ImGui::MenuItem("Set current scene as start scene"))
+                    SetCurrentSceneAsStartScene();
+
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
 
@@ -401,7 +445,6 @@ namespace LevEngine::Editor
         /*m_ActiveScene->OnViewportResized(
             static_cast<uint32_t>(m_Viewport->GetWidth()),
             static_cast<uint32_t>(m_Viewport->GetHeight()));*/
-        m_EditorScenePath = Path();
         SceneManager::LoadEmptyScene();
     }
 
@@ -428,7 +471,6 @@ namespace LevEngine::Editor
         if (SceneManager::LoadScene(path))
         {
             Selection::Deselect();
-            m_EditorScenePath = path;
         }
     }
 
@@ -440,9 +482,10 @@ namespace LevEngine::Editor
             return false;
         }
 
-        if (!m_EditorScenePath.empty())
+        const auto scenePath = SceneManager::GetActiveScenePath();
+        if (!scenePath.empty())
         {
-            SceneManager::SaveScene(m_EditorScenePath.string().c_str());
+            SceneManager::SaveScene(scenePath.string().c_str());
             return true;
         }
 
@@ -461,8 +504,6 @@ namespace LevEngine::Editor
         if (!filepath.empty())
         {
             SceneManager::SaveScene(filepath);
-
-            m_EditorScenePath = filepath.c_str();
             return true;
         }
 
@@ -483,6 +524,6 @@ namespace LevEngine::Editor
         m_SceneState = SceneState::Edit;
         Selection::Deselect();
 
-        OpenScene(m_EditorScenePath);
+        OpenScene(SceneManager::GetActiveScenePath());
     }
 }
