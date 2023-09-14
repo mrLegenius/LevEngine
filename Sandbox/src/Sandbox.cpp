@@ -7,14 +7,15 @@
 class SandboxApp : public Application
 {
 public:
-	SandboxApp() : Application("Sandbox", 1600, 900)
+	SandboxApp(const ApplicationCommandLineArgs args)
+		: Application({ "Sandbox", 1600, 900, args})
 	{
 		PushLayer(new Sandbox::Game);
 	}
 	~SandboxApp() = default;
 };
 
-Application* CreateApplication()
+Application* CreateApplication(ApplicationCommandLineArgs args)
 {
-	return new SandboxApp;
+	return new SandboxApp(args);
 }

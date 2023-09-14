@@ -11,10 +11,30 @@
 
 namespace LevEngine
 {
+struct ApplicationCommandLineArgs
+{
+	int Count = 0;
+	char** Args = nullptr;
+
+	const char* operator[](const int index) const
+	{
+		LEV_CORE_ASSERT(index < Count);
+		return Args[index];
+	}
+};
+
+struct ApplicationSpecification
+{
+	String Name = "LevApp";
+	uint32_t WindowWidth = 1600;
+	uint32_t WindowHeight = 900;
+	ApplicationCommandLineArgs CommandLineArgs;
+};
+	
 class Application
 {
 public:
-	explicit Application(const String& name = "My3DApp", uint32_t width = 800, uint32_t height = 800);
+	explicit Application(const ApplicationSpecification& specification);
 	~Application();
 
 	void Run();
@@ -27,6 +47,7 @@ public:
 
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
+	[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 private:
 	bool OnWindowClosed(WindowClosedEvent& e);
 	bool OnWindowResized(WindowResizedEvent& e);
@@ -45,6 +66,7 @@ private:
 	float m_LastFrameTime = 0.0f;
 	bool m_Minimized = false;
 	ImGuiLayer* m_ImGuiLayer;
+	ApplicationSpecification m_Specification;
 
 	static Application* s_Instance;
 };
