@@ -135,6 +135,7 @@ namespace LevEngine
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vector3& v);
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vector4& v);
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Color& c);
+	YAML::Emitter& operator<<(YAML::Emitter& out, const eastl::string& s);
 
 	inline void SerializeAsset(YAML::Emitter& out, const String& nodeName, const Ref<Asset>& asset)
 	{

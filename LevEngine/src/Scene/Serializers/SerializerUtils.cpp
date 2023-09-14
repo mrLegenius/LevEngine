@@ -31,4 +31,10 @@ namespace LevEngine
 		out << YAML::BeginSeq << c.r << c.g << c.b << c.a << YAML::EndSeq;
 		return out;
 	}
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const eastl::string& s)
+	{
+		out << s;
+		return out;
+	}
 }
