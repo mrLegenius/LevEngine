@@ -43,6 +43,8 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
+		m_AssetsByPath.clear();
+		m_Assets.clear();
 		Queue<Path> directories;
 		directories.push(GetAssetsPath());
 		do
