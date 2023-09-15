@@ -57,7 +57,6 @@ namespace Sandbox
 			}
 		}
 	};
-
 	
 	class ShootSystem : public System
 	{
@@ -198,11 +197,11 @@ namespace Sandbox
 
 		auto& scene = SceneManager::GetActiveScene();
 
-		scene->RegisterUpdateSystem(CreateRef<FreeCameraSystem>());
-		scene->RegisterUpdateSystem(CreateRef<ShootSystem>());
-		scene->RegisterUpdateSystem(CreateRef<ProjectileMovementSystem>());
-		scene->RegisterUpdateSystem(CreateRef<ProjectileLifeSystem>());
-		scene->RegisterUpdateSystem(CreateRef<TargetSpawnSystem>());
+		scene->RegisterUpdateSystem<FreeCameraSystem>();
+		scene->RegisterUpdateSystem<ShootSystem>();
+		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
+		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
+		scene->RegisterUpdateSystem<TargetSpawnSystem>();
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
 	}
