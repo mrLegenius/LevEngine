@@ -35,6 +35,9 @@ namespace LevEngine::Editor
 
     void EditorLayer::LoadProject()
     {
+        m_SaveData.SetLastOpenedProject(Project::GetPath());
+        m_SaveData.Save();
+        
         AssetDatabase::ProcessAllAssets();
 
         OpenScene(Project::GetStartScene());
@@ -54,13 +57,22 @@ namespace LevEngine::Editor
         m_Console = std::make_shared<ConsolePanel>();
         Log::Logger::AddLogHandler(m_Console);
 
-        ModalPopup::Show("Project Selection",
+        m_SaveData.Load();
+
+        if (Project::Load(m_SaveData.GetLastOpenedProject()))
+        {
+            LoadProject();
+        }
+        else
+        {
+            ModalPopup::Show("Project Selection",
                 "Open existing or create new project",
                 "Open",
                 "Create new",
                 [this] { OpenProject(); },
                 [this]{ NewProject(); });
-        
+        }
+
         Application::Get().GetWindow().EnableCursor();
     }
 

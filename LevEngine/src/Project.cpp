@@ -25,6 +25,8 @@ void Project::Save()
 
 bool Project::Load(const Path& path)
 {
+    if (path.empty()) return false;
+    
     s_Project = CreateRef<Project>(path);
     YAML::Node data;
     try
@@ -83,6 +85,12 @@ void Project::SetStartScene(Path path)
     LEV_CORE_ASSERT(s_Project, "No loaded project");
 
     s_Project->m_StartScene = Move(path);
+}
+
+Path Project::GetPath()
+{
+    LEV_CORE_ASSERT(s_Project, "No loaded project");
+    return s_Project->m_Path;
 }
 }
 

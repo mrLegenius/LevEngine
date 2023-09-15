@@ -1,4 +1,5 @@
 #pragma once
+#include "EditorSaveData.h"
 #include "Events/ApplicationEvent.h"
 #include "Panels/AssetBrowserPanel.h"
 #include "Panels/ConsolePanel.h"
@@ -41,6 +42,8 @@ private:
 	Ref<AssetBrowserPanel> m_AssetsBrowser;
 	Ref<GamePanel> m_Game;
 	std::shared_ptr<ConsolePanel> m_Console;
+
+	EditorSaveData m_SaveData{"SaveData.editor"};
 	
 	enum class SceneState
 	{

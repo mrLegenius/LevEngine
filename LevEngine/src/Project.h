@@ -16,6 +16,8 @@ public:
     [[nodiscard]] static const Ref<Project>& GetProject() { return s_Project; }
     static bool CreateNew(const Path& path);
     static void SetStartScene(Path path);
+    [[nodiscard]] static Path GetPath();
+
 private:
     Path m_Root;
     Path m_Path;
