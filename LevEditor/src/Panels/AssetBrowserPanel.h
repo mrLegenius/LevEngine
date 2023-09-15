@@ -19,9 +19,5 @@ namespace LevEngine::Editor
         Path m_CurrentDirectory;
 
         Ref<Texture> m_DirectoryIcon;
-        Ref<Texture> m_FileIcon;
-        Ref<Texture> m_MeshIcon;
-        Ref<Texture> m_MaterialIcon;
-        Ref<Texture> m_SkyboxIcon;
     };
 }

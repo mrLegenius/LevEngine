@@ -14,6 +14,11 @@ namespace LevEngine
 		void DrawProperties() override { }
 
 		[[nodiscard]] const Ref<Mesh>& GetMesh() const { return m_Mesh; }
+
+		[[nodiscard]] Ref<Texture> GetIcon() const override
+		{
+			return TextureLibrary::GetTexture("resources\\Icons\\AssetsBrowser\\MeshIcon.png");
+		}
 	protected:
 		bool OverrideDataFile() const override { return false; }
 

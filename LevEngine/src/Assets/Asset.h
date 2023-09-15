@@ -1,8 +1,10 @@
 ﻿#pragma once
 #include <yaml-cpp/yaml.h>
 
+#include "TextureLibrary.h"
 #include "DataTypes/Path.h"
 #include "DataTypes/String.h"
+#include "Renderer/Texture.h"
 
 namespace LevEngine
 {
@@ -40,6 +42,11 @@ namespace LevEngine
 			m_Extension = path.extension().string().c_str();
 			m_MetaPath = path.string().append(".meta").c_str();
 			m_Path = path;
+		}
+
+		[[nodiscard]] virtual Ref<Texture> GetIcon() const
+		{
+			return TextureLibrary::GetTexture("resources\\Icons\\AssetsBrowser\\FileIcon.png");;
 		}
 
 	protected:

@@ -13,10 +13,6 @@ namespace LevEngine::Editor
         : m_CurrentDirectory(AssetDatabase::GetAssetsPath())
     {
         m_DirectoryIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\DirectoryIcon.png");
-        m_FileIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\FileIcon.png");
-        m_MeshIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\MeshIcon.png");
-        m_MaterialIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\MaterialIcon.png");
-        m_SkyboxIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\SkyboxIcon.png");
     }
 
     void AssetBrowserPanel::DrawContent()
@@ -68,19 +64,9 @@ namespace LevEngine::Editor
                 asset = AssetDatabase::GetAsset(path);
             
             ImGui::PushID(filenameString.c_str());
-            Ref<Texture> icon = nullptr;
-            if (directoryEntry.is_directory())
-	            icon = m_DirectoryIcon;
-            else if (AssetDatabase::IsAssetTexture(path))
-                icon = TextureLibrary::GetTexture(path.string().c_str());
-            else if (AssetDatabase::IsAssetMesh(path))
-                icon = m_MeshIcon;
-            else if (AssetDatabase::IsAssetMaterial(path))
-                icon = m_MaterialIcon;
-        	else if (AssetDatabase::IsAssetSkybox(path))
-                icon = m_SkyboxIcon;
-			else
-				icon = m_FileIcon;
+            Ref<Texture> icon = directoryEntry.is_directory()
+                ? m_DirectoryIcon
+                : asset->GetIcon();
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton(icon->GetId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
