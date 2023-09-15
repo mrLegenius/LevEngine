@@ -14,6 +14,7 @@ class EditorLayer final : public Layer
 public:
 	void OpenProject();
 	void NewProject();
+	void LoadProject();
 	void OnAttach() override;
 	void OnUpdate(float deltaTime) override;
 	void OnScenePlay();

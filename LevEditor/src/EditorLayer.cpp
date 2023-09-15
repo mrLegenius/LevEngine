@@ -5,6 +5,7 @@
 #include <imgui_internal.h>
 
 #include "EntitySelection.h"
+#include "ModalPopup.h"
 #include "Project.h"
 #include "Selection.h"
 
@@ -14,41 +15,26 @@ namespace LevEngine::Editor
     {
         const String& path = FileDialogs::OpenFile("LevProject (*.levproject)\0*.levproject\0");
 
-        if(!Project::Load(path.c_str()))
-            NewProject();
+        if(Project::Load(path.c_str()))
+            LoadProject();
+        else
+            LEV_THROW("Failed to open project")
+        
     }
 
     void EditorLayer::NewProject()
     {
         const String& path = FileDialogs::SaveFile("LevProject (*.levproject)\0*.levproject\0", "levproject");
 
-        if(!Project::CreateNew(path.c_str()))
-        {
+        if(Project::CreateNew(path.c_str()))
+            LoadProject();
+        else
             LEV_THROW("Failed to create new project")
-        }
     }
 
-    void EditorLayer::OnAttach()
+
+    void EditorLayer::LoadProject()
     {
-        LEV_PROFILE_FUNCTION();
-
-        //spdlog uses shared_ptr so we use it here as well
-        m_Console = std::make_shared<ConsolePanel>();
-        Log::Logger::AddLogHandler(m_Console);
-        
-        const auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
-        if (commandLineArgs.Count > 1)
-        {
-            const auto projectFilePath = commandLineArgs[1];
-
-            if (!Project::Load(projectFilePath))
-                OpenProject();
-        }
-        else
-        {
-            OpenProject();
-        }
-
         AssetDatabase::ProcessAllAssets();
 
         OpenScene(Project::GetStartScene());
@@ -58,7 +44,23 @@ namespace LevEngine::Editor
         m_Hierarchy = CreateRef<HierarchyPanel>();
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
+    }
+    
+    void EditorLayer::OnAttach()
+    {
+        LEV_PROFILE_FUNCTION();
 
+        //spdlog uses shared_ptr so we use it here as well
+        m_Console = std::make_shared<ConsolePanel>();
+        Log::Logger::AddLogHandler(m_Console);
+
+        ModalPopup::Show("Project Selection",
+                "Open existing or create new project",
+                "Open",
+                "Create new",
+                [this] { OpenProject(); },
+                [this]{ NewProject(); });
+        
         Application::Get().GetWindow().EnableCursor();
     }
 
@@ -141,6 +143,8 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
+        if (!Project::GetProject()) return;
+        
         if (Input::IsKeyDown(KeyCode::Escape))
         {
             Application::Get().GetWindow().EnableCursor();
@@ -182,10 +186,14 @@ namespace LevEngine::Editor
 
     void EditorLayer::OnGUIRender()
     {
-        ImGui::ShowDemoWindow(nullptr);
-
         LEV_PROFILE_FUNCTION();
+        
+        ImGui::ShowDemoWindow(nullptr);
+        
+        ModalPopup::Render();
 
+        if (!Project::GetProject()) return;
+        
         DrawDockSpace();
         m_Viewport->Render();
         m_Hierarchy->Render();
