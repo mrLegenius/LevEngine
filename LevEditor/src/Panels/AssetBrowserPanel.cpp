@@ -9,7 +9,8 @@
 
 namespace LevEngine::Editor
 {
-    AssetBrowserPanel::AssetBrowserPanel() : m_CurrentDirectory(AssetDatabase::AssetsRoot)
+    AssetBrowserPanel::AssetBrowserPanel()
+        : m_CurrentDirectory(AssetDatabase::GetAssetsPath())
     {
         m_DirectoryIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\DirectoryIcon.png");
         m_FileIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\FileIcon.png");
@@ -20,7 +21,7 @@ namespace LevEngine::Editor
 
     void AssetBrowserPanel::DrawContent()
     {
-        if (m_CurrentDirectory != AssetDatabase::AssetsRoot)
+        if (m_CurrentDirectory != AssetDatabase::GetAssetsPath())
         {
             if (ImGui::Button("<"))
 	            m_CurrentDirectory = m_CurrentDirectory.parent_path();
@@ -28,10 +29,11 @@ namespace LevEngine::Editor
 
         static float padding = 16.0f;
         static float thumbnailSize = 64.0f;
-
+        
+        auto relativePath = relative(m_CurrentDirectory, Project::GetRoot());
         ImGui::SameLine();
         ImGui::AlignTextToFramePadding();
-        ImGui::Text(m_CurrentDirectory.string().c_str());
+        ImGui::Text(relativePath.string().c_str());
 
         ImGui::PushItemWidth(-300);
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 400);
@@ -91,7 +93,7 @@ namespace LevEngine::Editor
 	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
 	                {
 	                    const auto assetPathPayload = static_cast<const wchar_t*>(payload->Data);
-	                    const Path assetPath = AssetDatabase::AssetsRoot / assetPathPayload;
+	                    const Path assetPath = AssetDatabase::GetAssetsPath() / assetPathPayload;
 
                         AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath), path);
 	                }
@@ -101,7 +103,7 @@ namespace LevEngine::Editor
 
             if (ImGui::BeginDragDropSource())
             {
-                auto relativePath = std::filesystem::relative(path, AssetDatabase::AssetsRoot);
+                auto relativePath = relative(path);
                 const wchar_t* itemPath = relativePath.c_str();
                 ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
                 ImGui::EndDragDropSource();

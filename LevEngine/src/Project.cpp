@@ -1,6 +1,8 @@
 #include "levpch.h"
 #include "Project.h"
 
+#include "Scene/Serializers/SerializerUtils.h"
+
 namespace LevEngine
 {
 void Project::Save()

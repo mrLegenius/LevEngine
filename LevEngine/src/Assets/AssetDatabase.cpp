@@ -44,7 +44,7 @@ namespace LevEngine
 	void AssetDatabase::ProcessAllAssets()
 	{
 		Queue<Path> directories;
-		directories.push(AssetsRoot);
+		directories.push(GetAssetsPath());
 		do
 		{
 			auto directory = directories.front();

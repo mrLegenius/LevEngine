@@ -52,12 +52,10 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
-        //spdlog uses shared_ptr so we use here as well
+        //spdlog uses shared_ptr so we use it here as well
         m_Console = std::make_shared<ConsolePanel>();
         Log::Logger::AddLogHandler(m_Console);
-
-        AssetDatabase::ProcessAllAssets();
-
+        
         const auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
         if (commandLineArgs.Count > 1)
         {
@@ -71,6 +69,8 @@ namespace LevEngine::Editor
             OpenProject();
         }
 
+        AssetDatabase::ProcessAllAssets();
+
         OpenScene(Project::GetStartScene());
 
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
@@ -78,14 +78,6 @@ namespace LevEngine::Editor
         m_Hierarchy = CreateRef<HierarchyPanel>();
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
-        
-        //<--- Systems ---<<
-        //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
-        //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
-        //m_ActiveScene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
-        //m_ActiveScene->RegisterUpdateSystem(CreateRef<TestSystem>());
-        //m_ActiveScene->RegisterOneFrame<CollisionBeginEvent>();
-        //m_ActiveScene->RegisterOneFrame<CollisionEndEvent>();
 
         Application::Get().GetWindow().EnableCursor();
     }
@@ -445,9 +437,6 @@ namespace LevEngine::Editor
 
     void EditorLayer::CreateNewScene()
     {
-        /*m_ActiveScene->OnViewportResized(
-            static_cast<uint32_t>(m_Viewport->GetWidth()),
-            static_cast<uint32_t>(m_Viewport->GetHeight()));*/
         SceneManager::LoadEmptyScene();
     }
 

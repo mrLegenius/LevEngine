@@ -3,7 +3,7 @@
 
 /*
  * There are some problems in this project
- * 1. We need Project system to have ability change assets of separate project
+ * 1. (Done) We need Project system to have ability change assets of separate project
  * 2. We need Prefabs system to avoid complete object creation from code
  * 3. We need resource loading system (by name)
  * 4. We need our systems and components in editor, to setup entities visually
@@ -97,8 +97,8 @@ namespace Sandbox
 					meshTransform.SetLocalRotation(Random::Rotation());
 					
 					auto& mesh = projectileMeshEntity.AddComponent<MeshRendererComponent>();
-					mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::AssetsRoot / "Models" / "lava_rock.obj");
-					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::AssetsRoot / "Textures" / "LavaRock" /  "LavaRock.mat");
+					mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Models" / "lava_rock.obj");
+					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Textures" / "LavaRock" /  "LavaRock.mat");
 
 					auto& projectileComp = projectile.AddComponent<Projectile>();
 
@@ -180,8 +180,8 @@ namespace Sandbox
 				meshTransform.SetLocalScale(Vector3::One * 0.05f);
 					
 				auto& mesh = meshEntity.AddComponent<MeshRendererComponent>();
-				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::AssetsRoot / "FancyTorch" / "FancyTorch.obj");
-				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::AssetsRoot / "FancyTorch" /  "FancyTorch.mat");
+				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "FancyTorch" / "FancyTorch.obj");
+				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "FancyTorch" /  "FancyTorch.mat");
 
 			}
 		}
@@ -194,7 +194,7 @@ namespace Sandbox
 	{
 		AssetDatabase::ProcessAllAssets();
 
-		SceneManager::LoadScene(AssetDatabase::AssetsRoot / "Scenes" / "TestScene.scene");
+		SceneManager::LoadScene(AssetDatabase::GetAssetsPath() / "Scenes" / "TestScene.scene");
 
 		auto& scene = SceneManager::GetActiveScene();
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "DataTypes/Path.h"
-
-#include "Scene/Serializers/SerializerUtils.h"
+#include "DataTypes/Utility.h"
 
 namespace LevEngine
 {
