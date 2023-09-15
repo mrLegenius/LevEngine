@@ -10,28 +10,6 @@
 
 namespace LevEngine::Editor
 {
-    void OnKatamariCollided(Entity me, Entity other)
-    {
-        /*auto& myCollider = me.GetComponent<SphereCollider>();
-        auto& myTransform = me.GetComponent<Transform>();
-
-        auto& otherRigidbody = other.GetComponent<Rigidbody>();
-        auto& otherTransform = other.GetComponent<Transform>();
-        if (otherRigidbody.bodyType == BodyType::Static) return;
-
-        const auto size = myCollider.radius;
-        const auto otherSize = Math::MaxElement(otherTransform.GetWorldScale());
-
-        if (size <= otherSize) return;
-
-        myCollider.radius += otherSize;
-
-        otherRigidbody.enabled = false;
-
-        otherTransform.SetParent(me);*/
-    }
-
-
     void EditorLayer::OpenProject()
     {
         const String& path = FileDialogs::OpenFile("LevProject (*.levproject)\0*.levproject\0");
@@ -42,10 +20,12 @@ namespace LevEngine::Editor
 
     void EditorLayer::NewProject()
     {
-        const String& path = FileDialogs::SaveFile("LevProject (*.levproject)\0*.levproject\0");
+        const String& path = FileDialogs::SaveFile("LevProject (*.levproject)\0*.levproject\0", "levproject");
 
         if(!Project::CreateNew(path.c_str()))
+        {
             LEV_THROW("Failed to create new project")
+        }
     }
 
     void EditorLayer::OnAttach()
@@ -492,7 +472,7 @@ namespace LevEngine::Editor
             return false;
         }
 
-        const auto filepath = FileDialogs::SaveFile("LevEngine Scene (*.scene)\0*.scene\0");
+        const auto filepath = FileDialogs::SaveFile("LevEngine Scene (*.scene)\0*.scene\0", "scene");
         if (!filepath.empty())
         {
             SceneManager::SaveScene(filepath);

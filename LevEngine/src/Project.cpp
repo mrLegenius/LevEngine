@@ -61,6 +61,8 @@ const Path& Project::GetStartScene()
 
 bool Project::CreateNew(const Path& path)
 {
+    if (path.empty()) return false;
+    
     try
     {
         s_Project = CreateRef<Project>(path);
