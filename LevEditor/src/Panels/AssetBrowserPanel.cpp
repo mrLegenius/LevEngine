@@ -78,8 +78,7 @@ namespace LevEngine::Editor
                 {
 	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
 	                {
-	                    const auto assetPathPayload = static_cast<const wchar_t*>(payload->Data);
-	                    const Path assetPath = AssetDatabase::GetAssetsPath() / assetPathPayload;
+	                    const Path assetPath = static_cast<const wchar_t*>(payload->Data);
 
                         AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath), path);
 	                }
@@ -89,8 +88,7 @@ namespace LevEngine::Editor
 
             if (ImGui::BeginDragDropSource())
             {
-                auto relativePath = relative(path);
-                const wchar_t* itemPath = relativePath.c_str();
+                const wchar_t* itemPath = path.c_str();
                 ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
                 ImGui::EndDragDropSource();
             }

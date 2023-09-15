@@ -7,7 +7,7 @@ class LetEditor : public Application
 {
 public:
 	LetEditor(const ApplicationCommandLineArgs args)
-		: Application({ "LevEditor", 1600, 900, args})
+		: Application({ "LevEditor", 1280, 720, args})
 	{
 		PushLayer(new Editor::EditorLayer);
 	}
