@@ -7,6 +7,12 @@ namespace LevEngine
 	class TextureLibrary
 	{
 	public:
+		static Ref<Texture> GetEmptyTexture()
+		{
+			static Ref<Texture> emptyTexture = Texture::CreateTexture2D(1, 1, 1, Texture::TextureFormat());
+			return emptyTexture;
+		}
+		
 		static Ref<Texture> GetTexture(const String& path)
 		{
 			if (const auto texture = m_TextureMap.find(path); texture != m_TextureMap.end())

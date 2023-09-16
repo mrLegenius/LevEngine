@@ -3,6 +3,7 @@
 #include "ConstantBuffer.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "TextureLibrary.h"
 #include "DataTypes/Map.h"
 #include "Kernel/Color.h"
 
@@ -73,29 +74,14 @@ public:
 
 	void SetTexture(const TextureType type, const Ref<Texture>& texture)
 	{
-		m_Textures[type] = texture;
-		switch (type)
-		{
-		case TextureType::Emissive:
-			m_Data.HasEmissiveTexture = texture != nullptr;
-			break;
-		case TextureType::Diffuse:
-			m_Data.HasDiffuseTexture = texture != nullptr;
-			break;
-		case TextureType::Specular:
-			m_Data.HasSpecularTexture = texture != nullptr;
-			break;
-		case TextureType::Normal:
-			m_Data.HasNormalTexture = texture != nullptr;
-			break;
-		}
+		m_Textures[type] = texture ? texture : TextureLibrary::GetEmptyTexture();
 
 		m_IsDirty = true;
 	}
 	[[nodiscard]] Ref<Texture> GetTexture(const TextureType type) const
 	{
 		const auto it = m_Textures.find(type);
-		return it != m_Textures.end() ? it->second : nullptr;
+		return it != m_Textures.end() ? it->second : TextureLibrary::GetEmptyTexture();
 	}
 
 	void SetTextureTiling(const float value)
@@ -141,11 +127,7 @@ private:
 
 		alignas(8) Vector2 Tiling{ 1, 1 };
 		alignas(8) Vector2 Offset{ 0, 0 };
-
-		uint32_t HasEmissiveTexture = false;
-		uint32_t HasDiffuseTexture = false;
-		uint32_t HasSpecularTexture = false;
-		uint32_t HasNormalTexture = false;
+		
 		float Shininess = 2;
 	};
 

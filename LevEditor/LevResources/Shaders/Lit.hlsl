@@ -25,25 +25,20 @@ float4 PSMain(PS_IN input) : SV_Target
 	
     float2 textureUV = ApplyTextureProperties(input.uv, material.tiling, material.offset);
 		
-	if (material.hasNormalTexture)
-	{
-        float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
-		normal = normalize(texNormal * 2.0 - 1.0);
-	}
-	else
-	{
-		normal = normalize(input.normal);
-	}
+	float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
+
+	//TODO: Fix normals. we do need to multiply here
+	normal = normalize(texNormal * 2.0 - 1.0) * normalize(input.normal); 
 
 	LightingResult lit = CalcLighting(input.fragPos, normal, input.depth);
 
-    float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, textureUV);
-    float3 ambient = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, textureUV) * globalAmbient;
-    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, textureUV) * lit.diffuse;
+    float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, textureUV);
+    float3 ambient = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, textureUV) * globalAmbient;
+    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, textureUV) * lit.diffuse;
 
 	float3 specular = 0;
 	if (material.shininess > 1.0f)
-        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, textureUV) * lit.specular;
+        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, textureUV) * lit.specular;
 
 	float3 finalColor = (emissive + ambient + diffuse + specular);
 

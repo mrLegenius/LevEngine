@@ -46,16 +46,8 @@ struct Material
     float2 tiling;
     float2 offset;
 	//<--- 16 ---<<
-	
-	//<--- 16 ---<<
-	bool hasEmissiveTexture;
-	bool hasDiffuseTexture;
-    bool hasSpecularTexture;
-    bool hasNormalTexture;
-	//<--- 16 ---<<
 
 	//<--- 4 ---<<
-
     float shininess;
 	//<--- 4 ---<<
 };
@@ -273,21 +265,10 @@ float2 ApplyTextureProperties(float2 uv, float2 tiling, float2 offset)
     return uv * tiling + offset;
 }
 
-float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, bool hasTexture, float2 uv)
+float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, float2 uv)
 {
-    float3 result = color;
-    if (hasTexture)
-    {
-        float3 texColor = tex.Sample(sampl, uv);
-        if (any(result.rgb))
-        {
-            result *= texColor;
-        }
-        else
-        {
-            result = texColor;
-        }
-    }
+	float3 texColor = tex.Sample(sampl, uv);
+    float3 result = color * texColor;
 
     return result;
 }

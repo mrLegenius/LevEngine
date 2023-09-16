@@ -6,6 +6,11 @@ namespace LevEngine
 Material::Material()
 {
 	m_ConstantBuffer = ConstantBuffer::Create(sizeof GPUData);
+
+	m_Textures[TextureType::Emissive] = TextureLibrary::GetEmptyTexture();
+	m_Textures[TextureType::Diffuse] = TextureLibrary::GetEmptyTexture();
+	m_Textures[TextureType::Specular] = TextureLibrary::GetEmptyTexture();
+	m_Textures[TextureType::Normal] = TextureLibrary::GetEmptyTexture();
 }
 
 void Material::Bind(const Ref<Shader>& shader)

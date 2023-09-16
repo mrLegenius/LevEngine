@@ -32,22 +32,17 @@ PS_OUT PSMain(PS_IN input)
 
     float2 textureUV = ApplyTextureProperties(input.uv, material.tiling, material.offset);
 	
-	if (material.hasNormalTexture)
-	{
-        float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
-		normal = normalize(texNormal * 2.0 - 1.0);
-	}
-	else
-	{
-		normal = normalize(input.normal);
-	}
+	float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
+
+	//TODO: Fix normals. we do need to multiply here
+	normal = normalize(input.normal) * normalize(texNormal * 2.0 - 1.0);
 
 	result.Normal = float4(normal, 0.0f);
 
-    float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, material.hasEmissiveTexture, textureUV);
-    float3 ambient = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, textureUV) * globalAmbient;
+    float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, textureUV);
+    float3 ambient = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, textureUV) * globalAmbient;
 
-    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, material.hasDiffuseTexture, textureUV);
+    float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, textureUV);
 	
 	float cascade = GetCascadeIndex(input.depth);
 	float4 fragPosLightSpace = mul(float4(input.fragPos, 1.0f), lightViewProjection[cascade]);
@@ -59,7 +54,7 @@ PS_OUT PSMain(PS_IN input)
 	
 	float3 specular = 0;
 	if (material.shininess > 1.0f)
-        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, material.hasSpecularTexture, textureUV);
+        specular = CombineColorAndTexture(material.specular, specularTexture, specularTextureSampler, textureUV);
 
 	result.LightAccumulation = float4(ambient + emissive + (diffuse * lit.diffuse) + (specular * lit.specular), 1.0f);
 
