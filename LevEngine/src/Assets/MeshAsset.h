@@ -2,7 +2,6 @@
 #include "Asset.h"
 #include "ObjLoader.h"
 #include "Renderer/3D/Mesh.h"
-#include "DataTypes/String.h"
 
 namespace LevEngine
 {

@@ -13,12 +13,12 @@ public:
 
 	explicit MaterialAsset(const Path& path, const UUID uuid) : Asset(path, uuid)
 	{
-		Deserialize();
+		
 	}
 
 	void DrawProperties() override;
 
-	Ref<Texture> GetIcon() const override
+	[[nodiscard]] Ref<Texture> GetIcon() const override
 	{
 		return Icons::Material();
 	}
