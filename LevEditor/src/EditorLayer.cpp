@@ -11,25 +11,30 @@
 
 namespace LevEngine::Editor
 {
-    void EditorLayer::OpenProject()
+    bool EditorLayer::OpenProject()
     {
         const String& path = FileDialogs::OpenFile("LevProject (*.levproject)\0*.levproject\0");
 
         if(Project::Load(path.c_str()))
+        {
             LoadProject();
-        else
-            LEV_THROW("Failed to open project")
-        
+            return true;
+        }
+
+        return false;
     }
 
-    void EditorLayer::NewProject()
+    bool EditorLayer::NewProject()
     {
         const String& path = FileDialogs::SaveFile("LevProject (*.levproject)\0*.levproject\0", "levproject");
 
         if(Project::CreateNew(path.c_str()))
+        {
             LoadProject();
-        else
-            LEV_THROW("Failed to create new project")
+            return true;
+        }
+        
+        return false;
     }
 
 
@@ -40,8 +45,10 @@ namespace LevEngine::Editor
         
         AssetDatabase::ProcessAllAssets();
 
-        OpenScene(Project::GetStartScene());
-
+        const auto startScene = Project::GetStartScene();
+        if (startScene.empty() || !OpenScene(startScene))
+            SceneManager::LoadEmptyScene();
+        
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Hierarchy = CreateRef<HierarchyPanel>();
@@ -69,8 +76,8 @@ namespace LevEngine::Editor
                 "Open existing or create new project",
                 "Open",
                 "Create new",
-                [this] { OpenProject(); },
-                [this]{ NewProject(); });
+                [this] { if(!OpenProject()) LEV_THROW("Failed to open project") },
+                [this]{ if(!NewProject()) LEV_THROW("Failed to create new project") });
         }
 
         Application::Get().GetWindow().EnableCursor();
@@ -420,11 +427,24 @@ namespace LevEngine::Editor
                 if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
                     SaveSceneAs();
 
-                if (ImGui::MenuItem("Set current scene as start scene"))
-                    SetCurrentSceneAsStartScene();
-
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
+
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Project"))
+            {
+                if (ImGui::MenuItem("Open project..."))
+                    if (!OpenProject())
+                        Log::CoreWarning("Failed to open project");
+
+                if (ImGui::MenuItem("Create New..."))
+                    if(!NewProject())
+                        Log::CoreWarning("Failed to open project");
+                
+                if (ImGui::MenuItem("Set current scene as start scene"))
+                    SetCurrentSceneAsStartScene();
 
                 ImGui::EndMenu();
             }
@@ -449,12 +469,12 @@ namespace LevEngine::Editor
         }
     }
 
-    void EditorLayer::OpenScene(const Path& path)
+    bool EditorLayer::OpenScene(const Path& path)
     {
         if (path.extension().string() != ".scene")
         {
             Log::Warning("Failed to open scene. {0} is not a scene file", path.filename().string());
-            return;
+            return false;
         }
 
         if (m_SceneState != SceneState::Edit)
@@ -463,7 +483,10 @@ namespace LevEngine::Editor
         if (SceneManager::LoadScene(path))
         {
             Selection::Deselect();
+            return true;
         }
+
+        return false;
     }
 
     bool EditorLayer::SaveScene()

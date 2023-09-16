@@ -13,8 +13,8 @@ namespace LevEngine::Editor
 class EditorLayer final : public Layer
 {
 public:
-	void OpenProject();
-	void NewProject();
+	bool OpenProject();
+	bool NewProject();
 	void LoadProject();
 	void OnAttach() override;
 	void OnUpdate(float deltaTime) override;
@@ -26,7 +26,7 @@ public:
 	void DrawDockSpace();
 	void CreateNewScene();
 	void OpenScene();
-	void OpenScene(const Path& path);
+	bool OpenScene(const Path& path);
 	bool SaveScene();
 	bool SaveSceneAs();
 	void OnEvent(Event& event) override;
