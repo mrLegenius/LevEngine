@@ -26,7 +26,7 @@ namespace LevEngine
 
 		[[nodiscard]] Ref<Texture> GetIcon() const override
 		{
-			return TextureLibrary::GetTexture("resources\\Icons\\AssetsBrowser\\SkyboxIcon.png");
+			return Icons::Skybox();
 		}
 		
 	protected:

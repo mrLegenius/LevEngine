@@ -17,7 +17,7 @@ namespace LevEngine
 
 		[[nodiscard]] Ref<Texture> GetIcon() const override
 		{
-			return TextureLibrary::GetTexture("resources\\Icons\\AssetsBrowser\\MeshIcon.png");
+			return Icons::Mesh();
 		}
 	protected:
 		bool OverrideDataFile() const override { return false; }

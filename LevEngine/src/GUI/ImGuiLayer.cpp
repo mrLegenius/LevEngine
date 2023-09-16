@@ -36,8 +36,8 @@ namespace LevEngine
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		io.Fonts->AddFontFromFileTTF("resources/Fonts/Ubuntu/Ubuntu-Bold.ttf", 18.0f);
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("resources/Fonts/Ubuntu/Ubuntu-Regular.ttf", 18.0f);
+		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Bold.ttf", 18.0f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Regular.ttf", 18.0f);
 		
 		ImGui::StyleColorsDark();
 

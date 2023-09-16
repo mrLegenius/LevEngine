@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <yaml-cpp/yaml.h>
 
-#include "TextureLibrary.h"
+#include "Assets.h"
 #include "DataTypes/Path.h"
 #include "DataTypes/String.h"
 #include "Renderer/Texture.h"
@@ -46,7 +46,7 @@ namespace LevEngine
 
 		[[nodiscard]] virtual Ref<Texture> GetIcon() const
 		{
-			return TextureLibrary::GetTexture("resources\\Icons\\AssetsBrowser\\FileIcon.png");;
+			return Icons::File();
 		}
 
 	protected:

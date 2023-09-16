@@ -230,14 +230,13 @@ namespace LevEngine::Editor
 
     void EditorLayer::DrawToolbar()
     {
-        static auto selectIcon = Texture::Create("resources/Icons/Select.png");
-        static auto translateIcon = Texture::Create("resources/Icons/Translate.png");
-        static auto rotationIcon = Texture::Create("resources/Icons/Rotate.png");
-        static auto scaleIcon = Texture::Create("resources/Icons/Scale.png");
+        static auto selectIcon = Icons::Select();
+        static auto translateIcon = Icons::Translate();
+        static auto rotationIcon = Icons::Rotate();
+        static auto scaleIcon = Icons::Scale();
 
-        static auto iconPlay = Texture::Create("resources/Icons/PlayButton.png");
-        static auto iconStop = Texture::Create("resources/Icons/StopButton.png");
-
+        static auto iconPlay = Icons::Play();
+        static auto iconStop = Icons::Stop();
 
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuBarHeight));

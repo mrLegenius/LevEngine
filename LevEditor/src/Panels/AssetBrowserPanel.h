@@ -17,7 +17,5 @@ namespace LevEngine::Editor
         void DrawCreateMenu(const String& label, const String& defaultName) const;
 
         Path m_CurrentDirectory;
-
-        Ref<Texture> m_DirectoryIcon;
     };
 }

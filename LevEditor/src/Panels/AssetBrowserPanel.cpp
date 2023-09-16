@@ -12,7 +12,6 @@ namespace LevEngine::Editor
     AssetBrowserPanel::AssetBrowserPanel()
         : m_CurrentDirectory(AssetDatabase::GetAssetsPath())
     {
-        m_DirectoryIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\DirectoryIcon.png");
     }
 
     void AssetBrowserPanel::DrawContent()
@@ -64,9 +63,9 @@ namespace LevEngine::Editor
                 asset = AssetDatabase::GetAsset(path);
             
             ImGui::PushID(filenameString.c_str());
-            Ref<Texture> icon = directoryEntry.is_directory()
-                ? m_DirectoryIcon
-                : asset->GetIcon();
+            const Ref<Texture> icon = directoryEntry.is_directory()
+                                          ? Icons::Directory()
+                                          : asset->GetIcon();
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton(icon->GetId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });

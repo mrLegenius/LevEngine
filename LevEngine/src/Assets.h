@@ -1,7 +1,4 @@
 #pragma once
-
-#include <filesystem>
-
 #include "TextureLibrary.h"
 #include "DataTypes/Path.h"
 #include "Renderer/Texture.h"
@@ -10,188 +7,166 @@
 
 using namespace LevEngine;
 
-static Path resources = Path("resources");
+static Path resources = Path("LevResources");
 
 static String GetShaderPath(const String& name) { return (resources / "Shaders" / name.c_str()).string().c_str(); }
 static String GetTexturePath(const String& name) { return (resources / "Textures" / name.c_str()).string().c_str(); }
+static String GetIconsPath(const String& name) { return (resources / "Icons" / name.c_str()).string().c_str(); }
 
-namespace ShaderAssets
+static auto GetIcon(const String& name) { return TextureLibrary::GetTexture(GetIconsPath(name)); }
+
+struct Icons
 {
-    inline auto Lit()
-    {
-		LEV_PROFILE_FUNCTION();
+	static auto Play(){ return GetIcon("PlayButton.png"); }
+	static auto Stop(){ return GetIcon("StopButton.png"); }
+	static auto Rotate(){ return GetIcon("Rotate.png"); } 
+	static auto Scale(){ return GetIcon("Scale.png"); } 
+	static auto Select(){ return GetIcon("Select.png"); } 
+	static auto Translate(){ return GetIcon("Translate.png"); }
+    
+	static auto Directory(){ return GetIcon("Assets\\DirectoryIcon.png"); } 
+	static auto File(){ return GetIcon("Assets\\FileIcon.png"); } 
+	static auto Material(){ return GetIcon("Assets\\MaterialIcon.png"); } 
+	static auto Mesh(){ return GetIcon("Assets\\MeshIcon.png"); } 
+	static auto Skybox(){ return GetIcon("Assets\\SkyboxIcon.png"); }
+};
 
-        static Ref<Shader> shader;
-        if (shader) return shader;
-
-        shader = Shader::Create(GetShaderPath("Lit.hlsl"));
-        return shader;
-    }
-
-	inline auto Unlit()
-	{
-		LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader;
-        if (shader) return shader;
-
-        shader = Shader::Create(GetShaderPath("Unlit.hlsl"));
-
-        return shader;
-	}
-
-	inline auto Skybox()
-    {
-		LEV_PROFILE_FUNCTION();
-
-	    static Ref<Shader> shader;
-	    if (shader) return shader;
-
-	    shader = Shader::Create(GetShaderPath("Skybox.hlsl"));
-
-        return shader;
-    }
-
-    inline auto ShadowPass()
-    {
-		LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader;
-        if (shader) return shader;
-
-        shader = Shader::Create(GetShaderPath("ShadowPass.hlsl"));
-
-        return shader;
-    }
-
-    inline auto CascadeShadowPass()
-    {
-		LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader;
-        if (shader) return shader;
-
-        shader = Shader::Create(GetShaderPath("CascadeShadowPass.hlsl"), ShaderType::Vertex | ShaderType::Geometry);
-
-        return shader;
-    }
-
-	inline auto GBufferPass()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("GBufferPass.hlsl"));
-
-		return shader;
-	}
-
-	inline auto DeferredVertexOnly()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"), ShaderType::Vertex);
-		return shader;
-	}
-
-	inline auto DeferredPointLight()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"));
-
-		return shader;
-	}
-
-	inline auto DeferredQuadRender()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("ForwardQuadRender.hlsl"));
-
-		return shader;
-	}
-
-	inline auto Particles()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("Particles/Particles.hlsl"), ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
-
-		return shader;
-	}
-
-	inline auto ParticlesCompute()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("Particles/ParticlesCompute.hlsl"), ShaderType::Compute);
-
-		return shader;
-	}
-
-	inline auto ParticlesEmitter()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("Particles/ParticlesEmitter.hlsl"), ShaderType::Compute);
-
-		return shader;
-	}
-
-	inline auto BitonicSort()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("Particles/BitonicSort.hlsl"), ShaderType::Compute);
-
-		return shader;
-	}
-
-	inline auto BitonicTranspose()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("Particles/BitonicTranspose.hlsl"), ShaderType::Compute);
-
-		return shader;
-	}
-}
-
-namespace TextureAssets
+struct ShaderAssets
 {
-	inline Ref<Texture> Particle()
+	static auto Lit()
+    {
+		LEV_PROFILE_FUNCTION();
+
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("Lit.hlsl"));
+        return shader;
+    }
+
+	static auto Unlit()
+	{
+		LEV_PROFILE_FUNCTION();
+
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("Unlit.hlsl"));
+    	
+        return shader;
+	}
+
+	static auto Skybox()
+    {
+		LEV_PROFILE_FUNCTION();
+
+	    static Ref<Shader> shader = Shader::Create(GetShaderPath("Skybox.hlsl"));
+    	
+        return shader;
+    }
+
+	static auto ShadowPass()
+    {
+		LEV_PROFILE_FUNCTION();
+
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("ShadowPass.hlsl"));
+
+        return shader;
+    }
+
+	static auto CascadeShadowPass()
+    {
+		LEV_PROFILE_FUNCTION();
+
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("CascadeShadowPass.hlsl"), ShaderType::Vertex | ShaderType::Geometry);
+
+        return shader;
+    }
+
+	static auto GBufferPass()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("GBufferPass.hlsl"));
+
+		return shader;
+	}
+
+	static auto DeferredVertexOnly()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"), ShaderType::Vertex);
+
+		return shader;
+	}
+
+	static auto DeferredPointLight()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"));
+
+		return shader;
+	}
+
+	static auto DeferredQuadRender()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("ForwardQuadRender.hlsl"));
+
+		return shader;
+	}
+
+	static auto Particles()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/Particles.hlsl"), ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
+
+		return shader;
+	}
+
+	static auto ParticlesCompute()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/ParticlesCompute.hlsl"), ShaderType::Compute);
+
+		return shader;
+	}
+
+	static auto ParticlesEmitter()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/ParticlesEmitter.hlsl"), ShaderType::Compute);
+
+		return shader;
+	}
+
+	static auto BitonicSort()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/BitonicSort.hlsl"), ShaderType::Compute);
+
+		return shader;
+	}
+
+	static auto BitonicTranspose()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/BitonicTranspose.hlsl"), ShaderType::Compute);
+
+		return shader;
+	}
+};
+
+struct TextureAssets
+{
+	static Ref<Texture> Particle()
 	{
 		static auto texture = TextureLibrary::GetTexture(GetTexturePath("particle.png"));
 		return texture;
 	}
-}
+};
 
 struct Materials
 {

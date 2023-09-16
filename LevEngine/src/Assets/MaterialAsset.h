@@ -18,6 +18,11 @@ public:
 
 	void DrawProperties() override;
 
+	Ref<Texture> GetIcon() const override
+	{
+		return Icons::Material();
+	}
+
 protected:
 	void SerializeData(YAML::Emitter& out) override;
 	void DeserializeData(YAML::Node& node) override;
