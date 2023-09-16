@@ -17,6 +17,8 @@ public:
     static bool CreateNew(const Path& path);
     static void SetStartScene(Path path);
     [[nodiscard]] static Path GetPath();
+    static void Build();
+    void CopyEngineResourceDirectory() const noexcept;
 
 private:
     Path m_Root;

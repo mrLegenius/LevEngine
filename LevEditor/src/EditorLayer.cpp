@@ -445,6 +445,9 @@ namespace LevEngine::Editor
                 if (ImGui::MenuItem("Set current scene as start scene"))
                     SetCurrentSceneAsStartScene();
 
+                if (ImGui::MenuItem("Build"))
+                    Project::Build();
+
                 ImGui::EndMenu();
             }
 

@@ -7,11 +7,11 @@
 
 using namespace LevEngine;
 
-static Path resources = Path("LevResources");
+static Path EngineResourcesRoot = Path("LevResources");
 
-static String GetShaderPath(const String& name) { return (resources / "Shaders" / name.c_str()).string().c_str(); }
-static String GetTexturePath(const String& name) { return (resources / "Textures" / name.c_str()).string().c_str(); }
-static String GetIconsPath(const String& name) { return (resources / "Icons" / name.c_str()).string().c_str(); }
+static String GetShaderPath(const String& name) { return (EngineResourcesRoot / "Shaders" / name.c_str()).string().c_str(); }
+static String GetTexturePath(const String& name) { return (EngineResourcesRoot / "Textures" / name.c_str()).string().c_str(); }
+static String GetIconsPath(const String& name) { return (EngineResourcesRoot / "Icons" / name.c_str()).string().c_str(); }
 
 static auto GetIcon(const String& name) { return TextureLibrary::GetTexture(GetIconsPath(name)); }
 

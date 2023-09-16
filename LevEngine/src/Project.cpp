@@ -92,5 +92,17 @@ Path Project::GetPath()
     LEV_CORE_ASSERT(s_Project, "No loaded project");
     return s_Project->m_Path;
 }
+
+void Project::Build()
+{
+    LEV_CORE_ASSERT(s_Project, "No loaded project");
+    
+    s_Project->CopyEngineResourceDirectory();
+}
+    
+void Project::CopyEngineResourceDirectory() const noexcept
+{
+    CopyRecursively(EngineResourcesRoot, m_Root / EngineResourcesRoot);
+}
 }
 
