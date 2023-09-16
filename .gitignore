@@ -32,6 +32,9 @@ Latest commit 491040e on Jan 26, 2022
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# LevEngine ignores
+Sandbox/LevResources/
+
 #Profiler output
 LevEngineProfile-*.json
 
