@@ -50,7 +50,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -58,6 +58,10 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -68,7 +72,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -78,6 +82,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>assimp-vc143-mt.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompiler.h" />
@@ -472,7 +482,7 @@
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\DataTypes\String.h" />
-    <ClInclude Include="src\ObjLoader.h" />
+    <ClInclude Include="src\MeshLoader.h" />
     <ClInclude Include="src\levpch.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Physics\Components\CollisionEvents.h" />

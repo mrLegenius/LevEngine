@@ -1,5 +1,15 @@
 Scene: Scene Name
 Entities:
+  - Entity: 12685685000942160993
+    Tag: Chest
+    Transform:
+      Position: [6.88374662, 1.49259412, -7.54699564]
+      Rotation: [-0, -2.81964922, 0]
+      Scale: [1.50000334, 1.5, 1.50000334]
+    MeshRenderer:
+      Mesh: 1600610067072245332
+      Material: 11254321036137541248
+      Cast Shadow: true
   - Entity: 6507700503830715917
     Tag: Point Light
     Parent: 3352402856425678934
@@ -46,7 +56,7 @@ Entities:
     Tag: Directional Light
     Transform:
       Position: [-4.61883545, 11.7034178, -2.41830444]
-      Rotation: [-0.924305975, -2.2127285, -2.29241395]
+      Rotation: [-0.924336255, -1.87408185, -2.2923727]
       Scale: [0.999945402, 0.999966264, 0.999982893]
     Camera:
       Camera:
@@ -60,7 +70,7 @@ Entities:
       Main: false
       FixedAspectRatio: false
     Directional Light:
-      Color: [0.200895414, 0.177680701, 0.33590734, 1]
+      Color: [1, 1, 1, 1]
   - Entity: 3352402856425678934
     Tag: Torch
     Transform:
@@ -101,7 +111,7 @@ Entities:
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
-      Scale: [10, 1, 10]
+      Scale: [20, 1, 20]
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 9169973734714539385
@@ -139,8 +149,8 @@ Entities:
   - Entity: 1697474554961836166
     Tag: Torch
     Transform:
-      Position: [0.0712279528, 2.92038727, -0.0886228979]
-      Rotation: [-0, 0, 0]
+      Position: [0, 2.22270942, 0]
+      Rotation: [-0, 0, -0]
       Scale: [0.100000001, 0.100000001, 0.100000001]
     MeshRenderer:
       Mesh: 17632389977203314860
@@ -464,3 +474,13 @@ Entities:
       Texture: 8196646840874663791
       MaxParticles: 100
       Rate: 50
+  - Entity: 4625743991041343338
+    Tag: Sword
+    Transform:
+      Position: [-5.09187222, 1.79009414, 1.97184885]
+      Rotation: [-0, -0.403480411, 0]
+      Scale: [0.499999285, 0.5, 0.499999285]
+    MeshRenderer:
+      Mesh: 4136629942807961606
+      Material: 13585415404850273055
+      Cast Shadow: true

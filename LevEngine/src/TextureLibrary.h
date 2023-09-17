@@ -12,6 +12,13 @@ namespace LevEngine
 			static Ref<Texture> emptyTexture = Texture::CreateTexture2D(1, 1, 1, Texture::TextureFormat());
 			return emptyTexture;
 		}
+
+		static Ref<Texture> GetEmptyNormalMap()
+		{
+			static uint8_t data[3] = {128, 128, 255};
+			static Ref<Texture> emptyTexture = Texture::CreateTexture2D(1, 1, 1, Texture::TextureFormat(), &data[0]);
+			return emptyTexture;
+		}
 		
 		static Ref<Texture> GetTexture(const String& path)
 		{

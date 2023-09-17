@@ -49,7 +49,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;LEV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -60,6 +60,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>LevEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -69,7 +72,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -82,6 +85,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>LevEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\AssetSelection.h" />

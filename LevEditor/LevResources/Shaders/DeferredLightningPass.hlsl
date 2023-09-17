@@ -8,7 +8,6 @@ PS_IN VSMain(VS_IN input)
 	float4 fragPos = mul(pos, model);
 
 	output.pos = mul(fragPos, viewProjection);
-	output.normal = mul(transpose(model), input.normal);
 	output.uv = input.uv;
 	output.fragPos = fragPos.xyz;
 	output.depth = mul(fragPos, cameraView).z;

@@ -10,7 +10,7 @@ Material::Material()
 	m_Textures[TextureType::Emissive] = TextureLibrary::GetEmptyTexture();
 	m_Textures[TextureType::Diffuse] = TextureLibrary::GetEmptyTexture();
 	m_Textures[TextureType::Specular] = TextureLibrary::GetEmptyTexture();
-	m_Textures[TextureType::Normal] = TextureLibrary::GetEmptyTexture();
+	m_Textures[TextureType::Normal] = TextureLibrary::GetEmptyNormalMap();
 }
 
 void Material::Bind(const Ref<Shader>& shader)

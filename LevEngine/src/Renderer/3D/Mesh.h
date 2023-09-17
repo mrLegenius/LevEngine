@@ -84,6 +84,21 @@ public:
 			AddVertexBuffer(BufferBinding("NORMAL", 0), buffer);
 		}
 
+		if (tangents.size() && biTangents.size())
+		{
+			const auto tangentsBuffer = VertexBuffer::Create(&tangents[0].x, tangents.size(), sizeof Vector3);
+			AddVertexBuffer(BufferBinding("TANGENT", 0), tangentsBuffer);
+
+			const auto biTangentsBuffer = VertexBuffer::Create(&biTangents[0].x, biTangents.size(), sizeof Vector3);
+			AddVertexBuffer(BufferBinding("BINORMAL", 0), biTangentsBuffer);
+		}
+
+		if (colors.size())
+		{
+			const auto buffer = VertexBuffer::Create(colors[0].Raw(), colors.size(), sizeof Color);
+			AddVertexBuffer(BufferBinding("COLOR", 0), buffer);
+		}
+
 		if (uvs.size())
 		{
 			const auto buffer = VertexBuffer::Create(&uvs[0].x, uvs.size(), sizeof Vector2);
@@ -104,6 +119,9 @@ public:
 		}
 	}
 
+	void AddTangent(Vector3 value) { tangents.emplace_back(value); }
+	void AddBiTangent(Vector3 value) { biTangents.emplace_back(value); }
+
 	Ref<IndexBuffer> IndexBuffer;
 
 private:
@@ -113,5 +131,8 @@ private:
 	Vector<Vector2> uvs;
 	Vector<uint32_t> indices;
 	Vector<Vector3> normals;
+	Vector<Vector3> tangents;
+	Vector<Vector3> biTangents;
+	Vector<Color> colors;
 };
 }
