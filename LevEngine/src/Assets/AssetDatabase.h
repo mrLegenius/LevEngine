@@ -37,7 +37,28 @@ namespace LevEngine
 		{
 			const auto extension = path.extension().string();
 
-			return extension == ".obj";
+			return
+				extension == ".obj"
+			 || extension == ".fbx"
+			 || extension == ".dae"
+			 || extension == ".gltf"
+			 || extension == ".glb"
+			 || extension == ".blend"
+			 || extension == ".3ds"
+			 || extension == ".ase"
+			 || extension == ".ifc"
+			 || extension == ".xgl"
+			 || extension == ".zgl"
+			 || extension == ".ply"
+			 || extension == ".dxf"
+			 || extension == ".lwo"
+			 || extension == ".lws"
+			 || extension == ".lxo"
+			 || extension == ".stl"
+			 || extension == ".x"
+			 || extension == ".ac"
+			 || extension == ".ms3d"
+			 ;
 		}
 
 		static bool IsAssetMaterial(const Path& path)
