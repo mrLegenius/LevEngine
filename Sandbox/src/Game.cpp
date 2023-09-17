@@ -19,41 +19,57 @@ namespace Sandbox
 		float timer;
 	};
 
-	struct TargetTag
+	struct Player
 	{
-		float _;
+		float speed;
+	};
+
+	struct Enemy
+	{
+		float speed;
 	};
 	
 	void OnProjectileCollided(Entity entity, Entity other)
 	{
-		if (!other.HasComponent<TargetTag>()) return;
+		if (!other.HasComponent<Enemy>()) return;
 
 		SceneManager::GetActiveScene()->DestroyEntity(entity);
 		SceneManager::GetActiveScene()->DestroyEntity(other);
 		score++;
 	}
 	
-	class FreeCameraSystem : public System
+	class FPSMovementSystem : public System
 	{
 		void Update(const float deltaTime, entt::registry& registry) override
 		{
-			const auto view = registry.view<Transform, CameraComponent>();
+			const auto view = registry.view<Transform, Player, Rigidbody>();
 
+			constexpr auto rotationSpeed = 45;
+			const Vector2 mouse{ Input::GetMouseDelta().first, Input::GetMouseDelta().second };
+			
 			for (const auto entity : view)
 			{
-				auto [transform, camera] = view.get<Transform, CameraComponent>(entity);
+				auto [transform, player, rigidbody] = view.get<Transform, Player, Rigidbody>(entity);
+				
+				const auto delta = mouse * rotationSpeed * deltaTime;
 
-				if (!camera.isMain) continue;
-
+				auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
+				rotation.y -= delta.x;
+				rotation.x -= delta.y;
+				transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
+				
 				if (Input::IsKeyDown(KeyCode::W))
-					transform.MoveUp(deltaTime * 10);
+					transform.MoveForward(deltaTime * 10);
 				else if (Input::IsKeyDown(KeyCode::S))
-					transform.MoveDown(deltaTime * 10);
+					transform.MoveBackward(deltaTime * 10);
 
 				if (Input::IsKeyDown(KeyCode::A))
 					transform.MoveLeft(deltaTime * 10);
 				else if (Input::IsKeyDown(KeyCode::D))
 					transform.MoveRight(deltaTime * 10);
+
+				if (Input::IsKeyPressed(KeyCode::Space))
+					rigidbody.AddImpulse(Vector3::Up * 10);
 			}
 		}
 	};
@@ -70,7 +86,7 @@ namespace Sandbox
 
 				if (!camera.isMain) continue;
 
-				if (Input::IsKeyPressed(KeyCode::Space))
+				if (Input::IsMouseButtonPressed(MouseButton::Left))
 				{
 					auto projectile = SceneManager::GetActiveScene()->CreateEntity("Missile");
 
@@ -144,7 +160,7 @@ namespace Sandbox
 		}
 	};
 
-	class TargetSpawnSystem : public System
+	class EnemySpawnSystem : public System
 	{
 	public:
 		void Update(const float deltaTime, entt::registry& registry) override
@@ -157,36 +173,126 @@ namespace Sandbox
 
 				const auto target = SceneManager::GetActiveScene()->CreateEntity("Target");
 
-				target.AddComponent<TargetTag>();
+				auto& enemy = target.AddComponent<Enemy>();
+				enemy.speed = 5;
 
 				auto& rigidbody = target.AddComponent<Rigidbody>();
-				rigidbody.bodyType = BodyType::Dynamic;
-				rigidbody.gravityScale = 0;
 				
 				auto& transform = target.GetComponent<Transform>();
 
-				auto randomPosition = Random::Vec3(-5.0f, 5.0f);
+				auto randomPosition = Random::Vec3(-25.0f, 25.0f);
 				randomPosition.y = 1;
 				transform.SetWorldPosition(randomPosition);
 
 				auto& collider = target.AddComponent<BoxCollider>();
-				collider.extents = Vector3(0.5, 1, 0.5);
+				collider.extents = Vector3(0.5, 1.75, 0.5);
+				collider.offset = Vector3(0, 1.75, 0);
 				
 				const auto meshEntity = SceneManager::GetActiveScene()->CreateEntity("Mesh");
 					
 				auto& meshTransform = meshEntity.GetComponent<Transform>();
 				meshTransform.SetParent(target, false);
-				meshTransform.SetLocalScale(Vector3::One * 0.05f);
+				meshTransform.SetLocalScale({0.01f, 0.02f, 0.01f});
 					
 				auto& mesh = meshEntity.AddComponent<MeshRendererComponent>();
-				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "FancyTorch" / "FancyTorch.obj");
-				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "FancyTorch" /  "FancyTorch.mat");
+				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Enemy" / "enemy_model.fbx");
+				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Enemy" /  "enemy_material.mat");
 
 			}
 		}
 	private:
 		float m_Timer = 0;
 		float m_SpawnInterval = 2.0f;
+	};
+	
+	class PlayerSpawnSystem : public System
+	{
+	public:
+		void Update(float deltaTime, entt::registry& registry) override
+		{
+			const auto playerView = registry.view<Player>();
+
+			if (!playerView.empty()) return;
+			
+			auto& scene = SceneManager::GetActiveScene();
+
+			const auto player = scene->CreateEntity("Player");
+
+			auto& playerTransform = player.GetComponent<Transform>();
+			playerTransform.SetWorldPosition(Vector3{0, 2, 0});
+			
+			auto& playerComponent = player.AddComponent<Player>();
+			playerComponent.speed = 10;
+
+			auto& rigidbody = player.AddComponent<Rigidbody>();
+			auto& collider = player.AddComponent<BoxCollider>();
+			collider.extents = Vector3{0.25, 1, 0.25};
+			collider.offset = Vector3{0, 1, 0};
+
+			{
+				const auto sword = scene->CreateEntity("Sword");
+
+				auto& swordTransform = sword.GetComponent<Transform>();
+				swordTransform.SetParent(player);
+				swordTransform.SetLocalPosition({0.7f, 2, -4});
+				swordTransform.SetLocalScale(Vector3::One * 0.2f);
+				const auto eulers = Vector3{10, 100, 0} * Math::DegToRad;
+				swordTransform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(eulers));
+				
+				auto& mesh = sword.AddComponent<MeshRendererComponent>();
+				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "sword.fbx");
+				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "Sword.mat");
+			}
+
+			const auto view = registry.view<Transform, CameraComponent>();
+			for (const auto entity : view)
+			{
+				auto [transform, camera] = view.get<Transform, CameraComponent>(entity);
+				
+				if (!camera.isMain) continue;
+
+				transform.SetParent(player);
+				transform.SetLocalRotation(Quaternion::Identity);
+				transform.SetLocalPosition(Vector3{0, 4, 0});
+			}
+		}
+	};
+
+	class EnemyMovementSystem : public System
+	{
+	public:
+		void Update(float deltaTime, entt::registry& registry) override
+		{
+			const auto enemyView = registry.view<Transform, Rigidbody, Enemy>();
+
+			const auto playerView = registry.view<Transform, Player>();
+
+			Vector3 playerPosition;
+			bool foundPlayer = false;
+			
+			for (const auto player : playerView)
+			{
+				playerPosition = playerView.get<Transform>(player).GetWorldPosition();
+				foundPlayer = true;
+			}
+
+			if (!foundPlayer) return;
+			
+			for (const auto entity : enemyView)
+			{
+				auto [transform, rigidbody, enemy] = enemyView.get<Transform, Rigidbody, Enemy>(entity);
+				
+				auto enemyPosition = transform.GetWorldPosition();
+
+				auto dir = playerPosition - enemyPosition;
+				dir.y = 0;
+				dir.Normalize();
+
+				rigidbody.velocity = dir * enemy.speed;
+				
+				transform.SetWorldRotation(Quaternion::LookRotation(dir, Vector3::Up));
+			}
+		}
 	};
 	
 	void Game::OnAttach()
@@ -197,13 +303,17 @@ namespace Sandbox
 
 		auto& scene = SceneManager::GetActiveScene();
 
-		scene->RegisterUpdateSystem<FreeCameraSystem>();
+		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
 		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
-		scene->RegisterUpdateSystem<TargetSpawnSystem>();
+		scene->RegisterUpdateSystem<EnemySpawnSystem>();
+		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
+		scene->RegisterUpdateSystem<EnemyMovementSystem>();
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
+
+		Application::Get().GetWindow().DisableCursor();
 	}
 
 	void Game::OnDetach() { }
@@ -214,6 +324,9 @@ namespace Sandbox
 		SceneManager::GetActiveScene()->OnPhysics(deltaTime);
 		SceneManager::GetActiveScene()->OnLateUpdate(deltaTime);
 		SceneManager::GetActiveScene()->OnRender();
+
+		if (Input::IsKeyPressed(KeyCode::Escape))
+			Application::Get().Close();
 	}
 
 	void Game::OnGUIRender()
