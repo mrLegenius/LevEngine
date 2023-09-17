@@ -60,6 +60,12 @@
     <ClInclude Include="src\Gizmo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\EditorSaveData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModalPopup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\LevEditor.cpp">
@@ -102,6 +108,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Gizmo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EditorSaveData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModalPopup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
