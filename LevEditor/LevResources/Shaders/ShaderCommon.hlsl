@@ -6,13 +6,15 @@ struct VS_IN
 {
 	float3 pos : POSITION;
 	float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
     float2 uv : TEXCOORD;
 };
 
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
-	float3 normal : NORMAL;
+	float3x3 TBN : NORMAL;
 	float2 uv : UV;
 	float3 fragPos : POSITION0;
 	float depth : TEXCOORD1;

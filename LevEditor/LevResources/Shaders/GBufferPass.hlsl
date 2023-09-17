@@ -8,11 +8,19 @@ PS_IN VSMain(VS_IN input)
 	float4 fragPos = mul(pos, model);
 
 	output.pos = mul(fragPos, viewProjection);
-	output.normal = mul(transpose(model), input.normal);
 	output.uv = input.uv;
 	output.fragPos = fragPos.xyz;
 	output.depth = mul(fragPos, cameraView).z;
-
+	
+    float4x4 transposedModel = transpose(model);
+    float3 normal = mul(transposedModel, float4(input.normal, 0.0f));
+    float3 tangent = mul(transposedModel, float4(input.tangent, 0.0f));
+    float3 binormal = mul(transposedModel, float4(input.binormal, 0.0f));
+	
+    output.TBN = float3x3(normalize(tangent),
+                          normalize(binormal),
+                          normalize(normal));
+	
 	return output;
 }
 
@@ -32,11 +40,10 @@ PS_OUT PSMain(PS_IN input)
 
     float2 textureUV = ApplyTextureProperties(input.uv, material.tiling, material.offset);
 	
-	float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
-
-	//TODO: Fix normals. we do need to multiply here
-	normal = normalize(input.normal) * normalize(texNormal * 2.0 - 1.0);
-
+    float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
+    texNormal = normalize(texNormal * 2.0 - 1.0);
+    normal = normalize(mul(texNormal, input.TBN));
+	
 	result.Normal = float4(normal, 0.0f);
 
     float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, textureUV);

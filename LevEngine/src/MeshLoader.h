@@ -27,6 +27,7 @@ public:
 			| aiProcess_PreTransformVertices //Combine to single mesh if possible
 			| aiProcess_RemoveRedundantMaterials
 			| aiProcess_JoinIdenticalVertices
+			| aiProcess_GenSmoothNormals
 			//| aiProcess_SortByPType // Do not split mesh to sub meshes with different primitives types
 			//| aiProcess_FlipWindingOrder
 			//| aiProcess_ImproveCacheLocality // It may help with rendering large models

@@ -74,14 +74,22 @@ public:
 
 	void SetTexture(const TextureType type, const Ref<Texture>& texture)
 	{
-		m_Textures[type] = texture ? texture : TextureLibrary::GetEmptyTexture();
+		m_Textures[type] = texture
+			? texture
+			: type == TextureType::Normal
+		        ? TextureLibrary::GetEmptyNormalMap()
+		        : TextureLibrary::GetEmptyTexture();
 
 		m_IsDirty = true;
 	}
 	[[nodiscard]] Ref<Texture> GetTexture(const TextureType type) const
 	{
 		const auto it = m_Textures.find(type);
-		return it != m_Textures.end() ? it->second : TextureLibrary::GetEmptyTexture();
+		return it != m_Textures.end()
+				? it->second
+				: type == TextureType::Normal
+					? TextureLibrary::GetEmptyNormalMap()
+					: TextureLibrary::GetEmptyTexture();
 	}
 
 	void SetTextureTiling(const float value)
