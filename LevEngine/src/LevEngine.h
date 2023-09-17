@@ -14,7 +14,7 @@
 #include "Kernel/UUID.h"
 #include "Kernel/ClassCollection.h"
 
-#include "ObjLoader.h"
+#include "MeshLoader.h"
 #include "TextureLibrary.h"
 
 #include "Debugging/Profiler.h"

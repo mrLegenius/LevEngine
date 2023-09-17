@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Asset.h"
-#include "ObjLoader.h"
+#include "MeshLoader.h"
 #include "Renderer/3D/Mesh.h"
 
 namespace LevEngine
@@ -24,7 +24,7 @@ namespace LevEngine
 		void SerializeData(YAML::Emitter& out) override { }
 		void DeserializeData(YAML::Node& node) override
 		{
-			m_Mesh = ObjLoader::LoadMesh(m_Path.c_str());
+			m_Mesh = MeshLoader::LoadMesh(m_Path);
 		}
 
 	private:
