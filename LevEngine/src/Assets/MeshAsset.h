@@ -2,7 +2,6 @@
 #include "Asset.h"
 #include "ObjLoader.h"
 #include "Renderer/3D/Mesh.h"
-#include "DataTypes/String.h"
 
 namespace LevEngine
 {
@@ -14,6 +13,11 @@ namespace LevEngine
 		void DrawProperties() override { }
 
 		[[nodiscard]] const Ref<Mesh>& GetMesh() const { return m_Mesh; }
+
+		[[nodiscard]] Ref<Texture> GetIcon() const override
+		{
+			return Icons::Mesh();
+		}
 	protected:
 		bool OverrideDataFile() const override { return false; }
 

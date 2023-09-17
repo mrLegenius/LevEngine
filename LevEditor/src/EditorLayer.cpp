@@ -5,55 +5,80 @@
 #include <imgui_internal.h>
 
 #include "EntitySelection.h"
+#include "ModalPopup.h"
+#include "Project.h"
 #include "Selection.h"
 
 namespace LevEngine::Editor
 {
-    void OnKatamariCollided(Entity me, Entity other)
+    bool EditorLayer::OpenProject()
     {
-        /*auto& myCollider = me.GetComponent<SphereCollider>();
-        auto& myTransform = me.GetComponent<Transform>();
+        const String& path = FileDialogs::OpenFile("LevProject (*.levproject)\0*.levproject\0");
 
-        auto& otherRigidbody = other.GetComponent<Rigidbody>();
-        auto& otherTransform = other.GetComponent<Transform>();
-        if (otherRigidbody.bodyType == BodyType::Static) return;
+        if(Project::Load(path.c_str()))
+        {
+            LoadProject();
+            return true;
+        }
 
-        const auto size = myCollider.radius;
-        const auto otherSize = Math::MaxElement(otherTransform.GetWorldScale());
-
-        if (size <= otherSize) return;
-
-        myCollider.radius += otherSize;
-
-        otherRigidbody.enabled = false;
-
-        otherTransform.SetParent(me);*/
+        return false;
     }
 
-    
-    void EditorLayer::OnAttach()
+    bool EditorLayer::NewProject()
     {
-        LEV_PROFILE_FUNCTION();
+        const String& path = FileDialogs::SaveFile("LevProject (*.levproject)\0*.levproject\0", "levproject");
 
-        //spdlog uses shared_ptr so we use here as well
-        m_Console = std::make_shared<ConsolePanel>();
-        Log::Logger::AddLogHandler(m_Console);
+        if(Project::CreateNew(path.c_str()))
+        {
+            LoadProject();
+            return true;
+        }
+        
+        return false;
+    }
 
+
+    void EditorLayer::LoadProject()
+    {
+        m_SaveData.SetLastOpenedProject(Project::GetPath());
+        m_SaveData.Save();
+        
         AssetDatabase::ProcessAllAssets();
 
+        const auto startScene = Project::GetStartScene();
+        if (startScene.empty() || !OpenScene(startScene))
+            SceneManager::LoadEmptyScene();
+        
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Hierarchy = CreateRef<HierarchyPanel>();
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
-        
-        //<--- Systems ---<<
-        //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
-        //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
-        //m_ActiveScene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
-        //m_ActiveScene->RegisterUpdateSystem(CreateRef<TestSystem>());
-        //m_ActiveScene->RegisterOneFrame<CollisionBeginEvent>();
-        //m_ActiveScene->RegisterOneFrame<CollisionEndEvent>();
+    }
+    
+    void EditorLayer::OnAttach()
+    {
+        LEV_PROFILE_FUNCTION();
+
+        //spdlog uses shared_ptr so we use it here as well
+        m_Console = std::make_shared<ConsolePanel>();
+        Log::Logger::AddLogHandler(m_Console);
+
+        m_SaveData.Load();
+
+        if (Project::Load(m_SaveData.GetLastOpenedProject()))
+        {
+            LoadProject();
+        }
+        else
+        {
+            ModalPopup::Show("Project Selection",
+                "Open existing or create new project",
+                "Open",
+                "Create new",
+                [this] { if(!OpenProject()) LEV_THROW("Failed to open project") },
+                [this]{ if(!NewProject()) LEV_THROW("Failed to create new project") });
+        }
 
         Application::Get().GetWindow().EnableCursor();
     }
@@ -137,6 +162,8 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
+        if (!Project::GetProject()) return;
+        
         if (Input::IsKeyDown(KeyCode::Escape))
         {
             Application::Get().GetWindow().EnableCursor();
@@ -178,10 +205,14 @@ namespace LevEngine::Editor
 
     void EditorLayer::OnGUIRender()
     {
-        ImGui::ShowDemoWindow(nullptr);
-
         LEV_PROFILE_FUNCTION();
+        
+        ImGui::ShowDemoWindow(nullptr);
+        
+        ModalPopup::Render();
 
+        if (!Project::GetProject()) return;
+        
         DrawDockSpace();
         m_Viewport->Render();
         m_Hierarchy->Render();
@@ -199,14 +230,13 @@ namespace LevEngine::Editor
 
     void EditorLayer::DrawToolbar()
     {
-        static auto selectIcon = Texture::Create("resources/Icons/Select.png");
-        static auto translateIcon = Texture::Create("resources/Icons/Translate.png");
-        static auto rotationIcon = Texture::Create("resources/Icons/Rotate.png");
-        static auto scaleIcon = Texture::Create("resources/Icons/Scale.png");
+        static auto selectIcon = Icons::Select();
+        static auto translateIcon = Icons::Translate();
+        static auto rotationIcon = Icons::Rotate();
+        static auto scaleIcon = Icons::Scale();
 
-        static auto iconPlay = Texture::Create("resources/Icons/PlayButton.png");
-        static auto iconStop = Texture::Create("resources/Icons/StopButton.png");
-
+        static auto iconPlay = Icons::Play();
+        static auto iconStop = Icons::Stop();
 
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuBarHeight));
@@ -335,6 +365,18 @@ namespace LevEngine::Editor
         ImGui::End();
     }
 
+    void EditorLayer::SetCurrentSceneAsStartScene() const
+    {
+        if (!SceneManager::GetActiveScene())
+        {
+            Log::CoreWarning("There is no active scene");
+            return;
+        }
+
+        Project::SetStartScene(SceneManager::GetActiveScenePath());
+        Project::Save();
+    }
+
     void EditorLayer::DrawDockSpace()
     {
         LEV_PROFILE_FUNCTION();
@@ -390,6 +432,25 @@ namespace LevEngine::Editor
                 ImGui::EndMenu();
             }
 
+            if (ImGui::BeginMenu("Project"))
+            {
+                if (ImGui::MenuItem("Open project..."))
+                    if (!OpenProject())
+                        Log::CoreWarning("Failed to open project");
+
+                if (ImGui::MenuItem("Create New..."))
+                    if(!NewProject())
+                        Log::CoreWarning("Failed to open project");
+                
+                if (ImGui::MenuItem("Set current scene as start scene"))
+                    SetCurrentSceneAsStartScene();
+
+                if (ImGui::MenuItem("Build"))
+                    Project::Build();
+
+                ImGui::EndMenu();
+            }
+
             ImGui::EndMenuBar();
         }
 
@@ -398,10 +459,6 @@ namespace LevEngine::Editor
 
     void EditorLayer::CreateNewScene()
     {
-        /*m_ActiveScene->OnViewportResized(
-            static_cast<uint32_t>(m_Viewport->GetWidth()),
-            static_cast<uint32_t>(m_Viewport->GetHeight()));*/
-        m_EditorScenePath = Path();
         SceneManager::LoadEmptyScene();
     }
 
@@ -414,12 +471,12 @@ namespace LevEngine::Editor
         }
     }
 
-    void EditorLayer::OpenScene(const Path& path)
+    bool EditorLayer::OpenScene(const Path& path)
     {
         if (path.extension().string() != ".scene")
         {
             Log::Warning("Failed to open scene. {0} is not a scene file", path.filename().string());
-            return;
+            return false;
         }
 
         if (m_SceneState != SceneState::Edit)
@@ -428,8 +485,10 @@ namespace LevEngine::Editor
         if (SceneManager::LoadScene(path))
         {
             Selection::Deselect();
-            m_EditorScenePath = path;
+            return true;
         }
+
+        return false;
     }
 
     bool EditorLayer::SaveScene()
@@ -440,9 +499,10 @@ namespace LevEngine::Editor
             return false;
         }
 
-        if (!m_EditorScenePath.empty())
+        const auto scenePath = SceneManager::GetActiveScenePath();
+        if (!scenePath.empty())
         {
-            SceneManager::SaveScene(m_EditorScenePath.string().c_str());
+            SceneManager::SaveScene(scenePath.string().c_str());
             return true;
         }
 
@@ -457,12 +517,10 @@ namespace LevEngine::Editor
             return false;
         }
 
-        const auto filepath = FileDialogs::SaveFile("LevEngine Scene (*.scene)\0*.scene\0");
+        const auto filepath = FileDialogs::SaveFile("LevEngine Scene (*.scene)\0*.scene\0", "scene");
         if (!filepath.empty())
         {
             SceneManager::SaveScene(filepath);
-
-            m_EditorScenePath = filepath.c_str();
             return true;
         }
 
@@ -483,6 +541,6 @@ namespace LevEngine::Editor
         m_SceneState = SceneState::Edit;
         Selection::Deselect();
 
-        OpenScene(m_EditorScenePath);
+        OpenScene(SceneManager::GetActiveScenePath());
     }
 }

@@ -17,6 +17,14 @@ namespace LevEngine
 
 		void DrawProperties() override;
 
+		[[nodiscard]] Ref<Texture> GetIcon() const override
+		{
+			if (m_Texture)
+				return m_Texture;
+
+			return Asset::GetIcon();
+		}
+		
 	protected:
 		[[nodiscard]] bool OverrideDataFile() const override { return false; }
 

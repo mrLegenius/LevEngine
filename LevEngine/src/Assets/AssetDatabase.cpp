@@ -43,8 +43,13 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
+		if (!exists(GetAssetsPath()))
+			create_directory(GetAssetsPath());
+		
+		m_AssetsByPath.clear();
+		m_Assets.clear();
 		Queue<Path> directories;
-		directories.push(AssetsRoot);
+		directories.push(GetAssetsPath());
 		do
 		{
 			auto directory = directories.front();

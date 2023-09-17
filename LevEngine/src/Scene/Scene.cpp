@@ -21,7 +21,7 @@ void Scene::OnUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-	for (const auto system : m_UpdateSystems)
+	for (const auto& system : m_UpdateSystems)
 		system->Update(deltaTime, m_Registry);
 }
 
@@ -44,10 +44,10 @@ void Scene::OnLateUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-    for (const auto system : m_LateUpdateSystems)
+    for (const auto& system : m_LateUpdateSystems)
         system->Update(deltaTime, m_Registry);
 
-    for (const auto system : m_EventSystems)
+    for (const auto& system : m_EventSystems)
         system->Update(deltaTime, m_Registry);
 }
 

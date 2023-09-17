@@ -17,14 +17,15 @@ namespace LevEngine
 {
 Application* Application::s_Instance = nullptr;
 
-Application::Application(const String& name, const uint32_t width, const uint32_t height)
+Application::Application(const ApplicationSpecification& specification)
+	: m_Specification(specification)
 {
 	LEV_PROFILE_FUNCTION();
 
 	LEV_CORE_ASSERT(!s_Instance, "Only one application is allowed");
 	s_Instance = this;
 
-	m_Window = Window::Create(WindowAttributes(name, width, height));
+	m_Window = Window::Create(WindowAttributes(specification.Name, specification.WindowWidth, specification.WindowHeight));
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 	Renderer::Init();

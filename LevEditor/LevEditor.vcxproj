@@ -86,9 +86,11 @@
   <ItemGroup>
     <ClInclude Include="src\AssetSelection.h" />
     <ClInclude Include="src\EditorCamera.h" />
+    <ClInclude Include="src\EditorSaveData.h" />
     <ClInclude Include="src\EntitySelection.h" />
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Gizmo.h" />
+    <ClInclude Include="src\ModalPopup.h" />
     <ClInclude Include="src\Panels\AssetBrowserPanel.h" />
     <ClInclude Include="src\Panels\ConsolePanel.h" />
     <ClInclude Include="src\Panels\GamePanel.h" />
@@ -100,7 +102,9 @@
     <ClInclude Include="src\Selection.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\EditorSaveData.cpp" />
     <ClCompile Include="src\Gizmo.cpp" />
+    <ClCompile Include="src\ModalPopup.cpp" />
     <ClCompile Include="src\Panels\ConsolePanel.cpp" />
     <ClCompile Include="src\Panels\GamePanel.cpp" />
     <ClCompile Include="src\pch.cpp">

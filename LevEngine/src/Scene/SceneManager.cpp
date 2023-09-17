@@ -7,6 +7,7 @@ namespace LevEngine
 {
     void SceneManager::SaveScene(const String& path)
     {
+        m_ActiveScenePath = path.c_str();
         const SceneSerializer sceneSerializer(m_ActiveScene);
         sceneSerializer.Serialize(path);
     }
@@ -19,6 +20,7 @@ namespace LevEngine
         if (sceneSerializer.Deserialize(path.generic_string().c_str()))
         {
             m_ActiveScene = newScene;
+            m_ActiveScenePath = path;
             return true;
         }
 
@@ -27,6 +29,7 @@ namespace LevEngine
 
     const Ref<Scene>& SceneManager::LoadEmptyScene()
     {
+        m_ActiveScenePath = Path();
         return m_ActiveScene = CreateRef<Scene>();
     }
 }

@@ -3,6 +3,7 @@
 #include "DefaultAsset.h"
 #include "MaterialAsset.h"
 #include "MeshAsset.h"
+#include "Project.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
 #include "DataTypes/UnorderedMap.h"
@@ -13,7 +14,15 @@ namespace LevEngine
 	{
 	public:
 		inline static const Path AssetsRoot = "resources";
+		
+		static Path GetAssetsPath()
+		{
+			if (Project::GetProject())
+				return Project::GetRoot() / AssetsRoot;
 
+			return AssetsRoot;
+		}
+		
 		static void ImportAsset(const Path& path);
 		static void ProcessAllAssets();
 

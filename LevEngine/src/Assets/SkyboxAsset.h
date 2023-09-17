@@ -24,6 +24,11 @@ namespace LevEngine
 
 		[[nodiscard]] const Ref<Texture>& GetTexture() const { return m_Texture; }
 
+		[[nodiscard]] Ref<Texture> GetIcon() const override
+		{
+			return Icons::Skybox();
+		}
+		
 	protected:
 		void SerializeData(YAML::Emitter& out) override;
 		void DeserializeData(YAML::Node& node) override;

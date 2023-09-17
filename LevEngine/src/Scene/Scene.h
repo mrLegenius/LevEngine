@@ -39,20 +39,24 @@ public:
 
 	void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 
-	void RegisterUpdateSystem(Ref<System> system)
+	template<typename T>
+	void RegisterUpdateSystem()
 	{
-		m_UpdateSystems.emplace_back(system);
+		static_assert(eastl::is_base_of_v<System, T>, "T must derive from System");
+		m_UpdateSystems.emplace_back(CreateScope<T>());
 	}
 
-	void RegisterLateUpdateSystem(Ref<System> system)
+	template<typename T>
+	void RegisterLateUpdateSystem()
 	{
-		m_LateUpdateSystems.emplace_back(system);
+		static_assert(eastl::is_base_of_v<System, T>, "T must derive from System");
+		m_LateUpdateSystems.emplace_back(CreateScope<T>());
 	}
 
 	template<typename T>
 	void RegisterOneFrame()
 	{
-		m_EventSystems.emplace_back(new EventSystem<T>);
+		m_EventSystems.emplace_back(CreateScope<EventSystem<T>>());
 	}
 
 	Entity GetEntityBy(Transform* value);
@@ -66,8 +70,8 @@ private:
 
 	Entity ConvertEntity(entt::entity entity);
 
-	Vector<Ref<System>> m_UpdateSystems;
-	Vector<Ref<System>> m_LateUpdateSystems;
-	Vector<Ref<System>> m_EventSystems;
+	Vector<Scope<System>> m_UpdateSystems;
+	Vector<Scope<System>> m_LateUpdateSystems;
+	Vector<Scope<System>> m_EventSystems;
 };
 }

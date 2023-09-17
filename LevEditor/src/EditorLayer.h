@@ -1,4 +1,5 @@
 #pragma once
+#include "EditorSaveData.h"
 #include "Events/ApplicationEvent.h"
 #include "Panels/AssetBrowserPanel.h"
 #include "Panels/ConsolePanel.h"
@@ -12,16 +13,20 @@ namespace LevEngine::Editor
 class EditorLayer final : public Layer
 {
 public:
+	bool OpenProject();
+	bool NewProject();
+	void LoadProject();
 	void OnAttach() override;
 	void OnUpdate(float deltaTime) override;
 	void OnScenePlay();
 	void OnSceneStop();
 	void DrawToolbar();
 	void DrawStatusbar();
+	void SetCurrentSceneAsStartScene() const;
 	void DrawDockSpace();
 	void CreateNewScene();
 	void OpenScene();
-	void OpenScene(const Path& path);
+	bool OpenScene(const Path& path);
 	bool SaveScene();
 	bool SaveSceneAs();
 	void OnEvent(Event& event) override;
@@ -38,8 +43,8 @@ private:
 	Ref<GamePanel> m_Game;
 	std::shared_ptr<ConsolePanel> m_Console;
 
-	Path m_EditorScenePath;
-
+	EditorSaveData m_SaveData{"SaveData.editor"};
+	
 	enum class SceneState
 	{
 		Edit = 0, Play = 1
