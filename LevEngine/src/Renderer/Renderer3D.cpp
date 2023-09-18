@@ -72,7 +72,7 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
 
     mesh->Bind(shader);
 
-    const MeshModelBufferData data = { model };
+    const MeshModelBufferData data = { model, model.Transpose().Invert() };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
     m_ModelConstantBuffer->Bind(ShaderType::Vertex);
 

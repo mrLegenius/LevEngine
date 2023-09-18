@@ -28,6 +28,7 @@ cbuffer CameraConstantBuffer : register(b0)
 cbuffer ModelConstantBuffer : register(b1)
 {
 	row_major matrix model;
+	row_major matrix transposedInvertedModel;
 };
 
 cbuffer lightSpaceConstantBuffer : register(b3)

@@ -11,6 +11,7 @@ namespace LevEngine
 struct MeshModelBufferData
 {
 	Matrix Model;
+	Matrix TransposedInvertedModel;
 };
 
 struct DirLightData
