@@ -94,7 +94,7 @@ void D3D11Shader::Bind() const
 void D3D11Shader::Unbind() const
 {
 	for (const auto [_, parameter] : m_ShaderParameters)
-		parameter->Bind();
+		parameter->Unbind();
 
 	if (m_VertexShader)
 	{
