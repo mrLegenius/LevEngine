@@ -32,7 +32,6 @@ namespace LevEngine
 
     void OpaquePass::Process(entt::registry& registry, RenderParams& params)
     {
-	    const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
         const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
         for (const auto entity : view)
         {
@@ -45,9 +44,13 @@ namespace LevEngine
             if (!mesh) continue;
             if (!meshRenderer.material) continue;
 
-            meshRenderer.material->material.Bind(shader);
+            const auto shader = meshRenderer.material->GetForwardShader();
+
+            shader->Bind();
+            auto& material = meshRenderer.material->GetMaterial();
+            material.Bind(shader);
             Renderer3D::DrawMesh(transform.GetModel(), meshRenderer, shader);
-            meshRenderer.material->material.Unbind(shader);
+            material.Unbind(shader);
         }
     }
 
