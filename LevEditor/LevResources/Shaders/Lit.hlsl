@@ -1,4 +1,5 @@
 #include "ShaderCommon.hlsl"
+#include "MaterialSimple.hlsl"
 
 PS_IN VSMain(VS_IN input)
 {
@@ -29,18 +30,14 @@ LightingResult CalcLighting(float3 fragPos, float3 normal, float depth);
 [earlydepthstencil]
 float4 PSMain(PS_IN input) : SV_Target
 {
-	float3 normal;
-	
     float2 textureUV = ApplyTextureProperties(input.uv, material.tiling, material.offset);
 		
-	float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
-    texNormal = normalize(texNormal * 2.0 - 1.0);
-    normal = normalize(mul(texNormal, input.TBN));
+	float3 normal = CalculateNormal(normalTexture, normalTextureSampler, textureUV, input.TBN);
 
 	LightingResult lit = CalcLighting(input.fragPos, normal, input.depth);
 
     float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, textureUV);
-    float3 ambient = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, textureUV) * globalAmbient;
+    float3 ambient = CombineColorAndTexture(material.ambient, diffuseTexture, diffuseTextureSampler, textureUV) * globalAmbient;
     float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, textureUV) * lit.diffuse;
 
 	float3 specular = 0;
