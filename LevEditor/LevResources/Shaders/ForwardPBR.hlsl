@@ -30,9 +30,7 @@ float3 CalcLighting(float3 fragPos, float3 normal, float depth, float3 albedo, f
 float4 PSMain(PS_IN input) : SV_Target
 {
     float2 textureUV = ApplyTextureProperties(input.uv, material.tiling, material.offset);
-		
 	float3 normal = CalculateNormal(normalMap, normalMapSampler, textureUV, input.TBN);
-
 	float3 albedo = albedoMap.Sample(albedoMapSampler, textureUV).rgb * material.tint;
 
 	//Gamma correction
@@ -44,7 +42,7 @@ float4 PSMain(PS_IN input) : SV_Target
 	
 	float3 lit = CalcLighting(input.fragPos, normal, input.depth, albedo, metallic, roughness);
 
-	float ambientColor = globalAmbient * albedo * ao;
+	float3 ambientColor = globalAmbient * albedo * ao;
 
 	float3 finalColor = ambientColor + lit;
 
