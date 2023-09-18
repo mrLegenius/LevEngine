@@ -478,10 +478,10 @@ Entities:
   - Entity: 12685685000942160993
     Tag: Chest
     Transform:
-      Position: [6.88374662, 1.49259412, -7.54699564]
+      Position: [6.88374662, 1.62417614, -7.54699564]
       Rotation: [-0, -2.81964922, 0]
       Scale: [1.50000334, 1.5, 1.50000334]
     MeshRenderer:
       Mesh: 1600610067072245332
-      Material: 11254321036137541248
+      Material: 35745855355570945
       Cast Shadow: true
