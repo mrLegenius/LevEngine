@@ -33,6 +33,14 @@ struct Icons
 
 struct ShaderAssets
 {
+	static auto ForwardPBR()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("ForwardPBR.hlsl"));
+		return shader;
+	}
+	
 	static auto Lit()
     {
 		LEV_PROFILE_FUNCTION();

@@ -437,6 +437,8 @@
     <ClInclude Include="src\Assets\AssetDatabase.h" />
     <ClInclude Include="src\Assets\DefaultAsset.h" />
     <ClInclude Include="src\Assets\MaterialAsset.h" />
+    <ClInclude Include="src\Assets\MaterialSimpleAsset.h" />
+    <ClInclude Include="src\Assets\MaterialPBRAsset.h" />
     <ClInclude Include="src\Assets\MeshAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Assets\TextureAsset.h" />
@@ -515,6 +517,8 @@
     <ClInclude Include="src\Renderer\ClearFlags.h" />
     <ClInclude Include="src\Renderer\ClearPass.h" />
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
+    <ClInclude Include="src\Renderer\Material.h" />
+    <ClInclude Include="src\Renderer\MaterialPBR.h" />
     <ClInclude Include="src\Renderer\RendererContext.h" />
     <ClInclude Include="src\Renderer\CopyTexturePass.h" />
     <ClInclude Include="src\Renderer\CPUAccess.h" />
@@ -525,7 +529,7 @@
     <ClInclude Include="src\Renderer\DepthFunc.h" />
     <ClInclude Include="src\Renderer\DepthStencilState.h" />
     <ClInclude Include="src\Renderer\IndexBuffer.h" />
-    <ClInclude Include="src\Renderer\Material.h" />
+    <ClInclude Include="src\Renderer\MaterialSimple.h" />
     <ClInclude Include="src\Renderer\OpaquePass.h" />
     <ClInclude Include="src\Renderer\ParticlePass.h" />
     <ClInclude Include="src\Renderer\PipelineState.h" />
@@ -779,7 +783,8 @@
     </ClCompile>
     <ClCompile Include="src\Assets\Asset.cpp" />
     <ClCompile Include="src\Assets\AssetDatabase.cpp" />
-    <ClCompile Include="src\Assets\MaterialAsset.cpp" />
+    <ClCompile Include="src\Assets\MaterialSimpleAsset.cpp" />
+    <ClCompile Include="src\Assets\MaterialPBRAsset.cpp" />
     <ClCompile Include="src\Assets\MeshAsset.cpp" />
     <ClCompile Include="src\Assets\SkyboxAsset.cpp" />
     <ClCompile Include="src\Assets\TextureAsset.cpp" />
@@ -826,6 +831,8 @@
     <ClCompile Include="src\Renderer\CascadeShadowMap.cpp" />
     <ClCompile Include="src\Renderer\ClearPass.cpp" />
     <ClCompile Include="src\Renderer\ConstantBuffer.cpp" />
+    <ClCompile Include="src\Renderer\Material.cpp" />
+    <ClCompile Include="src\Renderer\MaterialPBR.cpp" />
     <ClCompile Include="src\Renderer\RendererContext.cpp" />
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RendererContext.cpp" />
@@ -834,7 +841,7 @@
     <ClCompile Include="src\Renderer\DeferredLightingPass.cpp" />
     <ClCompile Include="src\Renderer\DepthStencilState.cpp" />
     <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
-    <ClCompile Include="src\Renderer\Material.cpp" />
+    <ClCompile Include="src\Renderer\MaterialSimple.cpp" />
     <ClCompile Include="src\Renderer\OpaquePass.cpp" />
     <ClCompile Include="src\Renderer\ParticlePass.cpp" />
     <ClCompile Include="src\Renderer\PipelineState.cpp" />

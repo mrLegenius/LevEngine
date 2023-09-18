@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include "Asset.h"
 #include "DefaultAsset.h"
-#include "MaterialAsset.h"
+#include "MaterialSimpleAsset.h"
+#include "MaterialPBRAsset.h"
 #include "MeshAsset.h"
 #include "Project.h"
 #include "SkyboxAsset.h"
@@ -68,6 +69,13 @@ namespace LevEngine
 			return extension == ".mat";
 		}
 
+		static bool IsAssetPBRMaterial(const Path& path)
+		{
+			const auto extension = path.extension().string();
+
+			return extension == ".pbr";
+		}
+
 		static bool IsAssetSkybox(const Path& path)
 		{
 			const auto extension = path.extension().string();
@@ -81,8 +89,11 @@ namespace LevEngine
 				return CreateRef<TextureAsset>(path, uuid);
 
 			if (IsAssetMaterial(path))
-				return CreateRef<MaterialAsset>(path, uuid);
+				return CreateRef<MaterialSimpleAsset>(path, uuid);
 
+			if (IsAssetPBRMaterial(path))
+				return CreateRef<MaterialPBRAsset>(path, uuid);
+			
 			if (IsAssetSkybox(path))
 				return CreateRef<SkyboxAsset>(path, uuid);
 
