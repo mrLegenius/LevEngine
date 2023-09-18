@@ -65,17 +65,18 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 
 float GeometrySmith(float3 N, float3 V, float3 L, float roughness)
 {
-    float NdotV = max(dot(N, V), 0.0);
     float NdotL = max(dot(N, L), 0.0);
-    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
+    float NdotV = max(dot(N, V), 0.0);
+
     float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
 	
     return ggx1 * ggx2;
 }
 
 float3 CalcPBR(
     float3 lightDir,
-    float3 normal, float viewDir, float3 color, 
+    float3 normal, float3 viewDir, float3 color, 
     float3 albedo, float metallic, float roughness)
 {
     float3 halfVector = normalize(viewDir + lightDir);
@@ -101,7 +102,7 @@ float3 CalcPBR(
     return Lo;
 }
 
-float4 CalcDirLight(
+float3 CalcDirLight(
     DirLight light,
     float3 normal, float3 viewDir,
     float4 fragPosLightSpace, float cascade,
