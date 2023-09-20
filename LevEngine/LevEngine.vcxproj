@@ -544,6 +544,7 @@
     <ClInclude Include="src\Renderer\Texture.h" />
     <ClInclude Include="src\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\Renderer\Viewport.h" />
+    <ClInclude Include="src\Scene\Components\AudioListener\AudioListener.h" />
     <ClInclude Include="src\Scene\Components\Camera\Camera.h" />
     <ClInclude Include="src\Scene\Components\ComponentDrawer.h" />
     <ClInclude Include="src\Scene\Components\Components.h" />
@@ -844,6 +845,7 @@
     <ClCompile Include="src\Renderer\StructuredBuffer.cpp" />
     <ClCompile Include="src\Renderer\Texture.cpp" />
     <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
+    <ClCompile Include="src\Scene\Components\AudioListener\AudioListener.cpp" />
     <ClCompile Include="src\Scene\Components\Camera\Camera.cpp" />
     <ClCompile Include="src\Scene\Components\Emitter\EmitterComponent.cpp" />
     <ClCompile Include="src\Scene\Components\Lights\Lights.cpp" />

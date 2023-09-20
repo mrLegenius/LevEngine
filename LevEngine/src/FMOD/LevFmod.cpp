@@ -1,5 +1,7 @@
 ﻿#include "levpch.h"
 #include "LevFmod.h"
+
+#include "Scene/Components/AudioListener/AudioListener.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine::LevFmod
@@ -30,6 +32,8 @@ namespace LevEngine::LevFmod
         {
             Log::CoreError("FMOD Sound System: Failed to initialize");
         }
+
+        AudioListenerComponent unused;
     }
 
     void LevFmod::Update()
@@ -68,7 +72,32 @@ namespace LevEngine::LevFmod
 
     void LevFmod::SetListenerAttributes()
     {
-        // not implemented
+        if (m_listeners.size() == 0) {
+            if (m_listenerWarning) {
+                Log::Error("FMOD Sound System: No listeners are set!");
+                m_listenerWarning = false;
+            }
+            return;
+        }
+
+        for (int i = 0; i < m_listeners.size(); i++) {
+            auto listener = m_listeners[i];
+            auto entity = listener.entity;
+
+            if (entity == nullptr)
+                continue;
+            
+            if (entity->HasComponent<Transform>())
+            {
+                if (!listener.listenerLock)
+                {
+                    Transform transform = entity->GetComponent<Transform>();
+                    const auto attr = Get3DAttributes(transform);
+                    
+                    CheckErrors(m_system->setListenerAttributes(i, &attr));   
+                }
+            }
+        }
     }
 
     void LevFmod::PlayOneShot(const String& eventName, const Entity* entity)
@@ -104,18 +133,23 @@ namespace LevEngine::LevFmod
         return fv;
     }
 
+    FMOD_3D_ATTRIBUTES LevFmod::Get3DAttributes(const Transform& transform)
+    {
+        const Vector3 pos = transform.GetWorldPosition() / m_distanceScale;
+        const Vector3 up = transform.GetUpDirection();
+        const Vector3 forward = transform.GetForwardDirection();
+        constexpr Vector3 vel(0, 0, 0);
+
+        return Get3DAttributes(ToFmodVector(pos), ToFmodVector(up),
+                                                        ToFmodVector(forward), ToFmodVector(vel));
+    }
+
     void LevFmod::UpdateInstance3DAttributes(FMOD::Studio::EventInstance *instance, const Entity *entity) {
         // try to set 3D attributes
         if (instance && entity && entity->HasComponent<Transform>()) {
             const auto& transform = entity->GetComponent<Transform>();
-            const Vector3 pos = transform.GetWorldPosition();
-            const Vector3 up = transform.GetUpDirection();
-            const Vector3 forward = transform.GetForwardDirection();
-            constexpr Vector3 vel(0, 0, 0);
-
-            const FMOD_3D_ATTRIBUTES attr = Get3DAttributes(ToFmodVector(pos), ToFmodVector(up),
-                                                            ToFmodVector(forward), ToFmodVector(vel));
             
+            const FMOD_3D_ATTRIBUTES attr = Get3DAttributes(transform);
             CheckErrors(instance->set3DAttributes(&attr));
         }
     }

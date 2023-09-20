@@ -4,6 +4,7 @@
 #include "fmod_errors.h"
 #include "../Kernel/Logger.h"
 #include "DataTypes/UnorderedMap.h"
+#include "DataTypes/Vector.h"
 
 
 namespace LevEngine
@@ -46,6 +47,7 @@ namespace LevEngine::LevFmod
 
         FMOD_3D_ATTRIBUTES Get3DAttributes(FMOD_VECTOR pos, FMOD_VECTOR up, FMOD_VECTOR forward, FMOD_VECTOR vel);
         FMOD_VECTOR ToFmodVector(DirectX::SimpleMath::Vector3 vec);
+        FMOD_3D_ATTRIBUTES Get3DAttributes(const Transform& transform);
         void UpdateInstance3DAttributes(FMOD::Studio::EventInstance *i, const Entity *entity);
         EventInfo* GetEventInfo(FMOD::Studio::EventInstance* eventInstance);
         void ReleaseOneEvent(FMOD::Studio::EventInstance *eventInstance);
@@ -75,6 +77,19 @@ namespace LevEngine::LevFmod
         UnorderedMap<String, FMOD::Studio::EventDescription *> m_eventDescriptions;
         UnorderedMap<uint64_t, FMOD::Studio::EventInstance *> m_events;
         UnorderedMap<String, FMOD::Studio::Bank *> m_banks;
+
+        struct Listener {
+            // Entity to which this listener is attached
+            Entity *entity = nullptr;
+
+            // When true, locks the listener in place, disabling internal 3D attribute updates.
+            // 3D attributes can still be manually set with a set3DAttributes call.
+            bool listenerLock = false;
+        };
+
+        float m_distanceScale = 1.0f;
+        bool m_listenerWarning = true;
+        Vector<Listener> m_listeners;
     };
 }
 
