@@ -89,7 +89,7 @@ struct ShaderAssets
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader = Shader::Create(GetShaderPath("GBufferPass.hlsl"));
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaquePBR.hlsl"));
 
 		return shader;
 	}
@@ -98,7 +98,7 @@ struct ShaderAssets
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"), ShaderType::Vertex);
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPassPBR.hlsl"), ShaderType::Vertex);
 
 		return shader;
 	}
@@ -107,7 +107,7 @@ struct ShaderAssets
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"));
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPassPBR.hlsl"));
 
 		return shader;
 	}

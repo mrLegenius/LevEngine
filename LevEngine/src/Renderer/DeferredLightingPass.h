@@ -12,16 +12,16 @@ namespace LevEngine
 		DeferredLightingPass(
 			const Ref<PipelineState>& pipeline1, 
 			const Ref<PipelineState>& pipeline2,
-			const Ref<Texture>& diffuseTexture,
-			const Ref<Texture>& specularTexture,
-			const Ref<Texture>& normalTexture,
-			const Ref<Texture>& depthTexture)
+			const Ref<Texture>& albedoMap,
+			const Ref<Texture>& metallicRoughnessAOTexture,
+			const Ref<Texture>& normalMap,
+			const Ref<Texture>& depthMap)
 				: m_Pipeline1(pipeline1)
 				, m_Pipeline2(pipeline2)
-				, m_DiffuseTexture(diffuseTexture)
-				, m_SpecularTexture(specularTexture)
-				, m_NormalTexture(normalTexture)
-				, m_DepthTexture(depthTexture)
+				, m_AlbedoMap(albedoMap)
+				, m_MetallicRoughnessAOMap(metallicRoughnessAOTexture)
+				, m_NormalMap(normalMap)
+				, m_DepthMap(depthMap)
 		{
 			LEV_PROFILE_FUNCTION();
 
@@ -42,10 +42,10 @@ namespace LevEngine
 		Ref<PipelineState> m_Pipeline1;
 		Ref<PipelineState> m_Pipeline2;
 
-		Ref<Texture> m_DiffuseTexture;
-		Ref<Texture> m_SpecularTexture;
-		Ref<Texture> m_NormalTexture;
-		Ref<Texture> m_DepthTexture;
+		Ref<Texture> m_AlbedoMap;
+		Ref<Texture> m_MetallicRoughnessAOMap;
+		Ref<Texture> m_NormalMap;
+		Ref<Texture> m_DepthMap;
 
 		Ref<ConstantBuffer> m_LightIndexBuffer;
 	};

@@ -7,7 +7,6 @@ namespace LevEngine
     {
     public:
         virtual Material& GetMaterial() = 0;
-        virtual const Ref<Shader> GetForwardShader() = 0; 
 
         [[nodiscard]] Ref<Texture> GetIcon() const override { return Icons::Material(); }
 	

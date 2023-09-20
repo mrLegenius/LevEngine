@@ -33,6 +33,9 @@ SamplerState normalMapSampler : register(s3);
 Texture2D<float> ambientOcclusionMap : register(t4);
 SamplerState ambientOcclusionMapSampler : register(s4);
 
+Texture2D emissiveMap : register(t5);
+SamplerState emissiveMapSampler : register(s5);
+
 float3 FresnelSchlick(float cosTheta, float3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
@@ -113,10 +116,10 @@ float3 CalcDirLight(
     float3 Lo = CalcPBR(lightDir, normal, viewDir, light.color, albedo, metallic, roughness);
     float shadow = CalcShadow(fragPosLightSpace, normal, lightDir, cascade);
 
-    return float4(Lo * shadow, 1.0f);
+    return Lo * shadow;
 }
 
-float4 CalcPointLight(
+float3 CalcPointLight(
     PointLight light,
     float3 normal, float3 fragPos, float3 viewDir,
     float3 albedo, float metallic, float roughness)
@@ -130,7 +133,24 @@ float4 CalcPointLight(
     
     float3 Lo = CalcPBR(lightDir, normal, viewDir, color, albedo, metallic, roughness);
 
-    return float4(Lo, 1.0f);
+    return Lo;
+}
+
+float3 CalcPointLightInViewSpace(
+    PointLight light, 
+    float3 normal, float3 fragPos, float3 viewDir,
+    float3 albedo, float metallic, float roughness)
+{
+    float3 lightDir = light.positionViewSpace - fragPos;
+    float distance = length(lightDir);
+    lightDir = lightDir / distance;
+
+    float attenuation = CalcAttenuation(light.range, light.smoothness, distance);
+    float3 color = light.color * attenuation * light.intensity;
+
+    float3 Lo = CalcPBR(lightDir, normal, viewDir, color, albedo, metallic, roughness);
+
+    return Lo;
 }
 
 

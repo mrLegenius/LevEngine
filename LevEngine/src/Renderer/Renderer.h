@@ -22,8 +22,8 @@ public:
 
 private:
 	static Ref<Texture> m_DepthTexture;
-	static Ref<Texture> m_DiffuseTexture;
-	static Ref<Texture> m_SpecularTexture;
+	static Ref<Texture> m_AlbedoTexture;
+	static Ref<Texture> m_MetallicRoughnessAOTexture;
 	static Ref<Texture> m_NormalTexture;
 	static Ref<RenderTarget> s_GBufferRenderTarget;
 	static Ref<RenderTarget> s_DepthOnlyRenderTarget;

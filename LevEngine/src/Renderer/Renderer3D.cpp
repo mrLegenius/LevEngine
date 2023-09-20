@@ -122,9 +122,7 @@ void Renderer3D::RenderSphere(const Matrix& model, const Ref<Shader>& shader)
 {
     LEV_PROFILE_FUNCTION();
 
-    static Ref<Mesh> mesh;
-    if (mesh == nullptr)
-	    mesh = Mesh::CreateSphere(30);
+    static Ref<Mesh> mesh = Mesh::CreateSphere(20);
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));

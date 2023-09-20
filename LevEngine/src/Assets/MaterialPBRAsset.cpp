@@ -18,6 +18,7 @@ namespace LevEngine
         DrawMaterialTexture("Roughness", m_Material, MaterialPBR::TextureType::Roughness, m_Roughness);
         DrawMaterialTexture("Normal", m_Material, MaterialPBR::TextureType::Normal, m_Normal);
         DrawMaterialTexture("AmbientOcclusion", m_Material, MaterialPBR::TextureType::AmbientOcclusion, m_AmbientOcclusion);
+        DrawMaterialTexture("Emissive", m_Material, MaterialPBR::TextureType::Emissive, m_Emissive);
 
         auto tiling = m_Material.GetTextureTiling();
         if (GUIUtils::DrawVector2Control("Tiling", tiling, 1, 100))
@@ -39,6 +40,7 @@ namespace LevEngine
         SerializeAsset(out, "RoughnessTexture", m_Roughness);
         SerializeAsset(out, "AmbientOcclusion", m_AmbientOcclusion);
         SerializeAsset(out, "Normal", m_Normal);
+        SerializeAsset(out, "Emissive", m_Emissive);
 
         out << YAML::Key << "Tiling" << YAML::Value << m_Material.GetTextureTiling();
         out << YAML::Key << "Offset" << YAML::Value << m_Material.GetTextureOffset();
@@ -57,6 +59,7 @@ namespace LevEngine
         m_Roughness = DeserializeAsset<TextureAsset>(node["RoughnessTexture"]);
         m_AmbientOcclusion = DeserializeAsset<TextureAsset>(node["AmbientOcclusion"]);
         m_Normal = DeserializeAsset<TextureAsset>(node["Normal"]);
+        m_Emissive = DeserializeAsset<TextureAsset>(node["Emissive"]);
 
         if (m_Albedo)
             m_Material.SetTexture(MaterialPBR::TextureType::Albedo, m_Albedo->GetTexture());

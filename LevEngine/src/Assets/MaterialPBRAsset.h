@@ -9,7 +9,6 @@ class MaterialPBRAsset final : public MaterialAsset
 {
 public:
     Material& GetMaterial() override { return m_Material; }
-    const Ref<Shader> GetForwardShader() override { return ShaderAssets::ForwardPBR(); }
     explicit MaterialPBRAsset(const Path& path, const UUID uuid) : MaterialAsset(path, uuid)
     {
         ShaderAssets::ForwardPBR();
@@ -31,5 +30,6 @@ private:
     Ref<TextureAsset> m_Roughness;
     Ref<TextureAsset> m_Normal;
     Ref<TextureAsset> m_AmbientOcclusion;
+    Ref<TextureAsset> m_Emissive;
 };
 }

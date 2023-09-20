@@ -17,6 +17,7 @@ public:
         Roughness = 2,
         Normal = 3,
         AmbientOcclusion = 4,
+        Emissive = 5,
     };
     
     MaterialPBR();

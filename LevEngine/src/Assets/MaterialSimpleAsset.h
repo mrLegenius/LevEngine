@@ -10,7 +10,6 @@ class MaterialSimpleAsset final : public MaterialAsset
 {
 public:
 	Material& GetMaterial() override { return m_Material; }
-	const Ref<Shader> GetForwardShader() override { return ShaderAssets::Lit(); }
 	
 	explicit MaterialSimpleAsset(const Path& path, const UUID uuid) : MaterialAsset(path, uuid) { }
 

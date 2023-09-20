@@ -15,8 +15,8 @@
 namespace LevEngine
 {
 Ref<Texture> Renderer::m_DepthTexture;
-Ref<Texture> Renderer::m_DiffuseTexture;
-Ref<Texture> Renderer::m_SpecularTexture;
+Ref<Texture> Renderer::m_AlbedoTexture;
+Ref<Texture> Renderer::m_MetallicRoughnessAOTexture;
 Ref<Texture> Renderer::m_NormalTexture;
 
 Ref<RenderTarget> Renderer::s_GBufferRenderTarget;
@@ -55,38 +55,38 @@ void Renderer::Init()
 	}
 
 	{
-		LEV_PROFILE_SCOPE("GBuffer diffuse texture creation");
+		LEV_PROFILE_SCOPE("GBuffer albedo texture creation");
 
-		const Texture::TextureFormat diffuseTextureFormat(
+		const Texture::TextureFormat format(
 			Texture::Components::RGBA,
 			Texture::Type::UnsignedNormalized,
 			1,
 			8, 8, 8, 8, 0, 0);
-		m_DiffuseTexture = Texture::CreateTexture2D(width, height, 1, diffuseTextureFormat);
-	}
-
-	{
-		LEV_PROFILE_SCOPE("GBuffer specular texture creation");
-
-		const Texture::TextureFormat specularTextureFormat(
-			Texture::Components::RGBA,
-			Texture::Type::UnsignedNormalized,
-			1,
-			8, 8, 8, 8, 0, 0);
-		m_SpecularTexture = Texture::CreateTexture2D(width, height, 1, specularTextureFormat);
+		m_AlbedoTexture = Texture::CreateTexture2D(width, height, 1, format);
 	}
 
 	{
 		LEV_PROFILE_SCOPE("GBuffer normal texture creation");
 
-		const Texture::TextureFormat normalTextureFormat(
+		const Texture::TextureFormat format(
 			Texture::Components::RGBA,
 			Texture::Type::Float,
 			1,
 			32, 32, 32, 32, 0, 0);
-		m_NormalTexture = Texture::CreateTexture2D(width, height, 1, normalTextureFormat);
+		m_NormalTexture = Texture::CreateTexture2D(width, height, 1, format);
 	}
+	
+	{
+		LEV_PROFILE_SCOPE("GBuffer metallic/roughness/ambientOcclusion texture creation");
 
+		const Texture::TextureFormat format(
+			Texture::Components::RGBA,
+			Texture::Type::UnsignedNormalized,
+			1,
+			8, 8, 8, 8, 0, 0);
+		m_MetallicRoughnessAOTexture = Texture::CreateTexture2D(width, height, 1, format);
+	}
+	
 	{
 		LEV_PROFILE_SCOPE("DepthOnly render target creation");
 
@@ -99,9 +99,9 @@ void Renderer::Init()
 
 		s_GBufferRenderTarget = RenderTarget::Create();
 		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color0, mainRenderTarget->GetTexture(AttachmentPoint::Color0));
-		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color1, m_DiffuseTexture);
-		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color2, m_SpecularTexture);
-		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color3, m_NormalTexture);
+		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color1, m_AlbedoTexture);
+		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color2, m_NormalTexture);
+		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color3, m_MetallicRoughnessAOTexture);
 		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, m_DepthTexture);
 	}
 
@@ -155,6 +155,7 @@ void Renderer::Init()
 		FaceOperation faceOperation;
 		faceOperation.StencilFunction = CompareFunction::Equal;
 		faceOperation.StencilDepthPass = StencilOperation::Keep;
+		stencilMode.WriteMask = 0x00;
 		stencilMode.StencilReference = 1;
 		stencilMode.BackFace = faceOperation;
 
@@ -168,8 +169,8 @@ void Renderer::Init()
 
 		s_OpaquePipeline = CreateRef<PipelineState>();
 		s_OpaquePipeline->GetRasterizerState().SetCullMode(CullMode::Back);
-		s_OpaquePipeline->SetShader(ShaderType::Vertex, ShaderAssets::Lit());
-		s_OpaquePipeline->SetShader(ShaderType::Vertex, ShaderAssets::Lit());
+		s_OpaquePipeline->SetShader(ShaderType::Vertex, ShaderAssets::ForwardPBR());
+		s_OpaquePipeline->SetShader(ShaderType::Vertex, ShaderAssets::ForwardPBR());
 		s_OpaquePipeline->SetRenderTarget(mainRenderTarget);
 	}
 
@@ -204,7 +205,7 @@ void Renderer::Init()
 		s_DeferredTechnique->AddPass(CreateRef<OpaquePass>(s_GBufferPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(s_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture));
 		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, ClearFlags::Stencil, Vector4::Zero, 1, 1));
-		s_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_DiffuseTexture, m_SpecularTexture, m_NormalTexture, m_DepthTexture));
+		s_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_AlbedoTexture, m_MetallicRoughnessAOTexture, m_NormalTexture, m_DepthTexture));
 		s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<ParticlePass>(s_ParticlesPipelineState, m_DepthTexture, m_NormalTexture));
 	}

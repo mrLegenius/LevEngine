@@ -9,10 +9,10 @@ namespace LevEngine
 {
 	bool DeferredLightingPass::Begin(entt::registry& registry, RenderParams& params)
 	{
-		m_DiffuseTexture->Bind(1, ShaderType::Pixel);
-		m_SpecularTexture->Bind(2, ShaderType::Pixel);
-		m_NormalTexture->Bind(3, ShaderType::Pixel);
-		m_DepthTexture->Bind(4, ShaderType::Pixel);
+		m_AlbedoMap->Bind(1, ShaderType::Pixel);
+		m_NormalMap->Bind(2, ShaderType::Pixel);
+		m_MetallicRoughnessAOMap->Bind(3, ShaderType::Pixel);
+		m_DepthMap->Bind(4, ShaderType::Pixel);
 
 		return RenderPass::Begin(registry, params);
 	}
@@ -30,6 +30,8 @@ namespace LevEngine
 			auto model = Matrix::CreateScale(light.Range, light.Range, light.Range)
 				* Matrix::CreateTranslation(worldPosition);
 
+			m_Pipeline1->GetRenderTarget()->Clear( ClearFlags::Stencil, Vector4::Zero, 1.0f, 1 );
+			
 			m_LightIndexBuffer->SetData(&m_LightParams);
 			m_LightIndexBuffer->Bind(ShaderType::Pixel);
 
@@ -47,10 +49,10 @@ namespace LevEngine
 
 	void DeferredLightingPass::End(entt::registry& registry, RenderParams& params)
 	{
-		m_DiffuseTexture->Unbind(1, ShaderType::Pixel);
-		m_SpecularTexture->Unbind(2, ShaderType::Pixel);
-		m_NormalTexture->Unbind(3, ShaderType::Pixel);
-		m_DepthTexture->Unbind(4, ShaderType::Pixel);
+		m_AlbedoMap->Unbind(1, ShaderType::Pixel);
+		m_NormalMap->Unbind(2, ShaderType::Pixel);
+		m_MetallicRoughnessAOMap->Unbind(3, ShaderType::Pixel);
+		m_DepthMap->Unbind(4, ShaderType::Pixel);
 	}
 }
 
