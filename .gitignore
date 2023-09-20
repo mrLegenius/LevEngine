@@ -34,6 +34,7 @@ Latest commit 491040e on Jan 26, 2022
 
 # LevEngine ignores
 Sandbox/LevResources/
+LevEditor/SaveData.editor
 
 #Profiler output
 LevEngineProfile-*.json
