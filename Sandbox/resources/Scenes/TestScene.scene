@@ -1,5 +1,25 @@
 Scene: Scene Name
 Entities:
+  - Entity: 1505402216038266346
+    Tag: New Entity
+    Transform:
+      Position: [3.70000005, 3.9000001, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    MeshRenderer:
+      Mesh: 4136629942807961606
+      Material: 13329391460008384187
+      Cast Shadow: true
+  - Entity: 3187912942755661022
+    Tag: New Entity
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    MeshRenderer:
+      Mesh: 4915651832749162070
+      Material: 6368603494050966349
+      Cast Shadow: true
   - Entity: 16565123621967757236
     Tag: Rifle
     Transform:
@@ -66,7 +86,7 @@ Entities:
     Tag: Directional Light
     Transform:
       Position: [-4.61883545, 11.7034178, -2.41830444]
-      Rotation: [-0.924336255, -1.87408185, -2.2923727]
+      Rotation: [-0.924337626, -1.74316537, -2.29237294]
       Scale: [0.999945402, 0.999966264, 0.999982893]
     Camera:
       Camera:
@@ -74,9 +94,9 @@ Entities:
         PerspectiveFOV: 45
         PerspectiveNear: 0.100000001
         PerspectiveFar: 1000
-        OrthographicSize: 9
+        OrthographicSize: 5
         OrthographicNear: 2
-        OrthographicFar: 10000
+        OrthographicFar: 2000
       Main: false
       FixedAspectRatio: false
     Directional Light:
@@ -120,7 +140,7 @@ Entities:
     Tag: Floor
     Transform:
       Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
+      Rotation: [-0, 0, -0]
       Scale: [50, 1, 50]
     Rigidbody:
       Body Type: 0
@@ -135,7 +155,7 @@ Entities:
       Offset: [0, 0, 0]
     MeshRenderer:
       Mesh: 6362171717149004471
-      Material: 9169973734714539385
+      Material: 3408746618771347714
       Cast Shadow: false
   - Entity: 15749311956304931436
     Tag: Fire Particles
