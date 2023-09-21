@@ -13,6 +13,7 @@ namespace LevEngine::Editor
 class EditorLayer final : public Layer
 {
 public:
+	void ShowProjectSelectionPopup();
 	bool OpenProject();
 	bool NewProject();
 	void LoadProject();
