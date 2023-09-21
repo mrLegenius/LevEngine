@@ -11,6 +11,16 @@
 
 namespace LevEngine::Editor
 {
+    void EditorLayer::ShowProjectSelectionPopup()
+    {
+        ModalPopup::Show("Project Selection",
+    "Open existing or create new project",
+    "Open",
+    "Create new",
+    [this] { if(!OpenProject()) ShowProjectSelectionPopup(); },
+    [this]{ if(!NewProject()) ShowProjectSelectionPopup(); });
+    }
+    
     bool EditorLayer::OpenProject()
     {
         const String& path = FileDialogs::OpenFile("LevProject (*.levproject)\0*.levproject\0");
@@ -72,12 +82,7 @@ namespace LevEngine::Editor
         }
         else
         {
-            ModalPopup::Show("Project Selection",
-                "Open existing or create new project",
-                "Open",
-                "Create new",
-                [this] { if(!OpenProject()) LEV_THROW("Failed to open project") },
-                [this]{ if(!NewProject()) LEV_THROW("Failed to create new project") });
+            ShowProjectSelectionPopup();
         }
 
         Application::Get().GetWindow().EnableCursor();
