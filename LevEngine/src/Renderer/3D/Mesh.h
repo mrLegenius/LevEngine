@@ -1,8 +1,8 @@
 #pragma once
-#include <map>
 
 #include "DataTypes/Map.h"
 #include "DataTypes/Vector.h"
+#include "Math/BoundingVolume.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Renderer/BufferBinding.h"
@@ -122,6 +122,16 @@ public:
 	void AddTangent(Vector3 value) { tangents.emplace_back(value); }
 	void AddBiTangent(Vector3 value) { biTangents.emplace_back(value); }
 
+	void SetAABBBoundingVolume(const Vector3& min, const Vector3& max)
+	{
+		m_BoundingVolume = {min, max};
+	}
+
+	[[nodiscard]] bool IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) const
+	{
+		return m_BoundingVolume.IsOnFrustum(frustum, meshTransform);
+	}
+
 	Ref<IndexBuffer> IndexBuffer;
 
 private:
@@ -134,5 +144,7 @@ private:
 	Vector<Vector3> tangents;
 	Vector<Vector3> biTangents;
 	Vector<Color> colors;
+
+	AABBBoundingVolume m_BoundingVolume{};
 };
 }

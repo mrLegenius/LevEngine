@@ -170,7 +170,7 @@ void Renderer::Init()
 		s_OpaquePipeline = CreateRef<PipelineState>();
 		s_OpaquePipeline->GetRasterizerState().SetCullMode(CullMode::Back);
 		s_OpaquePipeline->SetShader(ShaderType::Vertex, ShaderAssets::ForwardPBR());
-		s_OpaquePipeline->SetShader(ShaderType::Vertex, ShaderAssets::ForwardPBR());
+		s_OpaquePipeline->SetShader(ShaderType::Pixel, ShaderAssets::ForwardPBR());
 		s_OpaquePipeline->SetRenderTarget(mainRenderTarget);
 	}
 
@@ -318,6 +318,8 @@ void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const T
 
 	RecalculateAllTransforms(registry);
 
+	mainCamera->RecalculateFrustum(*cameraTransform);
+	
 	const auto renderParams = CreateRenderParams(mainCamera, cameraTransform);
 
 	//TODO: Maybe move to its own pass?

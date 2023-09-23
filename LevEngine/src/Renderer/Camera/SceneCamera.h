@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "DataTypes/Vector.h"
 #include "Math/Math.h"
+#include "Math/Frustum.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
@@ -21,8 +23,12 @@ public:
 	[[nodiscard]] Matrix GetPerspectiveProjection() const { return m_PerspectiveProjection; }
 	float GetPerspectiveProjectionSliceDistance(float cascadeDistance) const;
 
+	void RecalculateFrustum(const Transform& cameraTransform);
+	[[nodiscard]] const Frustum& GetFrustum() const { return m_Frustum; }
+
 protected:
 
+	Frustum m_Frustum;
 	ProjectionType m_ProjectionType = ProjectionType::Perspective;
 	float m_AspectRatio = 1.0f;
 	uint32_t m_ViewportHeight = 0;

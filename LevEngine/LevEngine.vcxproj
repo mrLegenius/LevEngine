@@ -476,8 +476,11 @@
     <ClInclude Include="src\Kernel\UUID.h" />
     <ClInclude Include="src\Kernel\Window.h" />
     <ClInclude Include="src\LevEngine.h" />
+    <ClInclude Include="src\Math\BoundingVolume.h" />
+    <ClInclude Include="src\Math\Frustum.h" />
     <ClInclude Include="src\Math\Math.h" />
     <ClInclude Include="src\Math\Matrix.h" />
+    <ClInclude Include="src\Math\Plane.h" />
     <ClInclude Include="src\Math\Quaternion.h" />
     <ClInclude Include="src\Math\Random.h" />
     <ClInclude Include="src\Math\Vector2.h" />

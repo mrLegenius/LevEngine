@@ -27,6 +27,8 @@ struct RenderSettings
 	//Lightning
 	static constexpr int MaxPointLights = 200;
 	static constexpr Vector3 GlobalAmbient{ 0.03f, 0.03f, 0.03f };
+
+	static constexpr bool UseFrustumCulling = true;
 	static constexpr RenderTechniqueType RenderTechnique = RenderTechniqueType::Deferred;
 
 	static constexpr uint32_t ShadowMapSlot = 9;

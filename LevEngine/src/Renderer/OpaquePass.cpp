@@ -44,6 +44,11 @@ namespace LevEngine
             const auto mesh = meshRenderer.mesh->GetMesh();
             if (!mesh) continue;
             if (!meshRenderer.material) continue;
+
+            if constexpr (RenderSettings::UseFrustumCulling)
+            {
+                if (!mesh->IsOnFrustum(params.Camera.GetFrustum(), transform)) continue;
+            }
             
             auto& material = meshRenderer.material->GetMaterial();
             material.Bind(shader);
