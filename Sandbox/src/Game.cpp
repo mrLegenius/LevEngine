@@ -37,7 +37,33 @@ namespace Sandbox
 		SceneManager::GetActiveScene()->DestroyEntity(other);
 		score++;
 	}
-	
+
+	class FPRCameraRotationSystem : public System
+	{
+	public:
+		void Update(float deltaTime, entt::registry& registry) override
+		{
+			const auto view = registry.view<Transform, CameraComponent>();
+
+			constexpr auto rotationSpeed = 45;
+			const Vector2 mouse{ Input::GetMouseDelta().first, Input::GetMouseDelta().second };
+			
+			for (const auto entity : view)
+			{
+				auto [transform, camera] = view.get<Transform, CameraComponent>(entity);
+
+				if (!camera.isMain) continue;
+				
+				const auto delta = mouse * rotationSpeed * deltaTime;
+
+				auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
+				rotation.x -= delta.y;
+
+				rotation.x = Math::Clamp(rotation.x, -89.99f, 89.999f);
+				transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
+			}
+		}
+	};
 	class FPSMovementSystem : public System
 	{
 		void Update(const float deltaTime, entt::registry& registry) override
@@ -50,14 +76,11 @@ namespace Sandbox
 			for (const auto entity : view)
 			{
 				auto [transform, player, rigidbody] = view.get<Transform, Player, Rigidbody>(entity);
-				
+
 				const auto delta = mouse * rotationSpeed * deltaTime;
 
 				auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
 				rotation.y -= delta.x;
-				rotation.x -= delta.y;
-
-				rotation.x = Math::Clamp(rotation.x, -89.99f, 89.999f);
 				transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
 				
 				if (Input::IsKeyDown(KeyCode::W))
@@ -167,6 +190,8 @@ namespace Sandbox
 	public:
 		void Update(const float deltaTime, entt::registry& registry) override
 		{
+			return;
+			
 			m_Timer += deltaTime;
 
 			if (m_Timer >= m_SpawnInterval)
@@ -231,21 +256,6 @@ namespace Sandbox
 			collider.extents = Vector3{0.25, 1, 0.25};
 			collider.offset = Vector3{0, 1, 0};
 
-			{
-				const auto sword = scene->CreateEntity("Sword");
-
-				auto& swordTransform = sword.GetComponent<Transform>();
-				swordTransform.SetParent(player);
-				swordTransform.SetLocalPosition({0.7f, 2, -4});
-				swordTransform.SetLocalScale(Vector3::One * 0.2f);
-				const auto eulers = Vector3{10, 100, 0} * Math::DegToRad;
-				swordTransform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(eulers));
-				
-				auto& mesh = sword.AddComponent<MeshRendererComponent>();
-				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "sword.fbx");
-				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "Sword.pbr");
-			}
-
 			const auto view = registry.view<Transform, CameraComponent>();
 			for (const auto entity : view)
 			{
@@ -256,6 +266,20 @@ namespace Sandbox
 				transform.SetParent(player);
 				transform.SetLocalRotation(Quaternion::Identity);
 				transform.SetLocalPosition(Vector3{0, 4, 0});
+
+				{
+					const auto sword = scene->CreateEntity("Sword");
+					auto& swordTransform = sword.GetComponent<Transform>();
+					swordTransform.SetParent(SceneManager::GetActiveScene()->GetEntityBy(&transform));
+					swordTransform.SetLocalPosition({0.7f, -2, -4});
+					swordTransform.SetLocalScale(Vector3::One * 0.2f);
+					const auto eulers = Vector3{10, 100, 0} * Math::DegToRad;
+					swordTransform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(eulers));
+				
+					auto& mesh = sword.AddComponent<MeshRendererComponent>();
+					mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "sword.fbx");
+					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "Sword.pbr");
+				}
 			}
 		}
 	};
@@ -306,6 +330,7 @@ namespace Sandbox
 		auto& scene = SceneManager::GetActiveScene();
 
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
+		scene->RegisterUpdateSystem<FPRCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
 		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
