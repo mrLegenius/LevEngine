@@ -27,6 +27,17 @@ namespace LevEngine
 			auto [transform, light] = view.get<Transform, PointLightComponent>(entity);
 
 			auto worldPosition = transform.GetWorldPosition();
+			
+			if constexpr (RenderSettings::UseFrustumCulling)
+			{
+				auto sphereBoundingVolume = SphereBoundingVolume{worldPosition, light.Range};
+				if (!sphereBoundingVolume.IsOnFrustum(params.Camera.GetFrustum()))
+				{
+					m_LightParams.LightIndex++;
+					continue;
+				}
+			}
+			
 			auto model = Matrix::CreateScale(light.Range, light.Range, light.Range)
 				* Matrix::CreateTranslation(worldPosition);
 

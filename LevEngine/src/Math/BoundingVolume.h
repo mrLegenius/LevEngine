@@ -22,19 +22,25 @@ struct SphereBoundingVolume final : BoundingVolume
         return plane.GetSignedDistanceToPlane(center) > -radius;
     }
 
+	[[nodiscard]] bool IsOnFrustum(const Frustum& camFrustum) const
+    {
+    	//Check Firstly the result that have the most chance to failure to avoid to call all functions.
+    	return IsOnOrForwardPlane(camFrustum.leftFace)
+			&& IsOnOrForwardPlane(camFrustum.rightFace)
+			&& IsOnOrForwardPlane(camFrustum.farFace)
+			&& IsOnOrForwardPlane(camFrustum.nearFace)
+			&& IsOnOrForwardPlane(camFrustum.topFace)
+			&& IsOnOrForwardPlane(camFrustum.bottomFace);
+    };
+	
     [[nodiscard]] bool IsOnFrustum(const Frustum& camFrustum, const Transform& transform) const override
     {
-        //Get global scale thanks to our transform
-        const Vector3 globalScale = transform.GetWorldScale();
-
-        //Get our global center with process it with the global model matrix of our transform
-        const Vector3 globalCenter{ Vector3::Transform(center, transform.GetModel())};
-
-        //To wrap correctly our shape, we need the maximum scale scalar.
-        const float maxScale = Math::MaxElement(globalScale);
-
-        //Max scale is assuming for the diameter. So, we need the half to apply it to our radius
-        const SphereBoundingVolume globalSphere(globalCenter, radius * (maxScale * 0.5f));
+        const Vector3 worldScale = transform.GetWorldScale();
+        const Vector3 worldCenter = Vector3::Transform(center, transform.GetModel());
+    	
+        const float maxScale = Math::MaxElement(worldScale);
+    	
+        const SphereBoundingVolume globalSphere(worldCenter, radius * maxScale);
 
         //Check Firstly the result that have the most chance to failure to avoid to call all functions.
         return globalSphere.IsOnOrForwardPlane(camFrustum.leftFace)
