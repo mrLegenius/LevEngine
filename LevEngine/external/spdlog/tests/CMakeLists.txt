@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
 project(spdlog_utests CXX)
 
 if(NOT TARGET spdlog)
@@ -44,7 +44,8 @@ set(SPDLOG_UTESTS_SOURCES
     test_custom_callbacks.cpp
     test_cfg.cpp
     test_time_point.cpp
-    test_stopwatch.cpp)
+    test_stopwatch.cpp
+    test_circular_q.cpp)
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
     list(APPEND SPDLOG_UTESTS_SOURCES test_errors.cpp)

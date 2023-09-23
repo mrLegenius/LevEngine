@@ -34,27 +34,27 @@ namespace LevEngine::Log
 	template <typename T> constexpr void CoreError(T message) { Logger::GetCoreLogger()->error(message); }
 	template <typename T> constexpr void CoreCritical(T message) { Logger::GetCoreLogger()->critical(message); }
 
-	template<typename FormatString, typename... Args> constexpr void CoreTrace(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void CoreTrace(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetCoreLogger()->trace(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void CoreDebug(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void CoreDebug(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetCoreLogger()->debug(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void CoreInfo(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void CoreInfo(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetCoreLogger()->info(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void CoreWarning(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void CoreWarning(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetCoreLogger()->warn(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void CoreError(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void CoreError(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetCoreLogger()->error(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void CoreCritical(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void CoreCritical(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetCoreLogger()->critical(format, std::forward<Args>(args)...);
 	}
@@ -68,27 +68,27 @@ namespace LevEngine::Log
 	template <typename T> constexpr void Error(T message) { Logger::GetLogger()->error(message); }
 	template <typename T> constexpr void Critical(T message) { Logger::GetLogger()->critical(message); }
 
-	template<typename FormatString, typename... Args> constexpr void Trace(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void Trace(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetLogger()->trace(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void Debug(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void Debug(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetLogger()->debug(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void Info(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void Info(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetLogger()->info(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void Warning(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void Warning(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetLogger()->warn(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void Error(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void Error(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetLogger()->error(format, std::forward<Args>(args)...);
 	}
-	template<typename FormatString, typename... Args> constexpr void Critical(const FormatString& format, Args&&...args)
+	template<typename... Args> constexpr void Critical(fmt::format_string<Args...> format, Args&&...args)
 	{
 		Logger::GetLogger()->critical(format, std::forward<Args>(args)...);
 	}
