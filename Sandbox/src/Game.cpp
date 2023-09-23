@@ -56,6 +56,8 @@ namespace Sandbox
 				auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
 				rotation.y -= delta.x;
 				rotation.x -= delta.y;
+
+				rotation.x = Math::Clamp(rotation.x, -89.99f, 89.999f);
 				transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
 				
 				if (Input::IsKeyDown(KeyCode::W))
@@ -113,7 +115,7 @@ namespace Sandbox
 					
 					auto& mesh = projectileMeshEntity.AddComponent<MeshRendererComponent>();
 					mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Models" / "lava_rock.obj");
-					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Textures" / "LavaRock" /  "LavaRock.mat");
+					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Textures" / "LavaRock" / "LavaRock.pbr");
 
 					auto& projectileComp = projectile.AddComponent<Projectile>();
 
@@ -196,7 +198,7 @@ namespace Sandbox
 					
 				auto& mesh = meshEntity.AddComponent<MeshRendererComponent>();
 				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Enemy" / "enemy_model.fbx");
-				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Enemy" /  "enemy_material.mat");
+				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Enemy" /  "enemy_material.pbr");
 
 			}
 		}
@@ -241,7 +243,7 @@ namespace Sandbox
 				
 				auto& mesh = sword.AddComponent<MeshRendererComponent>();
 				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "sword.fbx");
-				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "Sword.mat");
+				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "Sword.pbr");
 			}
 
 			const auto view = registry.view<Transform, CameraComponent>();
