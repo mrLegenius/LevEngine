@@ -3,7 +3,6 @@
 
 #include <chrono>
 
-#include "Time.h"
 #include "Utils.h"
 #include "../Renderer/Renderer.h"
 #include "../Events/ApplicationEvent.h"
@@ -12,6 +11,8 @@
 #include "../Input/Input.h"
 #include "../Events/Event.h"
 #include "Math/Random.h"
+#include "Time/Time.h"
+#include "Time/TimelineRunner.h"
 
 namespace LevEngine
 {
@@ -48,12 +49,16 @@ void Application::Run()
 	float totalTime = 0;
 	unsigned int frameCount = 0;
 
+	Time::Init(1 / 60.0f);
+
 	while (m_IsRunning)
 	{
 		auto curTime = std::chrono::steady_clock::now();
 		const float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
 		Time::SetDeltaTime(deltaTime);
 		PrevTime = curTime;
+
+		TimelineRunner::OnUpdate(deltaTime);
 
 		totalTime += deltaTime;
 		frameCount++;

@@ -80,6 +80,8 @@ namespace LevEngine::Editor
                 [this]{ if(!NewProject()) LEV_THROW("Failed to create new project") });
         }
 
+        WaypointMovementComponent unused;
+
         Application::Get().GetWindow().EnableCursor();
     }
 

@@ -59,7 +59,12 @@ public:
 		m_EventSystems.emplace_back(CreateScope<EventSystem<T>>());
 	}
 
-	Entity GetEntityBy(Transform* value);
+	template<typename T>
+	Entity GetEntityBy(T* value)
+	{
+		const auto entity = entt::to_entity(m_Registry, *value);
+		return ConvertEntity(entity);
+	}
 
 private:
 	entt::registry m_Registry;

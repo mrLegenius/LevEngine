@@ -5,6 +5,7 @@
 
 namespace LevEngine
 {
+	class Timeline;
 	class Application;
 
 	class Time
@@ -12,12 +13,18 @@ namespace LevEngine
 	public:
 		friend Application;
 
+		static void Init(float deltaTimeFixed);
 		static void SetDeltaTime(float deltaTime);
-		static Timestep GetDeltaTime();
+		static Timestep GetScaledDeltaTime();
+		static Timestep GetUnscaledDeltaTime();
+		static Timestep GetFixedDeltaTime();
 		static Timestep GetTimeSinceStartup();
-	private:
 		
+	private:
 		static Timestep s_DeltaTime;
+		static Timestep s_DeltaTimeFixed;
 		static std::chrono::time_point<std::chrono::high_resolution_clock> s_StartupTime;
+		static Timeline* s_TimelineVariable;
+		static Timeline* s_TimelineFixed;
 	};
 }

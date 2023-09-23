@@ -3,6 +3,9 @@
 #include "Assets/AssetDatabase.h"
 #include "Kernel/Color.h"
 #include "Renderer/Texture.h"
+#include "Scene/Entity.h"
+#include "Scene/SceneManager.h"
+#include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
@@ -70,6 +73,105 @@ namespace LevEngine
 					*assetPtr = newAsset;
 					changed = true;
 				}
+			}
+			ImGui::EndDragDropTarget();
+
+			return changed;
+		}
+
+		template<class T>
+		static bool DrawSelectableComponentList(const String& label, Vector<Ref<T>>& components, int& itemSelectedIdx)
+		{
+			bool changed = false;
+			
+			if (ImGui::BeginListBox(label.c_str()))
+			{
+				const int count = static_cast<int>(components.size());
+				for (int idx = 0; idx < count; idx++)
+				{
+					const bool wasSelected = (itemSelectedIdx == idx);
+					bool isSelected = false;
+					auto componentPtr = &components[idx];
+					if (GUIUtils::DrawSelectableComponentRef<T>(TypeParseTraits<Transform>::name, componentPtr, wasSelected, isSelected, idx))
+					{
+						changed = true;
+					}
+
+					if (isSelected)
+					{
+						itemSelectedIdx = idx;
+
+						const auto scene = SceneManager::GetActiveScene();
+						Entity entity = scene->GetEntityBy(componentPtr);
+						//Selection::Select(CreateRef<EntitySelection>(entity));
+					}
+				}
+				ImGui::EndListBox();
+			}
+
+			ImGui::AlignTextToFramePadding();
+			if (ImGui::Button("+"))
+			{
+				components.emplace_back(eastl::shared_ptr<T>());
+				itemSelectedIdx = components.size() - 1;
+				changed = true;
+			}
+			ImGui::SameLine();
+
+			if (ImGui::Button("-"))
+			{
+				if (itemSelectedIdx >= 0 && itemSelectedIdx + 1 < components.size())
+				{
+					components.erase_first(components[itemSelectedIdx]);
+					changed = true;
+				}
+				else if (components.size() > 0)
+				{
+					if (itemSelectedIdx == components.size() - 1)
+					{
+						--itemSelectedIdx;
+					}
+					
+					components.pop_back();
+					changed = true;
+				}
+			}
+
+			return changed;
+		}
+
+		template<class T>
+		static bool DrawSelectableComponentRef(const String& label, Ref<T>* componentPtr, bool wasSelected, bool& isSelected, int selectableIdx = 0)
+		{
+			const auto& component = *componentPtr;
+			auto changed = false;
+
+			ImGui::AlignTextToFramePadding();
+			const auto componentRefName = String(component ? "Component is assigned" : "None");
+			const auto uniqueId = "##" + ToString(selectableIdx);
+			isSelected = ImGui::Selectable((label + " " + componentRefName + uniqueId).c_str(), wasSelected);
+			
+			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+			if (wasSelected)
+				ImGui::SetItemDefaultFocus();
+
+			if (component && ImGui::BeginPopupContextItem("Component"))
+			{
+				if (ImGui::MenuItem("Clear"))
+				{
+					*componentPtr = nullptr;
+					changed = true;
+				}
+
+				ImGui::EndPopup();
+			}
+
+			if (!ImGui::BeginDragDropTarget()) return changed;
+
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EntityPayload))
+			{
+				const auto draggedEntity = *static_cast<Entity*>(payload->Data);
+				*componentPtr = CreateRef(draggedEntity.GetComponent<T>());
 			}
 			ImGui::EndDragDropTarget();
 
