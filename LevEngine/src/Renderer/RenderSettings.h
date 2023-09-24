@@ -40,4 +40,9 @@ struct RenderSettings
 
 	static constexpr bool EnableShaderDebug = false;
 };
+
+struct RenderDebugSettings
+{
+	static constexpr bool DrawBoundingVolumes = false;
+};
 }
