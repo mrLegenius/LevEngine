@@ -8,6 +8,7 @@
 #include "Renderer3D.h"
 #include "ShadowMapPass.h"
 #include "SkyboxPass.h"
+#include "DebugRender/DebugRenderPass.h"
 #include "Kernel/Application.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/Camera/Camera.h"
@@ -23,6 +24,7 @@ Ref<RenderTarget> Renderer::s_GBufferRenderTarget;
 Ref<RenderTarget> Renderer::s_DepthOnlyRenderTarget;
 Ref<PipelineState> Renderer::s_GBufferPipeline;
 Ref<PipelineState> Renderer::s_OpaquePipeline;
+Ref<PipelineState> Renderer::s_DebugPipeline;
 Ref<PipelineState> Renderer::s_SkyboxPipeline;
 Ref<PipelineState> Renderer::s_ParticlesPipelineState;
 Ref<PipelineState> Renderer::m_PositionalLightPipeline1;
@@ -175,6 +177,16 @@ void Renderer::Init()
 	}
 
 	{
+		LEV_PROFILE_SCOPE("Debug pipeline creation");
+
+		s_DebugPipeline = CreateRef<PipelineState>();
+		s_DebugPipeline->GetRasterizerState().SetCullMode(CullMode::Back);
+		s_DebugPipeline->SetShader(ShaderType::Vertex, ShaderAssets::Debug());
+		s_DebugPipeline->SetShader(ShaderType::Pixel, ShaderAssets::Debug());
+		s_DebugPipeline->SetRenderTarget(mainRenderTarget);
+	}
+
+	{
 		LEV_PROFILE_SCOPE("Skybox pipeline creation");
 
 		s_SkyboxPipeline = CreateRef<PipelineState>();
@@ -206,6 +218,7 @@ void Renderer::Init()
 		s_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(s_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture));
 		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, ClearFlags::Stencil, Vector4::Zero, 1, 1));
 		s_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_AlbedoTexture, m_MetallicRoughnessAOTexture, m_NormalTexture, m_DepthTexture));
+		s_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<ParticlePass>(s_ParticlesPipelineState, m_DepthTexture, m_NormalTexture));
 	}
@@ -217,19 +230,13 @@ void Renderer::Init()
 		s_ForwardTechnique->AddPass(CreateRef<ShadowMapPass>());
 		s_ForwardTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget));
 		s_ForwardTechnique->AddPass(CreateRef<OpaquePass>(s_OpaquePipeline));
+		s_ForwardTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_ForwardTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));
 		//TODO: Fix particle bounce
 		s_ForwardTechnique->AddPass(CreateRef<ParticlePass>(s_ParticlesPipelineState, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_NormalTexture));
 	}
 
-	const Viewport viewport = { 0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height) };
-
-	m_PositionalLightPipeline1->GetRasterizerState().SetViewport(viewport);
-	m_PositionalLightPipeline2->GetRasterizerState().SetViewport(viewport);
-	s_GBufferPipeline->GetRasterizerState().SetViewport(viewport);
-	s_OpaquePipeline->GetRasterizerState().SetViewport(viewport);
-	s_SkyboxPipeline->GetRasterizerState().SetViewport(viewport);
-	s_ParticlesPipelineState->GetRasterizerState().SetViewport(viewport);
+	SetViewport(static_cast<float>(width), static_cast<float>(height));
 }
 
 void Renderer::Shutdown()
@@ -248,6 +255,7 @@ void Renderer::SetViewport(const float width, const float height)
 	m_PositionalLightPipeline2->GetRasterizerState().SetViewport(viewport);
 	s_GBufferPipeline->GetRasterizerState().SetViewport(viewport);
 	s_OpaquePipeline->GetRasterizerState().SetViewport(viewport);
+	s_DebugPipeline->GetRasterizerState().SetViewport(viewport);
 	s_SkyboxPipeline->GetRasterizerState().SetViewport(viewport);
 	s_ParticlesPipelineState->GetRasterizerState().SetViewport(viewport);
 

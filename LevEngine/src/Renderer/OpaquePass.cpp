@@ -2,8 +2,6 @@
 #include "OpaquePass.h"
 
 #include "Renderer3D.h"
-#include "DebugRender/DebugRender.h"
-#include "Kernel/Time.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
@@ -54,8 +52,6 @@ namespace LevEngine
             Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
             material.Unbind(shader);
         }
-        
-        DebugRender::Update(Time::GetDeltaTime().GetSeconds());
     }
 
     void OpaquePass::End(entt::registry& registry, RenderParams& params)

@@ -64,20 +64,4 @@ namespace LevEngine
     {
         DrawLine(origin, origin + direction, color);
     }
-
-    void DebugRender::Update(float deltaTime)
-    {
-        static auto debugBuffer = ConstantBuffer::Create(sizeof Color);
-        
-        ShaderAssets::Debug()->Bind();
-        while (!m_Shapes.empty())
-        {
-            const auto& gizmo = m_Shapes.front();
-            debugBuffer->SetData(&gizmo->GetColor());
-            debugBuffer->Bind(2, ShaderType::Pixel);
-            gizmo->Draw();
-            m_Shapes.pop();
-        }
-        ShaderAssets::Debug()->Unbind();
-    }
 }

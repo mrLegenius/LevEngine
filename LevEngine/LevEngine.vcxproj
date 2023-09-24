@@ -524,6 +524,7 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugCube.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugLine.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRender.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugRenderPass.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugShape.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugSphere.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugWireCube.h" />
@@ -917,6 +918,7 @@
       <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;D:\Projects\C++\LevEngine\\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
+    <ClCompile Include="src\Renderer\DebugRender\DebugRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Material.cpp" />
     <ClCompile Include="src\Renderer\MaterialPBR.cpp" />
     <ClCompile Include="src\Renderer\RendererContext.cpp" />

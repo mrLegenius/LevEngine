@@ -15,8 +15,7 @@ namespace LevEngine
         static void DrawLine(Vector3 start, Vector3 end, Color color);
         static void DrawRay(Vector3 origin, Vector3 direction, Color color);
 
-        static void Update(float deltaTime);
-
+        static Queue<Ref<DebugShape>>& GetRequestedShapes() { return m_Shapes; }
     private:
         inline static Queue<Ref<DebugShape>> m_Shapes;
     };
