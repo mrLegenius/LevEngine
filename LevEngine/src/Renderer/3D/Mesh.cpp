@@ -42,6 +42,58 @@ Ref<Mesh> Mesh::CreatePlane(const int resolution)
 	return mesh;
 }
 
+Ref<Mesh> Mesh::CreateWireCube()
+{
+	auto mesh = CreateRef<Mesh>();
+
+	for (int i = 0; i < 8; i++) 
+	{
+		mesh->AddVertex(Vector3(
+			static_cast<float>(i & 1) - 0.5f,
+			static_cast<float>((i >> 1) & 1) - 0.5f,
+			static_cast<float>(i >> 2) - 0.5f));
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		mesh->AddIndex(2 * i);
+		mesh->AddIndex(2 * i + 1);
+
+		mesh->AddIndex(i);
+		mesh->AddIndex(i + 4);
+
+		if (i < 2)
+		{
+			mesh->AddIndex(i);
+			mesh->AddIndex(i + 2);
+		}
+		else
+		{
+			mesh->AddIndex(i + 2);
+			mesh->AddIndex(i + 4);
+		}
+	}
+
+	mesh->Init();
+
+	return mesh;
+}
+
+Ref<Mesh> Mesh::CreateLine(const Vector3 start, const Vector3 end)
+{
+	auto mesh = CreateRef<Mesh>();
+
+	mesh->AddVertex(start);
+	mesh->AddVertex(end);
+	mesh->AddIndex(0);
+	mesh->AddIndex(1);
+
+	mesh->Init();
+
+	return mesh;
+}
+
+	
 Ref<Mesh> Mesh::CreateCube()
 {
 	auto mesh = CreateRef<Mesh>();
@@ -175,8 +227,8 @@ Ref<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 	assert(sliceCount >= 3u);
 
 	const uint32_t stackCount = sliceCount / 2;
-	const auto phiStep = DirectX::XM_PI / stackCount;
-	const auto thetaStep = DirectX::XM_2PI / sliceCount;
+	const auto phiStep = DirectX::XM_PI / static_cast<float>(stackCount);
+	const auto thetaStep = DirectX::XM_2PI / static_cast<float>(sliceCount);
 
 	auto mesh = CreateRef<Mesh>();
 
@@ -247,6 +299,37 @@ Ref<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 	return mesh;
 }
 
+Ref<Mesh> Mesh::CreateRing(const Vector3 majorAxis, const Vector3 minorAxis)
+{
+	const auto mesh = CreateRef<Mesh>();
+	
+	constexpr size_t ringSegments = 32;
+	constexpr float fAngleDelta = 2 * Math::Pi / static_cast<float>(ringSegments);
+
+	const auto cosDelta = Vector3(cosf(fAngleDelta));
+	const auto sinDelta = Vector3(sinf(fAngleDelta));
+
+	Vector3 sin = Vector3::Zero;
+	Vector3 cos = Vector3::One;
+	
+	for (size_t i = 0; i < ringSegments; i++)
+	{
+		Vector3 pos = majorAxis * cos + minorAxis * sin;
+		mesh->AddVertex(pos);
+
+		const auto newCos = cos * cosDelta - sin * sinDelta;
+		const auto newSin = cos * sinDelta + sin * cosDelta;
+
+		cos = newCos;
+		sin = newSin;
+	}
+
+	mesh->Init();
+
+	return mesh;
+}
+
+	
 Ref<IndexBuffer> Mesh::CreateIndexBuffer() const
 {
 	const auto indicesCount = GetIndicesCount();

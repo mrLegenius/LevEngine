@@ -25,7 +25,10 @@ public:
 	Mesh() = default;
 
 	static Ref<Mesh> CreatePlane(int resolution);
+	static Ref<Mesh> CreateWireCube();
+	static Ref<Mesh> CreateLine(Vector3 start, Vector3 end);
 	static Ref<Mesh> CreateSphere(uint32_t sliceCount);
+	static Ref<Mesh> CreateRing(const Vector3 majorAxis, const Vector3 minorAxis);
 	static Ref<Mesh> CreateCube();
 
 	Ref<IndexBuffer> CreateIndexBuffer() const;
@@ -70,7 +73,8 @@ public:
 
 	void Init()
 	{
-		IndexBuffer = CreateIndexBuffer();
+		if (indices.size())
+			IndexBuffer = CreateIndexBuffer();
 
 		if (vertices.size())
 		{
@@ -122,10 +126,8 @@ public:
 	void AddTangent(Vector3 value) { tangents.emplace_back(value); }
 	void AddBiTangent(Vector3 value) { biTangents.emplace_back(value); }
 
-	void SetAABBBoundingVolume(const Vector3& min, const Vector3& max)
-	{
-		m_BoundingVolume = {min, max};
-	}
+	void SetAABBBoundingVolume(const Vector3& min, const Vector3& max) { m_BoundingVolume = {min, max}; }
+	[[nodiscard]] const AABBBoundingVolume& GetAABBBoundingVolume() { return m_BoundingVolume; }
 
 	[[nodiscard]] bool IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) const
 	{
