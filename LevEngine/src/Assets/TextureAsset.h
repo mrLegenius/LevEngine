@@ -8,15 +8,15 @@ namespace LevEngine
 	class TextureAsset final : public Asset
 	{
 	public:
+		Ref<SamplerState> samplerState;
+		
 		TextureAsset(const Path& path, const UUID& uuid) : Asset(path, uuid)
 		{
-			m_SamplerState = SamplerState::Create();
+			samplerState = SamplerState::Create();
 		}
 
 		[[nodiscard]] const Ref<Texture>& GetTexture() const { return m_Texture; }
-
-		void DrawProperties() override;
-
+		
 		[[nodiscard]] Ref<Texture> GetIcon() const override
 		{
 			if (m_Texture)
@@ -35,11 +35,10 @@ namespace LevEngine
 		void DeserializeData(YAML::Node& node) override
 		{
 			m_Texture = TextureLibrary::GetTexture(m_Path.string().c_str());
-			m_Texture->AttachSampler(m_SamplerState);
+			m_Texture->AttachSampler(samplerState);
 		}
 		
 	private:
 		Ref<Texture> m_Texture;
-		Ref<SamplerState> m_SamplerState;
 	};
 }

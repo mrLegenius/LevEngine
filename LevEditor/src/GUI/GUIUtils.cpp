@@ -1,4 +1,4 @@
-﻿#include "levpch.h"
+﻿#include "pch.h"
 #include "GUIUtils.h"
 
 #include <imgui.h>
@@ -7,7 +7,7 @@
 #include "TextureLibrary.h"
 #include "Assets/AssetDatabase.h"
 
-namespace LevEngine
+namespace LevEngine::Editor
 {
 #define IntToFloat(x) ((x) / 255.0f)
 	constexpr auto redDark = ImVec4{ IntToFloat(75), IntToFloat(10), IntToFloat(10), 1.0f };

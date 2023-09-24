@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "ModalPopup.h"
 
+#include "imgui.h"
+
 namespace LevEngine::Editor
 {
     void ModalPopup::Show(

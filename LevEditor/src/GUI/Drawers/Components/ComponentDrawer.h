@@ -5,7 +5,7 @@
 #include "Kernel/ClassCollection.h"
 #include "Scene/Entity.h"
 
-namespace LevEngine
+namespace LevEngine::Editor
 {
 	class IComponentDrawer
 	{

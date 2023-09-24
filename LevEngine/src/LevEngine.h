@@ -41,8 +41,11 @@
 
 // -- Time -------------------------------------------------
 
-#include "Kernel/Timestep.h"
-#include "Kernel/Time.h"
+#include "Kernel/Time/Timestep.h"
+#include "Kernel/Time/Time.h"
+#include "Kernel/Time/Timeline.h"
+#include "Kernel/Time/TimelineFactory.h"
+#include "Kernel/Time/TimelineRunner.h"
 
 // -- Input ------------------------------------------------
 
@@ -114,9 +117,9 @@
 #include "Scene/Components/Lights/Lights.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/SkyboxRenderer/SkyboxRenderer.h"
+#include "Scene/Components/Animation/WaypointMovement.h"
 
 #include "Scene/Components/Components.h"
-#include "Scene/Components/ComponentDrawer.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 // /////////////////////////////////////////////////////////

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Assets/Asset.h"
 #include "Selection.h"
+#include "GUI/Drawers/Assets/AssetDrawer.h"
 
 namespace LevEngine
 {
@@ -35,9 +36,12 @@ namespace LevEngine
 
 			ImGui::Separator();
 
-			ImGui::BeginChild("asset_properties");
-			m_Asset->DrawEditor();
-			ImGui::EndChild();
+			static auto& assetDrawers = OrderedClassCollection<Editor::IAssetDrawer>::Instance();
+			
+			for (const auto& assetDrawer : assetDrawers)
+			{
+				assetDrawer.first->Draw(m_Asset);
+			}
 		}
 
 	private:

@@ -7,7 +7,7 @@
 #include "Scene/SceneManager.h"
 #include "Scene/Components/TypeParseTraits.h"
 
-namespace LevEngine
+namespace LevEngine::Editor
 {
 	struct GUIUtils
 	{

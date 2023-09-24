@@ -1,10 +1,6 @@
 ﻿#include "levpch.h"
 #include "MaterialAsset.h"
 
-#include <imgui.h>
-
-#include "TextureLibrary.h"
-#include "GUI/GUIUtils.h"
 #include "Renderer/Material.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
@@ -19,10 +15,10 @@ namespace LevEngine
 
 		out << YAML::Key << "Shininess" << YAML::Value << material.GetShininess();
 
-		SerializeAsset(out, "Diffuse", m_Diffuse);
-		SerializeAsset(out, "Emissive", m_Emissive);
-		SerializeAsset(out, "Specular", m_Specular);
-		SerializeAsset(out, "Normal", m_Normal);
+		SerializeAsset(out, "Diffuse", diffuse);
+		SerializeAsset(out, "Emissive", emissive);
+		SerializeAsset(out, "Specular", specular);
+		SerializeAsset(out, "Normal", normal);
 
 		out << YAML::Key << "Tiling" << YAML::Value << material.GetTextureTiling();
 		out << YAML::Key << "Offset" << YAML::Value << material.GetTextureOffset();
@@ -37,56 +33,24 @@ namespace LevEngine
 		material.SetEmissiveColor(node["EmissiveColor"].as<Color>());
 		material.SetShininess(node["Shininess"].as<float>());
 
-		m_Diffuse = DeserializeAsset<TextureAsset>(node["Diffuse"]);
-		m_Emissive = DeserializeAsset<TextureAsset>(node["Emissive"]);
-		m_Specular = DeserializeAsset<TextureAsset>(node["Specular"]);
-		m_Normal = DeserializeAsset<TextureAsset>(node["Normal"]);
+		diffuse = DeserializeAsset<TextureAsset>(node["Diffuse"]);
+		emissive = DeserializeAsset<TextureAsset>(node["Emissive"]);
+		specular = DeserializeAsset<TextureAsset>(node["Specular"]);
+		normal = DeserializeAsset<TextureAsset>(node["Normal"]);
 
-		if (m_Diffuse)
-			material.SetTexture(Material::TextureType::Diffuse, m_Diffuse->GetTexture());
+		if (diffuse)
+			material.SetTexture(Material::TextureType::Diffuse, diffuse->GetTexture());
 
-		if (m_Emissive)
-			material.SetTexture(Material::TextureType::Emissive, m_Emissive->GetTexture());
+		if (emissive)
+			material.SetTexture(Material::TextureType::Emissive, emissive->GetTexture());
 
-		if (m_Specular)
-			material.SetTexture(Material::TextureType::Specular, m_Specular->GetTexture());
+		if (specular)
+			material.SetTexture(Material::TextureType::Specular, specular->GetTexture());
 
-		if (m_Normal)
-			material.SetTexture(Material::TextureType::Normal, m_Normal->GetTexture());
+		if (normal)
+			material.SetTexture(Material::TextureType::Normal, normal->GetTexture());
 
 		material.SetTextureTiling(node["Tiling"].as<Vector2>());
 		material.SetTextureOffset(node["Offset"].as<Vector2>());
-	}
-
-	void MaterialAsset::DrawProperties()
-	{
-		GUIUtils::DrawColor3Control("Ambient", BindGetter(&Material::GetAmbientColor, &material), BindSetter(&Material::SetAmbientColor, &material));
-		GUIUtils::DrawColor3Control("Diffuse", BindGetter(&Material::GetDiffuseColor, &material), BindSetter(&Material::SetDiffuseColor, &material));
-		GUIUtils::DrawColor3Control("Specular", BindGetter(&Material::GetSpecularColor, &material), BindSetter(&Material::SetSpecularColor, &material));
-		GUIUtils::DrawColor3Control("Emissive", BindGetter(&Material::GetEmissiveColor, &material), BindSetter(&Material::SetEmissiveColor, &material));
-
-		GUIUtils::DrawFloatControl("Shininess", BindGetter(&Material::GetShininess, &material), BindSetter(&Material::SetShininess, &material), 1.0f, 2.0f, 128.0f);
-
-		DrawMaterialTexture("Diffuse", material, Material::TextureType::Diffuse, m_Diffuse);
-		DrawMaterialTexture("Specular", material, Material::TextureType::Specular, m_Specular);
-		DrawMaterialTexture("Normal", material, Material::TextureType::Normal, m_Normal);
-		DrawMaterialTexture("Emissive", material, Material::TextureType::Emissive, m_Emissive);
-
-		auto tiling = material.GetTextureTiling();
-		if (GUIUtils::DrawVector2Control("Tiling", tiling, 1, 100))
-			material.SetTextureTiling(tiling);
-
-		auto offset = material.GetTextureOffset();
-		if (GUIUtils::DrawVector2Control("Offset", offset, 0, 100))
-			material.SetTextureOffset(offset);
-	}
-	void MaterialAsset::DrawMaterialTexture(const String& label, Material& material,
-	                                        Material::TextureType textureType, Ref<TextureAsset>& textureAsset)
-	{
-		ImGui::PushID(static_cast<int>(textureType));
-
-		if (GUIUtils::DrawTextureAsset(label, &textureAsset))
-			material.SetTexture(textureType, textureAsset ? textureAsset->GetTexture() : nullptr);
-		ImGui::PopID();
 	}
 }

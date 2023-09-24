@@ -1,26 +1,13 @@
 ﻿#include "levpch.h"
 #include "SkyboxRenderer.h"
 
-#include "../ComponentDrawer.h"
 #include "../ComponentSerializer.h"
 #include "Assets/AssetDatabase.h"
-#include "GUI/GUIUtils.h"
 
 namespace LevEngine
 {
 	SkyboxRendererComponent::SkyboxRendererComponent() = default;
-
-	class SkyboxComponentDrawer final : public ComponentDrawer<SkyboxRendererComponent, SkyboxComponentDrawer>
-	{
-	protected:
-		String GetLabel() const override { return "Skybox Renderer"; }
-
-		void DrawContent(SkyboxRendererComponent& component) override
-		{
-			GUIUtils::DrawAsset<SkyboxAsset>("Skybox", &component.skybox);
-		}
-	};
-
+	
 	class SkyboxComponentSerializer final : public ComponentSerializer<SkyboxRendererComponent, SkyboxComponentSerializer>
 	{
 	protected:

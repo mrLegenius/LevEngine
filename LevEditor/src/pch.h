@@ -18,5 +18,8 @@
 #include <unordered_set>
 #include <set>
 
+#include <imgui.h>
+#include <imgui_internal.h>
+
 #include "LevEngine.h"
 
