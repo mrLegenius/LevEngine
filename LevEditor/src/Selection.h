@@ -10,10 +10,7 @@ namespace LevEngine
 
 		static const Ref<Selection>& Current() { return m_CurrentSelection; }
 		template<class T>
-		static const Ref<T>& CurrentAs()
-		{
-			return CastRef<T>(m_CurrentSelection);
-		}
+		static Ref<T> CurrentAs() { return CastRef<T>(m_CurrentSelection); }
 		static void Select(const Ref<Selection>& selection) { m_CurrentSelection = selection; }
 		static void Deselect() { m_CurrentSelection = nullptr; }
 
