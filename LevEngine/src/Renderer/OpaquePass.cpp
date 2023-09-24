@@ -1,10 +1,9 @@
 ﻿#include "levpch.h"
 #include "OpaquePass.h"
 
-#include "RenderCommand.h"
 #include "Renderer3D.h"
-#include "Kernel/Application.h"
-#include "Scene/Components/Components.h"
+#include "Debug/DebugRender.h"
+#include "Kernel/Time.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
@@ -37,7 +36,7 @@ namespace LevEngine
         for (const auto entity : view)
         {
             Transform transform = view.get<Transform>(entity);
-            MeshRendererComponent meshRenderer = view.get<MeshRendererComponent>(entity);
+            const MeshRendererComponent meshRenderer = view.get<MeshRendererComponent>(entity);
 
             if (!meshRenderer.mesh) continue;
 
@@ -52,9 +51,11 @@ namespace LevEngine
             
             auto& material = meshRenderer.material->GetMaterial();
             material.Bind(shader);
-            Renderer3D::DrawMesh(transform.GetModel(), meshRenderer, shader);
+            Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
             material.Unbind(shader);
         }
+        
+        DebugRender::Update(Time::GetDeltaTime().GetSeconds());
     }
 
     void OpaquePass::End(entt::registry& registry, RenderParams& params)
