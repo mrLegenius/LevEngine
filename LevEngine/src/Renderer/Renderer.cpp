@@ -180,10 +180,11 @@ void Renderer::Init()
 		LEV_PROFILE_SCOPE("Debug pipeline creation");
 
 		s_DebugPipeline = CreateRef<PipelineState>();
-		s_DebugPipeline->GetRasterizerState().SetCullMode(CullMode::Back);
 		s_DebugPipeline->SetShader(ShaderType::Vertex, ShaderAssets::Debug());
 		s_DebugPipeline->SetShader(ShaderType::Pixel, ShaderAssets::Debug());
 		s_DebugPipeline->SetRenderTarget(mainRenderTarget);
+		s_DebugPipeline->GetRasterizerState().SetAntialiasedLineEnable(true);
+		s_DebugPipeline->GetRasterizerState().SetCullMode(CullMode::None);
 	}
 
 	{
