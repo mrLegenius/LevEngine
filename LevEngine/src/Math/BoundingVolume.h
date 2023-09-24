@@ -90,21 +90,7 @@ struct AABBBoundingVolume final :  BoundingVolume
 		return -r <= plane.GetSignedDistanceToPlane(center);
 	}
 
-	[[nodiscard]] bool IsOnFrustum(const Frustum& camFrustum, const Transform& transform) const override
-	{
-		//Get global scale thanks to our transform
-		const Vector3 worldCenter{ Vector3::Transform(center, transform.GetModel()) };
-		const Vector3 worldExtents = transform.GetWorldScale() * extents;
-		
-		const AABBBoundingVolume globalAABB(worldCenter, worldExtents.x, worldExtents.y, worldExtents.z);
-
-		return globalAABB.IsOnOrForwardPlane(camFrustum.leftFace)
-			&& globalAABB.IsOnOrForwardPlane(camFrustum.rightFace)
-			&& globalAABB.IsOnOrForwardPlane(camFrustum.topFace)
-			&& globalAABB.IsOnOrForwardPlane(camFrustum.bottomFace)
-			&& globalAABB.IsOnOrForwardPlane(camFrustum.nearFace)
-			&& globalAABB.IsOnOrForwardPlane(camFrustum.farFace);
-	}
+	[[nodiscard]] bool IsOnFrustum(const Frustum& camFrustum, const Transform& transform) const override;
 };
 }
 
