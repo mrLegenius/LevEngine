@@ -1,6 +1,6 @@
 #include "levpch.h"
 #include "BoundingVolume.h"
-#include "Renderer/DebugRender.h"
+#include "Renderer/DebugRender/DebugRender.h"
 
 bool AABBBoundingVolume::IsOnFrustum(const Frustum& camFrustum, const Transform& transform) const
 {

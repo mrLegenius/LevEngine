@@ -2,7 +2,7 @@
 #include "OpaquePass.h"
 
 #include "Renderer3D.h"
-#include "Debug/DebugRender.h"
+#include "DebugRender/DebugRender.h"
 #include "Kernel/Time.h"
 #include "Scene/Components/Transform/Transform.h"
 
