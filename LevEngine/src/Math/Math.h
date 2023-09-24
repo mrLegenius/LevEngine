@@ -17,8 +17,8 @@ namespace LevEngine
 		static constexpr float RadToDeg = 180.0 / 3.141592653589793238463;
 		static constexpr float DegToRad = 3.141592653589793238463 / 180.0;
 
-		template<typename T>
-		static T Max(const T a, const T b) { return ((a) > (b)) ? (a) : (b); }
+		template<typename T, typename T2>
+		static T Max(const T a, const T2 b) { return ((a) > (b)) ? (a) : (b); }
 
 		template<typename T>
 		static T Min(const T a, const T b) { return ((a) < (b)) ? (a) : (b); }

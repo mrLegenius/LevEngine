@@ -28,8 +28,10 @@ public:
 	static Ref<Mesh> CreateWireCube();
 	static Ref<Mesh> CreateLine(Vector3 start, Vector3 end);
 	static Ref<Mesh> CreateSphere(uint32_t sliceCount);
-	static Ref<Mesh> CreateRing(const Vector3 majorAxis, const Vector3 minorAxis);
+	static Ref<Mesh> CreateRing(Vector3 majorAxis, Vector3 minorAxis);
 	static Ref<Mesh> CreateCube();
+	static Ref<Mesh> CreateGrid(Vector3 xAxis, Vector3 yAxis, uint32_t xDivisions, uint32_t yDivisions);
+
 
 	Ref<IndexBuffer> CreateIndexBuffer() const;
 
@@ -133,7 +135,7 @@ public:
 	{
 		return m_BoundingVolume.IsOnFrustum(frustum, meshTransform);
 	}
-
+	
 	Ref<IndexBuffer> IndexBuffer;
 
 private:

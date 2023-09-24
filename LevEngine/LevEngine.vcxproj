@@ -522,6 +522,7 @@
     <ClInclude Include="src\Renderer\ClearPass.h" />
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCube.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugGrid.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugLine.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRender.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRenderPass.h" />

@@ -6,6 +6,7 @@
 #include "DebugSphere.h"
 #include "DebugWireCube.h"
 #include "DebugWireSphere.h"
+#include "DebugGrid.h"
 
 namespace LevEngine
 {
@@ -63,5 +64,22 @@ namespace LevEngine
     void DebugRender::DrawRay(const Vector3 origin, const Vector3 direction, const Color color)
     {
         DrawLine(origin, origin + direction, color);
+    }
+
+    void DebugRender::DrawGrid(const Vector3 position,
+                               Vector3 xAxis, Vector3 yAxis,
+                               uint32_t xCells, uint32_t yCells,
+                               const float cellSize,
+                               Color color)
+    {
+        const Vector3 scale = static_cast<float>(xCells) * cellSize * xAxis + static_cast<float>(yCells) * cellSize * yAxis;
+        
+        const Matrix model =
+            Matrix::CreateScale(scale)
+            * Matrix::CreateTranslation(position);
+        
+        const auto grid = CreateRef<DebugGrid>(model, xAxis, yAxis, xCells, yCells, color);
+
+        m_Shapes.emplace(grid);
     }
 }

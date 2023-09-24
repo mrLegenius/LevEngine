@@ -92,7 +92,6 @@ Ref<Mesh> Mesh::CreateLine(const Vector3 start, const Vector3 end)
 
 	return mesh;
 }
-
 	
 Ref<Mesh> Mesh::CreateCube()
 {
@@ -222,6 +221,50 @@ Ref<Mesh> Mesh::CreateCube()
 	return mesh;
 }
 
+Ref<Mesh> Mesh::CreateGrid(const Vector3 xAxis, const Vector3 yAxis, const uint32_t xDivisions, const uint32_t yDivisions)
+{
+	auto mesh = CreateRef<Mesh>();
+
+	const auto xdivs = Math::Max(1, xDivisions);
+	const auto ydivs = Math::Max(1, yDivisions);
+
+	uint32_t indices = 0;
+	for (size_t i = 0; i <= xdivs; ++i)
+	{
+		float percent = static_cast<float>(i) / static_cast<float>(xdivs);
+		percent = percent * 2.f - 1.f;
+		Vector3 scale = xAxis * percent;
+		Vector3 v1 = scale - yAxis;
+		Vector3 v2 = scale + yAxis;
+
+		mesh->AddVertex(v1);
+		mesh->AddVertex(v2);
+
+		mesh->AddIndex(indices++);
+		mesh->AddIndex(indices++);
+	}
+
+	for (size_t i = 0; i <= ydivs; i++)
+	{
+		FLOAT percent = static_cast<float>(i) / static_cast<float>(ydivs);
+		percent = (percent * 2.f) - 1.f;
+		Vector3 scale = XMVectorScale(yAxis, percent);
+
+		Vector3 v1 = scale - xAxis;
+		Vector3 v2 = scale + xAxis;
+		
+		mesh->AddVertex(v1);
+		mesh->AddVertex(v2);
+
+		mesh->AddIndex(indices++);
+		mesh->AddIndex(indices++);
+	}
+
+	mesh->Init();
+
+	return mesh;
+}
+
 Ref<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 {
 	assert(sliceCount >= 3u);
@@ -329,7 +372,6 @@ Ref<Mesh> Mesh::CreateRing(const Vector3 majorAxis, const Vector3 minorAxis)
 	return mesh;
 }
 
-	
 Ref<IndexBuffer> Mesh::CreateIndexBuffer() const
 {
 	const auto indicesCount = GetIndicesCount();
