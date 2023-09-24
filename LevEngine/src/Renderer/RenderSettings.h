@@ -43,6 +43,6 @@ struct RenderSettings
 
 struct RenderDebugSettings
 {
-	static constexpr bool DrawBoundingVolumes = true;
+	static constexpr bool DrawBoundingVolumes = false;
 };
 }
