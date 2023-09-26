@@ -6,6 +6,8 @@
 #include "Emitter/EmitterComponent.h"
 #include "Lights/Lights.h"
 #include "MeshRenderer/MeshRenderer.h"
+#include "Physics/Components/Collider.h"
+#include "Physics/Components/Rigidbody.h"
 #include "SkyboxRenderer/SkyboxRenderer.h"
 #include "Transform/Transform.h"
 
@@ -27,4 +29,7 @@ namespace LevEngine
     REGISTER_PARSE_TYPE(PointLightComponent);
     REGISTER_PARSE_TYPE(MeshRendererComponent);
     REGISTER_PARSE_TYPE(SkyboxRendererComponent);
+    REGISTER_PARSE_TYPE(BoxCollider);
+    REGISTER_PARSE_TYPE(SphereCollider);
+    REGISTER_PARSE_TYPE(Rigidbody);
 }

@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include "GUI/GUIUtils.h"
 #include "Kernel/ClassCollection.h"
 #include "Scene/Entity.h"
 
@@ -37,6 +38,13 @@ namespace LevEngine::Editor
 			ImGui::Separator();
 			const bool opened = ImGui::TreeNodeEx((void*)typeid(TComponent).hash_code(),
 				treeNodeFlags, GetLabel().c_str());
+
+			if (ImGui::BeginDragDropSource())
+			{
+				ImGui::SetDragDropPayload(TypeParseTraits<TComponent>::name, &component, sizeof(TComponent), ImGuiCond_Once);
+				ImGui::EndDragDropSource();
+			}
+			
 			ImGui::PopStyleVar();
 
 			ImGui::SameLine(contentRegionAvail.x - lineHeight * 0.5f);
