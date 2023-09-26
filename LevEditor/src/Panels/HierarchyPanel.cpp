@@ -46,6 +46,11 @@ namespace LevEngine::Editor
 					DrawEntityNode(entity);
 			});
 
+		if (ImGui::IsMouseReleased(0))
+		{
+			m_PressedEntity = Entity();
+		}
+
 		for (const auto toDelete : m_EntitiesToDelete)
 		{
 			activeScene->DestroyEntity(toDelete);
@@ -88,10 +93,18 @@ namespace LevEngine::Editor
 
 		if (ImGui::IsItemClicked())
 		{
-			if (entitySelection)
-				entitySelection->Set(entity);
-			else
-				Selection::Select(CreateRef<EntitySelection>(entity));
+			m_PressedEntity = entity;
+		}
+		
+		if (ImGui::IsMouseReleased(0))
+		{
+			if (ImGui::IsItemHovered() && entity == m_PressedEntity)
+			{
+				if (entitySelection)
+					entitySelection->Set(entity);
+				else
+					Selection::Select(CreateRef<EntitySelection>(entity));
+			}
 		}
 
 		if (ImGui::BeginDragDropSource())
