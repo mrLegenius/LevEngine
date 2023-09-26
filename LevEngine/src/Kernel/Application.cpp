@@ -34,6 +34,8 @@ Application::Application(const ApplicationSpecification& specification)
 	m_ImGuiLayer = new ImGuiLayer;
 	PushOverlay(m_ImGuiLayer);
 
+	vgjs::JobSystem jobSystem;
+
 	Time::s_StartupTime = std::chrono::high_resolution_clock::now();
 }
 
@@ -98,6 +100,8 @@ void Application::Run()
 		Input::Reset();
 		m_Window->Update();
 	}
+
+	vgjs::terminate();
 }
 
 void Application::Close()

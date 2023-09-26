@@ -17,38 +17,131 @@ Scene::~Scene()
     m_Registry.clear();
 }
 
+void Scene::RequestUpdates(const float deltaTime)
+{
+    for (const auto& system : m_UpdateSystems)
+    {
+        vgjs::schedule([this, deltaTime, &system](){system->Update(deltaTime, m_Registry);});
+    }
+    
+    vgjs::continuation([this](){m_IsUpdateDone = true;});
+}
+
 void Scene::OnUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-	for (const auto& system : m_UpdateSystems)
-		system->Update(deltaTime, m_Registry);
+    m_IsUpdateDone = false;
+	vgjs::schedule([this, deltaTime](){ RequestUpdates(deltaTime);});
+
+    while (!m_IsUpdateDone)
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+    }
+}
+
+void Scene::RequestPhysicsUpdates(const float deltaTime)
+{
+    Physics::Process(m_Registry, deltaTime);
+
+    vgjs::continuation([this](){m_IsPhysicsDone = true;});
 }
 
 void Scene::OnPhysics(const float deltaTime)
 {
-    Physics::Process(m_Registry, deltaTime);
+    m_IsPhysicsDone = false;
+    
+    vgjs::schedule([this, deltaTime](){ RequestPhysicsUpdates(deltaTime);});;
+
+    while (!m_IsPhysicsDone)
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+    }
+}
+
+void Scene::RequestRenderUpdate()
+{
+    Renderer::Render(m_Registry);
+
+    vgjs::continuation([this](){m_IsRenderDone = true;});
 }
 
 void Scene::OnRender()
 {
-    Renderer::Render(m_Registry);
+    //NOTE В рендере мы не ждём, когда он отрисуется, а идём считать следующий кадр, но если прошлый кадр не отрисовался, то ждём (можно сделать ещё один апдейт в будущем)
+    while (!m_IsRenderDone)
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+    }
+    
+    m_IsRenderDone = false;
+    
+    vgjs::schedule([this](){RequestRenderUpdate();});
+}
+
+void Scene::RequestRenderUpdate(SceneCamera* mainCamera, const Transform* cameraTransform)
+{
+    Renderer::Render(m_Registry, mainCamera, cameraTransform);
+    
+    vgjs::continuation([this](){m_IsRenderDone = true;});
 }
 
 void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
 {
-    Renderer::Render(m_Registry, mainCamera, cameraTransform);
+    //NOTE В рендере мы не ждём, когда он отрисуется, а идём считать следующий кадр, но если прошлый кадр не отрисовался, то ждём (можно сделать ещё один апдейт в будущем)
+    
+    while (!m_IsRenderDone)
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+    }
+    
+    m_IsRenderDone = false;
+
+    //TODO Кешировать камеру, чтобы не случилось казусов с другими потоками
+    vgjs::schedule([this, mainCamera, cameraTransform](){RequestRenderUpdate(mainCamera, cameraTransform);});
+}
+
+void Scene::RequestLateUpdate(const float deltaTime)
+{
+    for (const auto& system : m_LateUpdateSystems)
+    {
+        vgjs::schedule([this, deltaTime, &system](){system->Update(deltaTime, m_Registry);});
+    }
+    
+    vgjs::continuation([this](){m_IsLateUpdateDone = true;});
+}
+
+void Scene::RequestEventsUpdate(const float deltaTime)
+{
+    for (const auto& system : m_EventSystems)
+    {
+        vgjs::schedule([this, deltaTime, &system](){ system->Update(deltaTime, m_Registry);});
+    }
+
+    vgjs::continuation([this](){m_IsEventUpdateDone = true;});
 }
 
 void Scene::OnLateUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-    for (const auto& system : m_LateUpdateSystems)
-        system->Update(deltaTime, m_Registry);
-
-    for (const auto& system : m_EventSystems)
-        system->Update(deltaTime, m_Registry);
+    m_IsLateUpdateDone = false;
+    
+    vgjs::schedule([this, deltaTime](){RequestLateUpdate(deltaTime);});
+    
+    while (!m_IsLateUpdateDone)
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+    }
+    
+    m_IsEventUpdateDone = false;
+    
+    vgjs::schedule([this, deltaTime](){RequestEventsUpdate(deltaTime);});
+    
+    while (!m_IsEventUpdateDone)
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+    }
 }
 
 void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
