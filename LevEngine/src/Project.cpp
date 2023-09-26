@@ -42,7 +42,8 @@ bool Project::Load(const Path& path)
     if (!data["Project"]) return false;
 
     s_Project->m_Name = data["Project"].as<String>();
-    s_Project->m_StartScene = data["StartScene"].as<String>().c_str();
+    if (const auto scene = data["StartScene"])
+        s_Project->m_StartScene = scene.as<String>().c_str();
 
     return true;
 }
@@ -54,11 +55,11 @@ const Path& Project::GetRoot()
     return s_Project->m_Root;
 }
 
-const Path& Project::GetStartScene()
+Path Project::GetStartScene()
 {
     LEV_CORE_ASSERT(s_Project, "No loaded project");
 
-    return s_Project->m_StartScene;
+    return s_Project->m_Root / AssetDatabase::AssetsRoot / s_Project->m_StartScene;
 }
 
 bool Project::CreateNew(const Path& path)
@@ -80,11 +81,11 @@ bool Project::CreateNew(const Path& path)
     return true;
 }
 
-void Project::SetStartScene(Path path)
+void Project::SetStartScene(const Path& path)
 {
     LEV_CORE_ASSERT(s_Project, "No loaded project");
 
-    s_Project->m_StartScene = Move(path);
+    s_Project->m_StartScene = relative(path, s_Project->m_Root / AssetDatabase::AssetsRoot);
 }
 
 Path Project::GetPath()
