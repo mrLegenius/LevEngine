@@ -12,7 +12,7 @@ namespace LevEngine::Editor
 
         void DrawContent(LevEngine::WaypointMovementComponent& component) override
         {
-            GUIUtils::DrawSelectableComponentList<Transform>("Waypoints", component.waypoints, m_itemCurrentIdx);
+            GUIUtils::DrawSelectableComponentList<Transform>("Waypoints", component.entities, m_itemCurrentIdx);
         }
 
     private:

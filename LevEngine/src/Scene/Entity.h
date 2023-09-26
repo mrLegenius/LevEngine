@@ -12,6 +12,11 @@ public:
 
 	~Entity() = default;
 
+	bool IsValid() const
+	{
+		return m_Handle && m_Handle.valid();
+	}
+
 	template<typename T>
 	bool HasComponent() const
 	{

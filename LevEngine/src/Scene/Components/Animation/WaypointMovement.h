@@ -3,11 +3,11 @@
 
 namespace LevEngine
 {
-    struct Transform;
+    class Entity;
 
     struct WaypointMovementComponent
     {
-        Vector<Ref<Transform>> waypoints;
+        Vector<Entity> entities;
         
         WaypointMovementComponent();
     };   

@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include "EntitySelection.h"
+#include "Selection.h"
 #include "Assets/Asset.h"
 #include "Assets/AssetDatabase.h"
 #include "Kernel/Color.h"
@@ -80,19 +82,19 @@ namespace LevEngine::Editor
 		}
 
 		template<class T>
-		static bool DrawSelectableComponentList(const String& label, Vector<Ref<T>>& components, int& itemSelectedIdx)
+		static bool DrawSelectableComponentList(const String& label, Vector<Entity>& entities, int& itemSelectedIdx)
 		{
 			bool changed = false;
 			
 			if (ImGui::BeginListBox(label.c_str()))
 			{
-				const int count = static_cast<int>(components.size());
+				const int count = static_cast<int>(entities.size());
 				for (int idx = 0; idx < count; idx++)
 				{
 					const bool wasSelected = (itemSelectedIdx == idx);
 					bool isSelected = false;
-					auto componentPtr = &components[idx];
-					if (GUIUtils::DrawSelectableComponentRef<T>(TypeParseTraits<Transform>::name, componentPtr, wasSelected, isSelected, idx))
+					Entity& entity = entities[idx];
+					if (GUIUtils::DrawSelectableComponent<T>(TypeParseTraits<T>::name, entity, wasSelected, isSelected, idx))
 					{
 						changed = true;
 					}
@@ -100,10 +102,13 @@ namespace LevEngine::Editor
 					if (isSelected)
 					{
 						itemSelectedIdx = idx;
-
-						const auto scene = SceneManager::GetActiveScene();
-						Entity entity = scene->GetEntityBy(componentPtr);
-						//Selection::Select(CreateRef<EntitySelection>(entity));
+						
+						if (entity.IsValid() && entity.HasComponent<T>())
+						{
+							// Select Entity in editor.
+							const auto scene = SceneManager::GetActiveScene();
+							Selection::Select(CreateRef<EntitySelection>(entity));
+						}
 					}
 				}
 				ImGui::EndListBox();
@@ -112,27 +117,27 @@ namespace LevEngine::Editor
 			ImGui::AlignTextToFramePadding();
 			if (ImGui::Button("+"))
 			{
-				components.emplace_back(eastl::shared_ptr<T>());
-				itemSelectedIdx = components.size() - 1;
+				entities.emplace_back(Entity());
+				itemSelectedIdx = entities.size() - 1;
 				changed = true;
 			}
 			ImGui::SameLine();
 
 			if (ImGui::Button("-"))
 			{
-				if (itemSelectedIdx >= 0 && itemSelectedIdx + 1 < components.size())
+				if (itemSelectedIdx >= 0 && itemSelectedIdx + 1 < entities.size())
 				{
-					components.erase_first(components[itemSelectedIdx]);
+					entities.erase_first(entities[itemSelectedIdx]);
 					changed = true;
 				}
-				else if (components.size() > 0)
+				else if (entities.size() > 0)
 				{
-					if (itemSelectedIdx == components.size() - 1)
+					if (itemSelectedIdx == entities.size() - 1)
 					{
 						--itemSelectedIdx;
 					}
 					
-					components.pop_back();
+					entities.pop_back();
 					changed = true;
 				}
 			}
@@ -141,13 +146,14 @@ namespace LevEngine::Editor
 		}
 
 		template<class T>
-		static bool DrawSelectableComponentRef(const String& label, Ref<T>* componentPtr, bool wasSelected, bool& isSelected, int selectableIdx = 0)
+		static bool DrawSelectableComponent(const String& label, Entity& entity, bool wasSelected, bool& isSelected, int selectableIdx = 0)
 		{
-			const auto& component = *componentPtr;
+			const bool hasComponent = entity.IsValid() && entity.HasComponent<T>();
+			
 			auto changed = false;
 
 			ImGui::AlignTextToFramePadding();
-			const auto componentRefName = String(component ? "Component is assigned" : "None");
+			const auto componentRefName = String(hasComponent ? "Component is assigned" : "None");
 			const auto uniqueId = "##" + ToString(selectableIdx);
 			isSelected = ImGui::Selectable((label + " " + componentRefName + uniqueId).c_str(), wasSelected);
 			
@@ -155,11 +161,11 @@ namespace LevEngine::Editor
 			if (wasSelected)
 				ImGui::SetItemDefaultFocus();
 
-			if (component && ImGui::BeginPopupContextItem("Component"))
+			if (hasComponent && ImGui::BeginPopupContextItem("Component"))
 			{
 				if (ImGui::MenuItem("Clear"))
 				{
-					*componentPtr = nullptr;
+					entity = Entity();
 					changed = true;
 				}
 
@@ -170,8 +176,7 @@ namespace LevEngine::Editor
 
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EntityPayload))
 			{
-				const auto draggedEntity = *static_cast<Entity*>(payload->Data);
-				*componentPtr = CreateRef(draggedEntity.GetComponent<T>());
+				entity = *static_cast<Entity*>(payload->Data);
 			}
 			ImGui::EndDragDropTarget();
 
