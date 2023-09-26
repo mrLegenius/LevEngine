@@ -59,7 +59,7 @@ Path Project::GetStartScene()
 {
     LEV_CORE_ASSERT(s_Project, "No loaded project");
 
-    return s_Project->m_Root / AssetDatabase::AssetsRoot / s_Project->m_StartScene;
+    return s_Project->m_Root / s_Project->m_StartScene;
 }
 
 bool Project::CreateNew(const Path& path)
@@ -85,7 +85,7 @@ void Project::SetStartScene(const Path& path)
 {
     LEV_CORE_ASSERT(s_Project, "No loaded project");
 
-    s_Project->m_StartScene = relative(path, s_Project->m_Root / AssetDatabase::AssetsRoot);
+    s_Project->m_StartScene = relative(path, s_Project->m_Root);
 }
 
 Path Project::GetPath()
