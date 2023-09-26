@@ -24,7 +24,7 @@ class Mesh
 public:
 	Mesh() = default;
 
-	static Ref<Mesh> CreatePlane(int resolution);
+	static Ref<Mesh> CreatePlane(const uint32_t resolution);
 	static Ref<Mesh> CreateWireCube();
 	static Ref<Mesh> CreateLine(Vector3 start, Vector3 end);
 	static Ref<Mesh> CreateSphere(uint32_t sliceCount);
@@ -43,11 +43,11 @@ public:
 		normals.clear();
 	}
 
-	[[nodiscard]] uint32_t GetVerticesCount() const { return vertices.size(); }
+	[[nodiscard]] uint32_t GetVerticesCount() const { return static_cast<uint32_t>(vertices.size()); }
 	[[nodiscard]] Vector3 GetVertex(const uint32_t index) const { return vertices[index]; }
 	void AddVertex(const Vector3& value) { vertices.emplace_back(value); }
 
-	[[nodiscard]] uint32_t GetIndicesCount() const { return indices.size(); }
+	[[nodiscard]] uint32_t GetIndicesCount() const { return static_cast<uint32_t>(indices.size()); }
 	[[nodiscard]] uint32_t GetIndex(const uint32_t index) const { return indices[index]; }
 	void AddTriangle(const Vector3& value)
 	{
@@ -80,34 +80,34 @@ public:
 
 		if (vertices.size())
 		{
-			const auto buffer = VertexBuffer::Create(&vertices[0].x, vertices.size(), sizeof Vector3);
+			const auto buffer = VertexBuffer::Create(&vertices[0].x, static_cast<uint32_t>(vertices.size()), sizeof Vector3);
 			AddVertexBuffer(BufferBinding("POSITION", 0), buffer);
 		}
 
 		if (normals.size())
 		{
-			const auto buffer = VertexBuffer::Create(&normals[0].x, normals.size(), sizeof Vector3);
+			const auto buffer = VertexBuffer::Create(&normals[0].x, static_cast<uint32_t>(normals.size()), sizeof Vector3);
 			AddVertexBuffer(BufferBinding("NORMAL", 0), buffer);
 		}
 
 		if (tangents.size() && biTangents.size())
 		{
-			const auto tangentsBuffer = VertexBuffer::Create(&tangents[0].x, tangents.size(), sizeof Vector3);
+			const auto tangentsBuffer = VertexBuffer::Create(&tangents[0].x, static_cast<uint32_t>(tangents.size()), sizeof Vector3);
 			AddVertexBuffer(BufferBinding("TANGENT", 0), tangentsBuffer);
 
-			const auto biTangentsBuffer = VertexBuffer::Create(&biTangents[0].x, biTangents.size(), sizeof Vector3);
+			const auto biTangentsBuffer = VertexBuffer::Create(&biTangents[0].x, static_cast<uint32_t>(biTangents.size()), sizeof Vector3);
 			AddVertexBuffer(BufferBinding("BINORMAL", 0), biTangentsBuffer);
 		}
 
 		if (colors.size())
 		{
-			const auto buffer = VertexBuffer::Create(colors[0].Raw(), colors.size(), sizeof Color);
+			const auto buffer = VertexBuffer::Create(colors[0].Raw(), static_cast<uint32_t>(colors.size()), sizeof Color);
 			AddVertexBuffer(BufferBinding("COLOR", 0), buffer);
 		}
 
 		if (uvs.size())
 		{
-			const auto buffer = VertexBuffer::Create(&uvs[0].x, uvs.size(), sizeof Vector2);
+			const auto buffer = VertexBuffer::Create(&uvs[0].x, static_cast<uint32_t>(uvs.size()), sizeof Vector2);
 			AddVertexBuffer(BufferBinding("TEXCOORD", 0), buffer);
 		}
 	}

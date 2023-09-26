@@ -3,37 +3,34 @@
 
 namespace LevEngine
 {
-Ref<Mesh> Mesh::CreatePlane(const int resolution)
+Ref<Mesh> Mesh::CreatePlane(const uint32_t resolution)
 {
 	auto mesh = CreateRef<Mesh>();
 
-	const float size = 1.f / (resolution - 1);
+	const float size = 1.f / static_cast<float>(resolution - 1);
 
-	for (int i = 0; i < resolution; i++)
+	for (uint32_t i = 0; i < resolution; i++)
 	{
-		for (int j = 0; j < resolution; j++)
+		for (uint32_t j = 0; j < resolution; j++)
 		{
-			auto pos = Vector3(i * size - 0.5f, j * size - 0.5f, 0);
+			auto pos = Vector3(static_cast<float>(i) * size - 0.5f, static_cast<float>(j) * size - 0.5f, 0);
 			mesh->vertices.emplace_back(pos);
 
 			auto normal = Vector3(0, 0, -1);
 			mesh->normals.emplace_back(normal);
 
-			auto uv = Vector2(i * size, j * size);
+			auto uv = Vector2(static_cast<float>(i) * size, static_cast<float>(j) * size);
 			mesh->uvs.emplace_back(uv);
 
 			if (i == resolution - 1 || j == resolution - 1) continue;
 
-			auto triangle1 = Vector3(resolution * i + j,
-			                         resolution * i + j + resolution,
-			                         resolution * i + j + resolution + 1);
-
-			auto triangle2 = Vector3(resolution * i + j,
-			                         resolution * i + j + resolution + 1,
-			                         resolution * i + j + 1);
-
-			mesh->AddTriangle(triangle1);
-			mesh->AddTriangle(triangle2);
+			mesh->AddIndex(resolution * i + j);
+			mesh->AddIndex(resolution * i + j + resolution);
+			mesh->AddIndex(resolution * i + j + resolution + 1);
+			
+			mesh->AddIndex(resolution * i + j);
+			mesh->AddIndex(resolution * i + j + resolution + 1);
+			mesh->AddIndex(resolution * i + j + 1);
 		}
 	}
 
@@ -225,8 +222,8 @@ Ref<Mesh> Mesh::CreateGrid(const Vector3 xAxis, const Vector3 yAxis, const uint3
 {
 	auto mesh = CreateRef<Mesh>();
 
-	const auto xdivs = Math::Max(1, xDivisions);
-	const auto ydivs = Math::Max(1, yDivisions);
+	const auto xdivs = Math::Max(xDivisions, 1u);
+	const auto ydivs = Math::Max(yDivisions, 1u);
 
 	uint32_t indices = 0;
 	for (size_t i = 0; i <= xdivs; ++i)
@@ -279,12 +276,12 @@ Ref<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 	mesh->normals.emplace_back(Vector3(0, 1, 0));
 	mesh->uvs.emplace_back(Vector2(0, 1));
 
-	for (int i = 1; i <= stackCount - 1; i++) 
+	for (uint32_t i = 1; i <= stackCount - 1; i++) 
 	{
-		const auto phi = i * phiStep;
-		for (int j = 0; j <= sliceCount; j++) 
+		const auto phi = static_cast<float>(i) * phiStep;
+		for (uint32_t j = 0; j <= sliceCount; j++) 
 		{
-			const auto theta = j * thetaStep;
+			const auto theta = static_cast<float>(j) * thetaStep;
 
 			const float x = std::sin(phi) * std::sin(theta);
 			const float y = std::cos(phi);
@@ -296,7 +293,9 @@ Ref<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 			pos.Normalize();
 			mesh->normals.emplace_back(pos);
 
-			auto uv = Vector2(static_cast<float>(j) / sliceCount, 1 - static_cast<float>(i) / stackCount);
+			auto uv = Vector2(
+				static_cast<float>(j) / static_cast<float>(sliceCount),
+				1 - static_cast<float>(i) / static_cast<float>(stackCount));
 			mesh->uvs.emplace_back(uv);
 		}
 	}
@@ -305,36 +304,35 @@ Ref<Mesh> Mesh::CreateSphere(const uint32_t sliceCount)
 	mesh->normals.emplace_back(Vector3(0, -1, 0));
 	mesh->uvs.emplace_back(Vector2(0, 0));
 
-	for (int i = 1; i <= sliceCount; i++) 
+	for (uint32_t i = 1; i <= sliceCount; i++) 
 	{
-		auto triangle = Vector3(i, i + 1, 0);
-		mesh->AddTriangle(triangle);
+		mesh->AddIndex(i);
+		mesh->AddIndex(i + 1);
+		mesh->AddIndex(0);
 	}
 
-	auto baseIndex = 1;
+	uint32_t baseIndex = 1;
 	const auto ringVertexCount = sliceCount + 1;
-	for (int i = 0; i < stackCount - 2; i++) {
-		for (int j = 0; j < sliceCount; j++) {
+	for (uint32_t i = 0; i < stackCount - 2; i++) {
+		for (uint32_t j = 0; j < sliceCount; j++) {
 
-			auto triangle2 = Vector3(baseIndex + (i + 1) * ringVertexCount + j + 1,
-				baseIndex + i * ringVertexCount + j + 1,
-				baseIndex + (i + 1) * ringVertexCount + j);
-
-			auto triangle1 = Vector3(baseIndex + (i + 1) * ringVertexCount + j,
-			                         baseIndex + i * ringVertexCount + j + 1,
-									 baseIndex + i * ringVertexCount + j);
-
-			mesh->AddTriangle(triangle1);
-			mesh->AddTriangle(triangle2);
+			mesh->AddIndex(baseIndex + (i + 1) * ringVertexCount + j);
+			mesh->AddIndex(baseIndex + i * ringVertexCount + j + 1);
+			mesh->AddIndex(baseIndex + i * ringVertexCount + j);
+			
+			mesh->AddIndex(baseIndex + (i + 1) * ringVertexCount + j + 1);
+			mesh->AddIndex(baseIndex + i * ringVertexCount + j + 1);
+			mesh->AddIndex(baseIndex + (i + 1) * ringVertexCount + j);
 		}
 	}
 
 	const auto southPoleIndex = mesh->GetVerticesCount() - 1;
 	baseIndex = southPoleIndex - ringVertexCount;
-	for (int i = 0; i < sliceCount; i++) {
-
-		auto triangle = Vector3(baseIndex + i + 1, baseIndex + i, southPoleIndex);
-		mesh->AddTriangle(triangle);
+	for (uint32_t i = 0; i < sliceCount; i++)
+	{
+		mesh->AddIndex(baseIndex + i + 1);
+		mesh->AddIndex(baseIndex + i);
+		mesh->AddIndex(southPoleIndex);
 	}
 
 	mesh->Init();

@@ -1717,7 +1717,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint16_t 
     texture->m_CPUAccess = cpuAccess;
     texture->m_IsTransparent = true;
 
-    texture->m_NumSlices = Math::Max<uint16_t>(slices, 1);
+    texture->m_NumSlices = Math::Max<uint16_t>(slices, 1u);
 
     texture->m_TextureDimension = Dimension::Texture2D;
     if (texture->m_NumSlices > 1)
@@ -2202,8 +2202,8 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
     if (m_ShaderResourceView) m_ShaderResourceView->Release(); m_ShaderResourceView = nullptr;
     if (m_UnorderedAccessView) m_UnorderedAccessView->Release(); m_UnorderedAccessView = nullptr;
 
-    m_Width = Math::Max<uint16_t>(width, 1);
-    m_Height = Math::Max<uint16_t>(height, 1);
+    m_Width = Math::Max<uint16_t>(width, 1u);
+    m_Height = Math::Max<uint16_t>(height, 1u);
 
     // Create texture with the dimensions specified.
     D3D11_TEXTURE2D_DESC textureDesc = { 0 };

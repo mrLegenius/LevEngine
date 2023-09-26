@@ -20,7 +20,7 @@ namespace LevEngine::Editor
 			m_Size.x = renderTexture->GetWidth();
 			m_Size.y = renderTexture->GetHeight();
 
-			m_Camera.SetViewportSize(m_Size.x, m_Size.y);
+			m_Camera.SetViewportSize(static_cast<uint32_t>(m_Size.x), static_cast<uint32_t>(m_Size.y));
 		}
 
 		[[nodiscard]] EditorCamera& GetCamera() { return m_Camera; }

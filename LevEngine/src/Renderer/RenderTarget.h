@@ -60,8 +60,8 @@ namespace LevEngine
         {
             if (m_Width != width || m_Height != height)
             {
-                m_Width = Math::Max<uint16_t>(width, 1);
-                m_Height = Math::Max<uint16_t>(height, 1);
+                m_Width = Math::Max<uint16_t>(width, 1u);
+                m_Height = Math::Max<uint16_t>(height, 1u);
                 // Resize the attached textures
                 for (auto texture : m_Textures)
                 {

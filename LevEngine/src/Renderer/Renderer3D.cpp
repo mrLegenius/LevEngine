@@ -46,8 +46,8 @@ void Renderer3D::SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMa
     LEV_PROFILE_FUNCTION();
 
     const auto& window = Application::Get().GetWindow();
-    const float width = window.GetWidth();
-    const float height = window.GetHeight();
+    const float width = static_cast<float>(window.GetWidth());
+    const float height = static_cast<float>(window.GetHeight());
 
     const auto viewProjection = viewMatrix * camera.GetProjection();
 

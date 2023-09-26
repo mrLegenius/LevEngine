@@ -59,7 +59,7 @@ struct Transform
 	}
 
 	[[nodiscard]] const Vector<Entity>& GetChildren() const { return children; }
-	[[nodiscard]] uint32_t GetChildrenCount() const { return children.size(); }
+	[[nodiscard]] uint32_t GetChildrenCount() const { return static_cast<uint32_t>(children.size()); }
 
 	[[nodiscard]] Entity GetParent() const { return parent; }
 	void RemoveChild(const Entity entity)

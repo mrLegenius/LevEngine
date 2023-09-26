@@ -84,7 +84,7 @@ namespace LevEngine::Editor
 		if (entity.GetComponent<Transform>().GetChildrenCount() == 0)
 			flags |= ImGuiTreeNodeFlags_Leaf;
 
-		const bool opened = ImGui::TreeNodeEx((void*)static_cast<uint32_t>(entity), flags, tag.c_str());
+		const bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(static_cast<uint32_t>(entity)), flags, tag.c_str());
 
 		if (ImGui::IsItemClicked())
 		{

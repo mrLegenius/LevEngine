@@ -198,7 +198,7 @@ namespace LevEngine
 		const int speed, const int min, const int max)
 	{
 		auto value = getter();
-		if (ImGui::DragInt(label.c_str(), &value, speed, min, max))
+		if (ImGui::DragInt(label.c_str(), &value, static_cast<float>(speed), min, max))
 			setter(value);
 	}
 

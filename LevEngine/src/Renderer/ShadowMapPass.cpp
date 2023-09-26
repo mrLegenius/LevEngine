@@ -18,9 +18,9 @@ Vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const 
             for (uint32_t z = 0; z < 2; ++z)
             {
                 const Vector4 pt = Vector4::Transform(Vector4(
-                    2.0f * x - 1.0f,
-                    2.0f * y - 1.0f,
-                    z,
+                    2.0f *  static_cast<float>(x) - 1.0f,
+                    2.0f *  static_cast<float>(y) - 1.0f,
+                    static_cast<float>(z),
                     1.0f), inv);
 
                 corners.push_back(pt / pt.w);
@@ -29,7 +29,7 @@ Vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const 
     return corners;
 }
 
-Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustrumCorners) const
+Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners) const
 {
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
@@ -38,7 +38,7 @@ Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, Vector<Vecto
     float minZ = std::numeric_limits<float>::max();
     float maxZ = std::numeric_limits<float>::lowest();
 
-    for (const auto& corner : frustrumCorners)
+    for (const auto& corner : frustumCorners)
     {
         const auto trf = Vector4::Transform(corner, lightView);
 
@@ -76,18 +76,18 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 
 	for (int cascadeIndex = 0; cascadeIndex < RenderSettings::CascadeCount; ++cascadeIndex)
 	{
-		auto frustrumCorners = GetFrustumWorldCorners(params.CameraViewMatrix, cameraCascadeProjections[cascadeIndex]);
+		auto frustumCorners = GetFrustumWorldCorners(params.CameraViewMatrix, cameraCascadeProjections[cascadeIndex]);
 
 		Vector4 center = Vector4::Zero;
 
-		for (const auto& corner : frustrumCorners)
+		for (const auto& corner : frustumCorners)
 			center += corner;
 
-		center /= frustrumCorners.size();
+		center /= static_cast<float>(frustumCorners.size());
 
 		const auto lightViewMatrix = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + lightDirection, Vector3::Up);
 
-		m_ShadowData.ViewProjection[cascadeIndex] = lightViewMatrix * GetCascadeProjection(lightViewMatrix, frustrumCorners);
+		m_ShadowData.ViewProjection[cascadeIndex] = lightViewMatrix * GetCascadeProjection(lightViewMatrix, frustumCorners);
 		m_ShadowData.Distances[cascadeIndex] = params.Camera.GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
 
 		m_ShadowData.ShadowMapDimensions = RenderSettings::ShadowMapResolution;
@@ -95,7 +95,7 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 	m_CascadeShadowMap->SetRenderTarget();
 	ShaderAssets::CascadeShadowPass()->Bind();
 
-	params.Camera.SetViewportSize(RenderSettings::ShadowMapResolution, RenderSettings::ShadowMapResolution);
+	params.Camera.SetViewportSize( static_cast<uint32_t>(RenderSettings::ShadowMapResolution),  static_cast<uint32_t>(RenderSettings::ShadowMapResolution));
 
 	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);

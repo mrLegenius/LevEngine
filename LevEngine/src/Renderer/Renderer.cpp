@@ -217,7 +217,7 @@ void Renderer::Init()
 		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_GBufferRenderTarget));
 		s_DeferredTechnique->AddPass(CreateRef<OpaquePass>(s_GBufferPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(s_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture));
-		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, ClearFlags::Stencil, Vector4::Zero, 1, 1));
+		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, ClearFlags::Stencil, Vector4::Zero, 1.0f, 1));
 		s_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_AlbedoTexture, m_MetallicRoughnessAOTexture, m_NormalTexture, m_DepthTexture));
 		s_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));

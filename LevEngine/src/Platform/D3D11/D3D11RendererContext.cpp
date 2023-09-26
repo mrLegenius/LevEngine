@@ -106,8 +106,8 @@ void D3D11RendererContext::SwapBuffers()
 void D3D11RendererContext::ResizeBackBuffer(uint16_t width, uint16_t height)
 {
 	// If either the width or the height are 0, make them 1.
-	width = Math::Max<uint32_t>(width, 1);
-	height = Math::Max<uint32_t>(height, 1);
+	width = Math::Max<uint32_t>(width, 1u);
+	height = Math::Max<uint32_t>(height, 1u);
 
 	//// Make sure we're not referencing the render targets when the window is resized.
 	context->OMSetRenderTargets(0, nullptr, nullptr);

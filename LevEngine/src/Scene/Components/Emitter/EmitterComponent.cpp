@@ -34,22 +34,22 @@ namespace LevEngine
 			ImGui::ColorEdit4("End Color", component.Birth.EndColor.Raw());
 
 			ImGui::Checkbox("Random Initial Size", &component.Birth.RandomStartSize);
-			ImGui::DragFloat("Initial Size", &component.Birth.StartSize, 0.1, 0, std::numeric_limits<float>::max());
+			ImGui::DragFloat("Initial Size", &component.Birth.StartSize, 0.1f, 0.0f, std::numeric_limits<float>::max());
 			if (component.Birth.RandomStartSize)
-				ImGui::DragFloat("Initial Size B", &component.Birth.StartSizeB, 0.1, 0, std::numeric_limits<float>::max());
-			ImGui::DragFloat("End Size", &component.Birth.EndSize, 0.1, 0, std::numeric_limits<float>::max());
+				ImGui::DragFloat("Initial Size B", &component.Birth.StartSizeB, 0.1f, 0.0f, std::numeric_limits<float>::max());
+			ImGui::DragFloat("End Size", &component.Birth.EndSize, 0.1f, 0.0f, std::numeric_limits<float>::max());
 
 			ImGui::Checkbox("Random Initial Life Time", &component.Birth.RandomStartLifeTime);
-			ImGui::DragFloat("Initial Life Time", &component.Birth.LifeTime, 0.1, 0, std::numeric_limits<float>::max());
+			ImGui::DragFloat("Initial Life Time", &component.Birth.LifeTime, 0.1f, 0.0f, std::numeric_limits<float>::max());
 			if (component.Birth.RandomStartLifeTime)
-				ImGui::DragFloat("Initial Life Time B", &component.Birth.LifeTimeB, 0.1, 0, std::numeric_limits<float>::max());
+				ImGui::DragFloat("Initial Life Time B", &component.Birth.LifeTimeB, 0.1f, 0.0f, std::numeric_limits<float>::max());
 
 			ImGui::DragFloat("Gravity Scale", &component.Birth.GravityScale);
 
 			int maxParticles = static_cast<int>(component.MaxParticles);
 			if (ImGui::DragInt("Max Particles", &maxParticles, 1, 1, std::numeric_limits<int>::max()))
 				component.MaxParticles = maxParticles;
-			ImGui::DragFloat("Spawn Rate", &component.Rate, 0.1, 0, std::numeric_limits<float>::max());
+			ImGui::DragFloat("Spawn Rate", &component.Rate, 0.1f, 0.0f, std::numeric_limits<float>::max());
 
 			GUIUtils::DrawTextureAsset("Texture", &component.Texture);
 		}
