@@ -41,7 +41,7 @@ namespace LevEngine::Editor
 
 			if (ImGui::BeginDragDropSource())
 			{
-				ImGui::SetDragDropPayload(TypeParseTraits<TComponent>::name, &component, sizeof(TComponent), ImGuiCond_Once);
+				ImGui::SetDragDropPayload(TypeParseTraits<TComponent>::name, &entity, sizeof(Entity), ImGuiCond_Once);
 				ImGui::EndDragDropSource();
 			}
 			

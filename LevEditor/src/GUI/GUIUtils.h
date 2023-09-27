@@ -105,13 +105,6 @@ namespace LevEngine::Editor
 					if (isSelected)
 					{
 						itemSelectedIdx = idx;
-						
-						if (entity.IsValid() && entity.HasComponent<T>())
-						{
-							// Select Entity in editor.
-							const auto scene = SceneManager::GetActiveScene();
-							Selection::Select(CreateRef<EntitySelection>(entity));
-						}
 					}
 				}
 				
@@ -126,12 +119,9 @@ namespace LevEngine::Editor
 					itemSelectedIdx = entities.size() - 1;
 					changed = true;
 				}
-				else if (const ImGuiPayload* payloadComponent = ImGui::AcceptDragDropPayload(typeName))
+				else if (const ImGuiPayload* payloadFromComponentDrawer = ImGui::AcceptDragDropPayload(typeName))
 				{
-					T* componentPtr = static_cast<T*>(payloadComponent->Data);
-					Entity entity = SceneManager::GetActiveScene()->GetEntityBy(componentPtr);
-					Log::Info(entity.HasComponent<T>());
-					entities.push_back(entity);
+					entities.emplace_back(*static_cast<Entity*>(payloadFromComponentDrawer->Data));
 					itemSelectedIdx = entities.size() - 1;
 					changed = true;
 				}
@@ -173,20 +163,33 @@ namespace LevEngine::Editor
 		template<class T>
 		static bool DrawSelectableComponent(const String& componentTypeName, Entity& entity, bool wasSelected, bool& isSelected, int selectableIdx = 0)
 		{
-			const bool hasComponent = entity.IsValid() && entity.HasComponent<T>();
+			const bool entityHasComponent = entity.IsValid() && entity.HasComponent<T>();
 			
 			auto changed = false;
 
 			ImGui::AlignTextToFramePadding();
-			const auto entityName = String(hasComponent ? entity.GetName() : "None");
+			const auto entityName = String(entityHasComponent ? entity.GetName() : "None");
 			const auto uniqueId = "##" + ToString(selectableIdx);
-			isSelected = ImGui::Selectable((entityName + " " + componentTypeName + uniqueId).c_str(), wasSelected);
+			
+			if (ImGui::Selectable((entityName + " " + componentTypeName + uniqueId).c_str(),
+				wasSelected, ImGuiSelectableFlags_AllowDoubleClick))
+			{
+				isSelected = true;
+				
+				if (ImGui::IsMouseDoubleClicked(0))
+				{
+					if (entityHasComponent)
+					{
+						Selection::Select(CreateRef<EntitySelection>(entity));
+					}
+				}
+			}
 			
 			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 			if (wasSelected)
 				ImGui::SetItemDefaultFocus();
 
-			if (hasComponent && ImGui::BeginPopupContextItem("Component"))
+			if (entityHasComponent && ImGui::BeginPopupContextItem("Component"))
 			{
 				if (ImGui::MenuItem("Clear"))
 				{
@@ -199,10 +202,15 @@ namespace LevEngine::Editor
 
 			if (ImGui::BeginDragDropTarget())
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EntityPayload))
+				if (const ImGuiPayload* payloadEntity = ImGui::AcceptDragDropPayload(EntityPayload))
 				{
-					entity = *static_cast<Entity*>(payload->Data);
+					entity = *static_cast<Entity*>(payloadEntity->Data);
 				}
+				else if (const ImGuiPayload* payloadFromComponentDrawer = ImGui::AcceptDragDropPayload(TypeParseTraits<T>::name))
+				{
+					entity = *static_cast<Entity*>(payloadFromComponentDrawer->Data);
+				}
+				
 				ImGui::EndDragDropTarget();
 			}
 			
