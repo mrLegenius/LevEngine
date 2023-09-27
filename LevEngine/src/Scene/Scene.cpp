@@ -162,7 +162,7 @@ void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
     }
 }
 
-void Scene::ForEachEntity(const std::function<void(Entity)>& callback)
+void Scene::ForEachEntity(const Action<Entity>& callback)
 {
 	for (const auto entityId : m_Registry.storage<entt::entity>())
 	{

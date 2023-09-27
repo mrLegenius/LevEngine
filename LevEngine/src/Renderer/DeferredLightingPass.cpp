@@ -7,6 +7,20 @@
 
 namespace LevEngine
 {
+	DeferredLightingPass::DeferredLightingPass(const Ref<PipelineState>& pipeline1, const Ref<PipelineState>& pipeline2,
+		const Ref<Texture>& albedoMap, const Ref<Texture>& metallicRoughnessAOTexture, const Ref<Texture>& normalMap,
+		const Ref<Texture>& depthMap): m_Pipeline1(pipeline1)
+		                               , m_Pipeline2(pipeline2)
+		                               , m_AlbedoMap(albedoMap)
+		                               , m_MetallicRoughnessAOMap(metallicRoughnessAOTexture)
+		                               , m_NormalMap(normalMap)
+		                               , m_DepthMap(depthMap)
+	{
+		LEV_PROFILE_FUNCTION();
+
+		m_LightIndexBuffer = ConstantBuffer::Create(sizeof m_LightParams, 4);
+	}
+
 	bool DeferredLightingPass::Begin(entt::registry& registry, RenderParams& params)
 	{
 		m_AlbedoMap->Bind(1, ShaderType::Pixel);

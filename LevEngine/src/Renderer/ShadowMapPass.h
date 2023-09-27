@@ -17,15 +17,7 @@ class ShadowMapPass : public RenderPass
         alignas(16) float ShadowMapDimensions;
     };
 public:
-    ShadowMapPass()
-    {
-        LEV_PROFILE_FUNCTION();
-
-        m_CascadeShadowMap = CreateRef<CascadeShadowMap>(
-            static_cast<uint32_t>(RenderSettings::ShadowMapResolution),
-            static_cast<uint32_t>(RenderSettings::ShadowMapResolution));
-        m_ShadowMapConstantBuffer = ConstantBuffer::Create(sizeof ShadowData, 3);
-    }
+    ShadowMapPass();
 
     bool Begin(entt::registry& registry, RenderParams& params) override;
     void Process(entt::registry& registry, RenderParams& params) override;
@@ -36,7 +28,7 @@ private:
     Ref<CascadeShadowMap> m_CascadeShadowMap = nullptr;
     Ref<ConstantBuffer> m_ShadowMapConstantBuffer;
 
-    Vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const;
-    Matrix GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners) const;
+    [[nodiscard]] Vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const;
+    [[nodiscard]] Matrix GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners) const;
 };
 }

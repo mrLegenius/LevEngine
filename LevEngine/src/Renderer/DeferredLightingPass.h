@@ -15,18 +15,7 @@ namespace LevEngine
 			const Ref<Texture>& albedoMap,
 			const Ref<Texture>& metallicRoughnessAOTexture,
 			const Ref<Texture>& normalMap,
-			const Ref<Texture>& depthMap)
-				: m_Pipeline1(pipeline1)
-				, m_Pipeline2(pipeline2)
-				, m_AlbedoMap(albedoMap)
-				, m_MetallicRoughnessAOMap(metallicRoughnessAOTexture)
-				, m_NormalMap(normalMap)
-				, m_DepthMap(depthMap)
-		{
-			LEV_PROFILE_FUNCTION();
-
-			m_LightIndexBuffer = ConstantBuffer::Create(sizeof m_LightParams, 4);
-		}
+			const Ref<Texture>& depthMap);
 
 		bool Begin(entt::registry& registry, RenderParams& params) override;
 		void Process(entt::registry& registry, RenderParams& params) override;
@@ -37,7 +26,7 @@ namespace LevEngine
 			uint32_t LightIndex;
 		};
 
-		LightParams m_LightParams;
+		LightParams m_LightParams{};
 
 		Ref<PipelineState> m_Pipeline1;
 		Ref<PipelineState> m_Pipeline2;

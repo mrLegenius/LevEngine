@@ -117,15 +117,8 @@ namespace LevEngine
 
 		[[nodiscard]] virtual bool IsTransparent() const = 0;
 
-		void AttachSampler(const Ref<SamplerState>& sampler)
-		{
-			m_SamplerState = sampler;
-		}
-
-		[[nodiscard]] const Ref<SamplerState>& GetSamplerState() const
-		{
-			return m_SamplerState;
-		}
+		void AttachSampler(const Ref<SamplerState>& sampler) { m_SamplerState = sampler; }
+		[[nodiscard]] const Ref<SamplerState>& GetSamplerState() const { return m_SamplerState; }
 
 		virtual void Resize(uint16_t width, uint16_t height = 0, uint16_t depth = 0) = 0;
 

@@ -3,6 +3,7 @@
 
 #include "System.h"
 #include "Components/Transform/Transform.h"
+#include "DataTypes/Delegates.h"
 #include "DataTypes/Pointers.h"
 #include "Kernel/UUID.h"
 #include "Physics/Physics.h"
@@ -30,7 +31,7 @@ public:
 
 	void OnViewportResized(uint32_t width, uint32_t height);
 
-	void ForEachEntity(const std::function<void(Entity)>& callback);
+	void ForEachEntity(const Action<Entity>& callback);
 
 	Entity CreateEntity(const String& name = "Entity");
 	Entity CreateEntity(UUID uuid, const String& name);

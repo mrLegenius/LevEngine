@@ -24,6 +24,7 @@
 
 // -- Data Types -------------------------------------------
 
+#include "DataTypes/Delegates.h"
 #include "DataTypes/Map.h"
 #include "DataTypes/Pair.h"
 #include "DataTypes/Path.h"
@@ -103,6 +104,7 @@
 #include "Renderer/Camera/SceneCamera.h"
 
 #include "Renderer/3D/Mesh.h"
+#include "Renderer/3D/Primitives.h"
 
 #include "Renderer/DebugRender/DebugRender.h"
 

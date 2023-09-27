@@ -260,8 +260,8 @@ void Renderer::SetViewport(const float width, const float height)
 	s_SkyboxPipeline->GetRasterizerState().SetViewport(viewport);
 	s_ParticlesPipelineState->GetRasterizerState().SetViewport(viewport);
 
-	//s_DepthOnlyRenderTarget->Resize(width, height);
-	//s_GBufferRenderTarget->Resize(width, height);
+	s_DepthOnlyRenderTarget->Resize(width, height);
+	s_GBufferRenderTarget->Resize(width, height);
 }
 
 void DirectionalLightSystem(entt::registry& registry);

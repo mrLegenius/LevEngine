@@ -2,6 +2,7 @@
 #include "Renderer3D.h"
 #include "RenderCommand.h"
 #include "Assets.h"
+#include "3D/Primitives.h"
 #include "Kernel/Application.h"
 
 namespace LevEngine
@@ -155,7 +156,7 @@ void Renderer3D::RenderSphere(const Matrix& model, const Ref<Shader>& shader)
 {
     LEV_PROFILE_FUNCTION();
 
-    static Ref<Mesh> mesh = Mesh::CreateSphere(20);
+    static Ref<Mesh> mesh = Primitives::CreateSphere(20);
 
     const MeshModelBufferData data = { model };
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));

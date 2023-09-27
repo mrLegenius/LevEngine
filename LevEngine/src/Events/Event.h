@@ -3,6 +3,7 @@
 #include <string>
 #include <functional>
 
+#include "DataTypes/Delegates.h"
 #include "DataTypes/String.h"
 
 namespace LevEngine
@@ -49,7 +50,7 @@ public:
 class EventDispatcher
 {
 	template<typename T>
-	using EventFn = std::function<bool(T&)>;
+	using EventFn = Func<bool, T&>;
 public:
 	explicit EventDispatcher(Event& event)
 		: m_Event(event) { }

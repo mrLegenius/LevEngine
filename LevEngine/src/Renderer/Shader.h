@@ -29,6 +29,6 @@ namespace LevEngine
 		String m_FilePath;
 		String m_Name;
 
-		ShaderType m_Type;
+		ShaderType m_Type{};
 	};
 }
