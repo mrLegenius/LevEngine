@@ -85,7 +85,7 @@ namespace LevEngine
     {
         ImGui::PushID(static_cast<int>(textureType));
 
-        if (GUIUtils::DrawTextureAsset(label, &textureAsset))
+        if (GUIUtils::DrawTextureAsset(label, textureAsset))
             MaterialPBR.SetTexture(textureType, textureAsset ? textureAsset->GetTexture() : nullptr);
         ImGui::PopID();
     }

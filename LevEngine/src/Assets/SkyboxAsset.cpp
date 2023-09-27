@@ -7,12 +7,12 @@ namespace LevEngine
 {
 	void SkyboxAsset::DrawProperties()
 	{
-		GUIUtils::DrawTextureAsset("Left", &m_Left);
-		GUIUtils::DrawTextureAsset("Right", &m_Right);
-		GUIUtils::DrawTextureAsset("Bottom", &m_Bottom);
-		GUIUtils::DrawTextureAsset("Top", &m_Top);
-		GUIUtils::DrawTextureAsset("Back", &m_Back);
-		GUIUtils::DrawTextureAsset("Front", &m_Front);
+		GUIUtils::DrawTextureAsset("Left", m_Left);
+		GUIUtils::DrawTextureAsset("Right", m_Right);
+		GUIUtils::DrawTextureAsset("Bottom", m_Bottom);
+		GUIUtils::DrawTextureAsset("Top", m_Top);
+		GUIUtils::DrawTextureAsset("Back", m_Back);
+		GUIUtils::DrawTextureAsset("Front", m_Front);
 	}
 
 	void SkyboxAsset::SerializeData(YAML::Emitter& out)
