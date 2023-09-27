@@ -76,6 +76,9 @@ namespace LevEngine
         if (m_Normal)
             m_Material.SetTexture(MaterialPBR::TextureType::Normal, m_Normal->GetTexture());
 
+        if (m_Emissive)
+            m_Material.SetTexture(MaterialPBR::TextureType::Emissive, m_Emissive->GetTexture());
+
         m_Material.SetTextureTiling(node["Tiling"].as<Vector2>());
         m_Material.SetTextureOffset(node["Offset"].as<Vector2>());
     }
