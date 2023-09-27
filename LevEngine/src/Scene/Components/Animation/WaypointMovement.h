@@ -8,6 +8,7 @@ namespace LevEngine
     struct WaypointMovementComponent
     {
         Vector<Entity> entities;
+        float currentDisplacement;
         
         WaypointMovementComponent();
     };   

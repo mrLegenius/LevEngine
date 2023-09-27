@@ -470,6 +470,7 @@
     <ClInclude Include="src\Kernel\Time\Time.h" />
     <ClInclude Include="src\Kernel\Time\Timeline.h" />
     <ClInclude Include="src\Kernel\Time\TimelineFactory.h" />
+    <ClInclude Include="src\Kernel\Time\TimelineParameters.h" />
     <ClInclude Include="src\Kernel\Time\TimelineRunner.h" />
     <ClInclude Include="src\Kernel\Time\Timestep.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
@@ -560,6 +561,7 @@
     <ClInclude Include="src\Scene\Components\Lights\Lights.h" />
     <ClInclude Include="src\Scene\Components\MeshRenderer\MeshRenderer.h" />
     <ClInclude Include="src\Scene\Components\SkyboxRenderer\SkyboxRenderer.h" />
+    <ClInclude Include="src\Scene\Components\Time\TimelineComponent.h" />
     <ClInclude Include="src\Scene\Components\Transform\Transform.h" />
     <ClInclude Include="src\Scene\Components\TypeParseTraits.h" />
     <ClInclude Include="src\Scene\Entity.h" />
@@ -569,7 +571,8 @@
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.h" />
     <ClInclude Include="src\Scene\System.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />
-    <ClInclude Include="src\Scene\Systems\WaypointMovementSystem.h" />
+    <ClInclude Include="src\Scene\Systems\WaypointDisplacementByTimeSystem.h" />
+    <ClInclude Include="src\Scene\Systems\WaypointPositionUpdateSystem.h" />
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
@@ -1159,6 +1162,7 @@
     <ClCompile Include="src\Scene\Components\Lights\Lights.cpp" />
     <ClCompile Include="src\Scene\Components\MeshRenderer\MeshRenderer.cpp" />
     <ClCompile Include="src\Scene\Components\SkyboxRenderer\SkyboxRenderer.cpp" />
+    <ClCompile Include="src\Scene\Components\Time\TimelineComponent.cpp" />
     <ClCompile Include="src\Scene\Components\Transform\Transform.cpp" />
     <ClCompile Include="src\Scene\Components\TypeParseTraits.cpp" />
     <ClCompile Include="src\Scene\Entity.cpp" />
@@ -1166,7 +1170,8 @@
     <ClCompile Include="src\Scene\SceneManager.cpp" />
     <ClCompile Include="src\Scene\Serializers\SceneSerializer.cpp" />
     <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
-    <ClCompile Include="src\Scene\Systems\WaypointMovementSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\WaypointDisplacementByTimeSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\WaypointPositionUpdateSystem.cpp" />
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>

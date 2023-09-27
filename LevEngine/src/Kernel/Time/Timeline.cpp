@@ -1,15 +1,13 @@
 ﻿#include "levpch.h"
 #include "Timeline.h"
 
-LevEngine::Timeline::Timeline(bool startPlaying, bool isLooping, double duration)
+LevEngine::Timeline::Timeline(Ref<TimelineParameters> timelineParameters)
 {
-    LEV_ASSERT(duration > -Math::FloatEpsilon || !isLooping);
+    LEV_ASSERT(timelineParameters->duration > -Math::FloatEpsilon || !timelineParameters->isLooping);
     
-    m_TimeScale = 1.0;
-    m_IsLooping = isLooping;
-    m_Duration = duration;
+    m_TimelineParameters = timelineParameters;
 
-    if (startPlaying)
+    if (m_TimelineParameters->startPlayingOnStart)
     {
         Play();
     }
@@ -61,13 +59,13 @@ void LevEngine::Timeline::OnUpdate(float deltaTime)
         {
             do
             {
-                m_TimeElapsed -= m_Duration;
+                m_TimeElapsed -= m_TimelineParameters->duration;
             }
             while (IsMaxDurationReached());
         }
         else
         {
-            m_TimeElapsed = m_Duration;
+            m_TimeElapsed = m_TimelineParameters->duration;
             Pause();
         }
     }

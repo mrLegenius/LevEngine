@@ -3,10 +3,13 @@
 
 namespace LevEngine
 {
-    class WaypointMovementSystem : public System
+    class WaypointDisplacementByTimeSystem : public System
     {
     public:
         void Update(const float deltaTime, entt::registry& registry) override;
+        
+    private:
+        bool m_Inited;
     };
 }
 
