@@ -12,18 +12,18 @@ namespace LevEngine
 	{
 	public:
 
-		static constexpr float FloatEpsilon = 0.000001;
-		static constexpr float Pi = 3.141592653589793238463;
-		static constexpr float RadToDeg = 180.0 / 3.141592653589793238463;
-		static constexpr float DegToRad = 3.141592653589793238463 / 180.0;
+		static constexpr float FloatEpsilon = 0.000001f;
+		static constexpr float Pi = 3.141592653589793238463f;
+		static constexpr float RadToDeg = 180.0f / 3.141592653589793238463f;
+		static constexpr float DegToRad = 3.141592653589793238463f / 180.0f;
 
 		template<typename T>
-		static T Max(const T a, const T b) { return ((a) > (b)) ? (a) : (b); }
-
+		static constexpr auto Max(const T a, const T b) { return std::max(a, b); }
+		
 		template<typename T>
-		static T Min(const T a, const T b) { return ((a) < (b)) ? (a) : (b); }
+		static constexpr auto Min(const T a, const T b) { return std::min(a, b); }
 
-		static float MaxElement(const Vector3 vector)
+		static constexpr float MaxElement(const Vector3 vector)
 		{
 			return Max(Max(vector.x, vector.y), vector.z);
 		}

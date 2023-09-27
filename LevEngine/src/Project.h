@@ -12,10 +12,10 @@ public:
     static void Save();
     static bool Load(const Path& path);
     static const Path& GetRoot();
-    static const Path& GetStartScene();
+    static Path GetStartScene();
     [[nodiscard]] static const Ref<Project>& GetProject() { return s_Project; }
     static bool CreateNew(const Path& path);
-    static void SetStartScene(Path path);
+    static void SetStartScene(const Path& path);
     [[nodiscard]] static Path GetPath();
     static void Build();
     void CopyEngineResourceDirectory() const noexcept;

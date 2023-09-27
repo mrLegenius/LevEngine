@@ -13,7 +13,7 @@ public:
     virtual void Unbind(const Ref<Shader>& shader);
 
 protected:
-    explicit Material(const size_t gpuDataSize)
+    explicit Material(const uint32_t gpuDataSize)
         : m_ConstantBuffer(ConstantBuffer::Create(gpuDataSize)) { }
 
     virtual void* GetGPUData() = 0;

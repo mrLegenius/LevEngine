@@ -30,6 +30,7 @@ private:
 	static Ref<OpaquePass> s_GBufferPass;
 	static Ref<PipelineState> s_GBufferPipeline;
 	static Ref<PipelineState> s_OpaquePipeline;
+	static Ref<PipelineState> s_DebugPipeline;
 	static Ref<PipelineState> s_SkyboxPipeline;
 	static Ref<PipelineState> s_ParticlesPipelineState;
 	static Ref<PipelineState> m_PositionalLightPipeline1;

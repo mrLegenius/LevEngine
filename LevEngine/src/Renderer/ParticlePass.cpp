@@ -16,11 +16,11 @@ extern ID3D11DeviceContext* context;
 void BindTextureArray(const Ref<D3D11Texture>* textures, const uint32_t count)
 {
 	auto** srv = new ID3D11ShaderResourceView *[count];
-	for (int i = 0; i < count; ++i)
+	for (uint32_t i = 0; i < count; ++i)
 		srv[i] = textures[i]->GetShaderResourceView();
 
-	auto ss = new ID3D11SamplerState* [count];
-	for (int i = 0; i < count; ++i)
+	const auto ss = new ID3D11SamplerState* [count];
+	for (uint32_t i = 0; i < count; ++i)
 		ss[i] = CastRef<D3D11SamplerState>(textures[i]->GetSamplerState())->GetSamplerState();
 
 	context->PSSetShaderResources(0, count, srv);
@@ -127,7 +127,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	{
 		auto [transform, emitter, id] = group.get<Transform, EmitterComponent, IDComponent>(entity);
 
-		int textureIndex = -1.0f;
+		int textureIndex = -1;
 
 		auto texture = emitter.Texture ? emitter.Texture->GetTexture() : nullptr;
 		for (uint32_t i = 0; i < textureSlotIndex; i++)
@@ -145,7 +145,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 			}
 		}
 
-		if (textureIndex == -1.0f)
+		if (textureIndex == -1)
 		{
 			if (textureSlotIndex >= MaxTextureSlots)
 			{

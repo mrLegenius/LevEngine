@@ -14,6 +14,8 @@ public:
 
 	void DrawIndexed(const Ref<IndexBuffer>& indexBuffer) override;
 	void DrawFullScreenQuad() override;
+	void DrawLineList(const Ref<IndexBuffer>& indexBuffer) override;
+	void DrawLineStrip(uint32_t vertexCount);
 	void DrawPointList(uint32_t count) override;
 };
 }

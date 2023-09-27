@@ -33,6 +33,14 @@ struct Icons
 
 struct ShaderAssets
 {
+	static auto Debug()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Debug.hlsl"));
+		return shader;
+	}
+	
 	static auto ForwardPBR()
 	{
 		LEV_PROFILE_FUNCTION();

@@ -195,6 +195,8 @@ namespace LevEngine::Editor
 
         if (m_Viewport->IsActive())
         {
+            DebugRender::DrawGrid(Vector3::Zero, Vector3::Right, Vector3::Forward, 100, 100, 1.0f, Color::Gray);
+            
             m_Viewport->UpdateCamera(deltaTime);
             auto& camera = m_Viewport->GetCamera();
             activeScene->OnRender(&camera, &camera.GetTransform());

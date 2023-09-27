@@ -34,7 +34,7 @@ namespace LevEngine
 
 	YAML::Emitter& operator<<(YAML::Emitter& out, const eastl::string& s)
 	{
-		out << s;
+		out << s.c_str();
 		return out;
 	}
 }
