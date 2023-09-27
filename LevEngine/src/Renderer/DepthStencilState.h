@@ -175,18 +175,10 @@ public:
 
     static Ref<DepthStencilState> Create();
 
-    void SetDepthMode(const DepthMode& depthMode)
-    {
-	    m_DepthMode = depthMode;
-        m_Dirty = true;
-    }
+    void SetDepthMode(const DepthMode& depthMode);
     [[nodiscard]] const DepthMode& GetDepthMode() const { return m_DepthMode; }
 
-    void SetStencilMode(const StencilMode& stencilMode)
-    {
-	    m_StencilMode = stencilMode;
-        m_Dirty = true;
-    }
+    void SetStencilMode(const StencilMode& stencilMode);
     [[nodiscard]] const StencilMode& GetStencilMode() const { return m_StencilMode; }
 
     virtual void Bind() = 0;

@@ -1,6 +1,4 @@
 #pragma once
-#include <cstdint>
-#include <memory>
 
 #include "ClearFlags.h"
 #include "RenderTarget.h"

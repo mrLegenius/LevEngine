@@ -13,10 +13,7 @@ namespace LevEngine
 		ShaderParameter(String name, const uint32_t slotId, const ShaderType shaderType)
 			: m_Name(Move(name))
 			, m_SlotId(slotId)
-			, m_ShaderType(shaderType)
-		{
-			
-		}
+			, m_ShaderType(shaderType) { }
 
 		void Set(const Ref<ConstantBuffer>& constantBuffer);
 		void Set(const Ref<Texture>& texture);

@@ -23,4 +23,16 @@ namespace LevEngine
 
 		return nullptr;
 	}
+
+	void DepthStencilState::SetDepthMode(const DepthMode& depthMode)
+	{
+		m_DepthMode = depthMode;
+		m_Dirty = true;
+	}
+
+	void DepthStencilState::SetStencilMode(const StencilMode& stencilMode)
+	{
+		m_StencilMode = stencilMode;
+		m_Dirty = true;
+	}
 }

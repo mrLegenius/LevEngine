@@ -9,8 +9,7 @@ class CopyTexturePass final : public RenderPass
 public:
 	CopyTexturePass(const Ref<Texture>& destinationTexture, const Ref<Texture>& sourceTexture)
 	: m_DestinationTexture(destinationTexture)
-	, m_SourceTexture(sourceTexture)
-	{ }
+	, m_SourceTexture(sourceTexture) { }
 
 	void Process(entt::registry& registry, RenderParams& params) override;
 

@@ -58,6 +58,16 @@ Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, Vector<Vecto
     return Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ);
 }
 
+ShadowMapPass::ShadowMapPass()
+{
+	LEV_PROFILE_FUNCTION();
+
+	m_CascadeShadowMap = CreateRef<CascadeShadowMap>(
+		static_cast<uint32_t>(RenderSettings::ShadowMapResolution),
+		static_cast<uint32_t>(RenderSettings::ShadowMapResolution));
+	m_ShadowMapConstantBuffer = ConstantBuffer::Create(sizeof ShadowData, 3);
+}
+
 bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 {
 	const SceneCamera* lightCamera = nullptr;

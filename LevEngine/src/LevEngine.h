@@ -103,6 +103,7 @@
 #include "Renderer/Camera/SceneCamera.h"
 
 #include "Renderer/3D/Mesh.h"
+#include "Renderer/3D/Primitives.h"
 
 #include "Renderer/DebugRender/DebugRender.h"
 

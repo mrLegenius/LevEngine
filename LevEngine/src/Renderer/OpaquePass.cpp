@@ -6,6 +6,11 @@
 
 namespace LevEngine
 {
+    OpaquePass::OpaquePass(const Ref<PipelineState>& pipelineState) : m_PipelineState(pipelineState)
+    {
+        m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
+    }
+
     bool OpaquePass::Begin(entt::registry& registry, RenderParams& params)
     {
         //TODO: Move this to its own pass

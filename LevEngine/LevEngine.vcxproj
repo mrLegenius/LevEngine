@@ -513,6 +513,7 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Project.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
+    <ClInclude Include="src\Renderer\3D\Primitives.h" />
     <ClInclude Include="src\Renderer\BitonicSort.h" />
     <ClInclude Include="src\Renderer\BlendState.h" />
     <ClInclude Include="src\Renderer\BufferBinding.h" />
@@ -838,6 +839,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Project.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
+    <ClCompile Include="src\Renderer\3D\Primitives.cpp" />
     <ClCompile Include="src\Renderer\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\BlendState.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
@@ -941,6 +943,7 @@
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\Renderer\RenderTarget.cpp" />
+    <ClCompile Include="src\Renderer\RenderTechnique.cpp" />
     <ClCompile Include="src\Renderer\SamplerState.cpp" />
     <ClCompile Include="src\Renderer\Shader.cpp" />
     <ClCompile Include="src\Renderer\ShaderParameter.cpp" />
