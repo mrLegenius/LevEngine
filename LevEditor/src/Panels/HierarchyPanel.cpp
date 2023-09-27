@@ -109,7 +109,7 @@ namespace LevEngine::Editor
 
 		if (ImGui::BeginDragDropSource())
 		{
-			ImGui::SetDragDropPayload(GUIUtils::EntityPayload, &entity, sizeof(Entity));
+			ImGui::SetDragDropPayload(GUIUtils::EntityPayload, &entity, sizeof(Entity), ImGuiCond_Once);
 			ImGui::EndDragDropSource();
 		}
 

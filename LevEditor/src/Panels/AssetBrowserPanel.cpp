@@ -88,7 +88,8 @@ namespace LevEngine::Editor
             if (ImGui::BeginDragDropSource())
             {
                 const wchar_t* itemPath = path.c_str();
-                ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+                ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath,
+                    (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
                 ImGui::EndDragDropSource();
             }
 
