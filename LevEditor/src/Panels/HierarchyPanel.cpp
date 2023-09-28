@@ -4,6 +4,7 @@
 #include <imgui.h>
 
 #include "EntitySelection.h"
+#include "ModalPopup.h"
 #include "GUI/GUIUtils.h"
 
 namespace LevEngine::Editor
@@ -66,6 +67,14 @@ namespace LevEngine::Editor
 		}
 	}
 
+	void HierarchyPanel::CreatePrefab(const Entity entity, const Path& path)
+	{
+		if (const auto& asset = AssetDatabase::CreateAsset<PrefabAsset>(path))
+			asset->SaveEntity(entity);
+
+		Log::CoreInfo("Prefab '{0}' is created at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+	}
+
 	void HierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		LEV_PROFILE_FUNCTION()
@@ -120,6 +129,25 @@ namespace LevEngine::Editor
 				m_EntitiesToDelete.emplace(m_EntitiesToDelete.begin(), entity);
 			if (ImGui::MenuItem("Duplicate", "ctrl+D"))
 				activeScene->DuplicateEntity(entity);
+			
+			if (ImGui::MenuItem("Save As Prefab", "ctrl+D"))
+			{
+				Path path = AssetDatabase::GetAssetsPath() / "Prefabs";
+				path /= (tag + ".prefab").c_str();
+
+				if (AssetDatabase::AssetExists(path))
+				{
+					ModalPopup::Show("Prefab already exists", "Do you want to override it?", "Yes", "No",
+					[entity, path]
+					{
+						CreatePrefab(entity, path);
+					});
+				}
+				else
+				{
+					CreatePrefab(entity, path);
+				}
+			}
 
 			ImGui::EndPopup();
 		}

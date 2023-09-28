@@ -4,7 +4,6 @@
 #include "Assets/Asset.h"
 #include "Assets/AssetDatabase.h"
 #include "Kernel/Color.h"
-#include "Math/Math.h"
 
 namespace YAML
 {
@@ -169,4 +168,6 @@ namespace LevEngine
 			return nullptr;
 		}
 	}
+
+	void SerializeEntity(YAML::Emitter& out, Entity entity);
 }

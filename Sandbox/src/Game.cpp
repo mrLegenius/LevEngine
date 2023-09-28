@@ -129,16 +129,14 @@ namespace Sandbox
 					rigidbody.bodyType = BodyType::Kinematic;
 					rigidbody.gravityScale = 0;
 					
-					auto projectileMeshEntity = SceneManager::GetActiveScene()->CreateEntity("MissileMesh");
+					auto meshPrefab = AssetDatabase::GetAsset<PrefabAsset>(AssetDatabase::GetAssetsPath() / "Prefabs" / "Rock.prefab"); 
+					auto projectileMeshEntity = meshPrefab->Instantiate(SceneManager::GetActiveScene());
 					
 					auto& meshTransform = projectileMeshEntity.GetComponent<Transform>();
 					meshTransform.SetParent(projectile, false);
+					meshTransform.SetLocalPosition(Vector3::Zero);
 					meshTransform.SetLocalScale(Vector3::One * 0.05f);
 					meshTransform.SetLocalRotation(Random::Rotation());
-					
-					auto& mesh = projectileMeshEntity.AddComponent<MeshRendererComponent>();
-					mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Models" / "lava_rock.obj");
-					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Textures" / "LavaRock" / "LavaRock.pbr");
 
 					auto& projectileComp = projectile.AddComponent<Projectile>();
 
