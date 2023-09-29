@@ -7,9 +7,9 @@ namespace LevEngine
 {
 MaterialSimple::MaterialSimple() : Material(sizeof GPUData)
 {
-	m_Textures[TextureType::Emissive] = TextureLibrary::GetEmptyTexture();
-	m_Textures[TextureType::Diffuse] = TextureLibrary::GetEmptyTexture();
-	m_Textures[TextureType::Specular] = TextureLibrary::GetEmptyTexture();
+	m_Textures[TextureType::Emissive] = TextureLibrary::GetWhiteTexture();
+	m_Textures[TextureType::Diffuse] = TextureLibrary::GetWhiteTexture();
+	m_Textures[TextureType::Specular] = TextureLibrary::GetWhiteTexture();
 	m_Textures[TextureType::Normal] = TextureLibrary::GetEmptyNormalMap();
 }
 
@@ -74,7 +74,7 @@ void MaterialSimple::SetTexture(const TextureType type, const Ref<Texture>& text
 		                   ? texture
 		                   : type == TextureType::Normal
 		                   ? TextureLibrary::GetEmptyNormalMap()
-		                   : TextureLibrary::GetEmptyTexture();
+		                   : TextureLibrary::GetWhiteTexture();
 
 	m_IsDirty = true;
 }
@@ -86,7 +86,7 @@ Ref<Texture> MaterialSimple::GetTexture(const TextureType type) const
 		       ? it->second
 		       : type == TextureType::Normal
 		       ? TextureLibrary::GetEmptyNormalMap()
-		       : TextureLibrary::GetEmptyTexture();
+		       : TextureLibrary::GetWhiteTexture();
 }
 
 void MaterialSimple::SetTextureTiling(const float value)

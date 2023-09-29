@@ -5,13 +5,31 @@
 
 namespace LevEngine
 {
+static Ref<Texture> GetDefaultTexture(const MaterialPBR::TextureType type)
+{
+    switch (type)
+    {
+    case MaterialPBR::TextureType::Albedo:
+    case MaterialPBR::TextureType::Metallic:
+    case MaterialPBR::TextureType::Roughness:
+        return TextureLibrary::GetWhiteTexture();
+    case MaterialPBR::TextureType::Normal:
+        return TextureLibrary::GetEmptyNormalMap();
+    case MaterialPBR::TextureType::AmbientOcclusion:
+    case MaterialPBR::TextureType::Emissive:
+        return TextureLibrary::GetBlackTexture();
+    default:
+        throw std::exception("Unknown PBR Texture Type");
+    }
+}
+    
 MaterialPBR::MaterialPBR() : Material(sizeof GPUData)
 {
-    m_Textures[TextureType::Albedo] = TextureLibrary::GetEmptyTexture();
-    m_Textures[TextureType::Metallic] = TextureLibrary::GetEmptyTexture();
-    m_Textures[TextureType::Roughness] = TextureLibrary::GetEmptyTexture();
-    m_Textures[TextureType::Normal] = TextureLibrary::GetEmptyNormalMap();
-    m_Textures[TextureType::AmbientOcclusion] = TextureLibrary::GetEmptyTexture();
+    m_Textures[TextureType::Albedo] = GetDefaultTexture(TextureType::Albedo);
+    m_Textures[TextureType::Metallic] = GetDefaultTexture(TextureType::Metallic);
+    m_Textures[TextureType::Roughness] = GetDefaultTexture(TextureType::Roughness);
+    m_Textures[TextureType::Normal] = GetDefaultTexture(TextureType::Normal);
+    m_Textures[TextureType::AmbientOcclusion] = GetDefaultTexture(TextureType::AmbientOcclusion);
 }
 
 void MaterialPBR::SetTintColor(const Color color)
@@ -49,23 +67,14 @@ float MaterialPBR::GetRoughness() const
 
 void MaterialPBR::SetTexture(const TextureType type, const Ref<Texture>& texture)
 {
-    m_Textures[type] = texture
-                           ? texture
-                           : type == TextureType::Normal
-                           ? TextureLibrary::GetEmptyNormalMap()
-                           : TextureLibrary::GetEmptyTexture();
-
+    m_Textures[type] = texture ? texture : GetDefaultTexture(type);
     m_IsDirty = true;
 }
 
 Ref<Texture> MaterialPBR::GetTexture(const TextureType type) const
 {
     const auto it = m_Textures.find(type);
-    return it != m_Textures.end()
-               ? it->second
-               : type == TextureType::Normal
-               ? TextureLibrary::GetEmptyNormalMap()
-               : TextureLibrary::GetEmptyTexture();
+    return it != m_Textures.end() ? it->second : GetDefaultTexture(type);
 }
 
 void MaterialPBR::SetTextureTiling(const float value)
