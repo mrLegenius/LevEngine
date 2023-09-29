@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include "EntitySelection.h"
+#include "Selection.h"
 #include "Assets/Asset.h"
 #include "Assets/AssetDatabase.h"
 #include "Kernel/Color.h"
@@ -6,6 +8,7 @@
 #include "Scene/Entity.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/TypeParseTraits.h"
+#include "DataTypes/String.h"
 
 namespace LevEngine::Editor
 {
@@ -13,6 +16,7 @@ namespace LevEngine::Editor
 	{
 		static constexpr const char* AssetPayload = "ASSETS_BROWSER_ITEM";
 		static constexpr const char* EntityPayload = "ENTITY";
+		static constexpr const char* ComponentPayload = "COMPONENT";
 
 		static bool DrawVector3Control(const String& label, Vector3& values, float resetValue = 0.0f, float labelWidth = 100.0f);
 		static bool DrawVector2Control(const String& label, Vector2& values, float resetValue = 0.0f, float labelWidth = 100.0f);
@@ -80,19 +84,23 @@ namespace LevEngine::Editor
 		}
 
 		template<class T>
-		static bool DrawSelectableComponentList(const String& label, Vector<Ref<T>>& components, int& itemSelectedIdx)
+		static bool DrawSelectableComponentList(const String& label, Vector<Entity>& entities, int& itemSelectedIdx)
 		{
 			bool changed = false;
+
+			const char* typeName = TypeParseTraits<T>::name;
 			
 			if (ImGui::BeginListBox(label.c_str()))
 			{
-				const int count = static_cast<int>(components.size());
+				const int count = static_cast<int>(entities.size());
 				for (int idx = 0; idx < count; idx++)
 				{
 					const bool wasSelected = (itemSelectedIdx == idx);
 					bool isSelected = false;
-					auto componentPtr = &components[idx];
-					if (GUIUtils::DrawSelectableComponentRef<T>(TypeParseTraits<Transform>::name, componentPtr, wasSelected, isSelected, idx))
+					Entity& entity = entities[idx];
+
+					auto componentTypeName = Format("({})", typeName);
+					if (GUIUtils::DrawSelectableComponent<T>(componentTypeName, entity, wasSelected, isSelected, idx))
 					{
 						changed = true;
 					}
@@ -100,39 +108,51 @@ namespace LevEngine::Editor
 					if (isSelected)
 					{
 						itemSelectedIdx = idx;
-
-						const auto scene = SceneManager::GetActiveScene();
-						Entity entity = scene->GetEntityBy(componentPtr);
-						//Selection::Select(CreateRef<EntitySelection>(entity));
 					}
 				}
+				
 				ImGui::EndListBox();
+			}
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payloadEntity = ImGui::AcceptDragDropPayload(EntityPayload))
+				{
+					entities.emplace_back(*static_cast<Entity*>(payloadEntity->Data));
+					itemSelectedIdx = entities.size() - 1;
+					changed = true;
+				}
+				else if (const ImGuiPayload* payloadFromComponentDrawer = ImGui::AcceptDragDropPayload(typeName))
+				{
+					entities.emplace_back(*static_cast<Entity*>(payloadFromComponentDrawer->Data));
+					itemSelectedIdx = entities.size() - 1;
+					changed = true;
+				}
+				
+				ImGui::EndDragDropTarget();
 			}
 
 			ImGui::AlignTextToFramePadding();
 			if (ImGui::Button("+"))
 			{
-				components.emplace_back(eastl::shared_ptr<T>());
-				itemSelectedIdx = components.size() - 1;
+				entities.emplace_back(Entity());
+				itemSelectedIdx = entities.size() - 1;
 				changed = true;
 			}
 			ImGui::SameLine();
 
 			if (ImGui::Button("-"))
 			{
-				if (itemSelectedIdx >= 0 && itemSelectedIdx + 1 < components.size())
+				if (itemSelectedIdx > 0 && itemSelectedIdx < entities.size())
 				{
-					components.erase_first(components[itemSelectedIdx]);
+					entities.erase_first(entities[itemSelectedIdx]);
+					--itemSelectedIdx;
+					
 					changed = true;
 				}
-				else if (components.size() > 0)
+				else if (entities.size() > 0)
 				{
-					if (itemSelectedIdx == components.size() - 1)
-					{
-						--itemSelectedIdx;
-					}
-					
-					components.pop_back();
+					entities.pop_back();
 					changed = true;
 				}
 			}
@@ -141,40 +161,60 @@ namespace LevEngine::Editor
 		}
 
 		template<class T>
-		static bool DrawSelectableComponentRef(const String& label, Ref<T>* componentPtr, bool wasSelected, bool& isSelected, int selectableIdx = 0)
+		static bool DrawSelectableComponent(const String& componentTypeName, Entity& entity, bool wasSelected,
+			bool& isSelected, int selectableIdx = 0)
 		{
-			const auto& component = *componentPtr;
+			const bool entityHasComponent = entity && entity.HasComponent<T>();
+			
 			auto changed = false;
 
 			ImGui::AlignTextToFramePadding();
-			const auto componentRefName = String(component ? "Component is assigned" : "None");
-			const auto uniqueId = "##" + ToString(selectableIdx);
-			isSelected = ImGui::Selectable((label + " " + componentRefName + uniqueId).c_str(), wasSelected);
+			const char* entityName = entityHasComponent ? entity.GetName().c_str() : "None";
+			
+			const auto label = Format("{} {}##{}", entityName, componentTypeName, selectableIdx);
+			
+			if (ImGui::Selectable(label.c_str(), wasSelected, ImGuiSelectableFlags_AllowDoubleClick))
+			{
+				isSelected = true;
+				
+				if (ImGui::IsMouseDoubleClicked(0))
+				{
+					if (entityHasComponent)
+					{
+						Selection::Select(CreateRef<EntitySelection>(entity));
+					}
+				}
+			}
 			
 			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 			if (wasSelected)
 				ImGui::SetItemDefaultFocus();
 
-			if (component && ImGui::BeginPopupContextItem("Component"))
+			if (entityHasComponent && ImGui::BeginPopupContextItem("Component"))
 			{
 				if (ImGui::MenuItem("Clear"))
 				{
-					*componentPtr = nullptr;
+					entity = Entity();
 					changed = true;
 				}
 
 				ImGui::EndPopup();
 			}
 
-			if (!ImGui::BeginDragDropTarget()) return changed;
-
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EntityPayload))
+			if (ImGui::BeginDragDropTarget())
 			{
-				const auto draggedEntity = *static_cast<Entity*>(payload->Data);
-				*componentPtr = CreateRef(draggedEntity.GetComponent<T>());
+				if (const ImGuiPayload* payloadEntity = ImGui::AcceptDragDropPayload(EntityPayload))
+				{
+					entity = *static_cast<Entity*>(payloadEntity->Data);
+				}
+				else if (const ImGuiPayload* payloadFromComponentDrawer = ImGui::AcceptDragDropPayload(TypeParseTraits<T>::name))
+				{
+					entity = *static_cast<Entity*>(payloadFromComponentDrawer->Data);
+				}
+				
+				ImGui::EndDragDropTarget();
 			}
-			ImGui::EndDragDropTarget();
-
+			
 			return changed;
 		}
 
@@ -205,5 +245,4 @@ namespace LevEngine::Editor
 			return changed;
 		}
 	};
-
 }
