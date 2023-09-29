@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class TimelineParameters;
+
 namespace LevEngine
 {
     class Timeline;
@@ -7,7 +9,7 @@ namespace LevEngine
     class TimelineFactory
     {
     public:
-        static Timeline* CreateTimeline();
+        static Timeline* CreateTimeline(Ref<TimelineParameters> timelineParameters);
     };
 }
 

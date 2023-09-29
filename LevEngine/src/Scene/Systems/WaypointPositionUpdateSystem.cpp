@@ -48,6 +48,7 @@ void WaypointPositionUpdateSystem::Update(const float deltaTime, entt::registry&
             Vector3 dir = difference;
             dir.Normalize();
             transform.SetWorldPosition(prevPosition + dir * distance);
+            // todo: set rotation and check that distance > 0
         }
     }
 }
