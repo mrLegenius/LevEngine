@@ -1,0 +1,31 @@
+Prefab: Enemy
+RootEntity: 15521556991851276175
+Entities:
+  - Entity: 15521556991851276175
+    Tag: Enemy
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Box Collider:
+      Extents: [0.5, 1.5, 0.5]
+      Offset: [0, 2.29999995, 0]
+    Rigidbody:
+      Body Type: 2
+      Gravity Scale: 1
+      Mass: 1
+      Elasticity: 0.5
+      Damping: 0.800000012
+      Angular Damping: 0.800000012
+      Enabled: true
+  - Entity: 14004482002913778106
+    Tag: Mesh
+    Parent: 15521556991851276175
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [0.00999999978, 0.0199999996, 0.00999999978]
+    MeshRenderer:
+      Mesh: 14487929412751068277
+      Material: 2751245691352325769
+      Cast Shadow: true
