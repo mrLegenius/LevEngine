@@ -47,7 +47,7 @@ PS_OUT PSMain(PS_IN input)
 	float ao = ambientOcclusionMap.Sample(ambientOcclusionMapSampler, textureUV);
 
 	//Gamma correction
-	albedo = pow(albedo, 2.2);
+	//albedo = pow(albedo, 2.2);
 
 	float cascade = GetCascadeIndex(input.depth);
 	float4 fragPosLightSpace = mul(float4(input.fragPos, 1.0f), lightViewProjection[cascade]);
@@ -55,11 +55,11 @@ PS_OUT PSMain(PS_IN input)
 
 	float3 lit = CalcDirLight(dirLight, normal, viewDir, fragPosLightSpace, cascade, albedo, metallic, roughness);
 
-    float3 ambientColor = globalAmbient * albedo * ao;
+    float3 ambientColor = globalAmbient * ao * albedo;
 	float3 finalColor = ambientColor + lit + emissive;
 
 	//Gamma correction
-	//finalColor = finalColor / (finalColor + 1.0);
+	finalColor = finalColor / (finalColor + 1.0);
 	finalColor = pow(finalColor, 0.44);
 
 	//result.LightAccumulation = float4(normal, 1.0f);

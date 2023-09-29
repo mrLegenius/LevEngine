@@ -16,12 +16,12 @@ Entities:
     Tag: BlueLight
     Parent: 6442536384003582315
     Transform:
-      Position: [-21.7738609, 6.31169748, -22.457468]
-      Rotation: [-0, 0, 0]
+      Position: [-21.1934109, 5.20373106, -22.0686836]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
-      Color: [0, 0.0338983536, 1, 1]
-      Range: 30.5
+      Color: [0, 0.0338988304, 1, 1]
+      Range: 20
       Smoothness: 0.75
       Intensity: 10
   - Entity: 17529679922283546918
@@ -195,7 +195,7 @@ Entities:
     Parent: 11837398838170000115
     Transform:
       Position: [-1.20967243e-05, 5.0001483, 25.5]
-      Rotation: [1.57078934, -1.96542487e-06, 3.14159083]
+      Rotation: [1.57078934, -1.92161292e-06, 3.14159083]
       Scale: [50, 0.999938488, 9.99950695]
     Box Collider:
       Extents: [25, 5, 0.400000006]
