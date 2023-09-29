@@ -1160,7 +1160,6 @@
     <ClCompile Include="src\Scene\Components\MeshRenderer\MeshRenderer.cpp" />
     <ClCompile Include="src\Scene\Components\SkyboxRenderer\SkyboxRenderer.cpp" />
     <ClCompile Include="src\Scene\Components\Transform\Transform.cpp" />
-    <ClCompile Include="src\Scene\Components\TypeParseTraits.cpp" />
     <ClCompile Include="src\Scene\Entity.cpp" />
     <ClCompile Include="src\Scene\Scene.cpp" />
     <ClCompile Include="src\Scene\SceneManager.cpp" />
