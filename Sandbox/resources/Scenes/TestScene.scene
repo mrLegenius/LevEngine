@@ -1,340 +1,99 @@
 Scene: Scene Name
 Entities:
-  - Entity: 337136061149689749
-    Tag: Smoke Particles
-    Parent: 17651114295808489261
+  - Entity: 3689415638347974649
+    Tag: Waypoint12
+    Parent: 10857159529581529762
     Transform:
-      Position: [0, 37.5030022, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [10, 10, 10]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-0.200000003, 0, -0.200000003]
-        PositionB: [0.200000003, 0, 0.200000003]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.200000003
-        StartSizeB: 0.5
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.400000006
-        LifeTimeB: 1
-        GravityScale: 0
-      Texture: 8196646840874663791
-      MaxParticles: 100
-      Rate: 50
-  - Entity: 17503441474138440245
-    Tag: Fire Particles
-    Parent: 17651114295808489261
+      Position: [-16.4916172, 0.556514859, 0.249802485]
+      Rotation: [0, -3.1415925, 0]
+      Scale: [0.0499999784, 0.0500000007, 0.0499999784]
+  - Entity: 11491594502396744912
+    Tag: Waypoint11
+    Parent: 10857159529581529762
     Transform:
-      Position: [0, 45.663002, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-0.200000003, 0, -0.200000003]
-        PositionB: [0.200000003, 0, 0.200000003]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0.988235295]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.200000003
-        StartSizeB: 0.600000024
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.200000003
-        LifeTimeB: 0.600000024
-        GravityScale: 0
-      Texture: 788160533914043389
-      MaxParticles: 100
-      Rate: 50
-  - Entity: 5437498412017705575
+      Position: [-14.7674503, 0.556572139, 14.6777763]
+      Rotation: [-0, -2.32619739, 0]
+      Scale: [0.0499999262, 0.0500000007, 0.0499999262]
+  - Entity: 17653901782476087631
+    Tag: Waypoint10
+    Parent: 10857159529581529762
+    Transform:
+      Position: [-7.21539974, 0.556570649, 18.0551567]
+      Rotation: [-0, -1.62946272, 0]
+      Scale: [0.0499999747, 0.0500000007, 0.0499999747]
+  - Entity: 11291592076948125486
+    Tag: Waypoint9
+    Parent: 10857159529581529762
+    Transform:
+      Position: [8.67433262, 0.556570947, 18.4273262]
+      Rotation: [0, -1.53532529, 0]
+      Scale: [0.0499999635, 0.0500000007, 0.0499999635]
+  - Entity: 3303745978303419542
+    Tag: Waypoint8
+    Parent: 10857159529581529762
+    Transform:
+      Position: [15.2127657, 0.556571186, 14.2995434]
+      Rotation: [0, -0.765558124, 0]
+      Scale: [0.0499999896, 0.0500000007, 0.0499999896]
+  - Entity: 18422890418356851195
+    Tag: Waypoint7
+    Parent: 10857159529581529762
+    Transform:
+      Position: [16.0767498, 0.556571186, 6.8210535]
+      Rotation: [0, -0.0282516629, 0]
+      Scale: [0.0499999933, 0.0500000007, 0.0499999933]
+  - Entity: 15719292031756994234
+    Tag: Waypoint6
+    Parent: 10857159529581529762
+    Transform:
+      Position: [15.693306, 0.556570768, -7.95618582]
+      Rotation: [-0, 0.0689429045, 0]
+      Scale: [0.0499999896, 0.0500000007, 0.0499999896]
+  - Entity: 12685685000942160993
+    Tag: Thomas
+    MeshRenderer:
+      Mesh: 5933597382245132837
+      Material: 17835983843247004483
+      Cast Shadow: true
+    TimelineComponent:
+      IsLooping: false
+      Duration: 10
+      TimeScale: 1
+      PlayOnInit: true
+    WaypointMovement:
+      WaypointsCount: 12
+      Waypoints:
+        - Entity: 1263878909094803935
+        - Entity: 10401188687603910767
+        - Entity: 2232428211685324750
+        - Entity: 16617195144346703286
+        - Entity: 11037750501948919825
+        - Entity: 15719292031756994234
+        - Entity: 18422890418356851195
+        - Entity: 3303745978303419542
+        - Entity: 11291592076948125486
+        - Entity: 17653901782476087631
+        - Entity: 11491594502396744912
+        - Entity: 3689415638347974649
+    Transform:
+      Position: [-16.4916172, 0.556514859, 0.249802485]
+      Rotation: [-0, -3.1415925, 0]
+      Scale: [0.0499999784, 0.0500000007, 0.0499999784]
+  - Entity: 6507700503830715917
     Tag: Point Light
-    Parent: 17651114295808489261
-    Transform:
-      Position: [0, 45.2640038, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [10, 10, 10]
+    Parent: 3352402856425678934
     Point Light:
       Color: [0.884169877, 0.368899524, 0.0341378339, 1]
       Range: 4.80000019
       Smoothness: 0.5
       Intensity: 0.5
-  - Entity: 17651114295808489261
-    Tag: Torch
-    Transform:
-      Position: [-9.89208698, 0.628469586, -9.63417149]
-      Rotation: [-0, 0, 0]
-      Scale: [0.0500000007, 0.0500000007, 0.0500000007]
-    MeshRenderer:
-      Mesh: 17632389977203314860
-      Material: 8838899374217920014
-      Cast Shadow: true
-  - Entity: 12987892874791468613
-    Tag: Smoke Particles
-    Parent: 10990379420440187170
-    Transform:
-      Position: [0, 37.5030022, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [10, 10, 10]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-0.200000003, 0, -0.200000003]
-        PositionB: [0.200000003, 0, 0.200000003]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.200000003
-        StartSizeB: 0.5
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.400000006
-        LifeTimeB: 1
-        GravityScale: 0
-      Texture: 8196646840874663791
-      MaxParticles: 100
-      Rate: 50
-  - Entity: 533120611763095065
-    Tag: Fire Particles
-    Parent: 10990379420440187170
-    Transform:
-      Position: [0, 45.663002, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-0.200000003, 0, -0.200000003]
-        PositionB: [0.200000003, 0, 0.200000003]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0.988235295]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.200000003
-        StartSizeB: 0.600000024
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.200000003
-        LifeTimeB: 0.600000024
-        GravityScale: 0
-      Texture: 788160533914043389
-      MaxParticles: 100
-      Rate: 50
-  - Entity: 2008014555571703348
-    Tag: Point Light
-    Parent: 10990379420440187170
-    Transform:
-      Position: [0, 45.2640038, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [10, 10, 10]
-    Point Light:
-      Color: [0.884169877, 0.368899524, 0.0341378339, 1]
-      Range: 4.80000019
-      Smoothness: 0.5
-      Intensity: 0.5
-  - Entity: 10990379420440187170
-    Tag: Torch
-    Transform:
-      Position: [-9.89208698, 0.628469586, 9.86728096]
-      Rotation: [-0, 0, 0]
-      Scale: [0.0500000007, 0.0500000007, 0.0500000007]
-    MeshRenderer:
-      Mesh: 17632389977203314860
-      Material: 8838899374217920014
-      Cast Shadow: true
-  - Entity: 7690596970259258522
-    Tag: Smoke Particles
-    Parent: 3074643834626215923
-    Transform:
-      Position: [0, 37.5030022, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [10, 10, 10]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-0.200000003, 0, -0.200000003]
-        PositionB: [0.200000003, 0, 0.200000003]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.200000003
-        StartSizeB: 0.5
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.400000006
-        LifeTimeB: 1
-        GravityScale: 0
-      Texture: 8196646840874663791
-      MaxParticles: 100
-      Rate: 50
-  - Entity: 4404657403437969173
-    Tag: Fire Particles
-    Parent: 3074643834626215923
-    Transform:
-      Position: [0, 45.663002, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-0.200000003, 0, -0.200000003]
-        PositionB: [0.200000003, 0, 0.200000003]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0.988235295]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.200000003
-        StartSizeB: 0.600000024
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.200000003
-        LifeTimeB: 0.600000024
-        GravityScale: 0
-      Texture: 788160533914043389
-      MaxParticles: 100
-      Rate: 50
-  - Entity: 8390807429886321386
-    Tag: Point Light
-    Parent: 3074643834626215923
-    Transform:
-      Position: [0, 45.2640038, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [10, 10, 10]
-    Point Light:
-      Color: [0.884169877, 0.368899524, 0.0341378339, 1]
-      Range: 4.80000019
-      Smoothness: 0.5
-      Intensity: 0.5
-  - Entity: 3074643834626215923
-    Tag: Torch
-    Transform:
-      Position: [9.35787296, 0.628469586, 9.86728096]
-      Rotation: [-0, 0, 0]
-      Scale: [0.0500000007, 0.0500000007, 0.0500000007]
-    MeshRenderer:
-      Mesh: 17632389977203314860
-      Material: 8838899374217920014
-      Cast Shadow: true
-  - Entity: 3803584472433469728
-    Tag: Smoke Particles
-    Parent: 1697474554961836166
-    Transform:
-      Position: [0, 37.5029984, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [10, 10, 10]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-0.200000003, 0, -0.200000003]
-        PositionB: [0.200000003, 0, 0.200000003]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.200000003
-        StartSizeB: 0.5
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.400000006
-        LifeTimeB: 1
-        GravityScale: 0
-      Texture: 8196646840874663791
-      MaxParticles: 100
-      Rate: 50
-  - Entity: 5227298308000770559
-    Tag: Fire Particles
-    Parent: 1697474554961836166
-    Transform:
-      Position: [0, 45.6629982, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-0.200000003, 0, -0.200000003]
-        PositionB: [0.200000003, 0, 0.200000003]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0.988235295]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.200000003
-        StartSizeB: 0.600000024
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.200000003
-        LifeTimeB: 0.600000024
-        GravityScale: 0
-      Texture: 788160533914043389
-      MaxParticles: 100
-      Rate: 50
-  - Entity: 8988851268302625154
-    Tag: Point Light
-    Parent: 1697474554961836166
     Transform:
       Position: [0, 45.2639999, 0]
       Rotation: [-0, 0, 0]
       Scale: [10, 10, 10]
-    Point Light:
-      Color: [0.884169877, 0.368899524, 0.0341378339, 1]
-      Range: 9.10000038
-      Smoothness: 0.5
-      Intensity: 1.39999998
-  - Entity: 1697474554961836166
-    Tag: Torch
-    Transform:
-      Position: [0, 2.22270942, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [0.100000001, 0.100000001, 0.100000001]
-    MeshRenderer:
-      Mesh: 17632389977203314860
-      Material: 8838899374217920014
-      Cast Shadow: true
-  - Entity: 15749311956304931436
-    Tag: Fire Particles
+  - Entity: 2440918126693032813
+    Tag: Smoke Particles
     Parent: 3352402856425678934
-    Transform:
-      Position: [0, 45.6629982, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
     Emitter:
       Birth:
         RandomVelocity: true
@@ -345,81 +104,25 @@ Entities:
         PositionB: [0.200000003, 0, 0.200000003]
         RandomStartColor: false
         StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0.988235295]
+        StartColorB: [0, 0, 0, 0]
         EndColor: [1, 1, 1, 0]
         RandomStartSize: true
         StartSize: 0.200000003
-        StartSizeB: 0.600000024
+        StartSizeB: 0.5
         EndSize: 0.100000001
         RandomStartLifeTime: true
-        LifeTime: 0.200000003
-        LifeTimeB: 0.600000024
+        LifeTime: 0.400000006
+        LifeTimeB: 1
         GravityScale: 0
-      Texture: 788160533914043389
+      Texture: 8196646840874663791
       MaxParticles: 100
       Rate: 50
-  - Entity: 8940989960097836712
-    Tag: Floor
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 37.5029984, 0]
       Rotation: [-0, 0, 0]
-      Scale: [50, 1, 50]
-    Rigidbody:
-      Body Type: 0
-      Gravity Scale: 1
-      Mass: 1
-      Elasticity: 0.5
-      Damping: 0.800000012
-      Angular Damping: 0.800000012
-      Enabled: true
-    Box Collider:
-      Extents: [25, 0.5, 25]
-      Offset: [0, 0, 0]
-    MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 9169973734714539385
-      Cast Shadow: false
-  - Entity: 13631027794021233931
-    Tag: Skybox
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Skybox Renderer:
-      Skybox: 3339433341381827521
-  - Entity: 3609519582529224002
-    Tag: Camera
-    Transform:
-      Position: [1.89999998, 17.2999992, -23.8999996]
-      Rotation: [-0.551524222, -3.1415925, 0]
-      Scale: [1, 1, 1]
-    Camera:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 5
-        OrthographicNear: 9.99999975e-05
-        OrthographicFar: 487.200012
-      Main: true
-      FixedAspectRatio: false
-  - Entity: 3352402856425678934
-    Tag: Torch
-    Transform:
-      Position: [8.78576756, 0.628469586, -9.63417149]
-      Rotation: [-0, 0, 0]
-      Scale: [0.0500000007, 0.0500000007, 0.0500000007]
-    MeshRenderer:
-      Mesh: 17632389977203314860
-      Material: 8838899374217920014
-      Cast Shadow: true
+      Scale: [10, 10, 10]
   - Entity: 15392721754015773208
     Tag: Directional Light
-    Transform:
-      Position: [-4.61883545, 11.7034178, -2.41830444]
-      Rotation: [-0.924336195, -1.87408233, -2.29237294]
-      Scale: [0.999945402, 0.999966264, 0.999982893]
     Camera:
       Camera:
         ProjectionType: 1
@@ -433,13 +136,151 @@ Entities:
       FixedAspectRatio: false
     Directional Light:
       Color: [1, 1, 1, 1]
-  - Entity: 2440918126693032813
-    Tag: Smoke Particles
-    Parent: 3352402856425678934
     Transform:
-      Position: [0, 37.5029984, 0]
+      Position: [-4.61883545, 11.7034178, -2.41830444]
+      Rotation: [-0.924336255, -1.87408185, -2.2923727]
+      Scale: [0.999945402, 0.999966264, 0.999982893]
+  - Entity: 3352402856425678934
+    Tag: Torch
+    MeshRenderer:
+      Mesh: 17632389977203314860
+      Material: 8838899374217920014
+      Cast Shadow: true
+    Transform:
+      Position: [8.78576756, 0.628469586, -9.63417149]
+      Rotation: [-0, 0, 0]
+      Scale: [0.0500000007, 0.0500000007, 0.0500000007]
+  - Entity: 3609519582529224002
+    Tag: Camera
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 5
+        OrthographicNear: 9.99999975e-05
+        OrthographicFar: 487.200012
+      Main: true
+      FixedAspectRatio: false
+    Transform:
+      Position: [1.89999866, 26.5220299, -38.8901978]
+      Rotation: [-0.696600437, -3.1415925, 3.1496187e-13]
+      Scale: [1.00001216, 1, 1.00000036]
+  - Entity: 13631027794021233931
+    Tag: Skybox
+    Skybox Renderer:
+      Skybox: 3339433341381827521
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 8940989960097836712
+    Tag: Floor
+    Box Collider:
+      Extents: [25, 0.5, 25]
+      Offset: [0, 0, 0]
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 9169973734714539385
+      Cast Shadow: false
+    Rigidbody:
+      Body Type: 0
+      Gravity Scale: 1
+      Mass: 1
+      Elasticity: 0.5
+      Damping: 0.800000012
+      Angular Damping: 0.800000012
+      Enabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [50, 1, 50]
+  - Entity: 15749311956304931436
+    Tag: Fire Particles
+    Parent: 3352402856425678934
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-0.200000003, 0, -0.200000003]
+        PositionB: [0.200000003, 0, 0.200000003]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0.988235295]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.200000003
+        StartSizeB: 0.600000024
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.200000003
+        LifeTimeB: 0.600000024
+        GravityScale: 0
+      Texture: 788160533914043389
+      MaxParticles: 100
+      Rate: 50
+    Transform:
+      Position: [0, 45.6629982, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 1697474554961836166
+    Tag: Torch
+    MeshRenderer:
+      Mesh: 17632389977203314860
+      Material: 8838899374217920014
+      Cast Shadow: true
+    Transform:
+      Position: [2.28332758, 2.22270942, -0.261606097]
+      Rotation: [-0, 0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+  - Entity: 8988851268302625154
+    Tag: Point Light
+    Parent: 1697474554961836166
+    Point Light:
+      Color: [0.884169877, 0.368899524, 0.0341378339, 1]
+      Range: 9.10000038
+      Smoothness: 0.5
+      Intensity: 1.39999998
+    Transform:
+      Position: [0, 45.2639999, 0]
       Rotation: [-0, 0, 0]
       Scale: [10, 10, 10]
+  - Entity: 5227298308000770559
+    Tag: Fire Particles
+    Parent: 1697474554961836166
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-0.200000003, 0, -0.200000003]
+        PositionB: [0.200000003, 0, 0.200000003]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0.988235295]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.200000003
+        StartSizeB: 0.600000024
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.200000003
+        LifeTimeB: 0.600000024
+        GravityScale: 0
+      Texture: 788160533914043389
+      MaxParticles: 100
+      Rate: 50
+    Transform:
+      Position: [0, 45.6629982, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 3803584472433469728
+    Tag: Smoke Particles
+    Parent: 1697474554961836166
     Emitter:
       Birth:
         RandomVelocity: true
@@ -463,25 +304,304 @@ Entities:
       Texture: 8196646840874663791
       MaxParticles: 100
       Rate: 50
-  - Entity: 6507700503830715917
-    Tag: Point Light
-    Parent: 3352402856425678934
     Transform:
-      Position: [0, 45.2639999, 0]
+      Position: [0, 37.5029945, -0.684629679]
       Rotation: [-0, 0, 0]
       Scale: [10, 10, 10]
+  - Entity: 3074643834626215923
+    Tag: Torch
+    MeshRenderer:
+      Mesh: 17632389977203314860
+      Material: 8838899374217920014
+      Cast Shadow: true
+    Transform:
+      Position: [9.35787296, 0.628469586, 9.86728096]
+      Rotation: [-0, 0, 0]
+      Scale: [0.0500000007, 0.0500000007, 0.0500000007]
+  - Entity: 8390807429886321386
+    Tag: Point Light
+    Parent: 3074643834626215923
     Point Light:
       Color: [0.884169877, 0.368899524, 0.0341378339, 1]
       Range: 4.80000019
       Smoothness: 0.5
       Intensity: 0.5
-  - Entity: 12685685000942160993
-    Tag: Chest
     Transform:
-      Position: [6.88374662, 1.49259412, -7.54699564]
-      Rotation: [-0, -2.81964922, 0]
-      Scale: [1.50000334, 1.5, 1.50000334]
+      Position: [0, 45.2640038, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [10, 10, 10]
+  - Entity: 4404657403437969173
+    Tag: Fire Particles
+    Parent: 3074643834626215923
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-0.200000003, 0, -0.200000003]
+        PositionB: [0.200000003, 0, 0.200000003]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0.988235295]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.200000003
+        StartSizeB: 0.600000024
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.200000003
+        LifeTimeB: 0.600000024
+        GravityScale: 0
+      Texture: 788160533914043389
+      MaxParticles: 100
+      Rate: 50
+    Transform:
+      Position: [0, 45.663002, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 7690596970259258522
+    Tag: Smoke Particles
+    Parent: 3074643834626215923
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-0.200000003, 0, -0.200000003]
+        PositionB: [0.200000003, 0, 0.200000003]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.200000003
+        StartSizeB: 0.5
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.400000006
+        LifeTimeB: 1
+        GravityScale: 0
+      Texture: 8196646840874663791
+      MaxParticles: 100
+      Rate: 50
+    Transform:
+      Position: [0, 37.5030022, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [10, 10, 10]
+  - Entity: 10990379420440187170
+    Tag: Torch
+    MeshRenderer:
+      Mesh: 17632389977203314860
+      Material: 8838899374217920014
+      Cast Shadow: true
+    Transform:
+      Position: [-9.89208698, 0.628469586, 9.86728096]
+      Rotation: [-0, 0, 0]
+      Scale: [0.0500000007, 0.0500000007, 0.0500000007]
+  - Entity: 2008014555571703348
+    Tag: Point Light
+    Parent: 10990379420440187170
+    Point Light:
+      Color: [0.884169877, 0.368899524, 0.0341378339, 1]
+      Range: 4.80000019
+      Smoothness: 0.5
+      Intensity: 0.5
+    Transform:
+      Position: [0, 45.2640038, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [10, 10, 10]
+  - Entity: 533120611763095065
+    Tag: Fire Particles
+    Parent: 10990379420440187170
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-0.200000003, 0, -0.200000003]
+        PositionB: [0.200000003, 0, 0.200000003]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0.988235295]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.200000003
+        StartSizeB: 0.600000024
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.200000003
+        LifeTimeB: 0.600000024
+        GravityScale: 0
+      Texture: 788160533914043389
+      MaxParticles: 100
+      Rate: 50
+    Transform:
+      Position: [0, 45.663002, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 12987892874791468613
+    Tag: Smoke Particles
+    Parent: 10990379420440187170
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-0.200000003, 0, -0.200000003]
+        PositionB: [0.200000003, 0, 0.200000003]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.200000003
+        StartSizeB: 0.5
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.400000006
+        LifeTimeB: 1
+        GravityScale: 0
+      Texture: 8196646840874663791
+      MaxParticles: 100
+      Rate: 50
+    Transform:
+      Position: [0, 37.5030022, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [10, 10, 10]
+  - Entity: 17651114295808489261
+    Tag: Torch
+    MeshRenderer:
+      Mesh: 17632389977203314860
+      Material: 8838899374217920014
+      Cast Shadow: true
+    Transform:
+      Position: [-9.89208698, 0.628469586, -9.63417149]
+      Rotation: [-0, 0, 0]
+      Scale: [0.0500000007, 0.0500000007, 0.0500000007]
+  - Entity: 5437498412017705575
+    Tag: Point Light
+    Parent: 17651114295808489261
+    Point Light:
+      Color: [0.884169877, 0.368899524, 0.0341378339, 1]
+      Range: 4.80000019
+      Smoothness: 0.5
+      Intensity: 0.5
+    Transform:
+      Position: [0, 45.2640038, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [10, 10, 10]
+  - Entity: 17503441474138440245
+    Tag: Fire Particles
+    Parent: 17651114295808489261
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-0.200000003, 0, -0.200000003]
+        PositionB: [0.200000003, 0, 0.200000003]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0.988235295]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.200000003
+        StartSizeB: 0.600000024
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.200000003
+        LifeTimeB: 0.600000024
+        GravityScale: 0
+      Texture: 788160533914043389
+      MaxParticles: 100
+      Rate: 50
+    Transform:
+      Position: [0, 45.663002, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 337136061149689749
+    Tag: Smoke Particles
+    Parent: 17651114295808489261
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-0.200000003, 0, -0.200000003]
+        PositionB: [0.200000003, 0, 0.200000003]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.200000003
+        StartSizeB: 0.5
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.400000006
+        LifeTimeB: 1
+        GravityScale: 0
+      Texture: 8196646840874663791
+      MaxParticles: 100
+      Rate: 50
+    Transform:
+      Position: [0, 37.5030022, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [10, 10, 10]
+  - Entity: 17962075195209285069
+    Tag: Chest
     MeshRenderer:
       Mesh: 1600610067072245332
       Material: 11254321036137541248
       Cast Shadow: true
+    Transform:
+      Position: [6.88374662, 1.49259412, -7.54699564]
+      Rotation: [-0, -2.81964922, 0]
+      Scale: [1.50000334, 1.5, 1.50000334]
+  - Entity: 1263878909094803935
+    Tag: Waypoint1
+    Parent: 10857159529581529762
+    Transform:
+      Position: [-16.4916172, 0.556514859, 0.249802485]
+      Rotation: [-0, -3.1415925, 0]
+      Scale: [0.0499999784, 0.0500000007, 0.0499999784]
+  - Entity: 10857159529581529762
+    Tag: ThomasPath
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 10401188687603910767
+    Tag: Waypoint2
+    Parent: 10857159529581529762
+    Transform:
+      Position: [-15.5193233, 0.556575775, -6.86973476]
+      Rotation: [-0, 2.72284436, 0]
+      Scale: [0.0499999709, 0.0500000007, 0.0499999709]
+  - Entity: 2232428211685324750
+    Tag: Waypoint3
+    Parent: 10857159529581529762
+    Transform:
+      Position: [-8.61136627, 0.556515813, -15.7010241]
+      Rotation: [-0, 1.52274108, 0]
+      Scale: [0.0500000864, 0.0500000007, 0.0500000864]
+  - Entity: 16617195144346703286
+    Tag: Waypoint4
+    Parent: 10857159529581529762
+    Transform:
+      Position: [6.0822258, 0.556515992, -16.1269588]
+      Rotation: [-0, 1.56276083, 0]
+      Scale: [0.0499994531, 0.0500000007, 0.0499994531]
+  - Entity: 11037750501948919825
+    Tag: Waypoint5
+    Parent: 10857159529581529762
+    Transform:
+      Position: [13.3463287, 0.556510627, -15.1164885]
+      Rotation: [-0, 0.541051745, 0]
+      Scale: [0.0499999747, 0.0500000007, 0.0499999747]
