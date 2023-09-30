@@ -11,7 +11,7 @@
 namespace LevEngine
 {
 
-    constexpr bool k_IsMultiThreading = true;
+    constexpr bool k_IsMultiThreading = false;
     constexpr int k_SleepMicroSeconds = 10;
 Scene::~Scene()
 {
