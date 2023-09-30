@@ -4,7 +4,7 @@
 /*
  * There are some problems in this project
  * 1. (Done) We need Project system to have ability change assets of separate project
- * 2. We need Prefabs system to avoid complete object creation from code
+ * 2. (In progress) We need Prefabs system to avoid complete object creation from code
  * 3. We need resource loading system (by name)
  * 4. We need our systems and components in editor, to setup entities visually
  * 5. We do not need to control engine pipeline in this project (OnUpdate, OnRender, etc)
