@@ -11,7 +11,8 @@
 namespace LevEngine
 {
 
-    constexpr bool k_IsThreading = true;
+    constexpr bool k_IsMultiThreading = true;
+    constexpr int k_SleepMicroSeconds = 10;
 Scene::~Scene()
 {
     LEV_PROFILE_FUNCTION();
@@ -21,7 +22,7 @@ Scene::~Scene()
 
 void Scene::RequestUpdates(const float deltaTime)
 {
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         for (const auto& system : m_UpdateSystems)
         {
@@ -44,15 +45,18 @@ void Scene::OnUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         m_IsUpdateDone = false;
         vgjs::schedule([this, deltaTime]() { RequestUpdates(deltaTime); });
 
+        //int i = 0;
         while (!m_IsUpdateDone)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
+            //i++;
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
+        //Log::CoreDebug("Update waited for {0} microseconds", i);
     }
     else 
     {
@@ -64,7 +68,7 @@ void Scene::RequestPhysicsUpdates(const float deltaTime)
 {
     Physics::Process(m_Registry, deltaTime);
 
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         vgjs::continuation([this]() {m_IsPhysicsDone = true; });
     }
@@ -72,16 +76,19 @@ void Scene::RequestPhysicsUpdates(const float deltaTime)
 
 void Scene::OnPhysics(const float deltaTime)
 {
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         m_IsPhysicsDone = false;
 
         vgjs::schedule([this, deltaTime]() { RequestPhysicsUpdates(deltaTime); });;
 
+        //int i = 0;
         while (!m_IsPhysicsDone)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
+            //i++;
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
+        //Log::CoreDebug("Physics waited for {0} microseconds", i);
     }
     else
     {
@@ -93,7 +100,7 @@ void Scene::RequestRenderUpdate()
 {
     Renderer::Render(m_Registry);
 
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         vgjs::continuation([this]() {m_IsRenderDone = true; });
     }
@@ -101,16 +108,19 @@ void Scene::RequestRenderUpdate()
 
 void Scene::OnRender()
 {
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         m_IsRenderDone = false;
 
         vgjs::schedule([this]() {RequestRenderUpdate(); });
 
+        //int i = 0;
         while (!m_IsRenderDone)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
+            //i++;
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
+        //Log::CoreDebug("Render waited for {0} microseconds", i);
     }
     else
     {
@@ -122,7 +132,7 @@ void Scene::RequestRenderUpdate(SceneCamera* mainCamera, const Transform* camera
 {
     Renderer::Render(m_Registry, mainCamera, cameraTransform);
 
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         vgjs::continuation([this]() {m_IsRenderDone = true; });
     }
@@ -130,16 +140,19 @@ void Scene::RequestRenderUpdate(SceneCamera* mainCamera, const Transform* camera
 
 void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
 {
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         m_IsRenderDone = false;
 
         vgjs::schedule([this, mainCamera, cameraTransform]() {RequestRenderUpdate(mainCamera, cameraTransform); });
 
+        //int i = 0;
         while (!m_IsRenderDone)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
+            //i++;
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
+        //Log::CoreDebug("CameraRender waited for {0} microseconds", i);
     }
     else
     {
@@ -149,7 +162,7 @@ void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
 
 void Scene::RequestLateUpdate(const float deltaTime)
 {
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         for (const auto& system : m_LateUpdateSystems)
         {
@@ -170,7 +183,7 @@ void Scene::RequestLateUpdate(const float deltaTime)
 
 void Scene::RequestEventsUpdate(const float deltaTime)
 {
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         for (const auto& system : m_EventSystems)
         {
@@ -193,25 +206,31 @@ void Scene::OnLateUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-    if constexpr (k_IsThreading)
+    if constexpr (k_IsMultiThreading)
     {
         m_IsLateUpdateDone = false;
 
         vgjs::schedule([this, deltaTime]() {RequestLateUpdate(deltaTime); });
 
+        //int i = 0;
         while (!m_IsLateUpdateDone)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
+            //i++;
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
+        //Log::CoreDebug("LateUpdate waited for {0} microseconds", i);
 
         m_IsEventUpdateDone = false;
 
         vgjs::schedule([this, deltaTime]() {RequestEventsUpdate(deltaTime); });
 
+        //i = 0;
         while (!m_IsEventUpdateDone)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
+            //i++;
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
+        //Log::CoreDebug("EventUpdate waited for {0} microseconds", i);
     }
 	else
 	{
