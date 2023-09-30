@@ -22,6 +22,8 @@ namespace LevEngine::Editor
 		virtual String GetName() = 0;
 		virtual void DrawContent() = 0;
 
+		static const ImGuiPayload* BeginDragDropTargetWindow(const char* payloadType);
+
 		ImGuiWindow* m_Window{};
 
 		bool m_Focused = false;

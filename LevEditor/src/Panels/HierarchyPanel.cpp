@@ -14,7 +14,7 @@ namespace LevEngine::Editor
 		LEV_PROFILE_FUNCTION()
 		
 		const auto& activeScene = SceneManager::GetActiveScene();
-		if (activeScene) return false;
+		if (!activeScene) return false;
 		
 		if (e.GetRepeatCount() > 0) return false;
 
@@ -39,9 +39,23 @@ namespace LevEngine::Editor
 		const auto& activeScene = SceneManager::GetActiveScene();
 
 		if (!activeScene) return;
+
+		if (const ImGuiPayload* payload = BeginDragDropTargetWindow(GUIUtils::AssetPayload))
+		{
+			const Path assetPath = static_cast<const wchar_t*>(payload->Data);
+
+			if (const auto& prefab = AssetDatabase::GetAsset<PrefabAsset>(assetPath))
+				prefab->Instantiate(activeScene);
+		}
+		
+		if (const ImGuiPayload* payload = BeginDragDropTargetWindow(GUIUtils::EntityPayload))
+		{
+			if (const auto draggedEntity = *static_cast<Entity*>(payload->Data))
+				draggedEntity.GetComponent<Transform>().SetParent(Entity{});
+		}
 		
 		activeScene->ForEachEntity(
-			[&](Entity entity)
+			[&](const Entity entity)
 			{
 				if (!entity.GetComponent<Transform>().GetParent())
 					DrawEntityNode(entity);
@@ -123,10 +137,38 @@ namespace LevEngine::Editor
 			ImGui::EndDragDropTarget();
 		}
 
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
+			{
+				const Path assetPath = static_cast<const wchar_t*>(payload->Data);
+
+				if (const auto& prefab = AssetDatabase::GetAsset<PrefabAsset>(assetPath))
+				{
+					const auto child = prefab->Instantiate(activeScene);
+					child.GetComponent<Transform>().SetParent(entity);
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
 		if (ImGui::BeginPopupContextItem())
 		{
+			if (ImGui::MenuItem("Create Child"))
+			{
+				const auto child = activeScene->CreateEntity("New Entity");
+				child.GetComponent<Transform>().SetParent(entity, false);
+			}
+
+			if (ImGui::MenuItem("Create Parent"))
+			{
+				const auto parent = activeScene->CreateEntity("New Entity");
+				entity.GetComponent<Transform>().SetParent(parent);
+			}
+			
 			if (ImGui::MenuItem("Delete", "delete"))
 				m_EntitiesToDelete.emplace(m_EntitiesToDelete.begin(), entity);
+			
 			if (ImGui::MenuItem("Duplicate", "ctrl+D"))
 				activeScene->DuplicateEntity(entity);
 			
