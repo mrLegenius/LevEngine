@@ -61,6 +61,39 @@ namespace LevEngine
         m_IsInited = false;
     }
 
+    void TimelineComponent::Play() const
+    {
+        if (timeline != nullptr)
+        {
+            timeline->Play();
+        }
+        else
+        {
+            Log::Warning("Timeline is not valid. Probably you are trying to play in Edit mode what is not allowed.");
+        }
+    }
+
+    void TimelineComponent::Pause() const
+    {
+        if (timeline != nullptr)
+        {
+            timeline->Pause();
+        }
+    }
+
+    void TimelineComponent::Stop() const
+    {
+        if (timeline != nullptr)
+        {
+            timeline->Stop();
+        }
+    }
+
+    bool TimelineComponent::IsPlaying() const
+    {
+        return timeline != nullptr && timeline->IsPlaying();
+    }
+
     double TimelineComponent::GetDuration() const
     {
         return duration;

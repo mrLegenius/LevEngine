@@ -28,6 +28,27 @@ namespace LevEngine::Editor
             
             GUIUtils::DrawCheckBox("Play On Init", BindGetter(&TimelineComponent::GetPlayOnInit, &component),
                 BindSetter(&TimelineComponent::SetPlayOnInit, &component));
+            
+            if (!component.IsPlaying())
+            {
+                if (ImGui::Button("Play", {80, 50}))
+                {
+                    component.Play();
+                }
+            }
+            else
+            {
+                if (ImGui::Button("Pause", {80, 50}))
+                {
+                    component.Pause();
+                }
+                ImGui::SameLine();
+
+                if (ImGui::Button("Stop", {80, 50}))
+                {
+                    component.Stop();
+                }
+            }
         }
     };
 }

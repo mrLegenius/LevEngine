@@ -25,6 +25,11 @@ double LevEngine::Timeline::GetTimeSinceStartup() const
 
 void LevEngine::Timeline::Play()
 {
+    if (!IsLooping() && IsMaxDurationReached())
+    {
+        m_TimeElapsed = 0.0;
+    }
+
     m_IsPlaying = true;
 }
 

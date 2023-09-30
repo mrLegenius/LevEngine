@@ -30,6 +30,10 @@ namespace LevEngine
         [[nodiscard]] double GetElapsedTime() const;
         bool IsInitialized() const;
         void ResetInit();
+        bool IsPlaying() const;
+        void Play() const;
+        void Pause() const;
+        void Stop() const;
 
     private:
         bool m_IsInited{};
