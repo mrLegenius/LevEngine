@@ -647,6 +647,7 @@
       <LinkCompiled>true</LinkCompiled>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\TransformDrawer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

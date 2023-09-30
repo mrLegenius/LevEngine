@@ -4,5 +4,5 @@
 class WaypointPositionUpdateSystem : LevEngine::System
 {
 public:
-    void Update(const float deltaTime, entt::registry& registry) override;
+    void Update(float deltaTime, entt::registry& registry) override;
 };

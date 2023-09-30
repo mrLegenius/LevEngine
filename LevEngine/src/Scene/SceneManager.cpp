@@ -17,13 +17,16 @@ namespace LevEngine
         const Ref<Scene>& newScene = CreateRef<Scene>();
         SceneSerializer sceneSerializer(newScene);
 
+        m_ActiveScene = newScene;
+        
         if (sceneSerializer.Deserialize(path.generic_string().c_str()))
         {
-            m_ActiveScene = newScene;
             m_ActiveScenePath = path;
             return true;
         }
 
+        // Invalidate scene reference if failed to deserialize the scene
+        m_ActiveScene = nullptr;
         return false;
     }
 

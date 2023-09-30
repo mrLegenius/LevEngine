@@ -9,7 +9,7 @@ namespace LevEngine
         void Update(const float deltaTime, entt::registry& registry) override;
         
     private:
-        bool m_Inited;
+        bool m_Inited = false;
     };
 }
 

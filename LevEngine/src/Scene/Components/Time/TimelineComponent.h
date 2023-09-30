@@ -1,18 +1,23 @@
 ﻿#pragma once
-#include "Scene/Components/Animation/WaypointMovement.h"
+#include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
     class Timeline;
+    
+    REGISTER_PARSE_TYPE(TimelineComponent);
+
+    struct TimelineComponent
+    {
+        bool isLooping;
+        double duration;
+        bool playOnInit;
+        Timeline* timeline;
+
+        void Init();
+        
+        [[nodiscard]] double GetDuration() const;
+        void SetDuration(double duration);
+        [[nodiscard]] double GetElapsedTime() const;
+    };
 }
-
-struct TimelineComponent
-{
-    bool isLooping;
-    double duration;
-    LevEngine::Timeline* timeline;
-
-    TimelineComponent();
-    void Init();
-    float GetElapsedTime() const;
-};

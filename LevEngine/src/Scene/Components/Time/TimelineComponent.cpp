@@ -4,23 +4,31 @@
 #include "Kernel/Time/Timeline.h"
 #include "Kernel/Time/TimelineParameters.h"
 
-TimelineComponent::TimelineComponent()
+namespace LevEngine
 {
-    
-}
-
-void TimelineComponent::Init()
-{
-    const auto parameters = LevEngine::CreateRef(TimelineParameters{true, isLooping, duration});
-    timeline = new LevEngine::Timeline(parameters);
-}
-
-float TimelineComponent::GetElapsedTime() const
-{
-    if (timeline != nullptr)
+    void TimelineComponent::Init()
     {
-        return timeline->GetTimeSinceStartup();
+        const auto parameters = CreateRef(TimelineParameters{playOnInit, isLooping, duration});
+        timeline = new Timeline(parameters);
     }
 
-    return 0.0f;
+    double TimelineComponent::GetElapsedTime() const
+    {
+        if (timeline != nullptr)
+        {
+            return timeline->GetTimeSinceStartup();
+        }
+
+        return 0.0f;
+    }
+
+    double TimelineComponent::GetDuration() const
+    {
+        return duration;
+    }
+
+    void TimelineComponent::SetDuration(double duration)
+    {
+        this->duration = duration;
+    }
 }

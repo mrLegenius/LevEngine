@@ -60,10 +60,26 @@ public:
 	}
 
 	template<typename T>
-	Entity GetEntityBy(T* value)
+	Entity GetEntityByComponent(T* value)
 	{
 		const auto entity = entt::to_entity(m_Registry, *value);
 		return ConvertEntity(entity);
+	}
+
+	Entity GetEntityByUUID(UUID uuid)
+	{
+		const auto view = m_Registry.view<IDComponent>();
+		for (const auto entity : view)
+		{
+			auto idComponent = view.get<IDComponent>(entity);
+			
+			if (idComponent.ID != uuid)
+				continue;
+
+			return ConvertEntity(entity);
+		}
+
+		return Entity();
 	}
 
 private:

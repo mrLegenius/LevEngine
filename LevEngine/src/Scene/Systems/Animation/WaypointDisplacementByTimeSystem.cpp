@@ -19,6 +19,7 @@ void LevEngine::WaypointDisplacementByTimeSystem::Update(const float deltaTime, 
             m_Inited = true;
         }
 
-        waypointMovement.currentDisplacement = timelineComponent.GetElapsedTime() / timelineComponent.duration;
+        waypointMovement.currentDisplacement = static_cast<float>
+            (Math::Clamp(timelineComponent.GetElapsedTime() / timelineComponent.duration, 0.0, 1.0));
     }
 }
