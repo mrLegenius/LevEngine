@@ -14,7 +14,7 @@ namespace LevEngine::Editor
         {
             ImGui::Checkbox("Is Looping", &component.isLooping);
 
-            GUIUtils::DrawFloatControl("Duration",
+            GUIUtils::DrawDoubleControl("Duration",
                                        BindGetter(&TimelineComponent::GetDuration, &component),
                                        BindSetter(&TimelineComponent::SetDuration, &component),
                                        0.1f, 0, std::numeric_limits<double>::max());

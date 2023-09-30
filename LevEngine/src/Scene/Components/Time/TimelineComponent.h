@@ -9,6 +9,8 @@ namespace LevEngine
 
     struct TimelineComponent
     {
+        TimelineComponent();
+        
         bool isLooping;
         double duration;
         bool playOnInit;

@@ -192,6 +192,20 @@ namespace LevEngine::Editor
 			setter(value);
 	}
 
+	void GUIUtils::DrawDoubleControl(const String& label, double& value, const double speed, const double min, const double max)
+	{
+		DrawDoubleControl(label, [&value] {return value; },
+			[&value](const float& newValue) {value = newValue; }, speed, min, max);
+	}
+
+	void GUIUtils::DrawDoubleControl(const String& label, const std::function<double()>& getter,
+		const std::function<void(double)>& setter, const double speed, const double min, const double max)
+	{
+		auto value = getter();
+		if (ImGui::DragScalar(label.c_str(), ImGuiDataType_Double, &value, speed, &min, &max))
+			setter(value);
+	}
+
 	void GUIUtils::DrawIntControl(const String& label,
 		const std::function<int()>& getter,
 		const std::function<void(int)>& setter,
