@@ -8,6 +8,7 @@
 #include "Scene/Entity.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/TypeParseTraits.h"
+#include "DataTypes/String.h"
 
 namespace LevEngine::Editor
 {
@@ -97,7 +98,9 @@ namespace LevEngine::Editor
 					const bool wasSelected = (itemSelectedIdx == idx);
 					bool isSelected = false;
 					Entity& entity = entities[idx];
-					if (GUIUtils::DrawSelectableComponent<T>("(" + String(typeName) + ")", entity, wasSelected, isSelected, idx))
+
+					auto componentTypeName = Format("({})", typeName);
+					if (GUIUtils::DrawSelectableComponent<T>(componentTypeName, entity, wasSelected, isSelected, idx))
 					{
 						changed = true;
 					}
@@ -140,18 +143,15 @@ namespace LevEngine::Editor
 
 			if (ImGui::Button("-"))
 			{
-				if (itemSelectedIdx >= 0 && itemSelectedIdx + 1 < entities.size())
+				if (itemSelectedIdx > 0 && itemSelectedIdx < entities.size())
 				{
 					entities.erase_first(entities[itemSelectedIdx]);
+					--itemSelectedIdx;
+					
 					changed = true;
 				}
 				else if (entities.size() > 0)
 				{
-					if (itemSelectedIdx == entities.size() - 1)
-					{
-						--itemSelectedIdx;
-					}
-					
 					entities.pop_back();
 					changed = true;
 				}
@@ -161,18 +161,19 @@ namespace LevEngine::Editor
 		}
 
 		template<class T>
-		static bool DrawSelectableComponent(const String& componentTypeName, Entity& entity, bool wasSelected, bool& isSelected, int selectableIdx = 0)
+		static bool DrawSelectableComponent(const String& componentTypeName, Entity& entity, bool wasSelected,
+			bool& isSelected, int selectableIdx = 0)
 		{
-			const bool entityHasComponent = entity.IsValid() && entity.HasComponent<T>();
+			const bool entityHasComponent = entity && entity.HasComponent<T>();
 			
 			auto changed = false;
 
 			ImGui::AlignTextToFramePadding();
-			const auto entityName = String(entityHasComponent ? entity.GetName() : "None");
-			const auto uniqueId = "##" + ToString(selectableIdx);
+			const char* entityName = entityHasComponent ? entity.GetName().c_str() : "None";
 			
-			if (ImGui::Selectable((entityName + " " + componentTypeName + uniqueId).c_str(),
-				wasSelected, ImGuiSelectableFlags_AllowDoubleClick))
+			const auto label = Format("{} {}##{}", entityName, componentTypeName, selectableIdx);
+			
+			if (ImGui::Selectable(label.c_str(), wasSelected, ImGuiSelectableFlags_AllowDoubleClick))
 			{
 				isSelected = true;
 				
@@ -244,5 +245,4 @@ namespace LevEngine::Editor
 			return changed;
 		}
 	};
-
 }
