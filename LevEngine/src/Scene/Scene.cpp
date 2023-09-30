@@ -25,8 +25,8 @@ void Scene::RequestUpdates(const float deltaTime)
     {
         for (const auto& system : m_UpdateSystems)
         {
-            system->Update(deltaTime, m_Registry);
-            //vgjs::schedule([this, deltaTime, &system]() {system->Update(deltaTime, m_Registry); });
+            //system->Update(deltaTime, m_Registry);
+            vgjs::schedule([this, deltaTime, &system]() {system->Update(deltaTime, m_Registry); });
         }
 
         vgjs::continuation([this]() {m_IsUpdateDone = true; });
@@ -134,7 +134,6 @@ void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
     {
         m_IsRenderDone = false;
 
-        //TODO Кешировать камеру, чтобы не случилось казусов с другими потоками
         vgjs::schedule([this, mainCamera, cameraTransform]() {RequestRenderUpdate(mainCamera, cameraTransform); });
 
         while (!m_IsRenderDone)
@@ -154,8 +153,8 @@ void Scene::RequestLateUpdate(const float deltaTime)
     {
         for (const auto& system : m_LateUpdateSystems)
         {
-            system->Update(deltaTime, m_Registry);
-            //vgjs::schedule([this, deltaTime, &system]() {system->Update(deltaTime, m_Registry); });
+            //system->Update(deltaTime, m_Registry);
+            vgjs::schedule([this, deltaTime, &system]() {system->Update(deltaTime, m_Registry); });
         }
 
         vgjs::continuation([this]() {m_IsLateUpdateDone = true; });
@@ -175,8 +174,8 @@ void Scene::RequestEventsUpdate(const float deltaTime)
     {
         for (const auto& system : m_EventSystems)
         {
-            system->Update(deltaTime, m_Registry);
-            //vgjs::schedule([this, deltaTime, &system]() { system->Update(deltaTime, m_Registry); });
+            //system->Update(deltaTime, m_Registry);
+            vgjs::schedule([this, deltaTime, &system]() { system->Update(deltaTime, m_Registry); });
         }
 
         vgjs::continuation([this]() {m_IsEventUpdateDone = true; });

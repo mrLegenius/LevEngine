@@ -83,10 +83,10 @@ private:
 	Vector<Scope<System>> m_LateUpdateSystems;
 	Vector<Scope<System>> m_EventSystems;
 
-	std::atomic_bool m_IsUpdateDone;
-	std::atomic_bool m_IsLateUpdateDone;
-	std::atomic_bool m_IsEventUpdateDone;
-	std::atomic_bool m_IsPhysicsDone;
+	std::atomic_bool m_IsUpdateDone = true;
+	std::atomic_bool m_IsLateUpdateDone = true;
+	std::atomic_bool m_IsEventUpdateDone = true;
+	std::atomic_bool m_IsPhysicsDone = true;
 	std::atomic_bool m_IsRenderDone = true;
 	
 };
