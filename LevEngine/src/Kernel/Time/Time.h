@@ -24,7 +24,7 @@ namespace LevEngine
 		static Timestep s_DeltaTime;
 		static Timestep s_DeltaTimeFixed;
 		static std::chrono::time_point<std::chrono::high_resolution_clock> s_StartupTime;
-		static Timeline* s_TimelineVariable;
-		static Timeline* s_TimelineFixed;
+		static Ref<Timeline> s_TimelineVariable;
+		static Ref<Timeline> s_TimelineFixed;
 	};
 }

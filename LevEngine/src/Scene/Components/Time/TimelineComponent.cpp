@@ -2,22 +2,43 @@
 #include "TimelineComponent.h"
 
 #include "Kernel/Time/Timeline.h"
+#include "Kernel/Time/TimelineFactory.h"
 #include "Kernel/Time/TimelineParameters.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
 {
-    TimelineComponent::TimelineComponent()
-    {
-        duration = 0.0;
-        isLooping = false;
-        playOnInit = true;
-    }
+    TimelineComponent::TimelineComponent() = default;
 
     void TimelineComponent::Init()
     {
         const auto parameters = CreateRef(TimelineParameters{playOnInit, isLooping, duration});
-        timeline = new Timeline(parameters);
+        
+        if (timeline == nullptr)
+        {
+            timeline = TimelineFactory::CreateTimeline(parameters);
+        }
+        else
+        {
+            timeline->SetTimelineParameters(parameters);
+        }
+        
+        m_IsInited = true;
+    }
+
+    bool TimelineComponent::GetIsLooping() const
+    {
+        return isLooping;
+    }
+
+    void TimelineComponent::SetIsLooping(bool isLooping)
+    {
+        this->isLooping = isLooping;
+
+        if (timeline != nullptr)
+        {
+            timeline->SetIsLooping(isLooping);
+        }
     }
 
     double TimelineComponent::GetElapsedTime() const
@@ -30,6 +51,16 @@ namespace LevEngine
         return 0.0f;
     }
 
+    bool TimelineComponent::IsInitialized() const
+    {
+        return m_IsInited;
+    }
+
+    void TimelineComponent::ResetInit()
+    {
+        m_IsInited = false;
+    }
+
     double TimelineComponent::GetDuration() const
     {
         return duration;
@@ -38,6 +69,41 @@ namespace LevEngine
     void TimelineComponent::SetDuration(double duration)
     {
         this->duration = duration;
+        
+        if (timeline != nullptr)
+        {
+            timeline->SetDuration(duration);
+        }
+    }
+
+    double TimelineComponent::GetTimeScale() const
+    {
+        return timeScale;
+    }
+
+    void TimelineComponent::SetTimeScale(double timeScale)
+    {
+        this->timeScale = timeScale;
+        
+        if (timeline != nullptr)
+        {
+            timeline->SetTimeScale(timeScale);
+        }
+    }
+
+    bool TimelineComponent::GetPlayOnInit() const
+    {
+        return this->playOnInit;
+    }
+
+    void TimelineComponent::SetPlayOnInit(bool playOnInit)
+    {
+        this->playOnInit = playOnInit;
+        
+        if (timeline != nullptr)
+        {
+            timeline->SetPlayOnInit(playOnInit);
+        }
     }
 
     class TimelineComponentSerializer final : public ComponentSerializer<TimelineComponent, TimelineComponentSerializer>
@@ -49,6 +115,7 @@ namespace LevEngine
         {
             out << YAML::Key << "IsLooping" << YAML::Value << component.isLooping;
             out << YAML::Key << "Duration" << YAML::Value << component.duration;
+            out << YAML::Key << "TimeScale" << YAML::Value << component.timeScale;
             out << YAML::Key << "PlayOnInit" << YAML::Value << component.playOnInit;
         }
         
@@ -56,7 +123,9 @@ namespace LevEngine
         {
             component.isLooping = node["IsLooping"].as<bool>();
             component.duration = node["Duration"].as<double>();
+            component.timeScale = node["TimeScale"].as<double>();
             component.playOnInit = node["PlayOnInit"].as<bool>();
+            component.ResetInit();
         }
     };
 }

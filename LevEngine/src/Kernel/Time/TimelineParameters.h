@@ -3,7 +3,8 @@
 class TimelineParameters
 {
 public:
-    bool startPlayingOnStart = true;
-    bool isLooping = false;
-    double duration = 0.0;
+    bool startPlayingOnStart{true};
+    bool isLooping{};
+    double duration{};
+    double timeScale{1.0};
 };

@@ -9,7 +9,7 @@ namespace LevEngine
     class TimelineFactory
     {
     public:
-        static Timeline* CreateTimeline(Ref<TimelineParameters> timelineParameters);
+        static Ref<Timeline> CreateTimeline(Ref<TimelineParameters> timelineParameters);
     };
 }
 

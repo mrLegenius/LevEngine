@@ -5,9 +5,13 @@
 #include "TimelineParameters.h"
 #include "TimelineRunner.h"
 
-LevEngine::Timeline* LevEngine::TimelineFactory::CreateTimeline(Ref<TimelineParameters> timelineParameters)
+namespace LevEngine
 {
-    Timeline* timeline = new Timeline(timelineParameters);
-    TimelineRunner::AddTimeline(timeline);
-    return timeline;
+    Ref<Timeline> TimelineFactory::CreateTimeline(Ref<TimelineParameters> timelineParameters)
+    {
+        Ref<Timeline> timeline = CreateRef<Timeline>(timelineParameters);
+        TimelineRunner::AddTimeline(timeline);
+        return timeline;
+    }
+
 }

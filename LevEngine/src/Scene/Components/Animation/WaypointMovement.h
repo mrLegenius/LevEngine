@@ -13,6 +13,6 @@ namespace LevEngine
         WaypointMovementComponent();
         
         Vector<Entity> entities;
-		float currentDisplacement;
+		float currentDisplacement{};
     }; 
 }

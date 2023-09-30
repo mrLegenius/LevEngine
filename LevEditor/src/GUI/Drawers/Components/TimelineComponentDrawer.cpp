@@ -12,14 +12,22 @@ namespace LevEngine::Editor
 
         void DrawContent(TimelineComponent& component) override
         {
-            ImGui::Checkbox("Is Looping", &component.isLooping);
+            GUIUtils::DrawCheckBox("Is Looping", BindGetter(&TimelineComponent::GetIsLooping, &component),
+                BindSetter(&TimelineComponent::SetIsLooping, &component));
 
+            constexpr double max = std::numeric_limits<double>::max();
             GUIUtils::DrawDoubleControl("Duration",
-                                       BindGetter(&TimelineComponent::GetDuration, &component),
-                                       BindSetter(&TimelineComponent::SetDuration, &component),
-                                       0.1f, 0, std::numeric_limits<double>::max());
+                                        BindGetter(&TimelineComponent::GetDuration, &component),
+                                        BindSetter(&TimelineComponent::SetDuration, &component),
+                                        0.1f, 0, &max);
+
+            GUIUtils::DrawDoubleControl("Time Scale",
+                                       BindGetter(&TimelineComponent::GetTimeScale, &component),
+                                       BindSetter(&TimelineComponent::SetTimeScale, &component),
+                                       0.01f);
             
-            ImGui::Checkbox("Play On Init", &component.playOnInit);
+            GUIUtils::DrawCheckBox("Play On Init", BindGetter(&TimelineComponent::GetPlayOnInit, &component),
+                BindSetter(&TimelineComponent::SetPlayOnInit, &component));
         }
     };
 }

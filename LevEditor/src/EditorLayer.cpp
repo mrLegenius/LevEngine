@@ -8,6 +8,8 @@
 #include "ModalPopup.h"
 #include "Project.h"
 #include "Selection.h"
+#include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
+#include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
 
 namespace LevEngine::Editor
 {
@@ -79,9 +81,7 @@ namespace LevEngine::Editor
                 [this] { if(!OpenProject()) LEV_THROW("Failed to open project") },
                 [this]{ if(!NewProject()) LEV_THROW("Failed to create new project") });
         }
-
-        WaypointMovementComponent unused;
-
+        
         Application::Get().GetWindow().EnableCursor();
     }
 
@@ -532,6 +532,10 @@ namespace LevEngine::Editor
     void EditorLayer::OnScenePlay()
     {
         if (!SaveScene()) return;
+
+        auto& scene = SceneManager::GetActiveScene();
+        scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
+        scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
 
         m_Game->Focus();
         m_SceneState = SceneState::Play;

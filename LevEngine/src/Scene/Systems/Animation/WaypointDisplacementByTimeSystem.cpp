@@ -5,21 +5,23 @@
 #include "Scene/Components/Time/TimelineComponent.h"
 #include "Scene/Components/Transform/Transform.h"
 
-void LevEngine::WaypointDisplacementByTimeSystem::Update(const float deltaTime, entt::registry& registry)
+namespace LevEngine
 {
-    const auto view = registry.view<WaypointMovementComponent, TimelineComponent>();
-
-    for (const auto entity : view)
+    void WaypointDisplacementByTimeSystem::Update(const float deltaTime, entt::registry& registry)
     {
-        auto [waypointMovement, timelineComponent] = view.get<WaypointMovementComponent, TimelineComponent>(entity);
+        const auto view = registry.view<WaypointMovementComponent, TimelineComponent>();
 
-        if (!m_Inited)
+        for (const auto entity : view)
         {
-            timelineComponent.Init();
-            m_Inited = true;
-        }
+            auto [waypointMovement, timelineComponent] = view.get<WaypointMovementComponent, TimelineComponent>(entity);
 
-        waypointMovement.currentDisplacement = static_cast<float>
-            (Math::Clamp(timelineComponent.GetElapsedTime() / timelineComponent.duration, 0.0, 1.0));
+            if (!timelineComponent.IsInitialized())
+            {
+                timelineComponent.Init();
+            }
+
+            waypointMovement.currentDisplacement = static_cast<float>
+                (Math::Clamp(timelineComponent.GetElapsedTime() / timelineComponent.duration, 0.0, 1.0));
+        }
     }
 }

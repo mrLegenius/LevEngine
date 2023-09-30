@@ -6,10 +6,7 @@ namespace LevEngine
     class WaypointDisplacementByTimeSystem : public System
     {
     public:
-        void Update(const float deltaTime, entt::registry& registry) override;
-        
-    private:
-        bool m_Inited = false;
+        void Update(float deltaTime, entt::registry& registry) override;
     };
 }
 

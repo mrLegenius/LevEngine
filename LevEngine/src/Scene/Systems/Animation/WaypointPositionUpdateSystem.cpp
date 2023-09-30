@@ -4,51 +4,62 @@
 #include "Scene/Components/Animation/WaypointMovement.h"
 #include "Scene/Components/Transform/Transform.h"
 
-void WaypointPositionUpdateSystem::Update(const float deltaTime, entt::registry& registry)
+namespace LevEngine
 {
-    const auto view = registry.view<LevEngine::WaypointMovementComponent, LevEngine::Transform>();
-
-    for (const auto entity : view)
+    void WaypointPositionUpdateSystem::Update(const float deltaTime, entt::registry& registry)
     {
-        auto [waypointMovement, transform] = view.get<LevEngine::WaypointMovementComponent, LevEngine::Transform>(entity);
+        const auto view = registry.view<WaypointMovementComponent, Transform>();
 
-        Vector<LevEngine::Entity> entities = waypointMovement.entities;
-        Vector<Vector3> positions;
-        double totalDistance = 0.0;
-        
-        for (auto waypointEntity : entities)
+        for (const auto entity : view)
         {
-            if (!waypointEntity.HasComponent<LevEngine::Transform>())
-                continue;
+            auto [waypointMovement, transform] = view.get<WaypointMovementComponent, Transform>(entity);
 
-            Vector3 position = waypointEntity.GetComponent<LevEngine::Transform>().GetWorldPosition();
-            if (positions.size() > 0)
-            {
-                totalDistance += (position - positions.back()).Length();
-            }
-            positions.emplace_back(position);
-        }
-
-        const int positionsSize = positions.size();
+            Vector<Entity> entities = waypointMovement.entities;
+            Vector<Transform*> waypoints;
+            double totalDistance = 0.0;
         
-        if (positionsSize == 0)
-            return;
-
-        for (int i = 1; i < positionsSize; ++i)
-        {
-            Vector3 prevPosition = positions[i - 1];
-            Vector3 difference = (positions[i] - prevPosition);
-            const float distance = difference.Length();
-            if (totalDistance + LevEngine::Math::FloatEpsilon > distance)
+            for (auto waypointEntity : entities)
             {
-                totalDistance -= distance;
-                continue;
+                if (!waypointEntity.HasComponent<Transform>())
+                    continue;
+
+                Transform& waypointTransform = waypointEntity.GetComponent<Transform>();
+                Vector3 position = waypointTransform.GetWorldPosition();
+                if (waypoints.size() > 0)
+                {
+                    totalDistance += (position - waypoints.back()->GetWorldPosition()).Length();
+                }
+                waypoints.emplace_back(&waypointTransform);
             }
 
-            Vector3 dir = difference;
-            dir.Normalize();
-            transform.SetWorldPosition(prevPosition + dir * distance);
-            // todo: add rotation
+            const int waypointsCount = waypoints.size();
+        
+            if (waypointsCount == 0)
+                return;
+
+            double traveledDistance = totalDistance * waypointMovement.currentDisplacement;
+
+            for (int i = 1; i < waypointsCount; ++i)
+            {
+                Vector3 prevPosition = waypoints[i - 1]->GetWorldPosition();
+                Vector3 difference = (waypoints[i]->GetWorldPosition() - prevPosition);
+                const float distance = difference.Length();
+                if (traveledDistance + Math::FloatEpsilon > distance)
+                {
+                    traveledDistance -= distance;
+                    continue;
+                }
+
+                Vector3 dir = difference;
+                dir.Normalize();
+                
+                transform.SetWorldPosition(prevPosition + dir * traveledDistance);
+                
+                transform.SetWorldRotation(Quaternion::Slerp(waypoints[i - 1]->GetWorldRotation(),
+                    waypoints[i]->GetWorldRotation(), traveledDistance / distance));
+
+                break;
+            }
         }
     }
 }

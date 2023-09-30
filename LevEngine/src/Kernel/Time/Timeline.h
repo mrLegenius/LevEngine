@@ -8,9 +8,8 @@ namespace LevEngine
     {
     public:
         Timeline(Ref<TimelineParameters> timelineParameters);
-
+        
         [[nodiscard]] double GetTimeScale() const;
-        void SetTimeScale(double timeScale);
         [[nodiscard]] double GetTimeSinceStartup() const;
 
         void Play();
@@ -24,15 +23,26 @@ namespace LevEngine
         
         void OnUpdate(float deltaTime);
         [[nodiscard]] bool IsPlaying() const;
+        void SetDuration(double duration);
+        void SetIsLooping(bool isLooping);
+        void SetPlayOnInit(bool playOnInit);
+        void SetTimeScale(double timeScale);
+        void SetTimelineParameters(Ref<TimelineParameters> timelineParameters);
 
     private:
         [[nodiscard]] bool IsMaxDurationReached() const
         {
-            return m_TimeElapsed + Math::FloatEpsilon > m_TimelineParameters->duration;
+            // If TimeScale >= 0
+            if (GetTimeScale() > -Math::FloatEpsilon)
+            {
+                return m_TimeElapsed + Math::FloatEpsilon > m_TimelineParameters->duration;
+            }
+
+            // If TimeScale < 0
+            return m_TimeElapsed < Math::FloatEpsilon;
         }
         
-        double m_TimeScale;
-        double m_TimeElapsed;
+        double m_TimeElapsed{};
         bool m_IsPlaying;
         Ref<TimelineParameters> m_TimelineParameters;
     };
