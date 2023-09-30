@@ -23,6 +23,5 @@ private:
 	};
 
 	Ref<PipelineState> m_PipelineState;
-	Ref<ConstantBuffer> m_CameraConstantBuffer;
 };
 }

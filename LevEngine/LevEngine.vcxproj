@@ -535,6 +535,7 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugWireSphere.h" />
     <ClInclude Include="src\Renderer\Material.h" />
     <ClInclude Include="src\Renderer\MaterialPBR.h" />
+    <ClInclude Include="src\Renderer\QuadRenderPass.h" />
     <ClInclude Include="src\Renderer\RendererContext.h" />
     <ClInclude Include="src\Renderer\CopyTexturePass.h" />
     <ClInclude Include="src\Renderer\CPUAccess.h" />
@@ -928,6 +929,7 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Material.cpp" />
     <ClCompile Include="src\Renderer\MaterialPBR.cpp" />
+    <ClCompile Include="src\Renderer\QuadRenderPass.cpp" />
     <ClCompile Include="src\Renderer\RendererContext.cpp" />
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RendererContext.cpp" />

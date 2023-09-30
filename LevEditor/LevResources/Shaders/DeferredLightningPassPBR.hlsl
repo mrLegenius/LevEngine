@@ -29,7 +29,7 @@ Texture2D depthBuffer : register(t4);
 float3 CalcLighting(float3 fragPos, float3 normal, float depth, float3 albedo, float metallic, float roughness);
 
 [earlydepthstencil]
-float4 PSMain(PS_IN input) : SV_Target
+float4 PSMain(PS_IN input) : SV_Target0
 {
     int2 uv = input.pos.xy;
 
@@ -45,10 +45,6 @@ float4 PSMain(PS_IN input) : SV_Target
 
     float3 lit = CalcLighting(fragPos, normal, depth, albedo, metallic, roughness);
     float3 finalColor = (albedo * lit);
-
-    //Gamma correction
-    finalColor = finalColor / (finalColor + 1.0);
-    finalColor = pow(finalColor, 0.45);
 
     return float4(finalColor, 1.0f);
 }
