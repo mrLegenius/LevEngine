@@ -87,7 +87,7 @@ private:
 	std::atomic_bool m_IsLateUpdateDone;
 	std::atomic_bool m_IsEventUpdateDone;
 	std::atomic_bool m_IsPhysicsDone;
-	std::atomic_bool m_IsRenderDone;
+	std::atomic_bool m_IsRenderDone = true;
 	
 };
 }
