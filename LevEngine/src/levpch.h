@@ -24,6 +24,8 @@
 #include <imgui_internal.h>
 #include <yaml-cpp/yaml.h>
 
+#include <VGJS.h>
+
 #include "Debugging/Profiler.h"
 #include "Kernel/Logger.h"
 
