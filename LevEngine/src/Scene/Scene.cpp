@@ -22,23 +22,13 @@ Scene::~Scene()
 
 void Scene::RequestUpdates(const float deltaTime)
 {
-    if constexpr (k_IsMultiThreading)
+    for (const auto& system : m_UpdateSystems)
     {
-        for (const auto& system : m_UpdateSystems)
-        {
-            //system->Update(deltaTime, m_Registry);
-            vgjs::schedule([this, deltaTime, &system]() {system->Update(deltaTime, m_Registry); });
-        }
+        //TODO Add schedule inside systems' Updates if needed
+        system->Update(deltaTime, m_Registry);
+    }
 
-        vgjs::continuation([this]() {m_IsUpdateDone = true; });
-    }
-    else
-    {
-        for (const auto& system : m_UpdateSystems)
-        {
-            system->Update(deltaTime, m_Registry);
-        }
-    }
+    vgjs::continuation([this]() {m_IsUpdateDone = true; });
 }
 
 void Scene::OnUpdate(const float deltaTime)
@@ -50,28 +40,25 @@ void Scene::OnUpdate(const float deltaTime)
         m_IsUpdateDone = false;
         vgjs::schedule([this, deltaTime]() { RequestUpdates(deltaTime); });
 
-        //int i = 0;
         while (!m_IsUpdateDone)
         {
-            //i++;
             std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
-        //Log::CoreDebug("Update waited for {0} microseconds", i);
     }
     else 
     {
-        RequestUpdates(deltaTime);
+        for (const auto& system : m_UpdateSystems)
+        {
+            system->Update(deltaTime, m_Registry);
+        }
     }
 }
 
 void Scene::RequestPhysicsUpdates(const float deltaTime)
 {
     Physics::Process(m_Registry, deltaTime);
-
-    if constexpr (k_IsMultiThreading)
-    {
-        vgjs::continuation([this]() {m_IsPhysicsDone = true; });
-    }
+    
+	vgjs::continuation([this]() {m_IsPhysicsDone = true; });
 }
 
 void Scene::OnPhysics(const float deltaTime)
@@ -82,17 +69,14 @@ void Scene::OnPhysics(const float deltaTime)
 
         vgjs::schedule([this, deltaTime]() { RequestPhysicsUpdates(deltaTime); });;
 
-        //int i = 0;
         while (!m_IsPhysicsDone)
         {
-            //i++;
             std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
-        //Log::CoreDebug("Physics waited for {0} microseconds", i);
     }
     else
     {
-        RequestPhysicsUpdates(deltaTime);
+        Physics::Process(m_Registry, deltaTime);
     }
 }
 
@@ -100,10 +84,7 @@ void Scene::RequestRenderUpdate()
 {
     Renderer::Render(m_Registry);
 
-    if constexpr (k_IsMultiThreading)
-    {
-        vgjs::continuation([this]() {m_IsRenderDone = true; });
-    }
+	vgjs::continuation([this]() {m_IsRenderDone = true; });
 }
 
 void Scene::OnRender()
@@ -114,17 +95,14 @@ void Scene::OnRender()
 
         vgjs::schedule([this]() {RequestRenderUpdate(); });
 
-        //int i = 0;
         while (!m_IsRenderDone)
         {
-            //i++;
             std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
-        //Log::CoreDebug("Render waited for {0} microseconds", i);
     }
     else
     {
-        RequestRenderUpdate();
+        Renderer::Render(m_Registry);
     }
 }
 
@@ -132,10 +110,7 @@ void Scene::RequestRenderUpdate(SceneCamera* mainCamera, const Transform* camera
 {
     Renderer::Render(m_Registry, mainCamera, cameraTransform);
 
-    if constexpr (k_IsMultiThreading)
-    {
-        vgjs::continuation([this]() {m_IsRenderDone = true; });
-    }
+	vgjs::continuation([this]() {m_IsRenderDone = true; });
 }
 
 void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
@@ -146,60 +121,37 @@ void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
 
         vgjs::schedule([this, mainCamera, cameraTransform]() {RequestRenderUpdate(mainCamera, cameraTransform); });
 
-        //int i = 0;
         while (!m_IsRenderDone)
         {
-            //i++;
             std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
-        //Log::CoreDebug("CameraRender waited for {0} microseconds", i);
     }
     else
     {
-        RequestRenderUpdate(mainCamera, cameraTransform);
+        Renderer::Render(m_Registry, mainCamera, cameraTransform);
     }
 }
 
 void Scene::RequestLateUpdate(const float deltaTime)
 {
-    if constexpr (k_IsMultiThreading)
+    for (const auto& system : m_LateUpdateSystems)
     {
-        for (const auto& system : m_LateUpdateSystems)
-        {
-            //system->Update(deltaTime, m_Registry);
-            vgjs::schedule([this, deltaTime, &system]() {system->Update(deltaTime, m_Registry); });
-        }
+        //TODO Add schedule inside systems' Updates if needed
+        system->Update(deltaTime, m_Registry);
+    }
 
-        vgjs::continuation([this]() {m_IsLateUpdateDone = true; });
-    }
-    else
-    {
-        for (const auto& system : m_LateUpdateSystems)
-        {
-            system->Update(deltaTime, m_Registry);
-        }
-    }
+    vgjs::continuation([this]() {m_IsLateUpdateDone = true; });
 }
 
 void Scene::RequestEventsUpdate(const float deltaTime)
 {
-    if constexpr (k_IsMultiThreading)
+    for (const auto& system : m_EventSystems)
     {
-        for (const auto& system : m_EventSystems)
-        {
-            //system->Update(deltaTime, m_Registry);
-            vgjs::schedule([this, deltaTime, &system]() { system->Update(deltaTime, m_Registry); });
-        }
+        //TODO Add schedule inside systems' Updates if needed
+        system->Update(deltaTime, m_Registry);
+    }
 
-        vgjs::continuation([this]() {m_IsEventUpdateDone = true; });
-    }
-    else
-    {
-        for (const auto& system : m_EventSystems)
-        {
-            system->Update(deltaTime, m_Registry);
-        }
-    }
+    vgjs::continuation([this]() {m_IsEventUpdateDone = true; });
 }
 
 void Scene::OnLateUpdate(const float deltaTime)
@@ -212,30 +164,31 @@ void Scene::OnLateUpdate(const float deltaTime)
 
         vgjs::schedule([this, deltaTime]() {RequestLateUpdate(deltaTime); });
 
-        //int i = 0;
         while (!m_IsLateUpdateDone)
         {
-            //i++;
             std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
-        //Log::CoreDebug("LateUpdate waited for {0} microseconds", i);
 
         m_IsEventUpdateDone = false;
 
         vgjs::schedule([this, deltaTime]() {RequestEventsUpdate(deltaTime); });
 
-        //i = 0;
         while (!m_IsEventUpdateDone)
         {
-            //i++;
             std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
-        //Log::CoreDebug("EventUpdate waited for {0} microseconds", i);
     }
 	else
 	{
-        RequestLateUpdate(deltaTime);
-        RequestEventsUpdate(deltaTime);
+        for (const auto& system : m_LateUpdateSystems)
+        {
+            system->Update(deltaTime, m_Registry);
+        }
+
+		for (const auto& system : m_EventSystems)
+        {
+            system->Update(deltaTime, m_Registry);
+        }
 	}
 }
 
