@@ -30,6 +30,8 @@ namespace LevEngine::Editor
 		bool m_Hovered = false;
 		bool m_Active = false;
 
+		bool m_CanScroll = true;
+
 		Vector2 m_WindowPadding{ 10, 5};
 	};
 }

@@ -8,7 +8,12 @@ namespace LevEngine::Editor
 	void Panel::Render()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(m_WindowPadding.x, m_WindowPadding.y));
-		m_Active = ImGui::Begin(GetName().c_str());
+
+		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
+		if (!m_CanScroll)
+			flags |= ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+		
+		m_Active = ImGui::Begin(GetName().c_str(), nullptr, flags);
 		if (m_Active)
 		{
 			m_Window = ImGui::GetCurrentWindow();

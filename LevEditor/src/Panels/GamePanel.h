@@ -6,11 +6,12 @@ namespace LevEngine::Editor
 	class GamePanel final : public Panel
 	{
 	public:
-		GamePanel()
+		GamePanel() : Panel()
 		{
 			m_WindowPadding = Vector2{ 0, 0 };
+			m_CanScroll = false;
 		}
-		explicit GamePanel(const Ref<Texture>& renderTexture)
+		explicit GamePanel(const Ref<Texture>& renderTexture) : GamePanel()
 		{
 			m_Texture = renderTexture->Clone();
 

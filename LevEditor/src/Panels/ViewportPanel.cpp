@@ -35,7 +35,7 @@ namespace LevEngine::Editor
 	    float right = 0.5f * (1 + viewportSize.x / m_Texture->GetWidth());
 	    float top = 0.5f * (1 + viewportSize.y / m_Texture->GetHeight());
 	    ImVec2 rightTop = ImVec2{ 1, 1 }; //{right, top};
-	    
+
         ImGui::Image(
             m_Texture->GetId(),
             viewportSize,

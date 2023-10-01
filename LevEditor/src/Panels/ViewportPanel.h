@@ -8,12 +8,13 @@ namespace LevEngine::Editor
 	class ViewportPanel final : public Panel
 	{
 	public:
-		ViewportPanel()
+		ViewportPanel() : Panel()
 		{
 			m_WindowPadding = Vector2{ 0, 0 };
+			m_CanScroll = false;
 		}
 
-		explicit ViewportPanel(const Ref<Texture>& renderTexture)
+		explicit ViewportPanel(const Ref<Texture>& renderTexture) : ViewportPanel()
 		{
 			m_Texture = renderTexture->Clone();
 
