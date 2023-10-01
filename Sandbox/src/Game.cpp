@@ -325,10 +325,14 @@ namespace Sandbox
 		SceneManager::GetActiveScene()->OnUpdate(deltaTime);
 		SceneManager::GetActiveScene()->OnPhysics(deltaTime);
 		SceneManager::GetActiveScene()->OnLateUpdate(deltaTime);
-		SceneManager::GetActiveScene()->OnRender();
-
+		
 		if (Input::IsKeyPressed(KeyCode::Escape))
 			Application::Get().Close();
+	}
+
+	void Game::OnRender()
+	{
+		SceneManager::GetActiveScene()->OnRender();
 	}
 
 	void Game::OnGUIRender()

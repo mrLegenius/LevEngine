@@ -8,7 +8,8 @@ namespace Sandbox
 	public:
 		void OnAttach() override;
 		void OnDetach() override;
-		void OnUpdate(const float deltaTime) override;
+		void OnUpdate(float deltaTime) override;
+		void OnRender() override;
 		void OnGUIRender() override;
 		void OnEvent(Event& event) override;
 	};

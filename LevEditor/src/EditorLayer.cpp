@@ -94,75 +94,7 @@ namespace LevEngine::Editor
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
         dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResized));
     }
-
-    void EditorLayer::OnDuplicateEntity() const
-    {
-        if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
-        {
-            SceneManager::GetActiveScene()->DuplicateEntity(entitySelection->Get());
-        }
-    }
-
-    bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
-    {
-        //Shortcuts
-        if (event.GetRepeatCount() > 0)
-            return false;
-
-        const bool control = Input::IsKeyDown(KeyCode::LeftControl) ||
-            Input::IsKeyDown(KeyCode::RightControl);
-        const bool shift = Input::IsKeyDown(KeyCode::LeftShift) ||
-            Input::IsKeyDown(KeyCode::RightShift);
-        const bool alt = Input::IsKeyDown(KeyCode::LeftAlt) ||
-            Input::IsKeyDown(KeyCode::RightAlt);
-
-        switch (event.GetKeyCode())
-        {
-
-        case KeyCode::N:
-        {
-            if (control) { CreateNewScene(); }
-            break;
-        }
-        case KeyCode::O:
-        {
-            if (control) { OpenScene(); }
-            break;
-        }
-        case KeyCode::S:
-        {
-            if (control && shift) { SaveSceneAs(); }
-            else if (control) { SaveScene(); }
-            break;
-        }
-        case KeyCode::D:
-        {
-            if (control)
-                OnDuplicateEntity();
-
-            break;
-        }
-
-        default:
-            break;
-        }
-
-        m_Hierarchy->OnKeyPressed(event);
-        return m_Viewport->OnKeyPressed(event);
-    }
-
-    bool EditorLayer::OnWindowResized(const WindowResizedEvent& e) const
-    {
-        const auto height = e.GetHeight();
-        const auto width = e.GetWidth();
-        
-        if (width == 0 || height == 0) return false;
-
-        SceneManager::GetActiveScene()->OnViewportResized(e.GetWidth(), e.GetHeight());
-        Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
-        return false;
-    }
-
+    
     void EditorLayer::OnUpdate(const float deltaTime)
     {
         LEV_PROFILE_FUNCTION();
@@ -194,10 +126,17 @@ namespace LevEngine::Editor
         }
 
         if (m_Viewport->IsActive())
+            m_Viewport->UpdateCamera(deltaTime);
+    }
+
+    void EditorLayer::OnRender()
+    {
+        const auto& activeScene = SceneManager::GetActiveScene();
+        
+        if (m_Viewport->IsActive())
         {
             DebugRender::DrawGrid(Vector3::Zero, Vector3::Right, Vector3::Forward, 100, 100, 1.0f, Color::Gray);
             
-            m_Viewport->UpdateCamera(deltaTime);
             auto& camera = m_Viewport->GetCamera();
             activeScene->OnRender(&camera, &camera.GetTransform());
             m_Viewport->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
@@ -209,7 +148,7 @@ namespace LevEngine::Editor
             m_Game->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         }
     }
-
+    
     void EditorLayer::OnGUIRender()
     {
         LEV_PROFILE_FUNCTION();
@@ -231,6 +170,75 @@ namespace LevEngine::Editor
         DrawToolbar();
         DrawStatusbar();
     }
+
+    void EditorLayer::OnDuplicateEntity()
+    {
+        if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
+        {
+            SceneManager::GetActiveScene()->DuplicateEntity(entitySelection->Get());
+        }
+    }
+
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
+    {
+        //Shortcuts
+        if (event.GetRepeatCount() > 0)
+            return false;
+
+        const bool control = Input::IsKeyDown(KeyCode::LeftControl) ||
+            Input::IsKeyDown(KeyCode::RightControl);
+        const bool shift = Input::IsKeyDown(KeyCode::LeftShift) ||
+            Input::IsKeyDown(KeyCode::RightShift);
+        const bool alt = Input::IsKeyDown(KeyCode::LeftAlt) ||
+            Input::IsKeyDown(KeyCode::RightAlt);
+
+        switch (event.GetKeyCode())
+        {
+
+        case KeyCode::N:
+            {
+                if (control) { CreateNewScene(); }
+                break;
+            }
+        case KeyCode::O:
+            {
+                if (control) { OpenScene(); }
+                break;
+            }
+        case KeyCode::S:
+            {
+                if (control && shift) { SaveSceneAs(); }
+                else if (control) { SaveScene(); }
+                break;
+            }
+        case KeyCode::D:
+            {
+                if (control)
+                    OnDuplicateEntity();
+
+                break;
+            }
+
+        default:
+            break;
+        }
+
+        m_Hierarchy->OnKeyPressed(event);
+        return m_Viewport->OnKeyPressed(event);
+    }
+
+    bool EditorLayer::OnWindowResized(const WindowResizedEvent& e) const
+    {
+        const auto height = e.GetHeight();
+        const auto width = e.GetWidth();
+        
+        if (width == 0 || height == 0) return false;
+
+        SceneManager::GetActiveScene()->OnViewportResized(e.GetWidth(), e.GetHeight());
+        Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
+        return false;
+    }
+
 
     constexpr float toolbarSize = 10;
     float menuBarHeight;

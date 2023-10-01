@@ -1,14 +1,13 @@
 ﻿#pragma once
 #include "Asset.h"
 #include "DefaultAsset.h"
-#include "MaterialSimpleAsset.h"
 #include "MaterialPBRAsset.h"
+#include "MaterialSimpleAsset.h"
 #include "MeshAsset.h"
 #include "PrefabAsset.h"
 #include "Project.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
-#include "DataTypes/UnorderedMap.h"
 
 namespace LevEngine
 {
@@ -143,7 +142,7 @@ namespace LevEngine
 				Log::CoreWarning("Asset in {0} is not found", path.string());
 				return nullptr;
 			}
-
+			
 			const auto& asset = assetIt->second;
 			if (!asset->IsDeserialized())
 				asset->Deserialize();

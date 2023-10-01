@@ -84,24 +84,36 @@ void Application::Run()
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate(deltaTime);
 		}
-
-		//We need to bind main render target before drawing GUI
-		//TODO: Maybe move to another place
-		m_Window->GetContext()->GetRenderTarget()->Bind();
-
-		m_ImGuiLayer->Begin();
-		{
-			LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
-			for (Layer* layer : m_LayerStack)
-				layer->OnGUIRender();
-		}
-		m_ImGuiLayer->End();
+		
+		if (!m_Minimized)
+			Render();
 
 		Input::Reset();
 		m_Window->Update();
 	}
 
 	vgjs::terminate();
+}
+
+void Application::Render()
+{
+	{
+		LEV_PROFILE_SCOPE("LayerStack OnRender");
+		for (Layer* layer : m_LayerStack)
+			layer->OnRender();
+	}
+			
+	//We need to bind main render target before drawing GUI
+	//TODO: Maybe move to another place
+	m_Window->GetContext()->GetRenderTarget()->Bind();
+
+	m_ImGuiLayer->Begin();
+	{
+		LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
+		for (Layer* layer : m_LayerStack)
+			layer->OnGUIRender();
+	}
+	m_ImGuiLayer->End();
 }
 
 void Application::Close()
