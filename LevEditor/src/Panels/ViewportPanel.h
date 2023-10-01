@@ -89,6 +89,8 @@ namespace LevEngine::Editor
 	protected:
 		String GetName() override { return "Viewport"; }
 		void DrawContent() override;
+		void DrawGizmo() const;
+
 	private:
 		Vector2 m_Size{ 0.0f };
 		Vector2 m_Bounds[2];

@@ -267,7 +267,9 @@ namespace LevEngine::Editor
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
         const auto& buttonActive = colors[ImGuiCol_ButtonActive];
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
-
+        const ImGuiIO& io = ImGui::GetIO();
+        const auto boldFont = io.Fonts->Fonts[0];
+        
         constexpr ImGuiWindowFlags windowFlags = 0
             | ImGuiWindowFlags_NoDocking
             | ImGuiWindowFlags_NoTitleBar
@@ -284,12 +286,11 @@ namespace LevEngine::Editor
         ImGui::SetCursorPosX(10);
         ImGui::SetCursorPosY(padding);
 
-        ImGui::BeginTable("tools", 4, 0, ImVec2(0, 0), size * 4);
-        
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
+        constexpr int columns = 7;
+        ImGui::BeginTable("tools", columns, 0, ImVec2(0, 0), size * 4);
+
+        for (int i = 0; i < columns; ++i)
+            ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
 
         {
             ImGui::TableNextColumn();
@@ -329,6 +330,48 @@ namespace LevEngine::Editor
             ImGui::SetItemAllowOverlap();
             ImGui::SetCursorPos(cursorPos);
             ImGui::Image(scaleIcon->GetId(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
+        }
+
+        {
+            ImGui::TableNextColumn();
+            ImGui::Dummy(ImVec2(size, size));
+        }
+        
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_space_world", Gizmo::Space == Gizmo::ToolSpace::World, 0, ImVec2(size, size)))
+                Gizmo::Space = Gizmo::ToolSpace::World;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            
+            ImGui::PushFont(boldFont);
+
+            const auto width = ImGui::GetColumnWidth();
+            const auto textWidth = ImGui::CalcTextSize("W").x;
+            const auto cursorPosX = cursorPos.x + (width - textWidth) * 0.5f;
+            ImGui::SetCursorPosX(cursorPosX);
+            
+            ImGui::Text("W");
+            ImGui::PopFont();
+        }
+
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_space_local", Gizmo::Space == Gizmo::ToolSpace::Local, 0, ImVec2(size, size)))
+                Gizmo::Space = Gizmo::ToolSpace::Local;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            ImGui::PushFont(boldFont);
+
+            const auto width = ImGui::GetColumnWidth();
+            const auto textWidth = ImGui::CalcTextSize("L").x;
+            const auto cursorPosX = cursorPos.x + (width - textWidth) * 0.5f;
+            ImGui::SetCursorPosX(cursorPosX);
+            
+            ImGui::Text("L");
+            ImGui::PopFont();
         }
 
         ImGui::EndTable();

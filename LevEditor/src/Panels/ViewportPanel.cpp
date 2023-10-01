@@ -9,7 +9,7 @@
 
 namespace LevEngine::Editor
 {
-	void ViewportPanel::DrawContent()
+    void ViewportPanel::DrawContent()
 	{
         if (!m_Focused)
             m_Camera.ResetInitialMousePosition();
@@ -53,6 +53,11 @@ namespace LevEngine::Editor
             ImGui::EndDragDropTarget();
         }
 
+        DrawGizmo();
+	}
+
+    void ViewportPanel::DrawGizmo() const
+    {
         //Gizmos
         const auto& entitySelection = CastRef<EntitySelection>(Selection::Current());
 
@@ -78,12 +83,12 @@ namespace LevEngine::Editor
             const float snapValues[3] = { snapValue, snapValue, snapValue };
 
             if (ImGuizmo::Manipulate(&cameraView._11,
-                &cameraProjection._11,
-                static_cast<ImGuizmo::OPERATION>(Gizmo::Tool),
-                ImGuizmo::LOCAL,
-                &model._11,
-                nullptr,
-                snap ? snapValues : nullptr))
+                                     &cameraProjection._11,
+                                     static_cast<ImGuizmo::OPERATION>(Gizmo::Tool),
+                                     static_cast<ImGuizmo::MODE>(Gizmo::Space),
+                                     &model._11,
+                                     nullptr,
+                                     snap ? snapValues : nullptr))
             {
                 Vector3 position, scale;
                 Quaternion rotation;
@@ -95,5 +100,5 @@ namespace LevEngine::Editor
                 tc.RecalculateModel();
             }
         }
-	}
+    }
 }
