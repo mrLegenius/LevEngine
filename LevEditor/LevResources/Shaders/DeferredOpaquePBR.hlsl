@@ -46,8 +46,8 @@ PS_OUT PSMain(PS_IN input)
 	float roughness = roughnessMap.Sample(roughnessMapSampler, textureUV) * material.roughness;
 	float ao = ambientOcclusionMap.Sample(ambientOcclusionMapSampler, textureUV);
 
-	//Gamma correction
-	albedo = pow(albedo, 2.2);
+	//Gamma correction for textures in linear space
+	//albedo = pow(albedo, 2.2);
 
 	float cascade = GetCascadeIndex(input.depth);
 	float4 fragPosLightSpace = mul(float4(input.fragPos, 1.0f), lightViewProjection[cascade]);
@@ -55,14 +55,9 @@ PS_OUT PSMain(PS_IN input)
 
 	float3 lit = CalcDirLight(dirLight, normal, viewDir, fragPosLightSpace, cascade, albedo, metallic, roughness);
 
-    float3 ambientColor = globalAmbient * albedo * ao;
+    float3 ambientColor = globalAmbient * ao * albedo;
 	float3 finalColor = ambientColor + lit + emissive;
 
-	//Gamma correction
-	//finalColor = finalColor / (finalColor + 1.0);
-	finalColor = pow(finalColor, 0.44);
-
-	//result.LightAccumulation = float4(normal, 1.0f);
 	result.LightAccumulation = float4(finalColor, 1.0f);
     result.Albedo = float4(albedo, 1.0f);
     result.MetallicRoughnessAO = float4(metallic, roughness, ao, 0.0f);

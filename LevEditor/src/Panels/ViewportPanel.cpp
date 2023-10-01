@@ -5,6 +5,7 @@
 
 #include "imguizmo/ImGuizmo.h"
 #include "EntitySelection.h"
+#include "GUI/GUIUtils.h"
 
 namespace LevEngine::Editor
 {
@@ -44,7 +45,7 @@ namespace LevEngine::Editor
 
         if (ImGui::BeginDragDropTarget())
         {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
             {
                 const wchar_t* path = (const wchar_t*)payload->Data;
                 SceneManager::LoadScene(path);

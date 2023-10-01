@@ -4,6 +4,7 @@
 #include "MaterialSimpleAsset.h"
 #include "MaterialPBRAsset.h"
 #include "MeshAsset.h"
+#include "PrefabAsset.h"
 #include "Project.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
@@ -83,6 +84,13 @@ namespace LevEngine
 			return extension == ".skybox";
 		}
 
+		static bool IsAssetPrefab(const Path& path)
+		{
+			const auto extension = path.extension().string();
+
+			return extension == ".prefab";
+		}
+
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid)
 		{
 			if (IsAssetTexture(path))
@@ -99,6 +107,9 @@ namespace LevEngine
 
 			if (IsAssetMesh(path))
 				return CreateRef<MeshAsset>(path, uuid);
+
+			if (IsAssetPrefab(path))
+				return CreateRef<PrefabAsset>(path, uuid);
 
 			return CreateRef<DefaultAsset>(path, uuid);
 		}
@@ -176,6 +187,7 @@ namespace LevEngine
 		static void RenameAsset(const Ref<Asset>& asset, const String& name);
 		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
+		static bool AssetExists(const Path& path);
 
 	private:
 		static inline UnorderedMap<UUID, Ref<Asset>> m_Assets;

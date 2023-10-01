@@ -5,6 +5,7 @@
 #include "CopyTexturePass.h"
 #include "DeferredLightingPass.h"
 #include "ParticlePass.h"
+#include "QuadRenderPass.h"
 #include "Renderer3D.h"
 #include "ShadowMapPass.h"
 #include "SkyboxPass.h"
@@ -15,24 +16,6 @@
 
 namespace LevEngine
 {
-Ref<Texture> Renderer::m_DepthTexture;
-Ref<Texture> Renderer::m_AlbedoTexture;
-Ref<Texture> Renderer::m_MetallicRoughnessAOTexture;
-Ref<Texture> Renderer::m_NormalTexture;
-
-Ref<RenderTarget> Renderer::s_GBufferRenderTarget;
-Ref<RenderTarget> Renderer::s_DepthOnlyRenderTarget;
-Ref<PipelineState> Renderer::s_GBufferPipeline;
-Ref<PipelineState> Renderer::s_OpaquePipeline;
-Ref<PipelineState> Renderer::s_DebugPipeline;
-Ref<PipelineState> Renderer::s_SkyboxPipeline;
-Ref<PipelineState> Renderer::s_ParticlesPipelineState;
-Ref<PipelineState> Renderer::m_PositionalLightPipeline1;
-Ref<PipelineState> Renderer::m_PositionalLightPipeline2;
-
-Ref<RenderTechnique> Renderer::s_DeferredTechnique;
-Ref<RenderTechnique> Renderer::s_ForwardTechnique;
-
 void Renderer::Init()
 {
 	LEV_PROFILE_FUNCTION();
@@ -46,14 +29,25 @@ void Renderer::Init()
 	const auto mainRenderTarget = window.GetContext()->GetRenderTarget();
 
 	{ 
+		LEV_PROFILE_SCOPE("GBuffer color texture creation");
+
+		const Texture::TextureFormat format(
+			Texture::Components::RGBA,
+			Texture::Type::Float,
+			1,
+			16, 16, 16, 16, 0, 0);
+		m_ColorTexture = Texture::CreateTexture2D(width, height, 1, format);
+	}
+	
+	{ 
 		LEV_PROFILE_SCOPE("GBuffer depth texture creation");
 
-		const Texture::TextureFormat depthStencilTextureFormat(
+		const Texture::TextureFormat format(
 			Texture::Components::DepthStencil,
 			Texture::Type::UnsignedNormalized,
 			1,
 			0, 0, 0, 0, 24, 8);
-		m_DepthTexture = Texture::CreateTexture2D(width, height, 1, depthStencilTextureFormat);
+		m_DepthTexture = Texture::CreateTexture2D(width, height, 1, format);
 	}
 
 	{
@@ -97,10 +91,30 @@ void Renderer::Init()
 	}
 
 	{
+		LEV_PROFILE_SCOPE("Deferred lights render target creation");
+
+		s_DeferredLightsRenderTarget = RenderTarget::Create();
+		s_DeferredLightsRenderTarget->AttachTexture(AttachmentPoint::Color0, m_ColorTexture);
+		s_DeferredLightsRenderTarget->AttachTexture(AttachmentPoint::DepthStencil, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil));
+	}
+
+	{
+		LEV_PROFILE_SCOPE("Deferred quad pipeline creation");
+
+		s_DeferredQuadPipeline = CreateRef<PipelineState>();
+		s_DeferredQuadPipeline->GetRasterizerState().SetCullMode(CullMode::None);
+		s_DeferredQuadPipeline->GetDepthStencilState()->SetDepthMode(DepthMode{false, DepthWrite::Disable});
+		s_DeferredQuadPipeline->GetDepthStencilState()->SetStencilMode(StencilMode{false });
+		s_DeferredQuadPipeline->SetShader(ShaderType::Vertex, ShaderAssets::DeferredQuadRender());
+		s_DeferredQuadPipeline->SetShader(ShaderType::Pixel, ShaderAssets::DeferredQuadRender());
+		s_DeferredQuadPipeline->SetRenderTarget(mainRenderTarget);
+	}
+
+	{
 		LEV_PROFILE_SCOPE("GBuffer render target creation");
 
 		s_GBufferRenderTarget = RenderTarget::Create();
-		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color0, mainRenderTarget->GetTexture(AttachmentPoint::Color0));
+		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color0, m_ColorTexture);
 		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color1, m_AlbedoTexture);
 		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color2, m_NormalTexture);
 		s_GBufferRenderTarget->AttachTexture(AttachmentPoint::Color3, m_MetallicRoughnessAOTexture);
@@ -121,7 +135,7 @@ void Renderer::Init()
 		LEV_PROFILE_SCOPE("Deferred lighting pipeline 1 creation");
 
 		m_PositionalLightPipeline1 = CreateRef<PipelineState>();
-		m_PositionalLightPipeline1->SetRenderTarget(s_DepthOnlyRenderTarget);
+		m_PositionalLightPipeline1->SetRenderTarget(s_DeferredLightsRenderTarget);
 		m_PositionalLightPipeline1->GetRasterizerState().SetCullMode(CullMode::Back);
 		m_PositionalLightPipeline1->GetRasterizerState().SetDepthClipEnabled(true);
 
@@ -144,7 +158,7 @@ void Renderer::Init()
 		LEV_PROFILE_SCOPE("Deferred lighting pipeline 2 creation");
 
 		m_PositionalLightPipeline2 = CreateRef<PipelineState>();
-		m_PositionalLightPipeline2->SetRenderTarget(mainRenderTarget);
+		m_PositionalLightPipeline2->SetRenderTarget(s_DeferredLightsRenderTarget);
 		m_PositionalLightPipeline2->GetRasterizerState().SetCullMode(CullMode::Front);
 		m_PositionalLightPipeline2->GetRasterizerState().SetDepthClipEnabled(false);
 
@@ -214,11 +228,13 @@ void Renderer::Init()
 
 		s_DeferredTechnique = CreateRef<RenderTechnique>();
 		s_DeferredTechnique->AddPass(CreateRef<ShadowMapPass>());
+		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget));
 		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_GBufferRenderTarget));
 		s_DeferredTechnique->AddPass(CreateRef<OpaquePass>(s_GBufferPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(s_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture));
 		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, ClearFlags::Stencil, Vector4::Zero, 1.0f, 1));
 		s_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_AlbedoTexture, m_MetallicRoughnessAOTexture, m_NormalTexture, m_DepthTexture));
+		s_DeferredTechnique->AddPass(CreateRef<QuadRenderPass>(s_DeferredQuadPipeline, m_ColorTexture));
 		s_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<ParticlePass>(s_ParticlesPipelineState, m_DepthTexture, m_NormalTexture));
@@ -259,9 +275,10 @@ void Renderer::SetViewport(const float width, const float height)
 	s_DebugPipeline->GetRasterizerState().SetViewport(viewport);
 	s_SkyboxPipeline->GetRasterizerState().SetViewport(viewport);
 	s_ParticlesPipelineState->GetRasterizerState().SetViewport(viewport);
+	s_DeferredQuadPipeline->GetRasterizerState().SetViewport(viewport);
 
-	s_DepthOnlyRenderTarget->Resize(width, height);
-	s_GBufferRenderTarget->Resize(width, height);
+	s_DepthOnlyRenderTarget->Resize(static_cast<uint16_t>(width), static_cast<uint16_t>(height));
+	s_GBufferRenderTarget->Resize(static_cast<uint16_t>(width), static_cast<uint16_t>(height));
 }
 
 void DirectionalLightSystem(entt::registry& registry);

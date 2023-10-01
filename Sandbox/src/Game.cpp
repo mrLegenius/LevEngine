@@ -4,7 +4,7 @@
 /*
  * There are some problems in this project
  * 1. (Done) We need Project system to have ability change assets of separate project
- * 2. We need Prefabs system to avoid complete object creation from code
+ * 2. (In progress) We need Prefabs system to avoid complete object creation from code
  * 3. We need resource loading system (by name)
  * 4. We need our systems and components in editor, to setup entities visually
  * 5. We do not need to control engine pipeline in this project (OnUpdate, OnRender, etc)
@@ -113,8 +113,9 @@ namespace Sandbox
 
 				if (Input::IsMouseButtonPressed(MouseButton::Left))
 				{
-					auto projectile = SceneManager::GetActiveScene()->CreateEntity("Missile");
-
+					const auto projectilePrefab = AssetDatabase::GetAsset<PrefabAsset>(AssetDatabase::GetAssetsPath() / "Prefabs" / "Missile.prefab");
+					auto projectile = projectilePrefab->Instantiate(SceneManager::GetActiveScene());
+					
 					auto& transform = projectile.GetComponent<Transform>();
 
 					transform.SetWorldPosition(cameraTransform.GetWorldPosition() + cameraTransform.GetForwardDirection() * 10);
@@ -129,16 +130,9 @@ namespace Sandbox
 					rigidbody.bodyType = BodyType::Kinematic;
 					rigidbody.gravityScale = 0;
 					
-					auto projectileMeshEntity = SceneManager::GetActiveScene()->CreateEntity("MissileMesh");
-					
+					auto projectileMeshEntity = transform.GetChildren()[0];
 					auto& meshTransform = projectileMeshEntity.GetComponent<Transform>();
-					meshTransform.SetParent(projectile, false);
-					meshTransform.SetLocalScale(Vector3::One * 0.05f);
 					meshTransform.SetLocalRotation(Random::Rotation());
-					
-					auto& mesh = projectileMeshEntity.AddComponent<MeshRendererComponent>();
-					mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Models" / "lava_rock.obj");
-					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Textures" / "LavaRock" / "LavaRock.pbr");
 
 					auto& projectileComp = projectile.AddComponent<Projectile>();
 
@@ -190,41 +184,22 @@ namespace Sandbox
 	public:
 		void Update(const float deltaTime, entt::registry& registry) override
 		{
-			return;
-			
 			m_Timer += deltaTime;
 
 			if (m_Timer >= m_SpawnInterval)
 			{
 				m_Timer -= m_SpawnInterval;
 
-				const auto target = SceneManager::GetActiveScene()->CreateEntity("Target");
+				const auto prefab = AssetDatabase::GetAsset<PrefabAsset>(AssetDatabase::GetAssetsPath() / "Prefabs" / "Enemy.prefab");
+				const auto enemy = prefab->Instantiate(SceneManager::GetActiveScene());
 
-				auto& enemy = target.AddComponent<Enemy>();
-				enemy.speed = 5;
-
-				auto& rigidbody = target.AddComponent<Rigidbody>();
+				auto& enemyComp = enemy.AddComponent<Enemy>();
+				enemyComp.speed = 5;
 				
-				auto& transform = target.GetComponent<Transform>();
-
-				auto randomPosition = Random::Vec3(-25.0f, 25.0f);
+				auto& transform = enemy.GetComponent<Transform>();
+				auto randomPosition = Random::Vec3(-20.0f, 20.0f);
 				randomPosition.y = 1;
 				transform.SetWorldPosition(randomPosition);
-
-				auto& collider = target.AddComponent<BoxCollider>();
-				collider.extents = Vector3(0.5, 1.75, 0.5);
-				collider.offset = Vector3(0, 1.75, 0);
-				
-				const auto meshEntity = SceneManager::GetActiveScene()->CreateEntity("Mesh");
-					
-				auto& meshTransform = meshEntity.GetComponent<Transform>();
-				meshTransform.SetParent(target, false);
-				meshTransform.SetLocalScale({0.01f, 0.02f, 0.01f});
-					
-				auto& mesh = meshEntity.AddComponent<MeshRendererComponent>();
-				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Enemy" / "enemy_model.fbx");
-				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Enemy" /  "enemy_material.pbr");
-
 			}
 		}
 	private:

@@ -131,4 +131,9 @@ namespace LevEngine
 		m_AssetsByPath.erase(path);
 		m_Assets.erase(uuid);
 	}
+
+	bool AssetDatabase::AssetExists(const Path& path)
+	{
+		return exists(path);
+	}
 }

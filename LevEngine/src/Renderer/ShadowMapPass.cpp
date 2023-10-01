@@ -70,17 +70,13 @@ ShadowMapPass::ShadowMapPass()
 
 bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 {
-	const SceneCamera* lightCamera = nullptr;
-	const auto group = registry.group<>(entt::get<Transform, DirectionalLightComponent, CameraComponent>);
+	const auto group = registry.group<>(entt::get<Transform, DirectionalLightComponent>);
     Vector3 lightDirection;
 	for (const auto entity : group)
 	{
-		auto [transform, camera] = group.get<Transform, CameraComponent>(entity);
-		lightCamera = &camera.camera;
+		auto& transform = group.get<Transform>(entity);
         lightDirection = transform.GetForwardDirection();
 	}
-
-	if (!lightCamera) return false;
 
 	const auto cameraCascadeProjections = params.Camera.GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
 

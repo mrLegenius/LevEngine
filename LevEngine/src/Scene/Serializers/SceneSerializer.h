@@ -2,6 +2,8 @@
 #include "Scene/Scene.h"
 #include <yaml-cpp/yaml.h>
 
+#include "DataTypes/Path.h"
+
 namespace LevEngine
 {
 	class SceneSerializer
@@ -10,8 +12,7 @@ namespace LevEngine
 		SceneSerializer(const Ref<Scene>& scene);
 		~SceneSerializer() = default;
 
-		void SerializeEntity(YAML::Emitter& out, Entity entity) const;
-		void Serialize(const String& filepath) const;
+		void Serialize(const Path& filepath) const;
 		void SerializeRuntime(const String& filepath);
 
 		bool Deserialize(const String& filepath);

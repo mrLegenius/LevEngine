@@ -6,29 +6,12 @@
 
 namespace LevEngine
 {
-    OpaquePass::OpaquePass(const Ref<PipelineState>& pipelineState) : m_PipelineState(pipelineState)
-    {
-        m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
-    }
+    OpaquePass::OpaquePass(const Ref<PipelineState>& pipelineState) : m_PipelineState(pipelineState) { }
 
     bool OpaquePass::Begin(entt::registry& registry, RenderParams& params)
     {
-        //TODO: Move this to its own pass
-        const auto view = registry.group<>(entt::get<Transform, DirectionalLightComponent>);
-        for (const auto entity : view)
-        {
-            auto [transform, light] = view.get<Transform, DirectionalLightComponent>(entity);
-
-            Renderer3D::SetDirLight(transform.GetForwardDirection(), light);
-        }
-
         m_PipelineState->Bind();
-
-        const auto viewProjection = params.CameraViewMatrix * params.Camera.GetProjection();
-
-        const CameraData cameraData{ params.CameraViewMatrix, viewProjection, params.CameraPosition };
-        m_CameraConstantBuffer->SetData(&cameraData);
-        m_CameraConstantBuffer->Bind(ShaderType::Vertex | ShaderType::Pixel);
+        
         return RenderPass::Begin(registry, params);
     }
 

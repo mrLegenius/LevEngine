@@ -7,9 +7,16 @@ namespace LevEngine
 	class TextureLibrary
 	{
 	public:
-		static Ref<Texture> GetEmptyTexture()
+		static Ref<Texture> GetWhiteTexture()
 		{
-			static Ref<Texture> emptyTexture = Texture::CreateTexture2D(1, 1, 1, Texture::TextureFormat());
+			static uint8_t data[3] = {255, 255, 255};
+			static Ref<Texture> emptyTexture = Texture::CreateTexture2D(1, 1, 1, Texture::TextureFormat(), &data[0]);
+			return emptyTexture;
+		}
+		static Ref<Texture> GetBlackTexture()
+		{
+			static uint8_t data[3] = {0, 0, 0};
+			static Ref<Texture> emptyTexture = Texture::CreateTexture2D(1, 1, 1, Texture::TextureFormat(), &data[0]);
 			return emptyTexture;
 		}
 

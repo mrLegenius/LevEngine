@@ -2,7 +2,6 @@
 #include "DeferredLightingPass.h"
 
 #include "Renderer3D.h"
-#include "Scene/Components/Components.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine

@@ -21,22 +21,26 @@ public:
 	static void SetViewport(float width, float height);
 
 private:
-	static Ref<Texture> m_DepthTexture;
-	static Ref<Texture> m_AlbedoTexture;
-	static Ref<Texture> m_MetallicRoughnessAOTexture;
-	static Ref<Texture> m_NormalTexture;
-	static Ref<RenderTarget> s_GBufferRenderTarget;
-	static Ref<RenderTarget> s_DepthOnlyRenderTarget;
-	static Ref<OpaquePass> s_GBufferPass;
-	static Ref<PipelineState> s_GBufferPipeline;
-	static Ref<PipelineState> s_OpaquePipeline;
-	static Ref<PipelineState> s_DebugPipeline;
-	static Ref<PipelineState> s_SkyboxPipeline;
-	static Ref<PipelineState> s_ParticlesPipelineState;
-	static Ref<PipelineState> m_PositionalLightPipeline1;
-	static Ref<PipelineState> m_PositionalLightPipeline2;
-
-	static Ref<RenderTechnique> s_DeferredTechnique;
-	static Ref<RenderTechnique> s_ForwardTechnique;
+	inline static Ref<Texture> m_ColorTexture;
+	inline static Ref<Texture> m_DepthTexture;
+	inline static Ref<Texture> m_AlbedoTexture;
+	inline static Ref<Texture> m_MetallicRoughnessAOTexture;
+	inline static Ref<Texture> m_NormalTexture;
+	
+	inline static Ref<RenderTarget> s_DeferredLightsRenderTarget;
+	inline static Ref<RenderTarget> s_GBufferRenderTarget;
+	inline static Ref<RenderTarget> s_DepthOnlyRenderTarget;
+	
+	inline static Ref<PipelineState> s_DeferredQuadPipeline;
+	inline static Ref<PipelineState> s_GBufferPipeline;
+	inline static Ref<PipelineState> s_OpaquePipeline;
+	inline static Ref<PipelineState> s_DebugPipeline;
+	inline static Ref<PipelineState> s_SkyboxPipeline;
+	inline static Ref<PipelineState> s_ParticlesPipelineState;
+	inline static Ref<PipelineState> m_PositionalLightPipeline1;
+	inline static Ref<PipelineState> m_PositionalLightPipeline2;
+	
+	inline static Ref<RenderTechnique> s_DeferredTechnique;
+	inline static Ref<RenderTechnique> s_ForwardTechnique;
 };
 }
