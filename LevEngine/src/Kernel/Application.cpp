@@ -53,7 +53,7 @@ void Application::Run()
 	while (m_IsRunning)
 	{
 		auto curTime = std::chrono::steady_clock::now();
-		const float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
+		float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
 		Time::SetDeltaTime(deltaTime);
 		PrevTime = curTime;
 
@@ -74,7 +74,7 @@ void Application::Run()
 		}
 
 		if (deltaTime > 1.0f) // Maybe breakpoint is hit
-			continue;
+			deltaTime = 1.0f / 60.0f;
 
 		m_Window->HandleInput();
 
