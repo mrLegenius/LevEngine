@@ -22,6 +22,8 @@ namespace LevEngine
 
     void TimelineComponent::Init()
     {
+        // TODO: Replace with TimelineInitSystem that is called once on play start when InitSystems will be implemented.
+        
         m_IsInited = true;
 
         // If timeline was playing in Edit mode, stop it

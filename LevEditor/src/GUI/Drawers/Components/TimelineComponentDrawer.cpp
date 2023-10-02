@@ -28,7 +28,8 @@ namespace LevEngine::Editor
             
             GUIUtils::DrawCheckBox("Play On Init", BindGetter(&TimelineComponent::GetPlayOnInit, &component),
                 BindSetter(&TimelineComponent::SetPlayOnInit, &component));
-            
+
+            // TODO: Draw control buttons only if editor is in Play mode.
             if (!component.IsPlaying())
             {
                 if (ImGui::Button("Play", {80, 50}))

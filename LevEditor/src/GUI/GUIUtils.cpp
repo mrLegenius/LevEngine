@@ -199,6 +199,7 @@ namespace LevEngine::Editor
 			[&value](const float& newValue) {value = newValue; }, speed, p_min, p_max);
 	}
 
+	// TODO: replace std::function with Action from dev branch
 	void GUIUtils::DrawDoubleControl(const String& label, const std::function<double()>& getter,
 		const std::function<void(double)>& setter, const double speed,
 		const double* p_min, const double* p_max)
