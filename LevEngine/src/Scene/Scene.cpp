@@ -11,7 +11,7 @@
 namespace LevEngine
 {
 
-    constexpr bool k_IsMultiThreading = false;
+    constexpr bool k_IsMultiThreading = true;
     constexpr int k_SleepMicroSeconds = 10;
 Scene::~Scene()
 {
@@ -91,14 +91,14 @@ void Scene::OnRender()
 {
     if constexpr (k_IsMultiThreading)
     {
-        m_IsRenderDone = false;
-
-        vgjs::schedule([this]() {RequestRenderUpdate(); });
-
         while (!m_IsRenderDone)
         {
             std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
+        
+        m_IsRenderDone = false;
+
+        vgjs::schedule([this]() {RequestRenderUpdate(); });
     }
     else
     {
