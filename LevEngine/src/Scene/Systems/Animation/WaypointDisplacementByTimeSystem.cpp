@@ -21,7 +21,7 @@ namespace LevEngine
             }
 
             waypointMovement.currentDisplacement = static_cast<float>
-                (Math::Clamp(timelineComponent.GetElapsedTime() / timelineComponent.duration, 0.0, 1.0));
+                (Math::Clamp(timelineComponent.GetElapsedTime() / timelineComponent.GetDuration(), 0.0, 1.0));
         }
     }
 }

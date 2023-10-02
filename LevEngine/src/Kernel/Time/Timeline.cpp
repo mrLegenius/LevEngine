@@ -1,21 +1,16 @@
 ﻿#include "levpch.h"
 #include "Timeline.h"
 
-LevEngine::Timeline::Timeline(Ref<TimelineParameters> timelineParameters)
-{
-    LEV_ASSERT(timelineParameters->duration > -Math::FloatEpsilon || !timelineParameters->isLooping);
-    
-    m_TimelineParameters = timelineParameters;
+LevEngine::Timeline::Timeline() = default;
 
-    if (m_TimelineParameters->startPlayingOnStart)
-    {
-        Play();
-    }
+LevEngine::Timeline::Timeline(const TimelineParameters&& timelineParameters)
+{
+    m_TimelineParameters = timelineParameters;
 }
 
 double LevEngine::Timeline::GetTimeScale() const
 {
-    return m_TimelineParameters->timeScale;
+    return m_TimelineParameters.timeScale;
 }
 
 double LevEngine::Timeline::GetTimeSinceStartup() const
@@ -25,6 +20,8 @@ double LevEngine::Timeline::GetTimeSinceStartup() const
 
 void LevEngine::Timeline::Play()
 {
+    LEV_ASSERT(IsValid());
+    
     if (!IsLooping() && IsMaxDurationReached())
     {
         m_TimeElapsed = 0.0;
@@ -59,13 +56,13 @@ void LevEngine::Timeline::OnUpdate(float deltaTime)
         {
             do
             {
-                m_TimeElapsed -= m_TimelineParameters->duration * Math::Sign(GetTimeScale());
+                m_TimeElapsed -= m_TimelineParameters.duration * Math::Sign(GetTimeScale());
             }
             while (IsMaxDurationReached());
         }
         else
         {
-            m_TimeElapsed = m_TimelineParameters->duration;
+            m_TimeElapsed = m_TimelineParameters.duration;
             Pause();
         }
     }
@@ -76,27 +73,37 @@ bool LevEngine::Timeline::IsPlaying() const
     return m_IsPlaying;
 }
 
+bool LevEngine::Timeline::IsLooping() const
+{
+    return m_TimelineParameters.isLooping;
+}
+
 void LevEngine::Timeline::SetDuration(double duration)
 {
-    m_TimelineParameters->duration = duration;
+    m_TimelineParameters.duration = duration;
 }
 
 void LevEngine::Timeline::SetIsLooping(bool isLooping)
 {
-    m_TimelineParameters->isLooping = isLooping;
-}
-
-void LevEngine::Timeline::SetPlayOnInit(bool playOnInit)
-{
-    m_TimelineParameters->startPlayingOnStart = playOnInit;
+    m_TimelineParameters.isLooping = isLooping;
 }
 
 void LevEngine::Timeline::SetTimeScale(const double timeScale)
 {
-    m_TimelineParameters->timeScale = timeScale;
+    m_TimelineParameters.timeScale = timeScale;
 }
 
-void LevEngine::Timeline::SetTimelineParameters(Ref<TimelineParameters> timelineParameters)
+void LevEngine::Timeline::SetTimelineParameters(const TimelineParameters& timelineParameters)
 {
     m_TimelineParameters = timelineParameters;
+}
+
+double LevEngine::Timeline::GetDuration() const
+{
+    return m_TimelineParameters.duration;
+}
+
+bool LevEngine::Timeline::IsValid() const
+{
+    return m_TimelineParameters.duration >= 0 || !m_TimelineParameters.isLooping;
 }

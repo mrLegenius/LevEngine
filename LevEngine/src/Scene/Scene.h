@@ -72,11 +72,8 @@ public:
 		for (const auto entity : view)
 		{
 			auto idComponent = view.get<IDComponent>(entity);
-			
-			if (idComponent.ID != uuid)
-				continue;
-
-			return ConvertEntity(entity);
+			if (idComponent.ID == uuid)
+				return ConvertEntity(entity);
 		}
 
 		return Entity();

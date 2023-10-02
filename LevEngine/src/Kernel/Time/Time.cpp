@@ -37,11 +37,8 @@ namespace LevEngine
 
     void Time::Init(float deltaTimeFixed)
     {
-        const Ref<TimelineParameters> timelineVariableParameters = CreateRef<TimelineParameters>({true, false, 0.0});
-        const Ref<TimelineParameters> timelineFixedParameters = CreateRef<TimelineParameters>({true, false, 0.0});
-        
-        s_TimelineVariable = TimelineFactory::CreateTimeline(timelineVariableParameters);
-        s_TimelineFixed = TimelineFactory::CreateTimeline(timelineFixedParameters);
+        s_TimelineVariable = TimelineFactory::CreateTimeline(TimelineParameters{true, false, 0.0});
+        s_TimelineFixed = TimelineFactory::CreateTimeline(TimelineParameters{true, false, 0.0});
         s_DeltaTimeFixed = Timestep(deltaTimeFixed);
     }
 

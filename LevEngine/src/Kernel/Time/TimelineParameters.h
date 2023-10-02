@@ -1,10 +1,11 @@
 ﻿#pragma once
 
-class TimelineParameters
+namespace LevEngine
 {
-public:
-    bool startPlayingOnStart{true};
-    bool isLooping{};
-    double duration{};
-    double timeScale{1.0};
-};
+    struct TimelineParameters
+    {
+        bool isLooping{};
+        double duration{};
+        double timeScale{1.0};
+    };
+}

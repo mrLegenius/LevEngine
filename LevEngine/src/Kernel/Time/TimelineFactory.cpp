@@ -7,9 +7,9 @@
 
 namespace LevEngine
 {
-    Ref<Timeline> TimelineFactory::CreateTimeline(Ref<TimelineParameters> timelineParameters)
+    Ref<Timeline> TimelineFactory::CreateTimeline(const TimelineParameters&& timelineParameters)
     {
-        Ref<Timeline> timeline = CreateRef<Timeline>(timelineParameters);
+        Ref<Timeline> timeline = CreateRef<Timeline>(eastl::move(timelineParameters));
         TimelineRunner::AddTimeline(timeline);
         return timeline;
     }
