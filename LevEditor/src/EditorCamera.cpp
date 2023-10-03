@@ -26,6 +26,8 @@ namespace LevEngine
 			auto rotation = m_Transform.GetLocalRotation().ToEuler() * Math::RadToDeg;
 			rotation.y -= delta.x;
 			rotation.x -= delta.y;
+
+			rotation.x = Math::Clamp(rotation.x, -89.99f, 89.999f);
 			m_Transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
 
 			if (Input::IsKeyDown(KeyCode::A))

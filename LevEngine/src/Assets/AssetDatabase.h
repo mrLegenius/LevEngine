@@ -1,12 +1,13 @@
 ﻿#pragma once
 #include "Asset.h"
 #include "DefaultAsset.h"
-#include "MaterialAsset.h"
+#include "MaterialPBRAsset.h"
+#include "MaterialSimpleAsset.h"
 #include "MeshAsset.h"
+#include "PrefabAsset.h"
 #include "Project.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
-#include "DataTypes/UnorderedMap.h"
 
 namespace LevEngine
 {
@@ -68,11 +69,25 @@ namespace LevEngine
 			return extension == ".mat";
 		}
 
+		static bool IsAssetPBRMaterial(const Path& path)
+		{
+			const auto extension = path.extension().string();
+
+			return extension == ".pbr";
+		}
+
 		static bool IsAssetSkybox(const Path& path)
 		{
 			const auto extension = path.extension().string();
 
 			return extension == ".skybox";
+		}
+
+		static bool IsAssetPrefab(const Path& path)
+		{
+			const auto extension = path.extension().string();
+
+			return extension == ".prefab";
 		}
 
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid)
@@ -81,13 +96,19 @@ namespace LevEngine
 				return CreateRef<TextureAsset>(path, uuid);
 
 			if (IsAssetMaterial(path))
-				return CreateRef<MaterialAsset>(path, uuid);
+				return CreateRef<MaterialSimpleAsset>(path, uuid);
 
+			if (IsAssetPBRMaterial(path))
+				return CreateRef<MaterialPBRAsset>(path, uuid);
+			
 			if (IsAssetSkybox(path))
 				return CreateRef<SkyboxAsset>(path, uuid);
 
 			if (IsAssetMesh(path))
 				return CreateRef<MeshAsset>(path, uuid);
+
+			if (IsAssetPrefab(path))
+				return CreateRef<PrefabAsset>(path, uuid);
 
 			return CreateRef<DefaultAsset>(path, uuid);
 		}
@@ -121,7 +142,7 @@ namespace LevEngine
 				Log::CoreWarning("Asset in {0} is not found", path.string());
 				return nullptr;
 			}
-
+			
 			const auto& asset = assetIt->second;
 			if (!asset->IsDeserialized())
 				asset->Deserialize();
@@ -165,6 +186,7 @@ namespace LevEngine
 		static void RenameAsset(const Ref<Asset>& asset, const String& name);
 		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
+		static bool AssetExists(const Path& path);
 
 	private:
 		static inline UnorderedMap<UUID, Ref<Asset>> m_Assets;

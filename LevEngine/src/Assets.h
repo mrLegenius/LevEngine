@@ -2,7 +2,7 @@
 #include "TextureLibrary.h"
 #include "DataTypes/Path.h"
 #include "Renderer/Texture.h"
-#include "Renderer/Material.h"
+#include "Renderer/MaterialSimple.h"
 #include "Renderer/Shader.h"
 
 using namespace LevEngine;
@@ -33,6 +33,22 @@ struct Icons
 
 struct ShaderAssets
 {
+	static auto Debug()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Debug.hlsl"));
+		return shader;
+	}
+	
+	static auto ForwardPBR()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("ForwardPBR.hlsl"));
+		return shader;
+	}
+	
 	static auto Lit()
     {
 		LEV_PROFILE_FUNCTION();
@@ -81,7 +97,7 @@ struct ShaderAssets
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader = Shader::Create(GetShaderPath("GBufferPass.hlsl"));
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaquePBR.hlsl"));
 
 		return shader;
 	}
@@ -90,7 +106,7 @@ struct ShaderAssets
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"), ShaderType::Vertex);
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPassPBR.hlsl"), ShaderType::Vertex);
 
 		return shader;
 	}
@@ -99,7 +115,7 @@ struct ShaderAssets
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"));
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPassPBR.hlsl"));
 
 		return shader;
 	}
@@ -170,7 +186,7 @@ struct TextureAssets
 
 struct Materials
 {
-	static Material Emerald()
+	static MaterialSimple Emerald()
 	{
 		const auto ambient = Color( 0.0215f, 0.1745f, 0.0215f);
 		const auto diffuse = Color(0.07568f, 0.89f, 0.63f);
@@ -178,7 +194,7 @@ struct Materials
 
 		const float shininess = 128.0f * 0.6f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -187,7 +203,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Jade()
+	static MaterialSimple Jade()
 	{
 		auto ambient = Color(0.135f, 0.2225f, 0.1575f);
 		auto diffuse = Color(0.54f, 0.89f, 0.63f);
@@ -195,7 +211,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.1f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -204,7 +220,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Obsidian()
+	static MaterialSimple Obsidian()
 	{
 		auto ambient = Color(0.05375f, 0.05f, 0.06625f);
 		auto diffuse = Color(0.18275f, 0.17f, 0.22525f);
@@ -212,7 +228,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.3f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -221,7 +237,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Pearl()
+	static MaterialSimple Pearl()
 	{
 		auto ambient = Color(0.25f, 0.20725f, 0.20725f);
 		auto diffuse = Color(1.0f, 0.829f, 0.829f);
@@ -229,7 +245,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.088f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -238,7 +254,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Ruby()
+	static MaterialSimple Ruby()
 	{
 		auto ambient = Color(0.1745f, 0.01175f, 0.01175f);
 		auto diffuse = Color(0.61424f, 0.04136f, 0.04136f);
@@ -246,7 +262,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.6f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -255,7 +271,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Turquoise()
+	static MaterialSimple Turquoise()
 	{
 		auto ambient = Color(0.1f, 0.18725f, 0.1745f);
 		auto diffuse = Color(0.396f, 0.74151f, 0.69102f);
@@ -263,7 +279,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.1f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -272,7 +288,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Brass()
+	static MaterialSimple Brass()
 	{
 		auto ambient = Color(0.329412f, 0.223529f, 0.027451f);
 		auto diffuse = Color(0.780392f, 0.568627f, 0.113725f);
@@ -280,7 +296,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.21794872f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -289,7 +305,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Bronze()
+	static MaterialSimple Bronze()
 	{
 		auto ambient = Color(0.2125f, 0.1275f, 0.054f);
 		auto diffuse = Color(0.714f, 0.4284f, 0.18144f);
@@ -297,7 +313,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.2f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -306,7 +322,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Chrome()
+	static MaterialSimple Chrome()
 	{
 		auto ambient = Color(0.25f, 0.25f, 0.25f);
 		auto diffuse = Color(0.4f, 0.4f, 0.4f);
@@ -314,7 +330,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.6f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -323,7 +339,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Copper()
+	static MaterialSimple Copper()
 	{
 		auto ambient = Color(0.19125f, 0.0735f, 0.0225f);
 		auto diffuse = Color(0.7038f, 0.27048f, 0.0828f);
@@ -331,7 +347,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.1f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -340,7 +356,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Gold()
+	static MaterialSimple Gold()
 	{
 		auto ambient = Color(0.24725f, 0.1995f, 0.0745f);
 		auto diffuse = Color(0.75164f, 0.60648f, 0.22648f);
@@ -348,7 +364,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.4f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -357,7 +373,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Silver()
+	static MaterialSimple Silver()
 	{
 		auto ambient = Color(0.19225f, 0.19225f, 0.19225f);
 		auto diffuse = Color(0.50754f, 0.50754f, 0.50754f);
@@ -365,7 +381,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.4f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -374,7 +390,7 @@ struct Materials
 		return material;
 	}
 
-	static Material BlackPlastic()
+	static MaterialSimple BlackPlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.01f, 0.01f, 0.01f);
@@ -382,7 +398,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -391,7 +407,7 @@ struct Materials
 		return material;
 	}
 
-	static Material CyanPlastic()
+	static MaterialSimple CyanPlastic()
 	{
 		auto ambient = Color(0.0f, 0.1f, 0.20725f);
 		auto diffuse = Color(1.0f, 0.829f, 0.829f);
@@ -399,7 +415,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -408,7 +424,7 @@ struct Materials
 		return material;
 	}
 
-	static Material GreenPlastic()
+	static MaterialSimple GreenPlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.1f, 0.35f, 0.1f);
@@ -416,7 +432,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -425,7 +441,7 @@ struct Materials
 		return material;
 	}
 
-	static Material RedPlastic()
+	static MaterialSimple RedPlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.5f, 0.0f, 0.0f);
@@ -433,7 +449,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -442,7 +458,7 @@ struct Materials
 		return material;
 	}
 
-	static Material WhitePlastic()
+	static MaterialSimple WhitePlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.55f, 0.55f, 0.55f);
@@ -450,7 +466,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -459,7 +475,7 @@ struct Materials
 		return material;
 	}
 
-	static Material YellowPlastic()
+	static MaterialSimple YellowPlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.5f, 0.5f, 0.0f);
@@ -467,7 +483,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -476,7 +492,7 @@ struct Materials
 		return material;
 	}
 
-	static Material BlackRubber()
+	static MaterialSimple BlackRubber()
 	{
 		auto ambient = Color(0.02f, 0.02f, 0.02f);
 		auto diffuse = Color(0.01f, 0.01f, 0.01f);
@@ -484,7 +500,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -493,7 +509,7 @@ struct Materials
 		return material;
 	}
 
-	static Material CyanRubber()
+	static MaterialSimple CyanRubber()
 	{
 		auto ambient = Color(0.0f, 0.05f, 0.05f);
 		auto diffuse = Color(0.4f, 0.5f, 0.5f);
@@ -501,7 +517,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -510,7 +526,7 @@ struct Materials
 		return material;
 	}
 
-	static Material GreenRubber()
+	static MaterialSimple GreenRubber()
 	{
 		auto ambient = Color(0.0f, 0.05f, 0.0f);
 		auto diffuse = Color(0.4f, 0.5f, 0.4f);
@@ -518,7 +534,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -527,7 +543,7 @@ struct Materials
 		return material;
 	}
 
-	static Material RedRubber()
+	static MaterialSimple RedRubber()
 	{
 		auto ambient = Color(0.05f, 0.0f, 0.0f);
 		auto diffuse = Color(0.5f, 0.4f, 0.4f);
@@ -535,7 +551,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -544,7 +560,7 @@ struct Materials
 		return material;
 	}
 
-	static Material WhiteRubber()
+	static MaterialSimple WhiteRubber()
 	{
 		auto ambient = Color(0.05f, 0.05f, 0.05f);
 		auto diffuse = Color(0.5f, 0.5f, 0.5f);
@@ -552,7 +568,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -561,7 +577,7 @@ struct Materials
 		return material;
 	}
 
-	static Material YellowRubber()
+	static MaterialSimple YellowRubber()
 	{
 		auto ambient = Color(0.05f, 0.05f, 0.0f);
 		auto diffuse = Color(0.5f, 0.5f, 0.4f);
@@ -569,7 +585,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);

@@ -16,40 +16,35 @@ namespace LevEngine::Editor
 	{
 		static constexpr const char* AssetPayload = "ASSETS_BROWSER_ITEM";
 		static constexpr const char* EntityPayload = "ENTITY";
-		static constexpr const char* ComponentPayload = "COMPONENT";
 
 		static bool DrawVector3Control(const String& label, Vector3& values, float resetValue = 0.0f, float labelWidth = 100.0f);
 		static bool DrawVector2Control(const String& label, Vector2& values, float resetValue = 0.0f, float labelWidth = 100.0f);
 		static void DrawFloatControl(const String& label, float& value, float speed = 1, float min = 0, float max = 0);
-		static void DrawFloatControl(const String& label, const std::function<float()>& getter,
-			const std::function<void(float)>& setter, float speed = 1, float min = 0, float max = 0);
-		
-		static void DrawDoubleControl(const String& label, double& value, double speed,
-		                              const double* p_min = nullptr, const double* p_max = nullptr);
-		
-		static void DrawDoubleControl(const String& label, const std::function<double()>& getter,
-			const std::function<void(double)>& setter, double speed,
-			const double* p_min = nullptr, const double* p_max = nullptr);
+		static void DrawFloatControl(const String& label, const Func<float>& getter, const Action<float>& setter,
+			float speed = 1, float min = 0, float max = 0);
+		static void DrawDoubleControl(const String& label, double& value, double speed, double min = 0, double max = 0);
+		static void DrawDoubleControl(const String& label, const Func<double>& getter, const Action<double>& setter,
+			double speed, double min = 0, double max = 0);
 
-		static void DrawIntControl(const String& label, const std::function<int()>& getter, const std::function<void(int)>& setter,
-		                           int speed = 1, int min = 0, int max = 0);
+		static void DrawIntControl(const String& label, const Func<int>& getter, const Action<int>& setter,
+			int speed = 1, int min = 0, int max = 0);
 
-		static void DrawColor3Control(const String& label, const std::function<Color()>& getter,
-		                              const std::function<void(Color)>& setter);
+		static void DrawColor3Control(const String& label, const Func<Color>& getter,
+									  const Action<Color>& setter);
 		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
-		static bool DrawTextureAsset(const String& label, Ref<TextureAsset>* assetPtr);
-		static bool DrawTextureAsset(Ref<TextureAsset>* assetPtr, Vector2 size);
-		static void DrawTexture2D(const std::function<const Ref<Texture>&()>& getter,
-		                          const std::function<void(Ref<Texture>)>& setter, Vector2 size = { 32, 32 });
+		static bool DrawTextureAsset(const String& label, Ref<TextureAsset>& assetPtr);
+		static bool DrawTextureAsset(Ref<TextureAsset>& assetPtr, Vector2 size);
+		static void DrawTexture2D(const Func<Ref<Texture>>& getter,
+								  const Action<Ref<Texture>>& setter, Vector2 size = { 32, 32 });
 
-		static void DrawCheckBox(const char* label, const std::function<bool()>& getter, const std::function<void(bool)>& setter);
+		static void DrawCheckBox(const char* label, const Func<bool>& getter, const Action<bool>& setter);
 
 		template<class T>
-		static bool DrawAsset(const String& label, Ref<T>* assetPtr)
+		static bool DrawAsset(const String& label, Ref<T>& assetPtr)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must derive from Asset");
 
-			const auto& asset = *assetPtr;
+			const auto& asset = assetPtr;
 			auto changed = false;
 
 			if (!label.empty())
@@ -66,7 +61,7 @@ namespace LevEngine::Editor
 			{
 				if (ImGui::MenuItem("Clear"))
 				{
-					*assetPtr = nullptr;
+					assetPtr = nullptr;
 					changed = true;
 				}
 
@@ -81,7 +76,7 @@ namespace LevEngine::Editor
 
 				if (const auto& newAsset = AssetDatabase::GetAsset<T>(assetPath))
 				{
-					*assetPtr = newAsset;
+					assetPtr = newAsset;
 					changed = true;
 				}
 			}

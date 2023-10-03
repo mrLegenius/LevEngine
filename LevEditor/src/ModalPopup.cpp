@@ -9,7 +9,7 @@ namespace LevEngine::Editor
         String title,
         String description,
         String buttonText,
-        const std::function<void()>& buttonAction)
+        const Action<>& buttonAction)
     {
         auto& popup = Get();
         popup.m_Title = Move(title);
@@ -27,8 +27,8 @@ namespace LevEngine::Editor
         String description,
         String leftButtonText,
         String rightButtonText,
-        const std::function<void()>& leftButtonAction,
-        const std::function<void()>& rightButtonAction)
+        const Action<>& leftButtonAction,
+        const Action<>& rightButtonAction)
     {
         auto& popup = Get();
         popup.m_Title = Move(title);

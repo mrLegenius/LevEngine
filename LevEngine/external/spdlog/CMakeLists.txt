@@ -1,6 +1,6 @@
 # Copyright(c) 2019 spdlog authors Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.10...3.21)
+cmake_minimum_required(VERSION 3.11)
 
 # ---------------------------------------------------------------------------------------
 # Start spdlog project
@@ -18,7 +18,7 @@ include(GNUInstallDirs)
 # ---------------------------------------------------------------------------------------
 # Set default build to release
 # ---------------------------------------------------------------------------------------
-if(NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
 endif()
 
@@ -129,9 +129,7 @@ option(
 option(SPDLOG_DISABLE_DEFAULT_LOGGER "Disable default logger creation" OFF)
 
 # clang-tidy
-if(${CMAKE_VERSION} VERSION_GREATER "3.5")
-    option(SPDLOG_TIDY "run clang-tidy" OFF)
-endif()
+option(SPDLOG_TIDY "run clang-tidy" OFF)
 
 if(SPDLOG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
@@ -344,7 +342,8 @@ if(SPDLOG_INSTALL)
     # ---------------------------------------------------------------------------------------
     # Install CMake config files
     # ---------------------------------------------------------------------------------------
-    export(TARGETS spdlog NAMESPACE spdlog:: FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
+    export(TARGETS spdlog spdlog_header_only NAMESPACE spdlog::
+           FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
     install(EXPORT spdlog DESTINATION ${export_dest_dir} NAMESPACE spdlog:: FILE ${config_targets_file})
 
     include(CMakePackageConfigHelpers)

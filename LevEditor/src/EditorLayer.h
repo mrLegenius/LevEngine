@@ -13,11 +13,13 @@ namespace LevEngine::Editor
 class EditorLayer final : public Layer
 {
 public:
+	void ShowProjectSelectionPopup();
 	bool OpenProject();
 	bool NewProject();
 	void LoadProject();
 	void OnAttach() override;
 	void OnUpdate(float deltaTime) override;
+	void OnRender() override;
 	void OnScenePlay();
 	void OnSceneStop();
 	void DrawToolbar();
@@ -30,7 +32,7 @@ public:
 	bool SaveScene();
 	bool SaveSceneAs();
 	void OnEvent(Event& event) override;
-	void OnDuplicateEntity() const;
+	static void OnDuplicateEntity();
 	bool OnKeyPressed(KeyPressedEvent& event);
 	bool OnWindowResized(const WindowResizedEvent& e) const;
 	void OnGUIRender() override;

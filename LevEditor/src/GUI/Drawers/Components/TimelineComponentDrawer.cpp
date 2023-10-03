@@ -19,7 +19,7 @@ namespace LevEngine::Editor
             GUIUtils::DrawDoubleControl("Duration",
                                         BindGetter(&TimelineComponent::GetDuration, &component),
                                         BindSetter(&TimelineComponent::SetDuration, &component),
-                                        0.1f, 0, &max);
+                                        0.1f, 0, max);
 
             GUIUtils::DrawDoubleControl("Time Scale",
                                        BindGetter(&TimelineComponent::GetTimeScale, &component),

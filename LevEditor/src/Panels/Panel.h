@@ -22,11 +22,15 @@ namespace LevEngine::Editor
 		virtual String GetName() = 0;
 		virtual void DrawContent() = 0;
 
+		static const ImGuiPayload* BeginDragDropTargetWindow(const char* payloadType);
+
 		ImGuiWindow* m_Window{};
 
 		bool m_Focused = false;
 		bool m_Hovered = false;
 		bool m_Active = false;
+
+		bool m_CanScroll = true;
 
 		Vector2 m_WindowPadding{ 10, 5};
 	};

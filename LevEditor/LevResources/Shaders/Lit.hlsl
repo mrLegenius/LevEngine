@@ -1,4 +1,5 @@
 #include "ShaderCommon.hlsl"
+#include "MaterialSimple.hlsl"
 
 PS_IN VSMain(VS_IN input)
 {
@@ -12,10 +13,9 @@ PS_IN VSMain(VS_IN input)
 	output.fragPos = fragPos.xyz;
 	output.depth = mul(fragPos, cameraView).z;
 	
-    float4x4 transposedModel = transpose(model);
-    float3 normal = mul(transposedModel, float4(input.normal, 0.0f));
-    float3 tangent = mul(transposedModel, float4(input.tangent, 0.0f));
-    float3 binormal = mul(transposedModel, float4(input.binormal, 0.0f));
+	float3 normal = mul(float4(input.normal, 0.0f), transposedInvertedModel);
+	float3 tangent = mul(float4(input.tangent, 0.0f), transposedInvertedModel);
+	float3 binormal = mul(float4(input.binormal, 0.0f), transposedInvertedModel);	
 	
     output.TBN = float3x3(normalize(tangent),
                           normalize(binormal),
@@ -29,18 +29,14 @@ LightingResult CalcLighting(float3 fragPos, float3 normal, float depth);
 [earlydepthstencil]
 float4 PSMain(PS_IN input) : SV_Target
 {
-	float3 normal;
-	
     float2 textureUV = ApplyTextureProperties(input.uv, material.tiling, material.offset);
 		
-	float3 texNormal = normalTexture.Sample(normalTextureSampler, textureUV).rgb;
-    texNormal = normalize(texNormal * 2.0 - 1.0);
-    normal = normalize(mul(texNormal, input.TBN));
+	float3 normal = CalculateNormal(normalTexture, normalTextureSampler, textureUV, input.TBN);
 
 	LightingResult lit = CalcLighting(input.fragPos, normal, input.depth);
 
     float3 emissive = CombineColorAndTexture(material.emissive, emissiveTexture, emissiveTextureSampler, textureUV);
-    float3 ambient = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, textureUV) * globalAmbient;
+    float3 ambient = CombineColorAndTexture(material.ambient, diffuseTexture, diffuseTextureSampler, textureUV) * globalAmbient;
     float3 diffuse = CombineColorAndTexture(material.diffuse, diffuseTexture, diffuseTextureSampler, textureUV) * lit.diffuse;
 
 	float3 specular = 0;

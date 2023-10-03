@@ -185,49 +185,46 @@ namespace LevEngine::Editor
 		DrawFloatControl(label, [&value] {return value; }, [&value](const float& newValue) {value = newValue; }, speed, min, max);
 	}
 
-	void GUIUtils::DrawFloatControl(const String& label, const std::function<float()>& getter, const std::function<void(float)>& setter, const float speed, const float min, const float max)
+	void GUIUtils::DrawFloatControl(const String& label, const Func<float>& getter, const Action<float>& setter, const float speed, const float min, const float max)
 	{
 		auto value = getter();
 		if (ImGui::DragFloat(label.c_str(), &value, speed, min, max))
 			setter(value);
 	}
 
-	void GUIUtils::DrawDoubleControl(const String& label, double& value, const double speed,
-	                                 const double* p_min, const double* p_max)
+	void GUIUtils::DrawDoubleControl(const String& label, double& value, double speed, double min, double max)
 	{
 		DrawDoubleControl(label, [&value] {return value; },
-			[&value](const float& newValue) {value = newValue; }, speed, p_min, p_max);
+			[&value](const float& newValue) {value = newValue; }, speed, min, max);
 	}
 
-	// TODO: replace std::function with Action from dev branch
-	void GUIUtils::DrawDoubleControl(const String& label, const std::function<double()>& getter,
-		const std::function<void(double)>& setter, const double speed,
-		const double* p_min, const double* p_max)
+	void GUIUtils::DrawDoubleControl(const String& label, const Func<double>& getter,
+		const Action<double>& setter, double speed, double min, double max)
 	{
 		auto value = getter();
-		if (ImGui::DragScalar(label.c_str(), ImGuiDataType_Double, &value, speed, p_min, p_max))
+		if (ImGui::DragScalar(label.c_str(), ImGuiDataType_Double, &value, speed, &min, &max))
 			setter(value);
 	}
 
 	void GUIUtils::DrawIntControl(const String& label,
-		const std::function<int()>& getter,
-		const std::function<void(int)>& setter,
+		const Func<int>& getter,
+		const Action<int>& setter,
 		const int speed, const int min, const int max)
 	{
 		auto value = getter();
-		if (ImGui::DragInt(label.c_str(), &value, speed, min, max))
+		if (ImGui::DragInt(label.c_str(), &value, static_cast<float>(speed), min, max))
 			setter(value);
 	}
 
-	void GUIUtils::DrawCheckBox(const char* label, const std::function<bool()>& getter,
-		const std::function<void(bool)>& setter)
+	void GUIUtils::DrawCheckBox(const char* label, const Func<bool>& getter,
+		const Action<bool>& setter)
 	{
 		auto value = getter();
 		if (ImGui::Checkbox(label, &value))
 			setter(value);
 	}
 
-	void GUIUtils::DrawColor3Control(const String& label, const std::function<Color()>& getter, const std::function<void(Color)>& setter)
+	void GUIUtils::DrawColor3Control(const String& label, const Func<Color>& getter, const Action<Color>& setter)
 	{
 		auto value = getter();
 		if (ImGui::ColorEdit3(label.c_str(), value.Raw()))
@@ -239,22 +236,22 @@ namespace LevEngine::Editor
 		DrawTexture2D([&texture] { return texture; }, [&texture](const Ref<Texture>& newTexture) { texture = newTexture; }, size);
 	}
 
-	bool GUIUtils::DrawTextureAsset(const String& label, Ref<TextureAsset>* assetPtr)
+	bool GUIUtils::DrawTextureAsset(const String& label, Ref<TextureAsset>& assetPtr)
 	{
 		const bool changed = DrawAsset(label, assetPtr);
-		if (*assetPtr && (*assetPtr)->GetTexture())
+		if (assetPtr && assetPtr->GetTexture())
 		{
 			ImGui::SameLine();
-			ImGui::Image((*assetPtr)->GetTexture()->GetId(), ImVec2(32, 32), ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			ImGui::Image(assetPtr->GetTexture()->GetId(), ImVec2(32, 32), ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		}
 
 		return changed;
 	}
 
-	bool GUIUtils::DrawTextureAsset(Ref<TextureAsset>* assetPtr, const Vector2 size)
+	bool GUIUtils::DrawTextureAsset(Ref<TextureAsset>& assetPtr, const Vector2 size)
 	{
 		auto changed = false;
-		const auto& asset = *assetPtr;
+		const auto& asset = assetPtr;
 
 		const auto& texture = asset ? asset->GetTexture() : nullptr;
 		ImGui::Image(texture ? texture->GetId() : nullptr, ImVec2(size.x, size.y), ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
@@ -263,7 +260,7 @@ namespace LevEngine::Editor
 		{
 			if (ImGui::MenuItem("Clear"))
 			{
-				*assetPtr = nullptr;
+				assetPtr = nullptr;
 				changed = true;
 			}
 			ImGui::EndPopup();
@@ -277,7 +274,7 @@ namespace LevEngine::Editor
 
 			if (const auto newAsset = AssetDatabase::GetAsset<TextureAsset>(assetPath))
 			{
-				*assetPtr = newAsset;
+				assetPtr = newAsset;
 				changed = true;
 			}
 		}
@@ -286,7 +283,7 @@ namespace LevEngine::Editor
 		return changed;
 	}
 
-	void GUIUtils::DrawTexture2D( const std::function<const Ref<Texture>&()>& getter, const std::function<void(Ref<Texture>)>& setter, const Vector2 size)
+	void GUIUtils::DrawTexture2D(const Func<Ref<Texture>>& getter, const Action<Ref<Texture>>& setter, const Vector2 size)
 	{
 		const auto texture = getter();
 		ImGui::Image(texture ? texture->GetId() : nullptr, ImVec2(size.x, size.y), ImVec2{0, 1}, ImVec2{1, 0});

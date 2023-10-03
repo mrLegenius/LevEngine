@@ -38,6 +38,7 @@ public:
 	~Application();
 
 	void Run();
+	void Render();
 	void Close();
 
 	void PushLayer(Layer* layer);

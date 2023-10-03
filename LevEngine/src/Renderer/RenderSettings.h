@@ -26,8 +26,10 @@ struct RenderSettings
 
 	//Lightning
 	static constexpr int MaxPointLights = 200;
-	static constexpr Vector3 GlobalAmbient{ 0.3f, 0.3f, 0.3f };
-	static constexpr RenderTechniqueType RenderTechnique = RenderTechniqueType::Forward;
+	static constexpr Vector3 GlobalAmbient{ 0.03f, 0.03f, 0.03f };
+
+	static constexpr bool UseFrustumCulling = true;
+	static constexpr RenderTechniqueType RenderTechnique = RenderTechniqueType::Deferred;
 
 	static constexpr uint32_t ShadowMapSlot = 9;
 	static constexpr uint32_t MaterialSlot = 4;
@@ -37,5 +39,10 @@ struct RenderSettings
 	static constexpr RendererAPI RendererAPI = RendererAPI::D3D11;
 
 	static constexpr bool EnableShaderDebug = false;
+};
+
+struct RenderDebugSettings
+{
+	static constexpr bool DrawBoundingVolumes = false;
 };
 }

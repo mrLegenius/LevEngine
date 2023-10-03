@@ -39,16 +39,16 @@ namespace LevEngine::Editor
 
 			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 			{
-				GUIUtils::DrawFloatControl("Orthographic size", BindGetter(&SceneCamera::GetOrthographicSize, &camera), BindSetter(&SceneCamera::SetOrthographicSize, &camera), 0.1f, 0, std::numeric_limits<float>::max());
-				GUIUtils::DrawFloatControl("Near clip", BindGetter(&SceneCamera::GetOrthographicNear, &camera), BindSetter(&SceneCamera::SetOrthographicNear, &camera), 0.1f, 0.0001, camera.GetOrthographicFar() - 0.001f);
+				GUIUtils::DrawFloatControl("Orthographic size", BindGetter(&SceneCamera::GetOrthographicSize, &camera), BindSetter(&SceneCamera::SetOrthographicSize, &camera), 0.1f, 0.0f, std::numeric_limits<float>::max());
+				GUIUtils::DrawFloatControl("Near clip", BindGetter(&SceneCamera::GetOrthographicNear, &camera), BindSetter(&SceneCamera::SetOrthographicNear, &camera), 0.1f, 0.0001f, camera.GetOrthographicFar() - 0.001f);
 				GUIUtils::DrawFloatControl("Far clip", BindGetter(&SceneCamera::GetOrthographicFar, &camera), BindSetter(&SceneCamera::SetOrthographicFar, &camera), 0.1f, camera.GetOrthographicNear() + 0.001f, std::numeric_limits<float>::max());
 			}
 			else if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 			{
-				GUIUtils::DrawFloatControl("Field of View", BindGetter(&SceneCamera::GetFieldOfView, &camera), BindSetter(&SceneCamera::SetFieldOfView, &camera), 1.0f, 1, std::numeric_limits<float>::max());
-				GUIUtils::DrawFloatControl("Near clip", BindGetter(&SceneCamera::GetPerspectiveNear, &camera), BindSetter(&SceneCamera::SetPerspectiveNear, &camera), 0.1f, 0.0001, camera.GetPerspectiveFar() - 0.001f);
+				GUIUtils::DrawFloatControl("Field of View", BindGetter(&SceneCamera::GetFieldOfView, &camera), BindSetter(&SceneCamera::SetFieldOfView, &camera), 1.0f, 1.0f, std::numeric_limits<float>::max());
+				GUIUtils::DrawFloatControl("Near clip", BindGetter(&SceneCamera::GetPerspectiveNear, &camera), BindSetter(&SceneCamera::SetPerspectiveNear, &camera), 0.1f, 0.0001f, camera.GetPerspectiveFar() - 0.001f);
 				GUIUtils::DrawFloatControl("Far clip", BindGetter(&SceneCamera::GetPerspectiveFar, &camera), BindSetter(&SceneCamera::SetPerspectiveFar, &camera), 0.1f, camera.GetPerspectiveNear() + 0.001f, std::numeric_limits<float>::max());
 			}
 		}
-	};	
+	};
 }

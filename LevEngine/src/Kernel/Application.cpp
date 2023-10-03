@@ -35,6 +35,8 @@ Application::Application(const ApplicationSpecification& specification)
 	m_ImGuiLayer = new ImGuiLayer;
 	PushOverlay(m_ImGuiLayer);
 
+	vgjs::JobSystem jobSystem;
+
 	Time::s_StartupTime = std::chrono::high_resolution_clock::now();
 }
 
@@ -54,7 +56,7 @@ void Application::Run()
 	while (m_IsRunning)
 	{
 		auto curTime = std::chrono::steady_clock::now();
-		const float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
+		float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
 		Time::SetDeltaTime(deltaTime);
 		PrevTime = curTime;
 
@@ -77,7 +79,7 @@ void Application::Run()
 		}
 
 		if (deltaTime > 1.0f) // Maybe breakpoint is hit
-			continue;
+			deltaTime = 1.0f / 60.0f;
 
 		m_Window->HandleInput();
 
@@ -87,22 +89,36 @@ void Application::Run()
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate(deltaTime);
 		}
-
-		//We need to bind main render target before drawing GUI
-		//TODO: Maybe move to another place
-		m_Window->GetContext()->GetRenderTarget()->Bind();
-
-		m_ImGuiLayer->Begin();
-		{
-			LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
-			for (Layer* layer : m_LayerStack)
-				layer->OnGUIRender();
-		}
-		m_ImGuiLayer->End();
+		
+		if (!m_Minimized)
+			Render();
 
 		Input::Reset();
 		m_Window->Update();
 	}
+
+	vgjs::terminate();
+}
+
+void Application::Render()
+{
+	{
+		LEV_PROFILE_SCOPE("LayerStack OnRender");
+		for (Layer* layer : m_LayerStack)
+			layer->OnRender();
+	}
+			
+	//We need to bind main render target before drawing GUI
+	//TODO: Maybe move to another place
+	m_Window->GetContext()->GetRenderTarget()->Bind();
+
+	m_ImGuiLayer->Begin();
+	{
+		LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
+		for (Layer* layer : m_LayerStack)
+			layer->OnGUIRender();
+	}
+	m_ImGuiLayer->End();
 }
 
 void Application::Close()

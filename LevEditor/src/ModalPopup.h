@@ -11,15 +11,15 @@ public:
         String title,
         String description,
         String buttonText,
-        const std::function<void()>& buttonAction);
+        const Action<>& buttonAction);
 
     static void Show(
         String title,
         String description,
         String leftButtonText,
         String rightButtonText,
-        const std::function<void()>& leftButtonAction = nullptr,
-        const std::function<void()>& rightButtonAction = nullptr);
+        const Action<>& leftButtonAction = nullptr,
+        const Action<>& rightButtonAction = nullptr);
 
 private:
 
@@ -38,7 +38,7 @@ private:
     String m_LeftButtonText;
     String m_RightButtonText;
 
-    std::function<void()> m_LeftButtonAction;
-    std::function<void()> m_RightButtonAction;
+    Action<> m_LeftButtonAction;
+    Action<> m_RightButtonAction;
 };
 }

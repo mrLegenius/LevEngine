@@ -8,19 +8,20 @@ namespace LevEngine::Editor
 	class ViewportPanel final : public Panel
 	{
 	public:
-		ViewportPanel()
+		ViewportPanel() : Panel()
 		{
 			m_WindowPadding = Vector2{ 0, 0 };
+			m_CanScroll = false;
 		}
 
-		explicit ViewportPanel(const Ref<Texture>& renderTexture)
+		explicit ViewportPanel(const Ref<Texture>& renderTexture) : ViewportPanel()
 		{
 			m_Texture = renderTexture->Clone();
 
 			m_Size.x = renderTexture->GetWidth();
 			m_Size.y = renderTexture->GetHeight();
 
-			m_Camera.SetViewportSize(m_Size.x, m_Size.y);
+			m_Camera.SetViewportSize(static_cast<uint32_t>(m_Size.x), static_cast<uint32_t>(m_Size.y));
 		}
 
 		[[nodiscard]] EditorCamera& GetCamera() { return m_Camera; }
@@ -89,6 +90,8 @@ namespace LevEngine::Editor
 	protected:
 		String GetName() override { return "Viewport"; }
 		void DrawContent() override;
+		void DrawGizmo() const;
+
 	private:
 		Vector2 m_Size{ 0.0f };
 		Vector2 m_Bounds[2];

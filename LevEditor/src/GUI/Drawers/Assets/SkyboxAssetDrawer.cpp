@@ -12,12 +12,12 @@ namespace LevEngine::Editor
 
         void DrawContent(Ref<SkyboxAsset> assetRef) override
         {
-            GUIUtils::DrawTextureAsset("Left", &assetRef->left);
-            GUIUtils::DrawTextureAsset("Right", &assetRef->right);
-            GUIUtils::DrawTextureAsset("Bottom", &assetRef->bottom);
-            GUIUtils::DrawTextureAsset("Top", &assetRef->top);
-            GUIUtils::DrawTextureAsset("Back", &assetRef->back);
-            GUIUtils::DrawTextureAsset("Front", &assetRef->front);
+            GUIUtils::DrawTextureAsset("Left", assetRef->left);
+            GUIUtils::DrawTextureAsset("Right", assetRef->right);
+            GUIUtils::DrawTextureAsset("Bottom", assetRef->bottom);
+            GUIUtils::DrawTextureAsset("Top", assetRef->top);
+            GUIUtils::DrawTextureAsset("Back", assetRef->back);
+            GUIUtils::DrawTextureAsset("Front", assetRef->front);
         }
     };
 }

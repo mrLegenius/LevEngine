@@ -13,6 +13,16 @@
 
 namespace LevEngine::Editor
 {
+    void EditorLayer::ShowProjectSelectionPopup()
+    {
+        ModalPopup::Show("Project Selection",
+    "Open existing or create new project",
+    "Open",
+    "Create new",
+    [this] { if(!OpenProject()) ShowProjectSelectionPopup(); },
+    [this]{ if(!NewProject()) ShowProjectSelectionPopup(); });
+    }
+    
     bool EditorLayer::OpenProject()
     {
         const String& path = FileDialogs::OpenFile("LevProject (*.levproject)\0*.levproject\0");
@@ -74,12 +84,7 @@ namespace LevEngine::Editor
         }
         else
         {
-            ModalPopup::Show("Project Selection",
-                "Open existing or create new project",
-                "Open",
-                "Create new",
-                [this] { if(!OpenProject()) LEV_THROW("Failed to open project") },
-                [this]{ if(!NewProject()) LEV_THROW("Failed to create new project") });
+            ShowProjectSelectionPopup();
         }
         
         Application::Get().GetWindow().EnableCursor();
@@ -91,75 +96,7 @@ namespace LevEngine::Editor
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
         dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResized));
     }
-
-    void EditorLayer::OnDuplicateEntity() const
-    {
-        if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
-        {
-            SceneManager::GetActiveScene()->DuplicateEntity(entitySelection->Get());
-        }
-    }
-
-    bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
-    {
-        //Shortcuts
-        if (event.GetRepeatCount() > 0)
-            return false;
-
-        const bool control = Input::IsKeyDown(KeyCode::LeftControl) ||
-            Input::IsKeyDown(KeyCode::RightControl);
-        const bool shift = Input::IsKeyDown(KeyCode::LeftShift) ||
-            Input::IsKeyDown(KeyCode::RightShift);
-        const bool alt = Input::IsKeyDown(KeyCode::LeftAlt) ||
-            Input::IsKeyDown(KeyCode::RightAlt);
-
-        switch (event.GetKeyCode())
-        {
-
-        case KeyCode::N:
-        {
-            if (control) { CreateNewScene(); }
-            break;
-        }
-        case KeyCode::O:
-        {
-            if (control) { OpenScene(); }
-            break;
-        }
-        case KeyCode::S:
-        {
-            if (control && shift) { SaveSceneAs(); }
-            else if (control) { SaveScene(); }
-            break;
-        }
-        case KeyCode::D:
-        {
-            if (control)
-                OnDuplicateEntity();
-
-            break;
-        }
-
-        default:
-            break;
-        }
-
-        m_Hierarchy->OnKeyPressed(event);
-        return m_Viewport->OnKeyPressed(event);
-    }
-
-    bool EditorLayer::OnWindowResized(const WindowResizedEvent& e) const
-    {
-        const auto height = e.GetHeight();
-        const auto width = e.GetWidth();
-        
-        if (width == 0 || height == 0) return false;
-
-        SceneManager::GetActiveScene()->OnViewportResized(e.GetWidth(), e.GetHeight());
-        Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
-        return false;
-    }
-
+    
     void EditorLayer::OnUpdate(const float deltaTime)
     {
         LEV_PROFILE_FUNCTION();
@@ -191,8 +128,17 @@ namespace LevEngine::Editor
         }
 
         if (m_Viewport->IsActive())
-        {
             m_Viewport->UpdateCamera(deltaTime);
+    }
+
+    void EditorLayer::OnRender()
+    {
+        const auto& activeScene = SceneManager::GetActiveScene();
+        
+        if (m_Viewport->IsActive())
+        {
+            DebugRender::DrawGrid(Vector3::Zero, Vector3::Right, Vector3::Forward, 100, 100, 1.0f, Color::Gray);
+            
             auto& camera = m_Viewport->GetCamera();
             activeScene->OnRender(&camera, &camera.GetTransform());
             m_Viewport->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
@@ -204,7 +150,7 @@ namespace LevEngine::Editor
             m_Game->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         }
     }
-
+    
     void EditorLayer::OnGUIRender()
     {
         LEV_PROFILE_FUNCTION();
@@ -226,6 +172,75 @@ namespace LevEngine::Editor
         DrawToolbar();
         DrawStatusbar();
     }
+
+    void EditorLayer::OnDuplicateEntity()
+    {
+        if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
+        {
+            SceneManager::GetActiveScene()->DuplicateEntity(entitySelection->Get());
+        }
+    }
+
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
+    {
+        //Shortcuts
+        if (event.GetRepeatCount() > 0)
+            return false;
+
+        const bool control = Input::IsKeyDown(KeyCode::LeftControl) ||
+            Input::IsKeyDown(KeyCode::RightControl);
+        const bool shift = Input::IsKeyDown(KeyCode::LeftShift) ||
+            Input::IsKeyDown(KeyCode::RightShift);
+        const bool alt = Input::IsKeyDown(KeyCode::LeftAlt) ||
+            Input::IsKeyDown(KeyCode::RightAlt);
+
+        switch (event.GetKeyCode())
+        {
+
+        case KeyCode::N:
+            {
+                if (control) { CreateNewScene(); }
+                break;
+            }
+        case KeyCode::O:
+            {
+                if (control) { OpenScene(); }
+                break;
+            }
+        case KeyCode::S:
+            {
+                if (control && shift) { SaveSceneAs(); }
+                else if (control) { SaveScene(); }
+                break;
+            }
+        case KeyCode::D:
+            {
+                if (control)
+                    OnDuplicateEntity();
+
+                break;
+            }
+
+        default:
+            break;
+        }
+
+        m_Hierarchy->OnKeyPressed(event);
+        return m_Viewport->OnKeyPressed(event);
+    }
+
+    bool EditorLayer::OnWindowResized(const WindowResizedEvent& e) const
+    {
+        const auto height = e.GetHeight();
+        const auto width = e.GetWidth();
+        
+        if (width == 0 || height == 0) return false;
+
+        SceneManager::GetActiveScene()->OnViewportResized(e.GetWidth(), e.GetHeight());
+        Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
+        return false;
+    }
+
 
     constexpr float toolbarSize = 10;
     float menuBarHeight;
@@ -254,7 +269,9 @@ namespace LevEngine::Editor
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
         const auto& buttonActive = colors[ImGuiCol_ButtonActive];
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
-
+        const ImGuiIO& io = ImGui::GetIO();
+        const auto boldFont = io.Fonts->Fonts[0];
+        
         constexpr ImGuiWindowFlags windowFlags = 0
             | ImGuiWindowFlags_NoDocking
             | ImGuiWindowFlags_NoTitleBar
@@ -271,12 +288,11 @@ namespace LevEngine::Editor
         ImGui::SetCursorPosX(10);
         ImGui::SetCursorPosY(padding);
 
-        ImGui::BeginTable("tools", 4, 0, ImVec2(0, 0), size * 4);
-        
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
+        constexpr int columns = 7;
+        ImGui::BeginTable("tools", columns, 0, ImVec2(0, 0), size * 4);
+
+        for (int i = 0; i < columns; ++i)
+            ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
 
         {
             ImGui::TableNextColumn();
@@ -316,6 +332,48 @@ namespace LevEngine::Editor
             ImGui::SetItemAllowOverlap();
             ImGui::SetCursorPos(cursorPos);
             ImGui::Image(scaleIcon->GetId(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
+        }
+
+        {
+            ImGui::TableNextColumn();
+            ImGui::Dummy(ImVec2(size, size));
+        }
+        
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_space_world", Gizmo::Space == Gizmo::ToolSpace::World, 0, ImVec2(size, size)))
+                Gizmo::Space = Gizmo::ToolSpace::World;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            
+            ImGui::PushFont(boldFont);
+
+            const auto width = ImGui::GetColumnWidth();
+            const auto textWidth = ImGui::CalcTextSize("W").x;
+            const auto cursorPosX = cursorPos.x + (width - textWidth) * 0.5f;
+            ImGui::SetCursorPosX(cursorPosX);
+            
+            ImGui::Text("W");
+            ImGui::PopFont();
+        }
+
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_space_local", Gizmo::Space == Gizmo::ToolSpace::Local, 0, ImVec2(size, size)))
+                Gizmo::Space = Gizmo::ToolSpace::Local;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            ImGui::PushFont(boldFont);
+
+            const auto width = ImGui::GetColumnWidth();
+            const auto textWidth = ImGui::CalcTextSize("L").x;
+            const auto cursorPosX = cursorPos.x + (width - textWidth) * 0.5f;
+            ImGui::SetCursorPosX(cursorPosX);
+            
+            ImGui::Text("L");
+            ImGui::PopFont();
         }
 
         ImGui::EndTable();

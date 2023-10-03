@@ -128,8 +128,8 @@ namespace LevEngine
 			const int xPos = LOWORD(lparam);
 			const int yPos = HIWORD(lparam);
 
-			MouseMovedEvent event((xPos), (yPos));
-			data->eventCallback(event);
+			//MouseMovedEvent event((xPos), (yPos));
+			//data->eventCallback(event);
 			return 0;
 		}
 		case WM_MOUSEWHEEL:
@@ -172,18 +172,16 @@ namespace LevEngine
 			if (raw->header.dwType == RIM_TYPEMOUSE &&
 				(raw->data.mouse.lLastX != 0 || raw->data.mouse.lLastY != 0))
 			{
-				MouseMovedEvent event((raw->data.mouse.lLastX), (raw->data.mouse.lLastY));
+				MouseMovedEvent event(static_cast<float>(raw->data.mouse.lLastX), static_cast<float>(raw->data.mouse.lLastY));
 				data->eventCallback(event);
 			}
 
 			delete[] lpb;
 			return 0;
 		}
-		default:
-		{
-			return DefWindowProc(hwnd, umessage, wparam, lparam);
 		}
-		}
+
+		return DefWindowProc(hwnd, umessage, wparam, lparam);
 	}
 
 	void WindowsWindow::Init(const WindowAttributes& attributes)
@@ -293,7 +291,7 @@ namespace LevEngine
 
 		RECT rect;
 		GetClientRect(m_Window, &rect);
-		MapWindowRect(m_Window, nullptr, reinterpret_cast<POINT*>(&rect), 2);
+		MapWindowRect(m_Window, nullptr, reinterpret_cast<POINT*>(&rect));
 		ClipCursor(&rect);
 	}
 

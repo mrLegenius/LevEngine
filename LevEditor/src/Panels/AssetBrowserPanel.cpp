@@ -111,7 +111,8 @@ namespace LevEngine::Editor
             {
                 if (ImGui::BeginMenu("Create"))
                 {
-                    DrawCreateMenu<MaterialAsset>("Material", "Material.mat");
+                    DrawCreateMenu<MaterialSimpleAsset>("Material", "Material.mat");
+                    DrawCreateMenu<MaterialPBRAsset>("PBR Material", "PBRMaterial.pbr");
                     DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
 
                     ImGui::EndMenu();

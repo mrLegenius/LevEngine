@@ -2,6 +2,7 @@
 #include "SkyboxPass.h"
 
 #include "RenderCommand.h"
+#include "3D/Primitives.h"
 #include "Scene/Components/SkyboxRenderer/SkyboxRenderer.h"
 #include "Scene/Components/Transform/Transform.h"
 
@@ -16,7 +17,7 @@ struct alignas(16) CameraData
 
 SkyboxPass::SkyboxPass(const Ref<PipelineState>& pipeline) : m_SkyboxPipeline(pipeline)
 {
-	m_SkyboxMesh = Mesh::CreateCube();
+	m_SkyboxMesh = Primitives::CreateCube();
 	m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
 }
 

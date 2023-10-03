@@ -49,8 +49,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;external/vgjs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -71,8 +71,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;external/vgjs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -437,9 +437,13 @@
     <ClInclude Include="src\Assets\AssetDatabase.h" />
     <ClInclude Include="src\Assets\DefaultAsset.h" />
     <ClInclude Include="src\Assets\MaterialAsset.h" />
+    <ClInclude Include="src\Assets\MaterialSimpleAsset.h" />
+    <ClInclude Include="src\Assets\MaterialPBRAsset.h" />
     <ClInclude Include="src\Assets\MeshAsset.h" />
+    <ClInclude Include="src\Assets\PrefabAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Assets\TextureAsset.h" />
+    <ClInclude Include="src\DataTypes\Delegates.h" />
     <ClInclude Include="src\DataTypes\Map.h" />
     <ClInclude Include="src\DataTypes\Pair.h" />
     <ClInclude Include="src\DataTypes\Path.h" />
@@ -477,8 +481,11 @@
     <ClInclude Include="src\Kernel\UUID.h" />
     <ClInclude Include="src\Kernel\Window.h" />
     <ClInclude Include="src\LevEngine.h" />
+    <ClInclude Include="src\Math\BoundingVolume.h" />
+    <ClInclude Include="src\Math\Frustum.h" />
     <ClInclude Include="src\Math\Math.h" />
     <ClInclude Include="src\Math\Matrix.h" />
+    <ClInclude Include="src\Math\Plane.h" />
     <ClInclude Include="src\Math\Quaternion.h" />
     <ClInclude Include="src\Math\Random.h" />
     <ClInclude Include="src\Math\Vector2.h" />
@@ -501,6 +508,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11IndexBuffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RasterizerState.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RenderCommands.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderTarget.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11SamplerState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Shader.h" />
@@ -510,6 +518,7 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Project.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
+    <ClInclude Include="src\Renderer\3D\Primitives.h" />
     <ClInclude Include="src\Renderer\BitonicSort.h" />
     <ClInclude Include="src\Renderer\BlendState.h" />
     <ClInclude Include="src\Renderer\BufferBinding.h" />
@@ -518,17 +527,28 @@
     <ClInclude Include="src\Renderer\ClearFlags.h" />
     <ClInclude Include="src\Renderer\ClearPass.h" />
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugCube.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugGrid.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugLine.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugRender.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugRenderPass.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugShape.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugSphere.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugWireCube.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugWireSphere.h" />
+    <ClInclude Include="src\Renderer\Material.h" />
+    <ClInclude Include="src\Renderer\MaterialPBR.h" />
+    <ClInclude Include="src\Renderer\QuadRenderPass.h" />
     <ClInclude Include="src\Renderer\RendererContext.h" />
     <ClInclude Include="src\Renderer\CopyTexturePass.h" />
     <ClInclude Include="src\Renderer\CPUAccess.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RendererContext.h" />
-    <ClInclude Include="src\Platform\D3D11\D3D11RenderCommands.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ShadowMap.h" />
     <ClInclude Include="src\Renderer\DeferredLightingPass.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />
     <ClInclude Include="src\Renderer\DepthStencilState.h" />
     <ClInclude Include="src\Renderer\IndexBuffer.h" />
-    <ClInclude Include="src\Renderer\Material.h" />
+    <ClInclude Include="src\Renderer\MaterialSimple.h" />
     <ClInclude Include="src\Renderer\OpaquePass.h" />
     <ClInclude Include="src\Renderer\ParticlePass.h" />
     <ClInclude Include="src\Renderer\PipelineState.h" />
@@ -786,8 +806,10 @@
     </ClCompile>
     <ClCompile Include="src\Assets\Asset.cpp" />
     <ClCompile Include="src\Assets\AssetDatabase.cpp" />
-    <ClCompile Include="src\Assets\MaterialAsset.cpp" />
+    <ClCompile Include="src\Assets\MaterialSimpleAsset.cpp" />
+    <ClCompile Include="src\Assets\MaterialPBRAsset.cpp" />
     <ClCompile Include="src\Assets\MeshAsset.cpp" />
+    <ClCompile Include="src\Assets\PrefabAsset.cpp" />
     <ClCompile Include="src\Assets\SkyboxAsset.cpp" />
     <ClCompile Include="src\Assets\TextureAsset.cpp" />
     <ClCompile Include="src\DataTypes\EASTL.cpp" />
@@ -874,6 +896,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;D:\projects\ITMO\LevEngine\\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;;D:\projects\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
     </ClCompile>
     <ClCompile Include="src\Kernel\Time\Timeline.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -949,6 +972,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;D:\projects\ITMO\LevEngine\\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;;D:\projects\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
     </ClCompile>
     <ClCompile Include="src\Kernel\Time\TimelineFactory.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1024,84 +1048,12 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;D:\projects\ITMO\LevEngine\\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;;D:\projects\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
     </ClCompile>
-    <ClCompile Include="src\Kernel\Time\TimelineRunner.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>D:\projects\ITMO\LevEngine\x64\Debug\LevEngine.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\LevEngine.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\LevEngine.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;D:\projects\ITMO\LevEngine\\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;;D:\projects\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
+    <ClCompile Include="src\Kernel\Time\TimelineRunner.cpp" />
     <ClCompile Include="src\Kernel\UUID.cpp" />
     <ClCompile Include="src\Kernel\Window.cpp" />
+    <ClCompile Include="src\Math\BoundingVolume.cpp" />
     <ClCompile Include="src\Math\Random.cpp" />
     <ClCompile Include="src\levpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -1125,12 +1077,93 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Project.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
+    <ClCompile Include="src\Renderer\3D\Primitives.cpp" />
     <ClCompile Include="src\Renderer\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\BlendState.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="src\Renderer\CascadeShadowMap.cpp" />
     <ClCompile Include="src\Renderer\ClearPass.cpp" />
     <ClCompile Include="src\Renderer\ConstantBuffer.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugRender.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>x64\Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>x64\Debug\LevEngine.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>x64\Debug\LevEngine.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp20</LanguageStandard>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\DebugRender\DebugRenderPass.cpp" />
+    <ClCompile Include="src\Renderer\Material.cpp" />
+    <ClCompile Include="src\Renderer\MaterialPBR.cpp" />
+    <ClCompile Include="src\Renderer\QuadRenderPass.cpp" />
     <ClCompile Include="src\Renderer\RendererContext.cpp" />
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RendererContext.cpp" />
@@ -1139,7 +1172,7 @@
     <ClCompile Include="src\Renderer\DeferredLightingPass.cpp" />
     <ClCompile Include="src\Renderer\DepthStencilState.cpp" />
     <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
-    <ClCompile Include="src\Renderer\Material.cpp" />
+    <ClCompile Include="src\Renderer\MaterialSimple.cpp" />
     <ClCompile Include="src\Renderer\OpaquePass.cpp" />
     <ClCompile Include="src\Renderer\ParticlePass.cpp" />
     <ClCompile Include="src\Renderer\PipelineState.cpp" />
@@ -1148,6 +1181,7 @@
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\Renderer\RenderTarget.cpp" />
+    <ClCompile Include="src\Renderer\RenderTechnique.cpp" />
     <ClCompile Include="src\Renderer\SamplerState.cpp" />
     <ClCompile Include="src\Renderer\Shader.cpp" />
     <ClCompile Include="src\Renderer\ShaderParameter.cpp" />
@@ -1169,156 +1203,8 @@
     <ClCompile Include="src\Scene\SceneManager.cpp" />
     <ClCompile Include="src\Scene\Serializers\SceneSerializer.cpp" />
     <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
-    <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>D:\projects\ITMO\LevEngine\x64\Debug\LevEngine.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\LevEngine.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\LevEngine.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;D:\projects\ITMO\LevEngine\\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;;D:\projects\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
-    <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>D:\projects\ITMO\LevEngine\x64\Debug\LevEngine.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\LevEngine.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\LevEngine.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;D:\projects\ITMO\LevEngine\\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;;D:\projects\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
+    <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp" />
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>

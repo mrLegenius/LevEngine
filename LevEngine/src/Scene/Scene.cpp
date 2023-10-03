@@ -10,6 +10,9 @@
 
 namespace LevEngine
 {
+
+    constexpr bool k_IsMultiThreading = false;
+    constexpr int k_SleepMicroSeconds = 10;
 Scene::~Scene()
 {
     LEV_PROFILE_FUNCTION();
@@ -17,38 +20,176 @@ Scene::~Scene()
     m_Registry.clear();
 }
 
+void Scene::RequestUpdates(const float deltaTime)
+{
+    for (const auto& system : m_UpdateSystems)
+    {
+        //TODO Add schedule inside systems' Updates if needed
+        system->Update(deltaTime, m_Registry);
+    }
+
+    vgjs::continuation([this]() {m_IsUpdateDone = true; });
+}
+
 void Scene::OnUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-	for (const auto& system : m_UpdateSystems)
-		system->Update(deltaTime, m_Registry);
+    if constexpr (k_IsMultiThreading)
+    {
+        m_IsUpdateDone = false;
+        vgjs::schedule([this, deltaTime]() { RequestUpdates(deltaTime); });
+
+        while (!m_IsUpdateDone)
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+        }
+    }
+    else 
+    {
+        for (const auto& system : m_UpdateSystems)
+        {
+            system->Update(deltaTime, m_Registry);
+        }
+    }
+}
+
+void Scene::RequestPhysicsUpdates(const float deltaTime)
+{
+    Physics::Process(m_Registry, deltaTime);
+    
+	vgjs::continuation([this]() {m_IsPhysicsDone = true; });
 }
 
 void Scene::OnPhysics(const float deltaTime)
 {
-    Physics::Process(m_Registry, deltaTime);
+    if constexpr (k_IsMultiThreading)
+    {
+        m_IsPhysicsDone = false;
+
+        vgjs::schedule([this, deltaTime]() { RequestPhysicsUpdates(deltaTime); });;
+
+        while (!m_IsPhysicsDone)
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+        }
+    }
+    else
+    {
+        Physics::Process(m_Registry, deltaTime);
+    }
+}
+
+void Scene::RequestRenderUpdate()
+{
+    Renderer::Render(m_Registry);
+
+	vgjs::continuation([this]() {m_IsRenderDone = true; });
 }
 
 void Scene::OnRender()
 {
-    Renderer::Render(m_Registry);
+    if constexpr (k_IsMultiThreading)
+    {
+        m_IsRenderDone = false;
+
+        vgjs::schedule([this]() {RequestRenderUpdate(); });
+
+        while (!m_IsRenderDone)
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+        }
+    }
+    else
+    {
+        Renderer::Render(m_Registry);
+    }
+}
+
+void Scene::RequestRenderUpdate(SceneCamera* mainCamera, const Transform* cameraTransform)
+{
+    Renderer::Render(m_Registry, mainCamera, cameraTransform);
+
+	vgjs::continuation([this]() {m_IsRenderDone = true; });
 }
 
 void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
 {
-    Renderer::Render(m_Registry, mainCamera, cameraTransform);
+    if constexpr (k_IsMultiThreading)
+    {
+        m_IsRenderDone = false;
+
+        vgjs::schedule([this, mainCamera, cameraTransform]() {RequestRenderUpdate(mainCamera, cameraTransform); });
+
+        while (!m_IsRenderDone)
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+        }
+    }
+    else
+    {
+        Renderer::Render(m_Registry, mainCamera, cameraTransform);
+    }
+}
+
+void Scene::RequestLateUpdate(const float deltaTime)
+{
+    for (const auto& system : m_LateUpdateSystems)
+    {
+        //TODO Add schedule inside systems' Updates if needed
+        system->Update(deltaTime, m_Registry);
+    }
+
+    vgjs::continuation([this]() {m_IsLateUpdateDone = true; });
+}
+
+void Scene::RequestEventsUpdate(const float deltaTime)
+{
+    for (const auto& system : m_EventSystems)
+    {
+        //TODO Add schedule inside systems' Updates if needed
+        system->Update(deltaTime, m_Registry);
+    }
+
+    vgjs::continuation([this]() {m_IsEventUpdateDone = true; });
 }
 
 void Scene::OnLateUpdate(const float deltaTime)
 {
     LEV_PROFILE_FUNCTION();
 
-    for (const auto& system : m_LateUpdateSystems)
-        system->Update(deltaTime, m_Registry);
+    if constexpr (k_IsMultiThreading)
+    {
+        m_IsLateUpdateDone = false;
 
-    for (const auto& system : m_EventSystems)
-        system->Update(deltaTime, m_Registry);
+        vgjs::schedule([this, deltaTime]() {RequestLateUpdate(deltaTime); });
+
+        while (!m_IsLateUpdateDone)
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+        }
+
+        m_IsEventUpdateDone = false;
+
+        vgjs::schedule([this, deltaTime]() {RequestEventsUpdate(deltaTime); });
+
+        while (!m_IsEventUpdateDone)
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+        }
+    }
+	else
+	{
+        for (const auto& system : m_LateUpdateSystems)
+        {
+            system->Update(deltaTime, m_Registry);
+        }
+
+		for (const auto& system : m_EventSystems)
+        {
+            system->Update(deltaTime, m_Registry);
+        }
+	}
 }
 
 void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
@@ -69,7 +210,7 @@ void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
     }
 }
 
-void Scene::ForEachEntity(const std::function<void(Entity)>& callback)
+void Scene::ForEachEntity(const Action<Entity>& callback)
 {
 	for (const auto entityId : m_Registry.storage<entt::entity>())
 	{

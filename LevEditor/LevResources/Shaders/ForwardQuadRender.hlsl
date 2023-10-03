@@ -1,4 +1,3 @@
-#include "ShaderCommon.hlsl"
 
 float4 VSMain(uint vI : SV_VERTEXID) : SV_POSITION
 {
@@ -6,57 +5,39 @@ float4 VSMain(uint vI : SV_VERTEXID) : SV_POSITION
 	return float4((texcoord.x - 0.5f) * 2, -(texcoord.y - 0.5f) * 2, 0, 1);
 }
 
-Texture2D diffuseTexture : register(t1);
-Texture2D specularTexture : register(t2);
-Texture2D normalTexture : register(t3);
-Texture2D depthTexture : register(t4);
+Texture2D colorTexture : register(t0);
 
-Texture2DArray shadowMapTexture : register(t9);
+float3 Uncharted2ToneMapping(float3 color)
+{
+	float A = 0.15;
+	float B = 0.50;
+	float C = 0.10;
+	float D = 0.20;
+	float E = 0.02;
+	float F = 0.30;
+	float W = 11.2;
+	float exposure = 2.;
+	color *= exposure;
+	color = ((color * (A * color + C * B) + D * E) / (color * (A * color + B) + D * F)) - E / F;
+	float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
+	color /= white;
+	return color;
+}
 
-LightingResult CalcLighting(float3 fragPos, float3 normal, float depth, float shininess);
+float3 ReinhardToneMapping(float3 color)
+{
+	float exposure = 1.5;
+	color *= exposure/(1. + color / exposure);
+	return color;
+}
 
-[earlydepthstencil]
 float4 PSMain(float4 pos : SV_POSITION) : SV_Target
 {
 	int2 uv = pos.xy;
-	float depth = depthTexture.Load(int3(uv, 0)).r;
-	float4 fragPos = ScreenToView(float4(uv, depth, 1.0f));
-	float3 normal = normalTexture.Load(int3(uv, 0)).rgb;
-
-	float4 specularValues = specularTexture.Load(int3(uv, 0));
-	float shininess = exp2(specularValues.a * 10.5f);
+	float3 finalColor = colorTexture.Load(int3(uv, 0)).rgb;
 	
-	LightingResult lit = CalcLighting(fragPos, normal, depth, shininess);
-	float3 diffuse = diffuseTexture.Load(int3(uv, 0)).rgb * lit.diffuse;
-	float3 specular = specularValues.rgb * lit.specular;
-	
-	float3 finalColor = (diffuse + specular);
+	//Gamma correction
+    finalColor = pow(ReinhardToneMapping(finalColor), 0.45);
 
 	return float4(finalColor, 1.0f);
-	//return float4(depth, depth, depth, 1.0f);
-}
-
-LightingResult CalcLighting(float3 fragPos, float3 normal, float depth, float shininess)
-{
-	float4 cameraPosition = { 0, 0, 0, 1 };
-
-	float cascade = 0;// GetCascadeIndex(depth);
-	float4 fragPosLightSpace = float4(fragPos, 1.0f);// mul(float4(fragPos, 1.0f), lightViewProjection[cascade]);
-
-	float3 viewDir = normalize(cameraPosition - fragPos);
-
-	LightingResult totalResult = CalcDirLight(dirLight, normal, viewDir, fragPosLightSpace, cascade, shininess);
-
-	/*[unroll]
-	for (int i = 0; i < pointLightsCount; i++)
-	{
-		LightingResult result = CalcPointLight(pointLights[i], normal, fragPos, viewDir);
-		totalResult.diffuse += result.diffuse;
-		totalResult.specular += result.specular;
-	}*/
-
-	totalResult.diffuse = saturate(totalResult.diffuse);
-	totalResult.specular = saturate(totalResult.specular);
-
-	return totalResult;
 }

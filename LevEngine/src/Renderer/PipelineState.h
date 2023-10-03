@@ -1,6 +1,4 @@
 #pragma once
-#include <map>
-
 #include "BlendState.h"
 #include "DepthStencilState.h"
 #include "RasterizerState.h"
@@ -15,40 +13,20 @@ class PipelineState
 public:
     using ShaderMap = Map<ShaderType, Ref<Shader>>;
 
-    PipelineState()
-    {
-        LEV_PROFILE_FUNCTION();
+    PipelineState();
 
-        m_BlendState = BlendState::Create();
-        m_DepthStencilState = DepthStencilState::Create();
-        m_RasterizerState = RasterizerState::Create();
-    }
-
-    void SetShader(const ShaderType type, const Ref<Shader>& shader)
-    {
-        m_Shaders[type] = shader;
-    }
-    [[nodiscard]] Ref<Shader> GetShader(const ShaderType type) const
-    {
-        LEV_PROFILE_FUNCTION();
-
-	    const auto it = m_Shaders.find(type);
-
-        return it != m_Shaders.end() ? it->second : nullptr;
-    }
-    [[nodiscard]] const ShaderMap& GetShaders() const
-    {
-        return m_Shaders;
-    }
+    void SetShader(const ShaderType type, const Ref<Shader>& shader) { m_Shaders[type] = shader; }
+    [[nodiscard]] Ref<Shader> GetShader(ShaderType type) const;
+    [[nodiscard]] const ShaderMap& GetShaders() const { return m_Shaders; }
 
     void SetBlendState(const Ref<BlendState>& blendState) { m_BlendState = blendState; }
-    [[nodiscard]] const Ref<BlendState>& GetBlendState() { return m_BlendState; }
+    [[nodiscard]] const Ref<BlendState>& GetBlendState() const { return m_BlendState; }
 
     void SetRasterizerState(const Ref<RasterizerState>& rasterizerState) { m_RasterizerState = rasterizerState; }
-    [[nodiscard]] RasterizerState& GetRasterizerState() { return *m_RasterizerState.get(); }
+    [[nodiscard]] RasterizerState& GetRasterizerState() const { return *m_RasterizerState.get(); }
 
     void SetDepthStencilState(const Ref<DepthStencilState>& depthStencilState) { m_DepthStencilState = depthStencilState; }
-    [[nodiscard]] const Ref<DepthStencilState>& GetDepthStencilState() { return m_DepthStencilState; }
+    [[nodiscard]] Ref<DepthStencilState>& GetDepthStencilState() { return m_DepthStencilState; }
 
     void SetRenderTarget(const Ref<RenderTarget>& renderTarget) { m_RenderTarget = renderTarget; }
     [[nodiscard]] Ref<RenderTarget> GetRenderTarget() const { return m_RenderTarget; }

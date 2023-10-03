@@ -6,10 +6,19 @@ namespace LevEngine
 class RenderCommand
 {
 public:
-	static void DrawIndexed(
-		const Ref<IndexBuffer>& indexBuffer)
+	static void DrawIndexed(const Ref<IndexBuffer>& indexBuffer)
 	{
 		s_RendererAPI->DrawIndexed(indexBuffer);
+	}
+
+	static void DrawLineList(const Ref<IndexBuffer>& indexBuffer)
+	{
+		s_RendererAPI->DrawLineList(indexBuffer);
+	}
+
+	static void DrawLineStrip(const uint32_t verticesCount)
+	{
+		s_RendererAPI->DrawLineStrip(verticesCount);
 	}
 
 	static void DrawFullScreenQuad()

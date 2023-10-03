@@ -128,9 +128,6 @@
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUI\Drawers\Assets\MaterialAssetDrawer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -138,6 +135,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Assets\MaterialSimpleAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Assets\MaterialPBRAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp">

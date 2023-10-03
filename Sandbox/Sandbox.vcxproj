@@ -94,6 +94,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -109,8 +110,8 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,6 +132,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,8 +152,8 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

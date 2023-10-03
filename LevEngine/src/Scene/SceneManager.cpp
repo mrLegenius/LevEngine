@@ -9,7 +9,7 @@ namespace LevEngine
     {
         m_ActiveScenePath = path.c_str();
         const SceneSerializer sceneSerializer(m_ActiveScene);
-        sceneSerializer.Serialize(path);
+        sceneSerializer.Serialize(path.c_str());
     }
 
     bool SceneManager::LoadScene(const Path& path)

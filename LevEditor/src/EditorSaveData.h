@@ -25,6 +25,8 @@ public:
     
     bool Load()
     {
+        if (!exists(m_Path)) return false;
+        
         YAML::Node data;
         try
         {

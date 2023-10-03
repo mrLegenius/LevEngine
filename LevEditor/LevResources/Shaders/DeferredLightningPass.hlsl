@@ -1,4 +1,5 @@
 #include "ShaderCommon.hlsl"
+#include "MaterialSimple.hlsl"
 
 PS_IN VSMain(VS_IN input)
 {

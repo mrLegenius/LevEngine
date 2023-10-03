@@ -32,7 +32,7 @@ public:
 			//| aiProcess_FlipWindingOrder
 			//| aiProcess_ImproveCacheLocality // It may help with rendering large models
 			| aiProcess_FixInfacingNormals //May help to fix inwards normals
-
+			| aiProcess_GenBoundingBoxes
 		);
 
 		Ref<Mesh> resultMesh = CreateRef<Mesh>();
@@ -88,6 +88,11 @@ public:
 			resultMesh->AddIndex(meshFaces[i].mIndices[2]);
 		}
 
+		const auto aabb = mesh->mAABB;
+		const auto aabbMin = Vector3{aabb.mMin.x, aabb.mMin.y, aabb.mMin.z};
+		const auto aabbMax = Vector3{aabb.mMax.x, aabb.mMax.y, aabb.mMax.z};
+		resultMesh->SetAABBBoundingVolume(aabbMin, aabbMax);
+		
 		resultMesh->Init();
 
 		return resultMesh;

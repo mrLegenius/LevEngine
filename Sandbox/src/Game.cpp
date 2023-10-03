@@ -7,7 +7,7 @@
 /*
  * There are some problems in this project
  * 1. (Done) We need Project system to have ability change assets of separate project
- * 2. We need Prefabs system to avoid complete object creation from code
+ * 2. (In progress) We need Prefabs system to avoid complete object creation from code
  * 3. We need resource loading system (by name)
  * 4. We need our systems and components in editor, to setup entities visually
  * 5. We do not need to control engine pipeline in this project (OnUpdate, OnRender, etc)
@@ -40,7 +40,33 @@ namespace Sandbox
 		SceneManager::GetActiveScene()->DestroyEntity(other);
 		score++;
 	}
-	
+
+	class FPRCameraRotationSystem : public System
+	{
+	public:
+		void Update(float deltaTime, entt::registry& registry) override
+		{
+			const auto view = registry.view<Transform, CameraComponent>();
+
+			constexpr auto rotationSpeed = 45;
+			const Vector2 mouse{ Input::GetMouseDelta().first, Input::GetMouseDelta().second };
+			
+			for (const auto entity : view)
+			{
+				auto [transform, camera] = view.get<Transform, CameraComponent>(entity);
+
+				if (!camera.isMain) continue;
+				
+				const auto delta = mouse * rotationSpeed * deltaTime;
+
+				auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
+				rotation.x -= delta.y;
+
+				rotation.x = Math::Clamp(rotation.x, -89.99f, 89.999f);
+				transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
+			}
+		}
+	};
 	class FPSMovementSystem : public System
 	{
 		void Update(const float deltaTime, entt::registry& registry) override
@@ -53,12 +79,11 @@ namespace Sandbox
 			for (const auto entity : view)
 			{
 				auto [transform, player, rigidbody] = view.get<Transform, Player, Rigidbody>(entity);
-				
+
 				const auto delta = mouse * rotationSpeed * deltaTime;
 
 				auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
 				rotation.y -= delta.x;
-				rotation.x -= delta.y;
 				transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
 				
 				if (Input::IsKeyDown(KeyCode::W))
@@ -91,8 +116,9 @@ namespace Sandbox
 
 				if (Input::IsMouseButtonPressed(MouseButton::Left))
 				{
-					auto projectile = SceneManager::GetActiveScene()->CreateEntity("Missile");
-
+					const auto projectilePrefab = AssetDatabase::GetAsset<PrefabAsset>(AssetDatabase::GetAssetsPath() / "Prefabs" / "Missile.prefab");
+					auto projectile = projectilePrefab->Instantiate(SceneManager::GetActiveScene());
+					
 					auto& transform = projectile.GetComponent<Transform>();
 
 					transform.SetWorldPosition(cameraTransform.GetWorldPosition() + cameraTransform.GetForwardDirection() * 10);
@@ -107,16 +133,9 @@ namespace Sandbox
 					rigidbody.bodyType = BodyType::Kinematic;
 					rigidbody.gravityScale = 0;
 					
-					auto projectileMeshEntity = SceneManager::GetActiveScene()->CreateEntity("MissileMesh");
-					
+					auto projectileMeshEntity = transform.GetChildren()[0];
 					auto& meshTransform = projectileMeshEntity.GetComponent<Transform>();
-					meshTransform.SetParent(projectile, false);
-					meshTransform.SetLocalScale(Vector3::One * 0.05f);
 					meshTransform.SetLocalRotation(Random::Rotation());
-					
-					auto& mesh = projectileMeshEntity.AddComponent<MeshRendererComponent>();
-					mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Models" / "lava_rock.obj");
-					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Textures" / "LavaRock" /  "LavaRock.mat");
 
 					auto& projectileComp = projectile.AddComponent<Projectile>();
 
@@ -174,33 +193,16 @@ namespace Sandbox
 			{
 				m_Timer -= m_SpawnInterval;
 
-				const auto target = SceneManager::GetActiveScene()->CreateEntity("Target");
+				const auto prefab = AssetDatabase::GetAsset<PrefabAsset>(AssetDatabase::GetAssetsPath() / "Prefabs" / "Enemy.prefab");
+				const auto enemy = prefab->Instantiate(SceneManager::GetActiveScene());
 
-				auto& enemy = target.AddComponent<Enemy>();
-				enemy.speed = 5;
-
-				auto& rigidbody = target.AddComponent<Rigidbody>();
+				auto& enemyComp = enemy.AddComponent<Enemy>();
+				enemyComp.speed = 5;
 				
-				auto& transform = target.GetComponent<Transform>();
-
-				auto randomPosition = Random::Vec3(-25.0f, 25.0f);
+				auto& transform = enemy.GetComponent<Transform>();
+				auto randomPosition = Random::Vec3(-20.0f, 20.0f);
 				randomPosition.y = 1;
 				transform.SetWorldPosition(randomPosition);
-
-				auto& collider = target.AddComponent<BoxCollider>();
-				collider.extents = Vector3(0.5, 1.75, 0.5);
-				collider.offset = Vector3(0, 1.75, 0);
-				
-				const auto meshEntity = SceneManager::GetActiveScene()->CreateEntity("Mesh");
-					
-				auto& meshTransform = meshEntity.GetComponent<Transform>();
-				meshTransform.SetParent(target, false);
-				meshTransform.SetLocalScale({0.01f, 0.02f, 0.01f});
-					
-				auto& mesh = meshEntity.AddComponent<MeshRendererComponent>();
-				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Enemy" / "enemy_model.fbx");
-				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Enemy" /  "enemy_material.mat");
-
 			}
 		}
 	private:
@@ -232,21 +234,6 @@ namespace Sandbox
 			collider.extents = Vector3{0.25, 1, 0.25};
 			collider.offset = Vector3{0, 1, 0};
 
-			{
-				const auto sword = scene->CreateEntity("Sword");
-
-				auto& swordTransform = sword.GetComponent<Transform>();
-				swordTransform.SetParent(player);
-				swordTransform.SetLocalPosition({0.7f, 2, -4});
-				swordTransform.SetLocalScale(Vector3::One * 0.2f);
-				const auto eulers = Vector3{10, 100, 0} * Math::DegToRad;
-				swordTransform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(eulers));
-				
-				auto& mesh = sword.AddComponent<MeshRendererComponent>();
-				mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "sword.fbx");
-				mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "Sword.mat");
-			}
-
 			const auto view = registry.view<Transform, CameraComponent>();
 			for (const auto entity : view)
 			{
@@ -257,6 +244,20 @@ namespace Sandbox
 				transform.SetParent(player);
 				transform.SetLocalRotation(Quaternion::Identity);
 				transform.SetLocalPosition(Vector3{0, 4, 0});
+
+				{
+					const auto sword = scene->CreateEntity("Sword");
+					auto& swordTransform = sword.GetComponent<Transform>();
+					swordTransform.SetParent(SceneManager::GetActiveScene()->GetEntityBy(&transform));
+					swordTransform.SetLocalPosition({0.7f, -2, -4});
+					swordTransform.SetLocalScale(Vector3::One * 0.2f);
+					const auto eulers = Vector3{10, 100, 0} * Math::DegToRad;
+					swordTransform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(eulers));
+				
+					auto& mesh = sword.AddComponent<MeshRendererComponent>();
+					mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "sword.fbx");
+					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "Sword.pbr");
+				}
 			}
 		}
 	};
@@ -307,6 +308,7 @@ namespace Sandbox
 		auto& scene = SceneManager::GetActiveScene();
 
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
+		scene->RegisterUpdateSystem<FPRCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
 		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
@@ -328,10 +330,14 @@ namespace Sandbox
 		SceneManager::GetActiveScene()->OnUpdate(deltaTime);
 		SceneManager::GetActiveScene()->OnPhysics(deltaTime);
 		SceneManager::GetActiveScene()->OnLateUpdate(deltaTime);
-		SceneManager::GetActiveScene()->OnRender();
-
+		
 		if (Input::IsKeyPressed(KeyCode::Escape))
 			Application::Get().Close();
+	}
+
+	void Game::OnRender()
+	{
+		SceneManager::GetActiveScene()->OnRender();
 	}
 
 	void Game::OnGUIRender()

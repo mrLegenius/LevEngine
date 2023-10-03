@@ -4,6 +4,23 @@
 #include "Debugging/Profiler.h"
 namespace LevEngine
 {
+PipelineState::PipelineState()
+{
+    LEV_PROFILE_FUNCTION();
+
+    m_BlendState = BlendState::Create();
+    m_DepthStencilState = DepthStencilState::Create();
+    m_RasterizerState = RasterizerState::Create();
+}
+
+Ref<Shader> PipelineState::GetShader(const ShaderType type) const
+{
+    LEV_PROFILE_FUNCTION();
+
+    const auto it = m_Shaders.find(type);
+    return it != m_Shaders.end() ? it->second : nullptr;
+}
+
 void PipelineState::Bind() const
 {
     LEV_PROFILE_FUNCTION();

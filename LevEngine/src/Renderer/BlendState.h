@@ -134,18 +134,7 @@ namespace LevEngine
             BlendFactor dstAlphaFactor = BlendFactor::Zero,
             BlendOperation alphaOp = BlendOperation::Add,
             LogicOperator logicOp = LogicOperator::None,
-            BlendWrite blendWrite = BlendWrite::All)
-            : BlendEnabled(enabled)
-            , LogicOpEnabled(logicOpEnabled)
-            , SrcFactor(srcFactor)
-            , DstFactor(dstFactor)
-            , BlendOp(blendOp)
-            , SrcAlphaFactor(srcAlphaFactor)
-            , DstAlphaFactor(dstAlphaFactor)
-            , AlphaOp(alphaOp)
-            , LogicOp(logicOp)
-            , Write(blendWrite)
-        {}
+            BlendWrite blendWrite = BlendWrite::All);
 
         static BlendMode AlphaBlending;
         static BlendMode Additive;
@@ -154,87 +143,33 @@ namespace LevEngine
     class BlendState
     {
     public:
-        BlendState()
-        {
-            m_BlendModes.resize(8, BlendMode());
-        }
-
+        BlendState();
         virtual ~BlendState() = default;
 
         static Ref<BlendState> Create();
 
-        void SetBlendMode(const BlendMode& blendMode)
-        {
-            m_BlendModes[0] = blendMode;
-            m_Dirty = true;
-        }
+        void SetBlendMode(const BlendMode& blendMode);
         // Use this method to set all blend modes at once. Only the first 8 are considered.
-        void SetBlendModes(const Vector<BlendMode>& blendModes)
-        {
-            m_BlendModes = blendModes;
-            m_Dirty = true;
-        }
-        const Vector<BlendMode>& GetBlendModes() const { return m_BlendModes; }
+        void SetBlendModes(const Vector<BlendMode>& blendModes);
+        [[nodiscard]] const Vector<BlendMode>& GetBlendModes() const { return m_BlendModes; }
 
-        void SetAlphaCoverage(const bool enabled)
-        {
-            if (m_AlphaToCoverageEnabled != enabled)
-            {
-                m_AlphaToCoverageEnabled = enabled;
-                m_Dirty = true;
-            }
-        }
+        void SetAlphaCoverage(bool enabled);
+        [[nodiscard]] bool GetAlphaCoverage() const { return m_AlphaToCoverageEnabled; }
 
-        bool GetAlphaCoverage() const
-        {
-            return m_AlphaToCoverageEnabled;
-        }
+        void SetIndependentBlend(bool enabled);
+        [[nodiscard]] bool GetIndependentBlend() const { return m_IndependentBlendEnabled; }
 
-        void SetIndependentBlend(const bool enabled)
-        {
-            if (m_AlphaToCoverageEnabled != enabled)
-            {
-                m_AlphaToCoverageEnabled = enabled;
-                m_Dirty = true;
-            }
-        }
+        void SetConstBlendFactor(const Vector4& constantBlendFactor);
+        [[nodiscard]] const Vector4& GetConstBlendFactor() const { return m_ConstBlendFactor; }
 
-        bool GetIndependentBlend() const
-        {
-            return m_IndependentBlendEnabled;
-        }
-
-        void SetConstBlendFactor(const Vector4& constantBlendFactor)
-        {
-            m_ConstBlendFactor = constantBlendFactor;
-            // No need to set the dirty flag as this value is not used to create the blend state object.
-            // It is only used when activating the blend state of the output merger.
-        }
-
-        const Vector4& GetConstBlendFactor() const
-        {
-            return m_ConstBlendFactor;
-        }
-
-        void SetSampleMask(const uint32_t sampleMask)
-        {
-            m_SampleMask = sampleMask;
-            // No need to set the dirty flag as this value is not used to create the blend state object.
-            // It is only used when activating the blend state of the output merger.
-        }
-
-        uint32_t GetSampleMask() const
-        {
-            return m_SampleMask;
-        }
+        void SetSampleMask(uint32_t sampleMask);
+        [[nodiscard]] uint32_t GetSampleMask() const { return m_SampleMask; }
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
     protected:
-
-        typedef Vector<BlendMode> BlendModeList;
-
-        BlendModeList m_BlendModes{};
+        
+        Vector<BlendMode> m_BlendModes{};
 
         bool m_AlphaToCoverageEnabled = false;
         bool m_IndependentBlendEnabled = false;
@@ -244,5 +179,4 @@ namespace LevEngine
 
         bool m_Dirty = true;
     };
-
 }

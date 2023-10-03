@@ -8,11 +8,7 @@ namespace LevEngine
 class OpaquePass final : public RenderPass
 {
 public:
-	explicit OpaquePass(const Ref<PipelineState>& pipelineState)
-		: m_PipelineState(pipelineState)
-	{
-		m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
-	}
+	explicit OpaquePass(const Ref<PipelineState>& pipelineState);
 
 	bool Begin(entt::registry& registry, RenderParams& params) override;
 	void Process(entt::registry& registry, RenderParams& params) override;
@@ -27,6 +23,5 @@ private:
 	};
 
 	Ref<PipelineState> m_PipelineState;
-	Ref<ConstantBuffer> m_CameraConstantBuffer;
 };
 }
