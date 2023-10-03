@@ -2,11 +2,16 @@
 #include "TimelineFactory.h"
 
 #include "Timeline.h"
+#include "TimelineParameters.h"
 #include "TimelineRunner.h"
 
-LevEngine::Timeline* LevEngine::TimelineFactory::CreateTimeline()
+namespace LevEngine
 {
-    Timeline* timeline = new Timeline();
-    TimelineRunner::AddTimeline(timeline);
-    return timeline;
+    Ref<Timeline> TimelineFactory::CreateTimeline(const TimelineParameters&& timelineParameters)
+    {
+        Ref<Timeline> timeline = CreateRef<Timeline>(eastl::move(timelineParameters));
+        TimelineRunner::AddTimeline(timeline);
+        return timeline;
+    }
+
 }

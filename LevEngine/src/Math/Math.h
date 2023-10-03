@@ -22,6 +22,10 @@ namespace LevEngine
 
 		template<typename T>
 		static T Min(const T a, const T b) { return ((a) < (b)) ? (a) : (b); }
+		
+		static int Sign(const int a) { return ((a) >= (0)) ? (1) : (-1); }
+		static float Sign(const float a) { return ((a) > (-FloatEpsilon)) ? (1.0f) : (-1.0f); }
+		static double Sign(const double a) { return ((a) > (-FloatEpsilon)) ? (1.0) : (-1.0); }
 
 		static float MaxElement(const Vector3 vector)
 		{

@@ -3,20 +3,24 @@
 
 #include "Timeline.h"
 
-Vector<LevEngine::Timeline*> LevEngine::TimelineRunner::s_Timelines;
-
-void LevEngine::TimelineRunner::AddTimeline(Timeline* timeline)
+namespace LevEngine
 {
-    s_Timelines.emplace_back(timeline);
-}
+    Vector<Ref<Timeline>> TimelineRunner::s_Timelines;
 
-void LevEngine::TimelineRunner::OnUpdate(float deltaTime)
-{
-    for (const auto timeline : s_Timelines)
+    void TimelineRunner::AddTimeline(Ref<Timeline> timeline)
     {
-        if (timeline->IsPlaying())
+        s_Timelines.emplace_back(timeline);
+    }
+
+    void TimelineRunner::OnUpdate(float deltaTime)
+    {
+        for (const auto timeline : s_Timelines)
         {
-            timeline->OnUpdate(deltaTime);   
+            if (timeline->IsPlaying())
+            {
+                timeline->OnUpdate(deltaTime);   
+            }
         }
     }
 }
+

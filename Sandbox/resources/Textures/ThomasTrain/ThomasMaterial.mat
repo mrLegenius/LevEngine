@@ -1,0 +1,9 @@
+AmbientColor: [1, 1, 1, 1]
+DiffuseColor: [1, 1, 1, 1]
+SpecularColor: [1, 1, 1, 1]
+EmissiveColor: [0, 0, 0, 1]
+Shininess: 2
+Diffuse: 3827950600195681274
+Emissive: 15224303691334022282
+Tiling: [1, 1]
+Offset: [0, 0]

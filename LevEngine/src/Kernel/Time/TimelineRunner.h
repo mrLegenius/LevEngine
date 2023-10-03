@@ -12,9 +12,9 @@ namespace LevEngine
 
     private:
         friend class TimelineFactory;
-        static void AddTimeline(Timeline* timeline);
+        static void AddTimeline(Ref<Timeline> timeline);
         
-        static Vector<Timeline*> s_Timelines;
+        static Vector<Ref<Timeline>> s_Timelines;
     };
 }
 

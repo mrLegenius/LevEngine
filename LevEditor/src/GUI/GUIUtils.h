@@ -21,11 +21,18 @@ namespace LevEngine::Editor
 		static bool DrawVector3Control(const String& label, Vector3& values, float resetValue = 0.0f, float labelWidth = 100.0f);
 		static bool DrawVector2Control(const String& label, Vector2& values, float resetValue = 0.0f, float labelWidth = 100.0f);
 		static void DrawFloatControl(const String& label, float& value, float speed = 1, float min = 0, float max = 0);
-		static void DrawFloatControl(const String& label, const std::function<float()>& getter, const std::function<void(float)>& setter,
-			float speed = 1, float min = 0, float max = 0);
+		static void DrawFloatControl(const String& label, const std::function<float()>& getter,
+			const std::function<void(float)>& setter, float speed = 1, float min = 0, float max = 0);
+		
+		static void DrawDoubleControl(const String& label, double& value, double speed,
+		                              const double* p_min = nullptr, const double* p_max = nullptr);
+		
+		static void DrawDoubleControl(const String& label, const std::function<double()>& getter,
+			const std::function<void(double)>& setter, double speed,
+			const double* p_min = nullptr, const double* p_max = nullptr);
 
 		static void DrawIntControl(const String& label, const std::function<int()>& getter, const std::function<void(int)>& setter,
-			int speed = 1, int min = 0, int max = 0);
+		                           int speed = 1, int min = 0, int max = 0);
 
 		static void DrawColor3Control(const String& label, const std::function<Color()>& getter,
 		                              const std::function<void(Color)>& setter);

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Timestep.h"
+#include "TimelineParameters.h"
 #include "Math/Math.h"
 
 namespace LevEngine
@@ -7,38 +7,45 @@ namespace LevEngine
     class Timeline
     {
     public:
-        Timeline(bool startPlaying = true, bool isLooping = false, double loopDuration = 0.0);
-
+        Timeline();
+        Timeline(const TimelineParameters&& timelineParameters);
+        
         [[nodiscard]] double GetTimeScale() const;
-        void SetTimeScale(double timeScale);
         [[nodiscard]] double GetTimeSinceStartup() const;
 
         void Play();
         void Pause();
         void Stop();
-        
-        [[nodiscard]] bool IsLooping() const
-        {
-            return m_IsLooping;
-        }
-        
+
         void OnUpdate(float deltaTime);
         [[nodiscard]] bool IsPlaying() const;
+        [[nodiscard]] bool IsLooping() const;
+        void SetDuration(double duration);
+        void SetIsLooping(bool isLooping);
+        void SetTimeScale(double timeScale);
+        void SetTimelineParameters(const TimelineParameters& timelineParameters);
+        double GetDuration() const;
 
     private:
         [[nodiscard]] bool IsMaxDurationReached() const
         {
-            return m_TimeElapsed + Math::FloatEpsilon > m_Duration;
-        }
-        
-        double m_TimeScale;
-        double m_TimeElapsed;
-        bool m_IsPlaying;
-        bool m_IsLooping;
+            // Negative duration is infinite timeline
+            if (m_TimelineParameters.duration < 0)
+            {
+                return false;
+            }
+            
+            if (GetTimeScale() >= 0)
+            {
+                return m_TimeElapsed + Math::FloatEpsilon > m_TimelineParameters.duration;
+            }
 
-        // If m_IsLooping, then equals loop duration, equals total play duration otherwise
-        // If !m_IsLooping && negative, then duration is infinite
-        double m_Duration; 
+            return m_TimeElapsed <= 0;
+        }
+
+        double m_TimeElapsed{};
+        bool m_IsPlaying{};
+        TimelineParameters m_TimelineParameters;
     };
 }
 

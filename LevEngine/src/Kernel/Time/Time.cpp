@@ -10,8 +10,8 @@ namespace LevEngine
     Timestep Time::s_DeltaTime = Timestep(0.0f);
     Timestep Time::s_DeltaTimeFixed = Timestep(0.0f);
     std::chrono::time_point<time_clock> Time::s_StartupTime = std::chrono::time_point<time_clock>{ };
-    Timeline* Time::s_TimelineVariable;
-    Timeline* Time::s_TimelineFixed;
+    Ref<Timeline> Time::s_TimelineVariable;
+    Ref<Timeline> Time::s_TimelineFixed;
 
     Timestep Time::GetScaledDeltaTime()
     {
@@ -30,16 +30,17 @@ namespace LevEngine
 
     Timestep Time::GetTimeSinceStartup()
     {
-	    const auto timeSinceStartup = time_clock::now() - s_StartupTime;
-	    const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeSinceStartup);
-        return Timestep(static_cast<float>(milliseconds.count()) / 1000.0f);
+	    return Timestep(s_TimelineVariable->GetTimeSinceStartup());
     }
 
     void Time::Init(float deltaTimeFixed)
     {
-        s_TimelineVariable = TimelineFactory::CreateTimeline();
-        s_TimelineFixed = TimelineFactory::CreateTimeline();
+        s_TimelineVariable = TimelineFactory::CreateTimeline(TimelineParameters{false, -1, 1.0});
+        s_TimelineFixed = TimelineFactory::CreateTimeline(TimelineParameters{false, -1, 1.0});
         s_DeltaTimeFixed = Timestep(deltaTimeFixed);
+
+        s_TimelineVariable->Play();
+        s_TimelineFixed->Play();
     }
 
     void Time::SetDeltaTime(const float deltaTime)
