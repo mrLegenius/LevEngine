@@ -8,7 +8,7 @@ namespace LevEngine::Editor
     class TimelineComponentDrawer final : public ComponentDrawer<TimelineComponent, TimelineComponentDrawer>
     {
     protected:
-        [[nodiscard]] String GetLabel() const override { return "TimelineComponent"; }
+        [[nodiscard]] String GetLabel() const override { return "Timeline"; }
 
         void DrawContent(TimelineComponent& component) override
         {
