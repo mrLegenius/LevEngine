@@ -35,6 +35,7 @@ struct CollisionInfo
 class Physics
 {
 public:
+    
     static void HandleCollision(Transform& transformA, Rigidbody& rigidbodyA, Transform& transformB, Rigidbody& rigidbodyB, ContactPoint p);
     static void Process(entt::registry& registry, float deltaTime);
 
