@@ -30,16 +30,17 @@ namespace LevEngine
 
     Timestep Time::GetTimeSinceStartup()
     {
-	    const auto timeSinceStartup = time_clock::now() - s_StartupTime;
-	    const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeSinceStartup);
-        return Timestep(static_cast<float>(milliseconds.count()) / 1000.0f);
+	    return Timestep(s_TimelineVariable->GetTimeSinceStartup());
     }
 
     void Time::Init(float deltaTimeFixed)
     {
-        s_TimelineVariable = TimelineFactory::CreateTimeline(TimelineParameters{true, false, 0.0});
-        s_TimelineFixed = TimelineFactory::CreateTimeline(TimelineParameters{true, false, 0.0});
+        s_TimelineVariable = TimelineFactory::CreateTimeline(TimelineParameters{false, -1, 1.0});
+        s_TimelineFixed = TimelineFactory::CreateTimeline(TimelineParameters{false, -1, 1.0});
         s_DeltaTimeFixed = Timestep(deltaTimeFixed);
+
+        s_TimelineVariable->Play();
+        s_TimelineFixed->Play();
     }
 
     void Time::SetDeltaTime(const float deltaTime)

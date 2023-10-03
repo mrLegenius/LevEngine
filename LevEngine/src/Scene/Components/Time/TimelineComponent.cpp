@@ -20,6 +20,11 @@ namespace LevEngine
         }
     }
 
+    TimelineComponent::~TimelineComponent()
+    {
+        timeline = nullptr;
+    }
+
     void TimelineComponent::Init()
     {
         // TODO: Replace with TimelineInitSystem that is called once on play start when InitSystems will be implemented.

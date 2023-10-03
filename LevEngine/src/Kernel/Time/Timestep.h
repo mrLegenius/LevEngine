@@ -17,7 +17,7 @@ namespace LevEngine
 		Timestep& operator+=(const Timestep& rhs);
 
 	private:
-		float m_Time;
+		double m_Time;
 	};
 
 	inline Timestep Timestep::operator*(const Timestep& rhs) const
@@ -27,7 +27,7 @@ namespace LevEngine
 
 	inline Timestep Timestep::operator*(double rhs) const
 	{
-		return Timestep(static_cast<double>(m_Time) * rhs);
+		return Timestep(m_Time * rhs);
 	}
 
 	inline Timestep& Timestep::operator+=(const Timestep& rhs)

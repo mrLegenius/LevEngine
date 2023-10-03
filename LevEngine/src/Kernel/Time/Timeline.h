@@ -29,6 +29,12 @@ namespace LevEngine
     private:
         [[nodiscard]] bool IsMaxDurationReached() const
         {
+            // Negative duration is infinite timeline
+            if (m_TimelineParameters.duration < 0)
+            {
+                return false;
+            }
+            
             if (GetTimeScale() >= 0)
             {
                 return m_TimeElapsed + Math::FloatEpsilon > m_TimelineParameters.duration;
@@ -37,8 +43,6 @@ namespace LevEngine
             return m_TimeElapsed <= 0;
         }
 
-        bool IsValid() const;
-        
         double m_TimeElapsed{};
         bool m_IsPlaying{};
         TimelineParameters m_TimelineParameters;

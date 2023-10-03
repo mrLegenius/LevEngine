@@ -10,6 +10,7 @@ namespace LevEngine
     struct TimelineComponent
     {
         TimelineComponent();
+        ~TimelineComponent();
         
         bool playOnInit{true};
         Ref<Timeline> timeline = nullptr;

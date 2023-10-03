@@ -20,8 +20,6 @@ double LevEngine::Timeline::GetTimeSinceStartup() const
 
 void LevEngine::Timeline::Play()
 {
-    LEV_ASSERT(IsValid());
-    
     if (!IsLooping() && IsMaxDurationReached())
     {
         m_TimeElapsed = 0.0;
@@ -101,9 +99,4 @@ void LevEngine::Timeline::SetTimelineParameters(const TimelineParameters& timeli
 double LevEngine::Timeline::GetDuration() const
 {
     return m_TimelineParameters.duration;
-}
-
-bool LevEngine::Timeline::IsValid() const
-{
-    return m_TimelineParameters.duration >= 0 || !m_TimelineParameters.isLooping;
 }
