@@ -12,6 +12,11 @@ namespace LevEngine
         s_Timelines.emplace_back(timeline);
     }
 
+    void TimelineRunner::RemoveTimeline(const Ref<Timeline>& timeline)
+    {
+        s_Timelines.erase_first(timeline);
+    }
+
     void TimelineRunner::OnUpdate(float deltaTime)
     {
         for (const auto timeline : s_Timelines)

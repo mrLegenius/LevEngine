@@ -13,6 +13,7 @@ namespace LevEngine
     private:
         friend class TimelineFactory;
         static void AddTimeline(Ref<Timeline> timeline);
+        static void RemoveTimeline(const Ref<Timeline>& timeline);
         
         static Vector<Ref<Timeline>> s_Timelines;
     };

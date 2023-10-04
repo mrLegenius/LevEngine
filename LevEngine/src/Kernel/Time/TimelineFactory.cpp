@@ -14,4 +14,8 @@ namespace LevEngine
         return timeline;
     }
 
+    void TimelineFactory::RemoveTimeline(const Ref<Timeline>& timeline)
+    {
+        TimelineRunner::RemoveTimeline(timeline);
+    }
 }

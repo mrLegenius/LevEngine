@@ -22,7 +22,7 @@ namespace LevEngine
 
     TimelineComponent::~TimelineComponent()
     {
-        timeline = nullptr;
+        TimelineFactory::RemoveTimeline(timeline);
     }
 
     void TimelineComponent::Init()
