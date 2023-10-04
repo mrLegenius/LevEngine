@@ -7,9 +7,7 @@ namespace LevEngine
 	{
 	public:
 		explicit DefaultAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
-
-		void DrawProperties() override { }
-
+		
 	protected:
 		bool OverrideDataFile() const override { return false; }
 

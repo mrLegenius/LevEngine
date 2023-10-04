@@ -9,12 +9,17 @@ class MaterialPBRAsset final : public MaterialAsset
 {
 public:
     Material& GetMaterial() override { return m_Material; }
+    Ref<TextureAsset>& GetAlbedo() { return m_Albedo; }
+    Ref<TextureAsset>& GetMetallic() { return m_Metallic; }
+    Ref<TextureAsset>& GetRoughness() { return m_Roughness; }
+    Ref<TextureAsset>& GetNormal() { return m_Normal; }
+    Ref<TextureAsset>& GetAmbientOcclusion() { return m_AmbientOcclusion; }
+    Ref<TextureAsset>& GetEmissive() { return m_Emissive; }
+
     explicit MaterialPBRAsset(const Path& path, const UUID uuid) : MaterialAsset(path, uuid)
     {
         ShaderAssets::ForwardPBR();
     }
-
-    void DrawProperties() override;
 
 protected:
     void SerializeData(YAML::Emitter& out) override;
@@ -23,8 +28,6 @@ protected:
 private:
     MaterialPBR m_Material;
 	
-    static void DrawMaterialTexture(const String& label, MaterialPBR& material, MaterialPBR::TextureType textureType, Ref<TextureAsset>& textureAsset);
-
     Ref<TextureAsset> m_Albedo;
     Ref<TextureAsset> m_Metallic;
     Ref<TextureAsset> m_Roughness;

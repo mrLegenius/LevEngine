@@ -23,6 +23,10 @@ namespace LevEngine
 		template<typename T>
 		static constexpr auto Min(const T a, const T b) { return std::min(a, b); }
 
+		static int Sign(const int a) { return ((a) >= (0)) ? (1) : (-1); }
+		static float Sign(const float a) { return ((a) > (-FloatEpsilon)) ? (1.0f) : (-1.0f); }
+		static double Sign(const double a) { return ((a) > (-FloatEpsilon)) ? (1.0) : (-1.0); }
+
 		static constexpr float MaxElement(const Vector3 vector)
 		{
 			return Max(Max(vector.x, vector.y), vector.z);

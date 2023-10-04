@@ -1,26 +1,12 @@
 ﻿#include "levpch.h"
 #include "Collider.h"
 
-#include "GUI/GUIUtils.h"
-#include "Scene/Components/ComponentDrawer.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
 {
 	BoxCollider::BoxCollider() = default;
 	SphereCollider::SphereCollider() = default;
-
-	class SphereColliderDrawer final : public ComponentDrawer<SphereCollider, SphereColliderDrawer>
-	{
-	protected:
-		String GetLabel() const override { return "Sphere Collider"; }
-
-		void DrawContent(SphereCollider& component) override
-		{
-			GUIUtils::DrawFloatControl("Radius", component.radius);
-			GUIUtils::DrawVector3Control("Offset", component.offset);
-		}
-	};
 
 	class SphereColliderSerializer final : public ComponentSerializer<SphereCollider, SphereColliderSerializer>
 	{
@@ -37,18 +23,6 @@ namespace LevEngine
 		{
 			component.radius = node["Radius"].as<float>();
 			component.offset = node["Offset"].as<Vector3>();
-		}
-	};
-
-	class BoxColliderDrawer final : public ComponentDrawer<BoxCollider, BoxColliderDrawer>
-	{
-	protected:
-		String GetLabel() const override { return "Box Collider"; }
-
-		void DrawContent(BoxCollider& component) override
-		{
-			GUIUtils::DrawVector3Control("Extents", component.extents);
-			GUIUtils::DrawVector3Control("Offset", component.offset);
 		}
 	};
 

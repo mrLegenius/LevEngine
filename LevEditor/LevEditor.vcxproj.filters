@@ -66,6 +66,15 @@
     <ClInclude Include="src\ModalPopup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\GUIUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\LevEditor.cpp">
@@ -114,6 +123,57 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ModalPopup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Assets\MaterialSimpleAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Assets\MaterialPBRAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\ColliderDrawers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\MeshRendererDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\RigidbodyDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\SkyboxComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\TransformDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\WaypointMovementComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\GUIUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

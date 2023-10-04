@@ -9,9 +9,7 @@ namespace LevEngine
 	{
 	public:
 		explicit MeshAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
-
-		void DrawProperties() override { }
-
+		
 		[[nodiscard]] const Ref<Mesh>& GetMesh() const { return m_Mesh; }
 
 		[[nodiscard]] Ref<Texture> GetIcon() const override

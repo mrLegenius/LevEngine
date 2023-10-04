@@ -10,18 +10,18 @@ class MaterialSimpleAsset final : public MaterialAsset
 {
 public:
 	Material& GetMaterial() override { return m_Material; }
+	Ref<TextureAsset>& GetDiffuse() { return m_Diffuse; }
+	Ref<TextureAsset>& GetEmissive() { return m_Emissive; }
+	Ref<TextureAsset>& GetSpecular() { return m_Specular; }
+	Ref<TextureAsset>& GetNormal() { return m_Normal; }
 	
 	explicit MaterialSimpleAsset(const Path& path, const UUID uuid) : MaterialAsset(path, uuid) { }
-
-	void DrawProperties() override;
 
 protected:
 	void SerializeData(YAML::Emitter& out) override;
 	void DeserializeData(YAML::Node& node) override;
 
 private:
-	static void DrawMaterialTexture(const String& label, MaterialSimple& material, MaterialSimple::TextureType textureType, Ref<TextureAsset>& textureAsset);
-	
 	MaterialSimple m_Material;
 	
 	Ref<TextureAsset> m_Diffuse;

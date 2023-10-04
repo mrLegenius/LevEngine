@@ -55,6 +55,7 @@ namespace LevEngine
 		if (!entities) return true;
 
 		std::unordered_map<UUID, Entity> entitiesMap;
+		std::unordered_map<UUID, Pair<Entity, YAML::Node>> entitiesToDeserialize;
 		std::unordered_map<UUID, UUID> relationships;
 
 		for (auto entity : entities)
@@ -72,10 +73,16 @@ namespace LevEngine
 
 			Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
 
-			for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
-				serializer->Deserialize(entity, deserializedEntity);
-
+			entitiesToDeserialize.try_emplace(uuid, Pair<Entity, YAML::Node>(deserializedEntity, entity));
 			entitiesMap.try_emplace(uuid, deserializedEntity);
+		}
+
+		for (auto& [uuid, pair] : entitiesToDeserialize)
+		{
+			auto deserializedEntity = pair.first;
+			auto entityNode = pair.second;
+			for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
+				serializer->Deserialize(entityNode, deserializedEntity);
 		}
 
 		for (auto& [uuid, entity] : entitiesMap)

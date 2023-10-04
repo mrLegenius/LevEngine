@@ -308,10 +308,4 @@ Entity Scene::DuplicateEntity(const Entity entity, const Entity parent)
 
     return duplicatedEntity;
 }
-
-Entity Scene::GetEntityBy(Transform* value)
-{
-	const auto entity = entt::to_entity(m_Registry, *value);
-    return ConvertEntity(entity);
-}
 }

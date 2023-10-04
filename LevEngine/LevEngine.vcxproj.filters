@@ -60,12 +60,6 @@
     <ClInclude Include="src\Kernel\PlatformUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kernel\Time.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Kernel\Timestep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Kernel\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -297,9 +291,6 @@
     <ClInclude Include="external\stb\include\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GUI\GUIUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\GUI\ImGuiLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -511,9 +502,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\Components\Transform\Transform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Scene\Components\ComponentDrawer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\Components\Components.h">
@@ -1494,6 +1482,51 @@
     <ClInclude Include="src\Renderer\MaterialSimple.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Assets\PrefabAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DataTypes\Delegates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kernel\Time\Time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kernel\Time\Timeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kernel\Time\TimelineFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kernel\Time\TimelineParameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kernel\Time\TimelineRunner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kernel\Time\Timestep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\3D\Primitives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\QuadRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\Animation\WaypointMovement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\Time\TimelineComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\TypeParseTraits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input\Input.cpp">
@@ -1509,9 +1542,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Kernel\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Kernel\Time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Kernel\UUID.cpp">
@@ -1647,9 +1677,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="external\stb\stb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUI\GUIUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\ImGuiBuild.cpp">
@@ -1919,5 +1946,35 @@
     <ClCompile Include="src\Renderer\MaterialSimple.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Assets\PrefabAsset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kernel\Time\Time.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kernel\Time\Timeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kernel\Time\TimelineFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\3D\Primitives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\QuadRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\RenderTechnique.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\Time\TimelineComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kernel\Time\TimelineRunner.cpp" />
+    <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp" />
   </ItemGroup>
 </Project>

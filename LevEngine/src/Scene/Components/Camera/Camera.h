@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "Renderer/Camera/SceneCamera.h"
+#include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
-	class CameraComponentDrawer;
-
+	REGISTER_PARSE_TYPE(CameraComponent);
+	
 	struct CameraComponent
 	{
 		SceneCamera camera;

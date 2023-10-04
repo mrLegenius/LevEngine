@@ -1,39 +1,12 @@
 ﻿#include "levpch.h"
 #include "Lights.h"
 
-#include "../ComponentDrawer.h"
 #include "../ComponentSerializer.h"
 
 namespace LevEngine
 {
 	DirectionalLightComponent::DirectionalLightComponent() = default;
 	PointLightComponent::PointLightComponent() = default;
-
-	class DirectionalLightDrawer final : public ComponentDrawer<DirectionalLightComponent, DirectionalLightDrawer>
-	{
-	protected:
-		String GetLabel() const override { return "Directional Light"; }
-
-		void DrawContent(DirectionalLightComponent& component) override
-		{
-			ImGui::ColorEdit3("Color", component.color.Raw());
-		}
-	};
-
-	class PointLightDrawer final : public ComponentDrawer<PointLightComponent, PointLightDrawer>
-	{
-	protected:
-		String GetLabel() const override { return "Point Light"; }
-
-		void DrawContent(PointLightComponent& component) override
-		{
-			ImGui::ColorEdit3("Color", component.color.Raw());
-
-			ImGui::DragFloat("Range", &component.Range, 0.1f, 0.0f, std::numeric_limits<float>::max());
-			ImGui::DragFloat("Intensity", &component.Intensity, 0.1f, 0.0f, std::numeric_limits<float>::max());
-			ImGui::DragFloat("Smoothness", &component.Smoothness, 0.1f, 0.0f, 1.0f);
-		}
-	};
 
 	class DirectionalLightComponentSerializer final : public ComponentSerializer<DirectionalLightComponent, DirectionalLightComponentSerializer>
 	{

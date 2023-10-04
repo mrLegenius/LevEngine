@@ -96,6 +96,10 @@
     <ClInclude Include="src\EntitySelection.h" />
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Gizmo.h" />
+    <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
+    <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
+    <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
+    <ClInclude Include="src\GUI\GUIUtils.h" />
     <ClInclude Include="src\ModalPopup.h" />
     <ClInclude Include="src\Panels\AssetBrowserPanel.h" />
     <ClInclude Include="src\Panels\ConsolePanel.h" />
@@ -110,6 +114,22 @@
   <ItemGroup>
     <ClCompile Include="src\EditorSaveData.cpp" />
     <ClCompile Include="src\Gizmo.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\MaterialSimpleAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\MaterialPBRAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\ColliderDrawers.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\MeshRendererDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\RigidbodyDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\SkyboxComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\TransformDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\WaypointMovementComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\GUIUtils.cpp" />
     <ClCompile Include="src\ModalPopup.cpp" />
     <ClCompile Include="src\Panels\ConsolePanel.cpp" />
     <ClCompile Include="src\Panels\GamePanel.cpp" />

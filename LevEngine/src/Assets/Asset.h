@@ -34,7 +34,6 @@ namespace LevEngine
 		bool Deserialize();
 		void SerializeMeta();
 
-		void DrawEditor();
 		void Rename(const Path& path)
 		{
 			m_Name = path.stem().string().c_str();
@@ -50,8 +49,6 @@ namespace LevEngine
 		}
 
 	protected:
-		virtual void DrawProperties() { }
-
 		[[nodiscard]] virtual bool OverrideDataFile() const { return true; }
 		virtual void SerializeData(YAML::Emitter& out) = 0;
 		virtual void DeserializeData(YAML::Node& node) = 0;

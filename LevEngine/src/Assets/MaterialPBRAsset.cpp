@@ -1,34 +1,10 @@
 #include "levpch.h"
 #include "MaterialPBRAsset.h"
 
-#include "GUI/GUIUtils.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
-    void MaterialPBRAsset::DrawProperties()
-    {
-        GUIUtils::DrawColor3Control("Tint", BindGetter(&MaterialPBR::GetTintColor, &m_Material), BindSetter(&MaterialPBR::SetTintColor, &m_Material));
-
-        GUIUtils::DrawFloatControl("Metallic", BindGetter(&MaterialPBR::GetMetallic, &m_Material), BindSetter(&MaterialPBR::SetMetallic, &m_Material), 0.01f, 0.04f, 1.0f);
-        GUIUtils::DrawFloatControl("Roughness", BindGetter(&MaterialPBR::GetRoughness, &m_Material), BindSetter(&MaterialPBR::SetRoughness, &m_Material), 0.01f, 0.0f, 1.0f);
-
-        DrawMaterialTexture("Albedo", m_Material, MaterialPBR::TextureType::Albedo, m_Albedo);
-        DrawMaterialTexture("Metallic", m_Material, MaterialPBR::TextureType::Metallic, m_Metallic);
-        DrawMaterialTexture("Roughness", m_Material, MaterialPBR::TextureType::Roughness, m_Roughness);
-        DrawMaterialTexture("Normal", m_Material, MaterialPBR::TextureType::Normal, m_Normal);
-        DrawMaterialTexture("AmbientOcclusion", m_Material, MaterialPBR::TextureType::AmbientOcclusion, m_AmbientOcclusion);
-        DrawMaterialTexture("Emissive", m_Material, MaterialPBR::TextureType::Emissive, m_Emissive);
-
-        auto tiling = m_Material.GetTextureTiling();
-        if (GUIUtils::DrawVector2Control("Tiling", tiling, 1, 100))
-            m_Material.SetTextureTiling(tiling);
-
-        auto offset = m_Material.GetTextureOffset();
-        if (GUIUtils::DrawVector2Control("Offset", offset, 0, 100))
-            m_Material.SetTextureOffset(offset);
-    }
-
     void MaterialPBRAsset::SerializeData(YAML::Emitter& out)
     {
         out << YAML::Key << "Tint" << YAML::Value << m_Material.GetTintColor();
@@ -81,15 +57,5 @@ namespace LevEngine
 
         m_Material.SetTextureTiling(node["Tiling"].as<Vector2>());
         m_Material.SetTextureOffset(node["Offset"].as<Vector2>());
-    }
-
-    void MaterialPBRAsset::DrawMaterialTexture(const String& label, MaterialPBR& MaterialPBR,
-        MaterialPBR::TextureType textureType, Ref<TextureAsset>& textureAsset)
-    {
-        ImGui::PushID(static_cast<int>(textureType));
-
-        if (GUIUtils::DrawTextureAsset(label, textureAsset))
-            MaterialPBR.SetTexture(textureType, textureAsset ? textureAsset->GetTexture() : nullptr);
-        ImGui::PopID();
     }
 }

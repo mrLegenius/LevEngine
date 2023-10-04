@@ -1,6 +1,9 @@
 ﻿#include "pch.h"
 #include "Game.h"
 
+#include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
+#include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
+
 /*
  * There are some problems in this project
  * 1. (Done) We need Project system to have ability change assets of separate project
@@ -312,6 +315,8 @@ namespace Sandbox
 		scene->RegisterUpdateSystem<EnemySpawnSystem>();
 		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
 		scene->RegisterUpdateSystem<EnemyMovementSystem>();
+		scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
+		scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
 

@@ -19,5 +19,6 @@ namespace LevEngine::Editor
 		void DrawEntityNode(Entity entity);
 		
 		Vector<Entity> m_EntitiesToDelete;
+		Entity m_PressedEntity;
 	};
 }

@@ -3,11 +3,6 @@
 
 namespace LevEngine
 {
-	void Asset::DrawEditor()
-	{
-		DrawProperties();
-	}
-
 	void Asset::Serialize()
 	{
 		SerializeData();

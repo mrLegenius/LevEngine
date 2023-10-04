@@ -2,7 +2,7 @@
 #include "ParticlePass.h"
 
 #include "Assets.h"
-#include "Kernel/Time.h"
+#include "Kernel/Time/Time.h"
 #include "RenderCommand.h"
 #include "RenderSettings.h"
 #include "Math/Random.h"
@@ -103,7 +103,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	textureSlots[0] = TextureAssets::Particle();  //<--- default particle ---<<
 	uint32_t textureSlotIndex = 1;
 
-	const float deltaTime = Time::GetDeltaTime().GetSeconds();
+	const float deltaTime = Time::GetScaledDeltaTime().GetSeconds();
 
 	const auto group = registry.view<Transform, EmitterComponent, IDComponent>();
 	m_ParticlesBuffer->Bind(0, ShaderType::Compute, true, -1);
