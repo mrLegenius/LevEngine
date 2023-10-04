@@ -131,6 +131,8 @@ namespace LevEngine::Editor
 
     void EditorLayer::OnRender()
     {
+        if (!Project::GetProject()) return;
+        
         const auto& activeScene = SceneManager::GetActiveScene();
         
         if (m_Viewport->IsActive())
