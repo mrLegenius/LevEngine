@@ -862,6 +862,7 @@
     <ClInclude Include="src\Physics\Events\CollisionBeginEvent.h" />
     <ClInclude Include="src\Physics\Events\CollisionEndEvent.h" />
     <ClInclude Include="src\Physics\Physics.h" />
+    <ClInclude Include="src\Physics\PhysX\PhysX.h" />
     <ClInclude Include="src\Physics\Systems\ForcesClearSystem.h" />
     <ClInclude Include="src\Physics\Systems\PositionUpdateSystem.h" />
     <ClInclude Include="src\Physics\Systems\VelocityUpdateSystem.h" />
@@ -1192,6 +1193,7 @@
     <ClCompile Include="src\Physics\Components\Collider.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
+    <ClCompile Include="src\Physics\PhysX\PhysX.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11BlendState.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11ConstantBuffer.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DepthStencilState.cpp" />

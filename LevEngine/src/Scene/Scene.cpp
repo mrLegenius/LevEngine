@@ -27,6 +27,11 @@ void Scene::OnUpdate(const float deltaTime)
 
 void Scene::OnPhysics(const float deltaTime)
 {
+    if (bTestPhysX)
+    {
+        PhysX physX;
+        bTestPhysX = false;
+    }
     Physics::Process(m_Registry, deltaTime);
 }
 

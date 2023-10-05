@@ -37,9 +37,6 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [50, 1, 50]
-    Box Collider:
-      Extents: [25, 0.5, 25]
-      Offset: [0, 0, 0]
     Rigidbody:
       Body Type: 0
       Gravity Scale: 1
@@ -48,6 +45,9 @@ Entities:
       Damping: 0.800000012
       Angular Damping: 0.800000012
       Enabled: true
+    Box Collider:
+      Extents: [25, 0.5, 25]
+      Offset: [0, 0, 0]
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 7582525064410579512
@@ -57,11 +57,8 @@ Entities:
     Parent: 11837398838170000115
     Transform:
       Position: [-1.20967243e-05, 5.0001483, 25.5]
-      Rotation: [1.57078934, -1.91040522e-06, 3.14159083]
+      Rotation: [1.57078934, -1.87321609e-06, 3.14159083]
       Scale: [50, 0.999938488, 9.99950695]
-    Box Collider:
-      Extents: [25, 5, 0.400000006]
-      Offset: [0, 0, 0]
     Rigidbody:
       Body Type: 0
       Gravity Scale: 1
@@ -70,6 +67,9 @@ Entities:
       Damping: 0.800000012
       Angular Damping: 0.800000012
       Enabled: true
+    Box Collider:
+      Extents: [25, 5, 0.400000006]
+      Offset: [0, 0, 0]
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 16895830209131566910
@@ -106,9 +106,6 @@ Entities:
       Position: [0, 4.99981117, -25.5]
       Rotation: [1.57079613, 0, -3.14159203]
       Scale: [50, 0.999977112, 9.99981594]
-    Box Collider:
-      Extents: [25, 5, 0.400000006]
-      Offset: [0, 0, 0]
     Rigidbody:
       Body Type: 0
       Gravity Scale: 1
@@ -117,6 +114,9 @@ Entities:
       Damping: 0.800000012
       Angular Damping: 0.800000012
       Enabled: true
+    Box Collider:
+      Extents: [25, 5, 0.400000006]
+      Offset: [0, 0, 0]
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 16895830209131566910
@@ -128,9 +128,6 @@ Entities:
       Position: [25.5, 5, 3.73348342e-07]
       Rotation: [1.57079613, 0, 1.5707953]
       Scale: [50, 0.999999702, 10]
-    Box Collider:
-      Extents: [0.400000006, 5, 25]
-      Offset: [0, 0, 0]
     Rigidbody:
       Body Type: 0
       Gravity Scale: 1
@@ -139,6 +136,9 @@ Entities:
       Damping: 0.800000012
       Angular Damping: 0.800000012
       Enabled: true
+    Box Collider:
+      Extents: [0.400000006, 5, 25]
+      Offset: [0, 0, 0]
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 16895830209131566910
@@ -169,9 +169,6 @@ Entities:
       Position: [-25.5, 5, 5.15551474e-05]
       Rotation: [1.57079613, 0, 1.5707953]
       Scale: [50, 0.999999702, 10]
-    Box Collider:
-      Extents: [0.400000006, 5, 25]
-      Offset: [0, 0, 0]
     Rigidbody:
       Body Type: 0
       Gravity Scale: 1
@@ -180,6 +177,9 @@ Entities:
       Damping: 0.800000012
       Angular Damping: 0.800000012
       Enabled: true
+    Box Collider:
+      Extents: [0.400000006, 5, 25]
+      Offset: [0, 0, 0]
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 16895830209131566910

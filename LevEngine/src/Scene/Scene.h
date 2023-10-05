@@ -9,6 +9,9 @@
 #include "Physics/Physics.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Systems/EventSystem.h"
+
+#include "Physics/PhysX/PhysX.h"
+
 namespace LevEngine
 {
 class Entity;
@@ -74,5 +77,7 @@ private:
 	Vector<Scope<System>> m_UpdateSystems;
 	Vector<Scope<System>> m_LateUpdateSystems;
 	Vector<Scope<System>> m_EventSystems;
+
+	static inline bool bTestPhysX = true;
 };
 }
