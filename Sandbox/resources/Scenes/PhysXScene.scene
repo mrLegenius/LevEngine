@@ -25,7 +25,7 @@ Entities:
     Tag: Camera
     Transform:
       Position: [0, 10, -10]
-      Rotation: [-0.52359885, 3.14159203, 4.5945989e-13]
+      Rotation: [-0.52359885, 3.14159203, 9.1891978e-13]
       Scale: [0.999999762, 1, 0.999999762]
     Camera:
       Camera:
