@@ -94,6 +94,14 @@ namespace LevEngine::Editor
 		Log::CoreInfo("Prefab '{0}' is created at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
 	}
 
+	void HierarchyPanel::SavePrefab(const Entity entity, const Path& path)
+	{
+		if (const auto& asset = AssetDatabase::GetAsset<PrefabAsset>(path))
+			asset->SaveEntity(entity);
+
+		Log::CoreInfo("Prefab '{0}' is updated at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+	}
+
 	void HierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		LEV_PROFILE_FUNCTION()
@@ -195,7 +203,7 @@ namespace LevEngine::Editor
 					ModalPopup::Show("Prefab already exists", "Do you want to override it?", "Yes", "No",
 					[entity, path]
 					{
-						CreatePrefab(entity, path);
+						SavePrefab(entity, path);
 					});
 				}
 				else

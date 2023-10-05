@@ -43,7 +43,10 @@ namespace LevEngine::Editor
 				drawList->AddRect(innerRect.Min, innerRect.Max, GetColorU32(ImGuiCol_DragDropTarget), 0.0f, 0, 2.0f);
 			}
 			if (payload->IsDelivery())
+			{
+				EndDragDropTarget();
 				return payload;
+			}
 		}
 
 		EndDragDropTarget();
