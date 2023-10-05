@@ -100,6 +100,7 @@
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
     <ClInclude Include="src\GUI\EditorGUI.h" />
+    <ClInclude Include="src\GUI\EditorGUI.inl" />
     <ClInclude Include="src\GUI\ScopedGUIHelpers.h" />
     <ClInclude Include="src\ModalPopup.h" />
     <ClInclude Include="src\Panels\AssetBrowserPanel.h" />
