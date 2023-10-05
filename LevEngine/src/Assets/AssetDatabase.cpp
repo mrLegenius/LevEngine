@@ -8,8 +8,6 @@ namespace LevEngine
 {
 	void AssetDatabase::ImportAsset(const Path& path)
 	{
-		if (!path.has_extension()) return;
-
 		auto uuid = UUID();
 		auto pathString = path.string();
 		pathString.append(".meta");
@@ -61,7 +59,8 @@ namespace LevEngine
 
 				if (directoryEntry.is_directory())
 					directories.push(path);
-				else if (path.extension() != ".meta")
+
+				if (path.extension() != ".meta")
 					ImportAsset(path);
 			}
 		} while (!directories.empty());
