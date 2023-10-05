@@ -12,21 +12,21 @@ namespace LevEngine::Editor
 
         void DrawContent(TimelineComponent& component) override
         {
-            GUIUtils::DrawCheckBox("Is Looping", BindGetter(&TimelineComponent::GetIsLooping, &component),
+            EditorGUI::DrawCheckBox("Is Looping", BindGetter(&TimelineComponent::GetIsLooping, &component),
                 BindSetter(&TimelineComponent::SetIsLooping, &component));
 
             constexpr double max = std::numeric_limits<double>::max();
-            GUIUtils::DrawDoubleControl("Duration",
+            EditorGUI::DrawDoubleControl("Duration",
                                         BindGetter(&TimelineComponent::GetDuration, &component),
                                         BindSetter(&TimelineComponent::SetDuration, &component),
                                         0.1f, 0, max);
 
-            GUIUtils::DrawDoubleControl("Time Scale",
+            EditorGUI::DrawDoubleControl("Time Scale",
                                        BindGetter(&TimelineComponent::GetTimeScale, &component),
                                        BindSetter(&TimelineComponent::SetTimeScale, &component),
                                        0.01f);
             
-            GUIUtils::DrawCheckBox("Play On Init", BindGetter(&TimelineComponent::GetPlayOnInit, &component),
+            EditorGUI::DrawCheckBox("Play On Init", BindGetter(&TimelineComponent::GetPlayOnInit, &component),
                 BindSetter(&TimelineComponent::SetPlayOnInit, &component));
 
             // TODO: Draw control buttons only if editor is in Play mode.

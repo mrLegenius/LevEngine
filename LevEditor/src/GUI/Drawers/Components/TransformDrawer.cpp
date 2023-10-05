@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
 #include "ComponentDrawer.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -14,15 +14,15 @@ namespace LevEngine::Editor
         void DrawContent(Transform& component) override
         {
             auto position = component.GetLocalPosition();
-            if (GUIUtils::DrawVector3Control("Position", position))
+            if (EditorGUI::DrawVector3Control("Position", position))
                 component.SetLocalPosition(position);
 
             Vector3 rotation = Math::ToDegrees(component.GetLocalRotation().ToEuler());
-            if (GUIUtils::DrawVector3Control("Rotation", rotation))
+            if (EditorGUI::DrawVector3Control("Rotation", rotation))
                 component.SetLocalRotation(Quaternion::CreateFromYawPitchRoll(Math::ToRadians(rotation)));
 
             auto scale = component.GetLocalScale();
-            if (GUIUtils::DrawVector3Control("Scale", scale, 1.0f))
+            if (EditorGUI::DrawVector3Control("Scale", scale, 1.0f))
                 component.SetLocalScale(scale);
         }
     };

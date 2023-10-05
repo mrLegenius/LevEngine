@@ -11,7 +11,7 @@
 
 namespace LevEngine::Editor
 {
-	struct GUIUtils
+	struct EditorGUI
 	{
 		static constexpr const char* AssetPayload = "ASSETS_BROWSER_ITEM";
 		static constexpr const char* EntityPayload = "ENTITY";
@@ -101,7 +101,7 @@ namespace LevEngine::Editor
 					Entity& entity = entities[idx];
 
 					auto componentTypeName = Format("({})", typeName);
-					if (GUIUtils::DrawSelectableComponent<T>(componentTypeName, entity, wasSelected, isSelected, idx))
+					if (EditorGUI::DrawSelectableComponent<T>(componentTypeName, entity, wasSelected, isSelected, idx))
 					{
 						changed = true;
 					}

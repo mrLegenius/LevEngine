@@ -5,7 +5,8 @@
 
 #include "AssetSelection.h"
 #include "Selection.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
+#include "GUI/ScopedGUIHelpers.h"
 
 namespace LevEngine::Editor
 {
@@ -24,8 +25,8 @@ namespace LevEngine::Editor
 
         static float padding = 16.0f;
         static float thumbnailSize = 64.0f;
-        
-        auto relativePath = relative(m_CurrentDirectory, Project::GetRoot());
+
+        const auto relativePath = relative(m_CurrentDirectory, Project::GetRoot());
         ImGui::SameLine();
         ImGui::AlignTextToFramePadding();
         ImGui::Text(relativePath.string().c_str());
@@ -62,7 +63,7 @@ namespace LevEngine::Editor
             if (!directoryEntry.is_directory())
                 asset = AssetDatabase::GetAsset(path);
             
-            ImGui::PushID(filenameString.c_str());
+            GUI::ScopedID id(filenameString);
             const Ref<Texture> icon = directoryEntry.is_directory()
                                           ? Icons::Directory()
                                           : asset->GetIcon();
@@ -75,7 +76,7 @@ namespace LevEngine::Editor
             {
                 if (ImGui::BeginDragDropTarget())
                 {
-	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
+	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EditorGUI::AssetPayload))
 	                {
 	                    const Path assetPath = static_cast<const wchar_t*>(payload->Data);
 
@@ -88,14 +89,15 @@ namespace LevEngine::Editor
             if (ImGui::BeginDragDropSource())
             {
                 const wchar_t* itemPath = path.c_str();
-                ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath,
+                ImGui::SetDragDropPayload(EditorGUI::AssetPayload, itemPath,
                     (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
                 ImGui::EndDragDropSource();
             }
 
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 5 });
             if (ImGui::BeginPopupContextItem())
             {
+                GUI::ScopedVariable windowPadding {ImGuiStyleVar_WindowPadding, Vector2{ 10, 5 }};
+                
                 if (ImGui::MenuItem("Delete"))
                     AssetDatabase::DeleteAsset(AssetDatabase::GetAsset(path));
 
@@ -104,23 +106,19 @@ namespace LevEngine::Editor
 
                 ImGui::EndPopup();
             }
-            ImGui::PopStyleVar();
             
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 5 });
             if (ImGui::BeginPopupContextWindow("Create Asset", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
             {
+                GUI::ScopedVariable windowPadding {ImGuiStyleVar_WindowPadding, Vector2{ 10, 5 }};
+                
                 if (ImGui::BeginMenu("Create"))
                 {
-                    DrawCreateMenu<MaterialSimpleAsset>("Material", "Material.mat");
-                    DrawCreateMenu<MaterialPBRAsset>("PBR Material", "PBRMaterial.pbr");
+                    DrawCreateMenu<MaterialPBRAsset>("Material", "Material.pbr");
                     DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
 
                     ImGui::EndMenu();
                 }
-
-                ImGui::EndPopup();
             }
-            ImGui::PopStyleVar();
 
             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
             {
@@ -137,8 +135,6 @@ namespace LevEngine::Editor
             ImGui::Text(stemString.c_str());
 
             ImGui::NextColumn();
-
-            ImGui::PopID();
         }
 
         ImGui::Columns(1);

@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
 #include "ComponentDrawer.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -13,14 +13,14 @@ namespace LevEngine::Editor
 		void DrawContent(EmitterComponent& component) override
 		{
 			ImGui::Checkbox("Random Initial Velocity", &component.Birth.RandomVelocity);
-			GUIUtils::DrawVector3Control("Initial Velocity", component.Birth.Velocity);
+			EditorGUI::DrawVector3Control("Initial Velocity", component.Birth.Velocity);
 			if (component.Birth.RandomVelocity)
-				GUIUtils::DrawVector3Control("Initial Velocity B", component.Birth.VelocityB);
+				EditorGUI::DrawVector3Control("Initial Velocity B", component.Birth.VelocityB);
 
 			ImGui::Checkbox("Random Initial Position", &component.Birth.RandomStartPosition);
-			GUIUtils::DrawVector3Control("Initial Position", component.Birth.Position);
+			EditorGUI::DrawVector3Control("Initial Position", component.Birth.Position);
 			if (component.Birth.RandomStartPosition)
-				GUIUtils::DrawVector3Control("Initial Position B", component.Birth.PositionB);
+				EditorGUI::DrawVector3Control("Initial Position B", component.Birth.PositionB);
 
 			ImGui::Checkbox("Random Initial Color", &component.Birth.RandomStartColor);
 			ImGui::ColorEdit4("Initial Color", component.Birth.StartColor.Raw());
@@ -46,7 +46,7 @@ namespace LevEngine::Editor
 				component.MaxParticles = maxParticles;
 			ImGui::DragFloat("Spawn Rate", &component.Rate, 0.1f, 0.0f, std::numeric_limits<float>::max());
 
-			GUIUtils::DrawTextureAsset("Texture", component.Texture);
+			EditorGUI::DrawTextureAsset("Texture", component.Texture);
 		}
 	};
 }

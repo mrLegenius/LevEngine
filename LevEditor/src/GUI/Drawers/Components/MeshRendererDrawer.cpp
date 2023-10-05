@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
 #include "ComponentDrawer.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -12,8 +12,8 @@ namespace LevEngine::Editor
 
         void DrawContent(MeshRendererComponent& component) override
         {
-            GUIUtils::DrawAsset<MeshAsset>("Mesh", component.mesh);
-            GUIUtils::DrawAsset<MaterialAsset>("Material", component.material);
+            EditorGUI::DrawAsset<MeshAsset>("Mesh", component.mesh);
+            EditorGUI::DrawAsset<MaterialAsset>("Material", component.material);
 
             ImGui::Checkbox("Cast shadows", &component.castShadow);
         }

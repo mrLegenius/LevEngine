@@ -99,7 +99,8 @@
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
-    <ClInclude Include="src\GUI\GUIUtils.h" />
+    <ClInclude Include="src\GUI\EditorGUI.h" />
+    <ClInclude Include="src\GUI\ScopedGUIHelpers.h" />
     <ClInclude Include="src\ModalPopup.h" />
     <ClInclude Include="src\Panels\AssetBrowserPanel.h" />
     <ClInclude Include="src\Panels\ConsolePanel.h" />
@@ -129,7 +130,7 @@
     <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\TransformDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\WaypointMovementComponentDrawer.cpp" />
-    <ClCompile Include="src\GUI\GUIUtils.cpp" />
+    <ClCompile Include="src\GUI\EditorGUI.cpp" />
     <ClCompile Include="src\ModalPopup.cpp" />
     <ClCompile Include="src\Panels\ConsolePanel.cpp" />
     <ClCompile Include="src\Panels\GamePanel.cpp" />

@@ -5,7 +5,7 @@
 
 #include "EntitySelection.h"
 #include "ModalPopup.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -40,7 +40,7 @@ namespace LevEngine::Editor
 
 		if (!activeScene) return;
 
-		if (const ImGuiPayload* payload = BeginDragDropTargetWindow(GUIUtils::AssetPayload))
+		if (const ImGuiPayload* payload = BeginDragDropTargetWindow(EditorGUI::AssetPayload))
 		{
 			const Path assetPath = static_cast<const wchar_t*>(payload->Data);
 
@@ -48,7 +48,7 @@ namespace LevEngine::Editor
 				prefab->Instantiate(activeScene);
 		}
 		
-		if (const ImGuiPayload* payload = BeginDragDropTargetWindow(GUIUtils::EntityPayload))
+		if (const ImGuiPayload* payload = BeginDragDropTargetWindow(EditorGUI::EntityPayload))
 		{
 			if (const auto draggedEntity = *static_cast<Entity*>(payload->Data))
 				draggedEntity.GetComponent<Transform>().SetParent(Entity{});
@@ -132,13 +132,13 @@ namespace LevEngine::Editor
 
 		if (ImGui::BeginDragDropSource())
 		{
-			ImGui::SetDragDropPayload(GUIUtils::EntityPayload, &entity, sizeof(Entity), ImGuiCond_Once);
+			ImGui::SetDragDropPayload(EditorGUI::EntityPayload, &entity, sizeof(Entity), ImGuiCond_Once);
 			ImGui::EndDragDropSource();
 		}
 
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::EntityPayload))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EditorGUI::EntityPayload))
 			{
 				const auto draggedEntity = *static_cast<Entity*>(payload->Data);
 
@@ -152,7 +152,7 @@ namespace LevEngine::Editor
 
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EditorGUI::AssetPayload))
 			{
 				const Path assetPath = static_cast<const wchar_t*>(payload->Data);
 

@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
-#include "GUIUtils.h"
+#include "EditorGUI.h"
+#include "ScopedGUIHelpers.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -22,13 +23,13 @@ namespace LevEngine::Editor
 	constexpr auto blueRegular = ImVec4{ IntToFloat(20), IntToFloat(20), IntToFloat(140), 1.0f };
 	constexpr auto blueLight = ImVec4{ IntToFloat(30), IntToFloat(30), IntToFloat(200), 1.0f };
 
-	bool GUIUtils::DrawVector3Control(const String& label, Vector3& values, const float resetValue, const float labelWidth)
+	bool EditorGUI::DrawVector3Control(const String& label, Vector3& values, const float resetValue, const float labelWidth)
 	{
 		// -- Init -------------------------------------------------------
 		const ImGuiIO& io = ImGui::GetIO();
 		const auto boldFont = io.Fonts->Fonts[0];
 
-		ImGui::PushID(label.c_str());
+		GUI::ScopedID id{label};
 
 		ImGui::Columns(2, nullptr, false);
 		ImGui::SetColumnWidth(0, labelWidth);
@@ -37,7 +38,7 @@ namespace LevEngine::Editor
 		ImGui::NextColumn();
 
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+		GUI::ScopedVariable itemSpacing{ImGuiStyleVar_ItemSpacing, Vector2::Zero};
 
 		const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
@@ -45,19 +46,18 @@ namespace LevEngine::Editor
 		bool changed = false;
 
 		// -- X Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, redDark);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redRegular);
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, redLight);
-		ImGui::PushFont(boldFont);
-
-		if (ImGui::Button("X", buttonSize))
 		{
-			values.x = resetValue;
-			changed = true;
-		}
+			GUI::ScopedColor color1(ImGuiCol_Button, redDark);
+			GUI::ScopedColor color2(ImGuiCol_ButtonHovered, redRegular);
+			GUI::ScopedColor color3(ImGuiCol_ButtonActive, redLight);
+			GUI::ScopedFont font(boldFont);
 
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
+			if (ImGui::Button("X", buttonSize))
+			{
+				values.x = resetValue;
+				changed = true;
+			}
+		}
 
 		ImGui::SameLine();
 		changed |= ImGui::DragFloat("##X", &values.x, 0.1f);
@@ -65,19 +65,18 @@ namespace LevEngine::Editor
 		ImGui::SameLine();
 
 		// -- Y Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, greenDark);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, greenRegular);
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, greenLight);
-		ImGui::PushFont(boldFont);
-
-		if (ImGui::Button("Y", buttonSize))
 		{
-			values.y = resetValue;
-			changed = true;
-		}
+			GUI::ScopedColor color1(ImGuiCol_Button, greenDark);
+			GUI::ScopedColor color2(ImGuiCol_ButtonHovered, greenRegular);
+			GUI::ScopedColor color3(ImGuiCol_ButtonActive, greenLight);
+			GUI::ScopedFont font(boldFont);
 
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
+			if (ImGui::Button("Y", buttonSize))
+			{
+				values.y = resetValue;
+				changed = true;
+			}
+		}
 
 		ImGui::SameLine();
 		changed |= ImGui::DragFloat("##Y", &values.y, 0.1f);
@@ -85,39 +84,36 @@ namespace LevEngine::Editor
 		ImGui::SameLine();
 
 		// -- Z Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, blueDark);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, blueRegular);
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, blueLight);
-		ImGui::PushFont(boldFont);
-
-		if (ImGui::Button("Z", buttonSize))
 		{
-			values.z = resetValue;
-			changed = true;
-		}
+			GUI::ScopedColor color1(ImGuiCol_Button, blueDark);
+			GUI::ScopedColor color2(ImGuiCol_ButtonHovered, blueRegular);
+			GUI::ScopedColor color3(ImGuiCol_ButtonActive, blueLight);
+			GUI::ScopedFont font(boldFont);
 
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
+			if (ImGui::Button("Z", buttonSize))
+			{
+				values.z = resetValue;
+				changed = true;
+			}
+		}
 
 		ImGui::SameLine();
 		changed |= ImGui::DragFloat("##Z", &values.z, 0.1f);
+		ImGui::PopItemWidth();
 
 		// -- Reset ------------------------------------------------------
-		ImGui::PopItemWidth();
-		ImGui::PopStyleVar();
 		ImGui::Columns();
-		ImGui::PopID();
 
 		return changed;
 	}
 
-	bool GUIUtils::DrawVector2Control(const String& label, Vector2& values, const float resetValue, const float labelWidth)
+	bool EditorGUI::DrawVector2Control(const String& label, Vector2& values, const float resetValue, const float labelWidth)
 	{
 		// -- Init -------------------------------------------------------
 		const ImGuiIO& io = ImGui::GetIO();
 		const auto boldFont = io.Fonts->Fonts[0];
 
-		ImGui::PushID(label.c_str());
+		GUI::ScopedID id{label};
 
 		ImGui::Columns(2, nullptr, false);
 		ImGui::SetColumnWidth(0, labelWidth);
@@ -126,7 +122,7 @@ namespace LevEngine::Editor
 		ImGui::NextColumn();
 
 		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+		GUI::ScopedVariable itemSpacing{ImGuiStyleVar_ItemSpacing, Vector2::Zero};
 
 		const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
@@ -134,19 +130,18 @@ namespace LevEngine::Editor
 		bool changed = false;
 
 		// -- X Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, redDark);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redRegular);
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, redLight);
-		ImGui::PushFont(boldFont);
-
-		if (ImGui::Button("X", buttonSize))
 		{
-			values.x = resetValue;
-			changed = true;
-		}
+			GUI::ScopedColor color1(ImGuiCol_Button, redDark);
+			GUI::ScopedColor color2(ImGuiCol_ButtonHovered, redRegular);
+			GUI::ScopedColor color3(ImGuiCol_ButtonActive, redLight);
+			GUI::ScopedFont font(boldFont);
 
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
+			if (ImGui::Button("X", buttonSize))
+			{
+				values.x = resetValue;
+				changed = true;
+			}
+		}
 
 		ImGui::SameLine();
 		changed |= ImGui::DragFloat("##X", &values.x, 0.1f);
@@ -154,51 +149,48 @@ namespace LevEngine::Editor
 		ImGui::SameLine();
 
 		// -- Y Component ------------------------------------------------
-		ImGui::PushStyleColor(ImGuiCol_Button, greenDark);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, greenRegular);
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, greenLight);
-		ImGui::PushFont(boldFont);
-
-		if (ImGui::Button("Y", buttonSize))
 		{
-			values.y = resetValue;
-			changed = true;
-		}
+			GUI::ScopedColor color1(ImGuiCol_Button, greenDark);
+			GUI::ScopedColor color2(ImGuiCol_ButtonHovered, greenRegular);
+			GUI::ScopedColor color3(ImGuiCol_ButtonActive, greenLight);
+			GUI::ScopedFont font(boldFont);
 
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
+			if (ImGui::Button("Y", buttonSize))
+			{
+				values.y = resetValue;
+				changed = true;
+			}
+		}
 
 		ImGui::SameLine();
 		changed |= ImGui::DragFloat("##Y", &values.y, 0.1f);
-
-		// -- Reset ------------------------------------------------------
 		ImGui::PopItemWidth();
-		ImGui::PopStyleVar();
+		
+		// -- Reset ------------------------------------------------------
 		ImGui::Columns();
-		ImGui::PopID();
 
 		return changed;
 	}
 
-	void GUIUtils::DrawFloatControl(const String& label, float& value, const float speed, const float min, const float max)
+	void EditorGUI::DrawFloatControl(const String& label, float& value, const float speed, const float min, const float max)
 	{
 		DrawFloatControl(label, [&value] {return value; }, [&value](const float& newValue) {value = newValue; }, speed, min, max);
 	}
 
-	void GUIUtils::DrawFloatControl(const String& label, const Func<float>& getter, const Action<float>& setter, const float speed, const float min, const float max)
+	void EditorGUI::DrawFloatControl(const String& label, const Func<float>& getter, const Action<float>& setter, const float speed, const float min, const float max)
 	{
 		auto value = getter();
 		if (ImGui::DragFloat(label.c_str(), &value, speed, min, max))
 			setter(value);
 	}
 
-	void GUIUtils::DrawDoubleControl(const String& label, double& value, double speed, double min, double max)
+	void EditorGUI::DrawDoubleControl(const String& label, double& value, double speed, double min, double max)
 	{
 		DrawDoubleControl(label, [&value] {return value; },
 			[&value](const float& newValue) {value = newValue; }, speed, min, max);
 	}
 
-	void GUIUtils::DrawDoubleControl(const String& label, const Func<double>& getter,
+	void EditorGUI::DrawDoubleControl(const String& label, const Func<double>& getter,
 		const Action<double>& setter, double speed, double min, double max)
 	{
 		auto value = getter();
@@ -206,7 +198,7 @@ namespace LevEngine::Editor
 			setter(value);
 	}
 
-	void GUIUtils::DrawIntControl(const String& label,
+	void EditorGUI::DrawIntControl(const String& label,
 		const Func<int>& getter,
 		const Action<int>& setter,
 		const int speed, const int min, const int max)
@@ -216,7 +208,7 @@ namespace LevEngine::Editor
 			setter(value);
 	}
 
-	void GUIUtils::DrawCheckBox(const char* label, const Func<bool>& getter,
+	void EditorGUI::DrawCheckBox(const char* label, const Func<bool>& getter,
 		const Action<bool>& setter)
 	{
 		auto value = getter();
@@ -224,19 +216,19 @@ namespace LevEngine::Editor
 			setter(value);
 	}
 
-	void GUIUtils::DrawColor3Control(const String& label, const Func<Color>& getter, const Action<Color>& setter)
+	void EditorGUI::DrawColor3Control(const String& label, const Func<Color>& getter, const Action<Color>& setter)
 	{
 		auto value = getter();
 		if (ImGui::ColorEdit3(label.c_str(), value.Raw()))
 			setter(value);
 	}
 
-	void GUIUtils::DrawTexture2D(Ref<Texture>& texture, const Vector2 size)
+	void EditorGUI::DrawTexture2D(Ref<Texture>& texture, const Vector2 size)
 	{
 		DrawTexture2D([&texture] { return texture; }, [&texture](const Ref<Texture>& newTexture) { texture = newTexture; }, size);
 	}
 
-	bool GUIUtils::DrawTextureAsset(const String& label, Ref<TextureAsset>& assetPtr)
+	bool EditorGUI::DrawTextureAsset(const String& label, Ref<TextureAsset>& assetPtr)
 	{
 		const bool changed = DrawAsset(label, assetPtr);
 		if (assetPtr && assetPtr->GetTexture())
@@ -248,7 +240,7 @@ namespace LevEngine::Editor
 		return changed;
 	}
 
-	bool GUIUtils::DrawTextureAsset(Ref<TextureAsset>& assetPtr, const Vector2 size)
+	bool EditorGUI::DrawTextureAsset(Ref<TextureAsset>& assetPtr, const Vector2 size)
 	{
 		auto changed = false;
 		const auto& asset = assetPtr;
@@ -283,7 +275,7 @@ namespace LevEngine::Editor
 		return changed;
 	}
 
-	void GUIUtils::DrawTexture2D(const Func<Ref<Texture>>& getter, const Action<Ref<Texture>>& setter, const Vector2 size)
+	void EditorGUI::DrawTexture2D(const Func<Ref<Texture>>& getter, const Action<Ref<Texture>>& setter, const Vector2 size)
 	{
 		const auto texture = getter();
 		ImGui::Image(texture ? texture->GetId() : nullptr, ImVec2(size.x, size.y), ImVec2{0, 1}, ImVec2{1, 0});

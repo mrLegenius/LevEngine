@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
 #include "ComponentDrawer.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -35,11 +35,11 @@ namespace LevEngine::Editor
                 ImGui::EndCombo();
             }
 
-            GUIUtils::DrawFloatControl("Gravity Scale", component.gravityScale);
-            GUIUtils::DrawFloatControl("Mass", component.mass);
-            GUIUtils::DrawFloatControl("Elasticity", component.elasticity);
-            GUIUtils::DrawFloatControl("Damping", component.damping);
-            GUIUtils::DrawFloatControl("Angular Damping", component.angularDamping);
+            EditorGUI::DrawFloatControl("Gravity Scale", component.gravityScale);
+            EditorGUI::DrawFloatControl("Mass", component.mass);
+            EditorGUI::DrawFloatControl("Elasticity", component.elasticity);
+            EditorGUI::DrawFloatControl("Damping", component.damping);
+            EditorGUI::DrawFloatControl("Angular Damping", component.angularDamping);
 
             ImGui::Checkbox("Enabled", &component.enabled);
         }

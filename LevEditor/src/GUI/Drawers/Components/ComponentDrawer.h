@@ -2,7 +2,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 #include "Kernel/ClassCollection.h"
 #include "Scene/Entity.h"
 
