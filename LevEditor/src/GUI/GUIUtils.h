@@ -3,10 +3,9 @@
 #include "Selection.h"
 #include "Assets/Asset.h"
 #include "Assets/AssetDatabase.h"
-#include "Kernel/Color.h"
+#include "Math/Color.h"
 #include "Renderer/Texture.h"
 #include "Scene/Entity.h"
-#include "Scene/SceneManager.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "DataTypes/String.h"
 

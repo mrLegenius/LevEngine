@@ -4,7 +4,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "DataTypes/Map.h"
-#include "Kernel/Color.h"
+#include "Math/Color.h"
 
 namespace LevEngine
 {

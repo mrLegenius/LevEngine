@@ -1,5 +1,5 @@
 #pragma once
-#include "Kernel/Color.h"
+#include "Math/Color.h"
 
 namespace LevEngine
 {

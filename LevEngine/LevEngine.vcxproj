@@ -466,7 +466,6 @@
     <ClInclude Include="src\Kernel\Application.h" />
     <ClInclude Include="src\Kernel\Asserts.h" />
     <ClInclude Include="src\Kernel\ClassCollection.h" />
-    <ClInclude Include="src\Kernel\Color.h" />
     <ClInclude Include="src\Kernel\Layer.h" />
     <ClInclude Include="src\Kernel\LayerStack.h" />
     <ClInclude Include="src\Kernel\Logger.h" />
@@ -482,6 +481,7 @@
     <ClInclude Include="src\Kernel\Window.h" />
     <ClInclude Include="src\LevEngine.h" />
     <ClInclude Include="src\Math\BoundingVolume.h" />
+    <ClInclude Include="src\Math\Color.h" />
     <ClInclude Include="src\Math\Frustum.h" />
     <ClInclude Include="src\Math\Math.h" />
     <ClInclude Include="src\Math\Matrix.h" />
@@ -818,7 +818,6 @@
     <ClCompile Include="src\GUI\ImGuiLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
     <ClCompile Include="src\Kernel\Application.cpp" />
-    <ClCompile Include="src\Kernel\Color.cpp" />
     <ClCompile Include="src\Kernel\Layer.cpp" />
     <ClCompile Include="src\Kernel\LayerStack.cpp" />
     <ClCompile Include="src\Kernel\Logger.cpp" />
@@ -829,6 +828,7 @@
     <ClCompile Include="src\Kernel\UUID.cpp" />
     <ClCompile Include="src\Kernel\Window.cpp" />
     <ClCompile Include="src\Math\BoundingVolume.cpp" />
+    <ClCompile Include="src\Math\Color.cpp" />
     <ClCompile Include="src\Math\Random.cpp" />
     <ClCompile Include="src\levpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

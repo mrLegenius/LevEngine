@@ -45,6 +45,7 @@ struct Color
 	explicit operator Vector3() const { return Vector3(r, g, b); }
 	explicit operator Vector4() const { return Vector4(r, g, b, a); }
 
+	static const Color Clear;
     static const Color White;
     static const Color Silver;
     static const Color Gray;
