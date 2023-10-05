@@ -94,29 +94,33 @@ namespace LevEngine::Editor
                 ImGui::EndDragDropSource();
             }
 
-            if (ImGui::BeginPopupContextItem())
             {
                 GUI::ScopedVariable windowPadding {ImGuiStyleVar_WindowPadding, Vector2{ 10, 5 }};
-                
-                if (ImGui::MenuItem("Delete"))
-                    AssetDatabase::DeleteAsset(AssetDatabase::GetAsset(path));
-
-                if (ImGui::MenuItem("Reimport"))
-                    AssetDatabase::ImportAsset(path);
-
-                ImGui::EndPopup();
-            }
-            
-            if (ImGui::BeginPopupContextWindow("Create Asset", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
-            {
-                GUI::ScopedVariable windowPadding {ImGuiStyleVar_WindowPadding, Vector2{ 10, 5 }};
-                
-                if (ImGui::BeginMenu("Create"))
+                if (ImGui::BeginPopupContextItem())
                 {
-                    DrawCreateMenu<MaterialPBRAsset>("Material", "Material.pbr");
-                    DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
+                    if (ImGui::MenuItem("Delete"))
+                        AssetDatabase::DeleteAsset(AssetDatabase::GetAsset(path));
 
-                    ImGui::EndMenu();
+                    if (ImGui::MenuItem("Reimport"))
+                        AssetDatabase::ImportAsset(path);
+
+                    ImGui::EndPopup();
+                }
+            }
+
+            {
+                GUI::ScopedVariable windowPadding {ImGuiStyleVar_WindowPadding, Vector2{ 10, 5 }};
+                if (ImGui::BeginPopupContextWindow("Create Asset", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
+                {
+                    if (ImGui::BeginMenu("Create"))
+                    {
+                        DrawCreateMenu<MaterialPBRAsset>("Material", "Material.pbr");
+                        DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
+
+                        ImGui::EndMenu();
+                    }
+
+                    ImGui::EndPopup();
                 }
             }
 
