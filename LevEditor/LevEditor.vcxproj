@@ -49,8 +49,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;LEV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -60,6 +60,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>LevEngine.lib;FMODStudio.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -69,8 +72,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -82,13 +85,22 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>LevEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\AssetSelection.h" />
     <ClInclude Include="src\EditorCamera.h" />
+    <ClInclude Include="src\EditorSaveData.h" />
     <ClInclude Include="src\EntitySelection.h" />
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Gizmo.h" />
+    <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
+    <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
+    <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
+    <ClInclude Include="src\GUI\GUIUtils.h" />
+    <ClInclude Include="src\ModalPopup.h" />
     <ClInclude Include="src\Panels\AssetBrowserPanel.h" />
     <ClInclude Include="src\Panels\ConsolePanel.h" />
     <ClInclude Include="src\Panels\GamePanel.h" />
@@ -100,7 +112,25 @@
     <ClInclude Include="src\Selection.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\EditorSaveData.cpp" />
     <ClCompile Include="src\Gizmo.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\MaterialSimpleAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\MaterialPBRAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\ColliderDrawers.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\MeshRendererDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\RigidbodyDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\SkyboxComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\TransformDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\WaypointMovementComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\GUIUtils.cpp" />
+    <ClCompile Include="src\ModalPopup.cpp" />
     <ClCompile Include="src\Panels\ConsolePanel.cpp" />
     <ClCompile Include="src\Panels\GamePanel.cpp" />
     <ClCompile Include="src\pch.cpp">
@@ -132,6 +162,9 @@
     <ProjectReference Include="..\LevEngine\LevEngine.vcxproj">
       <Project>{3e986346-23d1-4a72-802e-9727d0a4be89}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="LevResources\Shaders\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -1,449 +1,192 @@
 #pragma once
-
-#include <filesystem>
-
 #include "TextureLibrary.h"
-#include "ObjLoader.h"
 #include "DataTypes/Path.h"
 #include "Renderer/Texture.h"
-#include "Renderer/Material.h"
+#include "Renderer/MaterialSimple.h"
 #include "Renderer/Shader.h"
 
 using namespace LevEngine;
 
-static Path resources = Path("resources");
+static Path EngineResourcesRoot = Path("LevResources");
 
-static String GetShaderPath(const String& name) { return (resources / "Shaders" / name.c_str()).string().c_str(); }
-static String GetTexturePath(const String& name) { return (resources / "Textures" / name.c_str()).string().c_str(); }
-static String GetSkyboxPath(const String& name) { return (resources / "Skyboxes" / name.c_str()).string().c_str(); }
-static Path GetModelPath(const String& name) { return (resources / "Models" / name.c_str()); }
+static String GetShaderPath(const String& name) { return (EngineResourcesRoot / "Shaders" / name.c_str()).string().c_str(); }
+static String GetTexturePath(const String& name) { return (EngineResourcesRoot / "Textures" / name.c_str()).string().c_str(); }
+static String GetIconsPath(const String& name) { return (EngineResourcesRoot / "Icons" / name.c_str()).string().c_str(); }
 
-static Ref<SamplerState> GetDefaultClampedSamplerState()
+static auto GetIcon(const String& name) { return TextureLibrary::GetTexture(GetIconsPath(name)); }
+
+struct Icons
 {
-	static Ref<SamplerState> sampler;
-
-	if (sampler) return sampler;
-
-	sampler = SamplerState::Create();
-	sampler->SetFilter(SamplerState::MinFilter::Linear, SamplerState::MagFilter::Linear, SamplerState::MipFilter::Linear);
-	sampler->SetWrapMode(SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp);
-	sampler->SetCompareFunction(SamplerState::CompareFunc::Never);
-	sampler->SetCompareMode(SamplerState::CompareMode::None);
-	sampler->SetMinLOD(-FLT_MAX);
-	sampler->SetMaxLOD(FLT_MAX);
-	sampler->SetMaxAnisotropy(1);
-	sampler->EnableAnisotropicFiltering(false);
-	sampler->SetBorderColor({ 1, 1, 1, 1 });
-	sampler->SetLODBias(0);
-
-	return sampler;
-}
-
-static Ref<SamplerState> GetDefaultWrappedSamplerState()
-{
-	static Ref<SamplerState> sampler;
-
-	if (sampler) return sampler;
-
-	sampler = SamplerState::Create();
-	sampler->SetFilter(SamplerState::MinFilter::Linear, SamplerState::MagFilter::Linear, SamplerState::MipFilter::Linear);
-	sampler->SetWrapMode(SamplerState::WrapMode::Repeat, SamplerState::WrapMode::Repeat, SamplerState::WrapMode::Repeat);
-	sampler->SetCompareFunction(SamplerState::CompareFunc::Never);
-	sampler->SetCompareMode(SamplerState::CompareMode::None);
-	sampler->SetMinLOD(-FLT_MAX);
-	sampler->SetMaxLOD(FLT_MAX);
-	sampler->SetMaxAnisotropy(1);
-	sampler->EnableAnisotropicFiltering(false);
-	sampler->SetBorderColor({ 1, 1, 1, 1 });
-	sampler->SetLODBias(0);
-
-	return sampler;
-}
-
-struct LavaRockAssets
-{
-	static auto Mesh()
-	{
-		static auto mesh = ObjLoader().LoadMesh(GetModelPath("lava_rock.obj"));
-		return mesh;
-	}
-
-	static auto AmbientTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/ambient.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-	static auto EmissiveTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/emissive.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-	static auto SpecularTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/specular.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-
-	static auto NormalTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("LavaRock/normal.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
+	static auto Play(){ return GetIcon("PlayButton.png"); }
+	static auto Stop(){ return GetIcon("StopButton.png"); }
+	static auto Rotate(){ return GetIcon("Rotate.png"); } 
+	static auto Scale(){ return GetIcon("Scale.png"); } 
+	static auto Select(){ return GetIcon("Select.png"); } 
+	static auto Translate(){ return GetIcon("Translate.png"); }
+    
+	static auto Directory(){ return GetIcon("Assets\\DirectoryIcon.png"); } 
+	static auto File(){ return GetIcon("Assets\\FileIcon.png"); } 
+	static auto Material(){ return GetIcon("Assets\\MaterialIcon.png"); } 
+	static auto Mesh(){ return GetIcon("Assets\\MeshIcon.png"); } 
+	static auto Skybox(){ return GetIcon("Assets\\SkyboxIcon.png"); }
 };
 
-struct FancyTorch
+struct ShaderAssets
 {
-	static Path GetAssetPath(const String& name) { return (resources / "FancyTorch" / name.c_str()).string(); }
-
-	static auto Mesh()
+	static auto Debug()
 	{
-		static auto mesh = ObjLoader().LoadMesh(GetAssetPath("FancyTorch.obj"));
-		return mesh;
-	}
+		LEV_PROFILE_FUNCTION();
 
-	static auto AmbientTexture()
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Debug.hlsl"));
+		return shader;
+	}
+	
+	static auto ForwardPBR()
 	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_albedo.png").string().c_str());
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
+		LEV_PROFILE_FUNCTION();
 
-	static auto EmissiveTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_gloss.png").string().c_str());
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("ForwardPBR.hlsl"));
+		return shader;
 	}
-
-	static auto SpecularTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_metal.png").string().c_str());
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-	static auto NormalTexture()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetAssetPath("FancyTorchIron_normal.png").string().c_str());
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-};
-
-namespace ShaderAssets
-{
-    inline auto Lit()
+	
+	static auto Lit()
     {
 		LEV_PROFILE_FUNCTION();
 
-        static Ref<Shader> shader;
-        if (shader) return shader;
-
-        shader = Shader::Create(GetShaderPath("Lit.hlsl"));
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("Lit.hlsl"));
         return shader;
     }
 
-	inline auto Unlit()
+	static auto Unlit()
 	{
 		LEV_PROFILE_FUNCTION();
 
-        static Ref<Shader> shader;
-        if (shader) return shader;
-
-        shader = Shader::Create(GetShaderPath("Unlit.hlsl"));
-
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("Unlit.hlsl"));
+    	
         return shader;
 	}
 
-	inline auto Skybox()
+	static auto Skybox()
     {
 		LEV_PROFILE_FUNCTION();
 
-	    static Ref<Shader> shader;
-	    if (shader) return shader;
+	    static Ref<Shader> shader = Shader::Create(GetShaderPath("Skybox.hlsl"));
+    	
+        return shader;
+    }
 
-	    shader = Shader::Create(GetShaderPath("Skybox.hlsl"));
+	static auto ShadowPass()
+    {
+		LEV_PROFILE_FUNCTION();
+
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("ShadowPass.hlsl"));
 
         return shader;
     }
 
-    inline auto ShadowPass()
+	static auto CascadeShadowPass()
     {
 		LEV_PROFILE_FUNCTION();
 
-        static Ref<Shader> shader;
-        if (shader) return shader;
-
-        shader = Shader::Create(GetShaderPath("ShadowPass.hlsl"));
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("CascadeShadowPass.hlsl"), ShaderType::Vertex | ShaderType::Geometry);
 
         return shader;
     }
 
-    inline auto CascadeShadowPass()
-    {
-		LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader;
-        if (shader) return shader;
-
-        shader = Shader::Create(GetShaderPath("CascadeShadowPass.hlsl"), ShaderType::Vertex | ShaderType::Geometry);
-
-        return shader;
-    }
-
-	inline auto GBufferPass()
+	static auto GBufferPass()
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("GBufferPass.hlsl"));
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaquePBR.hlsl"));
 
 		return shader;
 	}
 
-	inline auto DeferredVertexOnly()
+	static auto DeferredVertexOnly()
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"), ShaderType::Vertex);
-		return shader;
-	}
-
-	inline auto DeferredPointLight()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("DeferredLightningPass.hlsl"));
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPassPBR.hlsl"), ShaderType::Vertex);
 
 		return shader;
 	}
 
-	inline auto DeferredQuadRender()
+	static auto DeferredPointLight()
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("ForwardQuadRender.hlsl"));
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPassPBR.hlsl"));
 
 		return shader;
 	}
 
-	inline auto Particles()
+	static auto DeferredQuadRender()
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("Particles/Particles.hlsl"), ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("ForwardQuadRender.hlsl"));
 
 		return shader;
 	}
 
-	inline auto ParticlesCompute()
+	static auto Particles()
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("Particles/ParticlesCompute.hlsl"), ShaderType::Compute);
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/Particles.hlsl"), ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
 
 		return shader;
 	}
 
-	inline auto ParticlesEmitter()
+	static auto ParticlesCompute()
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("Particles/ParticlesEmitter.hlsl"), ShaderType::Compute);
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/ParticlesCompute.hlsl"), ShaderType::Compute);
 
 		return shader;
 	}
 
-	inline auto BitonicSort()
+	static auto ParticlesEmitter()
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader;
-		if (shader) return shader;
-
-		shader = Shader::Create(GetShaderPath("Particles/BitonicSort.hlsl"), ShaderType::Compute);
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/ParticlesEmitter.hlsl"), ShaderType::Compute);
 
 		return shader;
 	}
 
-	inline auto BitonicTranspose()
+	static auto BitonicSort()
 	{
 		LEV_PROFILE_FUNCTION();
 
-		static Ref<Shader> shader;
-		if (shader) return shader;
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/BitonicSort.hlsl"), ShaderType::Compute);
 
-		shader = Shader::Create(GetShaderPath("Particles/BitonicTranspose.hlsl"), ShaderType::Compute);
+		return shader;
+	}
+
+	static auto BitonicTranspose()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/BitonicTranspose.hlsl"), ShaderType::Compute);
 
 		return shader;
 	}
 };
 
-namespace TextureAssets
+struct TextureAssets
 {
-    inline Ref<Texture> Bricks()
-    {
-        static auto texture = TextureLibrary::GetTexture(GetTexturePath("bricks.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-        return texture;
-    }
-
-	inline Ref<Texture> Particle()
+	static Ref<Texture> Particle()
 	{
 		static auto texture = TextureLibrary::GetTexture(GetTexturePath("particle.png"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-	inline Ref<Texture> Smoke()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("smoke.png"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-		return texture;
-	}
-
-    inline Ref<Texture> Log()
-    {
-        static auto texture = TextureLibrary::GetTexture(GetTexturePath("log.jpg"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-        return texture;
-    }
-
-    inline Ref<Texture> Gear()
-    {
-        static auto texture = TextureLibrary::GetTexture(GetTexturePath("gear.png"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-        return texture;
-    }
-
-    inline Ref<Texture> Rock()
-    {
-        static auto texture = TextureLibrary::GetTexture(GetTexturePath("rock.tga"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
-        return texture;
-    }
-
-	inline Ref<Texture> Fire()
-	{
-		static auto texture = TextureLibrary::GetTexture(GetTexturePath("fire.png"));
-		texture->AttachSampler(GetDefaultWrappedSamplerState());
 		return texture;
 	}
 };
-
-namespace SkyboxAssets
-{
-	inline auto LightBlue()
-    {
-        static String paths[6] = {
-            GetSkyboxPath("SpaceBlue/left.png"), //left
-            GetSkyboxPath("SpaceBlue/right.png"), //right
-        	GetSkyboxPath("SpaceBlue/bottom.png"), //bottom
-            GetSkyboxPath("SpaceBlue/top.png"), //top
-            GetSkyboxPath("SpaceBlue/back.png"), //back
-            GetSkyboxPath("SpaceBlue/front.png"), //front
-        };
-
-        static auto texture = Texture::CreateTextureCube(paths);
-		texture->AttachSampler(GetDefaultClampedSamplerState());
-
-        return texture;
-    }
-
-	inline auto Lake()
-	{
-		static String paths[6] = {
-			GetSkyboxPath("Lake/left.jpg"), //left
-			GetSkyboxPath("Lake/right.jpg"), //right
-			GetSkyboxPath("Lake/bottom.jpg"), //bottom
-			GetSkyboxPath("Lake/top.jpg"), //top
-			GetSkyboxPath("Lake/back.jpg"), //back
-			GetSkyboxPath("Lake/front.jpg"), //front
-		};
-
-		static auto texture = Texture::CreateTextureCube(paths);
-		texture->AttachSampler(GetDefaultClampedSamplerState());
-
-		return texture;
-	}
-
-	inline auto Interstellar()
-	{
-		static String paths[6] = {
-			GetSkyboxPath("Interstellar/left.png"), //left
-			GetSkyboxPath("Interstellar/right.png"), //right
-			GetSkyboxPath("Interstellar/bottom.png"), //bottom
-			GetSkyboxPath("Interstellar/top.png"), //top
-			GetSkyboxPath("Interstellar/back.png"), //back
-			GetSkyboxPath("Interstellar/front.png"), //front
-		};
-
-		static auto texture = Texture::CreateTextureCube(paths);
-		texture->AttachSampler(GetDefaultClampedSamplerState());
-
-		return texture;
-	}
-};
-
-namespace MeshAssets
-{
-	inline auto Log()
-	{
-        static auto mesh = ObjLoader().LoadMesh(GetModelPath("log.obj"));
-        return mesh;
-	}
-
-    inline auto Gear()
-    {
-        static auto mesh = ObjLoader().LoadMesh(GetModelPath("gear.obj"));
-        return mesh;
-    }
-
-    inline auto Rock()
-    {
-        static auto mesh = ObjLoader().LoadMesh(GetModelPath("rock.obj"));
-        return mesh;
-    }
-
-    inline auto Cube()
-	{
-        static auto mesh = Mesh::CreateCube();
-        return mesh;
-	}
-}
 
 struct Materials
 {
-	using Color = LevEngine::Color;
-
-	static Material Emerald()
+	static MaterialSimple Emerald()
 	{
 		const auto ambient = Color( 0.0215f, 0.1745f, 0.0215f);
 		const auto diffuse = Color(0.07568f, 0.89f, 0.63f);
@@ -451,7 +194,7 @@ struct Materials
 
 		const float shininess = 128.0f * 0.6f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -460,7 +203,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Jade()
+	static MaterialSimple Jade()
 	{
 		auto ambient = Color(0.135f, 0.2225f, 0.1575f);
 		auto diffuse = Color(0.54f, 0.89f, 0.63f);
@@ -468,7 +211,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.1f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -477,7 +220,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Obsidian()
+	static MaterialSimple Obsidian()
 	{
 		auto ambient = Color(0.05375f, 0.05f, 0.06625f);
 		auto diffuse = Color(0.18275f, 0.17f, 0.22525f);
@@ -485,7 +228,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.3f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -494,7 +237,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Pearl()
+	static MaterialSimple Pearl()
 	{
 		auto ambient = Color(0.25f, 0.20725f, 0.20725f);
 		auto diffuse = Color(1.0f, 0.829f, 0.829f);
@@ -502,7 +245,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.088f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -511,7 +254,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Ruby()
+	static MaterialSimple Ruby()
 	{
 		auto ambient = Color(0.1745f, 0.01175f, 0.01175f);
 		auto diffuse = Color(0.61424f, 0.04136f, 0.04136f);
@@ -519,7 +262,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.6f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -528,7 +271,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Turquoise()
+	static MaterialSimple Turquoise()
 	{
 		auto ambient = Color(0.1f, 0.18725f, 0.1745f);
 		auto diffuse = Color(0.396f, 0.74151f, 0.69102f);
@@ -536,7 +279,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.1f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -545,7 +288,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Brass()
+	static MaterialSimple Brass()
 	{
 		auto ambient = Color(0.329412f, 0.223529f, 0.027451f);
 		auto diffuse = Color(0.780392f, 0.568627f, 0.113725f);
@@ -553,7 +296,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.21794872f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -562,7 +305,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Bronze()
+	static MaterialSimple Bronze()
 	{
 		auto ambient = Color(0.2125f, 0.1275f, 0.054f);
 		auto diffuse = Color(0.714f, 0.4284f, 0.18144f);
@@ -570,7 +313,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.2f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -579,7 +322,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Chrome()
+	static MaterialSimple Chrome()
 	{
 		auto ambient = Color(0.25f, 0.25f, 0.25f);
 		auto diffuse = Color(0.4f, 0.4f, 0.4f);
@@ -587,7 +330,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.6f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -596,7 +339,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Copper()
+	static MaterialSimple Copper()
 	{
 		auto ambient = Color(0.19125f, 0.0735f, 0.0225f);
 		auto diffuse = Color(0.7038f, 0.27048f, 0.0828f);
@@ -604,7 +347,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.1f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -613,7 +356,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Gold()
+	static MaterialSimple Gold()
 	{
 		auto ambient = Color(0.24725f, 0.1995f, 0.0745f);
 		auto diffuse = Color(0.75164f, 0.60648f, 0.22648f);
@@ -621,7 +364,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.4f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -630,7 +373,7 @@ struct Materials
 		return material;
 	}
 
-	static Material Silver()
+	static MaterialSimple Silver()
 	{
 		auto ambient = Color(0.19225f, 0.19225f, 0.19225f);
 		auto diffuse = Color(0.50754f, 0.50754f, 0.50754f);
@@ -638,7 +381,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.4f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -647,7 +390,7 @@ struct Materials
 		return material;
 	}
 
-	static Material BlackPlastic()
+	static MaterialSimple BlackPlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.01f, 0.01f, 0.01f);
@@ -655,7 +398,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -664,7 +407,7 @@ struct Materials
 		return material;
 	}
 
-	static Material CyanPlastic()
+	static MaterialSimple CyanPlastic()
 	{
 		auto ambient = Color(0.0f, 0.1f, 0.20725f);
 		auto diffuse = Color(1.0f, 0.829f, 0.829f);
@@ -672,7 +415,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -681,7 +424,7 @@ struct Materials
 		return material;
 	}
 
-	static Material GreenPlastic()
+	static MaterialSimple GreenPlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.1f, 0.35f, 0.1f);
@@ -689,7 +432,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -698,7 +441,7 @@ struct Materials
 		return material;
 	}
 
-	static Material RedPlastic()
+	static MaterialSimple RedPlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.5f, 0.0f, 0.0f);
@@ -706,7 +449,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -715,7 +458,7 @@ struct Materials
 		return material;
 	}
 
-	static Material WhitePlastic()
+	static MaterialSimple WhitePlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.55f, 0.55f, 0.55f);
@@ -723,7 +466,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -732,7 +475,7 @@ struct Materials
 		return material;
 	}
 
-	static Material YellowPlastic()
+	static MaterialSimple YellowPlastic()
 	{
 		auto ambient = Color(0.0f, 0.0f, 0.0f);
 		auto diffuse = Color(0.5f, 0.5f, 0.0f);
@@ -740,7 +483,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.25f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -749,7 +492,7 @@ struct Materials
 		return material;
 	}
 
-	static Material BlackRubber()
+	static MaterialSimple BlackRubber()
 	{
 		auto ambient = Color(0.02f, 0.02f, 0.02f);
 		auto diffuse = Color(0.01f, 0.01f, 0.01f);
@@ -757,7 +500,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -766,7 +509,7 @@ struct Materials
 		return material;
 	}
 
-	static Material CyanRubber()
+	static MaterialSimple CyanRubber()
 	{
 		auto ambient = Color(0.0f, 0.05f, 0.05f);
 		auto diffuse = Color(0.4f, 0.5f, 0.5f);
@@ -774,7 +517,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -783,7 +526,7 @@ struct Materials
 		return material;
 	}
 
-	static Material GreenRubber()
+	static MaterialSimple GreenRubber()
 	{
 		auto ambient = Color(0.0f, 0.05f, 0.0f);
 		auto diffuse = Color(0.4f, 0.5f, 0.4f);
@@ -791,7 +534,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -800,7 +543,7 @@ struct Materials
 		return material;
 	}
 
-	static Material RedRubber()
+	static MaterialSimple RedRubber()
 	{
 		auto ambient = Color(0.05f, 0.0f, 0.0f);
 		auto diffuse = Color(0.5f, 0.4f, 0.4f);
@@ -808,7 +551,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -817,7 +560,7 @@ struct Materials
 		return material;
 	}
 
-	static Material WhiteRubber()
+	static MaterialSimple WhiteRubber()
 	{
 		auto ambient = Color(0.05f, 0.05f, 0.05f);
 		auto diffuse = Color(0.5f, 0.5f, 0.5f);
@@ -825,7 +568,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);
@@ -834,7 +577,7 @@ struct Materials
 		return material;
 	}
 
-	static Material YellowRubber()
+	static MaterialSimple YellowRubber()
 	{
 		auto ambient = Color(0.05f, 0.05f, 0.0f);
 		auto diffuse = Color(0.5f, 0.5f, 0.4f);
@@ -842,7 +585,7 @@ struct Materials
 
 		float shininess = 128.0f * 0.078125f;
 
-		Material material{};
+		MaterialSimple material{};
 		material.SetAmbientColor(ambient);
 		material.SetDiffuseColor(diffuse);
 		material.SetSpecularColor(specular);

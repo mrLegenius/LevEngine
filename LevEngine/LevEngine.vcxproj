@@ -49,8 +49,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
       <AdditionalModuleDependencies></AdditionalModuleDependencies>
@@ -60,8 +60,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories);$(_ZVcpkgCurrentInstalledDir)$(_ZVcpkgConfigSubdir)lib;$(_ZVcpkgCurrentInstalledDir)$(_ZVcpkgConfigSubdir)lib\manual-link;$(SolutionDir)\FMODStudio\studio\lib\$(Platform);$(SolutionDir)\FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>FMODStudio.lib;fmodstudioL_vc.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;FMODStudio.lib;fmodstudioL_vc.lib;fmodL_vc.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -72,8 +72,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;external/vgjs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -83,6 +83,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>assimp-vc143-mt.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompiler.h" />
@@ -432,16 +438,20 @@
     <ClInclude Include="src\Assets\AssetDatabase.h" />
     <ClInclude Include="src\Assets\DefaultAsset.h" />
     <ClInclude Include="src\Assets\MaterialAsset.h" />
+    <ClInclude Include="src\Assets\MaterialSimpleAsset.h" />
+    <ClInclude Include="src\Assets\MaterialPBRAsset.h" />
     <ClInclude Include="src\Assets\MeshAsset.h" />
+    <ClInclude Include="src\Assets\PrefabAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Assets\TextureAsset.h" />
-    <ClInclude Include="src\DataTypes\EASTL.h" />
+    <ClInclude Include="src\DataTypes\Delegates.h" />
     <ClInclude Include="src\DataTypes\Map.h" />
     <ClInclude Include="src\DataTypes\Pair.h" />
     <ClInclude Include="src\DataTypes\Path.h" />
     <ClInclude Include="src\DataTypes\Pointers.h" />
     <ClInclude Include="src\DataTypes\Queue.h" />
     <ClInclude Include="src\DataTypes\UnorderedMap.h" />
+    <ClInclude Include="src\DataTypes\Utility.h" />
     <ClInclude Include="src\DataTypes\Vector.h" />
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\EntryPoint.h" />
@@ -449,8 +459,9 @@
     <ClInclude Include="src\Events\Event.h" />
     <ClInclude Include="src\Events\KeyEvent.h" />
     <ClInclude Include="src\Events\MouseEvent.h" />
+    <ClInclude Include="src\GUI\GUI.h" />
+
     <ClInclude Include="src\FMOD\LevFmod.h" />
-    <ClInclude Include="src\GUI\GUIUtils.h" />
     <ClInclude Include="src\GUI\ImGuiLayer.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Input\KeyCodes.h" />
@@ -463,24 +474,31 @@
     <ClInclude Include="src\Kernel\LayerStack.h" />
     <ClInclude Include="src\Kernel\Logger.h" />
     <ClInclude Include="src\Kernel\PlatformUtils.h" />
-    <ClInclude Include="src\Kernel\Time.h" />
-    <ClInclude Include="src\Kernel\Timestep.h" />
+    <ClInclude Include="src\Kernel\Time\Time.h" />
+    <ClInclude Include="src\Kernel\Time\Timeline.h" />
+    <ClInclude Include="src\Kernel\Time\TimelineFactory.h" />
+    <ClInclude Include="src\Kernel\Time\TimelineParameters.h" />
+    <ClInclude Include="src\Kernel\Time\TimelineRunner.h" />
+    <ClInclude Include="src\Kernel\Time\Timestep.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
     <ClInclude Include="src\Kernel\UUID.h" />
     <ClInclude Include="src\Kernel\Window.h" />
     <ClInclude Include="src\LevEngine.h" />
+    <ClInclude Include="src\Math\BoundingVolume.h" />
+    <ClInclude Include="src\Math\Frustum.h" />
     <ClInclude Include="src\Math\Math.h" />
     <ClInclude Include="src\Math\Matrix.h" />
+    <ClInclude Include="src\Math\Plane.h" />
     <ClInclude Include="src\Math\Quaternion.h" />
     <ClInclude Include="src\Math\Random.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\DataTypes\String.h" />
-    <ClInclude Include="src\ObjLoader.h" />
+    <ClInclude Include="src\MeshLoader.h" />
     <ClInclude Include="src\levpch.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
-    <ClInclude Include="src\Physics\Components\CollisionEvent.h" />
+    <ClInclude Include="src\Physics\Components\CollisionEvents.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
     <ClInclude Include="src\Physics\Events\CollisionBeginEvent.h" />
     <ClInclude Include="src\Physics\Events\CollisionEndEvent.h" />
@@ -493,6 +511,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11IndexBuffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RasterizerState.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RenderCommands.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderTarget.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11SamplerState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Shader.h" />
@@ -500,7 +519,9 @@
     <ClInclude Include="src\Platform\D3D11\D3D11Texture.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11VertexBuffer.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="src\Project.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
+    <ClInclude Include="src\Renderer\3D\Primitives.h" />
     <ClInclude Include="src\Renderer\BitonicSort.h" />
     <ClInclude Include="src\Renderer\BlendState.h" />
     <ClInclude Include="src\Renderer\BufferBinding.h" />
@@ -509,17 +530,28 @@
     <ClInclude Include="src\Renderer\ClearFlags.h" />
     <ClInclude Include="src\Renderer\ClearPass.h" />
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugCube.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugGrid.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugLine.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugRender.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugRenderPass.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugShape.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugSphere.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugWireCube.h" />
+    <ClInclude Include="src\Renderer\DebugRender\DebugWireSphere.h" />
+    <ClInclude Include="src\Renderer\Material.h" />
+    <ClInclude Include="src\Renderer\MaterialPBR.h" />
+    <ClInclude Include="src\Renderer\QuadRenderPass.h" />
     <ClInclude Include="src\Renderer\RendererContext.h" />
     <ClInclude Include="src\Renderer\CopyTexturePass.h" />
     <ClInclude Include="src\Renderer\CPUAccess.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RendererContext.h" />
-    <ClInclude Include="src\Platform\D3D11\D3D11RenderCommands.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ShadowMap.h" />
     <ClInclude Include="src\Renderer\DeferredLightingPass.h" />
     <ClInclude Include="src\Renderer\DepthFunc.h" />
     <ClInclude Include="src\Renderer\DepthStencilState.h" />
     <ClInclude Include="src\Renderer\IndexBuffer.h" />
-    <ClInclude Include="src\Renderer\Material.h" />
+    <ClInclude Include="src\Renderer\MaterialSimple.h" />
     <ClInclude Include="src\Renderer\OpaquePass.h" />
     <ClInclude Include="src\Renderer\ParticlePass.h" />
     <ClInclude Include="src\Renderer\PipelineState.h" />
@@ -544,22 +576,26 @@
     <ClInclude Include="src\Renderer\Texture.h" />
     <ClInclude Include="src\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\Renderer\Viewport.h" />
+    <ClInclude Include="src\Scene\Components\Animation\WaypointMovement.h" />
     <ClInclude Include="src\Scene\Components\AudioListener\AudioListener.h" />
     <ClInclude Include="src\Scene\Components\Camera\Camera.h" />
-    <ClInclude Include="src\Scene\Components\ComponentDrawer.h" />
     <ClInclude Include="src\Scene\Components\Components.h" />
     <ClInclude Include="src\Scene\Components\ComponentSerializer.h" />
     <ClInclude Include="src\Scene\Components\Emitter\EmitterComponent.h" />
     <ClInclude Include="src\Scene\Components\Lights\Lights.h" />
     <ClInclude Include="src\Scene\Components\MeshRenderer\MeshRenderer.h" />
     <ClInclude Include="src\Scene\Components\SkyboxRenderer\SkyboxRenderer.h" />
+    <ClInclude Include="src\Scene\Components\Time\TimelineComponent.h" />
     <ClInclude Include="src\Scene\Components\Transform\Transform.h" />
+    <ClInclude Include="src\Scene\Components\TypeParseTraits.h" />
     <ClInclude Include="src\Scene\Entity.h" />
     <ClInclude Include="src\Scene\Scene.h" />
     <ClInclude Include="src\Scene\SceneManager.h" />
     <ClInclude Include="src\Scene\Serializers\SceneSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.h" />
     <ClInclude Include="src\Scene\System.h" />
+    <ClInclude Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.h" />
+    <ClInclude Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
@@ -774,13 +810,16 @@
     </ClCompile>
     <ClCompile Include="src\Assets\Asset.cpp" />
     <ClCompile Include="src\Assets\AssetDatabase.cpp" />
-    <ClCompile Include="src\Assets\MaterialAsset.cpp" />
+    <ClCompile Include="src\Assets\MaterialSimpleAsset.cpp" />
+    <ClCompile Include="src\Assets\MaterialPBRAsset.cpp" />
     <ClCompile Include="src\Assets\MeshAsset.cpp" />
+    <ClCompile Include="src\Assets\PrefabAsset.cpp" />
     <ClCompile Include="src\Assets\SkyboxAsset.cpp" />
     <ClCompile Include="src\Assets\TextureAsset.cpp" />
     <ClCompile Include="src\DataTypes\EASTL.cpp" />
+    <ClCompile Include="src\GUI\GUI.cpp" />
     <ClCompile Include="src\FMOD\LevFmod.cpp" />
-    <ClCompile Include="src\GUI\GUIUtils.cpp" />
+    
     <ClCompile Include="src\GUI\ImGuiBuild.cpp" />
     <ClCompile Include="src\GUI\ImGuiLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
@@ -789,9 +828,13 @@
     <ClCompile Include="src\Kernel\Layer.cpp" />
     <ClCompile Include="src\Kernel\LayerStack.cpp" />
     <ClCompile Include="src\Kernel\Logger.cpp" />
-    <ClCompile Include="src\Kernel\Time.cpp" />
+    <ClCompile Include="src\Kernel\Time\Time.cpp" />
+    <ClCompile Include="src\Kernel\Time\Timeline.cpp" />
+    <ClCompile Include="src\Kernel\Time\TimelineFactory.cpp" />
+    <ClCompile Include="src\Kernel\Time\TimelineRunner.cpp" />
     <ClCompile Include="src\Kernel\UUID.cpp" />
     <ClCompile Include="src\Kernel\Window.cpp" />
+    <ClCompile Include="src\Math\BoundingVolume.cpp" />
     <ClCompile Include="src\Math\Random.cpp" />
     <ClCompile Include="src\levpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -813,13 +856,20 @@
     <ClCompile Include="src\Platform\D3D11\D3D11VertexBuffer.cpp" />
     <ClCompile Include="src\Platform\Windows\PlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="src\Project.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
+    <ClCompile Include="src\Renderer\3D\Primitives.cpp" />
     <ClCompile Include="src\Renderer\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\BlendState.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="src\Renderer\CascadeShadowMap.cpp" />
     <ClCompile Include="src\Renderer\ClearPass.cpp" />
     <ClCompile Include="src\Renderer\ConstantBuffer.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugRender.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugRenderPass.cpp" />
+    <ClCompile Include="src\Renderer\Material.cpp" />
+    <ClCompile Include="src\Renderer\MaterialPBR.cpp" />
+    <ClCompile Include="src\Renderer\QuadRenderPass.cpp" />
     <ClCompile Include="src\Renderer\RendererContext.cpp" />
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RendererContext.cpp" />
@@ -828,7 +878,7 @@
     <ClCompile Include="src\Renderer\DeferredLightingPass.cpp" />
     <ClCompile Include="src\Renderer\DepthStencilState.cpp" />
     <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
-    <ClCompile Include="src\Renderer\Material.cpp" />
+    <ClCompile Include="src\Renderer\MaterialSimple.cpp" />
     <ClCompile Include="src\Renderer\OpaquePass.cpp" />
     <ClCompile Include="src\Renderer\ParticlePass.cpp" />
     <ClCompile Include="src\Renderer\PipelineState.cpp" />
@@ -837,6 +887,7 @@
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\Renderer\RenderTarget.cpp" />
+    <ClCompile Include="src\Renderer\RenderTechnique.cpp" />
     <ClCompile Include="src\Renderer\SamplerState.cpp" />
     <ClCompile Include="src\Renderer\Shader.cpp" />
     <ClCompile Include="src\Renderer\ShaderParameter.cpp" />
@@ -845,18 +896,22 @@
     <ClCompile Include="src\Renderer\StructuredBuffer.cpp" />
     <ClCompile Include="src\Renderer\Texture.cpp" />
     <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
+    <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp" />
     <ClCompile Include="src\Scene\Components\AudioListener\AudioListener.cpp" />
     <ClCompile Include="src\Scene\Components\Camera\Camera.cpp" />
     <ClCompile Include="src\Scene\Components\Emitter\EmitterComponent.cpp" />
     <ClCompile Include="src\Scene\Components\Lights\Lights.cpp" />
     <ClCompile Include="src\Scene\Components\MeshRenderer\MeshRenderer.cpp" />
     <ClCompile Include="src\Scene\Components\SkyboxRenderer\SkyboxRenderer.cpp" />
+    <ClCompile Include="src\Scene\Components\Time\TimelineComponent.cpp" />
     <ClCompile Include="src\Scene\Components\Transform\Transform.cpp" />
     <ClCompile Include="src\Scene\Entity.cpp" />
     <ClCompile Include="src\Scene\Scene.cpp" />
     <ClCompile Include="src\Scene\SceneManager.cpp" />
     <ClCompile Include="src\Scene\Serializers\SceneSerializer.cpp" />
     <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
+    <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp" />
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>

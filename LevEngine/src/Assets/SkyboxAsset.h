@@ -8,6 +8,13 @@ namespace LevEngine
 	class SkyboxAsset final : public Asset
 	{
 	public:
+		Ref<TextureAsset> left;
+		Ref<TextureAsset> right;
+		Ref<TextureAsset> bottom;
+		Ref<TextureAsset> top;
+		Ref<TextureAsset> back;
+		Ref<TextureAsset> front;
+		
 		enum class Side
 		{
 			Left,
@@ -20,10 +27,13 @@ namespace LevEngine
 
 		explicit SkyboxAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
 
-		void DrawProperties() override;
-
 		[[nodiscard]] const Ref<Texture>& GetTexture() const { return m_Texture; }
 
+		[[nodiscard]] Ref<Texture> GetIcon() const override
+		{
+			return Icons::Skybox();
+		}
+		
 	protected:
 		void SerializeData(YAML::Emitter& out) override;
 		void DeserializeData(YAML::Node& node) override;
@@ -31,13 +41,6 @@ namespace LevEngine
 		void InitTexture();
 
 		Ref<Texture> m_Texture;
-
-		Ref<TextureAsset> m_Left;
-		Ref<TextureAsset> m_Right;
-		Ref<TextureAsset> m_Bottom;
-		Ref<TextureAsset> m_Top;
-		Ref<TextureAsset> m_Back;
-		Ref<TextureAsset> m_Front;
 	};
 }
 

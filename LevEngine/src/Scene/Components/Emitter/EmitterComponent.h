@@ -1,8 +1,12 @@
 ﻿#pragma once
 #include "Assets/TextureAsset.h"
 #include "Renderer/Texture.h"
+#include "Scene/Components/TypeParseTraits.h"
+
 namespace LevEngine
 {
+	REGISTER_PARSE_TYPE(EmitterComponent);
+	
 	struct EmitterComponent
 	{
 		EmitterComponent();

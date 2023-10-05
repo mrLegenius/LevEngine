@@ -2,7 +2,6 @@
 #include "SceneSerializer.h"
 
 #include "../Entity.h"
-#include "../Components/Components.h"
 #include "Kernel/ClassCollection.h"
 #include "Scene/Components/ComponentSerializer.h"
 
@@ -13,30 +12,11 @@ namespace LevEngine
 	{
 	}
 
-	void SceneSerializer::SerializeEntity(YAML::Emitter& out, Entity entity) const
-	{
-		LEV_CORE_ASSERT(entity.HasComponent<IDComponent>());
-
-		out << YAML::BeginMap;
-
-		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
-		out << YAML::Key << "Tag" << YAML::Value << entity.GetComponent<TagComponent>().tag.c_str();
-
-		if (auto parent = entity.GetComponent<Transform>().GetParent())
-			out << YAML::Key << "Parent" << YAML::Value << parent.GetUUID();
-
-		for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
-			serializer->Serialize(out, entity);
-
-		out << YAML::EndMap;
-	}
-
-	void SceneSerializer::Serialize(const String& filepath) const
+	void SceneSerializer::Serialize(const Path& filepath) const
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
-		//TODO: Put actual scene name
-		out << YAML::Key << "Scene" << YAML::Value << "Scene Name";
+		out << YAML::Key << "Scene" << YAML::Value << filepath.stem().string();
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 		m_Scene->ForEachEntity(
@@ -69,12 +49,13 @@ namespace LevEngine
 			return false;
 
 		auto sceneName = data["Scene"].as<String>();
-		Log::Trace("Deserializing scene '{0}'", sceneName);
+		Log::CoreTrace("Deserializing scene '{0}'", sceneName);
 
 		auto entities = data["Entities"];
 		if (!entities) return true;
 
 		std::unordered_map<UUID, Entity> entitiesMap;
+		std::unordered_map<UUID, Pair<Entity, YAML::Node>> entitiesToDeserialize;
 		std::unordered_map<UUID, UUID> relationships;
 
 		for (auto entity : entities)
@@ -92,10 +73,16 @@ namespace LevEngine
 
 			Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
 
-			for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
-				serializer->Deserialize(entity, deserializedEntity);
-
+			entitiesToDeserialize.try_emplace(uuid, Pair<Entity, YAML::Node>(deserializedEntity, entity));
 			entitiesMap.try_emplace(uuid, deserializedEntity);
+		}
+
+		for (auto& [uuid, pair] : entitiesToDeserialize)
+		{
+			auto deserializedEntity = pair.first;
+			auto entityNode = pair.second;
+			for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
+				serializer->Deserialize(entityNode, deserializedEntity);
 		}
 
 		for (auto& [uuid, entity] : entitiesMap)

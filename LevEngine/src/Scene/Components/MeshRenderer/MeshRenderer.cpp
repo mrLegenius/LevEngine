@@ -1,29 +1,13 @@
 ﻿#include "levpch.h"
 #include "MeshRenderer.h"
 
-#include "GUI/GUIUtils.h"
-#include "../ComponentDrawer.h"
 #include "../ComponentSerializer.h"
 #include "Assets/AssetDatabase.h"
 
 namespace LevEngine
 {
 	MeshRendererComponent::MeshRendererComponent() = default;
-
-	class MeshRendererDrawer final : public ComponentDrawer<MeshRendererComponent, MeshRendererDrawer>
-	{
-	protected:
-		String GetLabel() const override { return "Mesh Renderer"; }
-
-		void DrawContent(MeshRendererComponent& component) override
-		{
-			GUIUtils::DrawAsset<MeshAsset>("Mesh", &component.mesh);
-			GUIUtils::DrawAsset<MaterialAsset>("Material", &component.material);
-
-			ImGui::Checkbox("Cast shadows", &component.castShadow);
-		}
-	};
-
+	
 
 class MeshRendererSerializer final : public ComponentSerializer<MeshRendererComponent, MeshRendererSerializer>
 {

@@ -2,6 +2,7 @@
 
 #include "../Renderer/RendererContext.h"
 #include "../Events/Event.h"
+#include "DataTypes/Delegates.h"
 
 namespace LevEngine
 {
@@ -22,7 +23,7 @@ struct WindowAttributes
 class Window
 {
 public:
-	using EventCallbackFn = std::function<void(Event&)>;
+	using EventCallbackFn = Action<Event&>;
 
 	virtual ~Window() = default;
 

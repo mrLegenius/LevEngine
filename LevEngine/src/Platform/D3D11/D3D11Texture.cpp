@@ -1698,6 +1698,142 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint
 	return texture;
 }
 
+Ref<Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint16_t height, const uint16_t slices, const TextureFormat format,
+                                           const void* data, const CPUAccess cpuAccess, const bool uav)
+{
+    if (!data)
+    {
+        Log::CoreWarning("Can't create texture with no data");
+        return nullptr;
+    }
+
+    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>();
+
+    texture->m_IsLoaded = true;
+    texture->m_Pitch = width * 4;
+    texture->m_Width = width;
+    texture->m_Height = height;
+    texture->m_TextureFormat = format;
+    texture->m_CPUAccess = cpuAccess;
+    texture->m_IsTransparent = true;
+
+    texture->m_NumSlices = Math::Max<uint16_t>(slices, 1u);
+
+    texture->m_TextureDimension = Dimension::Texture2D;
+    if (texture->m_NumSlices > 1)
+	    texture->m_TextureDimension = Dimension::Texture2DArray;
+
+    const DXGI_FORMAT dxgiFormat = ConvertFormat(format);
+
+    texture->m_SampleDesc = GetSupportedSampleCount(dxgiFormat, format.NumSamples);
+
+    texture->m_TextureFormat = ConvertFormat(dxgiFormat, format.NumSamples);
+
+    // Convert Depth/Stencil formats to typeless texture resource formats
+    texture->m_TextureResourceFormat = GetTextureFormat(dxgiFormat);
+    // Convert typeless formats to Depth/Stencil view formats
+    texture->m_DepthStencilViewFormat = GetDSVFormat(dxgiFormat);
+    // Convert depth/stencil and typeless formats to Shader Resource View formats
+    texture->m_ShaderResourceViewFormat = GetSRVFormat(dxgiFormat);
+    // Convert typeless formats to Render Target View formats
+    texture->m_RenderTargetViewFormat = GetRTVFormat(dxgiFormat);
+    // Convert typeless format to Unordered Access View formats.
+    texture->m_UnorderedAccessViewFormat = GetUAVFormat(dxgiFormat);
+
+    texture->m_BPP = LevEngine::GetBPP(texture->m_TextureResourceFormat);
+
+    // Query for texture format support.
+    auto res = device->CheckFormatSupport(texture->m_TextureResourceFormat, &texture->m_TextureResourceFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query texture resource format support")
+
+    res = device->CheckFormatSupport(texture->m_DepthStencilViewFormat, &texture->m_DepthStencilViewFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query depth/stencil format support")
+
+    res = device->CheckFormatSupport(texture->m_ShaderResourceViewFormat, &texture->m_ShaderResourceViewFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query shader resource format support")
+
+    res = device->CheckFormatSupport(texture->m_RenderTargetViewFormat, &texture->m_RenderTargetViewFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query render target format support")
+
+    res = device->CheckFormatSupport(texture->m_UnorderedAccessViewFormat, &texture->m_UnorderedAccessViewFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query uav format support")
+
+    const auto textureFormatSupported = texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D;
+    LEV_CORE_ASSERT(textureFormatSupported, "Unsupported texture format for 2D textures")
+
+    // Can the texture be dynamically modified on the CPU?
+    texture->m_Dynamic = (int)texture->m_CPUAccess != 0 && texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_CPU_LOCKABLE;
+    // Can mipmaps be automatically generated for this texture format?
+    //TODO: Restore mipmaps
+    //texture->m_GenerateMipMaps = !texture->m_Dynamic && texture->m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
+    // Are UAVs supported?
+    texture->m_UAV = uav && texture->m_UnorderedAccessViewFormatSupport & D3D11_FORMAT_SUPPORT_SHADER_LOAD;
+
+    D3D11_TEXTURE2D_DESC textureDesc = {};
+
+    textureDesc.Width = width;
+    textureDesc.Height = height;
+    textureDesc.MipLevels = texture->m_GenerateMipMaps ? 0 : 1;
+    textureDesc.ArraySize = texture->m_NumSlices;
+    textureDesc.Format = texture->m_TextureResourceFormat;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+    if ((texture->m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_SHADER_SAMPLE) != 0)
+    {
+        textureDesc.BindFlags |= D3D11_BIND_SHADER_RESOURCE;
+    }
+    if ((texture->m_RenderTargetViewFormatSupport & D3D11_FORMAT_SUPPORT_RENDER_TARGET) != 0)
+    {
+        textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+    }
+
+    textureDesc.CPUAccessFlags = 0;
+    textureDesc.MiscFlags = texture->m_GenerateMipMaps ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
+
+    D3D11_SUBRESOURCE_DATA subresourceData = {};
+
+    subresourceData.pSysMem = data;
+    subresourceData.SysMemPitch = texture->m_Pitch;
+    subresourceData.SysMemSlicePitch = 0;
+
+    auto result = device->CreateTexture2D(
+        &textureDesc,
+        texture->m_GenerateMipMaps ? nullptr : &subresourceData,
+        &texture->m_Texture2D
+    );
+
+    LEV_CORE_ASSERT(SUCCEEDED(result));
+
+    //Shader resource view
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc;
+
+    resourceViewDesc.Format = texture->m_ShaderResourceViewFormat;
+    resourceViewDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
+    resourceViewDesc.Texture2D.MipLevels = texture->m_GenerateMipMaps ? -1 : 1;
+    resourceViewDesc.Texture2D.MostDetailedMip = 0;
+    
+    result = device->CreateShaderResourceView(texture->m_Texture2D,
+        &resourceViewDesc,
+        &texture->m_ShaderResourceView
+    );
+
+    LEV_CORE_ASSERT(SUCCEEDED(result));
+
+    if (texture->m_GenerateMipMaps)
+    {
+        context->UpdateSubresource(texture->m_Texture2D, 0, nullptr, data, texture->m_Pitch, 0);
+        context->GenerateMips(texture->m_ShaderResourceView);
+    }
+
+    texture->m_IsDirty = false;
+    
+    return texture;
+}
+
 D3D11Texture::D3D11Texture(const String& path) : Texture(path)
 {
     LEV_PROFILE_FUNCTION();
@@ -2066,8 +2202,8 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
     if (m_ShaderResourceView) m_ShaderResourceView->Release(); m_ShaderResourceView = nullptr;
     if (m_UnorderedAccessView) m_UnorderedAccessView->Release(); m_UnorderedAccessView = nullptr;
 
-    m_Width = Math::Max<uint16_t>(width, 1);
-    m_Height = Math::Max<uint16_t>(height, 1);
+    m_Width = Math::Max<uint16_t>(width, 1u);
+    m_Height = Math::Max<uint16_t>(height, 1u);
 
     // Create texture with the dimensions specified.
     D3D11_TEXTURE2D_DESC textureDesc = { 0 };

@@ -3,18 +3,18 @@
 // -- Core -------------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+#include "Kernel/Logger.h"
+#include "Kernel/Asserts.h"
 #include "Kernel/Application.h"
 #include "Kernel/Layer.h"
-#include "Kernel/Logger.h"
 
-#include "Kernel/Asserts.h"
 #include "Kernel/Color.h"
 #include "Kernel/PlatformUtils.h"
 #include "Kernel/Utils.h"
 #include "Kernel/UUID.h"
 #include "Kernel/ClassCollection.h"
 
-#include "ObjLoader.h"
+#include "MeshLoader.h"
 #include "TextureLibrary.h"
 
 #include "Debugging/Profiler.h"
@@ -24,6 +24,7 @@
 
 // -- Data Types -------------------------------------------
 
+#include "DataTypes/Delegates.h"
 #include "DataTypes/Map.h"
 #include "DataTypes/Pair.h"
 #include "DataTypes/Path.h"
@@ -32,15 +33,20 @@
 #include "DataTypes/String.h"
 #include "DataTypes/UnorderedMap.h"
 #include "DataTypes/Vector.h"
+#include "DataTypes/Utility.h"
 
 // -- GUI --------------------------------------------------
 
 #include "GUI/ImGuiLayer.h"
+#include "GUI/GUI.h"
 
 // -- Time -------------------------------------------------
 
-#include "Kernel/Timestep.h"
-#include "Kernel/Time.h"
+#include "Kernel/Time/Timestep.h"
+#include "Kernel/Time/Time.h"
+#include "Kernel/Time/Timeline.h"
+#include "Kernel/Time/TimelineFactory.h"
+#include "Kernel/Time/TimelineRunner.h"
 
 // -- Input ------------------------------------------------
 
@@ -57,8 +63,6 @@
 
 #include "Scene/Serializers/SceneSerializer.h"
 #include "Scene/Serializers/SerializerUtils.h"
-
-
 
 // -- Math -------------------------------------------------
 
@@ -103,6 +107,9 @@
 #include "Renderer/Camera/SceneCamera.h"
 
 #include "Renderer/3D/Mesh.h"
+#include "Renderer/3D/Primitives.h"
+
+#include "Renderer/DebugRender/DebugRender.h"
 
 // /////////////////////////////////////////////////////////
 // -- Components -------------------------------------------
@@ -114,16 +121,23 @@
 #include "Scene/Components/Lights/Lights.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/SkyboxRenderer/SkyboxRenderer.h"
+#include "Scene/Components/Animation/WaypointMovement.h"
 
 #include "Scene/Components/Components.h"
-#include "Scene/Components/ComponentDrawer.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 // /////////////////////////////////////////////////////////
 // -- Physics ----------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-//#include "Physics/Events/CollisionBeginEvent.h"
+#include "Physics/Events/CollisionBeginEvent.h"
+#include "Physics/Events/CollisionEndEvent.h"
+
+#include "Physics/Components/Collider.h"
+#include "Physics/Components/CollisionEvents.h"
+#include "Physics/Components/Rigidbody.h"
+
+#include "Physics/Physics.h"
 
 // /////////////////////////////////////////////////////////
 // -- Assets -----------------------------------------------

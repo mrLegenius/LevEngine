@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include <string>
 
 #include "../Events/Event.h"
+
 namespace LevEngine
 {
 class Layer
@@ -11,8 +11,9 @@ public:
 	virtual ~Layer() = default;
 
 	virtual void OnAttach() { }
-	virtual void OnDetach() { };
+	virtual void OnDetach() { }
 	virtual void OnUpdate(const float deltaTime) { }
+	virtual void OnRender() { }
 	virtual void OnGUIRender() { }
 	virtual void OnEvent(Event& event) { }
 

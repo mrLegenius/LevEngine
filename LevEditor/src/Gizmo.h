@@ -14,6 +14,13 @@ namespace LevEngine
 			Scale = ImGuizmo::OPERATION::SCALE,
 		};
 
+		enum class ToolSpace
+		{
+			World = ImGuizmo::WORLD,
+			Local = ImGuizmo::LOCAL,
+		};
+
 		static inline ToolType Tool = ToolType::None;
+		static inline ToolSpace Space = ToolSpace::World;
 	};
 }

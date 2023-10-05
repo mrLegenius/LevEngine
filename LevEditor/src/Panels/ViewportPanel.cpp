@@ -5,10 +5,11 @@
 
 #include "imguizmo/ImGuizmo.h"
 #include "EntitySelection.h"
+#include "GUI/GUIUtils.h"
 
 namespace LevEngine::Editor
 {
-	void ViewportPanel::DrawContent()
+    void ViewportPanel::DrawContent()
 	{
         if (!m_Focused)
             m_Camera.ResetInitialMousePosition();
@@ -34,7 +35,7 @@ namespace LevEngine::Editor
 	    float right = 0.5f * (1 + viewportSize.x / m_Texture->GetWidth());
 	    float top = 0.5f * (1 + viewportSize.y / m_Texture->GetHeight());
 	    ImVec2 rightTop = ImVec2{ 1, 1 }; //{right, top};
-	    
+
         ImGui::Image(
             m_Texture->GetId(),
             viewportSize,
@@ -44,14 +45,19 @@ namespace LevEngine::Editor
 
         if (ImGui::BeginDragDropTarget())
         {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
             {
                 const wchar_t* path = (const wchar_t*)payload->Data;
-                SceneManager::LoadScene(Path(AssetDatabase::AssetsRoot) / path);
+                SceneManager::LoadScene(path);
             }
             ImGui::EndDragDropTarget();
         }
 
+        DrawGizmo();
+	}
+
+    void ViewportPanel::DrawGizmo() const
+    {
         //Gizmos
         const auto& entitySelection = CastRef<EntitySelection>(Selection::Current());
 
@@ -77,12 +83,12 @@ namespace LevEngine::Editor
             const float snapValues[3] = { snapValue, snapValue, snapValue };
 
             if (ImGuizmo::Manipulate(&cameraView._11,
-                &cameraProjection._11,
-                static_cast<ImGuizmo::OPERATION>(Gizmo::Tool),
-                ImGuizmo::LOCAL,
-                &model._11,
-                nullptr,
-                snap ? snapValues : nullptr))
+                                     &cameraProjection._11,
+                                     static_cast<ImGuizmo::OPERATION>(Gizmo::Tool),
+                                     static_cast<ImGuizmo::MODE>(Gizmo::Space),
+                                     &model._11,
+                                     nullptr,
+                                     snap ? snapValues : nullptr))
             {
                 Vector3 position, scale;
                 Quaternion rotation;
@@ -94,5 +100,5 @@ namespace LevEngine::Editor
                 tc.RecalculateModel();
             }
         }
-	}
+    }
 }

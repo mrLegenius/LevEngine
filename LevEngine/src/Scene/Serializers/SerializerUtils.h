@@ -4,7 +4,6 @@
 #include "Assets/Asset.h"
 #include "Assets/AssetDatabase.h"
 #include "Kernel/Color.h"
-#include "Math/Math.h"
 
 namespace YAML
 {
@@ -135,6 +134,7 @@ namespace LevEngine
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vector3& v);
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vector4& v);
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Color& c);
+	YAML::Emitter& operator<<(YAML::Emitter& out, const eastl::string& s);
 
 	inline void SerializeAsset(YAML::Emitter& out, const String& nodeName, const Ref<Asset>& asset)
 	{
@@ -168,4 +168,6 @@ namespace LevEngine
 			return nullptr;
 		}
 	}
+
+	void SerializeEntity(YAML::Emitter& out, Entity entity);
 }

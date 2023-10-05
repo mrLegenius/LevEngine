@@ -3,6 +3,7 @@
 
 #include "System.h"
 #include "Components/Transform/Transform.h"
+#include "DataTypes/Delegates.h"
 #include "DataTypes/Pointers.h"
 #include "Kernel/UUID.h"
 #include "Physics/Physics.h"
@@ -18,18 +19,24 @@ public:
 	~Scene();
 
 	void OnUpdate(float deltaTime);
+	void RequestPhysicsUpdates(float deltaTime);
 	void OnPhysics(float deltaTime);
+	void RequestRenderUpdate();
 	void OnLateUpdate(float deltaTime);
 	void OnRender();
+	void RequestRenderUpdate(SceneCamera* mainCamera, const Transform* cameraTransform);
 	void OnRender(SceneCamera* mainCamera, const Transform* cameraTransform);
+	void RequestLateUpdate(float deltaTime);
+	void RequestEventsUpdate(float deltaTime);
 
 	void OnViewportResized(uint32_t width, uint32_t height);
 
-	void ForEachEntity(const std::function<void(Entity)>& callback);
+	void ForEachEntity(const Action<Entity>& callback);
 
 	Entity CreateEntity(const String& name = "Entity");
 	Entity CreateEntity(UUID uuid, const String& name);
 
+	void DestroyEntity(entt::entity entity);
 	void DestroyEntity(Entity entity);
 	static void GetAllChildren(Entity entity, Vector<Entity>& entities);
 
@@ -38,23 +45,48 @@ public:
 
 	void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 
-	void RegisterUpdateSystem(Ref<System> system)
+	template<typename T>
+	void RegisterUpdateSystem()
 	{
-		m_UpdateSystems.emplace_back(system);
+		static_assert(eastl::is_base_of_v<System, T>, "T must derive from System");
+		m_UpdateSystems.emplace_back(CreateScope<T>());
 	}
 
-	void RegisterLateUpdateSystem(Ref<System> system)
+	template<typename T>
+	void RegisterLateUpdateSystem()
 	{
-		m_LateUpdateSystems.emplace_back(system);
+		static_assert(eastl::is_base_of_v<System, T>, "T must derive from System");
+		m_LateUpdateSystems.emplace_back(CreateScope<T>());
 	}
 
 	template<typename T>
 	void RegisterOneFrame()
 	{
-		m_EventSystems.emplace_back(new EventSystem<T>);
+		m_EventSystems.emplace_back(CreateScope<EventSystem<T>>());
 	}
 
-	Entity GetEntityBy(Transform* value);
+	template<typename T>
+	Entity GetEntityByComponent(T* value)
+	{
+		const auto entity = entt::to_entity(m_Registry, *value);
+		return ConvertEntity(entity);
+	}
+
+	Entity GetEntityByUUID(UUID uuid)
+	{
+		const auto view = m_Registry.view<IDComponent>();
+		for (const auto entity : view)
+		{
+			auto idComponent = view.get<IDComponent>(entity);
+			if (idComponent.ID == uuid)
+				return ConvertEntity(entity);
+		}
+
+		return Entity();
+	}
+
+private:
+	void RequestUpdates(float deltaTime);
 
 private:
 	entt::registry m_Registry;
@@ -65,8 +97,15 @@ private:
 
 	Entity ConvertEntity(entt::entity entity);
 
-	Vector<Ref<System>> m_UpdateSystems;
-	Vector<Ref<System>> m_LateUpdateSystems;
-	Vector<Ref<System>> m_EventSystems;
+	Vector<Scope<System>> m_UpdateSystems;
+	Vector<Scope<System>> m_LateUpdateSystems;
+	Vector<Scope<System>> m_EventSystems;
+
+	bool m_IsUpdateDone = true;
+	bool m_IsLateUpdateDone = true;
+	bool m_IsEventUpdateDone = true;
+	bool m_IsPhysicsDone = true;
+	bool m_IsRenderDone = true;
+	
 };
 }

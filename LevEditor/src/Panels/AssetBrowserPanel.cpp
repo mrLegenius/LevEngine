@@ -9,18 +9,14 @@
 
 namespace LevEngine::Editor
 {
-    AssetBrowserPanel::AssetBrowserPanel() : m_CurrentDirectory(AssetDatabase::AssetsRoot)
+    AssetBrowserPanel::AssetBrowserPanel()
+        : m_CurrentDirectory(AssetDatabase::GetAssetsPath())
     {
-        m_DirectoryIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\DirectoryIcon.png");
-        m_FileIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\FileIcon.png");
-        m_MeshIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\MeshIcon.png");
-        m_MaterialIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\MaterialIcon.png");
-        m_SkyboxIcon = Texture::Create("resources\\Icons\\AssetsBrowser\\SkyboxIcon.png");
     }
 
     void AssetBrowserPanel::DrawContent()
     {
-        if (m_CurrentDirectory != AssetDatabase::AssetsRoot)
+        if (m_CurrentDirectory != AssetDatabase::GetAssetsPath())
         {
             if (ImGui::Button("<"))
 	            m_CurrentDirectory = m_CurrentDirectory.parent_path();
@@ -28,10 +24,11 @@ namespace LevEngine::Editor
 
         static float padding = 16.0f;
         static float thumbnailSize = 64.0f;
-
+        
+        auto relativePath = relative(m_CurrentDirectory, Project::GetRoot());
         ImGui::SameLine();
         ImGui::AlignTextToFramePadding();
-        ImGui::Text(m_CurrentDirectory.string().c_str());
+        ImGui::Text(relativePath.string().c_str());
 
         ImGui::PushItemWidth(-300);
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 400);
@@ -66,19 +63,9 @@ namespace LevEngine::Editor
                 asset = AssetDatabase::GetAsset(path);
             
             ImGui::PushID(filenameString.c_str());
-            Ref<Texture> icon = nullptr;
-            if (directoryEntry.is_directory())
-	            icon = m_DirectoryIcon;
-            else if (AssetDatabase::IsAssetTexture(path))
-                icon = TextureLibrary::GetTexture(path.string().c_str());
-            else if (AssetDatabase::IsAssetMesh(path))
-                icon = m_MeshIcon;
-            else if (AssetDatabase::IsAssetMaterial(path))
-                icon = m_MaterialIcon;
-        	else if (AssetDatabase::IsAssetSkybox(path))
-                icon = m_SkyboxIcon;
-			else
-				icon = m_FileIcon;
+            const Ref<Texture> icon = directoryEntry.is_directory()
+                                          ? Icons::Directory()
+                                          : asset->GetIcon();
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton(icon->GetId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
@@ -90,8 +77,7 @@ namespace LevEngine::Editor
                 {
 	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
 	                {
-	                    const auto assetPathPayload = static_cast<const wchar_t*>(payload->Data);
-	                    const Path assetPath = AssetDatabase::AssetsRoot / assetPathPayload;
+	                    const Path assetPath = static_cast<const wchar_t*>(payload->Data);
 
                         AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath), path);
 	                }
@@ -101,9 +87,9 @@ namespace LevEngine::Editor
 
             if (ImGui::BeginDragDropSource())
             {
-                auto relativePath = std::filesystem::relative(path, AssetDatabase::AssetsRoot);
-                const wchar_t* itemPath = relativePath.c_str();
-                ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+                const wchar_t* itemPath = path.c_str();
+                ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath,
+                    (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
                 ImGui::EndDragDropSource();
             }
 
@@ -125,7 +111,8 @@ namespace LevEngine::Editor
             {
                 if (ImGui::BeginMenu("Create"))
                 {
-                    DrawCreateMenu<MaterialAsset>("Material", "Material.mat");
+                    DrawCreateMenu<MaterialSimpleAsset>("Material", "Material.mat");
+                    DrawCreateMenu<MaterialPBRAsset>("PBR Material", "PBRMaterial.pbr");
                     DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
 
                     ImGui::EndMenu();

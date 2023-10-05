@@ -3,11 +3,13 @@
 
 using String = eastl::string;
 
-template <typename T>
-typename eastl::remove_reference<T>::type&&
-Move(T&& x) noexcept
+inline String ToString(const float value) { return std::to_string(value).c_str(); }
+inline String ToString(const int value) { return std::to_string(value).c_str(); }
+
+template <typename... T>
+constexpr String Format(fmt::format_string<T...> format, T&&... args)
 {
-    return eastl::move(x);
+    return fmt::format(format, std::forward<T>(args)...).c_str();
 }
 
 template <>

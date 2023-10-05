@@ -6,14 +6,15 @@
 class LetEditor : public Application
 {
 public:
-	LetEditor() : Application("LevEditor", 1600, 900)
+	LetEditor(const ApplicationCommandLineArgs args)
+		: Application({ "LevEditor", 1280, 720, args})
 	{
 		PushLayer(new Editor::EditorLayer);
 	}
 	~LetEditor() = default;
 };
 
-Application* CreateApplication()
+Application* CreateApplication(ApplicationCommandLineArgs args)
 {
-	return new LetEditor;
+	return new LetEditor(args);
 }

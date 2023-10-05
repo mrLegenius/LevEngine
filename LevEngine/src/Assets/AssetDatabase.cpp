@@ -43,8 +43,13 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
+		if (!exists(GetAssetsPath()))
+			create_directory(GetAssetsPath());
+		
+		m_AssetsByPath.clear();
+		m_Assets.clear();
 		Queue<Path> directories;
-		directories.push(AssetsRoot);
+		directories.push(GetAssetsPath());
 		do
 		{
 			auto directory = directories.front();
@@ -125,5 +130,10 @@ namespace LevEngine
 
 		m_AssetsByPath.erase(path);
 		m_Assets.erase(uuid);
+	}
+
+	bool AssetDatabase::AssetExists(const Path& path)
+	{
+		return exists(path);
 	}
 }

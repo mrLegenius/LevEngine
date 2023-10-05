@@ -3,7 +3,6 @@
 
 #include <chrono>
 
-#include "Time.h"
 #include "Utils.h"
 #include "../Renderer/Renderer.h"
 #include "../Events/ApplicationEvent.h"
@@ -13,19 +12,22 @@
 #include "../Events/Event.h"
 #include "Assets/AssetDatabase.h"
 #include "Math/Random.h"
+#include "Time/Time.h"
+#include "Time/TimelineRunner.h"
 
 namespace LevEngine
 {
 Application* Application::s_Instance = nullptr;
 
-Application::Application(const String& name, const uint32_t width, const uint32_t height)
+Application::Application(const ApplicationSpecification& specification)
+	: m_Specification(specification)
 {
 	LEV_PROFILE_FUNCTION();
 
 	LEV_CORE_ASSERT(!s_Instance, "Only one application is allowed");
 	s_Instance = this;
 
-	m_Window = Window::Create(WindowAttributes(name, width, height));
+	m_Window = Window::Create(WindowAttributes(specification.Name, specification.WindowWidth, specification.WindowHeight));
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 	Renderer::Init();
@@ -39,6 +41,8 @@ Application::Application(const String& name, const uint32_t width, const uint32_
 
 	m_ImGuiLayer = new ImGuiLayer;
 	PushOverlay(m_ImGuiLayer);
+
+	vgjs::JobSystem jobSystem;
 
 	Time::s_StartupTime = std::chrono::high_resolution_clock::now();
 }
@@ -57,12 +61,16 @@ void Application::Run()
 	float totalTime = 0;
 	unsigned int frameCount = 0;
 
+	Time::Init(1 / 60.0f);
+
 	while (m_IsRunning)
 	{
 		auto curTime = std::chrono::steady_clock::now();
-		const float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
+		float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
 		Time::SetDeltaTime(deltaTime);
 		PrevTime = curTime;
+
+		TimelineRunner::OnUpdate(deltaTime);
 
 		totalTime += deltaTime;
 		frameCount++;
@@ -74,14 +82,14 @@ void Application::Run()
 			totalTime -= 1.0f;
 
 			String text("FPS: ");
-			text.append(std::to_string(fps).c_str());
+			text.append(ToString(fps));
 			m_Window->SetWindowTitle(text);
 
 			frameCount = 0;
 		}
 
 		if (deltaTime > 1.0f) // Maybe breakpoint is hit
-			continue;
+			deltaTime = 1.0f / 60.0f;
 
 		m_Window->HandleInput();
 
@@ -91,24 +99,38 @@ void Application::Run()
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate(deltaTime);
 		}
-
-		//We need to bind main render target before drawing GUI
-		//TODO: Maybe move to another place
-		m_Window->GetContext()->GetRenderTarget()->Bind();
-
-		m_ImGuiLayer->Begin();
-		{
-			LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
-			for (Layer* layer : m_LayerStack)
-				layer->OnGUIRender();
-		}
-		m_ImGuiLayer->End();
+		
+		if (!m_Minimized)
+			Render();
 
 		Input::Reset();
 		m_Window->Update();
 
 		m_fmod->Update();
 	}
+
+	vgjs::terminate();
+}
+
+void Application::Render()
+{
+	{
+		LEV_PROFILE_SCOPE("LayerStack OnRender");
+		for (Layer* layer : m_LayerStack)
+			layer->OnRender();
+	}
+			
+	//We need to bind main render target before drawing GUI
+	//TODO: Maybe move to another place
+	m_Window->GetContext()->GetRenderTarget()->Bind();
+
+	m_ImGuiLayer->Begin();
+	{
+		LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
+		for (Layer* layer : m_LayerStack)
+			layer->OnGUIRender();
+	}
+	m_ImGuiLayer->End();
 }
 
 void Application::Close()

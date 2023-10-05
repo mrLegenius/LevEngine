@@ -35,10 +35,7 @@ namespace LevEngine
             const CPUAccess cpuAccess = CPUAccess::None)
             : m_Stride(stride)
             , m_ElementsCount(static_cast<UINT>(count))
-            , m_CPUAccess(cpuAccess)
-        {
-
-        }
+            , m_CPUAccess(cpuAccess) { }
 
 
         // The system data buffer

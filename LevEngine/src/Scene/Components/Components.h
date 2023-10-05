@@ -1,4 +1,5 @@
 #pragma once
+#include "DataTypes/Utility.h"
 
 namespace LevEngine
 {
@@ -6,7 +7,7 @@ namespace LevEngine
 	{
 		UUID ID;
 
-		IDComponent() = default;
+		IDComponent(const UUID& ID) : ID(ID){};
 		IDComponent(const IDComponent&) = default;
 	};
 

@@ -3,6 +3,7 @@
 #include "CPUAccess.h"
 #include "SamplerState.h"
 #include "ShaderType.h"
+#include "DataTypes/Utility.h"
 #include "Math/Vector4.h"
 
 namespace LevEngine
@@ -97,6 +98,7 @@ namespace LevEngine
 
 		virtual ~Texture() = default;
 
+		static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format, void* data, CPUAccess cpuAccess = CPUAccess::None, bool uav = false);
 		static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format, CPUAccess cpuAccess = CPUAccess::None, bool uav = false);
 		static Ref<Texture> CreateTextureCube(const String paths[6]);
 		static Ref<Texture> Create(const String& path);
@@ -115,15 +117,8 @@ namespace LevEngine
 
 		[[nodiscard]] virtual bool IsTransparent() const = 0;
 
-		void AttachSampler(const Ref<SamplerState>& sampler)
-		{
-			m_SamplerState = sampler;
-		}
-
-		[[nodiscard]] const Ref<SamplerState>& GetSamplerState() const
-		{
-			return m_SamplerState;
-		}
+		void AttachSampler(const Ref<SamplerState>& sampler) { m_SamplerState = sampler; }
+		[[nodiscard]] const Ref<SamplerState>& GetSamplerState() const { return m_SamplerState; }
 
 		virtual void Resize(uint16_t width, uint16_t height = 0, uint16_t depth = 0) = 0;
 

@@ -1,8 +1,10 @@
 ﻿#pragma once
 #include <yaml-cpp/yaml.h>
 
+#include "Assets.h"
 #include "DataTypes/Path.h"
 #include "DataTypes/String.h"
+#include "Renderer/Texture.h"
 
 namespace LevEngine
 {
@@ -32,7 +34,6 @@ namespace LevEngine
 		bool Deserialize();
 		void SerializeMeta();
 
-		void DrawEditor();
 		void Rename(const Path& path)
 		{
 			m_Name = path.stem().string().c_str();
@@ -42,9 +43,12 @@ namespace LevEngine
 			m_Path = path;
 		}
 
-	protected:
-		virtual void DrawProperties() { }
+		[[nodiscard]] virtual Ref<Texture> GetIcon() const
+		{
+			return Icons::File();
+		}
 
+	protected:
 		[[nodiscard]] virtual bool OverrideDataFile() const { return true; }
 		virtual void SerializeData(YAML::Emitter& out) = 0;
 		virtual void DeserializeData(YAML::Node& node) = 0;

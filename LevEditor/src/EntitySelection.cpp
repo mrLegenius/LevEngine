@@ -3,6 +3,8 @@
 
 #include <imgui.h>
 
+#include "GUI/Drawers/Components/ComponentDrawer.h"
+
 namespace LevEngine::Editor
 {
 	void EntitySelection::DrawProperties()

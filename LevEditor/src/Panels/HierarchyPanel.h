@@ -13,9 +13,12 @@ namespace LevEngine::Editor
 	protected:
 		String GetName() override { return "Hierarchy"; }
 		void DrawContent() override;
+		static void CreatePrefab(Entity entity, const Path& path);
+
 	private:
 		void DrawEntityNode(Entity entity);
 		
 		Vector<Entity> m_EntitiesToDelete;
+		Entity m_PressedEntity;
 	};
 }

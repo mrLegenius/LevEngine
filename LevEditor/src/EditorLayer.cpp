@@ -5,82 +5,88 @@
 #include <imgui_internal.h>
 
 #include "EntitySelection.h"
+#include "ModalPopup.h"
+#include "Project.h"
 #include "Selection.h"
+#include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
+#include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
 
 namespace LevEngine::Editor
 {
-    void OnKatamariCollided(Entity me, Entity other)
+    void EditorLayer::ShowProjectSelectionPopup()
     {
-        /*auto& myCollider = me.GetComponent<SphereCollider>();
-        auto& myTransform = me.GetComponent<Transform>();
+        ModalPopup::Show("Project Selection",
+    "Open existing or create new project",
+    "Open",
+    "Create new",
+    [this] { if(!OpenProject()) ShowProjectSelectionPopup(); },
+    [this]{ if(!NewProject()) ShowProjectSelectionPopup(); });
+    }
+    
+    bool EditorLayer::OpenProject()
+    {
+        const String& path = FileDialogs::OpenFile("LevProject (*.levproject)\0*.levproject\0");
 
-        auto& otherRigidbody = other.GetComponent<Rigidbody>();
-        auto& otherTransform = other.GetComponent<Transform>();
-        if (otherRigidbody.bodyType == BodyType::Static) return;
+        if(Project::Load(path.c_str()))
+        {
+            LoadProject();
+            return true;
+        }
 
-        const auto size = myCollider.radius;
-        const auto otherSize = Math::MaxElement(otherTransform.GetWorldScale());
-
-        if (size <= otherSize) return;
-
-        myCollider.radius += otherSize;
-
-        otherRigidbody.enabled = false;
-
-        otherTransform.SetParent(me);*/
+        return false;
     }
 
-    class TestSystem : public System
+    bool EditorLayer::NewProject()
     {
-        void Update(float deltaTime, entt::registry& registry) override
+        const String& path = FileDialogs::SaveFile("LevProject (*.levproject)\0*.levproject\0", "levproject");
+
+        if(Project::CreateNew(path.c_str()))
         {
-            auto view = registry.view<Transform, DirectionalLightComponent, CameraComponent>();
-
-            for (auto entity : view)
-            {
-                auto [transform, light, camera] = view.get<Transform, DirectionalLightComponent, CameraComponent>(entity);
-
-                /* auto rot = transform.GetLocalRotation();
-                 auto mouseDelta = Input::GetMouseDelta();
-                 rot.x += mouseDelta.second / 180;
-                 rot.y += mouseDelta.first / 180;
-                 transform.SetLocalRotationRadians(rot);*/
-
-                float delta = 0;
-                if (Input::IsKeyDown(KeyCode::Q))
-                    delta = 0.001f;
-                else if (Input::IsKeyDown(KeyCode::E))
-                    delta = -0.001f;
-
-                auto ortho = camera.camera.GetOrthographicSize();
-                camera.camera.SetOrthographicSize(ortho + delta);
-            }
+            LoadProject();
+            return true;
         }
-    };
-    void EditorLayer::OnAttach()
+        
+        return false;
+    }
+
+
+    void EditorLayer::LoadProject()
     {
-        LEV_PROFILE_FUNCTION();
-
-        //spdlog uses shared_ptr so we use here as well
-        m_Console = std::make_shared<ConsolePanel>();
-        Log::Logger::AddLogHandler(m_Console);
-
+        m_SaveData.SetLastOpenedProject(Project::GetPath());
+        m_SaveData.Save();
+        
         AssetDatabase::ProcessAllAssets();
 
+        const auto startScene = Project::GetStartScene();
+        if (startScene.empty() || !OpenScene(startScene))
+            SceneManager::LoadEmptyScene();
+        
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
         m_Hierarchy = CreateRef<HierarchyPanel>();
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
-        
-        //<--- Systems ---<<
-        //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<OrbitCameraSystem>());
-        //m_ActiveScene->RegisterLateUpdateSystem(CreateRef<KatamariCollisionSystem>());
-        //m_ActiveScene->RegisterUpdateSystem(CreateRef<KatamariPlayerSystem>());
-        //m_ActiveScene->RegisterUpdateSystem(CreateRef<TestSystem>());
-        //m_ActiveScene->RegisterOneFrame<CollisionBeginEvent>();
-        //m_ActiveScene->RegisterOneFrame<CollisionEndEvent>();
+    }
+    
+    void EditorLayer::OnAttach()
+    {
+        LEV_PROFILE_FUNCTION();
 
+        //spdlog uses shared_ptr so we use it here as well
+        m_Console = std::make_shared<ConsolePanel>();
+        Log::Logger::AddLogHandler(m_Console);
+
+        m_SaveData.Load();
+
+        if (Project::Load(m_SaveData.GetLastOpenedProject()))
+        {
+            LoadProject();
+        }
+        else
+        {
+            ShowProjectSelectionPopup();
+        }
+        
         Application::Get().GetWindow().EnableCursor();
     }
 
@@ -90,8 +96,86 @@ namespace LevEngine::Editor
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
         dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResized));
     }
+    
+    void EditorLayer::OnUpdate(const float deltaTime)
+    {
+        LEV_PROFILE_FUNCTION();
 
-    void EditorLayer::OnDuplicateEntity() const
+        if (!Project::GetProject()) return;
+        
+        if (Input::IsKeyDown(KeyCode::Escape))
+        {
+            Application::Get().GetWindow().EnableCursor();
+            m_Hierarchy->Focus();
+        }
+
+        const auto& activeScene = SceneManager::GetActiveScene();
+        
+        switch (m_SceneState)
+        {
+	        case SceneState::Edit:
+	        {
+	            break;
+	        }
+	        case SceneState::Play:
+	        {
+	            activeScene->OnUpdate(deltaTime);
+	            activeScene->OnPhysics(deltaTime);
+	            activeScene->OnLateUpdate(deltaTime);
+
+	            break;
+	        }
+        }
+
+        if (m_Viewport->IsActive())
+            m_Viewport->UpdateCamera(deltaTime);
+    }
+
+    void EditorLayer::OnRender()
+    {
+        if (!Project::GetProject()) return;
+        
+        const auto& activeScene = SceneManager::GetActiveScene();
+        
+        if (m_Viewport->IsActive())
+        {
+            DebugRender::DrawGrid(Vector3::Zero, Vector3::Right, Vector3::Forward, 100, 100, 1.0f, Color::Gray);
+            
+            auto& camera = m_Viewport->GetCamera();
+            activeScene->OnRender(&camera, &camera.GetTransform());
+            m_Viewport->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+        }
+
+        if (m_Game->IsActive())
+        {
+            activeScene->OnRender();
+            m_Game->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+        }
+    }
+    
+    void EditorLayer::OnGUIRender()
+    {
+        LEV_PROFILE_FUNCTION();
+        
+        ImGui::ShowDemoWindow(nullptr);
+        
+        ModalPopup::Render();
+
+        if (!Project::GetProject()) return;
+        
+        DrawDockSpace();
+        m_Viewport->Render();
+        m_Hierarchy->Render();
+        m_Properties->Render();
+        m_AssetsBrowser->Render();
+        m_Game->Render();
+        m_Console->Render();
+        //DrawStatistics();
+        DrawToolbar();
+        DrawStatusbar();
+    }
+
+    void EditorLayer::OnDuplicateEntity()
     {
         if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
         {
@@ -116,28 +200,28 @@ namespace LevEngine::Editor
         {
 
         case KeyCode::N:
-        {
-            if (control) { CreateNewScene(); }
-            break;
-        }
+            {
+                if (control) { CreateNewScene(); }
+                break;
+            }
         case KeyCode::O:
-        {
-            if (control) { OpenScene(); }
-            break;
-        }
+            {
+                if (control) { OpenScene(); }
+                break;
+            }
         case KeyCode::S:
-        {
-            if (control && shift) { SaveSceneAs(); }
-            else if (control) { SaveScene(); }
-            break;
-        }
+            {
+                if (control && shift) { SaveSceneAs(); }
+                else if (control) { SaveScene(); }
+                break;
+            }
         case KeyCode::D:
-        {
-            if (control)
-                OnDuplicateEntity();
+            {
+                if (control)
+                    OnDuplicateEntity();
 
-            break;
-        }
+                break;
+            }
 
         default:
             break;
@@ -159,83 +243,19 @@ namespace LevEngine::Editor
         return false;
     }
 
-    void EditorLayer::OnUpdate(const float deltaTime)
-    {
-        LEV_PROFILE_FUNCTION();
-
-        if (Input::IsKeyDown(KeyCode::Escape))
-        {
-            Application::Get().GetWindow().EnableCursor();
-            m_Hierarchy->Focus();
-        }
-
-        const auto& activeScene = SceneManager::GetActiveScene();
-        
-        switch (m_SceneState)
-        {
-	        case SceneState::Edit:
-	        {
-	            break;
-	        }
-	        case SceneState::Play:
-	        {
-	            if (m_Viewport->IsFocused() || m_Game->IsFocused())
-	                Application::Get().GetWindow().DisableCursor();
-
-	            activeScene->OnUpdate(deltaTime);
-	            activeScene->OnPhysics(deltaTime);
-	            activeScene->OnLateUpdate(deltaTime);
-
-	            break;
-	        }
-        }
-
-        if (m_Viewport->IsActive())
-        {
-            m_Viewport->UpdateCamera(deltaTime);
-            auto& camera = m_Viewport->GetCamera();
-            activeScene->OnRender(&camera, &camera.GetTransform());
-            m_Viewport->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-        }
-
-        if (m_Game->IsActive())
-        {
-            activeScene->OnRender();
-            m_Game->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-        }
-    }
-
-    void EditorLayer::OnGUIRender()
-    {
-        ImGui::ShowDemoWindow(nullptr);
-
-        LEV_PROFILE_FUNCTION();
-
-        DrawDockSpace();
-        m_Viewport->Render();
-        m_Hierarchy->Render();
-        m_Properties->Render();
-        m_AssetsBrowser->Render();
-        m_Game->Render();
-        m_Console->Render();
-        //DrawStatistics();
-        DrawToolbar();
-        DrawStatusbar();
-    }
 
     constexpr float toolbarSize = 10;
     float menuBarHeight;
 
     void EditorLayer::DrawToolbar()
     {
-        static auto selectIcon = Texture::Create("resources/Icons/Select.png");
-        static auto translateIcon = Texture::Create("resources/Icons/Translate.png");
-        static auto rotationIcon = Texture::Create("resources/Icons/Rotate.png");
-        static auto scaleIcon = Texture::Create("resources/Icons/Scale.png");
+        static auto selectIcon = Icons::Select();
+        static auto translateIcon = Icons::Translate();
+        static auto rotationIcon = Icons::Rotate();
+        static auto scaleIcon = Icons::Scale();
 
-        static auto iconPlay = Texture::Create("resources/Icons/PlayButton.png");
-        static auto iconStop = Texture::Create("resources/Icons/StopButton.png");
-
+        static auto iconPlay = Icons::Play();
+        static auto iconStop = Icons::Stop();
 
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuBarHeight));
@@ -251,7 +271,9 @@ namespace LevEngine::Editor
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
         const auto& buttonActive = colors[ImGuiCol_ButtonActive];
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
-
+        const ImGuiIO& io = ImGui::GetIO();
+        const auto boldFont = io.Fonts->Fonts[0];
+        
         constexpr ImGuiWindowFlags windowFlags = 0
             | ImGuiWindowFlags_NoDocking
             | ImGuiWindowFlags_NoTitleBar
@@ -268,12 +290,11 @@ namespace LevEngine::Editor
         ImGui::SetCursorPosX(10);
         ImGui::SetCursorPosY(padding);
 
-        ImGui::BeginTable("tools", 4, 0, ImVec2(0, 0), size * 4);
-        
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
-        ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
+        constexpr int columns = 7;
+        ImGui::BeginTable("tools", columns, 0, ImVec2(0, 0), size * 4);
+
+        for (int i = 0; i < columns; ++i)
+            ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, size);
 
         {
             ImGui::TableNextColumn();
@@ -313,6 +334,48 @@ namespace LevEngine::Editor
             ImGui::SetItemAllowOverlap();
             ImGui::SetCursorPos(cursorPos);
             ImGui::Image(scaleIcon->GetId(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
+        }
+
+        {
+            ImGui::TableNextColumn();
+            ImGui::Dummy(ImVec2(size, size));
+        }
+        
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_space_world", Gizmo::Space == Gizmo::ToolSpace::World, 0, ImVec2(size, size)))
+                Gizmo::Space = Gizmo::ToolSpace::World;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            
+            ImGui::PushFont(boldFont);
+
+            const auto width = ImGui::GetColumnWidth();
+            const auto textWidth = ImGui::CalcTextSize("W").x;
+            const auto cursorPosX = cursorPos.x + (width - textWidth) * 0.5f;
+            ImGui::SetCursorPosX(cursorPosX);
+            
+            ImGui::Text("W");
+            ImGui::PopFont();
+        }
+
+        {
+            ImGui::TableNextColumn();
+            const auto cursorPos = ImGui::GetCursorPos();
+            if (ImGui::Selectable("##tool_space_local", Gizmo::Space == Gizmo::ToolSpace::Local, 0, ImVec2(size, size)))
+                Gizmo::Space = Gizmo::ToolSpace::Local;
+            ImGui::SetItemAllowOverlap();
+            ImGui::SetCursorPos(cursorPos);
+            ImGui::PushFont(boldFont);
+
+            const auto width = ImGui::GetColumnWidth();
+            const auto textWidth = ImGui::CalcTextSize("L").x;
+            const auto cursorPosX = cursorPos.x + (width - textWidth) * 0.5f;
+            ImGui::SetCursorPosX(cursorPosX);
+            
+            ImGui::Text("L");
+            ImGui::PopFont();
         }
 
         ImGui::EndTable();
@@ -362,6 +425,18 @@ namespace LevEngine::Editor
         ImGui::PopStyleVar(3);
         ImGui::PopStyleColor(3);
         ImGui::End();
+    }
+
+    void EditorLayer::SetCurrentSceneAsStartScene() const
+    {
+        if (!SceneManager::GetActiveScene())
+        {
+            Log::CoreWarning("There is no active scene");
+            return;
+        }
+
+        Project::SetStartScene(SceneManager::GetActiveScenePath());
+        Project::Save();
     }
 
     void EditorLayer::DrawDockSpace()
@@ -419,6 +494,25 @@ namespace LevEngine::Editor
                 ImGui::EndMenu();
             }
 
+            if (ImGui::BeginMenu("Project"))
+            {
+                if (ImGui::MenuItem("Open project..."))
+                    if (!OpenProject())
+                        Log::CoreWarning("Failed to open project");
+
+                if (ImGui::MenuItem("Create New..."))
+                    if(!NewProject())
+                        Log::CoreWarning("Failed to open project");
+                
+                if (ImGui::MenuItem("Set current scene as start scene"))
+                    SetCurrentSceneAsStartScene();
+
+                if (ImGui::MenuItem("Build"))
+                    Project::Build();
+
+                ImGui::EndMenu();
+            }
+
             ImGui::EndMenuBar();
         }
 
@@ -427,10 +521,6 @@ namespace LevEngine::Editor
 
     void EditorLayer::CreateNewScene()
     {
-        /*m_ActiveScene->OnViewportResized(
-            static_cast<uint32_t>(m_Viewport->GetWidth()),
-            static_cast<uint32_t>(m_Viewport->GetHeight()));*/
-        m_EditorScenePath = Path();
         SceneManager::LoadEmptyScene();
     }
 
@@ -443,12 +533,12 @@ namespace LevEngine::Editor
         }
     }
 
-    void EditorLayer::OpenScene(const Path& path)
+    bool EditorLayer::OpenScene(const Path& path)
     {
         if (path.extension().string() != ".scene")
         {
             Log::Warning("Failed to open scene. {0} is not a scene file", path.filename().string());
-            return;
+            return false;
         }
 
         if (m_SceneState != SceneState::Edit)
@@ -457,8 +547,10 @@ namespace LevEngine::Editor
         if (SceneManager::LoadScene(path))
         {
             Selection::Deselect();
-            m_EditorScenePath = path;
+            return true;
         }
+
+        return false;
     }
 
     bool EditorLayer::SaveScene()
@@ -469,9 +561,10 @@ namespace LevEngine::Editor
             return false;
         }
 
-        if (!m_EditorScenePath.empty())
+        const auto scenePath = SceneManager::GetActiveScenePath();
+        if (!scenePath.empty())
         {
-            SceneManager::SaveScene(m_EditorScenePath.string().c_str());
+            SceneManager::SaveScene(scenePath.string().c_str());
             return true;
         }
 
@@ -486,12 +579,10 @@ namespace LevEngine::Editor
             return false;
         }
 
-        const auto filepath = FileDialogs::SaveFile("LevEngine Scene (*.scene)\0*.scene\0");
+        const auto filepath = FileDialogs::SaveFile("LevEngine Scene (*.scene)\0*.scene\0", "scene");
         if (!filepath.empty())
         {
             SceneManager::SaveScene(filepath);
-
-            m_EditorScenePath = filepath.c_str();
             return true;
         }
 
@@ -501,6 +592,10 @@ namespace LevEngine::Editor
     void EditorLayer::OnScenePlay()
     {
         if (!SaveScene()) return;
+
+        auto& scene = SceneManager::GetActiveScene();
+        scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
+        scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
 
         m_Game->Focus();
         m_SceneState = SceneState::Play;
@@ -512,6 +607,6 @@ namespace LevEngine::Editor
         m_SceneState = SceneState::Edit;
         Selection::Deselect();
 
-        OpenScene(m_EditorScenePath);
+        OpenScene(SceneManager::GetActiveScenePath());
     }
 }

@@ -2,7 +2,6 @@
 #include "ConstantBuffer.h"
 #include "RenderTechnique.h"
 #include "RenderSettings.h"
-#include "Scene/Components/Components.h"
 #include "Scene/Components/Lights/Lights.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 
@@ -11,6 +10,7 @@ namespace LevEngine
 struct MeshModelBufferData
 {
 	Matrix Model;
+	Matrix TransposedInvertedModel;
 };
 
 struct DirLightData
@@ -43,8 +43,11 @@ public:
 	static void Init();
 
 	static void SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
-
+	static void DrawMesh(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);
 	static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader);
+	
+	static void DrawLineList(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);
+	static void DrawLineStrip(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);
 
 	static void SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight);
 	static void AddPointLights(const Vector4& positionViewSpace, const Vector3& position, const PointLightComponent& pointLight);
