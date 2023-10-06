@@ -26,7 +26,8 @@ namespace LevEngine
 		}
 		
 	protected:
-		[[nodiscard]] bool OverrideDataFile() const override { return false; }
+		[[nodiscard]] bool WriteDataToFile() const override { return false; }
+		[[nodiscard]] bool ReadDataFromFile() const override { return false; }
 
 		void SerializeMeta(YAML::Emitter& out) override;
 		void DeserializeMeta(YAML::Node& out) override;

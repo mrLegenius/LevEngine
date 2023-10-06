@@ -1,5 +1,6 @@
 ﻿#include "levpch.h"
 #include "Asset.h"
+#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
@@ -18,7 +19,7 @@ namespace LevEngine
 
 		out << YAML::EndMap;
 
-		if (!OverrideDataFile()) return;
+		if (!WriteDataToFile()) return;
 
 		try
 		{
@@ -28,7 +29,6 @@ namespace LevEngine
 		catch (std::exception& e)
 		{
 			Log::CoreWarning("Failed to serialize data of '{0}' asset. Error: {1}", m_Name, e.what());
-
 		}
 	}
 
@@ -38,6 +38,8 @@ namespace LevEngine
 		metaOut << YAML::BeginMap;
 
 		metaOut << YAML::Key << "UUID" << YAML::Value << m_UUID;
+		metaOut << YAML::Key << "Address" << YAML::Value << m_Address;
+		
 		SerializeMeta(metaOut);
 
 		metaOut << YAML::EndMap;
@@ -63,7 +65,7 @@ namespace LevEngine
 
 	bool Asset::DeserializeData()
 	{
-		if (!OverrideDataFile())
+		if (!ReadDataFromFile())
 		{
 			YAML::Node data{};
 			DeserializeData(data);
@@ -95,6 +97,9 @@ namespace LevEngine
 		try
 		{
 			YAML::Node meta = YAML::LoadFile(m_MetaPath.string());
+			if (const auto address = meta["Address"])
+				m_Address = address.as<String>();
+			
 			DeserializeMeta(meta);
 		}
 		catch (YAML::BadConversion&)

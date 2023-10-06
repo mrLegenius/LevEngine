@@ -14,7 +14,7 @@ public:
 	static void Clear();
 	static void RecalculateAllTransforms(entt::registry& registry);
 	static void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
-	static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);
+	static RenderParams CreateRenderParams(SceneCamera* mainCamera, Transform* cameraTransform);
 	static void Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform);
 	static void Render(entt::registry& registry);
 	static void Shutdown();

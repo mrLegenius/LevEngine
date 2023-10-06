@@ -322,10 +322,11 @@ void Renderer::LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, 
 	}
 }
 
-RenderParams Renderer::CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform)
+RenderParams Renderer::CreateRenderParams(SceneCamera* mainCamera, Transform* cameraTransform)
 {
 	LEV_PROFILE_FUNCTION();
 
+	cameraTransform->SetWorldScale(Vector3::One);
 	const auto cameraViewMatrix = cameraTransform->GetModel().Invert();
 	const auto cameraPosition = cameraTransform->GetWorldPosition();
 	const auto perspectiveViewProjectionMatrix = cameraViewMatrix * mainCamera->GetPerspectiveProjection();
@@ -346,7 +347,7 @@ void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const T
 
 	mainCamera->RecalculateFrustum(*cameraTransform);
 	
-	const auto renderParams = CreateRenderParams(mainCamera, cameraTransform);
+	const auto renderParams = CreateRenderParams(mainCamera, const_cast<Transform*>(cameraTransform));
 
 	//TODO: Maybe move to its own pass?
 	DirectionalLightSystem(registry);

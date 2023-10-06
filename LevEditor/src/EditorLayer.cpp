@@ -55,7 +55,8 @@ namespace LevEngine::Editor
     {
         m_SaveData.SetLastOpenedProject(Project::GetPath());
         m_SaveData.Save();
-        
+
+        ResourceManager::Init(Project::GetRoot());
         AssetDatabase::ProcessAllAssets();
 
         const auto startScene = Project::GetStartScene();

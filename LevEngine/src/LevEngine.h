@@ -149,3 +149,5 @@
 #include "Assets/MaterialAsset.h"
 #include "Assets/MeshAsset.h"
 #include "Assets/SkyboxAsset.h"
+
+#include "ResourceManager.h"
