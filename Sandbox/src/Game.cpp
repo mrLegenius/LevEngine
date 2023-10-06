@@ -8,7 +8,7 @@
  * There are some problems in this project
  * 1. (Done) We need Project system to have ability change assets of separate project
  * 2. (In progress) We need Prefabs system to avoid complete object creation from code
- * 3. We need resource loading system (by name)
+ * 3. (In progress) We need resource loading system (by name)
  * 4. We need our systems and components in editor, to setup entities visually
  * 5. We do not need to control engine pipeline in this project (OnUpdate, OnRender, etc)
  */
@@ -116,22 +116,22 @@ namespace Sandbox
 
 				if (Input::IsMouseButtonPressed(MouseButton::Left))
 				{
-					const auto projectilePrefab = AssetDatabase::GetAsset<PrefabAsset>(AssetDatabase::GetAssetsPath() / "Prefabs" / "Missile.prefab");
+					const auto projectilePrefab = ResourceManager::LoadAsset<PrefabAsset>("MissilePrefab");
 					auto projectile = projectilePrefab->Instantiate(SceneManager::GetActiveScene());
 					
 					auto& transform = projectile.GetComponent<Transform>();
 
-					transform.SetWorldPosition(cameraTransform.GetWorldPosition() + cameraTransform.GetForwardDirection() * 10);
-					transform.SetWorldRotation(cameraTransform.GetWorldRotation());
+					auto childTransform = cameraTransform.GetChildren()[0].GetComponent<Transform>();
+					Vector3 offset = 2.5f * childTransform.GetForwardDirection();
+					offset += 0.1f * childTransform.GetUpDirection();
 
-					auto& collider = projectile.AddComponent<SphereCollider>();
-					collider.radius = 1;
+					Vector3 origin = childTransform.GetWorldPosition() + offset;
+					
+					transform.SetWorldPosition(origin);
+					transform.SetWorldRotation(childTransform.GetWorldRotation());
 
 					auto& events = projectile.AddComponent<CollisionEvents>();
 					events.onCollisionBegin.connect<&OnProjectileCollided>();
-					auto& rigidbody = projectile.AddComponent<Rigidbody>();
-					rigidbody.bodyType = BodyType::Kinematic;
-					rigidbody.gravityScale = 0;
 					
 					auto projectileMeshEntity = transform.GetChildren()[0];
 					auto& meshTransform = projectileMeshEntity.GetComponent<Transform>();
@@ -139,7 +139,7 @@ namespace Sandbox
 
 					auto& projectileComp = projectile.AddComponent<Projectile>();
 
-					projectileComp.speed = 50;
+					projectileComp.speed = 100;
 					projectileComp.lifetime = 1;
 					projectileComp.timer = 0;
 				}
@@ -193,7 +193,7 @@ namespace Sandbox
 			{
 				m_Timer -= m_SpawnInterval;
 
-				const auto prefab = AssetDatabase::GetAsset<PrefabAsset>(AssetDatabase::GetAssetsPath() / "Prefabs" / "Enemy.prefab");
+				const auto prefab = ResourceManager::LoadAsset<PrefabAsset>("EnemyPrefab");
 				const auto enemy = prefab->Instantiate(SceneManager::GetActiveScene());
 
 				auto& enemyComp = enemy.AddComponent<Enemy>();
@@ -221,44 +221,14 @@ namespace Sandbox
 			
 			auto& scene = SceneManager::GetActiveScene();
 
-			const auto player = scene->CreateEntity("Player");
+			const auto prefab = ResourceManager::LoadAsset<PrefabAsset>("PlayerPrefab");
+			const auto player = prefab->Instantiate(scene);
 
 			auto& playerTransform = player.GetComponent<Transform>();
 			playerTransform.SetWorldPosition(Vector3{0, 2, 0});
 			
 			auto& playerComponent = player.AddComponent<Player>();
 			playerComponent.speed = 10;
-
-			auto& rigidbody = player.AddComponent<Rigidbody>();
-			auto& collider = player.AddComponent<BoxCollider>();
-			collider.extents = Vector3{0.25, 1, 0.25};
-			collider.offset = Vector3{0, 1, 0};
-
-			const auto view = registry.view<Transform, CameraComponent>();
-			for (const auto entity : view)
-			{
-				auto [transform, camera] = view.get<Transform, CameraComponent>(entity);
-				
-				if (!camera.isMain) continue;
-
-				transform.SetParent(player);
-				transform.SetLocalRotation(Quaternion::Identity);
-				transform.SetLocalPosition(Vector3{0, 4, 0});
-
-				{
-					const auto sword = scene->CreateEntity("Sword");
-					auto& swordTransform = sword.GetComponent<Transform>();
-					swordTransform.SetParent(SceneManager::GetActiveScene()->GetEntityBy(&transform));
-					swordTransform.SetLocalPosition({0.7f, -2, -4});
-					swordTransform.SetLocalScale(Vector3::One * 0.2f);
-					const auto eulers = Vector3{10, 100, 0} * Math::DegToRad;
-					swordTransform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(eulers));
-				
-					auto& mesh = sword.AddComponent<MeshRendererComponent>();
-					mesh.mesh = AssetDatabase::GetAsset<MeshAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "sword.fbx");
-					mesh.material = AssetDatabase::GetAsset<MaterialAsset>(AssetDatabase::GetAssetsPath() / "Sword" / "Sword.pbr");
-				}
-			}
 		}
 	};
 
@@ -301,6 +271,7 @@ namespace Sandbox
 	
 	void Game::OnAttach()
 	{
+		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
 
 		SceneManager::LoadScene(AssetDatabase::GetAssetsPath() / "Scenes" / "TestScene.scene");
