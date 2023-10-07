@@ -33,7 +33,8 @@ namespace LevEngine::Editor
 		static void DrawTexture2D(const Func<Ref<Texture>>& getter,
 								  const Action<Ref<Texture>>& setter, Vector2 size = { 32, 32 });
 
-		static void DrawCheckBox(const char* label, const Func<bool>& getter, const Action<bool>& setter);
+		static bool DrawCheckBox(const char* label, const Func<bool>& getter, const Action<bool>& setter);
+		static bool DrawCheckBox(const char* label, bool& value);
 
 		template<class T>
 		static bool DrawAsset(const String& label, Ref<T>& assetPtr);

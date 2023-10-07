@@ -8,6 +8,11 @@ namespace LevEngine
 {
 	Ref<Texture> Texture::Create(const String& path)
 	{
+		return Create(path, true);
+	}
+
+	Ref<Texture> Texture::Create(const String& path, bool isLinear)
+	{
 		switch (RenderSettings::RendererAPI)
 		{
 		case RendererAPI::None:
@@ -15,16 +20,15 @@ namespace LevEngine
 		case RendererAPI::OpenGL:
 			LEV_NOT_IMPLEMENTED
 		case RendererAPI::D3D11:
-			return CreateRef<D3D11Texture>(path);
+			return CreateRef<D3D11Texture>(path, isLinear);
 		default:
 			LEV_THROW("Unknown Renderer API")
 			break;
 		}
 	}
 
-
 	Ref<Texture> Texture::CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format,
-		void* data, CPUAccess cpuAccess, bool uav)
+	                                      void* data, CPUAccess cpuAccess, bool uav)
 	{
 		switch (RenderSettings::RendererAPI)
 		{

@@ -35,7 +35,7 @@ float4 PSMain(PS_IN input) : SV_Target
 	float3 emissive = emissiveMap.Sample(emissiveMapSampler, textureUV).rgb;
 
 	//Gamma correction
-	//albedo = pow(albedo, 2.2);
+	albedo = pow(albedo, 2.2);
 
 	float metallic = metallicMap.Sample(metallicMapSampler, textureUV) * material.metallic;
 	float roughness = roughnessMap.Sample(roughnessMapSampler, textureUV) * material.roughness;

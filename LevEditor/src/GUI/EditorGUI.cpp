@@ -208,12 +208,25 @@ namespace LevEngine::Editor
 			setter(value);
 	}
 
-	void EditorGUI::DrawCheckBox(const char* label, const Func<bool>& getter,
-		const Action<bool>& setter)
+	bool EditorGUI::DrawCheckBox(const char* label, const Func<bool>& getter,
+	                             const Action<bool>& setter)
 	{
 		auto value = getter();
-		if (ImGui::Checkbox(label, &value))
+		if (DrawCheckBox(label, value))
+		{
 			setter(value);
+			return true;
+		}
+		
+		return false;
+	}
+
+	bool EditorGUI::DrawCheckBox(const char* label, bool& value)
+	{
+		if (ImGui::Checkbox(label, &value))
+			return true;
+
+		return false;
 	}
 
 	void EditorGUI::DrawColor3Control(const String& label, const Func<Color>& getter, const Action<Color>& setter)

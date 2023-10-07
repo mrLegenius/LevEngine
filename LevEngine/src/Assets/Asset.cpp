@@ -57,8 +57,8 @@ namespace LevEngine
 
 	bool Asset::Deserialize()
 	{
-		m_Deserialized = DeserializeData();
 		m_Deserialized = DeserializeMeta();
+		m_Deserialized = DeserializeData();
 
 		return m_Deserialized = true;
 	}
