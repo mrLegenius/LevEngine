@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Essentials/EnumUtils.h"
 
 namespace LevEngine
 {
@@ -11,13 +12,5 @@ namespace LevEngine
 		Compute = 8,
 	};
 
-	inline ShaderType operator|(const ShaderType a, const ShaderType b)
-	{
-		return static_cast<ShaderType>(static_cast<int>(a) | static_cast<int>(b));
-	}
-
-	inline bool operator&(const ShaderType a, const ShaderType b)
-	{
-		return static_cast<int>(a) & static_cast<int>(b);
-	}
+	ENUM_AS_FLAG(ShaderType);
 }

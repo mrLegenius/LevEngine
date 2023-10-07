@@ -454,6 +454,7 @@
     <ClInclude Include="src\DataTypes\Vector.h" />
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\EntryPoint.h" />
+    <ClInclude Include="src\Essentials\EnumUtils.h" />
     <ClInclude Include="src\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Events\Event.h" />
     <ClInclude Include="src\Events\KeyEvent.h" />
