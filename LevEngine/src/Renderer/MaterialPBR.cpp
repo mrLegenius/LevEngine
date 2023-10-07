@@ -12,10 +12,10 @@ static Ref<Texture> GetDefaultTexture(const MaterialPBR::TextureType type)
     case MaterialPBR::TextureType::Albedo:
     case MaterialPBR::TextureType::Metallic:
     case MaterialPBR::TextureType::Roughness:
+    case MaterialPBR::TextureType::AmbientOcclusion:
         return TextureLibrary::GetWhiteTexture();
     case MaterialPBR::TextureType::Normal:
         return TextureLibrary::GetEmptyNormalMap();
-    case MaterialPBR::TextureType::AmbientOcclusion:
     case MaterialPBR::TextureType::Emissive:
         return TextureLibrary::GetBlackTexture();
     default:
