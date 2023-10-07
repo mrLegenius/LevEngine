@@ -71,6 +71,9 @@ ShadowMapPass::ShadowMapPass()
 bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 {
 	const auto group = registry.group<>(entt::get<Transform, DirectionalLightComponent>);
+
+	if (group.empty()) return false;
+	
     Vector3 lightDirection;
 	for (const auto entity : group)
 	{
