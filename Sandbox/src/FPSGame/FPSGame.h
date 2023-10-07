@@ -3,7 +3,7 @@
 
 namespace Sandbox
 {
-	class Game : public Layer
+	class FPSGame final : public Layer
 	{
 	public:
 		void OnAttach() override;
