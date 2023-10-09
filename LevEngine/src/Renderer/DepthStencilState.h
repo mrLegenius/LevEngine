@@ -67,6 +67,9 @@ namespace LevEngine
             , DepthWriteMask(depthWrite)
             , DepthFunction(depthFunction)
         {}
+
+        static DepthMode DisableDepthWrites;
+        static DepthMode DisableDepthTesting;
     };
 
     struct FaceOperation

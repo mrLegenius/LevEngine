@@ -572,6 +572,7 @@
     <ClInclude Include="src\Renderer\SkyboxPass.h" />
     <ClInclude Include="src\Renderer\StructuredBuffer.h" />
     <ClInclude Include="src\Renderer\Texture.h" />
+    <ClInclude Include="src\Renderer\TransparentPass.h" />
     <ClInclude Include="src\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\Renderer\Viewport.h" />
     <ClInclude Include="src\ResourceManager.h" />
@@ -891,6 +892,7 @@
     <ClCompile Include="src\Renderer\SkyboxPass.cpp" />
     <ClCompile Include="src\Renderer\StructuredBuffer.cpp" />
     <ClCompile Include="src\Renderer\Texture.cpp" />
+    <ClCompile Include="src\Renderer\TransparentPass.cpp" />
     <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp" />

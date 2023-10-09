@@ -34,6 +34,7 @@ private:
 	inline static Ref<PipelineState> s_DeferredQuadPipeline;
 	inline static Ref<PipelineState> s_GBufferPipeline;
 	inline static Ref<PipelineState> s_OpaquePipeline;
+	inline static Ref<PipelineState> s_TransparentPipeline;
 	inline static Ref<PipelineState> s_DebugPipeline;
 	inline static Ref<PipelineState> s_SkyboxPipeline;
 	inline static Ref<PipelineState> s_ParticlesPipelineState;
