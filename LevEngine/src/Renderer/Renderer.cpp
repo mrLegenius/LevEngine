@@ -372,16 +372,6 @@ void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const T
 
 	//TODO: Maybe move to its own pass?
 	Renderer3D::SetCameraBuffer(renderParams.Camera, renderParams.CameraViewMatrix, renderParams.CameraPosition);
-
-	auto cameraPosition = cameraTransform->GetWorldPosition();
-
-	// registry.sort<Transform>([cameraPosition](const Transform& lhs, const Transform& rhs)
-	// {
-	// 	const auto lDiff = (cameraPosition - lhs.GetWorldPosition()).LengthSquared();
-	// 	const auto rDiff = (cameraPosition - rhs.GetWorldPosition()).LengthSquared();
-	//
-	// 	return lDiff > rDiff;
-	// });
 	
 	switch (RenderSettings::RenderTechnique)
 	{
