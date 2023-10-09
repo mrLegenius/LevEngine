@@ -11,6 +11,8 @@ namespace LevEngine
         static void DrawCube(Vector3 position, Vector3 size, Color color);
         static void DrawWireCube(Vector3 position, Vector3 size, Color color);
         static void DrawSphere(Vector3 position, float radius, Color color);
+        static void DrawPoint(Vector3 position, Color color);
+        static void DrawPointStar(Vector3 position, Color color);
         static void DrawWireSphere(Vector3 position, float radius, Color color);
         static void DrawLine(Vector3 start, Vector3 end, Color color);
         static void DrawRay(Vector3 origin, Vector3 direction, Color color);

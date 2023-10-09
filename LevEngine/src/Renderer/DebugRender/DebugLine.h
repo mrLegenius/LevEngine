@@ -11,9 +11,10 @@ class DebugLine final : public DebugShape
 public:
     explicit DebugLine(const Vector3 start, const Vector3 end, const Color color)
         : DebugShape(color), m_Mesh(Primitives::CreateLine(start, end)) { }
+    
     void Draw() override
     {
-        Renderer3D::DrawMesh(Matrix::Identity, m_Mesh, ShaderAssets::Debug());
+        Renderer3D::DrawLineList(Matrix::Identity, m_Mesh, ShaderAssets::Debug());
     }
 
 private:
