@@ -1,4 +1,4 @@
-cbuffer CameraConstantBuffer : register(b0)
+cbuffer CameraConstantBuffer : register(b6)
 {
 	row_major matrix view;
 	row_major matrix viewProjection;
