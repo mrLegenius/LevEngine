@@ -30,6 +30,7 @@ MaterialPBR::MaterialPBR() : Material(sizeof GPUData)
     m_Textures[TextureType::Roughness] = GetDefaultTexture(TextureType::Roughness);
     m_Textures[TextureType::Normal] = GetDefaultTexture(TextureType::Normal);
     m_Textures[TextureType::AmbientOcclusion] = GetDefaultTexture(TextureType::AmbientOcclusion);
+    m_Textures[TextureType::Emissive] = GetDefaultTexture(TextureType::Emissive);
 }
 
 void MaterialPBR::SetTintColor(const Color color)
@@ -129,5 +130,13 @@ void MaterialPBR::Unbind(const Ref<Shader>& shader)
     }
     
     Material::Unbind(shader);
+}
+
+void MaterialPBR::SetEnableTransparency(const bool value) { m_EnableTransparency = value; }
+bool MaterialPBR::GetEnableTransparency() const { return m_EnableTransparency; }
+
+bool MaterialPBR::IsTransparent()
+{
+    return m_EnableTransparency && m_Textures[TextureType::Albedo]->IsTransparent();
 }
 }

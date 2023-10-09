@@ -17,6 +17,7 @@ namespace LevEngine::Editor
 
             EditorGUI::DrawFloatControl("Metallic", BindGetter(&MaterialPBR::GetMetallic, &material), BindSetter(&MaterialPBR::SetMetallic, &material), 0.01f, 0.04f, 1.0f);
             EditorGUI::DrawFloatControl("Roughness", BindGetter(&MaterialPBR::GetRoughness, &material), BindSetter(&MaterialPBR::SetRoughness, &material), 0.01f, 0.0f, 1.0f);
+            EditorGUI::DrawCheckBox("Enable Transparency", BindGetter(&MaterialPBR::GetEnableTransparency, &material), BindSetter(&MaterialPBR::SetEnableTransparency, &material));
 
             DrawMaterialTexture("Albedo", material, MaterialPBR::TextureType::Albedo, assetRef->GetAlbedo());
             DrawMaterialTexture("Metallic", material, MaterialPBR::TextureType::Metallic, assetRef->GetMetallic());

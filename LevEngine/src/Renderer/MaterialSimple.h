@@ -52,6 +52,10 @@ public:
 
 protected:
 	void* GetGPUData() override { return &m_Data; }
+
+public:
+	[[nodiscard]] bool IsTransparent() override { return false; }
+
 private:
 	struct alignas(16) GPUData
 	{

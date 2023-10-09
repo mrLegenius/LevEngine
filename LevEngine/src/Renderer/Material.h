@@ -12,6 +12,8 @@ public:
     virtual void Bind(const Ref<Shader>& shader);
     virtual void Unbind(const Ref<Shader>& shader);
 
+    [[nodiscard]] virtual bool IsTransparent() = 0;
+
 protected:
     explicit Material(const uint32_t gpuDataSize)
         : m_ConstantBuffer(ConstantBuffer::Create(gpuDataSize)) { }

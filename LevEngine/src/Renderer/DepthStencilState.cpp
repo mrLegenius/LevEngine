@@ -6,6 +6,9 @@
 
 namespace LevEngine
 {
+	DepthMode DepthMode::DisableDepthWrites = DepthMode{ true, DepthWrite::Disable };
+	DepthMode DepthMode::DisableDepthTesting = DepthMode{ false };
+	
 	Ref<DepthStencilState> DepthStencilState::Create()
 	{
 		switch (RenderSettings::RendererAPI)

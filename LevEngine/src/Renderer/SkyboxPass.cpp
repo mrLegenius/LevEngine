@@ -18,7 +18,7 @@ struct alignas(16) CameraData
 SkyboxPass::SkyboxPass(const Ref<PipelineState>& pipeline) : m_SkyboxPipeline(pipeline)
 {
 	m_SkyboxMesh = Primitives::CreateCube();
-	m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
+	m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 6);
 }
 
 void SkyboxPass::Process(entt::registry& registry, RenderParams& params)

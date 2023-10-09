@@ -44,11 +44,15 @@ public:
 
     void Bind(const Ref<Shader>& shader) override;
     void Unbind(const Ref<Shader>& shader) override;
+
+    void SetEnableTransparency(bool value);
+    [[nodiscard]] bool GetEnableTransparency() const;
+    [[nodiscard]] bool IsTransparent() override;
     
 protected:
 
     void* GetGPUData() override { return &m_Data; }
-    
+
 private:
     struct alignas(16) GPUData
     {
@@ -67,6 +71,8 @@ private:
     
     Map<TextureType, Ref<Texture>> m_Textures;
     GPUData m_Data{};
+
+    bool m_EnableTransparency{};
 };
 }
 

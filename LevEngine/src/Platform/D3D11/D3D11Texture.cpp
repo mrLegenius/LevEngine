@@ -1852,6 +1852,8 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
         return;
     }
 
+    m_IsTransparent = channels == 4;
+    
     if (channels == 4 || channels == 3)
     {
         if (isLinear)

@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include "ConstantBuffer.h"
-#include "PipelineState.h"
 #include "RenderPass.h"
+#include "PipelineState.h"
 
 namespace LevEngine
 {
@@ -15,13 +14,6 @@ public:
 	void End(entt::registry& registry, RenderParams& params) override;
 
 private:
-	struct alignas(16) CameraData
-	{
-		Matrix View;
-		Matrix ViewProjection;
-		Vector3 Position;
-	};
-
 	Ref<PipelineState> m_PipelineState;
 };
 }

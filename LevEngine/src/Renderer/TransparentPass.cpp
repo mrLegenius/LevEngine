@@ -1,21 +1,22 @@
-﻿#include "levpch.h"
-#include "OpaquePass.h"
+#include "levpch.h"
+#include "TransparentPass.h"
 
 #include "Renderer3D.h"
-#include "Scene/Components/Transform/Transform.h"
+#include "RenderSettings.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 
 namespace LevEngine
 {
-    OpaquePass::OpaquePass(const Ref<PipelineState>& pipelineState) : m_PipelineState(pipelineState) { }
+    TransparentPass::TransparentPass(const Ref<PipelineState>& pipelineState) : m_PipelineState(pipelineState) {  }
 
-    bool OpaquePass::Begin(entt::registry& registry, RenderParams& params)
+    bool TransparentPass::Begin(entt::registry& registry, RenderParams& params)
     {
         m_PipelineState->Bind();
         
         return RenderPass::Begin(registry, params);
     }
 
-    void OpaquePass::Process(entt::registry& registry, RenderParams& params)
+    void TransparentPass::Process(entt::registry& registry, RenderParams& params)
     {
         const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
         const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
@@ -26,8 +27,8 @@ namespace LevEngine
 
             if (!meshRenderer.material) continue;
             auto& material = meshRenderer.material->GetMaterial();
-
-            if (material.IsTransparent()) continue;
+            
+            if (!material.IsTransparent()) continue;
             if (!meshRenderer.mesh) continue;
 
             const auto mesh = meshRenderer.mesh->GetMesh();
@@ -44,9 +45,8 @@ namespace LevEngine
         }
     }
 
-    void OpaquePass::End(entt::registry& registry, RenderParams& params)
+    void TransparentPass::End(entt::registry& registry, RenderParams& params)
     {
         m_PipelineState->Unbind();
     }
 }
-

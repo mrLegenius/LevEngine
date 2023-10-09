@@ -31,6 +31,8 @@ cbuffer ModelConstantBuffer : register(b1)
 	row_major matrix transposedInvertedModel;
 };
 
+//lighting cbuffer b2
+
 cbuffer lightSpaceConstantBuffer : register(b3)
 {
 	row_major matrix lightViewProjection[CASCADE_COUNT];
@@ -38,11 +40,16 @@ cbuffer lightSpaceConstantBuffer : register(b3)
 	float shadowMapDimensions;
 };
 
+//material cbuffer b4
+
 cbuffer ScreenToViewParams : register(b5)
 {
 	float4x4 CameraInverseProjection;
 	float2 ScreenDimensions;
 }
+
+//skybox cbuffer at b6
+//debug cbuffer at b7
 
 Texture2DArray shadowMapTexture : register(t9);
 SamplerComparisonState shadowMapSampler : register(s9);
