@@ -9,6 +9,9 @@
 #include "Physics/Physics.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Systems/EventSystem.h"
+
+#include "Physics/PhysX/PhysicsPhysX.h"
+
 namespace LevEngine
 {
 class Entity;
@@ -84,7 +87,7 @@ public:
 
 		return Entity();
 	}
-
+	
 private:
 	void RequestUpdates(float deltaTime);
 
@@ -106,6 +109,5 @@ private:
 	bool m_IsEventUpdateDone = true;
 	bool m_IsPhysicsDone = true;
 	bool m_IsRenderDone = true;
-	
 };
 }

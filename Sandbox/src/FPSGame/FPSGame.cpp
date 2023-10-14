@@ -11,6 +11,7 @@
 #include "Systems/ProjectileLifeSystem.h"
 #include "Systems/ProjectileMovementSystem.h"
 #include "Systems/ShootSystem.h"
+#include "Systems/PhysicsPhysXTestSystem.h"
 
 /*
  * There are some problems in this project
@@ -32,18 +33,19 @@ namespace Sandbox
 		SceneManager::LoadScene(AssetDatabase::GetAssetsPath() / "Scenes" / "TestScene.scene");
 
 		auto& scene = SceneManager::GetActiveScene();
-
+		
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
-		scene->RegisterUpdateSystem<ShootSystem>();
-		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
-		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
-		scene->RegisterUpdateSystem<EnemySpawnSystem>();
+		//scene->RegisterUpdateSystem<ShootSystem>();
+		//scene->RegisterUpdateSystem<ProjectileMovementSystem>();
+		//scene->RegisterUpdateSystem<ProjectileLifeSystem>();
+		//scene->RegisterUpdateSystem<EnemySpawnSystem>();
 		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
-		scene->RegisterUpdateSystem<EnemyMovementSystem>();
+		//scene->RegisterUpdateSystem<EnemyMovementSystem>();
+		scene->RegisterUpdateSystem<PhysicsPhysXTestSystem>();
 		
-		scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
-		scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
+		//scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
+		//scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
 		
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();

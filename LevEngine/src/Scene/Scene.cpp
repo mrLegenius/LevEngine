@@ -77,6 +77,7 @@ void Scene::OnPhysics(const float deltaTime)
     else
     {
         Physics::Process(m_Registry, deltaTime);
+        PhysicsPhysX::Process(m_Registry, deltaTime);
     }
 }
 
