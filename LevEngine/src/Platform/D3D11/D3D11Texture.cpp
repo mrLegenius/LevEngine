@@ -527,6 +527,18 @@ DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
                 PrintTextureFormatReplaceWarning();
             }
             break;
+        case Texture::Type::SRGB:
+            if (format.RedBits == 8 && format.GreenBits == 8 && format.BlueBits == 8 && format.AlphaBits == 8)
+            {
+                result = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+            }
+            else
+            {
+                result = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+                PrintTextureFormatReplaceWarning();
+            }
+            break;
         case Texture::Type::UnsignedNormalized:
             if (format.RedBits == 8 && format.GreenBits == 8 && format.BlueBits == 8 && format.AlphaBits == 8)
             {
@@ -975,6 +987,16 @@ Texture::TextureFormat ConvertFormat(DXGI_FORMAT format, uint8_t numSamples)
     case DXGI_FORMAT_R8G8B8A8_TYPELESS:
         result.Components = Texture::Components::RGBA;
         result.Type = Texture::Type::Typeless;
+        result.RedBits = 8;
+        result.GreenBits = 8;
+        result.BlueBits = 8;
+        result.AlphaBits = 8;
+        result.DepthBits = 0;
+        result.StencilBits = 0;
+        break;
+    case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+        result.Components = Texture::Components::RGBA;
+        result.Type = Texture::Type::SRGB;
         result.RedBits = 8;
         result.GreenBits = 8;
         result.BlueBits = 8;

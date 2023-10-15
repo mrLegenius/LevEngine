@@ -35,7 +35,7 @@ namespace LevEngine
 		enum class Type
 		{
 			Typeless,           // Typeless formats.
-			// TODO: sRGB type
+			SRGB,
 			UnsignedNormalized, // Unsigned normalized (8, 10, or 16-bit unsigned integer values mapped to the range [0..1])
 			SignedNormalized,   // Signed normalized (8, or 16-bit signed integer values mapped to the range [-1..1])
 			Float,              // Floating point format (16, or 32-bit).
