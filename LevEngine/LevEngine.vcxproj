@@ -540,6 +540,7 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugWireSphere.h" />
     <ClInclude Include="src\Renderer\Material.h" />
     <ClInclude Include="src\Renderer\MaterialPBR.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\BloomPass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\LuminancePass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\PostProcessingPass.h" />
@@ -871,6 +872,7 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Material.cpp" />
     <ClCompile Include="src\Renderer\MaterialPBR.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\BloomPass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\LuminancePass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\PostProcessingPass.cpp" />

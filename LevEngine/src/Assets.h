@@ -197,6 +197,38 @@ struct ShaderAssets
 		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Tonemapping.hlsl"));
 		return shader;
 	}
+
+	static auto Bloom()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Bloom.hlsl"));
+		return shader;
+	}
+
+	static auto BloomBlurH()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/BloomBlurH.hlsl"));
+		return shader;
+	}
+
+	static auto BloomBlurV()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/BloomBlurV.hlsl"));
+		return shader;
+	}
+
+	static auto Scale()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Scale.hlsl"));
+		return shader;
+	}
 };
 
 struct TextureAssets

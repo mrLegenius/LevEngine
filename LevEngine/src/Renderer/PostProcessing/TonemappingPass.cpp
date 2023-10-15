@@ -25,12 +25,14 @@ namespace LevEngine
     }
 
     void TonemappingPass::SetLuminanceMap(const Ref<Texture>& map) { m_LuminanceMap = map; }
+    void TonemappingPass::SetBloomMap(const Ref<Texture>& map) { m_BloomMap = map; }
 
     bool TonemappingPass::Begin(entt::registry& registry, RenderParams& params)
     {
         m_Pipeline->Bind();
         m_ColorTexture->Bind(0, ShaderType::Pixel);
         m_LuminanceMap->Bind(1, ShaderType::Pixel);
+        m_BloomMap->Bind(2, ShaderType::Pixel);
         return RenderPass::Begin(registry, params);
     }
 
@@ -41,6 +43,7 @@ namespace LevEngine
 
     void TonemappingPass::End(entt::registry& registry, RenderParams& params)
     {
+        m_BloomMap->Unbind(2, ShaderType::Pixel);
         m_LuminanceMap->Unbind(1, ShaderType::Pixel);
         m_ColorTexture->Unbind(0, ShaderType::Pixel);
         m_Pipeline->Unbind();

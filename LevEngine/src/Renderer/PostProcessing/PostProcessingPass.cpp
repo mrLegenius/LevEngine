@@ -1,12 +1,14 @@
 #include "levpch.h"
 #include "PostProcessingPass.h"
 
+#include "BloomPass.h"
 #include "LuminanceAdaptationPass.h"
 #include "LuminancePass.h"
 #include "TonemappingPass.h"
 #include "Kernel/Time/Time.h"
 #include "Renderer/ConstantBuffer.h"
 #include "Renderer/RenderSettings.h"
+#include "Renderer/SamplerState.h"
 
 namespace LevEngine
 {
@@ -15,13 +17,23 @@ namespace LevEngine
         m_LuminancePass = CreateRef<LuminancePass>(colorTexture);
         m_LuminanceAdaptationPass = CreateRef<LuminanceAdaptationPass>();
         m_TonemappingPass = CreateRef<TonemappingPass>(mainRenderTarget, colorTexture);
+        m_BloomPass = CreateRef<BloomPass>(colorTexture);
 
         m_ConstantBuffer = ConstantBuffer::Create(sizeof GPUConstants, 8);
+
+        m_LinearSampler = SamplerState::Create();
+        m_LinearSampler->SetFilter(SamplerState::MinFilter::Linear, SamplerState::MagFilter::Linear, SamplerState::MipFilter::Linear);
+        m_LinearSampler->SetWrapMode(SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp);
+        
+        m_PointSampler = SamplerState::Create();
+        m_PointSampler->SetFilter(SamplerState::MinFilter::Nearest, SamplerState::MagFilter::Nearest, SamplerState::MipFilter::Nearest);
+        m_PointSampler->SetWrapMode(SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp);
     }
     
     void PostProcessingPass::SetViewport(const Viewport viewport)
     {
         m_TonemappingPass->SetViewport(viewport);
+        m_BloomPass->SetViewport(viewport);
     }
 
     bool PostProcessingPass::Begin(entt::registry& registry, RenderParams& params)
@@ -37,6 +49,9 @@ namespace LevEngine
         
         m_ConstantBuffer->SetData(&data);
         m_ConstantBuffer->Bind(ShaderType::Pixel);
+
+        m_LinearSampler->Bind(0, ShaderType::Pixel);
+        m_PointSampler->Bind(1, ShaderType::Pixel);
         
         return RenderPass::Begin(registry, params);
     }
@@ -46,7 +61,10 @@ namespace LevEngine
         m_LuminancePass->Execute(registry, params);
         m_LuminanceAdaptationPass->SetLuminanceMap(m_LuminancePass->GetLuminanceMap());
         m_LuminanceAdaptationPass->Execute(registry, params);
+        m_BloomPass->SetLuminanceMap(m_LuminanceAdaptationPass->GetCurrentLuminance());
+        m_BloomPass->Execute(registry, params);
         m_TonemappingPass->SetLuminanceMap(m_LuminanceAdaptationPass->GetCurrentLuminance());
+        m_TonemappingPass->SetBloomMap(m_BloomPass->GetBloomMap());
         m_TonemappingPass->Execute(registry, params);
 
         m_LuminanceAdaptationPass->SwapCurrentLuminanceMap();
@@ -54,6 +72,9 @@ namespace LevEngine
 
     void PostProcessingPass::End(entt::registry& registry, RenderParams& params)
     {
+        m_LinearSampler->Unbind(0, ShaderType::Pixel);
+        m_PointSampler->Unbind(1, ShaderType::Pixel);
+        
         RenderPass::End(registry, params);
     }
 }

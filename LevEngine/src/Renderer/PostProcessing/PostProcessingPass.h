@@ -5,10 +5,13 @@ namespace LevEngine
 {
     class RenderTarget;
     class Texture;
+    class ConstantBuffer;
+    class SamplerState;
+    
     class LuminanceAdaptationPass;
     class LuminancePass;
     class TonemappingPass;
-    class ConstantBuffer;;
+    class BloomPass;
     
     class PostProcessingPass final : public RenderPass
     {
@@ -36,7 +39,10 @@ namespace LevEngine
         Ref<LuminancePass> m_LuminancePass;
         Ref<LuminanceAdaptationPass> m_LuminanceAdaptationPass;
         Ref<TonemappingPass> m_TonemappingPass;
+        Ref<BloomPass> m_BloomPass;
 
         Ref<ConstantBuffer> m_ConstantBuffer;
+        Ref<SamplerState> m_LinearSampler;
+        Ref<SamplerState> m_PointSampler;
     };
 }

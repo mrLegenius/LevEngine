@@ -1,15 +1,8 @@
+#include "../Quad.hlsl"
 #include "PostProcessing.hlsl"
 
-float4 VSMain(uint vI : SV_VERTEXID) : SV_POSITION
-{
-    float2 texcoord = float2(vI & 1, vI >> 1);
-    return float4((texcoord.x - 0.5f) * 2, -(texcoord.y - 0.5f) * 2, 0, 1);
-}
-
-Texture2D colorTexture : register(t0);
-SamplerState colorSampler : register(s0);
-
 Texture2D<float> averageLuminanceMap : register(t1);
+Texture2D bloomMap : register(t2);
 
 float3 Uncharted2ToneMapping(float3 color, float exposure)
 {
@@ -55,10 +48,10 @@ float3 CalculateExposure(float avgLuminance)
     return exp2(exposure);
 }
 
-float4 PSMain(float4 pos : SV_POSITION) : SV_Target
+float4 PSMain(PS_IN input) : SV_Target
 {
-    float2 uv = pos.xy;
-    float3 color = colorTexture.Load(int3(uv, 0)).rgb;
+    float2 uv = input.uv;
+    float3 color = colorTexture.Sample(linearSampler, uv).rgb;
 
     float averageLuminance = averageLuminanceMap.Load(int3(0, 0, 0));
     float exposure = CalculateExposure(averageLuminance);
@@ -69,6 +62,11 @@ float4 PSMain(float4 pos : SV_POSITION) : SV_Target
 
     //Gamma correction
     finalColor = pow(finalColor, 0.45);
+
+    // Sample the bloom
+    float3 bloom = bloomMap.Sample(linearSampler, uv).rgb;
+    bloom *= constants.BloomMagnitude;
+    finalColor += bloom;
 
     return float4(finalColor, 1.0f);
 }
