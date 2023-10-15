@@ -15,12 +15,12 @@ void RenderTechnique::Process(entt::registry& registry, RenderParams params) con
 	LEV_PROFILE_FUNCTION();
 
 	for (const auto pass : m_PassList)
-	{
-		if (pass->Begin(registry, params))
-		{
-			pass->Process(registry, params);
-			pass->End(registry, params);
-		}
-	}
+		pass->Execute(registry, params);
+}
+
+void RenderTechnique::SetViewport(const Viewport& viewport)
+{
+	for (const auto pass : m_PassList)
+		pass->SetViewport(viewport);
 }
 }

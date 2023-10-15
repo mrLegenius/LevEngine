@@ -23,6 +23,7 @@
 
 // -- Data Types -------------------------------------------
 
+#include "DataTypes/Array.h"
 #include "DataTypes/Delegates.h"
 #include "DataTypes/Map.h"
 #include "DataTypes/Pair.h"

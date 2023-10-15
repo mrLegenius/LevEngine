@@ -295,6 +295,9 @@ void Renderer::SetViewport(const float width, const float height)
 
 	s_DepthOnlyRenderTarget->Resize(static_cast<uint16_t>(width), static_cast<uint16_t>(height));
 	s_GBufferRenderTarget->Resize(static_cast<uint16_t>(width), static_cast<uint16_t>(height));
+
+	s_ForwardTechnique->SetViewport(viewport);
+	s_DeferredTechnique->SetViewport(viewport);
 }
 
 void DirectionalLightSystem(entt::registry& registry);
