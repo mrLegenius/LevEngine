@@ -3,6 +3,12 @@
 
 namespace LevEngine
 {
+	void TextureAsset::CreateTexture()
+	{
+		m_Texture = Texture::Create(m_Path.string().c_str(), IsLinear);
+		m_Texture->AttachSampler(SamplerState);
+	}
+
 	void TextureAsset::SerializeMeta(YAML::Emitter& out)
 	{
 		out << YAML::Key << "IsLinear" << YAML::Value << IsLinear;
