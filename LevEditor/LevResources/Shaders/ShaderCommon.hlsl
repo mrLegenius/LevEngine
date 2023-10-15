@@ -50,6 +50,7 @@ cbuffer ScreenToViewParams : register(b5)
 
 //skybox cbuffer at b6
 //debug cbuffer at b7
+//post processing cbuffer at b8
 
 Texture2DArray shadowMapTexture : register(t9);
 SamplerComparisonState shadowMapSampler : register(s9);

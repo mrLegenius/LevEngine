@@ -443,6 +443,7 @@
     <ClInclude Include="src\Assets\PrefabAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Assets\TextureAsset.h" />
+    <ClInclude Include="src\DataTypes\Array.h" />
     <ClInclude Include="src\DataTypes\Delegates.h" />
     <ClInclude Include="src\DataTypes\Map.h" />
     <ClInclude Include="src\DataTypes\Pair.h" />

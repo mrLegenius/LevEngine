@@ -173,6 +173,30 @@ struct ShaderAssets
 
 		return shader;
 	}
+	
+	static auto Luminance()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Luminance.hlsl"));
+		return shader;
+	}
+
+	static auto LuminanceAdaptation()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/LuminanceAdaptation.hlsl"));
+		return shader;
+	}
+
+	static auto Tonemapping()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Tonemapping.hlsl"));
+		return shader;
+	}
 };
 
 struct TextureAssets

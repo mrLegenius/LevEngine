@@ -46,9 +46,6 @@ PS_OUT PSMain(PS_IN input)
 	float roughness = roughnessMap.Sample(roughnessMapSampler, textureUV) * material.roughness;
 	float ao = ambientOcclusionMap.Sample(ambientOcclusionMapSampler, textureUV);
 
-	//Gamma correction for textures in linear space
-	albedo = pow(albedo, 2.2);
-
 	float cascade = GetCascadeIndex(input.depth);
 	float4 fragPosLightSpace = mul(float4(input.fragPos, 1.0f), lightViewProjection[cascade]);
 	float3 viewDir = normalize(cameraPosition - input.fragPos);
