@@ -72,12 +72,13 @@ public:
 		return ConvertEntity(entity);
 	}
 
-	Entity GetEntityByUUID(UUID uuid)
+	Entity GetEntityByUUID(const UUID& uuid)
 	{
 		const auto view = m_Registry.view<IDComponent>();
+
 		for (const auto entity : view)
 		{
-			auto idComponent = view.get<IDComponent>(entity);
+			IDComponent idComponent = view.get<IDComponent>(entity);
 			if (idComponent.ID == uuid)
 				return ConvertEntity(entity);
 		}

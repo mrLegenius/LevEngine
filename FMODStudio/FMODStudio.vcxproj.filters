@@ -15,8 +15,46 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FMODStudio.cpp">
+    <ClCompile Include="export.cpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="core\inc\fmod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\fmod.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\fmod_codec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\fmod_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\fmod_dsp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\fmod_dsp_effects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\fmod_errors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc\fmod_output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="export.cpp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="studio\inc\fmod_studio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="studio\inc\fmod_studio.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="studio\inc\fmod_studio_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

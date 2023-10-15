@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 
 #include "Serializers/SceneSerializer.h"
+#include "Kernel/Application.h"
 
 namespace LevEngine
 {
@@ -14,6 +15,8 @@ namespace LevEngine
 
     bool SceneManager::LoadScene(const Path& path)
     {
+        ReleaseAllAudio();
+
         const Ref<Scene>& newScene = CreateRef<Scene>();
         SceneSerializer sceneSerializer(newScene);
 
@@ -32,8 +35,20 @@ namespace LevEngine
 
     const Ref<Scene>& SceneManager::LoadEmptyScene()
     {
+        ReleaseAllAudio();
+
         m_ActiveScenePath = Path();
         return m_ActiveScene = CreateRef<Scene>();
+    }
+
+    // TODO: Create PreSceneLoad event and release audio there
+    void SceneManager::ReleaseAllAudio()
+    {
+        auto fmod = Application::Get().GetAudioSubsystem();
+        if (fmod != nullptr)
+        {
+            fmod->ReleaseAll();
+        }
     }
 }
 

@@ -57,7 +57,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>LevEngine.lib;FMODStudio.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -97,6 +97,7 @@
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
+    <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
     <ClInclude Include="src\GUI\GUIUtils.h" />
@@ -119,6 +120,8 @@
     <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\ColliderDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />

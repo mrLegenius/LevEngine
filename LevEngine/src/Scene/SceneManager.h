@@ -23,6 +23,8 @@ namespace LevEngine
         
         static const Ref<Scene>& LoadEmptyScene();
 
+        static void ReleaseAllAudio();
+
     private:
         static inline Ref<Scene> m_ActiveScene;
         static inline Path m_ActiveScenePath;

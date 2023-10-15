@@ -40,12 +40,15 @@ public:
 
 	void Run();
 	void Render();
+	void AudioUpdate();
 	void Close();
 
 	void PushLayer(Layer* layer);
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
 	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
+
+	Ref<LevFmod> GetAudioSubsystem();
 
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
@@ -70,7 +73,7 @@ private:
 	ImGuiLayer* m_ImGuiLayer;
 	ApplicationSpecification m_Specification;
 
-	LevFmod::LevFmod* m_fmod;
+	Ref<LevFmod> m_Fmod;
 
 	static Application* s_Instance;
 };

@@ -176,5 +176,14 @@
     <ClCompile Include="src\GUI\GUIUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

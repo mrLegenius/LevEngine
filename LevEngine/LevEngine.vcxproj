@@ -53,7 +53,8 @@
       <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
-      <AdditionalModuleDependencies></AdditionalModuleDependencies>
+      <AdditionalModuleDependencies>
+      </AdditionalModuleDependencies>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,6 +92,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompiler.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompilertraits.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eaplatform.h" />
@@ -436,6 +438,7 @@
     <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Assets\Asset.h" />
     <ClInclude Include="src\Assets\AssetDatabase.h" />
+    <ClInclude Include="src\Assets\AudioBankAsset.h" />
     <ClInclude Include="src\Assets\DefaultAsset.h" />
     <ClInclude Include="src\Assets\MaterialAsset.h" />
     <ClInclude Include="src\Assets\MaterialSimpleAsset.h" />
@@ -460,7 +463,6 @@
     <ClInclude Include="src\Events\KeyEvent.h" />
     <ClInclude Include="src\Events\MouseEvent.h" />
     <ClInclude Include="src\GUI\GUI.h" />
-
     <ClInclude Include="src\FMOD\LevFmod.h" />
     <ClInclude Include="src\GUI\ImGuiLayer.h" />
     <ClInclude Include="src\Input\Input.h" />
@@ -577,7 +579,8 @@
     <ClInclude Include="src\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\Renderer\Viewport.h" />
     <ClInclude Include="src\Scene\Components\Animation\WaypointMovement.h" />
-    <ClInclude Include="src\Scene\Components\AudioListener\AudioListener.h" />
+    <ClInclude Include="src\Scene\Components\Audio\AudioListener.h" />
+    <ClInclude Include="src\Scene\Components\Audio\AudioSource.h" />
     <ClInclude Include="src\Scene\Components\Camera\Camera.h" />
     <ClInclude Include="src\Scene\Components\Components.h" />
     <ClInclude Include="src\Scene\Components\ComponentSerializer.h" />
@@ -600,6 +603,7 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />
     <ClCompile Include="external\eastl\source\allocator_eastl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -810,6 +814,7 @@
     </ClCompile>
     <ClCompile Include="src\Assets\Asset.cpp" />
     <ClCompile Include="src\Assets\AssetDatabase.cpp" />
+    <ClCompile Include="src\Assets\AudioBankAsset.cpp" />
     <ClCompile Include="src\Assets\MaterialSimpleAsset.cpp" />
     <ClCompile Include="src\Assets\MaterialPBRAsset.cpp" />
     <ClCompile Include="src\Assets\MeshAsset.cpp" />
@@ -819,7 +824,6 @@
     <ClCompile Include="src\DataTypes\EASTL.cpp" />
     <ClCompile Include="src\GUI\GUI.cpp" />
     <ClCompile Include="src\FMOD\LevFmod.cpp" />
-    
     <ClCompile Include="src\GUI\ImGuiBuild.cpp" />
     <ClCompile Include="src\GUI\ImGuiLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
@@ -897,7 +901,8 @@
     <ClCompile Include="src\Renderer\Texture.cpp" />
     <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp" />
-    <ClCompile Include="src\Scene\Components\AudioListener\AudioListener.cpp" />
+    <ClCompile Include="src\Scene\Components\Audio\AudioListener.cpp" />
+    <ClCompile Include="src\Scene\Components\Audio\AudioSource.cpp" />
     <ClCompile Include="src\Scene\Components\Camera\Camera.cpp" />
     <ClCompile Include="src\Scene\Components\Emitter\EmitterComponent.cpp" />
     <ClCompile Include="src\Scene\Components\Lights\Lights.cpp" />

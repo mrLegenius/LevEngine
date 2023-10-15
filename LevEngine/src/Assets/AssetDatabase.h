@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Asset.h"
+#include "AudioBankAsset.h"
 #include "DefaultAsset.h"
 #include "MaterialPBRAsset.h"
 #include "MaterialSimpleAsset.h"
@@ -90,6 +91,20 @@ namespace LevEngine
 			return extension == ".prefab";
 		}
 
+		static bool IsAssetAudioBank(const Path& path)
+		{
+			const String pathString = ToString(path);
+			int index = pathString.find('.');
+			if (index == eastl::string::npos)
+			{
+				return false;
+			}
+
+			const auto extension = pathString.right(pathString.length() - index);
+
+			return extension == ".bank";
+		}
+
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid)
 		{
 			if (IsAssetTexture(path))
@@ -109,6 +124,9 @@ namespace LevEngine
 
 			if (IsAssetPrefab(path))
 				return CreateRef<PrefabAsset>(path, uuid);
+
+			if (IsAssetAudioBank(path))
+				return CreateRef<AudioBankAsset>(path, uuid);
 
 			return CreateRef<DefaultAsset>(path, uuid);
 		}

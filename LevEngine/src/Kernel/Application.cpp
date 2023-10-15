@@ -33,11 +33,8 @@ Application::Application(const ApplicationSpecification& specification)
 	Renderer::Init();
 	Random::Init();
 
-	m_fmod = new LevFmod::LevFmod();
-	m_fmod->Init(1024, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_VOL0_BECOMES_VIRTUAL);
-
-	m_fmod->LoadBank(String((AssetDatabase::AssetsRoot / "Audio/Desktop/Master.bank").string().c_str()), FMOD_STUDIO_LOAD_BANK_NORMAL);
-	m_fmod->LoadBank((AssetDatabase::AssetsRoot / "Audio/Desktop/Master.strings.bank").string().c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL);
+	m_Fmod = CreateRef<LevFmod>();
+	m_Fmod->Init(1024, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_VOL0_BECOMES_VIRTUAL);
 
 	m_ImGuiLayer = new ImGuiLayer;
 	PushOverlay(m_ImGuiLayer);
@@ -50,9 +47,6 @@ Application::Application(const ApplicationSpecification& specification)
 Application::~Application()
 {
 	Renderer::Shutdown();
-	
-	m_fmod->~LevFmod();
-	m_fmod = nullptr;
 }
 
 void Application::Run()
@@ -103,10 +97,10 @@ void Application::Run()
 		if (!m_Minimized)
 			Render();
 
+		AudioUpdate();
+		
 		Input::Reset();
 		m_Window->Update();
-
-		m_fmod->Update();
 	}
 
 	vgjs::terminate();
@@ -131,6 +125,11 @@ void Application::Render()
 			layer->OnGUIRender();
 	}
 	m_ImGuiLayer->End();
+}
+
+void Application::AudioUpdate()
+{
+	m_Fmod->Update();
 }
 
 void Application::Close()
@@ -173,6 +172,11 @@ void Application::OnEvent(Event& e)
 	}
 }
 
+Ref<LevFmod> Application::GetAudioSubsystem()
+{
+	return m_Fmod;
+}
+
 bool Application::OnWindowClosed(WindowClosedEvent& e)
 {
 	Close();
@@ -198,11 +202,6 @@ bool Application::OnWindowResized(WindowResizedEvent& e)
 bool Application::OnKeyPressed(KeyPressedEvent& e)
 {
 	Input::OnKeyPressed(e.GetKeyCode());
-
-	if (e.GetKeyCode() == KeyCode::Space)
-	{
-		m_fmod->PlayOneShot("event:/TestMusic", nullptr);	
-	}
 	
 	return false;
 }

@@ -10,6 +10,7 @@
 #include "Selection.h"
 #include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
+#include "Scene/Systems/Audio/AudioSourceInitSystem.h"
 
 namespace LevEngine::Editor
 {
@@ -596,6 +597,7 @@ namespace LevEngine::Editor
         auto& scene = SceneManager::GetActiveScene();
         scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
         scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
+        scene->RegisterUpdateSystem<AudioSourceInitSystem>();
 
         m_Game->Focus();
         m_SceneState = SceneState::Play;

@@ -1527,6 +1527,21 @@
     <ClInclude Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Assets\AudioBankAsset.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\Audio\AudioListener.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\Audio\AudioSource.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FMOD\LevFmod.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input\Input.cpp">
@@ -1973,8 +1988,29 @@
     <ClCompile Include="src\Scene\Components\Time\TimelineComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kernel\Time\TimelineRunner.cpp" />
-    <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp" />
-    <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp" />
+    <ClCompile Include="src\Assets\AudioBankAsset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\Audio\AudioListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\Audio\AudioSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FMOD\LevFmod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kernel\Time\TimelineRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

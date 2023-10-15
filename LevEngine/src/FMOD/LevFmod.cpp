@@ -1,29 +1,31 @@
 ﻿#include "levpch.h"
 #include "LevFmod.h"
 
-#include "Scene/Components/AudioListener/AudioListener.h"
+#include "fmod_studio.hpp"
+#include "Scene/Components/Audio/AudioListener.h"
 #include "Scene/Components/Transform/Transform.h"
 
-namespace LevEngine::LevFmod
+namespace LevEngine
 {
     LevFmod::LevFmod()
     {
-        m_singleton = this;
-        m_system = nullptr;
-        m_coreSystem = nullptr;
-        CheckErrors(FMOD::Studio::System::create(&m_system));
-        CheckErrors(m_system->getCoreSystem(&m_coreSystem));
+        m_Singleton = this;
+        m_System = nullptr;
+        m_CoreSystem = nullptr;
+        CheckErrors(FMOD::Studio::System::create(&m_System));
+        CheckErrors(m_System->getCoreSystem(&m_CoreSystem));
     }
 
     LevFmod::~LevFmod()
     {
-        m_singleton = nullptr;
+        ReleaseAll();
+        m_Singleton = nullptr;
     }
 
     void LevFmod::Init(int numOfChannels, int studioFlags, int flags) const
     {
         // initialize FMOD Studio and FMOD Core System with provided flags
-        if (CheckErrors(m_system->initialize(numOfChannels, studioFlags, flags, nullptr))) {
+        if (CheckErrors(m_System->initialize(numOfChannels, studioFlags, flags, nullptr))) {
             Log::CoreInfo("FMOD Sound System: Successfully initialized");
             if (studioFlags & FMOD_STUDIO_INIT_LIVEUPDATE)
                 Log::CoreInfo("FMOD Sound System: Live update enabled!");
@@ -39,11 +41,11 @@ namespace LevEngine::LevFmod
     void LevFmod::Update()
     {
         // clean up one shots
-        for (auto it = m_events.begin(); it != m_events.end(); it = it++) {
+        for (auto it = m_Events.begin(); it != m_Events.end(); it++) {
             FMOD::Studio::EventInstance *eventInstance = it->second;
             const EventInfo *eventInfo = GetEventInfo(eventInstance);
             if (eventInfo->entity) {
-                if (!eventInfo->entity->HasComponent<Transform>()) {
+                if (!eventInfo->entity.HasComponent<Transform>()) {
                     CheckErrors(eventInstance->stop(FMOD_STUDIO_STOP_IMMEDIATE));
                     ReleaseOneEvent(eventInstance);
                     continue;
@@ -52,9 +54,6 @@ namespace LevEngine::LevFmod
             }
         }
 
-        // clean up invalid channel references
-        ClearChannelRefs();
-
         // update listener position
         SetListenerAttributes();
 
@@ -62,49 +61,53 @@ namespace LevEngine::LevFmod
         //runCallbacks();
 
         // finally, dispatch an update call to FMOD
-        CheckErrors(m_system->update());
+        CheckErrors(m_System->update());
     }
 
-    void LevFmod::ClearChannelRefs()
+    void LevFmod::AddListener(AudioListenerComponent* listenerComponent)
     {
-        // not implemented
+        m_Listeners.emplace_back(listenerComponent);
+    }
+
+    void LevFmod::RemoveListener(AudioListenerComponent* listenerComponent)
+    {
+        m_Listeners.erase_first(listenerComponent);
     }
 
     void LevFmod::SetListenerAttributes()
     {
-        if (m_listeners.size() == 0) {
-            if (m_listenerWarning) {
+        if (m_Listeners.size() == 0) {
+            if (m_ListenerWarning) {
                 Log::Error("FMOD Sound System: No listeners are set!");
-                m_listenerWarning = false;
+                m_ListenerWarning = false;
             }
             return;
         }
 
-        for (int i = 0; i < m_listeners.size(); i++) {
-            auto listener = m_listeners[i];
-            auto entity = listener.entity;
+        for (int i = 0; i < m_Listeners.size(); i++) {
+            const auto listener = m_Listeners[i];
+            auto entity = listener->entity;
 
-            if (entity == nullptr)
+            if (!entity)
                 continue;
             
-            if (entity->HasComponent<Transform>())
+            if (entity.HasComponent<Transform>())
             {
-                if (!listener.listenerLock)
+                if (!listener->listenerLock)
                 {
-                    Transform transform = entity->GetComponent<Transform>();
+                    Transform transform = entity.GetComponent<Transform>();
                     const auto attr = Get3DAttributes(transform);
                     
-                    CheckErrors(m_system->setListenerAttributes(i, &attr));   
+                    CheckErrors(m_System->setListenerAttributes(i, &attr));   
                 }
             }
         }
     }
 
-    void LevFmod::PlayOneShot(const String& eventName, const Entity* entity)
+    void LevFmod::PlayOneShot(const String& eventName, const Entity entity)
     {
-        FMOD::Studio::EventInstance *instance = CreateInstance(eventName, true, nullptr);
+        FMOD::Studio::EventInstance *instance = CreateInstance(eventName, true, entity);
         if (instance) {
-            // set 3D attributes once
             if (entity) {
                 UpdateInstance3DAttributes(instance, entity);
             }
@@ -113,8 +116,54 @@ namespace LevEngine::LevFmod
         }
     }
 
+    FMOD::Studio::EventInstance* LevFmod::CreateSound(const String& eventName, Entity entity, bool playOnCreate)
+    {
+        FMOD::Studio::EventInstance *instance = CreateInstance(eventName, false, entity);
+        if (instance) {
+            if (entity) {
+                UpdateInstance3DAttributes(instance, entity);
+            }
+
+            if (playOnCreate)
+            {
+                CheckErrors(instance->start());
+            }
+
+            return instance;
+        }
+
+        return nullptr;
+    }
+
+    void LevFmod::PlaySound(FMOD::Studio::EventInstance* instance)
+    {
+        CheckErrors(instance->start());
+    }
+
+    void LevFmod::StopSound(FMOD::Studio::EventInstance* instance, FMOD_STUDIO_STOP_MODE mode)
+    {
+        CheckErrors(instance->stop(mode));
+    }
+
+    void LevFmod::SetPause(FMOD::Studio::EventInstance* instance, bool isPaused)
+    {
+        CheckErrors(instance->setPaused(isPaused));
+    }
+
+    bool LevFmod::IsPlaying(FMOD::Studio::EventInstance* instance)
+    {
+        if (instance == nullptr)
+        {
+            return false;
+        }
+
+        FMOD_STUDIO_PLAYBACK_STATE state;
+        instance->getPlaybackState(&state);
+        return state == FMOD_STUDIO_PLAYBACK_STATE::FMOD_STUDIO_PLAYBACK_PLAYING;
+    }
+
     auto LevFmod::Get3DAttributes(const FMOD_VECTOR pos,
-        const FMOD_VECTOR up, FMOD_VECTOR forward, const FMOD_VECTOR vel) -> FMOD_3D_ATTRIBUTES
+                                  const FMOD_VECTOR up, FMOD_VECTOR forward, const FMOD_VECTOR vel) -> FMOD_3D_ATTRIBUTES
     {
         FMOD_3D_ATTRIBUTES f3d;
         f3d.forward = forward;
@@ -135,7 +184,7 @@ namespace LevEngine::LevFmod
 
     FMOD_3D_ATTRIBUTES LevFmod::Get3DAttributes(const Transform& transform)
     {
-        const Vector3 pos = transform.GetWorldPosition() / m_distanceScale;
+        const Vector3 pos = transform.GetWorldPosition() / m_DistanceScale;
         const Vector3 up = transform.GetUpDirection();
         const Vector3 forward = transform.GetForwardDirection();
         constexpr Vector3 vel(0, 0, 0);
@@ -144,10 +193,10 @@ namespace LevEngine::LevFmod
                                                         ToFmodVector(forward), ToFmodVector(vel));
     }
 
-    void LevFmod::UpdateInstance3DAttributes(FMOD::Studio::EventInstance *instance, const Entity *entity) {
+    void LevFmod::UpdateInstance3DAttributes(FMOD::Studio::EventInstance *instance, const Entity entity) {
         // try to set 3D attributes
-        if (instance && entity && entity->HasComponent<Transform>()) {
-            const auto& transform = entity->GetComponent<Transform>();
+        if (instance && entity && entity.HasComponent<Transform>()) {
+            const auto& transform = entity.GetComponent<Transform>();
             
             const FMOD_3D_ATTRIBUTES attr = Get3DAttributes(transform);
             CheckErrors(instance->set3DAttributes(&attr));
@@ -163,55 +212,138 @@ namespace LevEngine::LevFmod
 
     void LevFmod::ReleaseOneEvent(FMOD::Studio::EventInstance* eventInstance)
     {
+        if (eventInstance == nullptr)
+        {
+            return;
+        }
+
         EventInfo *eventInfo = GetEventInfo(eventInstance);
         eventInstance->setUserData(nullptr);
-        m_events.erase((uint64_t)eventInstance);
+        m_Events.erase((uint64_t)eventInstance);
+
+        if (IsPlaying(eventInstance))
+        {
+            StopSound(eventInstance, FMOD_STUDIO_STOP_MODE::FMOD_STUDIO_STOP_IMMEDIATE);
+        }
+
         CheckErrors(eventInstance->release());
-        delete &eventInfo;
+        delete eventInfo;
     }
 
-    String LevFmod::LoadBank(const String& pathToBank, int flags)
+    void LevFmod::ReleaseAllEvents()
     {
-        if (m_banks.count(pathToBank)) return pathToBank; // bank is already loaded
+        for (auto keyValuePair : m_Events)
+        {
+            FMOD::Studio::EventInstance* eventInstance = keyValuePair.second;
+            eventInstance->setUserData(nullptr);
+            CheckErrors(eventInstance->release());
+        }
+        m_Events.clear();
+        m_EventDescriptions.clear();
+    }
+
+    void LevFmod::LoadBank(const String& pathToBank, int flags)
+    {
+        if (IsBankRegistered(pathToBank))
+        {
+            return;
+        }
+
         FMOD::Studio::Bank *bank = nullptr;
-        CheckErrors(m_system->loadBankFile(pathToBank.c_str(), flags, &bank));
+        CheckErrors(m_System->loadBankFile(pathToBank.c_str(), flags, &bank));
         if (bank) {
-            m_banks.insert({pathToBank, bank});
-            return pathToBank;
+            m_Banks.insert({pathToBank, bank});
         }
-        return pathToBank;
+        return;
     }
 
-    FMOD::Studio::EventInstance* LevFmod::CreateInstance(String eventPath, bool isOneShot, Entity* entity)
+    void LevFmod::UnloadBank(const String& pathToBank)
     {
-        if (!m_eventDescriptions.count(eventPath)) {
-            FMOD::Studio::EventDescription *desc = nullptr;
-            const auto res = CheckErrors(m_system->getEvent(eventPath.c_str(), &desc));
-            if (!res) return 0;
-            m_eventDescriptions.insert({eventPath, desc});
+        if (!IsBankRegistered(pathToBank))
+        {
+            return;
         }
-        const auto desc = m_eventDescriptions.find(eventPath)->second;
+
+        auto keyValuePair = m_Banks.find(pathToBank);
+        if (keyValuePair->second != nullptr) {
+            CheckErrors(keyValuePair->second->unload());
+            m_Banks.erase(pathToBank);
+        }
+    }
+
+    void LevFmod::UnloadAllBanks()
+    {
+        for (auto keyValuePair : m_Banks)
+        {
+            CheckErrors(keyValuePair.second->unload());
+        }
+        m_Banks.clear();
+    }
+
+    FMOD_STUDIO_LOADING_STATE LevFmod::GetBankLoadingStatus(const String& pathToBank)
+    {
+        if (!IsBankRegistered(pathToBank))
+        {
+            return FMOD_STUDIO_LOADING_STATE::FMOD_STUDIO_LOADING_STATE_ERROR;
+        }
+
+        auto bank = m_Banks.find(pathToBank);
+        if (bank->second != nullptr) {
+            FMOD_STUDIO_LOADING_STATE state;
+            CheckErrors(bank->second->getLoadingState(&state));
+            return state;
+        }
+
+        return FMOD_STUDIO_LOADING_STATE::FMOD_STUDIO_LOADING_STATE_ERROR;
+    }
+
+    void LevFmod::ReleaseAll()
+    {
+        ReleaseAllEvents();
+        UnloadAllBanks();
+    }
+
+    FMOD::Studio::EventInstance* LevFmod::CreateInstance(String eventPath, bool isOneShot, Entity entity)
+    {
+        if (!m_EventDescriptions.count(eventPath)) {
+            FMOD::Studio::EventDescription *desc = nullptr;
+            const auto res = CheckErrors(m_System->getEvent(eventPath.c_str(), &desc));
+            if (!res) return 0;
+            m_EventDescriptions.insert({eventPath, desc});
+        }
+        const auto desc = m_EventDescriptions.find(eventPath)->second;
         FMOD::Studio::EventInstance *instance;
         CheckErrors(desc->createInstance(&instance));
         if (instance && (!isOneShot || entity)) {
-            instance->setUserData(entity);
+            auto *eventInfo = new EventInfo();
+            eventInfo->entity = entity;
+            instance->setUserData(eventInfo);
             const auto instanceId = (uint64_t)instance;
-            m_events[instanceId] = instance;
+            m_Events[instanceId] = instance;
         }
+
         return instance;
     }
 
     FMOD::Studio::EventInstance* LevFmod::CreateInstance(const FMOD::Studio::EventDescription* eventDesc, bool isOneShot,
-                                                         Entity* entity)
+                                                         Entity entity)
     {
         const auto desc = eventDesc;
         FMOD::Studio::EventInstance *instance;
         desc->createInstance(&instance);
         if (instance && (!isOneShot || entity)) {
-            instance->setUserData(entity);
-            const auto instanceId = (uint64_t)instance;
-            m_events[instanceId] = instance;
+            auto *eventInfo = new EventInfo();
+            eventInfo->entity = entity;
+            instance->setUserData(eventInfo);
+            const auto instanceId = reinterpret_cast<uint64_t>(instance);
+            m_Events[instanceId] = instance;
         }
+        
         return instance;
+    }
+
+    bool LevFmod::IsBankRegistered(const String pathToBank)
+    {
+        return m_Banks.count(pathToBank);
     }
 }
