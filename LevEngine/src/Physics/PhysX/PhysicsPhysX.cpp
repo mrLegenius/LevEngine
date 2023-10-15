@@ -1,6 +1,10 @@
 ﻿#include "levpch.h"
 #include "PhysicsPhysX.h"
 #include "Renderer/DebugRender/DebugRender.h"
+#include "Scene/Components/ComponentSerializer.h"
+
+#define MAX_NUM_ACTOR_SHAPES    128
+#define MAX_NUM_ACTOR_MATERIALS 128
 
 namespace LevEngine
 {
@@ -65,44 +69,14 @@ namespace LevEngine
         for (const auto entity : view)
         {
             auto [transform, rigidbody] = view.get<Transform, RigidbodyPhysX>(entity);
-            
             PxShape* shapes[128];
             const PxU32 nbShapes = rigidbody.GetActor()->getNbShapes();
             rigidbody.GetActor()->getShapes(shapes, nbShapes);
             for(PxU32 j = 0; j < nbShapes; ++j)
             {
-                const PxMat44 shapePose(PxShapeExt::getGlobalPose(*shapes[j], *rigidbody.GetActor()));
-                float array[9] = {
-                    shapePose.column0.x, shapePose.column0.y, shapePose.column0.z,
-                    shapePose.column1.x, shapePose.column1.y, shapePose.column1.z,
-                    shapePose.column2.x, shapePose.column2.y, shapePose.column2.z
-                };
-                PxQuat quat = PxQuat
-                (
-                    PxMat33
-                    (
-                        array
-                    )
-                );
-                transform.SetWorldRotation
-                (
-                    Quaternion
-                    (
-                        quat.x,
-                        quat.y,
-                        quat.z,
-                        quat.w
-                    )
-                );
-                transform.SetWorldPosition
-                (
-                    Vector3
-                    (
-                        shapePose.getPosition().x,
-                        shapePose.getPosition().y,
-                        shapePose.getPosition().z
-                    )
-                );
+                const PxTransform shapePose(PxShapeExt::getGlobalPose(*shapes[j], *rigidbody.GetActor()));
+                transform.SetWorldRotation(Quaternion(shapePose.q.x, shapePose.q.y, shapePose.q.z, shapePose.q.w));
+                transform.SetWorldPosition(Vector3(shapePose.p.x, shapePose.p.y,shapePose.p.z));
             }
         }
     }
@@ -142,7 +116,7 @@ namespace LevEngine
     {
         StepPhysics(deltaTime);
         UpdateTransforms(m_Registry);
-        //DrawDebugLines();
+        DrawDebugLines();
     }
     
     void PhysicsPhysX::CleanupPhysics()
@@ -162,32 +136,29 @@ namespace LevEngine
     {
         CleanupPhysics();
     }
-
     
     
-    /// -- Rigidbody Part -- ///
+    
+    /// --- Rigidbody Part --- ///
     RigidbodyPhysX::RigidbodyPhysX(const Transform& rbTransform)
     {
-        const auto& matrix = Matrix::CreateFromQuaternion(rbTransform.GetWorldRotation()) * Matrix::CreateTranslation(rbTransform.GetWorldPosition());
-        float array[16] = {
-            matrix.m[0][0], matrix.m[0][1], matrix.m[0][2], matrix.m[0][3],
-            matrix.m[1][0], matrix.m[1][1], matrix.m[1][2], matrix.m[1][3],
-            matrix.m[2][0], matrix.m[2][1], matrix.m[2][2], matrix.m[2][3],
-            matrix.m[3][0], matrix.m[3][1], matrix.m[3][2], matrix.m[3][3]
+        const PxTransform transform {
+            PxVec3(rbTransform.GetWorldPosition().x, rbTransform.GetWorldPosition().y, rbTransform.GetWorldPosition().z),
+            PxQuat(rbTransform.GetWorldRotation().x, rbTransform.GetWorldRotation().y, rbTransform.GetWorldRotation().z, rbTransform.GetWorldRotation().w)
         };
-        rbActor = PhysicsPhysX::GetInstance().GetPhysics()->createRigidDynamic(PxTransform(PxMat44(array)));
+        rbActor = PhysicsPhysX::GetInstance().GetPhysics()->createRigidDynamic(transform);
         PxRigidBodyExt::updateMassAndInertia(*(reinterpret_cast<PxRigidDynamic*>(rbActor)), 10);
         PhysicsPhysX::GetInstance().GetScene()->addActor(*(reinterpret_cast<PxRigidDynamic*>(rbActor)));
     }
-
-    void RigidbodyPhysX::CleanupActor()
+    
+    void RigidbodyPhysX::RemoveActor()
     {
-        PxShape* shapes[128];
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
         const PxU32 nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
-        for(PxU32 j = 0; j < nbShapes; ++j)
+        for(PxU32 i = 0; i < nbShapes; ++i)
         {
-            rbActor->detachShape(*shapes[j]);
+            rbActor->detachShape(*shapes[i]);
         }
         PhysicsPhysX::GetInstance().GetScene()->removeActor(*rbActor);
     }
@@ -195,27 +166,137 @@ namespace LevEngine
     void RigidbodyPhysX::SetActorType(PxActorType::Enum requestedActorType)
     {
         if (rbActor->getType() == requestedActorType) { return; }
-
-        const auto pose = rbActor->getGlobalPose();
         
-        CleanupActor();
+        RemoveActor();
         
         switch (requestedActorType)
         {
         case PxActorType::eRIGID_STATIC:
-            rbActor = PhysicsPhysX::GetInstance().GetPhysics()->createRigidStatic(pose);
+            rbActor = PhysicsPhysX::GetInstance().GetPhysics()->createRigidStatic(rbActor->getGlobalPose());
             PhysicsPhysX::GetInstance().GetScene()->addActor(*(reinterpret_cast<PxRigidStatic*>(rbActor)));
             break;
         case PxActorType::eRIGID_DYNAMIC:
-            rbActor = PhysicsPhysX::GetInstance().GetPhysics()->createRigidDynamic(pose);
+            rbActor = PhysicsPhysX::GetInstance().GetPhysics()->createRigidDynamic(rbActor->getGlobalPose());
             PxRigidBodyExt::updateMassAndInertia(*(reinterpret_cast<PxRigidDynamic*>(rbActor)), 10);
             PhysicsPhysX::GetInstance().GetScene()->addActor(*(reinterpret_cast<PxRigidDynamic*>(rbActor)));
             break;
         default:
-            break;
+            throw "<ERROR> void RigidbodyPhysX::SetActorType(PxActorType::Enum requestedActorType) <ERROR>";
         }
     }
 
+    void RigidbodyPhysX::AttachShapeGeometry(PxGeometryType::Enum requestedGeometryType)
+    {
+        if (rbActor->getNbShapes() >= MAX_NUM_ACTOR_SHAPES) { return; }
+        
+        const auto material = PhysicsPhysX::GetInstance().GetPhysics()->createMaterial(0.5f, 0.5f, 0.6f);
+        PxShape* shape = nullptr;
+        switch (requestedGeometryType)
+        {
+        case PxGeometryType::ePLANE:
+            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxPlaneGeometry(), *material, true);
+            break;
+        case PxGeometryType::eBOX:
+            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxBoxGeometry(0.5f, 0.5f, 0.5f), *material, true);
+            break;
+        case PxGeometryType::eSPHERE:
+            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxSphereGeometry(0.5f), *material, true);
+            break;
+        case PxGeometryType::eCAPSULE:
+            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxCapsuleGeometry(0.5f, 0.5f), *material, true);
+            break;
+        default:
+            throw "<ERROR> void RigidbodyPhysX::AttachShapeGeometry(PxGeometryType::Enum requestedGeometryType) <ERROR>";
+        }
+        rbActor->attachShape(*shape);
+        shape->release();
+        material->release();
+    }
+    
+    void RigidbodyPhysX::DetachShapeGeometry(PxU32 sequenceShapeNumber)
+    {
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+        const PxU32 nbShapes = rbActor->getNbShapes();
+        rbActor->getShapes(shapes, nbShapes);
+        rbActor->detachShape(*shapes[sequenceShapeNumber]);
+    }
+    
+    PxVec3 RigidbodyPhysX::GetShapeGeometryParams(PxU32 sequenceShapeNumber)
+    {
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+        const PxU32 nbShapes = rbActor->getNbShapes();
+        rbActor->getShapes(shapes, nbShapes);
+        switch (shapes[sequenceShapeNumber]->getGeometry().getType())
+        {
+        case PxGeometryType::eBOX:
+            return PxVec3(reinterpret_cast<PxBoxGeometry*>(shapes[sequenceShapeNumber])->halfExtents);
+        case PxGeometryType::eSPHERE:
+            return PxVec3(reinterpret_cast<PxSphereGeometry*>(shapes[sequenceShapeNumber])->radius, 0, 0);
+        case PxGeometryType::eCAPSULE:
+            return PxVec3(reinterpret_cast<PxCapsuleGeometry*>(shapes[sequenceShapeNumber])->radius, reinterpret_cast<PxCapsuleGeometry*>(shapes[sequenceShapeNumber])->halfHeight, 0);
+        default:
+            throw "<ERROR> PxVec3 RigidbodyPhysX::GetShapeGeometryParams(PxU32 sequenceShapeNumber) <ERROR>";
+        }
+    }
+    
+    void RigidbodyPhysX::SetShapeGeometryParam(PxU32 sequenceShapeNumber, PxU32 sequenceParamNumber, PxReal param)
+    {
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+        const PxU32 nbShapes = rbActor->getNbShapes();
+        rbActor->getShapes(shapes, nbShapes);
+        
+        const PxGeometryHolder geom(shapes[sequenceShapeNumber]->getGeometry());
+        PxReal initialX {}, initialY {}, initialZ {}, initialRadius {}, initialHeight {};
+        switch (shapes[sequenceShapeNumber]->getGeometry().getType())
+        {
+        case PxGeometryType::eBOX:
+            initialX = geom.box().halfExtents.x; initialY = geom.box().halfExtents.y; initialZ = geom.box().halfExtents.z;
+            if (sequenceParamNumber == 0) { shapes[sequenceShapeNumber]->setGeometry(PxBoxGeometry(param, initialY, initialZ)); }
+            if (sequenceParamNumber == 1) { shapes[sequenceShapeNumber]->setGeometry(PxBoxGeometry(initialX, param, initialZ)); }
+            if (sequenceParamNumber == 2) { shapes[sequenceShapeNumber]->setGeometry(PxBoxGeometry(initialX, initialY, param)); }
+            break;
+        case PxGeometryType::eSPHERE:
+            if (sequenceParamNumber == 0) { shapes[sequenceShapeNumber]->setGeometry(PxSphereGeometry(param)); }
+            break;
+        case PxGeometryType::eCAPSULE:
+            initialRadius = geom.capsule().radius; initialHeight = geom.capsule().halfHeight;
+            if (sequenceParamNumber == 0) { shapes[sequenceShapeNumber]->setGeometry(PxCapsuleGeometry(param, initialHeight));    }
+            if (sequenceParamNumber == 1) { shapes[sequenceShapeNumber]->setGeometry(PxBoxGeometry(initialRadius, param)); }
+            break;
+        default:
+            throw "<ERROR> void RigidbodyPhysX::SetShapeGeometryParam(PxU32 sequenceShapeNumber, PxU32 sequenceParamNumber, PxReal param) <ERROR>";
+        }
+    }
+
+    RigidbodyPhysX::~RigidbodyPhysX()
+    {
+        PX_RELEASE(rbActor)
+    }
+
+    // Actor
+    bool RigidbodyPhysX::GetActorGravityStatus()
+    {
+        return rbActor->getActorFlags().isSet(PxActorFlag::eDISABLE_GRAVITY);
+    }
+    bool RigidbodyPhysX::GetShapeGeometryVisualizationStatus()
+    {
+        return rbActor->getActorFlags().isSet(PxActorFlag::eVISUALIZATION);
+    }
+    PxReal RigidbodyPhysX::GetActorMass()
+    {
+        if (rbActor->getType() == PxActorType::eRIGID_STATIC) { return 0; }
+        return reinterpret_cast<PxRigidDynamic*>(rbActor)->getMass();
+    }
+    PxVec3 RigidbodyPhysX::GetActorLinearVelocity()
+    {
+        if (rbActor->getType() == PxActorType::eRIGID_STATIC) { return PxVec3(0,0,0); }
+        return reinterpret_cast<PxRigidDynamic*>(rbActor)->getLinearVelocity();
+    }
+    PxVec3 RigidbodyPhysX::GetActorAngularVelocity()
+    {
+        if (rbActor->getType() == PxActorType::eRIGID_STATIC) { return PxVec3(0,0,0); }
+        return reinterpret_cast<PxRigidDynamic*>(rbActor)->getAngularVelocity();
+    }
     void RigidbodyPhysX::SetActorGravityStatus(const bool status)
     {
         rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, status);
@@ -239,60 +320,60 @@ namespace LevEngine
         if (rbActor->getType() == PxActorType::eRIGID_STATIC) { return; }
         reinterpret_cast<PxRigidDynamic*>(rbActor)->setAngularVelocity(angularVelocity);
     }
-
-    void RigidbodyPhysX::AttachShapeGeometry(PxGeometryType::Enum requestedGeometryType)
-    {
-        if ((rbActor->getType() == PxActorType::eRIGID_DYNAMIC) && (requestedGeometryType == PxGeometryType::ePLANE)) { return; }
-        if ((rbActor->getNbShapes() > 128)) { return; }
-        
-        const auto material = PhysicsPhysX::GetInstance().GetPhysics()->createMaterial(0.5f, 0.5f, 0.6f);
-        PxShape* shape = nullptr;
-        switch (requestedGeometryType)
-        {
-        case PxGeometryType::ePLANE:
-            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxPlaneGeometry(), *material, true);
-            rbActor->attachShape(*shape);
-            shape->release();
-            break;
-        case PxGeometryType::eBOX:
-            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxBoxGeometry(0.5f, 0.5f, 0.5f), *material, true);
-            rbActor->attachShape(*shape);
-            shape->release();
-            break;
-        case PxGeometryType::eSPHERE:
-            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxSphereGeometry(0.5f), *material, true);
-            rbActor->attachShape(*shape);
-            shape->release();
-            break;
-        case PxGeometryType::eCAPSULE:
-            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxCapsuleGeometry(0.5f, 0.5f), *material, true);
-            rbActor->attachShape(*shape);
-            shape->release();
-            break;
-        default:
-            throw "<ERROR> void RigidbodyPhysX::AddShape(PxGeometryType::Enum requestedGeometryType) <ERROR>";
-        }
-        material->release();
-    }
     
-    void RigidbodyPhysX::DetachShapeGeometryType(PxU32 sequenceShapeNumber)
+    // Material
+    PxReal RigidbodyPhysX::GetStaticFriction(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber)
     {
-        PxShape* shapes[128];
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
         const PxU32 nbShapes = rbActor->getNbShapes();
+        if (nbShapes <= 0) { return 0; }
         rbActor->getShapes(shapes, nbShapes);
-        rbActor->detachShape(*shapes[sequenceShapeNumber]);
-    }
 
+        PxMaterial* materials[MAX_NUM_ACTOR_MATERIALS];
+        const PxU32 nbMaterials = shapes[sequenceShapeNumber]->getNbMaterials();
+        if (nbMaterials <= 0) { return 0; }
+        
+        shapes[sequenceShapeNumber]->getMaterials(materials, nbMaterials);
+        return materials[sequenceMaterialNumber]->getStaticFriction();
+    }
+    PxReal RigidbodyPhysX::GetDynamicFriction(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber)
+    {
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+        const PxU32 nbShapes = rbActor->getNbShapes();
+        if (nbShapes <= 0) { return 0; }
+        rbActor->getShapes(shapes, nbShapes);
+
+        PxMaterial* materials[MAX_NUM_ACTOR_MATERIALS];
+        const PxU32 nbMaterials = shapes[sequenceShapeNumber]->getNbMaterials();
+        if (nbMaterials <= 0) { return 0; }
+        
+        shapes[sequenceShapeNumber]->getMaterials(materials, nbMaterials);
+        return materials[sequenceMaterialNumber]->getDynamicFriction();
+    }
+    PxReal RigidbodyPhysX::GetRestitution(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber)
+    {
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+        const PxU32 nbShapes = rbActor->getNbShapes();
+        if (nbShapes <= 0) { return 0; }
+        rbActor->getShapes(shapes, nbShapes);
+
+        PxMaterial* materials[MAX_NUM_ACTOR_MATERIALS];
+        const PxU32 nbMaterials = shapes[sequenceShapeNumber]->getNbMaterials();
+        if (nbMaterials <= 0) { return 0; }
+        
+        shapes[sequenceShapeNumber]->getMaterials(materials, nbMaterials);
+        return materials[sequenceMaterialNumber]->getRestitution();
+    }
     void RigidbodyPhysX::SetStaticFriction(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber, PxReal staticFriction)
     {
         if ((staticFriction < 0.0f) && (staticFriction > PX_MAX_F32)) { return; }
         
-        PxShape* shapes[128];
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
         const PxU32 nbShapes = rbActor->getNbShapes();
         if (nbShapes <= 0) { return; }
         rbActor->getShapes(shapes, nbShapes);
 
-        PxMaterial* materials[128];
+        PxMaterial* materials[MAX_NUM_ACTOR_MATERIALS];
         const PxU32 nbMaterials = shapes[sequenceShapeNumber]->getNbMaterials();
         if (nbMaterials <= 0) { return; }
         
@@ -303,12 +384,12 @@ namespace LevEngine
     {
         if ((dynamicFriction < 0.0f) && (dynamicFriction > PX_MAX_F32)) { return; }
         
-        PxShape* shapes[128];
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
         const PxU32 nbShapes = rbActor->getNbShapes();
         if (nbShapes <= 0) { return; }
         rbActor->getShapes(shapes, nbShapes);
 
-        PxMaterial* materials[128];
+        PxMaterial* materials[MAX_NUM_ACTOR_MATERIALS];
         const PxU32 nbMaterials = shapes[sequenceShapeNumber]->getNbMaterials();
         if (nbMaterials <= 0) { return; }
         
@@ -319,12 +400,12 @@ namespace LevEngine
     {
         if ((restitution < 0.0f) && (restitution > 1.0f)) { return; }
         
-        PxShape* shapes[128];
+        PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
         const PxU32 nbShapes = rbActor->getNbShapes();
         if (nbShapes <= 0) { return; }
         rbActor->getShapes(shapes, nbShapes);
 
-        PxMaterial* materials[128];
+        PxMaterial* materials[MAX_NUM_ACTOR_MATERIALS];
         const PxU32 nbMaterials = shapes[sequenceShapeNumber]->getNbMaterials();
         if (nbMaterials <= 0) { return; }
         
@@ -332,37 +413,37 @@ namespace LevEngine
         materials[sequenceMaterialNumber]->setRestitution(restitution);
     }
 
-    
-    void RigidbodyPhysX::SetShapeGeometryParams(PxU32 sequenceShapeNumber, PxReal param1, PxReal param2, PxReal param3)
+
+
+    /*
+    /// --- ImGui Interface Part --- ///
+    class RigidbodyPhysXSerializer final : public ComponentSerializer<RigidbodyPhysX, RigidbodyPhysXSerializer>
     {
-        PxShape* shapes[128];
-        const PxU32 nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
-        if (!nbShapes > 0) return;
-        if (!shapes[sequenceShapeNumber]->isExclusive()) return;
-        
-        switch (shapes[sequenceShapeNumber]->getGeometry().getType())
+    protected:
+        const char* GetKey() override { return "RigidbodyPhysX"; }
+
+        void SerializeData(YAML::Emitter& out, const RigidbodyPhysX& component) override
         {
-        case PxGeometryType::ePLANE:
-            shapes[sequenceShapeNumber]->setGeometry(PxPlaneGeometry());
-            break;
-        case PxGeometryType::eBOX:
-            shapes[sequenceShapeNumber]->setGeometry(PxBoxGeometry(param1, param2, param3));
-            break;
-        case PxGeometryType::eSPHERE:
-            shapes[sequenceShapeNumber]->setGeometry(PxSphereGeometry(param1));
-            break;
-        case PxGeometryType::eCAPSULE:
-            shapes[sequenceShapeNumber]->setGeometry(PxCapsuleGeometry(param1, param2));
-            break;
-        default:
-            throw "<ERROR> void RigidbodyPhysX::ChangeShapeParams(PxU32 sequenceShapeNumber, float param0, float param1, float param2) <ERROR>";
+            out << YAML::Key << "Body Type" << YAML::Value << static_cast<int>(component.bodyType);
+            out << YAML::Key << "Gravity Scale" << YAML::Value << component.gravityScale;
+            out << YAML::Key << "Mass" << YAML::Value << component.mass;
+            out << YAML::Key << "Elasticity" << YAML::Value << component.elasticity;
+            out << YAML::Key << "Damping" << YAML::Value << component.damping;
+            out << YAML::Key << "Angular Damping" << YAML::Value << component.angularDamping;
+            out << YAML::Key << "Enabled" << YAML::Value << component.enabled;
         }
-    }
-    
-    RigidbodyPhysX::~RigidbodyPhysX()
-    {
-        PX_RELEASE(rbActor)
-    }
+
+        void DeserializeData(YAML::Node& node, Rigidbody& component) override
+        {
+            component.bodyType = static_cast<BodyType>(node["Body Type"].as<int>());
+            component.gravityScale = node["Gravity Scale"].as<float>();
+            component.mass = node["Mass"].as<float>();
+            component.elasticity = node["Elasticity"].as<float>();
+            component.damping = node["Damping"].as<float>();
+            component.angularDamping = node["Angular Damping"].as<float>();
+            component.enabled = node["Enabled"].as<bool>();
+        }
+    };
+    */
 }
 
