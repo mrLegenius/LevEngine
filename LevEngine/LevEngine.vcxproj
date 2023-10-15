@@ -540,6 +540,10 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugWireSphere.h" />
     <ClInclude Include="src\Renderer\Material.h" />
     <ClInclude Include="src\Renderer\MaterialPBR.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\LuminancePass.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\PostProcessingPass.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\TonemappingPass.h" />
     <ClInclude Include="src\Renderer\QuadRenderPass.h" />
     <ClInclude Include="src\Renderer\RendererContext.h" />
     <ClInclude Include="src\Renderer\CopyTexturePass.h" />
@@ -867,6 +871,10 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Material.cpp" />
     <ClCompile Include="src\Renderer\MaterialPBR.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\LuminancePass.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\PostProcessingPass.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\TonemappingPass.cpp" />
     <ClCompile Include="src\Renderer\QuadRenderPass.cpp" />
     <ClCompile Include="src\Renderer\RendererContext.cpp" />
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />

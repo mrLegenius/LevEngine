@@ -19,6 +19,18 @@ enum class RenderTechniqueType
 
 struct RenderSettings
 {
+	//General
+	static constexpr RenderTechniqueType RenderTechnique = RenderTechniqueType::Deferred;
+	static constexpr RendererAPI RendererAPI = RendererAPI::D3D11;
+	
+	static constexpr bool EnableShaderDebug = false;
+	static constexpr bool UseFrustumCulling = true;
+
+	static constexpr uint32_t ShadowMapSlot = 9;
+	static constexpr uint32_t MaterialSlot = 4;
+
+	static constexpr uint32_t MaxParticles = 1024 * 8;
+	
 	//Shadows
 	static constexpr int CascadeCount = 4;
 	static constexpr float CascadeDistances[CascadeCount] = { 0.1f, 0.3f, 0.5f, 1.0f };
@@ -27,18 +39,15 @@ struct RenderSettings
 	//Lightning
 	static constexpr int MaxPointLights = 200;
 	static constexpr Vector3 GlobalAmbient{ 0.03f, 0.03f, 0.03f };
+	
+	//Post-processing
+	static constexpr uint32_t LuminanceMapSize = 1024;
 
-	static constexpr bool UseFrustumCulling = true;
-	static constexpr RenderTechniqueType RenderTechnique = RenderTechniqueType::Deferred;
-
-	static constexpr uint32_t ShadowMapSlot = 9;
-	static constexpr uint32_t MaterialSlot = 4;
-
-	static constexpr uint32_t MaxParticles = 1024 * 8;
-
-	static constexpr RendererAPI RendererAPI = RendererAPI::D3D11;
-
-	static constexpr bool EnableShaderDebug = false;
+	static constexpr float BloomThreshold = 3.0f;
+	static constexpr float BloomMagnitude = 1.0f;
+	static constexpr float BloomBlurSigma = 0.8f;
+	static constexpr float AdaptationRate = 0.5f;
+	static constexpr float KeyValue = 0.01f;
 };
 
 struct RenderDebugSettings

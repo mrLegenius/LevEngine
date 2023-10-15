@@ -12,6 +12,9 @@
 #include "TransparentPass.h"
 #include "DebugRender/DebugRenderPass.h"
 #include "Kernel/Application.h"
+#include "PostProcessing/LuminanceAdaptationPass.h"
+#include "PostProcessing/LuminancePass.h"
+#include "PostProcessing/PostProcessingPass.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/Camera/Camera.h"
 
@@ -218,7 +221,7 @@ void Renderer::Init()
 		LEV_PROFILE_SCOPE("Skybox pipeline creation");
 
 		s_SkyboxPipeline = CreateRef<PipelineState>();
-		s_SkyboxPipeline->SetRenderTarget(mainRenderTarget);
+		s_SkyboxPipeline->SetRenderTarget(s_GBufferRenderTarget);
 		s_SkyboxPipeline->GetRasterizerState().SetCullMode(CullMode::None);
 		s_SkyboxPipeline->GetRasterizerState().SetDepthClipEnabled(false);
 		s_SkyboxPipeline->GetDepthStencilState()->SetDepthMode(DepthMode{ true, DepthWrite::Enable, CompareFunction::LessOrEqual });
@@ -247,9 +250,10 @@ void Renderer::Init()
 		s_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(s_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture));
 		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, ClearFlags::Stencil, Vector4::Zero, 1.0f, 1));
 		s_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_AlbedoTexture, m_MetallicRoughnessAOTexture, m_NormalTexture, m_DepthTexture));
-		s_DeferredTechnique->AddPass(CreateRef<QuadRenderPass>(s_DeferredQuadPipeline, m_ColorTexture));
-		s_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));
+		s_DeferredTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
+		//s_DeferredTechnique->AddPass(CreateRef<QuadRenderPass>(s_DeferredQuadPipeline, m_ColorTexture));
+		s_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<TransparentPass>(s_TransparentPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<ParticlePass>(s_ParticlesPipelineState, m_DepthTexture, m_NormalTexture));
 	}
@@ -285,7 +289,7 @@ void Renderer::SetViewport(const float width, const float height)
 
 	m_PositionalLightPipeline1->GetRasterizerState().SetViewport(viewport);
 	m_PositionalLightPipeline2->GetRasterizerState().SetViewport(viewport);
-	s_GBufferPipeline->GetRasterizerState().SetViewport(viewport);
+	s_GBufferPipeline->GetRasterizerState().SetViewport(viewport); 
 	s_OpaquePipeline->GetRasterizerState().SetViewport(viewport);
 	s_TransparentPipeline->GetRasterizerState().SetViewport(viewport);
 	s_DebugPipeline->GetRasterizerState().SetViewport(viewport);
