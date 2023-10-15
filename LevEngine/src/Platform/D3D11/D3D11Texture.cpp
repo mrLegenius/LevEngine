@@ -1653,7 +1653,14 @@ DXGI_SAMPLE_DESC GetSupportedSampleCount(const DXGI_FORMAT format, const uint8_t
     return sampleDesc;
 }
 
-Ref<D3D11Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint16_t height, const uint16_t slices, const TextureFormat& format, const CPUAccess cpuAccess, const bool uav)
+Ref<Texture> D3D11Texture::CreateTexture2D(
+    const uint16_t width,
+    const uint16_t height,
+    const uint16_t slices,
+    const TextureFormat& format,
+    const CPUAccess cpuAccess,
+    const bool uav,
+    const bool generateMipMaps)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -1709,9 +1716,9 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint
 
     // Can the texture be dynamically modified on the CPU?
     texture->m_Dynamic = (int)texture->m_CPUAccess != 0 && texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_CPU_LOCKABLE;
+    
     // Can mipmaps be automatically generated for this texture format?
-    //TODO: Restore mipmaps
-    //texture->m_GenerateMipMaps = !texture->m_Dynamic && texture->m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
+    texture->m_GenerateMipMaps = generateMipMaps && !texture->m_Dynamic && texture->m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
     // Are UAVs supported?
     texture->m_UAV = uav && texture->m_UnorderedAccessViewFormatSupport & D3D11_FORMAT_SUPPORT_SHADER_LOAD;
 
@@ -1720,8 +1727,15 @@ Ref<D3D11Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint
 	return texture;
 }
 
-Ref<Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint16_t height, const uint16_t slices, const TextureFormat format,
-                                           const void* data, const CPUAccess cpuAccess, const bool uav)
+Ref<Texture> D3D11Texture::CreateTexture2D(
+    const uint16_t width,
+    const uint16_t height,
+    const uint16_t slices,
+    const TextureFormat format,
+    const void* data,
+    const CPUAccess cpuAccess,
+    const bool uav,
+    const bool generateMipMaps)
 {
     if (!data)
     {
@@ -1785,9 +1799,9 @@ Ref<Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint16_t 
 
     // Can the texture be dynamically modified on the CPU?
     texture->m_Dynamic = (int)texture->m_CPUAccess != 0 && texture->m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_CPU_LOCKABLE;
+    
     // Can mipmaps be automatically generated for this texture format?
-    //TODO: Restore mipmaps
-    //texture->m_GenerateMipMaps = !texture->m_Dynamic && texture->m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
+    texture->m_GenerateMipMaps = generateMipMaps && !texture->m_Dynamic && texture->m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
     // Are UAVs supported?
     texture->m_UAV = uav && texture->m_UnorderedAccessViewFormatSupport & D3D11_FORMAT_SUPPORT_SHADER_LOAD;
 
@@ -1879,9 +1893,9 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
     if (channels == 4 || channels == 3)
     {
         if (isLinear)
-            m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-        else
             m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+        else
+            m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     }
     else if (channels == 1)
     {
@@ -1981,18 +1995,24 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
     stbi_image_free(data);
 }
 
-D3D11Texture::D3D11Texture(const String paths[6])
+D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
 {
     LEV_PROFILE_FUNCTION();
 
     int width, height, channels;
+    bool isHDR = false;
+    bool is16Bit = false;
 
     stbi_uc* data[6];
 
     stbi_set_flip_vertically_on_load(1);
 
     for (int i = 0; i < 6; ++i)
+    {
         data[i] = stbi_load(paths[i].c_str(), &width, &height, &channels, 4);
+        isHDR |= stbi_is_hdr(paths[i].c_str());
+        is16Bit |= stbi_is_16_bit(paths[i].c_str());
+    }
 
     bool failed = false;
     for (int i = 0; i < 6; ++i)
@@ -2010,13 +2030,12 @@ D3D11Texture::D3D11Texture(const String paths[6])
     m_Width = width;
     m_Height = height;
 
-    if (channels == 3)
+    if (channels == 4 || channels == 3)
     {
-        m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-    }
-    else if (channels == 4)
-    {
-        m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+        if (isLinear)
+            m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+        else
+            m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     }
     else
     {
@@ -2237,7 +2256,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 
     textureDesc.Width = m_Width;
     textureDesc.Height = m_Height;
-    textureDesc.MipLevels = 1;
+    textureDesc.MipLevels = m_GenerateMipMaps ? 0 : 1;
 
     if (((int)m_CPUAccess & (int)CPUAccess::Read) != 0)
     {
@@ -2502,7 +2521,7 @@ void D3D11Texture::CopyFrom(const Ref<Texture> sourceTexture)
 
 Ref<Texture> D3D11Texture::Clone()
 {
-    Ref<D3D11Texture> other;
+    Ref<Texture> other;
     switch (m_TextureDimension)
     {
     case Dimension::Texture1D:
@@ -2510,7 +2529,7 @@ Ref<Texture> D3D11Texture::Clone()
         LEV_NOT_IMPLEMENTED
     case Dimension::Texture2D:
     case Dimension::Texture2DArray:
-        other = CreateTexture2D(m_Width, m_Height, m_NumSlices, m_TextureFormat, m_CPUAccess, m_UAV);
+        other = CreateTexture2D(m_Width, m_Height, m_NumSlices, m_TextureFormat, m_CPUAccess, m_UAV, m_GenerateMipMaps);
         break;
     case Dimension::Texture3D:
     case Dimension::TextureCube:

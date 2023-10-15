@@ -98,11 +98,24 @@ namespace LevEngine
 
 		virtual ~Texture() = default;
 
-		static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format, void* data, CPUAccess cpuAccess = CPUAccess::None, bool uav = false);
-		static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format, CPUAccess cpuAccess = CPUAccess::None, bool uav = false);
+		static Ref<Texture> CreateTexture2D(
+			uint16_t width, uint16_t height, uint16_t slices,
+			const TextureFormat& format,
+			void* data,
+			CPUAccess cpuAccess = CPUAccess::None,
+			bool uav = false,
+			bool generateMipMaps = false);
+		
+		static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices,
+			const TextureFormat& format,
+			CPUAccess cpuAccess = CPUAccess::None,
+			bool uav = false,
+			bool generateMipMaps = false);
+		
 		static Ref<Texture> CreateTextureCube(const String paths[6]);
-		static Ref<Texture> Create(const String& path);
+		static Ref<Texture> CreateTextureCube(const String paths[6], const bool isLinear);
 		static Ref<Texture> Create(const String& path, bool isLinear);
+		static Ref<Texture> Create(const String& path);
 
 		[[nodiscard]] virtual void* GetId() = 0;
 
