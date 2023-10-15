@@ -44,7 +44,14 @@ namespace LevEngine
 			back->GetTexture()->GetPath(),
 			front->GetTexture()->GetPath() };
 
-		m_Texture = Texture::CreateTextureCube(paths);
+		const auto linear = left->IsLinear
+		|| right->IsLinear
+		|| bottom->IsLinear
+		|| top->IsLinear
+		|| back->IsLinear
+		|| front->IsLinear;
+
+		m_Texture = Texture::CreateTextureCube(paths, linear);
 	}
 }
 
