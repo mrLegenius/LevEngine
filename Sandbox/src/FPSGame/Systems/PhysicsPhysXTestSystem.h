@@ -19,7 +19,7 @@ namespace Sandbox
             auto& rigidbody = ground.AddComponent<RigidbodyPhysX>(ground.GetComponent<Transform>());
             rigidbody.SetActorType(PxActorType::eRIGID_STATIC);
             rigidbody.AttachShapeGeometry(PxGeometryType::eCAPSULE);
-            rigidbody.DetachShapeGeometryType(0);
+            rigidbody.DetachShapeGeometry(0);
             rigidbody.AttachShapeGeometry(PxGeometryType::ePLANE);
             
             const auto cube0 = prefab->Instantiate(scene);
@@ -32,13 +32,11 @@ namespace Sandbox
             rigidbody0.SetRestitution(0, 0, 0.2f);
 
             const auto cube1 = prefab->Instantiate(scene);
-            cube1.GetComponent<Transform>().SetWorldScale(Vector3(2.0f, 6.0f, 4.0f));
             cube1.GetComponent<Transform>().SetWorldPosition(Vector3(0.0f, 30.0f, 0.0f));
             cube1.GetComponent<Transform>().SetWorldRotation(Quaternion::CreateFromAxisAngle(Vector3(0.3f, 0.0f, 1.0f), 45));
             auto& rigidbody1 = cube1.AddComponent<RigidbodyPhysX>(cube1.GetComponent<Transform>());
             rigidbody1.AttachShapeGeometry(PxGeometryType::eBOX);
-            rigidbody1.SetShapeGeometryParams(0, 1.0f, 3.0f, 2.0f);
-            rigidbody1.SetActorMass(10);
+            rigidbody1.SetShapeGeometryParam(0, 1, 3);
         }
     };
 }
