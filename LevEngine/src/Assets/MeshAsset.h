@@ -17,7 +17,8 @@ namespace LevEngine
 			return Icons::Mesh();
 		}
 	protected:
-		bool OverrideDataFile() const override { return false; }
+		bool WriteDataToFile() const override { return false; }
+		bool ReadDataFromFile() const override { return false; }
 
 		void SerializeData(YAML::Emitter& out) override { }
 		void DeserializeData(YAML::Node& node) override

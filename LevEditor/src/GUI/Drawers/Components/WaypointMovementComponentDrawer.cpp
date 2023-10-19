@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
 #include "ComponentDrawer.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -12,7 +12,7 @@ namespace LevEngine::Editor
 
         void DrawContent(LevEngine::WaypointMovementComponent& component) override
         {
-            GUIUtils::DrawSelectableComponentList<Transform>("Waypoints", component.entities, m_itemCurrentIdx);
+            EditorGUI::DrawSelectableComponentList<Transform>("Waypoints", component.entities, m_itemCurrentIdx);
         }
 
     private:

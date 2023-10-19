@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
 #include "AssetDrawer.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -13,10 +13,11 @@ namespace LevEngine::Editor
         void DrawContent(Ref<MaterialPBRAsset> assetRef) override
         {
             MaterialPBR& material = *static_cast<MaterialPBR*>(&assetRef->GetMaterial());
-            GUIUtils::DrawColor3Control("Tint", BindGetter(&MaterialPBR::GetTintColor, &material), BindSetter(&MaterialPBR::SetTintColor, &material));
+            EditorGUI::DrawColor3Control("Tint", BindGetter(&MaterialPBR::GetTintColor, &material), BindSetter(&MaterialPBR::SetTintColor, &material));
 
-            GUIUtils::DrawFloatControl("Metallic", BindGetter(&MaterialPBR::GetMetallic, &material), BindSetter(&MaterialPBR::SetMetallic, &material), 0.01f, 0.04f, 1.0f);
-            GUIUtils::DrawFloatControl("Roughness", BindGetter(&MaterialPBR::GetRoughness, &material), BindSetter(&MaterialPBR::SetRoughness, &material), 0.01f, 0.0f, 1.0f);
+            EditorGUI::DrawFloatControl("Metallic", BindGetter(&MaterialPBR::GetMetallic, &material), BindSetter(&MaterialPBR::SetMetallic, &material), 0.01f, 0.04f, 1.0f);
+            EditorGUI::DrawFloatControl("Roughness", BindGetter(&MaterialPBR::GetRoughness, &material), BindSetter(&MaterialPBR::SetRoughness, &material), 0.01f, 0.0f, 1.0f);
+            EditorGUI::DrawCheckBox("Enable Transparency", BindGetter(&MaterialPBR::GetEnableTransparency, &material), BindSetter(&MaterialPBR::SetEnableTransparency, &material));
 
             DrawMaterialTexture("Albedo", material, MaterialPBR::TextureType::Albedo, assetRef->GetAlbedo());
             DrawMaterialTexture("Metallic", material, MaterialPBR::TextureType::Metallic, assetRef->GetMetallic());
@@ -26,11 +27,11 @@ namespace LevEngine::Editor
             DrawMaterialTexture("Emissive", material, MaterialPBR::TextureType::Emissive, assetRef->GetEmissive());
 
             auto tiling = material.GetTextureTiling();
-            if (GUIUtils::DrawVector2Control("Tiling", tiling, 1, 100))
+            if (EditorGUI::DrawVector2Control("Tiling", tiling, 1, 100))
                 material.SetTextureTiling(tiling);
 
             auto offset = material.GetTextureOffset();
-            if (GUIUtils::DrawVector2Control("Offset", offset, 0, 100))
+            if (EditorGUI::DrawVector2Control("Offset", offset, 0, 100))
                 material.SetTextureOffset(offset);
         }
         
@@ -39,7 +40,7 @@ namespace LevEngine::Editor
         {
             ImGui::PushID(static_cast<int>(textureType));
 
-            if (GUIUtils::DrawTextureAsset(label, textureAsset))
+            if (EditorGUI::DrawTextureAsset(label, textureAsset))
                 MaterialPBR.SetTexture(textureType, textureAsset ? textureAsset->GetTexture() : nullptr);
             ImGui::PopID();
         }

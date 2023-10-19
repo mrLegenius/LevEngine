@@ -166,7 +166,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\FPSGame\FPSGame.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -180,7 +180,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\FPSGame\Components\Enemy.h" />
+    <ClInclude Include="src\FPSGame\Components\Player.h" />
+    <ClInclude Include="src\FPSGame\Components\Projectile.h" />
+    <ClInclude Include="src\FPSGame\FPSGame.h" />
+    <ClInclude Include="src\FPSGame\Systems\EnemyMovementSystem.h" />
+    <ClInclude Include="src\FPSGame\Systems\EnemySpawnSystem.h" />
+    <ClInclude Include="src\FPSGame\Systems\FPSCameraRotationSystem.h" />
+    <ClInclude Include="src\FPSGame\Systems\FPSMovementSystem.h" />
+    <ClInclude Include="src\FPSGame\Systems\PlayerSpawnSystem.h" />
+    <ClInclude Include="src\FPSGame\Systems\ProjectileLifeSystem.h" />
+    <ClInclude Include="src\FPSGame\Systems\ProjectileMovementSystem.h" />
+    <ClInclude Include="src\FPSGame\Systems\ShootSystem.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

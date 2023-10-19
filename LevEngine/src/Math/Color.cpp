@@ -3,6 +3,7 @@
 
 namespace LevEngine
 {
+    const Color Color::Clear = Color(0x00000000);
     const Color Color::White = Color(0xFFFFFFFF);
     const Color Color::Silver = Color(0xC0C0C0FF);
     const Color Color::Gray = Color(0x808080FF);

@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "Project.h"
 
+#include "ResourceManager.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
@@ -99,6 +100,7 @@ void Project::Build()
     LEV_CORE_ASSERT(s_Project, "No loaded project");
     
     s_Project->CopyEngineResourceDirectory();
+    ResourceManager::Build(s_Project->GetRoot());
 }
     
 void Project::CopyEngineResourceDirectory() const noexcept

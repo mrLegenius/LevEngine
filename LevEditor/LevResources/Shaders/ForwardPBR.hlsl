@@ -31,11 +31,15 @@ float4 PSMain(PS_IN input) : SV_Target
 {
     float2 textureUV = ApplyTextureProperties(input.uv, material.tiling, material.offset);
 	float3 normal = CalculateNormal(normalMap, normalMapSampler, textureUV, input.TBN);
-	float3 albedo = albedoMap.Sample(albedoMapSampler, textureUV).rgb * material.tint;
+	float4 color = albedoMap.Sample(albedoMapSampler, textureUV);
 	float3 emissive = emissiveMap.Sample(emissiveMapSampler, textureUV).rgb;
 
+	float alpha = color.a;
+
+	clip (alpha - 0.1f);
+
 	//Gamma correction
-	albedo = pow(albedo, 2.2);
+	float3 albedo = pow(color.rgb, 2.2) * material.tint;
 
 	float metallic = metallicMap.Sample(metallicMapSampler, textureUV) * material.metallic;
 	float roughness = roughnessMap.Sample(roughnessMapSampler, textureUV) * material.roughness;
@@ -51,7 +55,7 @@ float4 PSMain(PS_IN input) : SV_Target
 	finalColor = finalColor / (finalColor + 1.0);
 	finalColor = pow(finalColor, 0.45);
 
-	return float4(finalColor, 1.0);
+	return float4(finalColor, alpha);
 }
 
 float3 CalcLighting(float3 fragPos, float3 normal, float depth, float3 albedo, float metallic, float roughness)

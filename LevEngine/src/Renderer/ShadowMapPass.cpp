@@ -71,6 +71,9 @@ ShadowMapPass::ShadowMapPass()
 bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 {
 	const auto group = registry.group<>(entt::get<Transform, DirectionalLightComponent>);
+
+	if (group.empty()) return false;
+	
     Vector3 lightDirection;
 	for (const auto entity : group)
 	{
@@ -115,6 +118,10 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
     for (const auto entity : view)
     {
         auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
+
+		if (!mesh.mesh) continue;
+		if (!mesh.material) continue;
+    	
         if (mesh.castShadow)
             Renderer3D::DrawMesh(transform.GetModel(), mesh, ShaderAssets::CascadeShadowPass());
     }

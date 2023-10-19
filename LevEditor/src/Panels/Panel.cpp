@@ -3,11 +3,13 @@
 
 #include <imgui.h>
 
+#include "GUI/ScopedGUIHelpers.h"
+
 namespace LevEngine::Editor
 {
 	void Panel::Render()
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(m_WindowPadding.x, m_WindowPadding.y));
+		GUI::ScopedVariable padding {ImGuiStyleVar_WindowPadding, m_WindowPadding};
 
 		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
 		if (!m_CanScroll)
@@ -23,7 +25,6 @@ namespace LevEngine::Editor
 			DrawContent();
 		}
 		ImGui::End();
-		ImGui::PopStyleVar();
 	}
 
 	const ImGuiPayload* Panel::BeginDragDropTargetWindow(const char* payloadType)
@@ -42,7 +43,10 @@ namespace LevEngine::Editor
 				drawList->AddRect(innerRect.Min, innerRect.Max, GetColorU32(ImGuiCol_DragDropTarget), 0.0f, 0, 2.0f);
 			}
 			if (payload->IsDelivery())
+			{
+				EndDragDropTarget();
 				return payload;
+			}
 		}
 
 		EndDragDropTarget();

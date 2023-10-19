@@ -458,6 +458,7 @@
     <ClInclude Include="src\DataTypes\Vector.h" />
     <ClInclude Include="src\Debugging\Profiler.h" />
     <ClInclude Include="src\EntryPoint.h" />
+    <ClInclude Include="src\Essentials\EnumUtils.h" />
     <ClInclude Include="src\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Events\Event.h" />
     <ClInclude Include="src\Events\KeyEvent.h" />
@@ -471,7 +472,6 @@
     <ClInclude Include="src\Kernel\Application.h" />
     <ClInclude Include="src\Kernel\Asserts.h" />
     <ClInclude Include="src\Kernel\ClassCollection.h" />
-    <ClInclude Include="src\Kernel\Color.h" />
     <ClInclude Include="src\Kernel\Layer.h" />
     <ClInclude Include="src\Kernel\LayerStack.h" />
     <ClInclude Include="src\Kernel\Logger.h" />
@@ -487,6 +487,7 @@
     <ClInclude Include="src\Kernel\Window.h" />
     <ClInclude Include="src\LevEngine.h" />
     <ClInclude Include="src\Math\BoundingVolume.h" />
+    <ClInclude Include="src\Math\Color.h" />
     <ClInclude Include="src\Math\Frustum.h" />
     <ClInclude Include="src\Math\Math.h" />
     <ClInclude Include="src\Math\Matrix.h" />
@@ -576,8 +577,10 @@
     <ClInclude Include="src\Renderer\SkyboxPass.h" />
     <ClInclude Include="src\Renderer\StructuredBuffer.h" />
     <ClInclude Include="src\Renderer\Texture.h" />
+    <ClInclude Include="src\Renderer\TransparentPass.h" />
     <ClInclude Include="src\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\Renderer\Viewport.h" />
+    <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\Scene\Components\Animation\WaypointMovement.h" />
     <ClInclude Include="src\Scene\Components\Audio\AudioListener.h" />
     <ClInclude Include="src\Scene\Components\Audio\AudioSource.h" />
@@ -828,7 +831,6 @@
     <ClCompile Include="src\GUI\ImGuiLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
     <ClCompile Include="src\Kernel\Application.cpp" />
-    <ClCompile Include="src\Kernel\Color.cpp" />
     <ClCompile Include="src\Kernel\Layer.cpp" />
     <ClCompile Include="src\Kernel\LayerStack.cpp" />
     <ClCompile Include="src\Kernel\Logger.cpp" />
@@ -839,6 +841,7 @@
     <ClCompile Include="src\Kernel\UUID.cpp" />
     <ClCompile Include="src\Kernel\Window.cpp" />
     <ClCompile Include="src\Math\BoundingVolume.cpp" />
+    <ClCompile Include="src\Math\Color.cpp" />
     <ClCompile Include="src\Math\Random.cpp" />
     <ClCompile Include="src\levpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -899,7 +902,9 @@
     <ClCompile Include="src\Renderer\SkyboxPass.cpp" />
     <ClCompile Include="src\Renderer\StructuredBuffer.cpp" />
     <ClCompile Include="src\Renderer\Texture.cpp" />
+    <ClCompile Include="src\Renderer\TransparentPass.cpp" />
     <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
+    <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp" />
     <ClCompile Include="src\Scene\Components\Audio\AudioListener.cpp" />
     <ClCompile Include="src\Scene\Components\Audio\AudioSource.cpp" />

@@ -2,7 +2,7 @@
 
 #include "LevEngine.h"
 #include "EntryPoint.h"
-#include "Game.h"
+#include "FPSGame/FPSGame.h"
 
 class SandboxApp : public Application
 {
@@ -10,7 +10,7 @@ public:
 	SandboxApp(const ApplicationCommandLineArgs args)
 		: Application({ "Sandbox", 1600, 900, args})
 	{
-		PushLayer(new Sandbox::Game);
+		PushLayer(new Sandbox::FPSGame);
 	}
 	~SandboxApp() = default;
 };

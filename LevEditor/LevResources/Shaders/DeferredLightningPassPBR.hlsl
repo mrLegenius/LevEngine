@@ -44,9 +44,8 @@ float4 PSMain(PS_IN input) : SV_Target0
     float4 fragPos = ScreenToView(float4(uv, depth, 1.0f));
 
     float3 lit = CalcLighting(fragPos, normal, depth, albedo, metallic, roughness);
-    float3 finalColor = (albedo * lit);
 
-    return float4(finalColor, 1.0f);
+    return float4(lit, 1.0f);
 }
 
 float3 CalcLighting(float3 fragPos, float3 normal, float depth, float3 albedo, float metallic, float roughness)

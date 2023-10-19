@@ -1,49 +1,5 @@
 Scene: TestScene
 Entities:
-  - Entity: 17161001247847914812
-    Tag: Waypoint4
-    Parent: 4684815799029988688
-    Transform:
-      Position: [17.0112114, 6.10351562e-05, -9.39930153]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 4152670026450596283
-    Tag: Waypoint5
-    Parent: 4684815799029988688
-    Transform:
-      Position: [17.0112114, 6.10351562e-05, 8.82788372]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 6053804230885538694
-    Tag: Waypoint6
-    Parent: 4684815799029988688
-    Transform:
-      Position: [4.79410601, 6.10351562e-05, 16.85219]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 8907368926904043922
-    Tag: MusicPlayer
-    Audio Source:
-      AudioBank: 12311189374319023591
-      AudioEventName: MusicFun
-      PlayOnInit: true
-      IsOneShot: false
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 2864383947918519609
-    Tag: VioletLight
-    Parent: 6442536384003582315
-    Point Light:
-      Color: [0.906779289, 0, 1, 1]
-      Range: 10
-      Smoothness: 0.75
-      Intensity: 10
-    Transform:
-      Position: [-21.368433, 6.31169748, 21.5256653]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
   - Entity: 15067421120708529696
     Tag: BlueLight
     Parent: 6442536384003582315
@@ -197,25 +153,18 @@ Entities:
       Position: [0, 4.99981117, -25.5]
       Rotation: [1.57079613, 0, -3.14159203]
       Scale: [50, 0.999977112, 9.99981594]
-  - Entity: 3609519582529224002
-    Tag: Camera
-    AudioListener:
-      {}
-    Camera:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 5
-        OrthographicNear: 9.99999975e-05
-        OrthographicFar: 487.200012
-      Main: true
-      FixedAspectRatio: false
+  - Entity: 2864383947918519609
+    Tag: VioletLight
+    Parent: 6442536384003582315
+    Point Light:
+      Color: [0.906779289, 0, 1, 1]
+      Range: 10
+      Smoothness: 0.75
+      Intensity: 10
     Transform:
-      Position: [1.89999998, 22.9444275, -12.335124]
-      Rotation: [-0.698424518, 1.77452731, 1.16741205e-06]
-      Scale: [0.999995649, 0.999998033, 0.999997139]
+      Position: [-21.368433, 6.31169748, 21.5256653]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
   - Entity: 13631027794021233931
     Tag: Skybox
     Skybox Renderer:
@@ -244,7 +193,7 @@ Entities:
       Enabled: true
     Transform:
       Position: [-1.20967243e-05, 5.0001483, 25.5]
-      Rotation: [1.57078934, -9.65900881e-07, 3.14159083]
+      Rotation: [1.57078934, -1.89308423e-06, 3.14159083]
       Scale: [50, 0.999938488, 9.99950695]
   - Entity: 8940989960097836712
     Tag: Floor
@@ -298,30 +247,3 @@ Entities:
       Position: [0.186893448, -13.7385082, 2.861035e-06]
       Rotation: [-0, 0, 0]
       Scale: [0.5, 0.49999696, 0.49999696]
-  - Entity: 4684815799029988688
-    Tag: Waypoints
-    Transform:
-      Position: [0.515158653, 0, 3.11121488]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 6517636914239588152
-    Tag: Waypoint1
-    Parent: 4684815799029988688
-    Transform:
-      Position: [-14.1727247, 0, 13.9421644]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 3467883140891490654
-    Tag: Waypoint2
-    Parent: 4684815799029988688
-    Transform:
-      Position: [-18.6007538, 0, -2.59505486]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 2068561932602198083
-    Tag: Waypoint3
-    Parent: 4684815799029988688
-    Transform:
-      Position: [1.23712468, 0, -20.9012756]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]

@@ -1,0 +1,49 @@
+Prefab: Player
+RootEntity: 16534605177672028581
+Entities:
+  - Entity: 16534605177672028581
+    Tag: Player
+    Box Collider:
+      Extents: [0.25, 1, 0.25]
+      Offset: [0, 1, 0]
+    Rigidbody:
+      Body Type: 2
+      Gravity Scale: 1
+      Mass: 1
+      Elasticity: 0.5
+      Damping: 0.800000012
+      Angular Damping: 0.800000012
+      Enabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 2, 1]
+  - Entity: 3609519582529224002
+    Tag: Camera
+    Parent: 16534605177672028581
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 5
+        OrthographicNear: 9.99999975e-05
+        OrthographicFar: 487.200012
+      Main: true
+      FixedAspectRatio: false
+    Transform:
+      Position: [0, 4, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 0.5, 1]
+  - Entity: 8193487410668680548
+    Tag: Weapon
+    Parent: 3609519582529224002
+    MeshRenderer:
+      Mesh: 5721017995879216389
+      Material: 9981030367959526075
+      Cast Shadow: true
+    Transform:
+      Position: [0.800000012, -0.800000012, -2.5999999]
+      Rotation: [0.04363323, 0.062831834, 1.16526233e-10]
+      Scale: [0.5, 0.5, 0.5]

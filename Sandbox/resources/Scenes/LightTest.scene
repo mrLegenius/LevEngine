@@ -1,0 +1,156 @@
+Scene: Default
+Entities:
+  - Entity: 16615573850914752988
+    Tag: Light
+    Point Light:
+      Color: [0, 1, 0.898304939, 1]
+      Range: 4
+      Smoothness: 0.75
+      Intensity: 7.69999981
+    Transform:
+      Position: [-0.329543531, 1.88620627, -4.18202257]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 3609059864159586914
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 7582525064410579512
+      Cast Shadow: true
+    Transform:
+      Position: [3.42274714, 1.29007804, -4.23298168]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 10424378411087453464
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 13469868196253741728
+      Cast Shadow: true
+    Transform:
+      Position: [2.79097557, 1.29007149, 4.11455965]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 5285605988623721684
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+    Transform:
+      Position: [-0.337129235, 1.9404912, -3.60323811]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 1383828708702784648
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 7582525064410579512
+      Cast Shadow: true
+    Transform:
+      Position: [-2.70211864, 1.1613183, -1.59125018]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 5906187110994499437
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 13469868196253741728
+      Cast Shadow: true
+    Transform:
+      Position: [3.36553812, 1.1613183, -1.59125018]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 7875993463321291618
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 13469868196253741728
+      Cast Shadow: true
+    Transform:
+      Position: [3.36553812, 1.1613183, 1.53512263]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 7802475251132823053
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+    Transform:
+      Position: [-2.40047503, 1.1613183, 1.53512263]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 9537511613159074008
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 7582525064410579512
+      Cast Shadow: true
+    Transform:
+      Position: [0, 1.1613183, 3.41268802]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 17195068133138422531
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 13469868196253741728
+      Cast Shadow: true
+    Transform:
+      Position: [0, 1.1613183, 0]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 14350727699591261213
+    Tag: Cube
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+    Transform:
+      Position: [0.11111486, 1.29007351, -7.27554703]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 15193309892571702092
+    Tag: Camera
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 42.9999962
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 100
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+    Transform:
+      Position: [0, 4.92730141, 4.93387318]
+      Rotation: [-0.81208545, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 10314463259572360203
+    Tag: Skybox
+    Skybox Renderer:
+      Skybox: 4388953932261144541
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 11642718779831016083
+    Tag: Floor
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 13469868196253741728
+      Cast Shadow: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [25, 1, 25]
+  - Entity: 15494177526218917396
+    Tag: Directional Light
+    Directional Light:
+      Color: [1, 1, 1, 1]
+    Transform:
+      Position: [0, 2.53177166, 0]
+      Rotation: [-1.05939758, -0.682420552, -4.26271612e-07]
+      Scale: [0.999998927, 0.999997854, 0.999997437]

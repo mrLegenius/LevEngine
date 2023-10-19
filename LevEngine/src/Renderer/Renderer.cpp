@@ -9,6 +9,7 @@
 #include "Renderer3D.h"
 #include "ShadowMapPass.h"
 #include "SkyboxPass.h"
+#include "TransparentPass.h"
 #include "DebugRender/DebugRenderPass.h"
 #include "Kernel/Application.h"
 #include "Scene/Entity.h"
@@ -103,7 +104,7 @@ void Renderer::Init()
 
 		s_DeferredQuadPipeline = CreateRef<PipelineState>();
 		s_DeferredQuadPipeline->GetRasterizerState().SetCullMode(CullMode::None);
-		s_DeferredQuadPipeline->GetDepthStencilState()->SetDepthMode(DepthMode{false, DepthWrite::Disable});
+		s_DeferredQuadPipeline->GetDepthStencilState()->SetDepthMode(DepthMode::DisableDepthTesting);
 		s_DeferredQuadPipeline->GetDepthStencilState()->SetStencilMode(StencilMode{false });
 		s_DeferredQuadPipeline->SetShader(ShaderType::Vertex, ShaderAssets::DeferredQuadRender());
 		s_DeferredQuadPipeline->SetShader(ShaderType::Pixel, ShaderAssets::DeferredQuadRender());
@@ -191,6 +192,18 @@ void Renderer::Init()
 	}
 
 	{
+		LEV_PROFILE_SCOPE("Transparent pipeline creation");
+
+		s_TransparentPipeline = CreateRef<PipelineState>();
+		s_TransparentPipeline->SetShader(ShaderType::Vertex, ShaderAssets::ForwardPBR());
+		s_TransparentPipeline->SetShader(ShaderType::Pixel, ShaderAssets::ForwardPBR());
+		s_TransparentPipeline->GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
+		s_TransparentPipeline->GetDepthStencilState()->SetDepthMode(DepthMode::DisableDepthWrites);
+		s_TransparentPipeline->GetRasterizerState().SetCullMode(CullMode::None);
+		s_TransparentPipeline->SetRenderTarget(mainRenderTarget);
+	}
+
+	{
 		LEV_PROFILE_SCOPE("Debug pipeline creation");
 
 		s_DebugPipeline = CreateRef<PipelineState>();
@@ -218,7 +231,7 @@ void Renderer::Init()
 
 		s_ParticlesPipelineState = CreateRef<PipelineState>();
 		s_ParticlesPipelineState->GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
-		s_ParticlesPipelineState->GetDepthStencilState()->SetDepthMode(DepthMode{ true, DepthWrite::Disable });
+		s_ParticlesPipelineState->GetDepthStencilState()->SetDepthMode(DepthMode::DisableDepthWrites);
 		s_ParticlesPipelineState->GetRasterizerState().SetCullMode(CullMode::None);
 		s_ParticlesPipelineState->SetRenderTarget(mainRenderTarget);
 	}
@@ -237,6 +250,7 @@ void Renderer::Init()
 		s_DeferredTechnique->AddPass(CreateRef<QuadRenderPass>(s_DeferredQuadPipeline, m_ColorTexture));
 		s_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));
+		s_DeferredTechnique->AddPass(CreateRef<TransparentPass>(s_TransparentPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<ParticlePass>(s_ParticlesPipelineState, m_DepthTexture, m_NormalTexture));
 	}
 
@@ -250,6 +264,7 @@ void Renderer::Init()
 		s_ForwardTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_ForwardTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));
 		//TODO: Fix particle bounce
+		s_ForwardTechnique->AddPass(CreateRef<TransparentPass>(s_TransparentPipeline));
 		s_ForwardTechnique->AddPass(CreateRef<ParticlePass>(s_ParticlesPipelineState, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_NormalTexture));
 	}
 
@@ -272,6 +287,7 @@ void Renderer::SetViewport(const float width, const float height)
 	m_PositionalLightPipeline2->GetRasterizerState().SetViewport(viewport);
 	s_GBufferPipeline->GetRasterizerState().SetViewport(viewport);
 	s_OpaquePipeline->GetRasterizerState().SetViewport(viewport);
+	s_TransparentPipeline->GetRasterizerState().SetViewport(viewport);
 	s_DebugPipeline->GetRasterizerState().SetViewport(viewport);
 	s_SkyboxPipeline->GetRasterizerState().SetViewport(viewport);
 	s_ParticlesPipelineState->GetRasterizerState().SetViewport(viewport);
@@ -322,10 +338,11 @@ void Renderer::LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, 
 	}
 }
 
-RenderParams Renderer::CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform)
+RenderParams Renderer::CreateRenderParams(SceneCamera* mainCamera, Transform* cameraTransform)
 {
 	LEV_PROFILE_FUNCTION();
 
+	cameraTransform->SetWorldScale(Vector3::One);
 	const auto cameraViewMatrix = cameraTransform->GetModel().Invert();
 	const auto cameraPosition = cameraTransform->GetWorldPosition();
 	const auto perspectiveViewProjectionMatrix = cameraViewMatrix * mainCamera->GetPerspectiveProjection();
@@ -346,7 +363,7 @@ void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const T
 
 	mainCamera->RecalculateFrustum(*cameraTransform);
 	
-	const auto renderParams = CreateRenderParams(mainCamera, cameraTransform);
+	const auto renderParams = CreateRenderParams(mainCamera, const_cast<Transform*>(cameraTransform));
 
 	//TODO: Maybe move to its own pass?
 	DirectionalLightSystem(registry);
@@ -355,7 +372,7 @@ void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const T
 
 	//TODO: Maybe move to its own pass?
 	Renderer3D::SetCameraBuffer(renderParams.Camera, renderParams.CameraViewMatrix, renderParams.CameraPosition);
-
+	
 	switch (RenderSettings::RenderTechnique)
 	{
 	case RenderTechniqueType::Forward:

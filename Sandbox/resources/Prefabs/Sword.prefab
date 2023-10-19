@@ -1,0 +1,13 @@
+Prefab: Sword
+RootEntity: 9194406255123790278
+Entities:
+  - Entity: 9194406255123790278
+    Tag: Sword
+    MeshRenderer:
+      Mesh: 4136629942807961606
+      Material: 13329391460008384187
+      Cast Shadow: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]

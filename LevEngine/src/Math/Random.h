@@ -2,7 +2,7 @@
 #include <random>
 
 #include "Math.h"
-#include "Kernel/Color.h"
+#include "Color.h"
 
 namespace LevEngine
 {

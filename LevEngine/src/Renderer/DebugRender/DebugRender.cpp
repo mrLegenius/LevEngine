@@ -43,6 +43,19 @@ namespace LevEngine
         m_Shapes.emplace(shape);
     }
 
+    void DebugRender::DrawPoint(const Vector3 position, const Color color)
+    {
+        DrawSphere(position, 0.1f, color);
+    }
+
+    void DebugRender::DrawPointStar(const Vector3 position, const Color color)
+    {
+        constexpr float size = 0.1f;
+        DrawLine(position + Vector3{-size, 0, 0}, position + Vector3{size, 0, 0}, color);
+        DrawLine(position + Vector3{0, -size, 0}, position + Vector3{0, size, 0}, color);
+        DrawLine(position + Vector3{0, 0, -size}, position + Vector3{0, 0, size}, color);
+    }
+
     void DebugRender::DrawWireSphere(const Vector3 position, const float radius, const Color color)
     {
         const Matrix model =

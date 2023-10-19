@@ -5,10 +5,13 @@
 
 #include "imguizmo/ImGuizmo.h"
 #include "EntitySelection.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
+    ImVec2 leftBottom;
+    ImVec2 rightTop;
+
     void ViewportPanel::DrawContent()
 	{
         if (!m_Focused)
@@ -26,15 +29,13 @@ namespace LevEngine::Editor
 
         m_Size = Vector2{ viewportSize.x, viewportSize.y };
 
-	    float left = 0.5f * (1 - viewportSize.x / m_Texture->GetWidth());
-	    float bottom = 0.5f * (1 - viewportSize.y / m_Texture->GetHeight());
+        const float left = 0.5f * (1 - viewportSize.x / m_Texture->GetWidth());
+        const float bottom = 0.5f * (1 - viewportSize.y / m_Texture->GetHeight());
+	    leftBottom = ImVec2{left, bottom};
 
-	    //TODO: Fix Viewport panel resizing
-	    ImVec2 leftBottom = ImVec2{0, 0}; //{left, bottom}; 
-
-	    float right = 0.5f * (1 + viewportSize.x / m_Texture->GetWidth());
-	    float top = 0.5f * (1 + viewportSize.y / m_Texture->GetHeight());
-	    ImVec2 rightTop = ImVec2{ 1, 1 }; //{right, top};
+        const float right = 0.5f * (1 + viewportSize.x / m_Texture->GetWidth());
+        const float top = 0.5f * (1 + viewportSize.y / m_Texture->GetHeight());
+	    rightTop = ImVec2{right, top};
 
         ImGui::Image(
             m_Texture->GetId(),
@@ -45,7 +46,7 @@ namespace LevEngine::Editor
 
         if (ImGui::BeginDragDropTarget())
         {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EditorGUI::AssetPayload))
             {
                 const wchar_t* path = (const wchar_t*)payload->Data;
                 SceneManager::LoadScene(path);
@@ -69,7 +70,12 @@ namespace LevEngine::Editor
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
 
-            ImGuizmo::SetRect(m_Bounds[0].x, m_Bounds[0].y, m_Bounds[1].x - m_Bounds[0].x, m_Bounds[1].y - m_Bounds[0].y);
+            const auto width = m_Texture->GetWidth();
+            const auto height = m_Texture->GetHeight();
+            const auto xOffset = width * leftBottom.x;
+            const auto yOffset = height * leftBottom.y;
+            
+            ImGuizmo::SetRect(m_Bounds[0].x - xOffset, m_Bounds[0].y - yOffset, width, height);
 
             const Matrix cameraView = m_Camera.GetTransform().GetModel().Invert();
             const Matrix& cameraProjection = m_Camera.GetProjection();
@@ -81,14 +87,14 @@ namespace LevEngine::Editor
             const float snapValue = Gizmo::Tool == Gizmo::ToolType::Rotate ? 5.0f : 0.5f;
 
             const float snapValues[3] = { snapValue, snapValue, snapValue };
-
-            if (ImGuizmo::Manipulate(&cameraView._11,
-                                     &cameraProjection._11,
-                                     static_cast<ImGuizmo::OPERATION>(Gizmo::Tool),
-                                     static_cast<ImGuizmo::MODE>(Gizmo::Space),
-                                     &model._11,
-                                     nullptr,
-                                     snap ? snapValues : nullptr))
+            
+            if (Manipulate(&cameraView._11,
+                           &cameraProjection._11,
+                           static_cast<ImGuizmo::OPERATION>(Gizmo::Tool),
+                           static_cast<ImGuizmo::MODE>(Gizmo::Space),
+                           &model._11,
+                           nullptr,
+                           snap ? snapValues : nullptr))
             {
                 Vector3 position, scale;
                 Quaternion rotation;

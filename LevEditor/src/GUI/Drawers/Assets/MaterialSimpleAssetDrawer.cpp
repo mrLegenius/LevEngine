@@ -2,7 +2,7 @@
 
 #include "AssetDrawer.h"
 #include "imgui.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -14,12 +14,12 @@ namespace LevEngine::Editor
         void DrawContent(Ref<MaterialSimpleAsset> assetRef) override
         {
             MaterialSimple& material = *static_cast<MaterialSimple*>(&assetRef->GetMaterial());
-            GUIUtils::DrawColor3Control("Ambient", BindGetter(&MaterialSimple::GetAmbientColor, &material), BindSetter(&MaterialSimple::SetAmbientColor, &material));
-            GUIUtils::DrawColor3Control("Diffuse", BindGetter(&MaterialSimple::GetDiffuseColor, &material), BindSetter(&MaterialSimple::SetDiffuseColor, &material));
-            GUIUtils::DrawColor3Control("Specular", BindGetter(&MaterialSimple::GetSpecularColor, &material), BindSetter(&MaterialSimple::SetSpecularColor, &material));
-            GUIUtils::DrawColor3Control("Emissive", BindGetter(&MaterialSimple::GetEmissiveColor, &material), BindSetter(&MaterialSimple::SetEmissiveColor, &material));
+            EditorGUI::DrawColor3Control("Ambient", BindGetter(&MaterialSimple::GetAmbientColor, &material), BindSetter(&MaterialSimple::SetAmbientColor, &material));
+            EditorGUI::DrawColor3Control("Diffuse", BindGetter(&MaterialSimple::GetDiffuseColor, &material), BindSetter(&MaterialSimple::SetDiffuseColor, &material));
+            EditorGUI::DrawColor3Control("Specular", BindGetter(&MaterialSimple::GetSpecularColor, &material), BindSetter(&MaterialSimple::SetSpecularColor, &material));
+            EditorGUI::DrawColor3Control("Emissive", BindGetter(&MaterialSimple::GetEmissiveColor, &material), BindSetter(&MaterialSimple::SetEmissiveColor, &material));
 
-            GUIUtils::DrawFloatControl("Shininess", BindGetter(&MaterialSimple::GetShininess, &material), BindSetter(&MaterialSimple::SetShininess, &material), 1.0f, 2.0f, 128.0f);
+            EditorGUI::DrawFloatControl("Shininess", BindGetter(&MaterialSimple::GetShininess, &material), BindSetter(&MaterialSimple::SetShininess, &material), 1.0f, 2.0f, 128.0f);
 
             DrawMaterialTexture("Diffuse", material, MaterialSimple::TextureType::Diffuse, assetRef->GetDiffuse());
             DrawMaterialTexture("Specular", material, MaterialSimple::TextureType::Specular, assetRef->GetSpecular());
@@ -27,11 +27,11 @@ namespace LevEngine::Editor
             DrawMaterialTexture("Emissive", material, MaterialSimple::TextureType::Emissive, assetRef->GetEmissive());
 
             auto tiling = material.GetTextureTiling();
-            if (GUIUtils::DrawVector2Control("Tiling", tiling, 1, 100))
+            if (EditorGUI::DrawVector2Control("Tiling", tiling, 1, 100))
                 material.SetTextureTiling(tiling);
 
             auto offset = material.GetTextureOffset();
-            if (GUIUtils::DrawVector2Control("Offset", offset, 0, 100))
+            if (EditorGUI::DrawVector2Control("Offset", offset, 0, 100))
                 material.SetTextureOffset(offset);
         }
         
@@ -40,7 +40,7 @@ namespace LevEngine::Editor
         {
             ImGui::PushID(static_cast<int>(textureType));
 
-            if (GUIUtils::DrawTextureAsset(label, textureAsset))
+            if (EditorGUI::DrawTextureAsset(label, textureAsset))
                 material.SetTexture(textureType, textureAsset ? textureAsset->GetTexture() : nullptr);
             ImGui::PopID();
         }

@@ -8,7 +8,6 @@
 #include "Kernel/Application.h"
 #include "Kernel/Layer.h"
 
-#include "Kernel/Color.h"
 #include "Kernel/PlatformUtils.h"
 #include "Kernel/Utils.h"
 #include "Kernel/UUID.h"
@@ -66,6 +65,7 @@
 
 // -- Math -------------------------------------------------
 
+#include "Math/Color.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
@@ -149,3 +149,5 @@
 #include "Assets/MaterialAsset.h"
 #include "Assets/MeshAsset.h"
 #include "Assets/SkyboxAsset.h"
+
+#include "ResourceManager.h"

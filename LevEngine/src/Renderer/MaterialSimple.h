@@ -4,7 +4,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "DataTypes/Map.h"
-#include "Kernel/Color.h"
+#include "Math/Color.h"
 
 namespace LevEngine
 {
@@ -52,6 +52,10 @@ public:
 
 protected:
 	void* GetGPUData() override { return &m_Data; }
+
+public:
+	[[nodiscard]] bool IsTransparent() override { return false; }
+
 private:
 	struct alignas(16) GPUData
 	{

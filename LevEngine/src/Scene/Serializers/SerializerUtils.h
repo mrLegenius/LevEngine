@@ -3,7 +3,7 @@
 
 #include "Assets/Asset.h"
 #include "Assets/AssetDatabase.h"
-#include "Kernel/Color.h"
+#include "Math/Color.h"
 
 namespace YAML
 {

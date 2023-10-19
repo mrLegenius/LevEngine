@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
 #include "AssetDrawer.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -12,12 +12,12 @@ namespace LevEngine::Editor
 
         void DrawContent(Ref<SkyboxAsset> assetRef) override
         {
-            GUIUtils::DrawTextureAsset("Left", assetRef->left);
-            GUIUtils::DrawTextureAsset("Right", assetRef->right);
-            GUIUtils::DrawTextureAsset("Bottom", assetRef->bottom);
-            GUIUtils::DrawTextureAsset("Top", assetRef->top);
-            GUIUtils::DrawTextureAsset("Back", assetRef->back);
-            GUIUtils::DrawTextureAsset("Front", assetRef->front);
+            EditorGUI::DrawTextureAsset("Left", assetRef->left);
+            EditorGUI::DrawTextureAsset("Right", assetRef->right);
+            EditorGUI::DrawTextureAsset("Bottom", assetRef->bottom);
+            EditorGUI::DrawTextureAsset("Top", assetRef->top);
+            EditorGUI::DrawTextureAsset("Back", assetRef->back);
+            EditorGUI::DrawTextureAsset("Front", assetRef->front);
         }
     };
 }

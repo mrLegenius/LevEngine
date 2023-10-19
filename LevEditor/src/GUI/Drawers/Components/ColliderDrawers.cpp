@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
 #include "ComponentDrawer.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
 {
@@ -12,8 +12,8 @@ namespace LevEngine::Editor
 
         void DrawContent(SphereCollider& component) override
         {
-            GUIUtils::DrawFloatControl("Radius", component.radius);
-            GUIUtils::DrawVector3Control("Offset", component.offset);
+            EditorGUI::DrawFloatControl("Radius", component.radius);
+            EditorGUI::DrawVector3Control("Offset", component.offset);
         }
     };
 
@@ -24,8 +24,8 @@ namespace LevEngine::Editor
 
         void DrawContent(BoxCollider& component) override
         {
-            GUIUtils::DrawVector3Control("Extents", component.extents);
-            GUIUtils::DrawVector3Control("Offset", component.offset);
+            EditorGUI::DrawVector3Control("Extents", component.extents);
+            EditorGUI::DrawVector3Control("Offset", component.offset);
         }
     };
 }

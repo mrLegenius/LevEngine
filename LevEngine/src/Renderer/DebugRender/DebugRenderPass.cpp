@@ -25,7 +25,7 @@ void DebugRenderPass::Process(entt::registry& registry, RenderParams& params)
     {
         const auto& gizmo = shapes.front();
         m_ConstantBuffer->SetData(&gizmo->GetColor());
-        m_ConstantBuffer->Bind(2, ShaderType::Pixel);
+        m_ConstantBuffer->Bind(7, ShaderType::Pixel);
         gizmo->Draw();
         shapes.pop();
     }

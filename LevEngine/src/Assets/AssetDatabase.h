@@ -136,6 +136,12 @@ namespace LevEngine
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must derive from Asset");
 
+			if (exists(path))
+			{
+				Log::CoreError("Asset already exists in {}", path);
+				return nullptr;
+			}
+			
 			const auto uuid = UUID();
 
 			auto asset = CreateAsset(path, uuid);
@@ -151,8 +157,14 @@ namespace LevEngine
 
 			return CastRef<T>(asset);
 		}
+		
+		static void CreateFolder(const Path& path)
+		{
+			if (!exists(path))
+				create_directory(path);
+		}
 
-		[[nodiscard]] static Ref<Asset> GetAsset(const Path& path)
+		[[nodiscard]] static Ref<Asset> GetAsset(const Path& path, const bool deserialize = true)
 		{
 			const auto assetIt = m_AssetsByPath.find(path);
 			if (assetIt == m_AssetsByPath.end())
@@ -162,7 +174,7 @@ namespace LevEngine
 			}
 			
 			const auto& asset = assetIt->second;
-			if (!asset->IsDeserialized())
+			if (!asset->IsDeserialized() && deserialize)
 				asset->Deserialize();
 
 			return asset;
@@ -184,11 +196,10 @@ namespace LevEngine
 			return asset;
 		}
 
-
 		template<class T>
 		[[nodiscard]] static Ref<T> GetAsset(const UUID uuid)
 		{
-			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
+			static_assert(eastl::is_base_of_v<Asset, T>, "T must be an asset");
 
 			return GetAsset<T>(GetAsset(uuid));
 		}
@@ -196,7 +207,7 @@ namespace LevEngine
 		template<class T>
 		[[nodiscard]] static Ref<T> GetAsset(const Path& path)
 		{
-			static_assert(std::is_base_of_v<Asset, T>, "T must be a asset");
+			static_assert(eastl::is_base_of_v<Asset, T>, "T must be an asset");
 
 			return GetAsset<T>(GetAsset(path));
 		}
@@ -207,8 +218,8 @@ namespace LevEngine
 		static bool AssetExists(const Path& path);
 
 	private:
-		static inline UnorderedMap<UUID, Ref<Asset>> m_Assets;
-		static inline UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
+		inline static UnorderedMap<UUID, Ref<Asset>> m_Assets;
+		inline static UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
 
 		template<class T>
 		[[nodiscard]] static Ref<T> GetAsset(const Ref<Asset>& asset)

@@ -24,18 +24,20 @@ namespace LevEngine
             Transform transform = view.get<Transform>(entity);
             const MeshRendererComponent meshRenderer = view.get<MeshRendererComponent>(entity);
 
+            if (!meshRenderer.material) continue;
+            auto& material = meshRenderer.material->GetMaterial();
+
+            if (material.IsTransparent()) continue;
             if (!meshRenderer.mesh) continue;
 
             const auto mesh = meshRenderer.mesh->GetMesh();
             if (!mesh) continue;
-            if (!meshRenderer.material) continue;
 
             if constexpr (RenderSettings::UseFrustumCulling)
             {
                 if (!mesh->IsOnFrustum(params.Camera.GetFrustum(), transform)) continue;
             }
             
-            auto& material = meshRenderer.material->GetMaterial();
             material.Bind(shader);
             Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
             material.Unbind(shader);

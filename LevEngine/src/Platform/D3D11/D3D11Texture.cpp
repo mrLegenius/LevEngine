@@ -1834,7 +1834,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(const uint16_t width, const uint16_t 
     return texture;
 }
 
-D3D11Texture::D3D11Texture(const String& path) : Texture(path)
+D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -1843,22 +1843,23 @@ D3D11Texture::D3D11Texture(const String& path) : Texture(path)
 	stbi_set_flip_vertically_on_load(1);
 
 	int width, height, channels;
-
-	stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 4);
-
+    
+    void* data = stbi_load(path.c_str(), &width, &height, &channels, 4);
+    
     if (!data)
     {
         Log::CoreWarning("Failed to load texture from {0}", path);
         return;
     }
 
-    if (channels == 4)
+    m_IsTransparent = channels == 4;
+    
+    if (channels == 4 || channels == 3)
     {
-        m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-    }
-	else if (channels == 3)
-    {
-        m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+        if (isLinear)
+            m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+        else
+            m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
     }
     else if (channels == 1)
     {

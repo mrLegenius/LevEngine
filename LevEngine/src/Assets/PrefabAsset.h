@@ -5,7 +5,7 @@
 
 namespace LevEngine
 {
-class PrefabAsset : public Asset
+class PrefabAsset final : public Asset
 {
 public:
     PrefabAsset(const Path& path, const UUID& uuid) : Asset(path, uuid) { }
@@ -14,6 +14,8 @@ public:
     void SaveEntity(Entity entity);
 
 protected:
+    [[nodiscard]] bool WriteDataToFile() const override { return m_EntityToSave; }
+    
     void SerializeData(YAML::Emitter& out) override;
     void DeserializeData(YAML::Node& node) override
     {

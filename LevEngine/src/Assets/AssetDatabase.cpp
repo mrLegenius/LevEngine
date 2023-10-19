@@ -3,15 +3,15 @@
 #include "AssetDatabase.h"
 
 #include "DataTypes/Queue.h"
+#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
 	void AssetDatabase::ImportAsset(const Path& path)
 	{
-		if (!path.has_extension()) return;
-
 		auto uuid = UUID();
 		auto pathString = path.string();
+		String address;
 		pathString.append(".meta");
 
 		bool needToGenerateMeta = false;
@@ -26,6 +26,11 @@ namespace LevEngine
 			{
 				needToGenerateMeta = true;
 			}
+
+			if (const auto addressData = data["Address"])
+			{
+				address = addressData.as<String>();
+			}
 		}
 		else 
 		{
@@ -37,6 +42,9 @@ namespace LevEngine
 		if (needToGenerateMeta)
 			asset->SerializeMeta();
 
+		if (!address.empty())
+			asset->SetAddress(address);
+		
 		m_Assets.try_emplace(uuid, asset);
 		m_AssetsByPath.try_emplace(path, asset);
 	}
@@ -61,7 +69,8 @@ namespace LevEngine
 
 				if (directoryEntry.is_directory())
 					directories.push(path);
-				else if (path.extension() != ".meta")
+
+				if (path.extension() != ".meta")
 					ImportAsset(path);
 			}
 		} while (!directories.empty());

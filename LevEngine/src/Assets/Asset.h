@@ -30,6 +30,9 @@ namespace LevEngine
 		[[nodiscard]] const UUID& GetUUID() const { return m_UUID; }
 		[[nodiscard]] bool IsDeserialized() const { return m_Deserialized; }
 
+		[[nodiscard]] const String& GetAddress() const { return m_Address; }
+		void SetAddress(const String& address) { m_Address = address; }
+
 		void Serialize();
 		bool Deserialize();
 		void SerializeMeta();
@@ -49,7 +52,9 @@ namespace LevEngine
 		}
 
 	protected:
-		[[nodiscard]] virtual bool OverrideDataFile() const { return true; }
+		[[nodiscard]] virtual bool WriteDataToFile() const { return true; }
+		[[nodiscard]] virtual bool ReadDataFromFile() const { return true; }
+		
 		virtual void SerializeData(YAML::Emitter& out) = 0;
 		virtual void DeserializeData(YAML::Node& node) = 0;
 
@@ -62,6 +67,7 @@ namespace LevEngine
 		Path m_MetaPath;
 		Path m_Path;
 		UUID m_UUID;
+		String m_Address;
 		bool m_Deserialized = false;
 
 	private:

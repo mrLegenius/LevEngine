@@ -14,7 +14,7 @@ public:
 	static void Clear();
 	static void RecalculateAllTransforms(entt::registry& registry);
 	static void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
-	static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);
+	static RenderParams CreateRenderParams(SceneCamera* mainCamera, Transform* cameraTransform);
 	static void Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform);
 	static void Render(entt::registry& registry);
 	static void Shutdown();
@@ -34,6 +34,7 @@ private:
 	inline static Ref<PipelineState> s_DeferredQuadPipeline;
 	inline static Ref<PipelineState> s_GBufferPipeline;
 	inline static Ref<PipelineState> s_OpaquePipeline;
+	inline static Ref<PipelineState> s_TransparentPipeline;
 	inline static Ref<PipelineState> s_DebugPipeline;
 	inline static Ref<PipelineState> s_SkyboxPipeline;
 	inline static Ref<PipelineState> s_ParticlesPipelineState;

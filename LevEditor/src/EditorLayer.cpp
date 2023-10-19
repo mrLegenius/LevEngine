@@ -12,6 +12,7 @@
 #include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Scene/Systems/Audio/AudioSourceInitSystem.h"
 #include <Scene/Components/Audio/AudioSource.h>
+#include "GUI/ScopedGUIHelpers.h"
 
 namespace LevEngine::Editor
 {
@@ -56,7 +57,8 @@ namespace LevEngine::Editor
     {
         m_SaveData.SetLastOpenedProject(Project::GetPath());
         m_SaveData.Save();
-        
+
+        ResourceManager::Init(Project::GetRoot());
         AssetDatabase::ProcessAllAssets();
 
         const auto startScene = Project::GetStartScene();
@@ -264,15 +266,16 @@ namespace LevEngine::Editor
         ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarSize));
         ImGui::SetNextWindowViewport(viewport->ID);
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        GUI::ScopedVariable windowPadding(ImGuiStyleVar_WindowPadding, Vector2(0, 2));
+        GUI::ScopedVariable itemInnerSpacing(ImGuiStyleVar_ItemInnerSpacing, Vector2::Zero);
+        GUI::ScopedVariable windowBorderSize(ImGuiStyleVar_WindowBorderSize, 0);
+
+        GUI::ScopedColor buttonColor(ImGuiCol_Button, Color::Clear);
         const auto& colors = ImGui::GetStyle().Colors;
         const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+        GUI::ScopedColor buttonHoveredColor(ImGuiCol_ButtonHovered, Color(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
         const auto& buttonActive = colors[ImGuiCol_ButtonActive];
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+        GUI::ScopedColor buttonActiveColor(ImGuiCol_ButtonActive, Color(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
         const ImGuiIO& io = ImGui::GetIO();
         const auto boldFont = io.Fonts->Fonts[0];
         
@@ -393,8 +396,6 @@ namespace LevEngine::Editor
             else if (m_SceneState == SceneState::Play)
                 OnSceneStop();
         }
-        ImGui::PopStyleVar(3);
-        ImGui::PopStyleColor(3);
         ImGui::End();
     }
 
@@ -405,16 +406,17 @@ namespace LevEngine::Editor
         ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarSize));
         ImGui::SetNextWindowViewport(viewport->ID);
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        GUI::ScopedVariable windowPadding(ImGuiStyleVar_WindowPadding, Vector2(0, 2));
+        GUI::ScopedVariable itemInnerSpacing(ImGuiStyleVar_ItemInnerSpacing, Vector2::Zero);
+        GUI::ScopedVariable windowBorderSize(ImGuiStyleVar_WindowBorderSize, 0);
+        
+        GUI::ScopedColor buttonColor(ImGuiCol_Button, Color::Clear);
         const auto& colors = ImGui::GetStyle().Colors;
         const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+        GUI::ScopedColor buttonHoveredColor(ImGuiCol_ButtonHovered, Color(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
         const auto& buttonActive = colors[ImGuiCol_ButtonActive];
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
-
+        GUI::ScopedColor buttonActiveColor(ImGuiCol_ButtonActive, Color(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+        
         constexpr ImGuiWindowFlags windowFlags = 0
             | ImGuiWindowFlags_NoDocking
             | ImGuiWindowFlags_NoTitleBar
@@ -424,8 +426,6 @@ namespace LevEngine::Editor
             | ImGuiWindowFlags_NoSavedSettings;
 
         ImGui::Begin("##statusbar", nullptr, windowFlags);
-        ImGui::PopStyleVar(3);
-        ImGui::PopStyleColor(3);
         ImGui::End();
     }
 
@@ -456,21 +456,21 @@ namespace LevEngine::Editor
             | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
             | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
             | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, toolbarSize * 3));
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-
+        
         // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
         // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
         // all active windows docked into it will lose their parent and become undocked.
         // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-
-        ImGui::Begin("Master DockSpace", nullptr, windowFlags);
-        ImGuiID dockMain = ImGui::GetID("MyDockspace");
-        ImGui::DockSpace(dockMain);
-        ImGui::PopStyleVar(3);
+        {
+            GUI::ScopedVariable windowPadding(ImGuiStyleVar_WindowPadding, Vector2(0, toolbarSize * 3));
+            GUI::ScopedVariable windowRounding(ImGuiStyleVar_WindowRounding, 0.0f);
+            GUI::ScopedVariable windowBorderSize(ImGuiStyleVar_WindowBorderSize, 0);
+            
+            ImGui::Begin("Master DockSpace", nullptr, windowFlags);
+            ImGuiID dockMain = ImGui::GetID("MyDockspace");
+            ImGui::DockSpace(dockMain);
+        }
         // Save off menu bar height for later.
         menuBarHeight = ImGui::GetCurrentWindow()->MenuBarHeight();
 

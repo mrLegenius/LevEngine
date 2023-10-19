@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "ModalPopup.h"
 
+#include "GUI/ScopedGUIHelpers.h"
+
 #include "imgui.h"
 
 namespace LevEngine::Editor
@@ -58,7 +60,7 @@ namespace LevEngine::Editor
             | ImGuiWindowFlags_NoDocking
             | ImGuiWindowFlags_NoSavedSettings;
         
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
+        GUI::ScopedVariable windowPadding{ImGuiStyleVar_WindowPadding, Vector2{10, 10}};
         if (ImGui::BeginPopupModal(m_Title.c_str(), nullptr, flags))
         {
             ImGui::Text(m_Description.c_str());
@@ -86,6 +88,5 @@ namespace LevEngine::Editor
                 
             ImGui::EndPopup();
         }
-        ImGui::PopStyleVar();
     }
 }

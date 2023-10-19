@@ -10,6 +10,7 @@ namespace LevEngine
         out << YAML::Key << "Tint" << YAML::Value << m_Material.GetTintColor();
         out << YAML::Key << "Metallic" << YAML::Value << m_Material.GetMetallic();
         out << YAML::Key << "Roughness" << YAML::Value << m_Material.GetRoughness();
+        out << YAML::Key << "EnableTransparency" << YAML::Value << m_Material.GetEnableTransparency();
 
         SerializeAsset(out, "Albedo", m_Albedo);
         SerializeAsset(out, "MetallicTexture", m_Metallic);
@@ -29,6 +30,8 @@ namespace LevEngine
         m_Material.SetTintColor(node["Tint"].as<Color>());
         m_Material.SetMetallic(node["Metallic"].as<float>());
         m_Material.SetRoughness(node["Roughness"].as<float>());
+        if (const auto transparency = node["EnableTransparency"])
+            m_Material.SetEnableTransparency(transparency.as<bool>());
 
         m_Albedo = DeserializeAsset<TextureAsset>(node["Albedo"]);
         m_Metallic = DeserializeAsset<TextureAsset>(node["MetallicTexture"]);

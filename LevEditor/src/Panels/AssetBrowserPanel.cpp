@@ -5,7 +5,8 @@
 
 #include "AssetSelection.h"
 #include "Selection.h"
-#include "GUI/GUIUtils.h"
+#include "GUI/EditorGUI.h"
+#include "GUI/ScopedGUIHelpers.h"
 
 namespace LevEngine::Editor
 {
@@ -24,8 +25,8 @@ namespace LevEngine::Editor
 
         static float padding = 16.0f;
         static float thumbnailSize = 64.0f;
-        
-        auto relativePath = relative(m_CurrentDirectory, Project::GetRoot());
+
+        const auto relativePath = relative(m_CurrentDirectory, Project::GetRoot());
         ImGui::SameLine();
         ImGui::AlignTextToFramePadding();
         ImGui::Text(relativePath.string().c_str());
@@ -62,7 +63,7 @@ namespace LevEngine::Editor
             if (!directoryEntry.is_directory())
                 asset = AssetDatabase::GetAsset(path);
             
-            ImGui::PushID(filenameString.c_str());
+            GUI::ScopedID id(filenameString);
             const Ref<Texture> icon = directoryEntry.is_directory()
                                           ? Icons::Directory()
                                           : asset->GetIcon();
@@ -71,11 +72,28 @@ namespace LevEngine::Editor
             ImGui::ImageButton(icon->GetId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
             ImGui::PopStyleColor();
 
+            const auto forceSelection =
+                Input::IsKeyDown(KeyCode::LeftControl)
+                && ImGui::IsMouseClicked(ImGuiMouseButton_Left);
+            
+            if (ImGui::IsItemHovered() && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) || forceSelection))
+            {
+                if (directoryEntry.is_directory() && !forceSelection)
+                    m_CurrentDirectory /= path.filename();
+                else
+                {
+                    if (const auto& selectedAsset = AssetDatabase::GetAsset(path))
+                        Selection::Select(CreateRef<AssetSelection>(selectedAsset));
+                    else
+                        Selection::Deselect();
+                }
+            }
+
             if (directoryEntry.is_directory())
             {
                 if (ImGui::BeginDragDropTarget())
                 {
-	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GUIUtils::AssetPayload))
+	                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EditorGUI::AssetPayload))
 	                {
 	                    const Path assetPath = static_cast<const wchar_t*>(payload->Data);
 
@@ -88,57 +106,47 @@ namespace LevEngine::Editor
             if (ImGui::BeginDragDropSource())
             {
                 const wchar_t* itemPath = path.c_str();
-                ImGui::SetDragDropPayload(GUIUtils::AssetPayload, itemPath,
+                ImGui::SetDragDropPayload(EditorGUI::AssetPayload, itemPath,
                     (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
                 ImGui::EndDragDropSource();
             }
 
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 5 });
-            if (ImGui::BeginPopupContextItem())
             {
-                if (ImGui::MenuItem("Delete"))
-                    AssetDatabase::DeleteAsset(AssetDatabase::GetAsset(path));
-
-                if (ImGui::MenuItem("Reimport"))
-                    AssetDatabase::ImportAsset(path);
-
-                ImGui::EndPopup();
-            }
-            ImGui::PopStyleVar();
-            
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 10, 5 });
-            if (ImGui::BeginPopupContextWindow("Create Asset", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
-            {
-                if (ImGui::BeginMenu("Create"))
+                GUI::ScopedVariable windowPadding {ImGuiStyleVar_WindowPadding, Vector2{ 10, 5 }};
+                if (ImGui::BeginPopupContextItem())
                 {
-                    DrawCreateMenu<MaterialSimpleAsset>("Material", "Material.mat");
-                    DrawCreateMenu<MaterialPBRAsset>("PBR Material", "PBRMaterial.pbr");
-                    DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
+                    if (ImGui::MenuItem("Delete"))
+                        AssetDatabase::DeleteAsset(AssetDatabase::GetAsset(path));
 
-                    ImGui::EndMenu();
-                }
+                    if (ImGui::MenuItem("Reimport"))
+                        AssetDatabase::ImportAsset(path);
 
-                ImGui::EndPopup();
-            }
-            ImGui::PopStyleVar();
-
-            if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-            {
-                if (directoryEntry.is_directory())
-                    m_CurrentDirectory /= path.filename();
-                else
-                {
-                    if (const auto& selectedAsset = AssetDatabase::GetAsset(path))
-                        Selection::Select(CreateRef<AssetSelection>(selectedAsset));
-                    else
-                        Selection::Deselect();
+                    ImGui::EndPopup();
                 }
             }
+
+            {
+                GUI::ScopedVariable windowPadding {ImGuiStyleVar_WindowPadding, Vector2{ 10, 5 }};
+                if (ImGui::BeginPopupContextWindow("Create Asset", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
+                {
+                    if (ImGui::BeginMenu("Create"))
+                    {
+                        DrawCreateMenu<MaterialPBRAsset>("Material", "Material.pbr");
+                        DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
+                        if (ImGui::MenuItem("Folder"))
+                            AssetDatabase::CreateFolder(m_CurrentDirectory / "Folder");
+                        
+                        ImGui::EndMenu();
+                    }
+
+                    ImGui::EndPopup();
+                }
+            }
+
+
             ImGui::Text(stemString.c_str());
 
             ImGui::NextColumn();
-
-            ImGui::PopID();
         }
 
         ImGui::Columns(1);
@@ -151,8 +159,8 @@ namespace LevEngine::Editor
 
         if (ImGui::MenuItem(label.c_str()))
         {
-	        const Ref<Asset> asset = AssetDatabase::CreateAsset<AssetType>(m_CurrentDirectory / defaultName.c_str());
-            Selection::Select(CreateRef<AssetSelection>(asset));
+            if (const Ref<Asset> asset = AssetDatabase::CreateAsset<AssetType>(m_CurrentDirectory / defaultName.c_str()))
+                Selection::Select(CreateRef<AssetSelection>(asset));
         }
     }
 }
