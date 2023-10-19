@@ -12,15 +12,15 @@ namespace LevEngine::Editor
 
         void DrawContent(AudioSourceComponent& component) override
         {
-            GUIUtils::DrawAsset<AudioBankAsset>("Audio Bank", component.audioBank);
+            EditorGUI::DrawAsset<AudioBankAsset>("Audio Bank", component.audioBank);
 
             auto& eventName = component.eventName;
             ImGui::InputText("Event name", eventName.data(), 256);
 
-            GUIUtils::DrawCheckBox("Play On Init", BindGetter(&AudioSourceComponent::GetPlayOnInit, &component),
+            EditorGUI::DrawCheckBox("Play On Init", BindGetter(&AudioSourceComponent::GetPlayOnInit, &component),
                 BindSetter(&AudioSourceComponent::SetPlayOnInit, &component));
 
-            GUIUtils::DrawCheckBox("Is One-Shot", BindGetter(&AudioSourceComponent::GetIsOneShot, &component),
+            EditorGUI::DrawCheckBox("Is One-Shot", BindGetter(&AudioSourceComponent::GetIsOneShot, &component),
                 BindSetter(&AudioSourceComponent::SetIsOneShot, &component));
         }
     };	

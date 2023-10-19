@@ -23,6 +23,8 @@ namespace Sandbox
                 auto randomPosition = Random::Vec3(-20.0f, 20.0f);
                 randomPosition.y = 1;
                 transform.SetWorldPosition(randomPosition);
+
+                Application::Get().GetAudioSubsystem()->PlayOneShot("event:/EnemySpawn", enemy);
             }
         }
     private:

@@ -7,7 +7,10 @@ namespace Sandbox
     {
         if (!other.HasComponent<Enemy>()) return;
 
+        Application::Get().GetAudioSubsystem()->PlayOneShot("event:/ProjectileHit", entity);
         SceneManager::GetActiveScene()->DestroyEntity(entity);
+
+        Application::Get().GetAudioSubsystem()->PlayOneShot("event:/EnemyDeath", other);
         SceneManager::GetActiveScene()->DestroyEntity(other);
         score++;
     }
@@ -52,6 +55,8 @@ namespace Sandbox
                     projectileComp.speed = 100;
                     projectileComp.lifetime = 1;
                     projectileComp.timer = 0;
+
+                    Application::Get().GetAudioSubsystem()->PlayOneShot("event:/Shot", projectile);
                 }
             }
         }
