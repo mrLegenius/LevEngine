@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Scene/Components/TypeParseTraits.h"
+#include <entt/entt.hpp>
 
 namespace FMOD
 {
@@ -19,8 +20,9 @@ namespace LevEngine
     struct AudioSourceComponent
     {
         AudioSourceComponent();
-        ~AudioSourceComponent();
 
+        static void OnComponentConstruct(entt::registry& registry, entt::entity entity);
+        static void OnComponentDestroy(entt::registry& registry, entt::entity entity);
         void Init();
         bool IsInitialized() const;
         void ResetInit();
@@ -31,10 +33,16 @@ namespace LevEngine
 
         [[nodiscard]] bool GetPlayOnInit() const;
         void SetPlayOnInit(bool playOnInit);
+        [[nodiscard]] bool GetIsOneShot() const;
+        void SetIsOneShot(bool isOneShot);
+
+        bool IsBankLoaded(String& bankPath);
+        void LoadBank(String& bankPath);
         
         Ref<AudioBankAsset> audioBank;
         String eventName;
         bool playOnInit{};
+        bool isOneShot{};
 
     private:
         Ref<LevFmod> m_Fmod;

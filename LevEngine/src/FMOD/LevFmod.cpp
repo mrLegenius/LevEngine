@@ -40,19 +40,25 @@ namespace LevEngine
 
     void LevFmod::Update()
     {
-        // clean up one shots
         for (auto it = m_Events.begin(); it != m_Events.end(); it++) {
             FMOD::Studio::EventInstance *eventInstance = it->second;
             const EventInfo *eventInfo = GetEventInfo(eventInstance);
-            if (eventInfo->entity) {
-                if (!eventInfo->entity.HasComponent<Transform>()) {
-                    CheckErrors(eventInstance->stop(FMOD_STUDIO_STOP_IMMEDIATE));
-                    ReleaseOneEvent(eventInstance);
-                    continue;
-                }
-                UpdateInstance3DAttributes(eventInstance, eventInfo->entity);
+
+            // cleanup events from destroyed sources
+            if (!eventInfo || !eventInfo->entity || !eventInfo->entity.HasComponent<Transform>()) {
+                m_EventsToRelease.emplace_back(eventInstance);
+                continue;
             }
+
+            UpdateInstance3DAttributes(eventInstance, eventInfo->entity);
         }
+
+        for (auto instance : m_EventsToRelease)
+        {
+            ReleaseOneEvent(instance, FMOD_STUDIO_STOP_ALLOWFADEOUT);
+        }
+
+        m_EventsToRelease.clear();
 
         // update listener position
         SetListenerAttributes();
@@ -131,7 +137,7 @@ namespace LevEngine
 
             if (playOnCreate)
             {
-                CheckErrors(instance->start());
+                PlaySound(instance);
             }
 
             return instance;
@@ -155,16 +161,28 @@ namespace LevEngine
         CheckErrors(instance->setPaused(isPaused));
     }
 
-    bool LevFmod::IsPlaying(FMOD::Studio::EventInstance* instance)
+    bool LevFmod::IsPaused(FMOD::Studio::EventInstance* instance)
     {
         if (instance == nullptr)
         {
             return false;
         }
 
+        bool isPaused;
+        instance->getPaused(&isPaused);
+        return isPaused;
+    }
+
+    FMOD_STUDIO_PLAYBACK_STATE LevFmod::GetPlaybackState(FMOD::Studio::EventInstance* instance)
+    {
+        if (instance == nullptr)
+        {
+            return FMOD_STUDIO_PLAYBACK_STATE::FMOD_STUDIO_PLAYBACK_STOPPED;
+        }
+
         FMOD_STUDIO_PLAYBACK_STATE state;
         instance->getPlaybackState(&state);
-        return state == FMOD_STUDIO_PLAYBACK_STATE::FMOD_STUDIO_PLAYBACK_PLAYING;
+        return state;
     }
 #pragma endregion
 
@@ -176,7 +194,7 @@ namespace LevEngine
     }
 
 #pragma region Banks
-    void LevFmod::LoadBank(const String& pathToBank, int flags)
+    void LevFmod::LoadBank(const String& pathToBank, FMOD_STUDIO_LOAD_BANK_FLAGS flags, bool preloadSampleData)
     {
         if (IsBankRegistered(pathToBank))
         {
@@ -186,6 +204,11 @@ namespace LevEngine
         FMOD::Studio::Bank* bank = nullptr;
         CheckErrors(m_System->loadBankFile(pathToBank.c_str(), flags, &bank));
         if (bank) {
+            if (preloadSampleData)
+            {
+                bank->loadSampleData();
+            }
+            
             m_Banks.insert({ pathToBank, bank });
         }
         return;
@@ -281,11 +304,35 @@ namespace LevEngine
 #pragma endregion
 
 #pragma region Parameters
+    float LevFmod::GetGlobalParameterByName(const String& parameterName) {
+        float value;
+        CheckErrors(m_System->getParameterByName(parameterName.c_str(), &value));
+        return value;
+    }
 
+    void LevFmod::SetGlobalParameterByName(const String& parameterName, float value) {
+        CheckErrors(m_System->setParameterByName(parameterName.c_str(), value));
+    }
+
+    float LevFmod::GetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2) {
+        FMOD_STUDIO_PARAMETER_ID id;
+        id.data1 = idHalf1;
+        id.data2 = idHalf2;
+        float value;
+        CheckErrors(m_System->getParameterByID(id, &value));
+        return value;
+    }
+
+    void LevFmod::SetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2, float value) {
+        FMOD_STUDIO_PARAMETER_ID id;
+        id.data1 = idHalf1;
+        id.data2 = idHalf2;
+        CheckErrors(m_System->setParameterByID(id, value));
+    }
 
     float LevFmod::GetEventParameterByName(FMOD::Studio::EventInstance* eventInstance, const String& parameterName) {
         float value;
-        CheckErrors(eventInstance->getParameterByName(parameterName.c_str(), &value));
+        CheckErrors(m_System->getParameterByName(parameterName.c_str(), &value));
         return value;
     }
 
@@ -322,10 +369,12 @@ namespace LevEngine
         const auto desc = m_EventDescriptions.find(eventPath)->second;
         FMOD::Studio::EventInstance* instance;
         CheckErrors(desc->createInstance(&instance));
-        if (instance && (!isOneShot || entity)) {
+
+        if (instance && entity && !isOneShot) {
             auto* eventInfo = new EventInfo();
             eventInfo->entity = entity;
             instance->setUserData(eventInfo);
+            
             const auto instanceId = (uint64_t)instance;
             m_Events[instanceId] = instance;
         }
@@ -350,24 +399,25 @@ namespace LevEngine
         return instance;
     }
 
-    void LevFmod::ReleaseOneEvent(FMOD::Studio::EventInstance* eventInstance)
+    void LevFmod::ReleaseOneEvent(FMOD::Studio::EventInstance* eventInstance, FMOD_STUDIO_STOP_MODE soundStopMode)
     {
         if (eventInstance == nullptr)
         {
             return;
         }
 
-        EventInfo* eventInfo = GetEventInfo(eventInstance);
         eventInstance->setUserData(nullptr);
         m_Events.erase((uint64_t)eventInstance);
 
-        if (IsPlaying(eventInstance))
+        FMOD_STUDIO_PLAYBACK_STATE state = GetPlaybackState(eventInstance);
+
+        if (state != FMOD_STUDIO_PLAYBACK_STOPPED 
+            && state != FMOD_STUDIO_PLAYBACK_STOPPING)
         {
-            StopSound(eventInstance, FMOD_STUDIO_STOP_MODE::FMOD_STUDIO_STOP_IMMEDIATE);
+            StopSound(eventInstance, soundStopMode);
         }
 
         CheckErrors(eventInstance->release());
-        delete eventInfo;
     }
 
     void LevFmod::ReleaseAllEvents()

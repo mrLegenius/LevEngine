@@ -19,6 +19,9 @@ namespace LevEngine::Editor
 
             GUIUtils::DrawCheckBox("Play On Init", BindGetter(&AudioSourceComponent::GetPlayOnInit, &component),
                 BindSetter(&AudioSourceComponent::SetPlayOnInit, &component));
+
+            GUIUtils::DrawCheckBox("Is One-Shot", BindGetter(&AudioSourceComponent::GetIsOneShot, &component),
+                BindSetter(&AudioSourceComponent::SetIsOneShot, &component));
         }
     };	
 }

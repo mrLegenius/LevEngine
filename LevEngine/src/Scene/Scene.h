@@ -86,6 +86,8 @@ public:
 		return Entity();
 	}
 
+	entt::registry& GetRegistry();
+
 private:
 	void RequestUpdates(float deltaTime);
 

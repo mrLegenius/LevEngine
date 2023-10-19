@@ -3,6 +3,8 @@
 
 #include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
+#include <Scene/Components/Audio/AudioSource.h>
+#include <Scene/Systems/Audio/AudioSourceInitSystem.h>
 
 /*
  * There are some problems in this project
@@ -36,7 +38,10 @@ namespace Sandbox
 	{
 		if (!other.HasComponent<Enemy>()) return;
 
+		Application::Get().GetAudioSubsystem()->PlayOneShot("event:/ProjectileDestroy", entity);
 		SceneManager::GetActiveScene()->DestroyEntity(entity);
+
+		Application::Get().GetAudioSubsystem()->PlayOneShot("event:/EnemyDeath", other);
 		SceneManager::GetActiveScene()->DestroyEntity(other);
 		score++;
 	}
@@ -142,6 +147,8 @@ namespace Sandbox
 					projectileComp.speed = 50;
 					projectileComp.lifetime = 1;
 					projectileComp.timer = 0;
+
+					Application::Get().GetAudioSubsystem()->PlayOneShot("event:/Shot", projectile);
 				}
 			}
 		}
@@ -203,6 +210,8 @@ namespace Sandbox
 				auto randomPosition = Random::Vec3(-20.0f, 20.0f);
 				randomPosition.y = 1;
 				transform.SetWorldPosition(randomPosition);
+
+				Application::Get().GetAudioSubsystem()->PlayOneShot("event:/EnemySpawn", enemy);
 			}
 		}
 	private:
@@ -248,7 +257,7 @@ namespace Sandbox
 				{
 					const auto sword = scene->CreateEntity("Sword");
 					auto& swordTransform = sword.GetComponent<Transform>();
-					swordTransform.SetParent(SceneManager::GetActiveScene()->GetEntityBy(&transform));
+					swordTransform.SetParent(SceneManager::GetActiveScene()->GetEntityByComponent(&transform));
 					swordTransform.SetLocalPosition({0.7f, -2, -4});
 					swordTransform.SetLocalScale(Vector3::One * 0.2f);
 					const auto eulers = Vector3{10, 100, 0} * Math::DegToRad;
@@ -305,8 +314,12 @@ namespace Sandbox
 
 		SceneManager::LoadScene(AssetDatabase::GetAssetsPath() / "Scenes" / "TestScene.scene");
 
+		Application::Get().GetAudioSubsystem()->LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), FMOD_STUDIO_LOAD_BANK_NORMAL, true);
+		Application::Get().GetAudioSubsystem()->LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), FMOD_STUDIO_LOAD_BANK_NORMAL, true);
+
 		auto& scene = SceneManager::GetActiveScene();
 
+		scene->RegisterUpdateSystem<AudioSourceInitSystem>();
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<FPRCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
@@ -319,6 +332,10 @@ namespace Sandbox
 		scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
+
+		auto& registry = scene->GetRegistry();
+		registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnComponentConstruct>();
+		registry.on_destroy<AudioSourceComponent>().connect<&AudioSourceComponent::OnComponentDestroy>();
 
 		Application::Get().GetWindow().DisableCursor();
 	}

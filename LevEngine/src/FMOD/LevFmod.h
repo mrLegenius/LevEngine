@@ -67,13 +67,14 @@ namespace LevEngine
         void StopSound(FMOD::Studio::EventInstance* instance, 
             FMOD_STUDIO_STOP_MODE mode = FMOD_STUDIO_STOP_MODE::FMOD_STUDIO_STOP_ALLOWFADEOUT);
         void SetPause(FMOD::Studio::EventInstance* instance, bool isPaused);
-        bool IsPlaying(FMOD::Studio::EventInstance* instance);
+        bool IsPaused(FMOD::Studio::EventInstance* instance);
+        FMOD_STUDIO_PLAYBACK_STATE GetPlaybackState(FMOD::Studio::EventInstance* instance);
 
         EventInfo* GetEventInfo(FMOD::Studio::EventInstance* eventInstance);
         
 
         /* Bank functions */
-        void LoadBank(const String &pathToBank, int flags);
+        void LoadBank(const String &pathToBank, FMOD_STUDIO_LOAD_BANK_FLAGS flags, bool preloadSampleData = false);
         void UnloadBank(const String &pathToBank);
         void UnloadAllBanks();
         FMOD_STUDIO_LOADING_STATE GetBankLoadingStatus(const String& pathToBank);
@@ -86,7 +87,11 @@ namespace LevEngine
         void UpdateInstance3DAttributes(FMOD::Studio::EventInstance* i, const Entity entity);
 
 
-        /* Event parameters */
+        /* Parameters */
+        float GetGlobalParameterByName(const String& parameterName);
+        void SetGlobalParameterByName(const String& parameterName, float value);
+        float GetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2);
+        void SetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2, float value);
         float GetEventParameterByName(FMOD::Studio::EventInstance* eventInstance, const String& parameterName);
         void SetEventParameterByName(FMOD::Studio::EventInstance* eventInstance, const String& parameterName, float value);
         float GetEventParameterByID(FMOD::Studio::EventInstance* eventInstance, unsigned int idHalf1, unsigned int idHalf2);
@@ -94,7 +99,7 @@ namespace LevEngine
 
 
         /* Event lifetime */
-        void ReleaseOneEvent(FMOD::Studio::EventInstance* eventInstance);
+        void ReleaseOneEvent(FMOD::Studio::EventInstance* eventInstance, FMOD_STUDIO_STOP_MODE soundStopMode);
         void ReleaseAllEvents();
         void ReleaseAll();
 
@@ -122,6 +127,8 @@ namespace LevEngine
         UnorderedMap<uint64_t, FMOD::Studio::EventInstance*> m_Events;
         UnorderedMap<String, FMOD::Studio::Bank*> m_Banks;
         Vector<AudioListenerComponent*> m_Listeners;
+
+        Vector<FMOD::Studio::EventInstance*> m_EventsToRelease;
 
         float m_DistanceScale = 1.0f;
         bool m_ListenerWarning = true;

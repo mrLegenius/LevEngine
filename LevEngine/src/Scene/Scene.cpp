@@ -20,6 +20,11 @@ Scene::~Scene()
     m_Registry.clear();
 }
 
+entt::registry& Scene::GetRegistry()
+{
+    return m_Registry;
+}
+
 void Scene::RequestUpdates(const float deltaTime)
 {
     for (const auto& system : m_UpdateSystems)
