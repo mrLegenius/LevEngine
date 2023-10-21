@@ -32,16 +32,12 @@ namespace LevEngine
 		fout << out.c_str();
 	}
 
-	bool SceneSerializer::Deserialize(const String& filepath)
+	bool SceneSerializer::Deserialize(const String& filepath) const
 	{
 		YAML::Node data;
-		try
+		if (!LoadYAMLFileSafe(filepath.c_str(), data))
 		{
-			data = YAML::LoadFile(filepath.c_str());
-		}
-		catch (std::exception& e)
-		{
-			Log::CoreWarning(e.what());
+			Log::CoreError("Failed to load scene data");
 			return false;
 		}
 

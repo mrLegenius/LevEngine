@@ -30,13 +30,9 @@ bool Project::Load(const Path& path)
     
     s_Project = CreateRef<Project>(path);
     YAML::Node data;
-    try
+    if (!LoadYAMLFileSafe(path, data))
     {
-        data = YAML::LoadFile(path.string());
-    }
-    catch (std::exception& e)
-    {
-        Log::CoreError("Failed to load project in {0}. Error: {1}", path.string(), e.what());
+        Log::CoreError("Failed to load project", path.string());
         return false;
     }
 

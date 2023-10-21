@@ -170,4 +170,6 @@ namespace LevEngine
 	}
 
 	void SerializeEntity(YAML::Emitter& out, Entity entity);
+	YAML::Node LoadYAMLFile(const Path& filepath);
+	bool LoadYAMLFileSafe(const Path& filepath, YAML::Node& node);
 }

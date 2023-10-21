@@ -71,10 +71,10 @@ namespace LevEngine
 			DeserializeData(data);
 			return true;
 		}
-
+		
 		try
 		{
-			YAML::Node data = YAML::LoadFile(m_Path.string());
+			YAML::Node data = LoadYAMLFile(m_Path);
 			DeserializeData(data);
 		}
 		catch (YAML::BadConversion&)
