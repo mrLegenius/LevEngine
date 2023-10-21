@@ -1,12 +1,10 @@
 #include "../Quad.hlsl"
-
-Texture2D colorTexture : register(t0);
-SamplerState colorSampler : register(s0);
+#include "PostProcessing.hlsl"
 
 float PSMain(PS_IN input) : SV_Target
 {
     // Sample the input
-    float3 color = colorTexture.Sample(colorSampler, input.uv).rgb;
+    float3 color = colorTexture.Sample(linearSampler, input.uv).rgb;
 
     // calculate the luminance using a weighted average
     float luminance = max(dot(color, float3(0.299f, 0.587f, 0.114f)), 0.0001f);

@@ -34,6 +34,8 @@ namespace LevEngine
             float Tau;
             float TimeDelta;
             float KeyValue;
+            float MinExposure;
+            float MaxExposure;
         };
         
         Ref<LuminancePass> m_LuminancePass;

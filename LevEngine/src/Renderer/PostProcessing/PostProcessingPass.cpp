@@ -45,6 +45,8 @@ namespace LevEngine
             RenderSettings::AdaptationRate,
             Time::GetScaledDeltaTime().GetSeconds(),
             RenderSettings::KeyValue,
+            RenderSettings::MinExposure,
+            RenderSettings::MaxExposure,
         };
         
         m_ConstantBuffer->SetData(&data);

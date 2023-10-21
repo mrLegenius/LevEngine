@@ -38,16 +38,6 @@ float3 WhitePreservingLumaBasedReinhardToneMapping(float3 color)
     return color;
 }
 
-float3 CalculateExposure(float avgLuminance)
-{
-    float KeyValue = constants.KeyValue;
-    // Use geometric mean
-    avgLuminance = max(avgLuminance, 0.001f);
-    float linearExposure = (KeyValue / avgLuminance);
-    float exposure = log2(max(linearExposure, 0.0001f));
-    return exp2(exposure);
-}
-
 float4 PSMain(PS_IN input) : SV_Target
 {
     float2 uv = input.uv;
@@ -55,6 +45,7 @@ float4 PSMain(PS_IN input) : SV_Target
 
     float averageLuminance = averageLuminanceMap.Load(int3(0, 0, 0));
     float exposure = CalculateExposure(averageLuminance);
+	exposure = clamp(exposure, constants.MinExposure, constants.MaxExposure);
 
     //Tone mapping
     //float3 finalColor = Uncharted2ToneMapping(color, exposure);

@@ -6,6 +6,8 @@ struct Constants
     float Tau;
     float TimeDelta;
     float KeyValue;
+	float MinExposure;
+	float MaxExposure;
 };
 
 cbuffer ScreenToViewParams : register(b8)
@@ -32,6 +34,11 @@ float CalculateExposure(float avgLuminance, float threshold)
     float exposure = log2(max(linearExposure, 0.0001f));
     exposure -= threshold;
     return exp2(exposure);
+}
+
+float CalculateExposure(float avgLuminance)
+{
+	return CalculateExposure(avgLuminance, 0);
 }
 
 float CalcGaussianWeight(int sampleDist, float sigma)
