@@ -43,13 +43,13 @@ struct RenderSettings
 	//Post-processing
 	static constexpr uint32_t LuminanceMapSize = 1024;
 
-	static constexpr float BloomThreshold = 0.2f;
-	static constexpr float BloomMagnitude = 1.0f;
-	static constexpr float BloomBlurSigma = 0.8f;
-	static constexpr float AdaptationRate = 0.5f;
-	static constexpr float KeyValue = 0.01f;
-	static constexpr float MinExposure = 0.5f;
-	static constexpr float MaxExposure = 3.00f;
+	inline static float BloomThreshold = 1.0f;
+	inline static float BloomMagnitude = 1.0f;
+	inline static float BloomBlurSigma = 0.8f;
+	inline static float AdaptationRate = 0.5f;
+	inline static float KeyValue = 0.01f;
+	inline static float MinExposure = 0.5f;
+	inline static float MaxExposure = 3.00f;
 };
 
 struct RenderDebugSettings
