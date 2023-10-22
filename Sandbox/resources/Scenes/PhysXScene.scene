@@ -1,49 +1,28 @@
 Scene: PhysXScene
 Entities:
-  - Entity: 11250473467159703533
-    Tag: Ground
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [50, 1, 50]
-    Rigidbody:
-      Body Type: 0
-      Gravity Scale: 1
-      Mass: 1
-      Elasticity: 0.5
-      Damping: 0.800000012
-      Angular Damping: 0.800000012
-      Enabled: true
-    Box Collider:
-      Extents: [25, 0.5, 25]
-      Offset: [0, 0, 0]
+  - Entity: 12124688881448939033
+    Tag: Rock
     MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 7582525064410579512
+      Mesh: 4915651832749162070
+      Material: 15608248225095435140
       Cast Shadow: true
-  - Entity: 12132848382187381059
-    Tag: Camera
+    RigidbodyPhysX:
+      Visualization Flag: true
+      Rigidbody Type: 1
+      Gravity Flag: true
+      Collider Type: 3
+      Box Extend X: 0.300000012
+      Box Extend Y: 0.400000006
+      Box Extend Z: 0.300000012
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.200000003
     Transform:
-      Position: [0, 10, -10]
-      Rotation: [-0.52359885, 3.14159203, 9.1891978e-13]
-      Scale: [0.999999762, 1, 0.999999762]
-    Camera:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Main: true
-      FixedAspectRatio: false
+      Position: [0, 10, 0]
+      Rotation: [-0.523598135, -0.523598135, -0.523598135]
+      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
   - Entity: 1868837540119655893
     Tag: DirectionalLight
-    Transform:
-      Position: [0, 31.239006, 0]
-      Rotation: [-1.04719782, -3.14159203, -3.14159203]
-      Scale: [1, 1, 1]
     Camera:
       Camera:
         ProjectionType: 0
@@ -57,24 +36,45 @@ Entities:
       FixedAspectRatio: false
     Directional Light:
       Color: [1, 1, 1, 1]
-  - Entity: 12124688881448939033
-    Tag: CustomPhysicsBox
     Transform:
-      Position: [0, 5, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1.00000024, 1, 0.99999994]
-    Rigidbody:
-      Body Type: 2
-      Gravity Scale: 1
-      Mass: 1
-      Elasticity: 0.5
-      Damping: 0.800000012
-      Angular Damping: 0.800000012
-      Enabled: true
-    Box Collider:
-      Extents: [0.5, 0.5, 0.5]
-      Offset: [0, 0, 0]
+      Position: [0, 31.239006, 0]
+      Rotation: [-1.04719782, -3.14159203, -3.14159203]
+      Scale: [1, 1, 1]
+  - Entity: 12132848382187381059
+    Tag: Camera
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+    Transform:
+      Position: [0, 10, -10]
+      Rotation: [-0.52359885, 3.14159203, 1.42760749e-12]
+      Scale: [1, 1, 1]
+  - Entity: 11250473467159703533
+    Tag: Ground
     MeshRenderer:
       Mesh: 6362171717149004471
-      Material: 15608248225095435140
+      Material: 7582525064410579512
       Cast Shadow: true
+    RigidbodyPhysX:
+      Visualization Flag: true
+      Rigidbody Type: 0
+      Gravity Flag: false
+      Collider Type: 3
+      Box Extend X: 5
+      Box Extend Y: 0.5
+      Box Extend Z: 5
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [10, 1, 10]
