@@ -91,6 +91,12 @@ namespace LevEngine
 
 			auto& transform = entity.GetComponent<Transform>();
 			transform.SetParent(entitiesMap[relationships[uuid]], false);
+
+			if (entity.HasComponent<RigidbodyPhysX>())
+			{
+				auto& rigidbody = entity.GetComponent<RigidbodyPhysX>();
+				rigidbody.SetRigidbodyInitialPose(transform);
+			}
 		}
 
 		return true;

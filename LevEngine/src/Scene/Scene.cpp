@@ -13,6 +13,13 @@ namespace LevEngine
 
     constexpr bool k_IsMultiThreading = false;
     constexpr int k_SleepMicroSeconds = 10;
+
+Scene::Scene()
+{
+    m_Registry.on_construct<RigidbodyPhysX>().connect<&RigidbodyPhysX::OnComponentConstruct>();
+    m_Registry.on_destroy<RigidbodyPhysX>().connect<&RigidbodyPhysX::OnComponentDestroy>();
+}
+    
 Scene::~Scene()
 {
     LEV_PROFILE_FUNCTION();

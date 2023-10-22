@@ -18,7 +18,7 @@ class Entity;
 class Scene
 {
 public:
-	Scene() = default;
+	Scene();
 	~Scene();
 
 	void OnUpdate(float deltaTime);

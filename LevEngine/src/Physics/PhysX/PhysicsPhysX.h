@@ -6,29 +6,26 @@
 namespace LevEngine
 {
     using namespace physx;
-
-    /// --- PhysX Part --- ///
+    
     class PhysicsPhysX
     {
     public:
         PhysicsPhysX(const PhysicsPhysX&) = delete;
         PhysicsPhysX& operator=(const PhysicsPhysX&) = delete;
         
-        static bool Advance(float deltaTime);
-        static void StepPhysics(float deltaTime);
-        static void UpdateTransforms(entt::registry& registry);
         static void Process(entt::registry& m_Registry, float deltaTime);
-        static void DrawDebugLines();
 
-        static PhysicsPhysX& GetInstance() { return physx; };
+        [[nodiscard]] static PhysicsPhysX& GetInstance();
         
-        [[nodiscard]] PxPhysics* GetPhysics() const { return psPhysics; }
-        [[nodiscard]] PxScene*   GetScene()   const { return psScene;   }
+        [[nodiscard]] PxPhysics* GetPhysics() const;
+        [[nodiscard]] PxScene*   GetScene()   const;
+        [[nodiscard]] Vector3    GetGravity() const;
         
-        [[nodiscard]] Vector3 GetGravity() const { return Vector3(psScene->getGravity().x, psScene->getGravity().y, psScene->getGravity().z); }
-        void SetGravity(Vector3 gravity)   const { psScene->setGravity(PxVec3(gravity.x, gravity.y, gravity.z)); }
+        void SetGravity(const Vector3 gravity);
 
-        inline static bool bDebug = true;
+        // for debug
+        inline static bool usePVD = false;
+        inline static bool useDebugRender = true;
         
     private:
         PhysicsPhysX();
@@ -36,62 +33,94 @@ namespace LevEngine
 
         void InitPhysics();
         void CleanupPhysics();
+
+        static bool Advance(float deltaTime);
+        static void StepPhysics(float deltaTime);
+        static void UpdateTransforms(entt::registry& registry);
+        static void DrawDebugLines();
         
         static PhysicsPhysX physx;
     
-        PxDefaultAllocator      psAllocator;
-        PxDefaultErrorCallback  psErrorCallback;
-        PxTolerancesScale       psToleranceScale;
-        PxFoundation*           psFoundation = nullptr;
-        PxPvd*                  psPvd        = nullptr;
-        PxPhysics*              psPhysics    = nullptr;
-        PxDefaultCpuDispatcher* psDispatcher = nullptr;
-        PxScene*                psScene      = nullptr;
+        PxDefaultAllocator      gAllocator;
+        PxDefaultErrorCallback  gErrorCallback;
+        PxTolerancesScale       gToleranceScale;
+        PxFoundation*           gFoundation      = NULL;
+        PxPvd*                  gPvd             = NULL;
+        PxPhysics*              gPhysics         = NULL;
+        PxDefaultCpuDispatcher* gDispatcher      = NULL;
+        PxScene*                gScene           = NULL;
 
+        // for physics update
         inline static float mAccumulator = 0.0f;
         inline static float mStepSize    = 1.0f / 120.0f;
     };
 
+
     
+    REGISTER_PARSE_TYPE(RigidbodyPhysX);
+
+    enum class RigidbodyType
+    {
+        Static,
+        Dynamic
+    };
     
-    /// --- Rigidbody Part --- ///
+    enum class ColliderType
+    {
+        Sphere,
+        Plane,
+        Capsule,
+        Box
+    };
+    
     class RigidbodyPhysX
     {
     public:
-        RigidbodyPhysX() = delete;
-        RigidbodyPhysX(const Transform& rbTransform);
-        ~RigidbodyPhysX();
+        RigidbodyPhysX()  = default;
+        ~RigidbodyPhysX() = default;
 
-        void RemoveActor(); //
-        void SetActorType(PxActorType::Enum requestedActorType); //
+        static void OnComponentConstruct(entt::registry& registry, entt::entity entity);
+        static void OnComponentDestroy(entt::registry& registry, entt::entity entity);
         
-        void AttachShapeGeometry(PxGeometryType::Enum requestedGeometryType);
-        void DetachShapeGeometry(PxU32 sequenceShapeNumber);
+        void SetRigidbodyInitialPose(const Transform& transform);
+        
+        void CleanupRigidbody();
 
-        [[nodiscard]] PxVec3 GetShapeGeometryParams(PxU32 sequenceShapeNumber);
-        void SetShapeGeometryParam(PxU32 sequenceShapeNumber, PxU32 sequenceParamNumber, PxReal param);
+        [[nodiscard]] ColliderType GetColliderType() const;
+        void AttachCollider(const ColliderType& colliderType);
+        void DetachCollider();
 
-        // Actor
-        [[nodiscard]] PxRigidActor* GetActor() const { return rbActor; }
-        [[nodiscard]] bool GetActorGravityStatus();
-        [[nodiscard]] bool GetShapeGeometryVisualizationStatus();
-        [[nodiscard]] PxReal GetActorMass();
-        [[nodiscard]] PxVec3 GetActorLinearVelocity();
-        [[nodiscard]] PxVec3 GetActorAngularVelocity();
-        void SetActorGravityStatus(const bool status = true);
-        void SetActorShapeGeometryVisualizationStatus(const bool status = true);
-        void SetActorMass(PxReal mass);
-        void SetActorLinearVelocity(PxVec3 linearVelocity);
-        void SetActorAngularVelocity(PxVec3 angularVelocity);
-        // Material
-        [[nodiscard]] PxReal GetStaticFriction(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber);
-        [[nodiscard]] PxReal GetDynamicFriction(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber);
-        [[nodiscard]] PxReal GetRestitution(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber);
-        void SetStaticFriction(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber, PxReal staticFriction = 0.0f);
-        void SetDynamicFriction(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber, PxReal dynamicFriction = 0.0f);
-        void SetRestitution(PxU32 sequenceShapeNumber, PxU32 sequenceMaterialNumber, PxReal restitution = 0.0f);
+        float GetSphereColliderRadius()      const;
+        float GetCapsuleColliderRadius()     const;
+        float GetCapsuleColliderHalfHeight() const;
+        float GetBoxColliderHalfExtendX()    const;
+        float GetBoxColliderHalfExtendY()    const;
+        float GetBoxColliderHalfExtendZ()    const;
+        
+        void SetSphereColliderRadius(float radius);
+        void SetCapsuleColliderRadius(float radius);
+        void SetCapsuleColliderHalfHeight(float halfHeight);
+        void SetBoxColliderHalfExtendX(float halfExtendX);
+        void SetBoxColliderHalfExtendY(float halfExtendY);
+        void SetBoxColliderHalfExtendZ(float halfExtendZ);
+        
+        [[nodiscard]] PxRigidActor* GetRigidbody() const;
+        
+        [[nodiscard]] RigidbodyType GetRigidbodyType()             const;
+        [[nodiscard]] bool          GetRigidbodyGravityFlag()      const;
+        [[nodiscard]] bool          GetColliderVisualizationFlag() const;
+        [[nodiscard]] float         GetStaticFriction()            const;
+        [[nodiscard]] float         GetDynamicFriction()           const;
+        [[nodiscard]] float         GetRestitution()               const;
+
+        void SetRigidbodyType(const RigidbodyType rigidbodyType);
+        void SetRigidbodyGravityFlag(const bool flag);
+        void SetColliderVisualizationFlag(const bool flag);
+        void SetStaticFriction(const float staticFriction);
+        void SetDynamicFriction(const float dynamicFriction);
+        void SetRestitution(const float restitution);
         
     private:
-        PxRigidActor* rbActor = nullptr;
+        PxRigidActor* rbActor = NULL;
     };
 }
