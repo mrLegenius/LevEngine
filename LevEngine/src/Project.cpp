@@ -2,6 +2,7 @@
 #include "Project.h"
 
 #include "ResourceManager.h"
+#include "Renderer/RenderSettings.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
@@ -42,6 +43,8 @@ bool Project::Load(const Path& path)
     if (const auto scene = data["StartScene"])
         s_Project->m_StartScene = scene.as<String>().c_str();
 
+    s_Project->LoadSettings();
+    
     return true;
 }
 
@@ -102,6 +105,36 @@ void Project::Build()
 void Project::CopyEngineResourceDirectory() const noexcept
 {
     CopyRecursively(EngineResourcesRoot, m_Root / EngineResourcesRoot);
+}
+
+void Project::LoadSettings()
+{
+    const Path settingsPath = GetRoot() / "Settings.yaml";
+
+    if(!exists(settingsPath))
+    {
+        SaveSettings();
+        return;
+    }
+    
+    YAML::Node data;
+    LoadYAMLFileSafe(settingsPath, data);
+
+    RenderSettings::LoadSettings(data);
+}
+    
+void Project::SaveSettings()
+{
+    const Path settingsPath = "Settings.yaml";
+
+    YAML::Emitter out;
+
+    out << YAML::BeginMap;
+    RenderSettings::SaveSettings(out);
+    out << YAML::EndMap;
+    
+    std::ofstream fout(GetRoot() / settingsPath);
+    fout << out.c_str();
 }
 }
 

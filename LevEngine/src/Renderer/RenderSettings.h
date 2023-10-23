@@ -1,5 +1,6 @@
 #pragma once
 #include "Math/Vector3.h"
+#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
@@ -20,16 +21,16 @@ enum class RenderTechniqueType
 struct RenderSettings
 {
 	//General
-	static constexpr RenderTechniqueType RenderTechnique = RenderTechniqueType::Deferred;
-	static constexpr RendererAPI RendererAPI = RendererAPI::D3D11;
+	inline static RenderTechniqueType RenderTechnique = RenderTechniqueType::Deferred;
+	inline static RendererAPI RendererAPI = RendererAPI::D3D11;
+
+	inline static bool UseFrustumCulling = true;
 	
 	static constexpr bool EnableShaderDebug = false;
-	static constexpr bool UseFrustumCulling = true;
-
 	static constexpr uint32_t ShadowMapSlot = 9;
 	static constexpr uint32_t MaterialSlot = 4;
 
-	static constexpr uint32_t MaxParticles = 1024 * 8;
+	inline static uint32_t MaxParticles = 1024 * 8;
 	
 	//Shadows
 	static constexpr int CascadeCount = 4;
@@ -43,13 +44,50 @@ struct RenderSettings
 	//Post-processing
 	static constexpr uint32_t LuminanceMapSize = 1024;
 
-	inline static float BloomThreshold = 1.0f;
+	inline static float BloomThreshold = 3.0f;
 	inline static float BloomMagnitude = 1.0f;
 	inline static float BloomBlurSigma = 0.8f;
 	inline static float AdaptationRate = 0.5f;
-	inline static float KeyValue = 0.01f;
+	inline static float KeyValue = 0.2f;
 	inline static float MinExposure = 0.5f;
 	inline static float MaxExposure = 3.00f;
+
+	//TODO: Move to Settings Serializer
+	static void LoadSettings(const YAML::Node& node)
+	{
+		if (const auto& renderSettings = node["RenderSettings"])
+		{
+			if (const auto pp = renderSettings["PostProcessing"])
+			{
+				TryParse(pp["BloomThreshold"], BloomThreshold);
+				TryParse(pp["BloomMagnitude"], BloomMagnitude);
+				TryParse(pp["BloomBlurSigma"], BloomBlurSigma);
+				TryParse(pp["AdaptationRate"], AdaptationRate);
+				TryParse(pp["KeyValue"], KeyValue);
+				TryParse(pp["MinExposure"], MinExposure);
+				TryParse(pp["MaxExposure"], MaxExposure);
+			}
+		}
+	}
+	
+	static void SaveSettings(YAML::Emitter& out)
+	{
+		out << YAML::Key << "RenderSettings" << YAML::Value << YAML::BeginMap;
+		{
+			out << YAML::Key << "PostProcessing" << YAML::Value << YAML::BeginMap;
+			{
+				out << YAML::Key << "BloomThreshold" << YAML::Value << BloomThreshold;
+				out << YAML::Key << "BloomMagnitude" << YAML::Value << BloomMagnitude;
+				out << YAML::Key << "BloomBlurSigma" << YAML::Value << BloomBlurSigma;
+				out << YAML::Key << "AdaptationRate" << YAML::Value << AdaptationRate;
+				out << YAML::Key << "KeyValue" << YAML::Value << KeyValue;
+				out << YAML::Key << "MinExposure" << YAML::Value << MinExposure;
+				out << YAML::Key << "MaxExposure" << YAML::Value << MaxExposure;
+			}
+			out << YAML::EndMap;
+		}
+		out << YAML::EndMap;
+	}
 };
 
 struct RenderDebugSettings

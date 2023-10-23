@@ -17,19 +17,19 @@ namespace LevEngine::Editor
             if(ImGui::TreeNodeEx("Post Processing", treeNodeFlags, "Post Processing"))
             {
                 EditorGUI::DrawFloatControl("Bloom Threshold", RenderSettings::BloomThreshold,
-                            0.05f, 0.0f, 10.0f);
+                            0.05f, 0.0f, 20.0f);
 
                 EditorGUI::DrawFloatControl("Bloom Magnitude", RenderSettings::BloomMagnitude,
-                            0.05f, 0.0f, 10.0f);
+                            0.05f, 0.0f, 20.0f);
 
                 EditorGUI::DrawFloatControl("Bloom Blur Sigma", RenderSettings::BloomBlurSigma,
-                            0.05f, 0.0f, 1.0f);
+                            0.05f, 0.5f, 1.5f);
 
                 EditorGUI::DrawFloatControl("Adaptation Rate", RenderSettings::AdaptationRate,
-                           0.05f, 0.0f, 1.0f);
+                           0.05f, 0.0f, 4.0f);
 
                 EditorGUI::DrawFloatControl("Key Value", RenderSettings::KeyValue,
-                           0.05f, 0.0f, 1.0f);
+                           0.05f, 0.0f, 0.5f);
 
                 EditorGUI::DrawFloatControl("Min Exposure", RenderSettings::MinExposure,
                            0.05f, 0.0f, 10.0f);
@@ -48,5 +48,8 @@ namespace LevEngine::Editor
             
             ImGui::TreePop();
         }
+
+        if (ImGui::Button("Save"))
+            Project::SaveSettings();
     }
 }

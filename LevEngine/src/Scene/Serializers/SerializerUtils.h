@@ -172,4 +172,16 @@ namespace LevEngine
 	void SerializeEntity(YAML::Emitter& out, Entity entity);
 	YAML::Node LoadYAMLFile(const Path& filepath);
 	bool LoadYAMLFileSafe(const Path& filepath, YAML::Node& node);
+	
+	template <typename T>
+	bool TryParse(const YAML::Node& node, T& value)
+	{
+		if (const auto data = node)
+		{
+			value = data.as<float>();
+			return true;
+		}
+
+		return false;
+	}
 }
