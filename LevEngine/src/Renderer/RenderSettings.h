@@ -51,43 +51,6 @@ struct RenderSettings
 	inline static float KeyValue = 0.2f;
 	inline static float MinExposure = 0.5f;
 	inline static float MaxExposure = 3.00f;
-
-	//TODO: Move to Settings Serializer
-	static void LoadSettings(const YAML::Node& node)
-	{
-		if (const auto& renderSettings = node["RenderSettings"])
-		{
-			if (const auto pp = renderSettings["PostProcessing"])
-			{
-				TryParse(pp["BloomThreshold"], BloomThreshold);
-				TryParse(pp["BloomMagnitude"], BloomMagnitude);
-				TryParse(pp["BloomBlurSigma"], BloomBlurSigma);
-				TryParse(pp["AdaptationRate"], AdaptationRate);
-				TryParse(pp["KeyValue"], KeyValue);
-				TryParse(pp["MinExposure"], MinExposure);
-				TryParse(pp["MaxExposure"], MaxExposure);
-			}
-		}
-	}
-	
-	static void SaveSettings(YAML::Emitter& out)
-	{
-		out << YAML::Key << "RenderSettings" << YAML::Value << YAML::BeginMap;
-		{
-			out << YAML::Key << "PostProcessing" << YAML::Value << YAML::BeginMap;
-			{
-				out << YAML::Key << "BloomThreshold" << YAML::Value << BloomThreshold;
-				out << YAML::Key << "BloomMagnitude" << YAML::Value << BloomMagnitude;
-				out << YAML::Key << "BloomBlurSigma" << YAML::Value << BloomBlurSigma;
-				out << YAML::Key << "AdaptationRate" << YAML::Value << AdaptationRate;
-				out << YAML::Key << "KeyValue" << YAML::Value << KeyValue;
-				out << YAML::Key << "MinExposure" << YAML::Value << MinExposure;
-				out << YAML::Key << "MaxExposure" << YAML::Value << MaxExposure;
-			}
-			out << YAML::EndMap;
-		}
-		out << YAML::EndMap;
-	}
 };
 
 struct RenderDebugSettings

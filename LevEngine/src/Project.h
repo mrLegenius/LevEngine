@@ -1,6 +1,7 @@
 #pragma once
 #include "DataTypes/Path.h"
 #include "DataTypes/Utility.h"
+#include "Serializers/RenderSettingsSerializer.h"
 
 namespace LevEngine
 {
@@ -20,7 +21,7 @@ public:
     static void Build();
     void CopyEngineResourceDirectory() const noexcept;
 
-    static void SaveSettings();
+    void SaveSettings();
 
 private:
     Path m_Root;
@@ -31,5 +32,7 @@ private:
     void LoadSettings();
 
     inline static Ref<Project> s_Project;
+
+    RenderSettingsSerializer m_RenderSettingsSerializer;
 };    
 }

@@ -120,7 +120,7 @@ void Project::LoadSettings()
     YAML::Node data;
     LoadYAMLFileSafe(settingsPath, data);
 
-    RenderSettings::LoadSettings(data);
+    m_RenderSettingsSerializer.Deserialize(data);
 }
     
 void Project::SaveSettings()
@@ -130,7 +130,7 @@ void Project::SaveSettings()
     YAML::Emitter out;
 
     out << YAML::BeginMap;
-    RenderSettings::SaveSettings(out);
+    m_RenderSettingsSerializer.Serialize(out);
     out << YAML::EndMap;
     
     std::ofstream fout(GetRoot() / settingsPath);
