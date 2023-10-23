@@ -44,9 +44,9 @@ namespace LevEngine
             RenderSettings::BloomBlurSigma,
             RenderSettings::AdaptationRate,
             Time::GetScaledDeltaTime().GetSeconds(),
-            RenderSettings::KeyValue,
-            RenderSettings::MinExposure,
-            RenderSettings::MaxExposure,
+            RenderSettings::IsEyeAdaptationEnabled ? RenderSettings::KeyValue : RenderSettings::ManualExposure,
+            RenderSettings::IsEyeAdaptationEnabled ? RenderSettings::MinExposure : 0,
+            RenderSettings::IsEyeAdaptationEnabled ? RenderSettings::MaxExposure : RenderSettings::ManualExposure,
         };
         
         m_ConstantBuffer->SetData(&data);
@@ -61,23 +61,35 @@ namespace LevEngine
     void PostProcessingPass::Process(entt::registry& registry, RenderParams& params)
     {
         m_LuminancePass->Execute(registry, params);
-        m_LuminanceAdaptationPass->SetLuminanceMap(m_LuminancePass->GetLuminanceMap());
-        m_LuminanceAdaptationPass->Execute(registry, params);
+
+        if (RenderSettings::IsEyeAdaptationEnabled)
+        {
+            m_LuminanceAdaptationPass->SetLuminanceMap(m_LuminancePass->GetLuminanceMap());
+            m_LuminanceAdaptationPass->Execute(registry, params);
+        }
         
         if (RenderSettings::IsBloomEnabled)
         {
             m_BloomPass->SetLuminanceMap(m_LuminanceAdaptationPass->GetCurrentLuminance());
             m_BloomPass->Execute(registry, params);
         }
+
+        const auto luminanceMap = RenderSettings::IsEyeAdaptationEnabled
+            ? m_LuminanceAdaptationPass->GetCurrentLuminance()
+            : TextureLibrary::GetWhiteTexture();
+        m_TonemappingPass->SetLuminanceMap(luminanceMap);
         
-        m_TonemappingPass->SetLuminanceMap(m_LuminanceAdaptationPass->GetCurrentLuminance());
         const auto bloomMap = RenderSettings::IsBloomEnabled
             ? m_BloomPass->GetBloomMap()
             : TextureLibrary::GetBlackTexture();
         m_TonemappingPass->SetBloomMap(bloomMap);
+        
         m_TonemappingPass->Execute(registry, params);
 
-        m_LuminanceAdaptationPass->SwapCurrentLuminanceMap();
+        if (RenderSettings::IsEyeAdaptationEnabled)
+        {
+            m_LuminanceAdaptationPass->SwapCurrentLuminanceMap();
+        }
     }
 
     void PostProcessingPass::End(entt::registry& registry, RenderParams& params)

@@ -48,10 +48,14 @@ struct RenderSettings
 	inline static float BloomThreshold = 3.0f;
 	inline static float BloomMagnitude = 1.0f;
 	inline static float BloomBlurSigma = 0.8f;
+
+	inline static bool IsEyeAdaptationEnabled = true;
 	inline static float AdaptationRate = 0.5f;
 	inline static float KeyValue = 0.2f;
+	
 	inline static float MinExposure = 0.5f;
 	inline static float MaxExposure = 3.00f;
+	inline static float ManualExposure = 1.00f;
 };
 
 struct RenderDebugSettings
