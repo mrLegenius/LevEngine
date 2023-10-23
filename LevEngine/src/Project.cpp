@@ -130,7 +130,7 @@ void Project::SaveSettings()
     YAML::Emitter out;
 
     out << YAML::BeginMap;
-    m_RenderSettingsSerializer.Serialize(out);
+    s_Project->m_RenderSettingsSerializer.Serialize(out);
     out << YAML::EndMap;
     
     std::ofstream fout(GetRoot() / settingsPath);

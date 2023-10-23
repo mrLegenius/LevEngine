@@ -63,10 +63,18 @@ namespace LevEngine
         m_LuminancePass->Execute(registry, params);
         m_LuminanceAdaptationPass->SetLuminanceMap(m_LuminancePass->GetLuminanceMap());
         m_LuminanceAdaptationPass->Execute(registry, params);
-        m_BloomPass->SetLuminanceMap(m_LuminanceAdaptationPass->GetCurrentLuminance());
-        m_BloomPass->Execute(registry, params);
+        
+        if (RenderSettings::IsBloomEnabled)
+        {
+            m_BloomPass->SetLuminanceMap(m_LuminanceAdaptationPass->GetCurrentLuminance());
+            m_BloomPass->Execute(registry, params);
+        }
+        
         m_TonemappingPass->SetLuminanceMap(m_LuminanceAdaptationPass->GetCurrentLuminance());
-        m_TonemappingPass->SetBloomMap(m_BloomPass->GetBloomMap());
+        const auto bloomMap = RenderSettings::IsBloomEnabled
+            ? m_BloomPass->GetBloomMap()
+            : TextureLibrary::GetBlackTexture();
+        m_TonemappingPass->SetBloomMap(bloomMap);
         m_TonemappingPass->Execute(registry, params);
 
         m_LuminanceAdaptationPass->SwapCurrentLuminanceMap();

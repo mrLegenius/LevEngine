@@ -44,6 +44,7 @@ struct RenderSettings
 	//Post-processing
 	static constexpr uint32_t LuminanceMapSize = 1024;
 
+	inline static bool IsBloomEnabled = true;
 	inline static float BloomThreshold = 3.0f;
 	inline static float BloomMagnitude = 1.0f;
 	inline static float BloomBlurSigma = 0.8f;

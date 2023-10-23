@@ -16,6 +16,8 @@ namespace LevEngine::Editor
         {
             if(ImGui::TreeNodeEx("Post Processing", treeNodeFlags, "Post Processing"))
             {
+                EditorGUI::DrawCheckBox("Enable Bloom", RenderSettings::IsBloomEnabled);
+                
                 EditorGUI::DrawFloatControl("Bloom Threshold", RenderSettings::BloomThreshold,
                             0.05f, 0.0f, 20.0f);
 

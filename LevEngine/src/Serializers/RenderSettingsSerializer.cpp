@@ -1,6 +1,6 @@
 #include "levpch.h"
 #include "RenderSettingsSerializer.h"
-
+#include "Scene/Serializers/SerializerUtils.h"
 #include "Renderer/RenderSettings.h"
 
 namespace LevEngine
@@ -11,6 +11,7 @@ namespace LevEngine
         {
             out << YAML::Key << "PostProcessing" << YAML::Value << YAML::BeginMap;
             {
+                out << YAML::Key << "IsBloomEnabled" << YAML::Value << RenderSettings::IsBloomEnabled;
                 out << YAML::Key << "BloomThreshold" << YAML::Value << RenderSettings::BloomThreshold;
                 out << YAML::Key << "BloomMagnitude" << YAML::Value << RenderSettings::BloomMagnitude;
                 out << YAML::Key << "BloomBlurSigma" << YAML::Value << RenderSettings::BloomBlurSigma;
@@ -30,6 +31,7 @@ namespace LevEngine
         {
             if (const auto pp = renderSettings["PostProcessing"])
             {
+                TryParse(pp["IsBloomEnabled"], RenderSettings::IsBloomEnabled);
                 TryParse(pp["BloomThreshold"], RenderSettings::BloomThreshold);
                 TryParse(pp["BloomMagnitude"], RenderSettings::BloomMagnitude);
                 TryParse(pp["BloomBlurSigma"], RenderSettings::BloomBlurSigma);

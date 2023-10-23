@@ -21,7 +21,7 @@ public:
     static void Build();
     void CopyEngineResourceDirectory() const noexcept;
 
-    void SaveSettings();
+    static void SaveSettings();
 
 private:
     Path m_Root;

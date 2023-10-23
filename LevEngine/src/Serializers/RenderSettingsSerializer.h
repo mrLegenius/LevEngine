@@ -1,5 +1,4 @@
 #pragma once
-#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
