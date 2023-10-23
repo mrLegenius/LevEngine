@@ -43,7 +43,9 @@ namespace LevEngine
 
             auto waypointsNodes = node["Waypoints"];
             if (!waypointsNodes)
+            {
                 return;
+            }
 
             int componentIdx = 0;
             for (auto waypoint : waypointsNodes)

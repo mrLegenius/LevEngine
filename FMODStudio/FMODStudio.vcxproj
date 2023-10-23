@@ -160,9 +160,7 @@
     </Link>
     <PostBuildEvent>
       <Command>(xcopy /y /d "$(SolutionDir)$(ProjectName)\core\lib\$(Platform)\fmod*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\")
-(xcopy /y /d "$(SolutionDir)$(ProjectName)\studio\lib\$(Platform)\fmodstudio*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\")
-(xcopy /y /d "$(SolutionDir)$(ProjectName)\core\lib\$(Platform)\fmod*.lib" "$(OutDir)")
-(xcopy /y /d "$(SolutionDir)$(ProjectName)\studio\lib\$(Platform)\fmodstudio*.lib" "$(OutDir)")</Command>
+(xcopy /y /d "$(SolutionDir)$(ProjectName)\studio\lib\$(Platform)\fmodstudio*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\")</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

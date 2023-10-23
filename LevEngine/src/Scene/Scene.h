@@ -11,11 +11,12 @@
 #include "Systems/EventSystem.h"
 namespace LevEngine
 {
+class LevFmod;
 class Entity;
 class Scene
 {
 public:
-	Scene() = default;
+	Scene();
 	~Scene();
 
 	void OnUpdate(float deltaTime);
@@ -28,6 +29,8 @@ public:
 	void OnRender(SceneCamera* mainCamera, const Transform* cameraTransform);
 	void RequestLateUpdate(float deltaTime);
 	void RequestEventsUpdate(float deltaTime);
+	void RequestAudioUpdate();
+	void AudioUpdate();
 
 	void OnViewportResized(uint32_t width, uint32_t height);
 
@@ -88,6 +91,8 @@ public:
 
 	entt::registry& GetRegistry();
 
+	Ref<LevFmod> GetAudioSubsystem();
+
 private:
 	void RequestUpdates(float deltaTime);
 
@@ -109,6 +114,9 @@ private:
 	bool m_IsEventUpdateDone = true;
 	bool m_IsPhysicsDone = true;
 	bool m_IsRenderDone = true;
-	
+	bool m_IsAudioUpdateDone = true;
+
+	const int MaxFmodChannelCount = 1024;
+	Ref<LevFmod> m_Fmod;
 };
 }

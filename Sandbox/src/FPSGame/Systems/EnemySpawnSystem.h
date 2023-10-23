@@ -13,8 +13,9 @@ namespace Sandbox
             {
                 m_Timer -= m_SpawnInterval;
 
+                const auto scene = SceneManager::GetActiveScene();
                 const auto prefab = ResourceManager::LoadAsset<PrefabAsset>("EnemyPrefab");
-                const auto enemy = prefab->Instantiate(SceneManager::GetActiveScene());
+                const auto enemy = prefab->Instantiate(scene);
 
                 auto& enemyComp = enemy.AddComponent<Enemy>();
                 enemyComp.speed = 5;
@@ -24,7 +25,7 @@ namespace Sandbox
                 randomPosition.y = 1;
                 transform.SetWorldPosition(randomPosition);
 
-                Application::Get().GetAudioSubsystem()->PlayOneShot("event:/EnemySpawn", enemy);
+                scene->GetAudioSubsystem()->PlayOneShot("event:/EnemySpawn", enemy);
             }
         }
     private:

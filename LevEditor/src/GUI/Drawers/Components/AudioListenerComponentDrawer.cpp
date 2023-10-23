@@ -10,9 +10,6 @@ namespace LevEngine::Editor
 	protected:
 		[[nodiscard]] String GetLabel() const override { return "Audio Listener"; }
 
-		void DrawContent(AudioListenerComponent& component) override
-		{
-			
-		}
+		void DrawContent(AudioListenerComponent& component) override { }
 	};	
 }

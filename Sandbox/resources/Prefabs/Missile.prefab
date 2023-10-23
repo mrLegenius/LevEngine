@@ -3,7 +3,7 @@ RootEntity: 9177273757486242227
 Entities:
   - Entity: 9177273757486242227
     Tag: Missile
-    Parent: 10140974126855644624
+    Parent: 6442536384003582315
     Audio Source:
       AudioBank: 12311189374319023591
       AudioEventName: FireballFlight

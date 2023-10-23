@@ -3,7 +3,8 @@ RootEntity: 16534605177672028581
 Entities:
   - Entity: 16534605177672028581
     Tag: Player
-    Parent: 6442536384003582315
+    AudioListener:
+      {}
     Box Collider:
       Extents: [0.25, 1, 0.25]
       Offset: [0, 1, 0]
@@ -48,5 +49,5 @@ Entities:
       Cast Shadow: true
     Transform:
       Position: [0.800000012, -0.800000012, -2.5999999]
-      Rotation: [0.04363323, 0.0628318265, 1.16526233e-10]
+      Rotation: [0.0436332226, 0.0628318116, 0]
       Scale: [0.5, 0.5, 0.5]

@@ -1,29 +1,5 @@
 Scene: TestScene
 Entities:
-  - Entity: 15067421120708529696
-    Tag: BlueLight
-    Parent: 6442536384003582315
-    Point Light:
-      Color: [0, 0.0338988304, 1, 1]
-      Range: 20
-      Smoothness: 0.75
-      Intensity: 10
-    Transform:
-      Position: [-21.1934109, 5.20373106, -22.0686836]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 17529679922283546918
-    Tag: CyanLight
-    Parent: 6442536384003582315
-    Point Light:
-      Color: [0, 1, 0.94915247, 1]
-      Range: 10
-      Smoothness: 0.75
-      Intensity: 15
-    Transform:
-      Position: [22.7348824, 6.31169748, -22.457468]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
   - Entity: 9352633774523005039
     Tag: RedLight
     Parent: 6442536384003582315
@@ -193,7 +169,7 @@ Entities:
       Enabled: true
     Transform:
       Position: [-1.20967243e-05, 5.0001483, 25.5]
-      Rotation: [1.57078934, -1.78215339e-06, 3.14159083]
+      Rotation: [1.57078934, -1.0392605e-06, 3.14159083]
       Scale: [50, 0.999938488, 9.99950695]
   - Entity: 8940989960097836712
     Tag: Floor
@@ -256,5 +232,29 @@ Entities:
       IsOneShot: false
     Transform:
       Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 15067421120708529696
+    Tag: BlueLight
+    Parent: 6442536384003582315
+    Point Light:
+      Color: [0, 0.0338988304, 1, 1]
+      Range: 20
+      Smoothness: 0.75
+      Intensity: 10
+    Transform:
+      Position: [-21.1934109, 5.20373106, -22.0686836]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 17529679922283546918
+    Tag: CyanLight
+    Parent: 6442536384003582315
+    Point Light:
+      Color: [0, 1, 0.94915247, 1]
+      Range: 10
+      Smoothness: 0.75
+      Intensity: 15
+    Transform:
+      Position: [22.7348824, 6.31169748, -22.457468]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]

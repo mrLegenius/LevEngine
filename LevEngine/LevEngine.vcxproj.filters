@@ -315,9 +315,6 @@
     <ClInclude Include="src\Math\Vector4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kernel\Color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Renderer\3D\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1536,10 +1533,25 @@
     <ClInclude Include="src\Scene\Components\Audio\AudioSource.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\FMOD\LevFmod.h">
+    <ClInclude Include="src\Audio\LevFmod.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Essentials\EnumUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\TransparentPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Audio\AudioPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1701,9 +1713,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Math\Random.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Kernel\Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\3D\Mesh.cpp">
@@ -1997,7 +2006,7 @@
     <ClCompile Include="src\Scene\Components\Audio\AudioSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FMOD\LevFmod.cpp">
+    <ClCompile Include="src\Audio\LevFmod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Kernel\Time\TimelineRunner.cpp">
@@ -2010,6 +2019,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math\Color.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\TransparentPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Audio\AudioPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

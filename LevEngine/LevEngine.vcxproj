@@ -61,7 +61,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mt.lib;FMODStudio.lib;fmodstudioL_vc.lib;fmodL_vc.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
@@ -92,6 +92,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Audio\AudioPlayer.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompiler.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompilertraits.h" />
@@ -464,7 +465,7 @@
     <ClInclude Include="src\Events\KeyEvent.h" />
     <ClInclude Include="src\Events\MouseEvent.h" />
     <ClInclude Include="src\GUI\GUI.h" />
-    <ClInclude Include="src\FMOD\LevFmod.h" />
+    <ClInclude Include="src\Audio\LevFmod.h" />
     <ClInclude Include="src\GUI\ImGuiLayer.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Input\KeyCodes.h" />
@@ -606,6 +607,7 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />
     <ClCompile Include="external\eastl\source\allocator_eastl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -826,7 +828,7 @@
     <ClCompile Include="src\Assets\TextureAsset.cpp" />
     <ClCompile Include="src\DataTypes\EASTL.cpp" />
     <ClCompile Include="src\GUI\GUI.cpp" />
-    <ClCompile Include="src\FMOD\LevFmod.cpp" />
+    <ClCompile Include="src\Audio\LevFmod.cpp" />
     <ClCompile Include="src\GUI\ImGuiBuild.cpp" />
     <ClCompile Include="src\GUI\ImGuiLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />

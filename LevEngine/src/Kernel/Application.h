@@ -7,7 +7,6 @@
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
-#include "FMOD/LevFmod.h"
 #include "GUI/ImGuiLayer.h"
 
 namespace LevEngine
@@ -40,15 +39,12 @@ public:
 
 	void Run();
 	void Render();
-	void AudioUpdate();
 	void Close();
 
 	void PushLayer(Layer* layer);
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
 	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
-
-	Ref<LevFmod> GetAudioSubsystem();
 
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
@@ -63,6 +59,7 @@ private:
 	bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
 	bool OnMouseScrolled(MouseScrolledEvent& e);
 
+
 	Scope<Window> m_Window;
 	bool m_IsRunning = true;
 
@@ -72,8 +69,6 @@ private:
 	bool m_Minimized = false;
 	ImGuiLayer* m_ImGuiLayer;
 	ApplicationSpecification m_Specification;
-
-	Ref<LevFmod> m_Fmod;
 
 	static Application* s_Instance;
 };

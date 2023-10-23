@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "FPSGame.h"
 
-#include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
-#include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
@@ -11,8 +9,6 @@
 #include "Systems/ProjectileLifeSystem.h"
 #include "Systems/ProjectileMovementSystem.h"
 #include "Systems/ShootSystem.h"
-#include <Scene/Systems/Audio/AudioSourceInitSystem.h>
-#include <Scene/Components/Audio/AudioSource.h>
 
 /*
  * There are some problems in this project
@@ -33,11 +29,11 @@ namespace Sandbox
 
 		SceneManager::LoadScene(AssetDatabase::GetAssetsPath() / "Scenes" / "TestScene.scene");
 
-		auto fmod = Application::Get().GetAudioSubsystem();
-		fmod->LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), FMOD_STUDIO_LOAD_BANK_NORMAL, true);
-		fmod->LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), FMOD_STUDIO_LOAD_BANK_NORMAL, true);
-
 		auto& scene = SceneManager::GetActiveScene();
+
+		const auto fmod = scene->GetAudioSubsystem();
+		fmod->LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
+		fmod->LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();

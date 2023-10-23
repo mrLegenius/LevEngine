@@ -33,9 +33,6 @@ Application::Application(const ApplicationSpecification& specification)
 	Renderer::Init();
 	Random::Init();
 
-	m_Fmod = CreateRef<LevFmod>();
-	m_Fmod->Init(1024, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_VOL0_BECOMES_VIRTUAL);
-
 	m_ImGuiLayer = new ImGuiLayer;
 	PushOverlay(m_ImGuiLayer);
 
@@ -97,8 +94,6 @@ void Application::Run()
 		if (!m_Minimized)
 			Render();
 
-		AudioUpdate();
-		
 		Input::Reset();
 		m_Window->Update();
 	}
@@ -125,11 +120,6 @@ void Application::Render()
 			layer->OnGUIRender();
 	}
 	m_ImGuiLayer->End();
-}
-
-void Application::AudioUpdate()
-{
-	m_Fmod->Update();
 }
 
 void Application::Close()
@@ -170,11 +160,6 @@ void Application::OnEvent(Event& e)
 		if (e.handled)
 			break;
 	}
-}
-
-Ref<LevFmod> Application::GetAudioSubsystem()
-{
-	return m_Fmod;
 }
 
 bool Application::OnWindowClosed(WindowClosedEvent& e)

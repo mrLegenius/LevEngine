@@ -1,17 +1,16 @@
 ﻿#include "levpch.h"
 #include "AudioListener.h"
 
-#include "FMOD/LevFmod.h"
+#include "Audio/LevFmod.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/ComponentSerializer.h"
-#include "Kernel/Application.h"
 
 namespace LevEngine
 {
 	AudioListenerComponent::AudioListenerComponent()
 	{
-		entity = SceneManager::GetActiveScene()->GetEntityByComponent(this);
-		m_Fmod = Application::Get().GetAudioSubsystem();
+		attachedToEntity = SceneManager::GetActiveScene()->GetEntityByComponent(this);
+		m_Fmod = SceneManager::GetActiveScene()->GetAudioSubsystem();
 		m_Fmod->AddListener(this);
 	}
 
