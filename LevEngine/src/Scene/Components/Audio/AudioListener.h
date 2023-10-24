@@ -20,10 +20,6 @@ namespace LevEngine
 
         Entity attachedToEntity;
 
-        // When true, locks the listener in place, disabling internal 3D attribute updates.
-        // 3D attributes can still be manually set with a set3DAttributes call.
-        bool disableListener3DAttributes = false;
-
     private:
         Ref<LevFmod> m_Fmod;
         bool m_IsInited{};

@@ -129,13 +129,10 @@ namespace LevEngine
 
             if (entity.HasComponent<Transform>())
             {
-                if (!listener->disableListener3DAttributes)
-                {
-                    Transform transform = entity.GetComponent<Transform>();
-                    const auto attr = Get3DAttributes(transform);
+                Transform transform = entity.GetComponent<Transform>();
+                const auto attr = Get3DAttributes(transform);
 
-                    CheckErrors(m_System->setListenerAttributes(listenerIdx, &attr));
-                }
+                CheckErrors(m_System->setListenerAttributes(listenerIdx, &attr));
             }
         }
     }
