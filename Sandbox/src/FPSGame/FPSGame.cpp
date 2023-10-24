@@ -48,13 +48,18 @@ namespace Sandbox
 		scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
 
 		scene->RegisterUpdateSystem<AudioSourceInitSystem>();
+		scene->RegisterUpdateSystem<AudioListenerInitSystem>();
 		
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
 
+
 		auto& registry = scene->GetRegistry();
+		registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnComponentConstruct>();
 		registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnComponentConstruct>();
-		registry.on_destroy<AudioSourceComponent>().connect<&AudioSourceComponent::OnComponentDestroy>();
+
+		registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnComponentDestroy>();
+
 
 		Application::Get().GetWindow().DisableCursor();
 	}

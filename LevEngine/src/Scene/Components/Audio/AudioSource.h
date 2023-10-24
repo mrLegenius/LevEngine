@@ -13,7 +13,6 @@ namespace LevEngine
         AudioSourceComponent();
 
         static void OnComponentConstruct(entt::registry& registry, entt::entity entity);
-        static void OnComponentDestroy(entt::registry& registry, entt::entity entity);
         void Init();
         bool IsInitialized() const;
         void ResetInit();

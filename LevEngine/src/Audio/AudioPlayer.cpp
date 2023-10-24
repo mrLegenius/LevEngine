@@ -14,6 +14,12 @@ namespace LevEngine
         m_EventHandle = 0;
     }
 
+    AudioPlayer::~AudioPlayer()
+    {
+        ReleaseSound();
+        m_Fmod = nullptr;
+    }
+
     void AudioPlayer::ReleaseSound()
     {
         if (m_EventHandle != 0)

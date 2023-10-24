@@ -41,9 +41,9 @@ namespace LevEngine
 
 			if (!entity.HasComponent<TComponent>())
 			{
-				TComponent* component = new TComponent();
-				DeserializeData(componentProps, *component);
-				entity.AddComponent<TComponent>(*component);
+				TComponent component = TComponent();
+				DeserializeData(componentProps, component);
+				entity.AddComponent<TComponent>(component);
 			}
 			else
 			{

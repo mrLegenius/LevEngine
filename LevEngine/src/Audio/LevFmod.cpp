@@ -75,12 +75,35 @@ namespace LevEngine
 #pragma region Audio Listeners
     void LevFmod::AddListener(AudioListenerComponent* listenerComponent)
     {
+        if (m_Listeners.size() == FMOD_MAX_LISTENERS)
+        {
+            Log::Warning("FMOD Sound System: Could not add new listener. System already at max listeners.");
+            return;
+        }
+
         m_Listeners.emplace_back(listenerComponent);
+        CheckErrors(m_System->setNumListeners(m_Listeners.size()));
+        Log::Info("FMOD Sound System: Added new listener. Current listener count: {}.", m_Listeners.size());
     }
 
     void LevFmod::RemoveListener(AudioListenerComponent* listenerComponent)
     {
-        m_Listeners.erase_first(listenerComponent);
+        auto iterator = eastl::find(m_Listeners.begin(), m_Listeners.end(), listenerComponent);
+
+        if (iterator == m_Listeners.end())
+        {
+            Log::Warning("FMOD Sound System: Tried to remove an unknown listener.");
+        }
+
+        int listenerIdx = iterator - m_Listeners.begin();
+        m_Listeners.erase(iterator);
+
+        int newListenersCount = (int) m_Listeners.size();
+        
+        // Minimum listener count in FMOD is 1. Setting count to 0 will return an error code.
+        CheckErrors(m_System->setNumListeners(newListenersCount == 0 ? 1 : newListenersCount));
+        Log::Info("FMOD Sound System: Removed a listener with index {}. Current listener count: {}.",
+            listenerIdx, m_Listeners.size());
     }
 
     void LevFmod::SetListenerAttributes()

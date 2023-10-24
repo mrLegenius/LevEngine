@@ -7,16 +7,41 @@
 
 namespace LevEngine
 {
-	AudioListenerComponent::AudioListenerComponent()
+	void AudioListenerComponent::OnComponentConstruct(entt::registry& registry, entt::entity entity)
 	{
+		AudioListenerComponent& component = registry.get<AudioListenerComponent>(entity);
+		component.Init();
+		
+	}
+
+	void AudioListenerComponent::OnComponentDestroy(entt::registry& registry, entt::entity entity)
+	{
+		AudioListenerComponent& component = registry.get<AudioListenerComponent>(entity);
+		component.m_Fmod->RemoveListener(&component);
+	}
+
+	void AudioListenerComponent::Init()
+	{
+		if (IsInitialized())
+		{
+			return;
+		}
+
 		attachedToEntity = SceneManager::GetActiveScene()->GetEntityByComponent(this);
 		m_Fmod = SceneManager::GetActiveScene()->GetAudioSubsystem();
 		m_Fmod->AddListener(this);
+
+		m_IsInited = true;
 	}
 
-	AudioListenerComponent::~AudioListenerComponent()
+	bool AudioListenerComponent::IsInitialized() const
 	{
-		m_Fmod->RemoveListener(this);
+		return m_IsInited;
+	}
+
+	void AudioListenerComponent::ResetInit()
+	{
+		m_IsInited = false;
 	}
 
 	class AudioListenerSerializer final : public ComponentSerializer<AudioListenerComponent, AudioListenerSerializer>
@@ -30,7 +55,7 @@ namespace LevEngine
 		}
 		void DeserializeData(YAML::Node& node, AudioListenerComponent& component) override
 		{
-			
+			component.ResetInit();
 		}
 	};
 }

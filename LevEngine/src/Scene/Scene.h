@@ -17,7 +17,8 @@ class Scene
 {
 public:
 	Scene();
-	~Scene();
+
+	void CleanupScene();
 
 	void OnUpdate(float deltaTime);
 	void RequestPhysicsUpdates(float deltaTime);

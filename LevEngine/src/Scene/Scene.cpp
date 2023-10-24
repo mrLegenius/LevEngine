@@ -18,17 +18,20 @@ namespace LevEngine
 Scene::Scene()
 {
     m_Fmod = CreateRef<LevFmod>();
-    if (!m_Fmod->Init(MaxFmodChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_VOL0_BECOMES_VIRTUAL))
+    if (!m_Fmod->Init(MaxFmodChannelCount,
+        FMOD_STUDIO_INIT_LIVEUPDATE,
+        FMOD_INIT_VOL0_BECOMES_VIRTUAL | FMOD_INIT_3D_RIGHTHANDED))
     {
         m_Fmod = nullptr;
     }
 }
 
-Scene::~Scene()
+void Scene::CleanupScene()
 {
     LEV_PROFILE_FUNCTION();
 
     m_Registry.clear();
+    m_Fmod = nullptr;
 }
 
 entt::registry& Scene::GetRegistry()

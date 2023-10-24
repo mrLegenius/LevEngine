@@ -18,12 +18,6 @@ namespace LevEngine
         component.Init();
     }
 
-    void AudioSourceComponent::OnComponentDestroy(entt::registry& registry, entt::entity entity)
-    {
-        AudioSourceComponent& component = registry.get<AudioSourceComponent>(entity);
-        component.audioPlayer->ReleaseSound();
-    }
-
     void AudioSourceComponent::Init()
     {
         if (IsInitialized())

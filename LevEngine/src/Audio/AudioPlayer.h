@@ -10,6 +10,7 @@ namespace LevEngine
 	{
 	public:
 		AudioPlayer();
+		~AudioPlayer();
 
 		void ReleaseSound();
 
