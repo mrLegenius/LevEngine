@@ -449,6 +449,7 @@
     <ClInclude Include="src\Assets\PrefabAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Assets\TextureAsset.h" />
+    <ClInclude Include="src\DataTypes\Array.h" />
     <ClInclude Include="src\DataTypes\Delegates.h" />
     <ClInclude Include="src\DataTypes\Map.h" />
     <ClInclude Include="src\DataTypes\Pair.h" />
@@ -546,6 +547,11 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugWireSphere.h" />
     <ClInclude Include="src\Renderer\Material.h" />
     <ClInclude Include="src\Renderer\MaterialPBR.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\BloomPass.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\LuminancePass.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\PostProcessingPass.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\TonemappingPass.h" />
     <ClInclude Include="src\Renderer\QuadRenderPass.h" />
     <ClInclude Include="src\Renderer\RendererContext.h" />
     <ClInclude Include="src\Renderer\CopyTexturePass.h" />
@@ -605,6 +611,7 @@
     <ClInclude Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.h" />
     <ClInclude Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />
+    <ClInclude Include="src\Serializers\RenderSettingsSerializer.h" />
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
@@ -880,6 +887,11 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Material.cpp" />
     <ClCompile Include="src\Renderer\MaterialPBR.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\BloomPass.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\LuminancePass.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\PostProcessingPass.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\TonemappingPass.cpp" />
     <ClCompile Include="src\Renderer\QuadRenderPass.cpp" />
     <ClCompile Include="src\Renderer\RendererContext.cpp" />
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />
@@ -926,6 +938,7 @@
     <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp" />
+    <ClCompile Include="src\Serializers\RenderSettingsSerializer.cpp" />
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>

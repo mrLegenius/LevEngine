@@ -1,0 +1,50 @@
+#pragma once
+#include "Renderer/RenderPass.h"
+
+namespace LevEngine
+{
+    class RenderTarget;
+    class Texture;
+    class ConstantBuffer;
+    class SamplerState;
+    
+    class LuminanceAdaptationPass;
+    class LuminancePass;
+    class TonemappingPass;
+    class BloomPass;
+    
+    class PostProcessingPass final : public RenderPass
+    {
+    public:
+        PostProcessingPass(const Ref<RenderTarget>& mainRenderTarget, const Ref<Texture>& colorTexture);
+        
+        void SetViewport(Viewport viewport) override;
+        
+    protected:
+        bool Begin(entt::registry& registry, RenderParams& params) override;
+        void Process(entt::registry& registry, RenderParams& params) override;
+        void End(entt::registry& registry, RenderParams& params) override;
+    
+    private:
+        struct alignas(16) GPUConstants
+        {
+            float BloomThreshold;
+            float BloomMagnitude;
+            float BloomBlurSigma;
+            float Tau;
+            float TimeDelta;
+            float KeyValue;
+            float MinExposure;
+            float MaxExposure;
+        };
+        
+        Ref<LuminancePass> m_LuminancePass;
+        Ref<LuminanceAdaptationPass> m_LuminanceAdaptationPass;
+        Ref<TonemappingPass> m_TonemappingPass;
+        Ref<BloomPass> m_BloomPass;
+
+        Ref<ConstantBuffer> m_ConstantBuffer;
+        Ref<SamplerState> m_LinearSampler;
+        Ref<SamplerState> m_PointSampler;
+    };
+}

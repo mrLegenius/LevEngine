@@ -33,12 +33,13 @@ namespace LevEngine
 		{
 			return Icons::Skybox();
 		}
+
+		void InitTexture();
 		
 	protected:
 		void SerializeData(YAML::Emitter& out) override;
 		void DeserializeData(YAML::Node& node) override;
 	private:
-		void InitTexture();
 
 		Ref<Texture> m_Texture;
 	};

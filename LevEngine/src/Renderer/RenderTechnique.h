@@ -11,6 +11,7 @@ public:
 	void AddPass(Ref<RenderPass> renderPass);
 	void Process(entt::registry& registry, RenderParams params) const;
 
+	void SetViewport(const Viewport& viewport);
 private:
 	using PassList = Vector<Ref<RenderPass>>;
 

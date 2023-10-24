@@ -38,6 +38,25 @@ namespace LevEngine
 		return out;
 	}
 
+	YAML::Node LoadYAMLFile(const Path& filepath)
+	{
+		return YAML::LoadFile(filepath.string());
+	}
+
+	bool LoadYAMLFileSafe(const Path& filepath, YAML::Node& node)
+	{
+		try
+		{
+			node = LoadYAMLFile(filepath);
+			return true;
+		}
+		catch (std::exception& e)
+		{
+			Log::CoreError("Failed to load yaml file at {0}. Error: {1}", filepath.generic_string(), e.what());
+			return false;
+		}
+	}
+
 	void SerializeEntity(YAML::Emitter& out, const Entity entity)
 	{
 		LEV_CORE_ASSERT(entity.HasComponent<IDComponent>());

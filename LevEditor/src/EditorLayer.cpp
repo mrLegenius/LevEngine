@@ -72,6 +72,7 @@ namespace LevEngine::Editor
         m_Hierarchy = CreateRef<HierarchyPanel>();
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
+        m_Settings = CreateRef<SettingsPanel>();
     }
     
     void EditorLayer::OnAttach()
@@ -176,6 +177,7 @@ namespace LevEngine::Editor
         m_AssetsBrowser->Render();
         m_Game->Render();
         m_Console->Render();
+        m_Settings->Render();
         //DrawStatistics();
         DrawToolbar();
         DrawStatusbar();

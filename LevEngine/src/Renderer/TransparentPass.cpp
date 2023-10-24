@@ -34,7 +34,7 @@ namespace LevEngine
             const auto mesh = meshRenderer.mesh->GetMesh();
             if (!mesh) continue;
 
-            if constexpr (RenderSettings::UseFrustumCulling)
+            if (RenderSettings::UseFrustumCulling)
             {
                 if (!mesh->IsOnFrustum(params.Camera.GetFrustum(), transform)) continue;
             }

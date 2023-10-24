@@ -1,5 +1,6 @@
 #pragma once
 #include "Math/Vector3.h"
+#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
@@ -19,6 +20,18 @@ enum class RenderTechniqueType
 
 struct RenderSettings
 {
+	//General
+	inline static RenderTechniqueType RenderTechnique = RenderTechniqueType::Deferred;
+	inline static RendererAPI RendererAPI = RendererAPI::D3D11;
+
+	inline static bool UseFrustumCulling = true;
+	
+	static constexpr bool EnableShaderDebug = false;
+	static constexpr uint32_t ShadowMapSlot = 9;
+	static constexpr uint32_t MaterialSlot = 4;
+
+	inline static uint32_t MaxParticles = 1024 * 8;
+	
 	//Shadows
 	static constexpr int CascadeCount = 4;
 	static constexpr float CascadeDistances[CascadeCount] = { 0.1f, 0.3f, 0.5f, 1.0f };
@@ -27,18 +40,22 @@ struct RenderSettings
 	//Lightning
 	static constexpr int MaxPointLights = 200;
 	static constexpr Vector3 GlobalAmbient{ 0.03f, 0.03f, 0.03f };
+	
+	//Post-processing
+	static constexpr uint32_t LuminanceMapSize = 1024;
 
-	static constexpr bool UseFrustumCulling = true;
-	static constexpr RenderTechniqueType RenderTechnique = RenderTechniqueType::Deferred;
+	inline static bool IsBloomEnabled = true;
+	inline static float BloomThreshold = 3.0f;
+	inline static float BloomMagnitude = 1.0f;
+	inline static float BloomBlurSigma = 0.8f;
 
-	static constexpr uint32_t ShadowMapSlot = 9;
-	static constexpr uint32_t MaterialSlot = 4;
-
-	static constexpr uint32_t MaxParticles = 1024 * 8;
-
-	static constexpr RendererAPI RendererAPI = RendererAPI::D3D11;
-
-	static constexpr bool EnableShaderDebug = false;
+	inline static bool IsEyeAdaptationEnabled = true;
+	inline static float AdaptationRate = 0.5f;
+	inline static float KeyValue = 0.2f;
+	
+	inline static float MinExposure = 0.5f;
+	inline static float MaxExposure = 3.00f;
+	inline static float ManualExposure = 1.00f;
 };
 
 struct RenderDebugSettings

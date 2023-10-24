@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Scene/Serializers/SerializerUtils.h"
 
 class EditorSaveData
 {
@@ -28,13 +29,9 @@ public:
         if (!exists(m_Path)) return false;
         
         YAML::Node data;
-        try
+        if (!LoadYAMLFileSafe(m_Path, data))
         {
-            data = YAML::LoadFile(m_Path.string());
-        }
-        catch (std::exception& e)
-        {
-            Log::CoreError("Failed to load saved data in {0}. Error: {1}", m_Path.string(), e.what());
+            Log::CoreError("Failed to load editor saved data");
             return false;
         }
 

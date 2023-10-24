@@ -2,6 +2,7 @@
 #include "Project.h"
 
 #include "ResourceManager.h"
+#include "Renderer/RenderSettings.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
@@ -30,13 +31,9 @@ bool Project::Load(const Path& path)
     
     s_Project = CreateRef<Project>(path);
     YAML::Node data;
-    try
+    if (!LoadYAMLFileSafe(path, data))
     {
-        data = YAML::LoadFile(path.string());
-    }
-    catch (std::exception& e)
-    {
-        Log::CoreError("Failed to load project in {0}. Error: {1}", path.string(), e.what());
+        Log::CoreError("Failed to load project", path.string());
         return false;
     }
 
@@ -46,6 +43,8 @@ bool Project::Load(const Path& path)
     if (const auto scene = data["StartScene"])
         s_Project->m_StartScene = scene.as<String>().c_str();
 
+    s_Project->LoadSettings();
+    
     return true;
 }
 
@@ -106,6 +105,36 @@ void Project::Build()
 void Project::CopyEngineResourceDirectory() const noexcept
 {
     CopyRecursively(EngineResourcesRoot, m_Root / EngineResourcesRoot);
+}
+
+void Project::LoadSettings()
+{
+    const Path settingsPath = GetRoot() / "Settings.yaml";
+
+    if(!exists(settingsPath))
+    {
+        SaveSettings();
+        return;
+    }
+    
+    YAML::Node data;
+    LoadYAMLFileSafe(settingsPath, data);
+
+    m_RenderSettingsSerializer.Deserialize(data);
+}
+    
+void Project::SaveSettings()
+{
+    const Path settingsPath = "Settings.yaml";
+
+    YAML::Emitter out;
+
+    out << YAML::BeginMap;
+    s_Project->m_RenderSettingsSerializer.Serialize(out);
+    out << YAML::EndMap;
+    
+    std::ofstream fout(GetRoot() / settingsPath);
+    fout << out.c_str();
 }
 }
 

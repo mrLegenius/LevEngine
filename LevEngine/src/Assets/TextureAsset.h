@@ -9,7 +9,7 @@ namespace LevEngine
 	{
 	public:
 		Ref<SamplerState> SamplerState;
-		bool IsLinear = true;
+		bool IsLinear = false;
 		
 		TextureAsset(const Path& path, const UUID& uuid) : Asset(path, uuid)
 		{
@@ -26,11 +26,7 @@ namespace LevEngine
 			return Asset::GetIcon();
 		}
 
-		void CreateTexture()
-		{
-			m_Texture = Texture::Create(m_Path.string().c_str(), IsLinear);
-			m_Texture->AttachSampler(SamplerState);
-		}
+		void CreateTexture();
 
 	protected:
 		[[nodiscard]] bool WriteDataToFile() const override { return false; }

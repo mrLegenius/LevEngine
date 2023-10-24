@@ -35,7 +35,7 @@ namespace LevEngine
 		enum class Type
 		{
 			Typeless,           // Typeless formats.
-			// TODO: sRGB type
+			SRGB,
 			UnsignedNormalized, // Unsigned normalized (8, 10, or 16-bit unsigned integer values mapped to the range [0..1])
 			SignedNormalized,   // Signed normalized (8, or 16-bit signed integer values mapped to the range [-1..1])
 			Float,              // Floating point format (16, or 32-bit).
@@ -98,11 +98,24 @@ namespace LevEngine
 
 		virtual ~Texture() = default;
 
-		static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format, void* data, CPUAccess cpuAccess = CPUAccess::None, bool uav = false);
-		static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format, CPUAccess cpuAccess = CPUAccess::None, bool uav = false);
+		static Ref<Texture> CreateTexture2D(
+			uint16_t width, uint16_t height, uint16_t slices,
+			const TextureFormat& format,
+			void* data,
+			CPUAccess cpuAccess = CPUAccess::None,
+			bool uav = false,
+			bool generateMipMaps = false);
+		
+		static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices,
+			const TextureFormat& format,
+			CPUAccess cpuAccess = CPUAccess::None,
+			bool uav = false,
+			bool generateMipMaps = false);
+		
 		static Ref<Texture> CreateTextureCube(const String paths[6]);
-		static Ref<Texture> Create(const String& path);
+		static Ref<Texture> CreateTextureCube(const String paths[6], const bool isLinear);
 		static Ref<Texture> Create(const String& path, bool isLinear);
+		static Ref<Texture> Create(const String& path);
 
 		[[nodiscard]] virtual void* GetId() = 0;
 

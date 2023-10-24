@@ -110,6 +110,7 @@
     <ClInclude Include="src\Panels\HierarchyPanel.h" />
     <ClInclude Include="src\Panels\Panel.h" />
     <ClInclude Include="src\Panels\PropertiesPanel.h" />
+    <ClInclude Include="src\Panels\SettingsPanel.h" />
     <ClInclude Include="src\Panels\ViewportPanel.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\Selection.h" />
@@ -138,6 +139,7 @@
     <ClCompile Include="src\ModalPopup.cpp" />
     <ClCompile Include="src\Panels\ConsolePanel.cpp" />
     <ClCompile Include="src\Panels\GamePanel.cpp" />
+    <ClCompile Include="src\Panels\SettingsPanel.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -169,7 +171,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="LevResources\Shaders\" />
+    <Folder Include="LevResources\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

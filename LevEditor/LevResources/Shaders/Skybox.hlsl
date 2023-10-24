@@ -34,5 +34,7 @@ SamplerState sam;
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-	return tex.Sample(sam, input.uv);
+	float3 finalColor = tex.Sample(sam, input.uv).rgb;
+	//finalColor = pow(finalColor, 0.45);
+	return float4(finalColor, 1.0f);
 }

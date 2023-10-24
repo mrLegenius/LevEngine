@@ -27,8 +27,13 @@ namespace LevEngine
 		}
 	}
 
-	Ref<Texture> Texture::CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices, const TextureFormat& format,
-	                                      void* data, CPUAccess cpuAccess, bool uav)
+	Ref<Texture> Texture::CreateTexture2D(
+		const uint16_t width, const uint16_t height, const uint16_t slices,
+		const TextureFormat& format,
+		void* data,
+		const CPUAccess cpuAccess,
+		const bool uav,
+		const bool generateMipMaps)
 	{
 		switch (RenderSettings::RendererAPI)
 		{
@@ -37,14 +42,19 @@ namespace LevEngine
 		case RendererAPI::OpenGL:
 			LEV_NOT_IMPLEMENTED
 		case RendererAPI::D3D11:
-			return D3D11Texture::CreateTexture2D(width, height, slices, format, data, cpuAccess, uav);
+			return D3D11Texture::CreateTexture2D(width, height, slices, format, data, cpuAccess, uav, generateMipMaps);
 		default:
 			LEV_THROW("Unknown Renderer API")
 				break;
 		}
 	}
 
-	Ref<Texture> Texture::CreateTexture2D(const uint16_t width, const uint16_t height, const uint16_t slices, const TextureFormat& format, const CPUAccess cpuAccess, const bool uav)
+	Ref<Texture> Texture::CreateTexture2D(
+		const uint16_t width, const uint16_t height, const uint16_t slices,
+		const TextureFormat& format,
+		const CPUAccess cpuAccess,
+		const bool uav,
+		const bool generateMipMaps)
 	{
 		switch (RenderSettings::RendererAPI)
 		{
@@ -53,7 +63,7 @@ namespace LevEngine
 		case RendererAPI::OpenGL:
 			LEV_NOT_IMPLEMENTED
 		case RendererAPI::D3D11:
-			return D3D11Texture::CreateTexture2D(width, height, slices, format, cpuAccess, uav);
+			return D3D11Texture::CreateTexture2D(width, height, slices, format, cpuAccess, uav, generateMipMaps);
 		default:
 			LEV_THROW("Unknown Renderer API")
 			break;
@@ -62,6 +72,11 @@ namespace LevEngine
 
 	Ref<Texture> Texture::CreateTextureCube(const String paths[6])
 	{
+		return CreateTextureCube(paths, false);
+	}
+
+	Ref<Texture> Texture::CreateTextureCube(const String paths[6], const bool isLinear)
+	{
 		switch (RenderSettings::RendererAPI)
 		{
 		case RendererAPI::None:
@@ -69,7 +84,7 @@ namespace LevEngine
 		case RendererAPI::OpenGL:
 			LEV_NOT_IMPLEMENTED
 		case RendererAPI::D3D11:
-			return CreateRef<D3D11Texture>(paths);
+			return CreateRef<D3D11Texture>(paths, isLinear);
 		default:
 			LEV_THROW("Unknown Renderer API")
 			break;

@@ -6,6 +6,7 @@
 #include "Panels/GamePanel.h"
 #include "Panels/HierarchyPanel.h"
 #include "Panels/PropertiesPanel.h"
+#include "Panels/SettingsPanel.h"
 #include "Panels/ViewportPanel.h"
 
 namespace LevEngine::Editor
@@ -43,6 +44,7 @@ private:
 	Ref<PropertiesPanel> m_Properties;
 	Ref<AssetBrowserPanel> m_AssetsBrowser;
 	Ref<GamePanel> m_Game;
+	Ref<SettingsPanel> m_Settings;
 	std::shared_ptr<ConsolePanel> m_Console;
 
 	EditorSaveData m_SaveData{"SaveData.editor"};
