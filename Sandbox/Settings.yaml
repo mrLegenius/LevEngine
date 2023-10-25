@@ -1,6 +1,7 @@
 RenderSettings:
   PostProcessing:
-    BloomThreshold: 1
+    IsBloomEnabled: false
+    BloomThreshold: 3
     BloomMagnitude: 0.5
     BloomBlurSigma: 0.800000012
     AdaptationRate: 0.5
