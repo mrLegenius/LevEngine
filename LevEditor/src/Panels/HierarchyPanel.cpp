@@ -97,7 +97,10 @@ namespace LevEngine::Editor
 	void HierarchyPanel::SavePrefab(const Entity entity, const Path& path)
 	{
 		if (const auto& asset = AssetDatabase::GetAsset<PrefabAsset>(path))
+		{
 			asset->SaveEntity(entity);
+			asset->Deserialize();
+		}
 
 		Log::CoreInfo("Prefab '{0}' is updated at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
 	}
