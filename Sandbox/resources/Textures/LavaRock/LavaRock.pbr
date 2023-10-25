@@ -1,6 +1,7 @@
 Tint: [1, 1, 1, 1]
 Metallic: 1
-Roughness: 1
+Roughness: 0
+EnableTransparency: false
 Albedo: 3861033728452781603
 MetallicTexture: 6890593323086706739
 RoughnessTexture: 4562044942032269577

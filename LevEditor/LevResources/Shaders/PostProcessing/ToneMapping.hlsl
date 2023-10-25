@@ -47,6 +47,11 @@ float4 PSMain(PS_IN input) : SV_Target
     float exposure = CalculateExposure(averageLuminance);
 	exposure = clamp(exposure, constants.MinExposure, constants.MaxExposure);
 
+    // Sample the bloom
+    float3 bloom = bloomMap.Sample(linearSampler, uv).rgb;
+    bloom *= constants.BloomMagnitude;
+    color += bloom;
+
     //Tone mapping
     //float3 finalColor = Uncharted2ToneMapping(color, exposure);
     float3 finalColor = ReinhardToneMapping(color, exposure);
@@ -55,9 +60,9 @@ float4 PSMain(PS_IN input) : SV_Target
     finalColor = pow(finalColor, 0.45);
 
     // Sample the bloom
-    float3 bloom = bloomMap.Sample(linearSampler, uv).rgb;
-    bloom *= constants.BloomMagnitude;
-    finalColor += bloom;
+    // float3 bloom = bloomMap.Sample(linearSampler, uv).rgb;
+    // bloom *= constants.BloomMagnitude;
+    // finalColor += bloom;
 
     return float4(finalColor, 1.0f);
 }

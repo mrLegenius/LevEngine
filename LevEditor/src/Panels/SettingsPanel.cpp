@@ -41,6 +41,18 @@ namespace LevEngine::Editor
 
                     EditorGUI::DrawFloatControl("Key Value", RenderSettings::KeyValue,
                                                 0.05f, 0.0f, 0.5f);
+                    
+                    EditorGUI::DrawFloatControl("Min Exposure", RenderSettings::MinExposure,
+                           0.05f, 0.0f, 10.0f);
+                    
+                    if (RenderSettings::MinExposure > RenderSettings::MaxExposure)
+                        RenderSettings::MinExposure = RenderSettings::MaxExposure;
+                    
+                    EditorGUI::DrawFloatControl("Max Exposure", RenderSettings::MaxExposure,
+                           0.05f, 0.0f, 10.0f);
+
+                    if (RenderSettings::MaxExposure < RenderSettings::MinExposure)
+                        RenderSettings::MaxExposure = RenderSettings::MinExposure;
                 }
                 else
                 {

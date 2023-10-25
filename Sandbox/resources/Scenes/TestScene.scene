@@ -72,12 +72,12 @@ Entities:
       Enabled: true
     Transform:
       Position: [-1.20967243e-05, 5.0001483, 25.5]
-      Rotation: [1.57078934, -1.82991357e-06, 3.14159083]
+      Rotation: [1.57078934, -1.80214897e-06, 3.14159083]
       Scale: [50, 0.999938488, 9.99950695]
   - Entity: 13631027794021233931
     Tag: Skybox
     Skybox Renderer:
-      Skybox: 13866860828441378123
+      Skybox: 9519266695626703141
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
