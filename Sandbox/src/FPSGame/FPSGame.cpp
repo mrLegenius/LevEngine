@@ -29,7 +29,12 @@ namespace Sandbox
 		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
 
-		SceneManager::LoadScene(AssetDatabase::GetAssetsPath() / "Scenes" / "TestScene.scene");
+		//TODO: Remove hard coded project name
+		Project::Load("Sandbox.levproject");
+
+		const auto startScene = Project::GetStartScene();
+		if (startScene.empty() || !SceneManager::LoadScene(startScene))
+			SceneManager::LoadScene(AssetDatabase::GetAssetsPath() / "Scenes" / "TestScene.scene");
 
 		auto& scene = SceneManager::GetActiveScene();
 

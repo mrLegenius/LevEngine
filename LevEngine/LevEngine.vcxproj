@@ -545,6 +545,7 @@
     <ClInclude Include="src\Renderer\PostProcessing\LuminancePass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\PostProcessingPass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\TonemappingPass.h" />
+    <ClInclude Include="src\Renderer\PostProcessing\VignettePass.h" />
     <ClInclude Include="src\Renderer\QuadRenderPass.h" />
     <ClInclude Include="src\Renderer\RendererContext.h" />
     <ClInclude Include="src\Renderer\CopyTexturePass.h" />
@@ -878,6 +879,7 @@
     <ClCompile Include="src\Renderer\PostProcessing\LuminancePass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\PostProcessingPass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\TonemappingPass.cpp" />
+    <ClCompile Include="src\Renderer\PostProcessing\VignettePass.cpp" />
     <ClCompile Include="src\Renderer\QuadRenderPass.cpp" />
     <ClCompile Include="src\Renderer\RendererContext.cpp" />
     <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />

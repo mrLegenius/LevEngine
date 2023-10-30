@@ -8,3 +8,8 @@ RenderSettings:
     KeyValue: 0.200000003
     MinExposure: 1.5
     MaxExposure: 2
+    IsVignetteEnabled: true
+    VignetteRadius: 0.49000001
+    VignetteSoftness: 0.200000003
+    VignetteColor: [0.0593220592, 0.832591414, 1, 0]
+    VignetteIntensity: 0.600000024

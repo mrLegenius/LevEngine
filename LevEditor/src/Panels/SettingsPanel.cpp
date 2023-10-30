@@ -61,6 +61,19 @@ namespace LevEngine::Editor
                 }
 
                 ImGui::Separator();
+
+                EditorGUI::DrawCheckBox("Enable Vignette", RenderSettings::IsVignetteEnabled);
+                
+                if (RenderSettings::IsVignetteEnabled)
+                {
+                    EditorGUI::DrawColor3Control("Color", RenderSettings::VignetteColor);
+                    EditorGUI::DrawVector2Control("Center", RenderSettings::VignetteCenter, 0.5f);
+                    EditorGUI::DrawFloatControl("Radius", RenderSettings::VignetteRadius, 0.01f, 0.0f, 1.0f);
+                    EditorGUI::DrawFloatControl("Softness", RenderSettings::VignetteSoftness, 0.01f, 0.0f, 1.0f);
+                    EditorGUI::DrawFloatControl("Intensity", RenderSettings::VignetteIntensity, 0.01f, 0.0f, 1.0f);
+                }
+
+                ImGui::Separator();
                 
                 ImGui::TreePop();
             }

@@ -5,6 +5,7 @@
 #include "LuminanceAdaptationPass.h"
 #include "LuminancePass.h"
 #include "TonemappingPass.h"
+#include "VignettePass.h"
 #include "Kernel/Time/Time.h"
 #include "Renderer/ConstantBuffer.h"
 #include "Renderer/RenderSettings.h"
@@ -18,6 +19,7 @@ namespace LevEngine
         m_LuminanceAdaptationPass = CreateRef<LuminanceAdaptationPass>();
         m_TonemappingPass = CreateRef<TonemappingPass>(mainRenderTarget, colorTexture);
         m_BloomPass = CreateRef<BloomPass>(colorTexture);
+        m_VignettePass = CreateRef<VignettePass>(mainRenderTarget);
 
         m_ConstantBuffer = ConstantBuffer::Create(sizeof GPUConstants, 8);
 
@@ -34,6 +36,7 @@ namespace LevEngine
     {
         m_TonemappingPass->SetViewport(viewport);
         m_BloomPass->SetViewport(viewport);
+        m_VignettePass->SetViewport(viewport);
     }
 
     bool PostProcessingPass::Begin(entt::registry& registry, RenderParams& params)
@@ -47,6 +50,11 @@ namespace LevEngine
             RenderSettings::IsEyeAdaptationEnabled ? RenderSettings::KeyValue : RenderSettings::ManualExposure,
             RenderSettings::IsEyeAdaptationEnabled ? RenderSettings::MinExposure : 0,
             RenderSettings::IsEyeAdaptationEnabled ? RenderSettings::MaxExposure : RenderSettings::ManualExposure,
+            RenderSettings::VignetteColor,
+            RenderSettings::VignetteCenter,
+            RenderSettings::VignetteRadius,
+            RenderSettings::VignetteSoftness,
+            RenderSettings::VignetteIntensity,
         };
         
         m_ConstantBuffer->SetData(&data);
@@ -85,7 +93,9 @@ namespace LevEngine
         m_TonemappingPass->SetBloomMap(bloomMap);
         
         m_TonemappingPass->Execute(registry, params);
-
+        
+        m_VignettePass->Execute(registry, params);
+        
         if (RenderSettings::IsEyeAdaptationEnabled)
         {
             m_LuminanceAdaptationPass->SwapCurrentLuminanceMap();
