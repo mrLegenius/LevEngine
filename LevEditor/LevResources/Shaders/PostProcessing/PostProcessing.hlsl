@@ -4,10 +4,19 @@ struct Constants
     float BloomMagnitude;
     float BloomBlurSigma;
     float Tau;
+
     float TimeDelta;
     float KeyValue;
 	float MinExposure;
 	float MaxExposure;
+
+    float4 VignetteColor;
+
+    float2 VignetteCenter;
+    float VignetteRadius;
+    float VignetteSoftness;
+            
+    float VignetteIntensity;
 };
 
 cbuffer ScreenToViewParams : register(b8)

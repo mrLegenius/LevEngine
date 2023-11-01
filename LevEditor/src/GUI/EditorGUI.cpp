@@ -208,6 +208,11 @@ namespace LevEngine::Editor
 			setter(value);
 	}
 
+	void EditorGUI::DrawColor3Control(const String& label, Color& value)
+	{
+		ImGui::ColorEdit3(label.c_str(), value.Raw());
+	}
+
 	bool EditorGUI::DrawCheckBox(const char* label, const Func<bool>& getter,
 	                             const Action<bool>& setter)
 	{

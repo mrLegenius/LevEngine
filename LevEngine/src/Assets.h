@@ -198,6 +198,14 @@ struct ShaderAssets
 		return shader;
 	}
 
+	static auto Vignette()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Vignette.hlsl"));
+		return shader;
+	}
+
 	static auto Bloom()
 	{
 		LEV_PROFILE_FUNCTION();

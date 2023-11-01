@@ -178,7 +178,8 @@ namespace LevEngine
 	{
 		if (const auto data = node)
 		{
-			value = data.as<float>();
+			value = data.as<T>();
+			
 			return true;
 		}
 

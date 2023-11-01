@@ -25,6 +25,8 @@ namespace LevEngine::Editor
 		static void DrawIntControl(const String& label, const Func<int>& getter, const Action<int>& setter,
 			int speed = 1, int min = 0, int max = 0);
 
+		static void DrawColor3Control(const String& label, Color& value);
+
 		static void DrawColor3Control(const String& label, const Func<Color>& getter,
 									  const Action<Color>& setter);
 		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });

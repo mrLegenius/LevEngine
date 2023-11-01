@@ -1,4 +1,5 @@
 #pragma once
+#include "Math/Color.h"
 #include "Renderer/RenderPass.h"
 
 namespace LevEngine
@@ -12,6 +13,7 @@ namespace LevEngine
     class LuminancePass;
     class TonemappingPass;
     class BloomPass;
+    class VignettePass;
     
     class PostProcessingPass final : public RenderPass
     {
@@ -32,16 +34,26 @@ namespace LevEngine
             float BloomMagnitude;
             float BloomBlurSigma;
             float Tau;
+            
             float TimeDelta;
             float KeyValue;
             float MinExposure;
             float MaxExposure;
+
+            Color VignetteColor;
+
+            Vector2 VignetteCenter;
+            float VignetteRadius;
+            float VignetteSoftness;
+            
+            float VignetteIntensity;
         };
         
         Ref<LuminancePass> m_LuminancePass;
         Ref<LuminanceAdaptationPass> m_LuminanceAdaptationPass;
         Ref<TonemappingPass> m_TonemappingPass;
         Ref<BloomPass> m_BloomPass;
+        Ref<VignettePass> m_VignettePass;
 
         Ref<ConstantBuffer> m_ConstantBuffer;
         Ref<SamplerState> m_LinearSampler;

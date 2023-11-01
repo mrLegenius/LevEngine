@@ -56,6 +56,13 @@ struct RenderSettings
 	inline static float MinExposure = 0.5f;
 	inline static float MaxExposure = 3.00f;
 	inline static float ManualExposure = 1.00f;
+	
+	inline static bool IsVignetteEnabled = true;
+	inline static float VignetteRadius = 0.5f;
+	inline static float VignetteSoftness = 0.5f;
+	inline static float VignetteIntensity = 0.7f;
+	inline static Vector2 VignetteCenter = {0.5f, 0.5f};
+	inline static Color VignetteColor;
 };
 
 struct RenderDebugSettings
