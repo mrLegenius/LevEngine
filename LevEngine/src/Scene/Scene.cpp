@@ -1,7 +1,7 @@
 #include "levpch.h"
 #include "Scene.h"
 
-#include "Audio/LevFmod.h"
+#include "Audio/Audio.h"
 #include "Physics/Physics.h"
 #include "Renderer/Renderer.h"
 
@@ -15,33 +15,17 @@ namespace LevEngine
     constexpr bool k_IsMultiThreading = false;
     constexpr int k_SleepMicroSeconds = 10;
 
-Scene::Scene()
-{
-    m_Fmod = CreateRef<LevFmod>();
-    if (!m_Fmod->Init(MaxFmodChannelCount,
-        FMOD_STUDIO_INIT_LIVEUPDATE,
-        FMOD_INIT_VOL0_BECOMES_VIRTUAL | FMOD_INIT_3D_RIGHTHANDED))
-    {
-        m_Fmod = nullptr;
-    }
-}
-
 void Scene::CleanupScene()
 {
     LEV_PROFILE_FUNCTION();
 
     m_Registry.clear();
-    m_Fmod = nullptr;
+    Audio::Get().ReleaseAll();
 }
 
 entt::registry& Scene::GetRegistry()
 {
     return m_Registry;
-}
-
-Ref<LevFmod> Scene::GetAudioSubsystem()
-{
-    return m_Fmod;
 }
 
 void Scene::RequestUpdates(const float deltaTime)
@@ -62,11 +46,9 @@ void Scene::OnUpdate(const float deltaTime)
     if constexpr (k_IsMultiThreading)
     {
         m_IsUpdateDone = false;
-        m_IsAudioUpdateDone = false;
         vgjs::schedule([this, deltaTime]() { RequestUpdates(deltaTime); });
-        vgjs::schedule([this]() { RequestAudioUpdate(); });
 
-        while (!m_IsUpdateDone && !m_IsAudioUpdateDone)
+        while (!m_IsUpdateDone)
         {
             std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
         }
@@ -77,8 +59,6 @@ void Scene::OnUpdate(const float deltaTime)
         {
             system->Update(deltaTime, m_Registry);
         }
-
-        AudioUpdate();
     }
 }
 
@@ -180,17 +160,6 @@ void Scene::RequestEventsUpdate(const float deltaTime)
     }
 
     vgjs::continuation([this]() {m_IsEventUpdateDone = true; });
-}
-
-void Scene::RequestAudioUpdate()
-{
-    AudioUpdate();
-    vgjs::continuation([this]() {m_IsAudioUpdateDone = true; });
-}
-
-void Scene::AudioUpdate()
-{
-    m_Fmod->Update();
 }
 
 void Scene::OnLateUpdate(const float deltaTime)

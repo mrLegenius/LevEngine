@@ -11,6 +11,7 @@
 #include "../Input/Input.h"
 #include "../Events/Event.h"
 #include "Assets/AssetDatabase.h"
+#include "Audio/Audio.h"
 #include "Math/Random.h"
 #include "Time/Time.h"
 #include "Time/TimelineRunner.h"
@@ -32,6 +33,8 @@ Application::Application(const ApplicationSpecification& specification)
 
 	Renderer::Init();
 	Random::Init();
+	Audio::Init(Audio::MaxAudioChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE,
+		FMOD_INIT_VOL0_BECOMES_VIRTUAL | FMOD_INIT_3D_RIGHTHANDED);
 
 	m_ImGuiLayer = new ImGuiLayer;
 	PushOverlay(m_ImGuiLayer);
@@ -44,6 +47,7 @@ Application::Application(const ApplicationSpecification& specification)
 Application::~Application()
 {
 	Renderer::Shutdown();
+	Audio::Shutdown();
 }
 
 void Application::Run()

@@ -467,7 +467,7 @@
     <ClInclude Include="src\Events\KeyEvent.h" />
     <ClInclude Include="src\Events\MouseEvent.h" />
     <ClInclude Include="src\GUI\GUI.h" />
-    <ClInclude Include="src\Audio\LevFmod.h" />
+    <ClInclude Include="src\Audio\Audio.h" />
     <ClInclude Include="src\GUI\ImGuiLayer.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Input\KeyCodes.h" />
@@ -837,7 +837,7 @@
     <ClCompile Include="src\Assets\TextureAsset.cpp" />
     <ClCompile Include="src\DataTypes\EASTL.cpp" />
     <ClCompile Include="src\GUI\GUI.cpp" />
-    <ClCompile Include="src\Audio\LevFmod.cpp" />
+    <ClCompile Include="src\Audio\Audio.cpp" />
     <ClCompile Include="src\GUI\ImGuiBuild.cpp" />
     <ClCompile Include="src\GUI\ImGuiLayer.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />

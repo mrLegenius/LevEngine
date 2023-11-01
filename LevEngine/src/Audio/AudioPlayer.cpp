@@ -1,7 +1,7 @@
 #include "levpch.h"
 #include "AudioPlayer.h"
 
-#include "Audio/LevFmod.h"
+#include "Audio/Audio.h"
 #include "Assets/AudioBankAsset.h"
 #include "Scene/Components/Audio/AudioSource.h"
 #include "Scene/SceneManager.h"
@@ -10,21 +10,19 @@ namespace LevEngine
 {
     AudioPlayer::AudioPlayer()
     {
-        m_Fmod = SceneManager::GetActiveScene()->GetAudioSubsystem();
         m_EventHandle = 0;
     }
 
     AudioPlayer::~AudioPlayer()
     {
         ReleaseSound();
-        m_Fmod = nullptr;
     }
 
     void AudioPlayer::ReleaseSound()
     {
         if (m_EventHandle != 0)
         {
-            m_Fmod->ReleaseOneEvent(m_EventHandle);
+            Audio::Get().ReleaseOneEvent(m_EventHandle);
             m_EventHandle = 0;
         }
     }
@@ -41,24 +39,24 @@ namespace LevEngine
 
             String bankPath = ToString(m_AudioBank->GetPath());
 
-            if (!m_Fmod->IsBankLoaded(bankPath) 
-                && !m_Fmod->IsBankLoading(bankPath))
+            if (!Audio::Get().IsBankLoaded(bankPath)
+                && !Audio::Get().IsBankLoading(bankPath))
             {
                 LoadBank(bankPath);
             }
 
             if (m_IsOneShot)
             {
-                m_Fmod->PlayOneShot(m_EventName, audioSourceEntity);
+                Audio::Get().PlayOneShot(m_EventName, audioSourceEntity);
                 audioSourceEntity.RemoveComponent<AudioSourceComponent>();
                 return;
             }
 
-            m_EventHandle = m_Fmod->CreateSound(m_EventName, audioSourceEntity, true);
+            m_EventHandle = Audio::Get().CreateSound(m_EventName, audioSourceEntity, true);
         }
         else
         {
-            m_Fmod->PlaySound(m_EventHandle);
+            Audio::Get().PlaySound(m_EventHandle);
         }
     }
 
@@ -70,7 +68,7 @@ namespace LevEngine
             return;
         }
 
-        m_Fmod->SetPause(m_EventHandle, isPaused);
+        Audio::Get().SetPause(m_EventHandle, isPaused);
     }
 
     void AudioPlayer::Stop()
@@ -81,7 +79,7 @@ namespace LevEngine
             return;
         }
 
-        m_Fmod->StopSound(m_EventHandle);
+        Audio::Get().StopSound(m_EventHandle);
     }
 
 #pragma region Getters
@@ -131,12 +129,12 @@ namespace LevEngine
 
     void AudioPlayer::LoadBank(String& bankPath)
     {
-        m_Fmod->LoadBank(bankPath);
+        Audio::Get().LoadBank(bankPath);
 
         int index = bankPath.find('.');
         String bankFilePath = bankPath.left(index);
         String bankStringsPath = bankFilePath + ".strings.bank";
-        m_Fmod->LoadBank(bankStringsPath);
+        Audio::Get().LoadBank(bankStringsPath);
     }
 }
 

@@ -7,39 +7,39 @@
 #include "DataTypes/Vector.h"
 #include "Scene/Entity.h"
 #include <source_location>
+#include "Scene/Components/Transform/Transform.h"
+
+namespace LevEngine
+{
+    
+}
 
 namespace LevEngine
 {
     struct AudioListenerComponent;
-}
-
-namespace DirectX
-{
-    namespace SimpleMath
-    {
-        struct Vector3;
-    }
-}
-
-namespace LevEngine
-{
     struct Transform;
-}
 
-namespace LevEngine
-{
-    class LevFmod final
+    class Audio final
     {
     public:
+        static const int MaxAudioChannelCount = 1024;
+
         struct EventInfo {
             // Entity to which this event is attached
             Entity entity = Entity();
         };
         
-        LevFmod();
-        ~LevFmod();
+        Audio();
+        ~Audio();
     
-        bool Init(int numOfChannels, int studioFlags, int flags) const;
+        static bool Init(int numOfChannels, int studioFlags, int flags);
+        static void Shutdown();
+        static Audio& Get() 
+        { 
+            return *s_Instance;
+        }
+
+
         void Update();
 
 
@@ -108,7 +108,7 @@ namespace LevEngine
 
         /* Event 3D attributes */
         FMOD_3D_ATTRIBUTES Get3DAttributes(FMOD_VECTOR pos, FMOD_VECTOR up, FMOD_VECTOR forward, FMOD_VECTOR vel);
-        FMOD_VECTOR ToFmodVector(DirectX::SimpleMath::Vector3 vec);
+        FMOD_VECTOR ToFmodVector(Vector3 vec);
         FMOD_3D_ATTRIBUTES Get3DAttributes(const Transform& transform);
         void UpdateInstance3DAttributes(FMOD::Studio::EventInstance* i, const Entity entity);
 
@@ -130,7 +130,10 @@ namespace LevEngine
             }
             return 1;
         }
+
         
+        static Audio* s_Instance;
+
         FMOD::Studio::System *m_System;
 
         UnorderedMap<String, FMOD::Studio::EventDescription *> m_EventDescriptions;

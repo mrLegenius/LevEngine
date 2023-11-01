@@ -3,7 +3,7 @@
 
 namespace LevEngine
 {
-	class LevFmod;
+	class Audio;
 	class AudioBankAsset;
 
 	class AudioPlayer
@@ -31,7 +31,6 @@ namespace LevEngine
 	private:
 		void LoadBank(String& bankPath);
 
-		Ref<LevFmod> m_Fmod;
 		intptr_t m_EventHandle;
 
 		Ref<AudioBankAsset> m_AudioBank;

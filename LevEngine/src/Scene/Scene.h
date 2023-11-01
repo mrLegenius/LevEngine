@@ -11,12 +11,12 @@
 #include "Systems/EventSystem.h"
 namespace LevEngine
 {
-class LevFmod;
+class Audio;
 class Entity;
 class Scene
 {
 public:
-	Scene();
+	Scene() = default;
 
 	void CleanupScene();
 
@@ -92,8 +92,6 @@ public:
 
 	entt::registry& GetRegistry();
 
-	Ref<LevFmod> GetAudioSubsystem();
-
 private:
 	void RequestUpdates(float deltaTime);
 
@@ -116,8 +114,5 @@ private:
 	bool m_IsPhysicsDone = true;
 	bool m_IsRenderDone = true;
 	bool m_IsAudioUpdateDone = true;
-
-	const int MaxFmodChannelCount = 1024;
-	Ref<LevFmod> m_Fmod;
 };
 }

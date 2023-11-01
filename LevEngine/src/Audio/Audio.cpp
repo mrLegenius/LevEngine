@@ -1,48 +1,59 @@
 ﻿#include "levpch.h"
-#include "LevFmod.h"
+#include "Audio.h"
 
 #include "fmod_studio.hpp"
 #include "Scene/Components/Audio/AudioListener.h"
-#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
-    LevFmod::LevFmod()
+    Audio* Audio::s_Instance = nullptr;
+
+    Audio::Audio()
     {
         m_System = nullptr;
         CheckErrors(FMOD::Studio::System::create(&m_System));
     }
 
-    LevFmod::~LevFmod()
+    Audio::~Audio()
     {
         ReleaseAll();
         CheckErrors(m_System->release());
     }
 
-    bool LevFmod::Init(int numOfChannels, int studioFlags, int flags) const
+    bool Audio::Init(int numOfChannels, int studioFlags, int flags)
     {
+        s_Instance = new Audio();
+
         // initialize FMOD Studio and FMOD Core System with provided flags
-        if (CheckErrors(m_System->initialize(numOfChannels, studioFlags, flags, nullptr))) 
+        if (s_Instance->CheckErrors(s_Instance->m_System->initialize(numOfChannels, studioFlags, flags, nullptr)))
         {
-            Log::Info("FMOD Sound System: Successfully initialized");
+            Log::CoreInfo("FMOD Sound System: Successfully initialized");
 
             if (studioFlags & FMOD_STUDIO_INIT_LIVEUPDATE)
             {
-                Log::Info("FMOD Sound System: Live update enabled!");
+                Log::CoreInfo("FMOD Sound System: Live update enabled!");
             }
             
             return true;
         }
         else
         {
-            Log::Error("FMOD Sound System: Failed to initialize");
+            Log::CoreError("FMOD Sound System: Failed to initialize");
         }
 
         AudioListenerComponent unused;
         return false;
     }
 
-    void LevFmod::Update()
+    void Audio::Shutdown()
+    {
+        if (s_Instance != nullptr)
+        {
+            delete s_Instance;
+        }
+    }
+
+    void Audio::Update()
     {
         for (auto iterator = m_Events.begin(); iterator != m_Events.end(); iterator++) {
             FMOD::Studio::EventInstance *eventInstance = iterator->second;
@@ -73,26 +84,26 @@ namespace LevEngine
     }
 
 #pragma region Audio Listeners
-    void LevFmod::AddListener(AudioListenerComponent* listenerComponent)
+    void Audio::AddListener(AudioListenerComponent* listenerComponent)
     {
         if (m_Listeners.size() == FMOD_MAX_LISTENERS)
         {
-            Log::Warning("FMOD Sound System: Could not add new listener. System already at max listeners.");
+            Log::CoreWarning("FMOD Sound System: Could not add new listener. System already at max listeners.");
             return;
         }
 
         m_Listeners.emplace_back(listenerComponent);
         CheckErrors(m_System->setNumListeners(m_Listeners.size()));
-        Log::Info("FMOD Sound System: Added new listener. Current listener count: {}.", m_Listeners.size());
+        Log::CoreInfo("FMOD Sound System: Added new listener. Current listener count: {}.", m_Listeners.size());
     }
 
-    void LevFmod::RemoveListener(AudioListenerComponent* listenerComponent)
+    void Audio::RemoveListener(AudioListenerComponent* listenerComponent)
     {
         auto iterator = eastl::find(m_Listeners.begin(), m_Listeners.end(), listenerComponent);
 
         if (iterator == m_Listeners.end())
         {
-            Log::Warning("FMOD Sound System: Tried to remove an unknown listener.");
+            Log::CoreWarning("FMOD Sound System: Tried to remove an unknown listener.");
         }
 
         int listenerIdx = iterator - m_Listeners.begin();
@@ -102,17 +113,17 @@ namespace LevEngine
         
         // Minimum listener count in FMOD is 1. Setting count to 0 will return an error code.
         CheckErrors(m_System->setNumListeners(newListenersCount == 0 ? 1 : newListenersCount));
-        Log::Info("FMOD Sound System: Removed a listener with index {}. Current listener count: {}.",
+        Log::CoreInfo("FMOD Sound System: Removed a listener with index {}. Current listener count: {}.",
             listenerIdx, m_Listeners.size());
     }
 
-    void LevFmod::SetListenerAttributes()
+    void Audio::SetListenerAttributes()
     {
         if (m_Listeners.empty()) 
         {
             if (m_ListenerWarning) 
             {
-                Log::Error("FMOD Sound System: No listeners are set!");
+                Log::CoreError("FMOD Sound System: No listeners are set!");
                 m_ListenerWarning = false;
             }
             return;
@@ -139,7 +150,7 @@ namespace LevEngine
 #pragma endregion
 
 #pragma region One-Shot Sounds
-    void LevFmod::PlayOneShot(const String& eventName, const Entity entity)
+    void Audio::PlayOneShot(const String& eventName, const Entity entity)
     {
         String prefixedEventName = GetPrefixedEventName(eventName);
 
@@ -158,7 +169,7 @@ namespace LevEngine
 #pragma endregion
 
 #pragma region Non-One-Shot Sounds
-    intptr_t LevFmod::CreateSound(const String& eventName, Entity entity, bool playOnCreate)
+    intptr_t Audio::CreateSound(const String& eventName, Entity entity, bool playOnCreate)
     {
         String prefixedEventName = GetPrefixedEventName(eventName);
 
@@ -183,7 +194,7 @@ namespace LevEngine
         return 0;
     }
 
-    void LevFmod::PlaySound(intptr_t instanceHandle)
+    void Audio::PlaySound(intptr_t instanceHandle)
     {
         auto iterator = m_Events.find(instanceHandle);
 
@@ -193,11 +204,11 @@ namespace LevEngine
         }
         else
         {
-            Log::Warning("Attempted to play a sound using an invalid handle");
+            Log::CoreWarning("Attempted to play a sound using an invalid handle");
         }
     }
 
-    void LevFmod::StopSound(intptr_t instanceHandle, bool forceImmediateStop)
+    void Audio::StopSound(intptr_t instanceHandle, bool forceImmediateStop)
     {
         auto iterator = m_Events.find(instanceHandle);
 
@@ -207,11 +218,11 @@ namespace LevEngine
         }
         else
         {
-            Log::Warning("Attempted to stop a sound using an invalid handle");
+            Log::CoreWarning("Attempted to stop a sound using an invalid handle");
         }
     }
 
-    void LevFmod::SetPause(intptr_t instanceHandle, bool isPaused)
+    void Audio::SetPause(intptr_t instanceHandle, bool isPaused)
     {
         auto iterator = m_Events.find(instanceHandle);
 
@@ -221,17 +232,17 @@ namespace LevEngine
         }
         else
         {
-            Log::Warning("Attempted to {} a sound using an invalid handle", isPaused ? "pause" : "unpause");
+            Log::CoreWarning("Attempted to {} a sound using an invalid handle", isPaused ? "pause" : "unpause");
         }
     }
 
-    bool LevFmod::IsPlaying(intptr_t instanceHandle)
+    bool Audio::IsPlaying(intptr_t instanceHandle)
     {
         auto iterator = m_Events.find(instanceHandle);
 
         if (iterator == m_Events.end())
         {
-            Log::Warning("Attempted to check IsPlaying status using an invalid handle");
+            Log::CoreWarning("Attempted to check IsPlaying status using an invalid handle");
             return false;
         }
 
@@ -241,13 +252,13 @@ namespace LevEngine
         return !isPaused && GetPlaybackState(eventInstance) == FMOD_STUDIO_PLAYBACK_PLAYING;
     }
 
-    bool LevFmod::IsStartingPlaying(intptr_t instanceHandle)
+    bool Audio::IsStartingPlaying(intptr_t instanceHandle)
     {
         auto iterator = m_Events.find(instanceHandle);
 
         if (iterator == m_Events.end())
         {
-            Log::Warning("Attempted to check IsStartingPlaying status using an invalid handle");
+            Log::CoreWarning("Attempted to check IsStartingPlaying status using an invalid handle");
             return false;
         }
 
@@ -257,7 +268,7 @@ namespace LevEngine
         return !isPaused && GetPlaybackState(eventInstance) == FMOD_STUDIO_PLAYBACK_STARTING;
     }
 
-    FMOD_STUDIO_PLAYBACK_STATE LevFmod::GetPlaybackState(FMOD::Studio::EventInstance* eventInstance)
+    FMOD_STUDIO_PLAYBACK_STATE Audio::GetPlaybackState(FMOD::Studio::EventInstance* eventInstance)
     {
         if (eventInstance == nullptr)
         {
@@ -270,7 +281,7 @@ namespace LevEngine
     }
 #pragma endregion
 
-    LevFmod::EventInfo* LevFmod::GetEventInfo(FMOD::Studio::EventInstance* eventInstance)
+    Audio::EventInfo* Audio::GetEventInfo(FMOD::Studio::EventInstance* eventInstance)
     {
         EventInfo* eventInfo;
         eventInstance->getUserData((void**)&eventInfo);
@@ -278,7 +289,7 @@ namespace LevEngine
     }
 
 #pragma region Banks
-    void LevFmod::LoadBank(const String& pathToBank, bool preloadSampleData)
+    void Audio::LoadBank(const String& pathToBank, bool preloadSampleData)
     {
         if (IsBankRegistered(pathToBank))
         {
@@ -299,7 +310,7 @@ namespace LevEngine
         return;
     }
 
-    void LevFmod::UnloadBank(const String& pathToBank)
+    void Audio::UnloadBank(const String& pathToBank)
     {
         if (!IsBankRegistered(pathToBank))
         {
@@ -314,7 +325,7 @@ namespace LevEngine
         }
     }
 
-    void LevFmod::UnloadAllBanks()
+    void Audio::UnloadAllBanks()
     {
         for (auto keyValuePair : m_Banks)
         {
@@ -323,7 +334,7 @@ namespace LevEngine
         m_Banks.clear();
     }
 
-    bool LevFmod::IsBankLoaded(const String& pathToBank)
+    bool Audio::IsBankLoaded(const String& pathToBank)
     {
         if (!IsBankRegistered(pathToBank))
         {
@@ -339,7 +350,7 @@ namespace LevEngine
         }
     }
 
-    bool LevFmod::IsBankLoading(const String& pathToBank)
+    bool Audio::IsBankLoading(const String& pathToBank)
     {
         if (!IsBankRegistered(pathToBank))
         {
@@ -355,14 +366,14 @@ namespace LevEngine
         }
     }
 
-    bool LevFmod::IsBankRegistered(const String pathToBank)
+    bool Audio::IsBankRegistered(const String pathToBank)
     {
         return m_Banks.count(pathToBank);
     }
 #pragma endregion
 
 #pragma region 3DAttributes
-    auto LevFmod::Get3DAttributes(const FMOD_VECTOR pos,
+    auto Audio::Get3DAttributes(const FMOD_VECTOR pos,
         const FMOD_VECTOR up, FMOD_VECTOR forward, const FMOD_VECTOR vel) -> FMOD_3D_ATTRIBUTES
     {
         FMOD_3D_ATTRIBUTES f3d;
@@ -373,7 +384,7 @@ namespace LevEngine
         return f3d;
     }
 
-    FMOD_VECTOR LevFmod::ToFmodVector(const DirectX::SimpleMath::Vector3 vec)
+    FMOD_VECTOR Audio::ToFmodVector(const Vector3 vec)
     {
         FMOD_VECTOR fv;
         fv.x = vec.x;
@@ -382,7 +393,7 @@ namespace LevEngine
         return fv;
     }
 
-    FMOD_3D_ATTRIBUTES LevFmod::Get3DAttributes(const Transform& transform)
+    FMOD_3D_ATTRIBUTES Audio::Get3DAttributes(const Transform& transform)
     {
         const Vector3 pos = transform.GetWorldPosition() / m_DistanceScale;
         const Vector3 up = transform.GetUpDirection();
@@ -393,7 +404,7 @@ namespace LevEngine
             ToFmodVector(forward), ToFmodVector(vel));
     }
 
-    void LevFmod::UpdateInstance3DAttributes(FMOD::Studio::EventInstance* instance, const Entity entity) {
+    void Audio::UpdateInstance3DAttributes(FMOD::Studio::EventInstance* instance, const Entity entity) {
         // try to set 3D attributes
         if (instance && entity && entity.HasComponent<Transform>())
         {
@@ -406,17 +417,17 @@ namespace LevEngine
 #pragma endregion
 
 #pragma region Parameters
-    float LevFmod::GetGlobalParameterByName(const String& parameterName) {
+    float Audio::GetGlobalParameterByName(const String& parameterName) {
         float value;
         CheckErrors(m_System->getParameterByName(parameterName.c_str(), &value));
         return value;
     }
 
-    void LevFmod::SetGlobalParameterByName(const String& parameterName, float value) {
+    void Audio::SetGlobalParameterByName(const String& parameterName, float value) {
         CheckErrors(m_System->setParameterByName(parameterName.c_str(), value));
     }
 
-    float LevFmod::GetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2) {
+    float Audio::GetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2) {
         FMOD_STUDIO_PARAMETER_ID id;
         id.data1 = idHalf1;
         id.data2 = idHalf2;
@@ -425,14 +436,14 @@ namespace LevEngine
         return value;
     }
 
-    void LevFmod::SetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2, float value) {
+    void Audio::SetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2, float value) {
         FMOD_STUDIO_PARAMETER_ID id;
         id.data1 = idHalf1;
         id.data2 = idHalf2;
         CheckErrors(m_System->setParameterByID(id, value));
     }
 
-    float LevFmod::GetEventParameterByName(intptr_t instanceHandle, const String& parameterName) {
+    float Audio::GetEventParameterByName(intptr_t instanceHandle, const String& parameterName) {
         auto iterator = m_Events.find(instanceHandle);
 
         if (iterator != m_Events.end())
@@ -447,7 +458,7 @@ namespace LevEngine
         }
     }
 
-    void LevFmod::SetEventParameterByName(intptr_t instanceHandle, const String& parameterName, float value) {
+    void Audio::SetEventParameterByName(intptr_t instanceHandle, const String& parameterName, float value) {
         auto iterator = m_Events.find(instanceHandle);
 
         if (iterator != m_Events.end())
@@ -456,7 +467,7 @@ namespace LevEngine
         }
     }
 
-    float LevFmod::GetEventParameterByID(intptr_t instanceHandle, unsigned int idHalf1, unsigned int idHalf2) {
+    float Audio::GetEventParameterByID(intptr_t instanceHandle, unsigned int idHalf1, unsigned int idHalf2) {
         auto iterator = m_Events.find(instanceHandle);
 
         if (iterator != m_Events.end())
@@ -474,7 +485,7 @@ namespace LevEngine
         }
     }
 
-    void LevFmod::SetEventParameterByID(intptr_t instanceHandle, unsigned int idHalf1, unsigned int idHalf2, float value) {
+    void Audio::SetEventParameterByID(intptr_t instanceHandle, unsigned int idHalf1, unsigned int idHalf2, float value) {
         auto iterator = m_Events.find(instanceHandle);
 
         if (iterator != m_Events.end())
@@ -488,7 +499,7 @@ namespace LevEngine
 #pragma endregion
 
 #pragma region EventPlayback
-    void LevFmod::StopEventInstance(FMOD::Studio::EventInstance* eventInstance, bool forceImmediateStop)
+    void Audio::StopEventInstance(FMOD::Studio::EventInstance* eventInstance, bool forceImmediateStop)
     {
         FMOD_STUDIO_PLAYBACK_STATE state = GetPlaybackState(eventInstance);
 
@@ -503,7 +514,7 @@ namespace LevEngine
 #pragma endregion
     
 #pragma region Event Lifetime
-    FMOD::Studio::EventInstance* LevFmod::CreateInstance(String eventPath, bool isOneShot, Entity entity)
+    FMOD::Studio::EventInstance* Audio::CreateInstance(String eventPath, bool isOneShot, Entity entity)
     {
         auto iterator = m_EventDescriptions.find(eventPath);
         FMOD::Studio::EventDescription* desc = nullptr;
@@ -538,7 +549,7 @@ namespace LevEngine
         return instance;
     }
 
-    FMOD::Studio::EventInstance* LevFmod::CreateInstance(const FMOD::Studio::EventDescription* eventDesc, bool isOneShot,
+    FMOD::Studio::EventInstance* Audio::CreateInstance(const FMOD::Studio::EventDescription* eventDesc, bool isOneShot,
         Entity entity)
     {
         const auto desc = eventDesc;
@@ -556,7 +567,7 @@ namespace LevEngine
         return instance;
     }
 
-    void LevFmod::ReleaseOneEvent(intptr_t instanceHandle, bool forceImmediateStop)
+    void Audio::ReleaseOneEvent(intptr_t instanceHandle, bool forceImmediateStop)
     {
         auto iterator = m_Events.find(instanceHandle);
 
@@ -575,7 +586,7 @@ namespace LevEngine
         CheckErrors(eventInstance->release());
     }
 
-    void LevFmod::ReleaseAllEvents()
+    void Audio::ReleaseAllEvents()
     {
         for (auto keyValuePair : m_Events)
         {
@@ -590,13 +601,13 @@ namespace LevEngine
         m_EventDescriptions.clear();
     }
 
-    void LevFmod::ReleaseAll()
+    void Audio::ReleaseAll()
     {
         ReleaseAllEvents();
         UnloadAllBanks();
     }
 
-    String LevFmod::GetPrefixedEventName(const String& eventName)
+    String Audio::GetPrefixedEventName(const String& eventName)
     {
         return eventName.find("event:/") != 0
             ? String("event:/") + eventName

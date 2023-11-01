@@ -12,7 +12,8 @@ void LevEngine::AudioListenerInitSystem::Update(float deltaTime, entt::registry&
 
         if (!audioListenerComponent.IsInitialized())
         {
-            audioListenerComponent.Init();
+            auto entityWrapped = Entity(entt::handle{ registry, entity });
+            audioListenerComponent.Init(entityWrapped);
         }
     }
 }

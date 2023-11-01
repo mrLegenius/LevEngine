@@ -4,7 +4,7 @@
 
 namespace LevEngine
 {
-    class LevFmod;
+    class Audio;
 
     REGISTER_PARSE_TYPE(AudioListenerComponent);
 
@@ -14,14 +14,13 @@ namespace LevEngine
 
         static void OnComponentConstruct(entt::registry& registry, entt::entity entity);
         static void OnComponentDestroy(entt::registry& registry, entt::entity entity);
-        void Init();
+        void Init(Entity entity);
         bool IsInitialized() const;
         void ResetInit();
 
         Entity attachedToEntity;
 
     private:
-        Ref<LevFmod> m_Fmod;
         bool m_IsInited{};
     };
 }

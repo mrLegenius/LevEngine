@@ -1533,7 +1533,7 @@
     <ClInclude Include="src\Scene\Components\Audio\AudioSource.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Audio\LevFmod.h">
+    <ClInclude Include="src\Audio\Audio.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h">
@@ -1555,6 +1555,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DataTypes\Array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\PostProcessing\BloomPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\PostProcessing\LuminancePass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\PostProcessing\PostProcessingPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\PostProcessing\TonemappingPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Serializers\RenderSettingsSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2009,7 +2030,7 @@
     <ClCompile Include="src\Scene\Components\Audio\AudioSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Audio\LevFmod.cpp">
+    <ClCompile Include="src\Audio\Audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Kernel\Time\TimelineRunner.cpp">
@@ -2037,6 +2058,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\PostProcessing\BloomPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\PostProcessing\LuminancePass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\PostProcessing\PostProcessingPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\PostProcessing\TonemappingPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serializers\RenderSettingsSerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

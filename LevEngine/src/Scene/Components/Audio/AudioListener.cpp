@@ -1,7 +1,7 @@
 ﻿#include "levpch.h"
 #include "AudioListener.h"
 
-#include "Audio/LevFmod.h"
+#include "Audio/Audio.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/ComponentSerializer.h"
 
@@ -10,26 +10,26 @@ namespace LevEngine
 	void AudioListenerComponent::OnComponentConstruct(entt::registry& registry, entt::entity entity)
 	{
 		AudioListenerComponent& component = registry.get<AudioListenerComponent>(entity);
-		component.Init();
+		auto entityWrapped = Entity(entt::handle{ registry, entity });
+		component.Init(entityWrapped);
 		
 	}
 
 	void AudioListenerComponent::OnComponentDestroy(entt::registry& registry, entt::entity entity)
 	{
 		AudioListenerComponent& component = registry.get<AudioListenerComponent>(entity);
-		component.m_Fmod->RemoveListener(&component);
+		Audio::Get().RemoveListener(&component);
 	}
 
-	void AudioListenerComponent::Init()
+	void AudioListenerComponent::Init(Entity entity)
 	{
 		if (IsInitialized())
 		{
 			return;
 		}
 
-		attachedToEntity = SceneManager::GetActiveScene()->GetEntityByComponent(this);
-		m_Fmod = SceneManager::GetActiveScene()->GetAudioSubsystem();
-		m_Fmod->AddListener(this);
+		attachedToEntity = entity;
+		Audio::Get().AddListener(this);
 
 		m_IsInited = true;
 	}

@@ -31,9 +31,8 @@ namespace Sandbox
 
 		auto& scene = SceneManager::GetActiveScene();
 
-		const auto fmod = scene->GetAudioSubsystem();
-		fmod->LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
-		fmod->LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
+		Audio::Get().LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
+		Audio::Get().LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();

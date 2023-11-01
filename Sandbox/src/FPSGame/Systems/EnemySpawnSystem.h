@@ -25,7 +25,7 @@ namespace Sandbox
                 randomPosition.y = 1;
                 transform.SetWorldPosition(randomPosition);
 
-                scene->GetAudioSubsystem()->PlayOneShot("event:/EnemySpawn", enemy);
+                Audio::Get().PlayOneShot("event:/EnemySpawn", enemy);
             }
         }
     private:
