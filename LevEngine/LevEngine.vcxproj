@@ -62,7 +62,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;FMODStudio.lib;fmodstudioL_vc.lib;fmodL_vc.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

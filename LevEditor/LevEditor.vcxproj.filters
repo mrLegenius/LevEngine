@@ -72,7 +72,16 @@
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GUI\GUIUtils.h">
+    <ClInclude Include="src\GUI\EditorGUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\EditorGUI.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\ScopedGUIHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\SettingsPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -173,9 +182,6 @@
     <ClCompile Include="src\GUI\Drawers\Components\WaypointMovementComponentDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUI\GUIUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -183,6 +189,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\EditorGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\SettingsPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

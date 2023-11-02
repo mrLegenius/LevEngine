@@ -121,7 +121,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(SolutionDir)\lib</OutDir>
+    <OutDir>Bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Bin\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -162,6 +163,10 @@
       <Command>(xcopy /y /d "$(SolutionDir)$(ProjectName)\core\lib\$(Platform)\fmod*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\")
 (xcopy /y /d "$(SolutionDir)$(ProjectName)\studio\lib\$(Platform)\fmodstudio*.dll" "$(SolutionDir)$(Platform)\$(Configuration)\")</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

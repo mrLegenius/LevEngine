@@ -1578,6 +1578,9 @@
     <ClInclude Include="src\Serializers\RenderSettingsSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer\PostProcessing\VignettePass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input\Input.cpp">
@@ -2076,6 +2079,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Serializers\RenderSettingsSerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\PostProcessing\VignettePass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

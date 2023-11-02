@@ -58,7 +58,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LevEngine.lib;FMODStudio.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
@@ -161,10 +161,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DirectXTK\DirectXTK_Desktop_2022.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\FMODStudio\FMODStudio.vcxproj">
-      <Project>{d6169991-3a39-41af-9b3a-e497de7ff55c}</Project>
-      <Name>FMODStudio</Name>
     </ProjectReference>
     <ProjectReference Include="..\LevEngine\LevEngine.vcxproj">
       <Project>{3e986346-23d1-4a72-802e-9727d0a4be89}</Project>
