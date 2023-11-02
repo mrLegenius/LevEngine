@@ -15,17 +15,22 @@ namespace LevEngine
 		void ReleaseSound();
 
 		void Play(Entity audioSourceEntity = Entity());
-		void SetPaused(bool isPaused);
 		void Stop();
 
-		[[nodiscard]] Ref<AudioBankAsset>& GetAudioBankAsset();
-		[[nodiscard]] const String& GetEventName() const;
-		[[nodiscard]] bool GetPlayOnInit() const;
-		[[nodiscard]] bool GetIsOneShot() const;
 
+		bool IsPaused();
+		void SetPaused(bool isPaused);
+
+		[[nodiscard]] Ref<AudioBankAsset>& GetAudioBankAsset();
 		void SetAudioBankAsset(Ref<AudioBankAsset> audioBank);
+
+		[[nodiscard]] const String& GetEventName() const;
 		void SetEventName(String eventName);
+
+		[[nodiscard]] bool GetPlayOnInit() const;
 		void SetPlayOnInit(bool playOnInit);
+
+		[[nodiscard]] bool GetIsOneShot() const;
 		void SetIsOneShot(bool isOneShot);
 
 	private:

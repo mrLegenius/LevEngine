@@ -20,7 +20,7 @@ void Scene::CleanupScene()
     LEV_PROFILE_FUNCTION();
 
     m_Registry.clear();
-    Audio::Get().ReleaseAll();
+    Audio::ReleaseAll();
 }
 
 entt::registry& Scene::GetRegistry()

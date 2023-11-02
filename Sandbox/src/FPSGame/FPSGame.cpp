@@ -36,8 +36,8 @@ namespace Sandbox
 
 		auto& scene = SceneManager::GetActiveScene();
 
-		Audio::Get().LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
-		Audio::Get().LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
+		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
+		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
@@ -59,10 +59,10 @@ namespace Sandbox
 
 
 		auto& registry = scene->GetRegistry();
-		registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnComponentConstruct>();
-		registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnComponentConstruct>();
+		registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
+		registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
 
-		registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnComponentDestroy>();
+		registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
 
 
 		Application::Get().GetWindow().DisableCursor();

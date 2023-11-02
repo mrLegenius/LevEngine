@@ -97,6 +97,8 @@ void Application::Run()
 		
 		if (!m_Minimized)
 			Render();
+		
+		Audio::Update();
 
 		Input::Reset();
 		m_Window->Update();

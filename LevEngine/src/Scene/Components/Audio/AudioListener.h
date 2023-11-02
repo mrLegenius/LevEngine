@@ -12,13 +12,13 @@ namespace LevEngine
     {
         AudioListenerComponent() = default;
 
-        static void OnComponentConstruct(entt::registry& registry, entt::entity entity);
-        static void OnComponentDestroy(entt::registry& registry, entt::entity entity);
+        static void OnConstruct(entt::registry& registry, entt::entity entity);
+        static void OnDestroy(entt::registry& registry, entt::entity entity);
         void Init(Entity entity);
         bool IsInitialized() const;
         void ResetInit();
 
-        Entity attachedToEntity;
+        Entity AttachedToEntity;
 
     private:
         bool m_IsInited{};

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Scene/Components/TypeParseTraits.h"
-#include <entt/entt.hpp>
+#include "Scene/Entity.h"
 
 namespace LevEngine
 {
@@ -12,12 +12,12 @@ namespace LevEngine
     {
         AudioSourceComponent();
 
-        static void OnComponentConstruct(entt::registry& registry, entt::entity entity);
-        void Init();
+        static void OnConstruct(entt::registry& registry, entt::entity entity);
+        void Init(Entity entity);
         bool IsInitialized() const;
         void ResetInit();
 
-        Ref<AudioPlayer> audioPlayer;
+        Ref<AudioPlayer> Player;
 
     private:
         bool m_IsInited{};

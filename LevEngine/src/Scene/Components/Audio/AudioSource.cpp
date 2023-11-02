@@ -9,26 +9,23 @@ namespace LevEngine
 {
     AudioSourceComponent::AudioSourceComponent()
     {
-        audioPlayer = CreateRef<AudioPlayer>();
+        Player = CreateRef<AudioPlayer>();
     }
 
-    void AudioSourceComponent::OnComponentConstruct(entt::registry& registry, entt::entity entity)
+    void AudioSourceComponent::OnConstruct(entt::registry& registry, entt::entity entity)
     {
         AudioSourceComponent& component = registry.get<AudioSourceComponent>(entity);
-        component.Init();
+        auto entityWrapped = Entity(entt::handle{ registry, entity });
+        component.Init(entityWrapped);
     }
 
-    void AudioSourceComponent::Init()
+    void AudioSourceComponent::Init(Entity entity)
     {
-        if (IsInitialized())
-        {
-            return;
-        }
+        if (IsInitialized()) return;
 
         m_IsInited = true;
 
-        Entity entity = SceneManager::GetActiveScene()->GetEntityByComponent(this);
-        audioPlayer->Play(entity);
+        Player->Play(entity);
     }
 
     bool AudioSourceComponent::IsInitialized() const
@@ -48,31 +45,31 @@ namespace LevEngine
 
         void SerializeData(YAML::Emitter& out, const AudioSourceComponent& component) override
         {
-            SerializeAsset(out, "AudioBank", component.audioPlayer->GetAudioBankAsset());
-            out << YAML::Key << "AudioEventName" << YAML::Value << component.audioPlayer->GetEventName().data();
-            out << YAML::Key << "PlayOnInit" << YAML::Value << component.audioPlayer->GetPlayOnInit();
-            out << YAML::Key << "IsOneShot" << YAML::Value << component.audioPlayer->GetIsOneShot();
+            SerializeAsset(out, "AudioBank", component.Player->GetAudioBankAsset());
+            out << YAML::Key << "AudioEventName" << YAML::Value << component.Player->GetEventName().data();
+            out << YAML::Key << "PlayOnInit" << YAML::Value << component.Player->GetPlayOnInit();
+            out << YAML::Key << "IsOneShot" << YAML::Value << component.Player->GetIsOneShot();
         }
         void DeserializeData(YAML::Node& node, AudioSourceComponent& component) override
         {
-            if (node["AudioBank"])
+            if (const auto audioBankNode = node["AudioBank"])
             {
-                component.audioPlayer->SetAudioBankAsset(DeserializeAsset<AudioBankAsset>(node["AudioBank"]));
+                component.Player->SetAudioBankAsset(DeserializeAsset<AudioBankAsset>(audioBankNode));
             }
 
-            if (node["AudioEventName"])
+            if (const auto audioEventNameNode = node["AudioEventName"])
             {
-                component.audioPlayer->SetEventName(node["AudioEventName"].as<eastl::string>());
+                component.Player->SetEventName(audioEventNameNode.as<String>());
             }
 
-            if (node["PlayOnInit"])
+            if (const auto audioPlayerNode = node["PlayOnInit"])
             {
-                component.audioPlayer->SetPlayOnInit(node["PlayOnInit"].as<bool>());
+                component.Player->SetPlayOnInit(audioPlayerNode.as<bool>());
             }
 
-            if (node["IsOneShot"])
+            if (const auto isOneShotNode = node["IsOneShot"])
             {
-                component.audioPlayer->SetIsOneShot(node["IsOneShot"].as<bool>());
+                component.Player->SetIsOneShot(isOneShotNode.as<bool>());
             }
 
             component.ResetInit();

@@ -22,7 +22,7 @@ namespace LevEngine
     {
         if (m_EventHandle != 0)
         {
-            Audio::Get().ReleaseOneEvent(m_EventHandle);
+            Audio::ReleaseOneEvent(m_EventHandle);
             m_EventHandle = 0;
         }
     }
@@ -39,36 +39,25 @@ namespace LevEngine
 
             String bankPath = ToString(m_AudioBank->GetPath());
 
-            if (!Audio::Get().IsBankLoaded(bankPath)
-                && !Audio::Get().IsBankLoading(bankPath))
+            if (!Audio::IsBankLoaded(bankPath)
+                && !Audio::IsBankLoading(bankPath))
             {
                 LoadBank(bankPath);
             }
 
             if (m_IsOneShot)
             {
-                Audio::Get().PlayOneShot(m_EventName, audioSourceEntity);
+                Audio::PlayOneShot(m_EventName, audioSourceEntity);
                 audioSourceEntity.RemoveComponent<AudioSourceComponent>();
                 return;
             }
 
-            m_EventHandle = Audio::Get().CreateSound(m_EventName, audioSourceEntity, true);
+            m_EventHandle = Audio::CreateSound(m_EventName, audioSourceEntity, true);
         }
         else
         {
-            Audio::Get().PlaySound(m_EventHandle);
+            Audio::PlaySound(m_EventHandle);
         }
-    }
-
-    void AudioPlayer::SetPaused(bool isPaused)
-    {
-        if (m_IsOneShot)
-        {
-            Log::Warning("Can not pause a one shot sound.");
-            return;
-        }
-
-        Audio::Get().SetPause(m_EventHandle, isPaused);
     }
 
     void AudioPlayer::Stop()
@@ -79,36 +68,47 @@ namespace LevEngine
             return;
         }
 
-        Audio::Get().StopSound(m_EventHandle);
+        Audio::StopSound(m_EventHandle);
     }
 
-#pragma region Getters
+#pragma region Getters and Setters
+    bool AudioPlayer::IsPaused()
+    {
+        if (m_IsOneShot)
+        {
+            Log::Warning("Can not pause a one shot sound.");
+            return false;
+        }
+
+        return Audio::IsPaused(m_EventHandle);
+    }
+
+    void AudioPlayer::SetPaused(bool isPaused)
+    {
+        if (m_IsOneShot)
+        {
+            Log::Warning("Can not pause a one shot sound.");
+            return;
+        }
+
+        Audio::SetPause(m_EventHandle, isPaused);
+    }
+
+
     Ref<AudioBankAsset>& AudioPlayer::GetAudioBankAsset()
     {
         return m_AudioBank;
     }
 
-    const String& AudioPlayer::GetEventName() const
-    {
-        return m_EventName;
-    }
-
-    bool AudioPlayer::GetPlayOnInit() const
-    {
-        return m_PlayOnInit;
-    }
-
-    bool AudioPlayer::GetIsOneShot() const
-    {
-        return m_IsOneShot;
-    }
-#pragma endregion
-
-
-#pragma region Setters
     void AudioPlayer::SetAudioBankAsset(Ref<AudioBankAsset> audioBank)
     {
         m_AudioBank = audioBank;
+    }
+
+
+    const String& AudioPlayer::GetEventName() const
+    {
+        return m_EventName;
     }
 
     void AudioPlayer::SetEventName(String eventName)
@@ -116,9 +116,21 @@ namespace LevEngine
         m_EventName = eventName;
     }
 
+
+    bool AudioPlayer::GetPlayOnInit() const
+    {
+        return m_PlayOnInit;
+    }
+
     void AudioPlayer::SetPlayOnInit(bool playOnInit)
     {
         m_PlayOnInit = playOnInit;
+    }
+
+
+    bool AudioPlayer::GetIsOneShot() const
+    {
+        return m_IsOneShot;
     }
 
     void AudioPlayer::SetIsOneShot(bool isOneShot)
@@ -127,14 +139,15 @@ namespace LevEngine
     }
 #pragma endregion
 
+
     void AudioPlayer::LoadBank(String& bankPath)
     {
-        Audio::Get().LoadBank(bankPath);
+        Audio::LoadBank(bankPath);
 
         int index = bankPath.find('.');
         String bankFilePath = bankPath.left(index);
         String bankStringsPath = bankFilePath + ".strings.bank";
-        Audio::Get().LoadBank(bankStringsPath);
+        Audio::LoadBank(bankStringsPath);
     }
 }
 

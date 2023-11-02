@@ -15,7 +15,8 @@ namespace LevEngine
 
             if (!audioSourceComponent.IsInitialized())
             {
-                audioSourceComponent.Init();
+                auto entityWrapped = Entity(entt::handle{ registry, entity });
+                audioSourceComponent.Init(entityWrapped);
             }
         }
     }

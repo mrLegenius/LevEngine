@@ -606,9 +606,9 @@ namespace LevEngine::Editor
         scene->RegisterUpdateSystem<AudioListenerInitSystem>();
 
         auto& registry = scene->GetRegistry();
-        registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnComponentConstruct>();
-        registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnComponentConstruct>();
-        registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnComponentDestroy>();
+        registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
+        registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
+        registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
 
         m_Game->Focus();
         m_SceneState = SceneState::Play;

@@ -14,21 +14,21 @@ namespace LevEngine::Editor
 
         void DrawContent(AudioSourceComponent& component) override
         {
-            EditorGUI::DrawAsset<AudioBankAsset>("Audio Bank", component.audioPlayer->GetAudioBankAsset());
+            EditorGUI::DrawAsset<AudioBankAsset>("Audio Bank", component.Player->GetAudioBankAsset());
 
-            auto& eventName = component.audioPlayer->GetEventName();
+            auto& eventName = component.Player->GetEventName();
             char buffer[256] = {};
             strcpy_s(buffer, sizeof buffer, eventName.c_str());
             if (ImGui::InputText("Event name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))
             {
-                component.audioPlayer->SetEventName(String(buffer));
+                component.Player->SetEventName(String(buffer));
             }
 
-            EditorGUI::DrawCheckBox("Play On Init", BindGetter(&AudioPlayer::GetPlayOnInit, component.audioPlayer),
-                BindSetter(&AudioPlayer::SetPlayOnInit, component.audioPlayer));
+            EditorGUI::DrawCheckBox("Play On Init", BindGetter(&AudioPlayer::GetPlayOnInit, component.Player),
+                BindSetter(&AudioPlayer::SetPlayOnInit, component.Player));
 
-            EditorGUI::DrawCheckBox("Is One-Shot", BindGetter(&AudioPlayer::GetIsOneShot, component.audioPlayer),
-                BindSetter(&AudioPlayer::SetIsOneShot, component.audioPlayer));
+            EditorGUI::DrawCheckBox("Is One-Shot", BindGetter(&AudioPlayer::GetIsOneShot, component.Player),
+                BindSetter(&AudioPlayer::SetIsOneShot, component.Player));
         }
     };	
 }

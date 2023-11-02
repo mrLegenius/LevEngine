@@ -151,6 +151,25 @@ namespace LevEngine
 	}
 
 	template<class T>
+	Ref<T> DeserializeAsset(const YAML::Node& node)
+	{
+		static_assert(std::is_base_of_v<Asset, T>, "T must be Asset");
+
+		if (!node) return nullptr;
+
+		try
+		{
+			const UUID assetUUID = node.as<std::uint64_t>();
+			return AssetDatabase::GetAsset<T>(assetUUID);
+		}
+		catch (std::exception& e)
+		{
+			Log::CoreWarning("Failed to deserialize asset. {0}", e.what());
+			return nullptr;
+		}
+	}
+
+	template<class T>
 	Ref<T> DeserializeAsset(YAML::Node&& node)
 	{
 		static_assert(std::is_base_of_v<Asset, T>, "T must be Asset");
