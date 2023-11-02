@@ -39,8 +39,17 @@ namespace LevEngine
 			auto componentProps = node[GetKey()];
 			if (!componentProps) return;
 
-			auto& component = entity.GetOrAddComponent<TComponent>();
-			DeserializeData(componentProps, component);
+			if (!entity.HasComponent<TComponent>())
+			{
+				TComponent component = TComponent();
+				DeserializeData(componentProps, component);
+				entity.AddComponent<TComponent>(component);
+			}
+			else
+			{
+				auto& component = entity.GetComponent<TComponent>();
+				DeserializeData(componentProps, component);
+			}			
 		}
 
 	protected:

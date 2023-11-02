@@ -1,7 +1,9 @@
 #include "levpch.h"
 #include "SceneManager.h"
 
+#include "Audio/Audio.h"
 #include "Serializers/SceneSerializer.h"
+#include "Kernel/Application.h"
 
 namespace LevEngine
 {
@@ -14,6 +16,11 @@ namespace LevEngine
 
     bool SceneManager::LoadScene(const Path& path)
     {
+        if (m_ActiveScene != nullptr)
+        {
+            m_ActiveScene->CleanupScene();
+        }
+
         const Ref<Scene>& newScene = CreateRef<Scene>();
         SceneSerializer sceneSerializer(newScene);
 

@@ -3,6 +3,12 @@ RootEntity: 9177273757486242227
 Entities:
   - Entity: 9177273757486242227
     Tag: Missile
+    Parent: 6442536384003582315
+    Audio Source:
+      AudioBank: 12311189374319023591
+      AudioEventName: FireballFlight
+      PlayOnInit: true
+      IsOneShot: false
     Sphere Collider:
       Radius: 1
       Offset: [0, 0, 0]
@@ -15,7 +21,7 @@ Entities:
       Angular Damping: 0.800000012
       Enabled: true
     Transform:
-      Position: [0, 2.18708563, 0]
+      Position: [0, -3.19465923, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
   - Entity: 14586057746468430878

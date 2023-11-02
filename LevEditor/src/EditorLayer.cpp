@@ -10,6 +10,10 @@
 #include "Selection.h"
 #include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
+#include "Scene/Systems/Audio/AudioSourceInitSystem.h"
+#include "Scene/Systems/Audio/AudioListenerInitSystem.h"
+#include <Scene/Components/Audio/AudioSource.h>
+#include <Scene/Components/Audio/AudioListener.h>
 #include "GUI/ScopedGUIHelpers.h"
 
 namespace LevEngine::Editor
@@ -598,6 +602,13 @@ namespace LevEngine::Editor
         auto& scene = SceneManager::GetActiveScene();
         scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
         scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
+        scene->RegisterUpdateSystem<AudioSourceInitSystem>();
+        scene->RegisterUpdateSystem<AudioListenerInitSystem>();
+
+        auto& registry = scene->GetRegistry();
+        registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
+        registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
+        registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
 
         m_Game->Focus();
         m_SceneState = SceneState::Play;

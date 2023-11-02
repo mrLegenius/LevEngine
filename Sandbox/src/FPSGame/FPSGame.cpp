@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "FPSGame.h"
 
-#include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
-#include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
@@ -38,6 +36,9 @@ namespace Sandbox
 
 		auto& scene = SceneManager::GetActiveScene();
 
+		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
+		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
+
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
@@ -49,9 +50,20 @@ namespace Sandbox
 		
 		scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
 		scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
+
+		scene->RegisterUpdateSystem<AudioSourceInitSystem>();
+		scene->RegisterUpdateSystem<AudioListenerInitSystem>();
 		
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
+
+
+		auto& registry = scene->GetRegistry();
+		registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
+		registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
+
+		registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
+
 
 		Application::Get().GetWindow().DisableCursor();
 	}

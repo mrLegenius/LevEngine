@@ -33,7 +33,9 @@ namespace LevEngine
 
         // If timeline was playing in Edit mode, stop it
         if (IsPlaying())
+        {
             timeline->Stop();
+        }
 
         if (playOnInit)
         {

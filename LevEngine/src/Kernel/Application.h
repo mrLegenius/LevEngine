@@ -59,6 +59,7 @@ private:
 	bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
 	bool OnMouseScrolled(MouseScrolledEvent& e);
 
+
 	Scope<Window> m_Window;
 	bool m_IsRunning = true;
 

@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "Scene.h"
 
+#include "Audio/Audio.h"
 #include "Physics/Physics.h"
 #include "Renderer/Renderer.h"
 
@@ -13,11 +14,18 @@ namespace LevEngine
 
     constexpr bool k_IsMultiThreading = false;
     constexpr int k_SleepMicroSeconds = 10;
-Scene::~Scene()
+
+void Scene::CleanupScene()
 {
     LEV_PROFILE_FUNCTION();
 
     m_Registry.clear();
+    Audio::ReleaseAll();
+}
+
+entt::registry& Scene::GetRegistry()
+{
+    return m_Registry;
 }
 
 void Scene::RequestUpdates(const float deltaTime)

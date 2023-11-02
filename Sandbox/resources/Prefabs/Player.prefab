@@ -32,6 +32,8 @@ Entities:
         OrthographicFar: 487.200012
       Main: true
       FixedAspectRatio: false
+    AudioListener:
+      {}
     Transform:
       Position: [0, 4, 0]
       Rotation: [-0, 0, 0]
@@ -45,5 +47,5 @@ Entities:
       Cast Shadow: true
     Transform:
       Position: [0.800000012, -0.800000012, -2.5999999]
-      Rotation: [0.04363323, 0.062831834, 1.16526233e-10]
+      Rotation: [0.0436332189, 0.0628318042, 0]
       Scale: [0.5, 0.5, 0.5]

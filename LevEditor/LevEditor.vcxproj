@@ -49,7 +49,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;LEV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -57,8 +57,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LevEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
@@ -97,6 +97,7 @@
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
+    <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
     <ClInclude Include="src\GUI\EditorGUI.h" />
@@ -122,6 +123,8 @@
     <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\ColliderDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />

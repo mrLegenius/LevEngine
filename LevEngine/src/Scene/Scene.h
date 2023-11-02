@@ -11,12 +11,14 @@
 #include "Systems/EventSystem.h"
 namespace LevEngine
 {
+class Audio;
 class Entity;
 class Scene
 {
 public:
 	Scene() = default;
-	~Scene();
+
+	void CleanupScene();
 
 	void OnUpdate(float deltaTime);
 	void RequestPhysicsUpdates(float deltaTime);
@@ -28,6 +30,8 @@ public:
 	void OnRender(SceneCamera* mainCamera, const Transform* cameraTransform);
 	void RequestLateUpdate(float deltaTime);
 	void RequestEventsUpdate(float deltaTime);
+	void RequestAudioUpdate();
+	void AudioUpdate();
 
 	void OnViewportResized(uint32_t width, uint32_t height);
 
@@ -72,18 +76,21 @@ public:
 		return ConvertEntity(entity);
 	}
 
-	Entity GetEntityByUUID(UUID uuid)
+	Entity GetEntityByUUID(const UUID& uuid)
 	{
 		const auto view = m_Registry.view<IDComponent>();
+
 		for (const auto entity : view)
 		{
-			auto idComponent = view.get<IDComponent>(entity);
+			IDComponent idComponent = view.get<IDComponent>(entity);
 			if (idComponent.ID == uuid)
 				return ConvertEntity(entity);
 		}
 
 		return Entity();
 	}
+
+	entt::registry& GetRegistry();
 
 private:
 	void RequestUpdates(float deltaTime);
@@ -106,6 +113,6 @@ private:
 	bool m_IsEventUpdateDone = true;
 	bool m_IsPhysicsDone = true;
 	bool m_IsRenderDone = true;
-	
+	bool m_IsAudioUpdateDone = true;
 };
 }

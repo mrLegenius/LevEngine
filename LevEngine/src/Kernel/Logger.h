@@ -2,7 +2,7 @@
 #include "spdlog/spdlog.h"
 
 //Able to log custom classes
-#include "DataTypes/String.h"
+#include "EASTL/string.h"
 #include "spdlog/fmt/ostr.h"
 
 namespace LevEngine::Log

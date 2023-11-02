@@ -123,9 +123,20 @@
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/SkyboxRenderer/SkyboxRenderer.h"
 #include "Scene/Components/Animation/WaypointMovement.h"
+#include "Scene/Components/Audio/AudioSource.h"
+#include "Scene/Components/Audio/AudioListener.h"
 
 #include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"
+
+// /////////////////////////////////////////////////////////
+// -- Systems -------------------------------------------
+// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+#include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
+#include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
+#include "Scene/Systems/Audio/AudioSourceInitSystem.h"
+#include "Scene/Systems/Audio/AudioListenerInitSystem.h"
 
 // /////////////////////////////////////////////////////////
 // -- Physics ----------------------------------------------
@@ -150,5 +161,13 @@
 #include "Assets/MaterialAsset.h"
 #include "Assets/MeshAsset.h"
 #include "Assets/SkyboxAsset.h"
+#include "Assets/AudioBankAsset.h"
 
 #include "ResourceManager.h"
+
+// /////////////////////////////////////////////////////////
+// -- Audio -----------------------------------------------
+// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+#include "Audio/Audio.h"
+#include "Audio/AudioPlayer.h"
