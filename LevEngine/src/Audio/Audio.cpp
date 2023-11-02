@@ -445,7 +445,8 @@ namespace LevEngine
             ToFmodVector(forward), ToFmodVector(vel));
     }
 
-    void Audio::UpdateInstance3DAttributes(FMOD::Studio::EventInstance* instance, const Entity entity) {
+    void Audio::UpdateInstance3DAttributes(FMOD::Studio::EventInstance* instance, const Entity entity) 
+    {
         if (!m_IsInitialized) return;
 
         // try to set 3D attributes
@@ -460,7 +461,8 @@ namespace LevEngine
 #pragma endregion
 
 #pragma region Parameters
-    float Audio::GetGlobalParameterByName(const String& parameterName) {
+    float Audio::GetGlobalParameterByName(const String& parameterName) 
+    {
         if (!m_IsInitialized) return 0;
 
         float value;
@@ -468,13 +470,15 @@ namespace LevEngine
         return value;
     }
 
-    void Audio::SetGlobalParameterByName(const String& parameterName, float value) {
+    void Audio::SetGlobalParameterByName(const String& parameterName, float value) 
+    {
         if (!m_IsInitialized) return;
 
         CheckErrors(m_System->setParameterByName(parameterName.c_str(), value));
     }
 
-    float Audio::GetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2) {
+    float Audio::GetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2) 
+    {
         if (!m_IsInitialized) return 0;
 
         FMOD_STUDIO_PARAMETER_ID id;
@@ -485,7 +489,8 @@ namespace LevEngine
         return value;
     }
 
-    void Audio::SetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2, float value) {
+    void Audio::SetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2, float value) 
+    {
         if (!m_IsInitialized) return;
 
         FMOD_STUDIO_PARAMETER_ID id;
@@ -494,7 +499,8 @@ namespace LevEngine
         CheckErrors(m_System->setParameterByID(id, value));
     }
 
-    float Audio::GetEventParameterByName(EventInstanceHandle handle, const String& parameterName) {
+    float Audio::GetEventParameterByName(EventInstanceHandle handle, const String& parameterName) 
+    {
         if (!m_IsInitialized) return 0;
 
         auto iterator = m_Events.find(handle);
@@ -511,7 +517,8 @@ namespace LevEngine
         }
     }
 
-    void Audio::SetEventParameterByName(EventInstanceHandle handle, const String& parameterName, float value) {
+    void Audio::SetEventParameterByName(EventInstanceHandle handle, const String& parameterName, float value) 
+    {
         if (!m_IsInitialized) return;
 
         auto iterator = m_Events.find(handle);
@@ -522,7 +529,8 @@ namespace LevEngine
         }
     }
 
-    float Audio::GetEventParameterByID(EventInstanceHandle handle, unsigned int idHalf1, unsigned int idHalf2) {
+    float Audio::GetEventParameterByID(EventInstanceHandle handle, unsigned int idHalf1, unsigned int idHalf2) 
+    {
         if (!m_IsInitialized) return 0;
 
         auto iterator = m_Events.find(handle);
@@ -542,7 +550,8 @@ namespace LevEngine
         }
     }
 
-    void Audio::SetEventParameterByID(EventInstanceHandle handle, unsigned int idHalf1, unsigned int idHalf2, float value) {
+    void Audio::SetEventParameterByID(EventInstanceHandle handle, unsigned int idHalf1, unsigned int idHalf2, float value) 
+    {
         if (!m_IsInitialized) return;
 
         auto iterator = m_Events.find(handle);
