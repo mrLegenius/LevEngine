@@ -57,8 +57,12 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+
 x64/
 x86/
+!FMODStudio/studio/lib/*
+!FMODStudio/core/lib/*
+
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
