@@ -219,7 +219,7 @@ namespace LevEngine
 		RECT windowRect = { 0, 0, static_cast<LONG>(attributes.width), static_cast<LONG>(attributes.height) };
 		AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
-		constexpr auto dwStyle = WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_THICKFRAME;
+		constexpr auto dwStyle = WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_THICKFRAME | WS_MAXIMIZEBOX;
 
 		const auto posX = (GetSystemMetrics(SM_CXSCREEN) - attributes.width) / 2;
 		const auto posY = (GetSystemMetrics(SM_CYSCREEN) - attributes.height) / 2;
