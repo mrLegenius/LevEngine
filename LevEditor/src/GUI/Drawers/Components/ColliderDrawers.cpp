@@ -9,6 +9,7 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Sphere Collider"; }
+        String GetAddMenuPath() const override { return "Physics"; }
 
         void DrawContent(SphereCollider& component) override
         {
@@ -21,6 +22,7 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Box Collider"; }
+        String GetAddMenuPath() const override { return "Physics"; }
 
         void DrawContent(BoxCollider& component) override
         {

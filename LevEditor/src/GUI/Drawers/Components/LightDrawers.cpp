@@ -8,6 +8,7 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Directional Light"; }
+        String GetAddMenuPath() const override { return "Lights"; }
 
         void DrawContent(DirectionalLightComponent& component) override
         {
@@ -19,7 +20,8 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Point Light"; }
-
+        String GetAddMenuPath() const override { return "Lights"; }
+        
         void DrawContent(PointLightComponent& component) override
         {
             ImGui::ColorEdit3("Color", component.color.Raw());

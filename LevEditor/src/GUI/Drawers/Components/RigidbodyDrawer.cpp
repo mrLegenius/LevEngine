@@ -9,6 +9,7 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Rigidbody"; }
+        String GetAddMenuPath() const override { return "Physics"; }
 
         void DrawContent(Rigidbody& component) override
         {

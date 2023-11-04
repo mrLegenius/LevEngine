@@ -11,6 +11,7 @@ namespace LevEngine::Editor
     {
     protected:
         [[nodiscard]] String GetLabel() const override { return "Audio Source"; }
+        String GetAddMenuPath() const override { return "Audio"; }
 
         void DrawContent(AudioSourceComponent& component) override
         {

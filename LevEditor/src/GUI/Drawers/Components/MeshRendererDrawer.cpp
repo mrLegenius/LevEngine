@@ -9,6 +9,7 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Mesh Renderer"; }
+        String GetAddMenuPath() const override { return "Renderers"; }
 
         void DrawContent(MeshRendererComponent& component) override
         {

@@ -9,6 +9,7 @@ namespace LevEngine::Editor
 	{
 	protected:
 		[[nodiscard]] String GetLabel() const override { return "Audio Listener"; }
+		String GetAddMenuPath() const override { return "Audio"; }
 
 		void DrawContent(AudioListenerComponent& component) override { }
 	};	

@@ -9,6 +9,7 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Skybox Renderer"; }
+        String GetAddMenuPath() const override { return "Renderers"; }
 
         void DrawContent(SkyboxRendererComponent& component) override
         {

@@ -77,20 +77,36 @@ namespace LevEngine::Editor
 				entity.RemoveComponent<TComponent>();
 		}
 
-		void DrawAddComponent(Entity entity) override
+		void DrawAddComponent(const Entity entity) override
 		{
 			if (IsRemovable() && !entity.HasComponent<TComponent>())
 			{
-				if (ImGui::MenuItem(GetLabel().c_str()))
+				const auto menuPath = GetAddMenuPath();
+				if (menuPath.empty())
 				{
-					entity.AddComponent<TComponent>();
-					ImGui::CloseCurrentPopup();
+					DrawMenuItem(entity);
 				}
+				else if (ImGui::BeginMenu(menuPath.c_str()))
+				{
+					DrawMenuItem(entity);
+
+					ImGui::EndMenu();
+				}
+			}
+		}
+
+		void DrawMenuItem(const Entity entity) const
+		{
+			if (ImGui::MenuItem(GetLabel().c_str()))
+			{
+				auto _ = entity.AddComponent<TComponent>();
+				ImGui::CloseCurrentPopup();
 			}
 		}
 
 	protected:
 		[[nodiscard]] virtual String GetLabel() const = 0;
+		[[nodiscard]] virtual String GetAddMenuPath() const { return ""; }
 		[[nodiscard]] virtual bool IsRemovable() const { return true; }
 
 		virtual void DrawContent(TComponent& component) = 0;
