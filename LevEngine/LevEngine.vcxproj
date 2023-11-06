@@ -92,6 +92,24 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h" />
+    <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
+    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
+    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
@@ -616,6 +634,30 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourCrowd.cpp" />
+    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.cpp" />
+    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.cpp" />
+    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.cpp" />
+    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourPathQueue.cpp" />
+    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.cpp" />
+    <ClCompile Include="external\RecastDetour\Detour\DetourAlloc.cpp" />
+    <ClCompile Include="external\RecastDetour\Detour\DetourAssert.cpp" />
+    <ClCompile Include="external\RecastDetour\Detour\DetourCommon.cpp" />
+    <ClCompile Include="external\RecastDetour\Detour\DetourNavMesh.cpp" />
+    <ClCompile Include="external\RecastDetour\Detour\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="external\RecastDetour\Detour\DetourNavMeshQuery.cpp" />
+    <ClCompile Include="external\RecastDetour\Detour\DetourNode.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\Recast.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastAlloc.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastArea.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastAssert.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastContour.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastFilter.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastLayers.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastMesh.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastMeshDetail.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastRasterization.cpp" />
+    <ClCompile Include="external\RecastDetour\Recast\RecastRegion.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />
