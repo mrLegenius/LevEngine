@@ -110,6 +110,8 @@
     <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
     <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
     <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
@@ -1060,6 +1062,8 @@
     <ClCompile Include="external\RecastDetour\Recast\RecastMeshDetail.cpp" />
     <ClCompile Include="external\RecastDetour\Recast\RecastRasterization.cpp" />
     <ClCompile Include="external\RecastDetour\Recast\RecastRegion.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp" />
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
