@@ -110,6 +110,8 @@
     <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
     <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
     <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
@@ -658,6 +660,8 @@
     <ClCompile Include="external\RecastDetour\Recast\RecastMeshDetail.cpp" />
     <ClCompile Include="external\RecastDetour\Recast\RecastRasterization.cpp" />
     <ClCompile Include="external\RecastDetour\Recast\RecastRegion.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />
