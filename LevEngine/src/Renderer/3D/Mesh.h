@@ -29,9 +29,11 @@ public:
 	void Clear();
 
 	[[nodiscard]] uint32_t GetVerticesCount() const { return static_cast<uint32_t>(vertices.size()); }
+	[[nodiscard]] const Vector<Vector3>& GetVertices() { return vertices; }
 	[[nodiscard]] Vector3 GetVertex(const uint32_t index) const { return vertices[index]; }
 	void AddVertex(const Vector3& value) { vertices.emplace_back(value); }
 
+	[[nodiscard]] const Vector<uint32_t>& GetIndices() const { return indices; }
 	[[nodiscard]] uint32_t GetIndicesCount() const { return static_cast<uint32_t>(indices.size()); }
 	[[nodiscard]] uint32_t GetIndex(const uint32_t index) const { return indices[index]; }
 	void AddTriangle(const Vector3& value);

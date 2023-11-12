@@ -5,13 +5,6 @@
 
 namespace LevEngine::Editor
 {
-    enum SamplePartitionType : int
-    {
-        SAMPLE_PARTITION_WATERSHED = 0,
-        SAMPLE_PARTITION_MONOTONE = 1,
-        SAMPLE_PARTITION_LAYERS = 2
-    };
-    
     class NavMeshComponentDrawer final : public ComponentDrawer<NavMeshComponent, NavMeshComponentDrawer>
     {
     protected:
@@ -31,65 +24,80 @@ namespace LevEngine::Editor
             
             ImGui::Spacing();
             ImGui::Text("Rasterization");
-            ImGui::SliderFloat("Cell size", &component.m_CellSize, 0.1f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Cell height", &component.m_CellHeight, 0.1f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Cell Size", &component.CellSize, 0.1f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Cell Height", &component.CellHeight, 0.1f, 1.0f, "%.2f");
             ImGui::Spacing();
             
             ImGui::Separator();
             
             ImGui::Spacing();
             ImGui::Text("Agent");
-            ImGui::SliderFloat("Agent height", &component.m_AgentHeight, 0.1f, 5.0f, "%.1f");
-            ImGui::SliderFloat("Agent radius", &component.m_AgentRadius, 0.1f, 5.0f, "%.1f");
-            ImGui::SliderFloat("Max climb", &component.m_AgentMaxClimb, 0.1f, 5.0f, "%.1f");
-            ImGui::SliderFloat("Max slope", &component.m_AgentMaxSlope, 0.0f, 5.0f, "%1.0f");
+            ImGui::SliderFloat("Agent Height", &component.AgentHeight, 0.1f, 5.0f, "%.1f");
+            ImGui::SliderFloat("Agent Radius", &component.AgentRadius, 0.1f, 5.0f, "%.1f");
+            ImGui::SliderFloat("Max Climb", &component.AgentMaxClimb, 0.1f, 5.0f, "%.1f");
+            ImGui::SliderFloat("Max Slope", &component.AgentMaxSlope, 0.0f, 5.0f, "%1.0f");
             ImGui::Spacing();
 
             ImGui::Separator();
 
             ImGui::Spacing();
             ImGui::Text("Region");
-            ImGui::SliderFloat("Min region size", &component.m_RegionMinSize, 0.1f, 150.0f, "%1.0f");
-            ImGui::SliderFloat("Merged region size", &component.m_RegionMergeSize, 0.1f, 150.0f, "%1.0f");
+            ImGui::SliderFloat("Min Region Size", &component.RegionMinSize, 0.1f, 150.0f, "%1.0f");
+            ImGui::SliderFloat("Merged Region Size", &component.RegionMergeSize, 0.1f, 150.0f, "%1.0f");
             ImGui::Spacing();
             
             ImGui::Separator();
             
             ImGui::Spacing();
             ImGui::Text("Partitioning");
-            const auto samplePartitionType = static_cast<SamplePartitionType>(component.m_PartitionType);
+            const auto samplePartitionType = static_cast<SamplePartitionType>(component.PartitionType);
             samplePartitionTypeWatershed = samplePartitionType == SAMPLE_PARTITION_WATERSHED ? true : false;
             samplePartitionTypeMonotone = samplePartitionType == SAMPLE_PARTITION_MONOTONE ? true : false;
             samplePartitionTypeLayers = samplePartitionType == SAMPLE_PARTITION_LAYERS ? true : false;
             if (ImGui::Checkbox("Watershed", &samplePartitionTypeWatershed))
             {
-                component.m_PartitionType = SAMPLE_PARTITION_WATERSHED;
+                component.PartitionType = SAMPLE_PARTITION_WATERSHED;
             }
             if (ImGui::Checkbox("Monotone", &samplePartitionTypeMonotone))
             {
-                component.m_PartitionType = SAMPLE_PARTITION_MONOTONE;
+                component.PartitionType = SAMPLE_PARTITION_MONOTONE;
             }
             if (ImGui::Checkbox("Layers", &samplePartitionTypeLayers))
             {
-                component.m_PartitionType = SAMPLE_PARTITION_LAYERS;
+                component.PartitionType = SAMPLE_PARTITION_LAYERS;
             }
+            ImGui::Spacing();
+
+            ImGui::Separator();
+
+            ImGui::Spacing();
+            ImGui::Text("Filtering");
+            ImGui::Checkbox("Low Hanging Obstacles", &component.FilterLowHangingObstacles);
+            ImGui::Checkbox("Ledge Spans", &component.FilterLedgeSpans);
+            ImGui::Checkbox("Walkable Low Height Spans", &component.FilterWalkableLowHeightSpans);
             ImGui::Spacing();
             
             ImGui::Separator();
 
             ImGui::Spacing();
             ImGui::Text("Polygonization");
-            ImGui::SliderFloat("Max edge length", &component.m_EdgeMaxLen, 0.0f, 50.0f, "%1.0f");
-            ImGui::SliderFloat("Max edge error", &component.m_EdgeMaxError, 0.1f, 3.0f, "%.1f");
-            ImGui::SliderFloat("Verts per poly", &component.m_VertsPerPoly, 3.0f, 12.0f, "%.1f");
+            ImGui::SliderFloat("Max Edge Length", &component.EdgeMaxLen, 0.0f, 50.0f, "%1.0f");
+            ImGui::SliderFloat("Max Edge Error", &component.EdgeMaxError, 0.1f, 3.0f, "%.1f");
+            ImGui::SliderFloat("Verts Per Poly", &component.VertsPerPoly, 3.0f, 12.0f, "%.1f");
             ImGui::Spacing();
 
             ImGui::Separator();
 
             ImGui::Spacing();
             ImGui::Text("Detail mesh");
-            ImGui::SliderFloat("Sample distance", &component.m_EdgeMaxError, 0.0f, 16.0f, "%1.0f");
-            ImGui::SliderFloat("Max sample error distance", &component.m_DetailSampleMaxError, 0.0f, 16.0f, "%1.0f");
+            ImGui::SliderFloat("Sample Distance", &component.EdgeMaxError, 0.0f, 16.0f, "%1.0f");
+            ImGui::SliderFloat("Max Sample Error Distance", &component.DetailSampleMaxError, 0.0f, 16.0f, "%1.0f");
+            ImGui::Spacing();
+
+            ImGui::Separator();
+
+            ImGui::Spacing();
+            ImGui::Checkbox("Keep Intermediate Results", &component.KeepIntermediateResults);
             ImGui::Spacing();
         }
 
