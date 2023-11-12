@@ -1,33 +1,58 @@
 #pragma once
+#include "RecastDetour/Detour/DetourNavMesh.h"
 #include "RecastDetour/Recast/Recast.h"
+#include "RecastDetour/Detour/DetourNavMeshQuery.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
+    enum SamplePartitionType : int
+    {
+        SAMPLE_PARTITION_WATERSHED = 0,
+        SAMPLE_PARTITION_MONOTONE = 1,
+        SAMPLE_PARTITION_LAYERS = 2
+    };
+    
     REGISTER_PARSE_TYPE(NavMeshComponent);
 	
     struct NavMeshComponent
     {
-        NavMeshComponent() = default;
+        NavMeshComponent();
         NavMeshComponent(const NavMeshComponent&) = default;
         
         void Build();
-
+        
+        float CellSize = 0.3f;
+        float CellHeight = 0.2f;
+        float AgentHeight = 2.0f;
+        float AgentRadius = 0.6f;
+        float AgentMaxClimb = 0.9f;
+        float AgentMaxSlope = 45.0f;
+        float RegionMinSize = 8.0f;
+        float RegionMergeSize = 8.0f;
+        float EdgeMaxLen = 12.0f;
+        float EdgeMaxError = 1.3f;
+        float VertsPerPoly = 6.0f;
+        float DetailSampleDist = 8.0f;
+        float DetailSampleMaxError = 1.0f;
+        int PartitionType = 0;
+        bool KeepIntermediateResults;
+        bool FilterLowHangingObstacles;
+        bool FilterLedgeSpans;
+        bool FilterWalkableLowHeightSpans;
+    private:
+        
+        dtNavMesh* m_NavMesh;
+        dtNavMeshQuery* m_NavQuery = nullptr;
         rcConfig m_Config;
-
-        float m_CellSize = 0.3f;
-        float m_CellHeight = 0.2f;
-        float m_AgentHeight = 2.0f;
-        float m_AgentRadius = 0.6f;
-        float m_AgentMaxClimb = 0.9f;
-        float m_AgentMaxSlope = 45.0f;
-        float m_RegionMinSize = 8.0f;
-        float m_RegionMergeSize = 8.0f;
-        float m_EdgeMaxLen = 12.0f;
-        float m_EdgeMaxError = 1.3f;
-        float m_VertsPerPoly = 6.0f;
-        float m_DetailSampleDist = 8.0f;
-        float m_DetailSampleMaxError = 1.0f;
-        int m_PartitionType = 0;
+        
+        rcHeightfield* m_Solid;
+        rcCompactHeightfield* m_CompactHeightfield;
+        unsigned char* m_TriangleAreas;
+        rcContourSet* m_ContourSet;
+        rcPolyMesh* m_PolyMesh;
+        rcPolyMeshDetail* m_PolyMeshDetail;
+        
+        rcContext* m_Context = new rcContext();
     };
 }
