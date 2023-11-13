@@ -14,6 +14,8 @@
 #include "Scene/Systems/Audio/AudioListenerInitSystem.h"
 #include <Scene/Components/Audio/AudioSource.h>
 #include <Scene/Components/Audio/AudioListener.h>
+
+#include "ComponentDebugRenderers/ComponentDebugRenderer.h"
 #include "GUI/ScopedGUIHelpers.h"
 
 namespace LevEngine::Editor
@@ -147,6 +149,8 @@ namespace LevEngine::Editor
         if (m_Viewport->IsActive())
         {
             DebugRender::DrawGrid(Vector3::Zero, Vector3::Right, Vector3::Forward, 100, 100, 1.0f, Color::Gray);
+
+            DoComponentRenderDebug();
             
             auto& camera = m_Viewport->GetCamera();
             activeScene->OnRender(&camera, &camera.GetTransform());
@@ -621,5 +625,17 @@ namespace LevEngine::Editor
         Selection::Deselect();
 
         OpenScene(SceneManager::GetActiveScenePath());
+    }
+    
+    void EditorLayer::DoComponentRenderDebug()
+    {
+        SceneManager::GetActiveScene()->ForEachEntity(
+            [](const Entity entity)
+            {
+                for (const auto debugRenderers : ClassCollection<IComponentDebugRenderer>::Instance())
+                {
+                    debugRenderers->Draw(entity);
+                }
+            });
     }
 }

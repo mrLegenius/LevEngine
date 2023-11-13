@@ -91,12 +91,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\AssetSelection.h" />
+    <ClInclude Include="src\ComponentDebugRenderers\ComponentDebugRenderer.h" />
     <ClInclude Include="src\EditorCamera.h" />
     <ClInclude Include="src\EditorSaveData.h" />
     <ClInclude Include="src\EntitySelection.h" />
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
+    <ClCompile Include="src\ComponentDebugRenderers\ColliderComponentsDebugRenderer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />

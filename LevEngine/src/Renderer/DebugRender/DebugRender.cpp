@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "DebugRender.h"
 
+#include "DebugCircle.h"
 #include "DebugCube.h"
 #include "DebugLine.h"
 #include "DebugSphere.h"
@@ -77,6 +78,18 @@ namespace LevEngine
     void DebugRender::DrawRay(const Vector3 origin, const Vector3 direction, const Color color)
     {
         DrawLine(origin, origin + direction, color);
+    }
+
+    void DebugRender::DrawCircle(const Vector3 position, const float radius, const Quaternion rotation, Color color)
+    {
+        const Matrix model =
+            Matrix::CreateFromQuaternion(rotation)
+            * Matrix::CreateScale(radius)
+            * Matrix::CreateTranslation(position);
+
+        const auto shape = CreateRef<DebugCircle>(model, color);
+        
+        m_Shapes.emplace(shape);
     }
 
     void DebugRender::DrawGrid(const Vector3 position,

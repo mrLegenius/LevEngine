@@ -39,6 +39,8 @@ public:
 	void OnGUIRender() override;
 
 private:
+	static void DoComponentRenderDebug();
+	
 	Ref<ViewportPanel> m_Viewport;
 	Ref<HierarchyPanel> m_Hierarchy;
 	Ref<PropertiesPanel> m_Properties;

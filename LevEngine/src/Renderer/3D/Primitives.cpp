@@ -357,7 +357,7 @@ Ref<Mesh> Primitives::CreateRing(const Vector3 majorAxis, const Vector3 minorAxi
 	Vector3 sin = Vector3::Zero;
 	Vector3 cos = Vector3::One;
 	
-	for (size_t i = 0; i < ringSegments; i++)
+	for (size_t i = 0; i <= ringSegments; i++)
 	{
 		Vector3 pos = majorAxis * cos + minorAxis * sin;
 		mesh->AddVertex(pos);
