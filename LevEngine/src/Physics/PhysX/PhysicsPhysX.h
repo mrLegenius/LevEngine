@@ -52,7 +52,7 @@ namespace LevEngine
 
         // for physics update
         inline static float mAccumulator = 0.0f;
-        inline static float mStepSize    = 1.0f / 120.0f;
+        inline static float mStepSize    = 1.0f / 60.0f;
     };
 
 

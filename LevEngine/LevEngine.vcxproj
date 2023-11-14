@@ -867,6 +867,7 @@
     <ClInclude Include="src\Physics\Events\CollisionEndEvent.h" />
     <ClInclude Include="src\Physics\Physics.h" />
     <ClInclude Include="src\Physics\PhysX\PhysicsPhysX.h" />
+    <ClInclude Include="src\Physics\PhysX\PhysicsUtils.h" />
     <ClInclude Include="src\Physics\Systems\ForcesClearSystem.h" />
     <ClInclude Include="src\Physics\Systems\PositionUpdateSystem.h" />
     <ClInclude Include="src\Physics\Systems\VelocityUpdateSystem.h" />
