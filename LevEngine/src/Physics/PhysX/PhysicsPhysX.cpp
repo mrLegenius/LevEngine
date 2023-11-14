@@ -2,12 +2,26 @@
 #include "PhysicsPhysX.h"
 #include "Renderer/DebugRender/DebugRender.h"
 #include "Scene/Components/ComponentSerializer.h"
+#include "Physics/PhysX/PhysicsUtils.h"
 
-constexpr auto PVD_HOST = "127.0.0.1";
+constexpr auto DEFAULT_PVD_HOST = "127.0.0.1";
+constexpr auto DEFAULT_PVD_PORT = 5425;
+constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
+
+constexpr auto DEFAULT_NUMBER_CPU_THREADS = 2;
 
 constexpr auto MAX_NUM_RIGIDBODIES         = 20;
+//constexpr auto MAX_NUM_RIGIDBODY_SCENES    = 5;
 constexpr auto MAX_NUM_RIGIDBODY_SHAPES    = 5;
 constexpr auto MAX_NUM_RIGIDBODY_MATERIALS = 5;
+
+constexpr Vector3 DEFAULT_GRAVITY_SCALE    = {0.0f, -9.81f, 0.0f};
+constexpr auto    DEFAULT_ACTOR_DENSITY    = 10;
+constexpr auto    DEFAULT_STATIC_FRICTION  = 0.5f;
+constexpr auto    DEFAULT_DYNAMIC_FRICTION = 0.5f;
+constexpr auto    DEFAULT_RESTITUTION      = 0.6f;
+constexpr auto    DEFAULT_SHAPE_SIZE       = 0.5f;
+
 
 namespace LevEngine
 {
@@ -20,15 +34,15 @@ namespace LevEngine
         if (usePVD)
         {
             gPvd = PxCreatePvd(*gFoundation);
-            PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
+            PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(DEFAULT_PVD_HOST, DEFAULT_PVD_PORT, DEFAULT_PVD_CONNECT_TIMEOUT);
             gPvd->connect(*transport,PxPvdInstrumentationFlag::eALL);
         }
         
         gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, gToleranceScale, true, gPvd);
         
         PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
-        sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
-        gDispatcher = PxDefaultCpuDispatcherCreate(2);
+        sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(DEFAULT_GRAVITY_SCALE);
+        gDispatcher = PxDefaultCpuDispatcherCreate(DEFAULT_NUMBER_CPU_THREADS);
         sceneDesc.cpuDispatcher	= gDispatcher;
         sceneDesc.filterShader	= PxDefaultSimulationFilterShader;
         gScene = gPhysics->createScene(sceneDesc);
@@ -81,39 +95,41 @@ namespace LevEngine
         {
             auto [transform, rigidbody] = view.get<Transform, RigidbodyPhysX>(entity);
             const PxTransform actorPose = rigidbody.GetRigidbody()->getGlobalPose();
-            transform.SetWorldRotation(Quaternion(actorPose.q.x, actorPose.q.y, actorPose.q.z, actorPose.q.w));
-            transform.SetWorldPosition(Vector3(actorPose.p.x, actorPose.p.y, actorPose.p.z));
+            //transform.SetWorldRotation(Quaternion(actorPose.q.x, actorPose.q.y, actorPose.q.z, actorPose.q.w));
+            //transform.SetWorldPosition(Vector3(actorPose.p.x, actorPose.p.y, actorPose.p.z));
+            transform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
+            transform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
         }
     }
     void PhysicsPhysX::DrawDebugLines()
     {
         const PxRenderBuffer& rb = physx.gScene->getRenderBuffer();
         auto a = rb.getNbLines();
-        for (PxU32 i = 0; i < rb.getNbLines(); i++)
+        for (auto i = 0; i < rb.getNbLines(); i++)
         {
             const PxDebugLine& line = rb.getLines()[i];
-            DebugRender::DrawLine(DirectX::SimpleMath::Vector3(line.pos0.x, line.pos0.y, line.pos0.z),
-                                    DirectX::SimpleMath::Vector3(line.pos1.x, line.pos1.y, line.pos1.z),
+            DebugRender::DrawLine(Vector3(line.pos0.x, line.pos0.y, line.pos0.z),
+                                    Vector3(line.pos1.x, line.pos1.y, line.pos1.z),
                                         Color(1.0f, 0.0f, 0.0f, 1.0f));
         }
-        for (PxU32 i = 0; i < rb.getNbPoints(); i++)
+        for (auto i = 0; i < rb.getNbPoints(); i++)
         {
             const PxDebugPoint& point = rb.getPoints()[i];
-            DebugRender::DrawPoint(DirectX::SimpleMath::Vector3(point.pos.x, point.pos.y, point.pos.z),
+            DebugRender::DrawPoint(Vector3(point.pos.x, point.pos.y, point.pos.z),
                                             Color(0.8f, 0.8f, 0.8f, 1.0f));
         }
         auto b = rb.getNbTriangles();
-        for (PxU32 i = 0; i < rb.getNbTriangles(); i++)
+        for (auto i = 0; i < rb.getNbTriangles(); i++)
         {
             const PxDebugTriangle& tri = rb.getTriangles()[i];
-            DebugRender::DrawLine(DirectX::SimpleMath::Vector3(tri.pos0.x, tri.pos0.y, tri.pos0.z),
-                                    DirectX::SimpleMath::Vector3(tri.pos1.x, tri.pos1.y, tri.pos1.z),
+            DebugRender::DrawLine(Vector3(tri.pos0.x, tri.pos0.y, tri.pos0.z),
+                                    Vector3(tri.pos1.x, tri.pos1.y, tri.pos1.z),
                                         Color(1.0f, 0.0f, 0.0f, 1.0f));
-            DebugRender::DrawLine(DirectX::SimpleMath::Vector3(tri.pos1.x, tri.pos1.y, tri.pos1.z),
-                                    DirectX::SimpleMath::Vector3(tri.pos2.x, tri.pos2.y, tri.pos2.z),
+            DebugRender::DrawLine(Vector3(tri.pos1.x, tri.pos1.y, tri.pos1.z),
+                                    Vector3(tri.pos2.x, tri.pos2.y, tri.pos2.z),
                                         Color(1.0f, 0.0f, 0.0f, 1.0f));
-            DebugRender::DrawLine(DirectX::SimpleMath::Vector3(tri.pos0.x, tri.pos0.y, tri.pos0.z),
-                                    DirectX::SimpleMath::Vector3(tri.pos2.x, tri.pos2.y, tri.pos2.z),
+            DebugRender::DrawLine(Vector3(tri.pos0.x, tri.pos0.y, tri.pos0.z),
+                                    Vector3(tri.pos2.x, tri.pos2.y, tri.pos2.z),
                                         Color(1.0f, 0.0f, 0.0f, 1.0f));
         }
     }
@@ -163,12 +179,15 @@ namespace LevEngine
     Vector3 PhysicsPhysX::GetGravity() const
     {
         const auto gravity = gScene->getGravity();
-        return Vector3(gravity.x, gravity.y, gravity.z);
+        //return Vector3(gravity.x, gravity.y, gravity.z);
+        return PhysicsUtils::FromPxVec3ToVector3(gravity);
     }
 
-    void PhysicsPhysX::SetGravity(const Vector3 gravity)
+    void PhysicsPhysX::SetGravity(const Vector3 newGravity)
     {
-        gScene->setGravity(PxVec3(gravity.x, gravity.y, gravity.z));
+        const auto gravity = PhysicsUtils::FromVector3ToPxVec3(newGravity);
+        //gScene->setGravity(PxVec3(gravity.x, gravity.y, gravity.z));
+        gScene->setGravity(gravity);
     }
 
     
@@ -177,13 +196,16 @@ namespace LevEngine
     {
         auto& rigidbody = registry.get<RigidbodyPhysX>(entity);
         const auto& transform = registry.get<Transform>(entity);
+        /*
         const PxTransform pxTransform
         {
             PxVec3(transform.GetWorldPosition().x, transform.GetWorldPosition().y, transform.GetWorldPosition().z),
             PxQuat(transform.GetWorldRotation().x, transform.GetWorldRotation().y, transform.GetWorldRotation().z, transform.GetWorldRotation().w)
         };
-        rigidbody.rbActor = PhysicsPhysX::GetInstance().GetPhysics()->createRigidDynamic(PxTransform(pxTransform));
-        PxRigidBodyExt::updateMassAndInertia(*(reinterpret_cast<PxRigidDynamic*>(rigidbody.rbActor)), 10);
+        */
+        const PxTransform pxTransform = PhysicsUtils::FromTransformToPxTransform(transform);
+        rigidbody.rbActor = PhysicsPhysX::GetInstance().GetPhysics()->createRigidDynamic(pxTransform);
+        PxRigidBodyExt::updateMassAndInertia(*(reinterpret_cast<PxRigidDynamic*>(rigidbody.rbActor)), DEFAULT_ACTOR_DENSITY);
         PhysicsPhysX::GetInstance().GetScene()->addActor(*(reinterpret_cast<PxRigidDynamic*>(rigidbody.rbActor)));
         rigidbody.AttachCollider(ColliderType::Box);
     }
@@ -195,20 +217,23 @@ namespace LevEngine
 
     void RigidbodyPhysX::SetRigidbodyInitialPose(const Transform& transform)
     {
+        /*
         const PxTransform pxTransform
         {
             PxVec3(transform.GetWorldPosition().x, transform.GetWorldPosition().y, transform.GetWorldPosition().z),
             PxQuat(transform.GetWorldRotation().x, transform.GetWorldRotation().y, transform.GetWorldRotation().z, transform.GetWorldRotation().w)
         };
+        */
+        const PxTransform pxTransform = PhysicsUtils::FromTransformToPxTransform(transform);
         rbActor->setGlobalPose(pxTransform);
     }
     
     void RigidbodyPhysX::CleanupRigidbody()
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
-        for(PxU32 i = 0; i < nbShapes; ++i)
+        for(auto i = 0; i < nbShapes; ++i)
         {
             rbActor->detachShape(*shapes[i]);
         }
@@ -219,7 +244,7 @@ namespace LevEngine
     ColliderType RigidbodyPhysX::GetColliderType() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
         return static_cast<ColliderType>(static_cast<int>(shapes[0]->getGeometry().getType()));
     }
@@ -242,21 +267,21 @@ namespace LevEngine
             }
         }
         
-        const auto material = PhysicsPhysX::GetInstance().GetPhysics()->createMaterial(0.5f, 0.5f, 0.6f);
+        const auto material = PhysicsPhysX::GetInstance().GetPhysics()->createMaterial(DEFAULT_STATIC_FRICTION, DEFAULT_DYNAMIC_FRICTION, DEFAULT_RESTITUTION);
         PxShape* shape = nullptr;
         switch (colliderType)
         {
         case ColliderType::Sphere:
-            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxSphereGeometry(0.5f), *material, true);
+            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxSphereGeometry(DEFAULT_SHAPE_SIZE), *material, true);
             break;
         case ColliderType::Plane:
             shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxPlaneGeometry(), *material, true);
             break;
         case ColliderType::Capsule:
-            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxCapsuleGeometry(0.5f, 0.5f), *material, true);
+            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxCapsuleGeometry(DEFAULT_SHAPE_SIZE, DEFAULT_SHAPE_SIZE), *material, true);
             break;
         case ColliderType::Box:
-            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxBoxGeometry(0.5f, 0.5f, 0.5f), *material, true);
+            shape = PhysicsPhysX::GetInstance().GetPhysics()->createShape(PxBoxGeometry(DEFAULT_SHAPE_SIZE, DEFAULT_SHAPE_SIZE, DEFAULT_SHAPE_SIZE), *material, true);
             break;
         default:
             break;
@@ -269,9 +294,9 @@ namespace LevEngine
     void RigidbodyPhysX::DetachCollider()
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
-        for (int i = 0; i < nbShapes; i++)
+        for (auto i = 0; i < nbShapes; i++)
         {
             rbActor->detachShape(*shapes[i]);
         }
@@ -280,11 +305,11 @@ namespace LevEngine
     float RigidbodyPhysX::GetSphereColliderRadius() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
 
         const PxGeometryHolder geom(shapes[0]->getGeometry());
-        const float radius = geom.sphere().radius;
+        const auto radius = geom.sphere().radius;
         
         return radius;
     }
@@ -292,11 +317,11 @@ namespace LevEngine
     float RigidbodyPhysX::GetCapsuleColliderRadius() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
 
         const PxGeometryHolder geom(shapes[0]->getGeometry());
-        const float radius = geom.capsule().radius;
+        const auto radius = geom.capsule().radius;
         
         return radius;
     }
@@ -304,11 +329,11 @@ namespace LevEngine
     float RigidbodyPhysX::GetCapsuleColliderHalfHeight() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
 
         const PxGeometryHolder geom(shapes[0]->getGeometry());
-        const float halfHeight = geom.capsule().halfHeight;
+        const auto halfHeight = geom.capsule().halfHeight;
         
         return halfHeight;
     }
@@ -316,11 +341,11 @@ namespace LevEngine
     float RigidbodyPhysX::GetBoxColliderHalfExtendX() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
         
         const PxGeometryHolder geom(shapes[0]->getGeometry());
-        const float initialHalfExtendX = geom.box().halfExtents.x;
+        const auto initialHalfExtendX = geom.box().halfExtents.x;
         
         return initialHalfExtendX;
     }
@@ -328,11 +353,11 @@ namespace LevEngine
     float RigidbodyPhysX::GetBoxColliderHalfExtendY() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
         
         const PxGeometryHolder geom(shapes[0]->getGeometry());
-        const float initialHalfExtendY = geom.box().halfExtents.y;
+        const auto initialHalfExtendY = geom.box().halfExtents.y;
         
         return initialHalfExtendY;
     }
@@ -340,11 +365,11 @@ namespace LevEngine
     float RigidbodyPhysX::GetBoxColliderHalfExtendZ() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
         
         const PxGeometryHolder geom(shapes[0]->getGeometry());
-        const float initialHalfExtendZ = geom.box().halfExtents.z;
+        const auto initialHalfExtendZ = geom.box().halfExtents.z;
         
         return initialHalfExtendZ;
     }
@@ -354,7 +379,7 @@ namespace LevEngine
         if ((radius > 0.0f) && (radius <= PX_MAX_F32))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const PxU32 nbShapes = rbActor->getNbShapes();
+            const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
             
             shapes[0]->setGeometry(PxSphereGeometry(radius));
@@ -366,11 +391,11 @@ namespace LevEngine
         if ((radius > 0.0f) && (radius <= PX_MAX_F32))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const PxU32 nbShapes = rbActor->getNbShapes();
+            const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
         
             const PxGeometryHolder geom(shapes[0]->getGeometry());
-            const float initialHeight = geom.capsule().halfHeight;
+            const auto initialHeight = geom.capsule().halfHeight;
             
             shapes[0]->setGeometry(PxCapsuleGeometry(radius, initialHeight));
         }
@@ -381,11 +406,11 @@ namespace LevEngine
         if ((halfHeight >= 0.0f) && (halfHeight <= PX_MAX_F32))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const PxU32 nbShapes = rbActor->getNbShapes();
+            const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
         
             const PxGeometryHolder geom(shapes[0]->getGeometry());
-            const float initialRadius = geom.capsule().radius;
+            const auto initialRadius = geom.capsule().radius;
             
             shapes[0]->setGeometry(PxCapsuleGeometry(initialRadius, halfHeight));
         }
@@ -396,12 +421,12 @@ namespace LevEngine
         if ((halfExtendX > 0.0f) && (halfExtendX <= PX_MAX_F32))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const PxU32 nbShapes = rbActor->getNbShapes();
+            const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
         
             const PxGeometryHolder geom(shapes[0]->getGeometry());
-            const float initialHalfExtendY = geom.box().halfExtents.y;
-            const float initialHalfExtendZ = geom.box().halfExtents.z;
+            const auto initialHalfExtendY = geom.box().halfExtents.y;
+            const auto initialHalfExtendZ = geom.box().halfExtents.z;
             
             shapes[0]->setGeometry(PxBoxGeometry(halfExtendX, initialHalfExtendY, initialHalfExtendZ));
         }
@@ -412,12 +437,12 @@ namespace LevEngine
         if ((halfExtendY > 0.0f) && (halfExtendY <= PX_MAX_F32))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const PxU32 nbShapes = rbActor->getNbShapes();
+            const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
         
             const PxGeometryHolder geom(shapes[0]->getGeometry());
-            const float initialHalfExtendX = geom.box().halfExtents.x;
-            const float initialHalfExtendZ = geom.box().halfExtents.z;
+            const auto initialHalfExtendX = geom.box().halfExtents.x;
+            const auto initialHalfExtendZ = geom.box().halfExtents.z;
             
             shapes[0]->setGeometry(PxBoxGeometry(initialHalfExtendX, halfExtendY, initialHalfExtendZ));
         }
@@ -428,12 +453,12 @@ namespace LevEngine
         if ((halfExtendZ > 0.0f) && (halfExtendZ <= PX_MAX_F32))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const PxU32 nbShapes = rbActor->getNbShapes();
+            const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
         
             const PxGeometryHolder geom(shapes[0]->getGeometry());
-            const float initialHalfExtendX = geom.box().halfExtents.x;
-            const float initialHalfExtendY = geom.box().halfExtents.y;
+            const auto initialHalfExtendX = geom.box().halfExtents.x;
+            const auto initialHalfExtendY = geom.box().halfExtents.y;
             
             shapes[0]->setGeometry(PxBoxGeometry(initialHalfExtendX, initialHalfExtendY, halfExtendZ));
         }
@@ -462,11 +487,11 @@ namespace LevEngine
     float RigidbodyPhysX::GetStaticFriction() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
         
         PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-        const PxU32 nbMaterials = shapes[0]->getNbMaterials();
+        const auto nbMaterials = shapes[0]->getNbMaterials();
         shapes[0]->getMaterials(materials, nbMaterials);
         
         return materials[0]->getStaticFriction();
@@ -475,11 +500,11 @@ namespace LevEngine
     float RigidbodyPhysX::GetDynamicFriction() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
         
         PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-        const PxU32 nbMaterials = shapes[0]->getNbMaterials();
+        const auto nbMaterials = shapes[0]->getNbMaterials();
         shapes[0]->getMaterials(materials, nbMaterials);
         
         return materials[0]->getDynamicFriction();
@@ -488,11 +513,11 @@ namespace LevEngine
     float RigidbodyPhysX::GetRestitution() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const PxU32 nbShapes = rbActor->getNbShapes();
+        const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
         
         PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-        const PxU32 nbMaterials = shapes[0]->getNbMaterials();
+        const auto nbMaterials = shapes[0]->getNbMaterials();
         shapes[0]->getMaterials(materials, nbMaterials);
         
         return materials[0]->getRestitution();
@@ -546,11 +571,11 @@ namespace LevEngine
         if ((staticFriction >= 0.0f) && (staticFriction <= PX_MAX_F32))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const PxU32 nbShapes = rbActor->getNbShapes();
+            const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
             
             PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-            const PxU32 nbMaterials = shapes[0]->getNbMaterials();
+            const auto nbMaterials = shapes[0]->getNbMaterials();
             shapes[0]->getMaterials(materials, nbMaterials);
             
             materials[0]->setStaticFriction(staticFriction);
@@ -562,11 +587,11 @@ namespace LevEngine
         if ((dynamicFriction >= 0.0f) && (dynamicFriction <= PX_MAX_F32))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const PxU32 nbShapes = rbActor->getNbShapes();
+            const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
             
             PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-            const PxU32 nbMaterials = shapes[0]->getNbMaterials();
+            const auto nbMaterials = shapes[0]->getNbMaterials();
             shapes[0]->getMaterials(materials, nbMaterials);
             
             materials[0]->setDynamicFriction(dynamicFriction);
@@ -578,16 +603,18 @@ namespace LevEngine
         if ((restitution >= 0.0f) && (restitution <= 1.0f))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const PxU32 nbShapes = rbActor->getNbShapes();
+            const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
             
             PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-            const PxU32 nbMaterials = shapes[0]->getNbMaterials();
+            const auto nbMaterials = shapes[0]->getNbMaterials();
             shapes[0]->getMaterials(materials, nbMaterials);
             
             materials[0]->setRestitution(restitution);
         }
     }
+
+    
     
     class RigidbodyPhysXSerializer final : public ComponentSerializer<RigidbodyPhysX, RigidbodyPhysXSerializer>
     {
