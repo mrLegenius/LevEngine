@@ -2,17 +2,18 @@
 
 #include "ComponentDrawer.h"
 #include "GUI/EditorGUI.h"
+#include "Physics/PhysX/PhysicsRigidbody.h"
 
 namespace LevEngine::Editor
 {
-    class RigidbodyPhysXDrawer final : public ComponentDrawer<RigidbodyPhysX, RigidbodyPhysXDrawer>
+    class RigidbodyPhysXDrawer final : public ComponentDrawer<PhysicsRigidbody, RigidbodyPhysXDrawer>
     {
     protected:
         [[nodiscard]] String GetLabel() const override { return "RigidbodyPhysX"; }
         
-        void DrawContent(RigidbodyPhysX& component) override
+        void DrawContent(PhysicsRigidbody& component) override
         {
-            EditorGUI::DrawCheckBox("Draw Collider", BindGetter(&RigidbodyPhysX::GetColliderVisualizationFlag, &component), BindSetter(&RigidbodyPhysX::SetColliderVisualizationFlag, &component));
+            EditorGUI::DrawCheckBox("Draw Collider", BindGetter(&PhysicsRigidbody::GetColliderVisualizationFlag, &component), BindSetter(&PhysicsRigidbody::SetColliderVisualizationFlag, &component));
             
             const char* rigidbodyTypeStrings[] = { "STATIC", "DYNAMIC" };
             const char* currentRigidbodyTypeString = rigidbodyTypeStrings[static_cast<int>(component.GetRigidbodyType())];
@@ -36,7 +37,7 @@ namespace LevEngine::Editor
 
             if (currentRigidbodyTypeString == "DYNAMIC")
             {
-                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&RigidbodyPhysX::GetRigidbodyGravityFlag, &component), BindSetter(&RigidbodyPhysX::SetRigidbodyGravityFlag, &component));
+                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&PhysicsRigidbody::GetRigidbodyGravityFlag, &component), BindSetter(&PhysicsRigidbody::SetRigidbodyGravityFlag, &component));
             }
             
             if (component.GetRigidbody()->getNbShapes() > 0)
@@ -87,23 +88,23 @@ namespace LevEngine::Editor
                 }
                 if (currentColliderTypeString == "SPHERE")
                 {
-                    EditorGUI::DrawFloatControl("Radius", BindGetter(&RigidbodyPhysX::GetSphereColliderRadius, &component), BindSetter(&RigidbodyPhysX::SetSphereColliderRadius, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Radius", BindGetter(&PhysicsRigidbody::GetSphereColliderRadius, &component), BindSetter(&PhysicsRigidbody::SetSphereColliderRadius, &component), 1.0f, 0.0f, FLT_MAX);
                 }
                 if (currentColliderTypeString == "CAPSULE")
                 {
-                    EditorGUI::DrawFloatControl("Radius", BindGetter(&RigidbodyPhysX::GetCapsuleColliderRadius, &component), BindSetter(&RigidbodyPhysX::SetCapsuleColliderRadius, &component), 1.0f, 0.0f, FLT_MAX);
-                    EditorGUI::DrawFloatControl("Half Height", BindGetter(&RigidbodyPhysX::GetCapsuleColliderHalfHeight, &component), BindSetter(&RigidbodyPhysX::SetCapsuleColliderHalfHeight, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Radius", BindGetter(&PhysicsRigidbody::GetCapsuleColliderRadius, &component), BindSetter(&PhysicsRigidbody::SetCapsuleColliderRadius, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Half Height", BindGetter(&PhysicsRigidbody::GetCapsuleColliderHalfHeight, &component), BindSetter(&PhysicsRigidbody::SetCapsuleColliderHalfHeight, &component), 1.0f, 0.0f, FLT_MAX);
                 }
                 if (currentColliderTypeString == "BOX")
                 {
-                    EditorGUI::DrawFloatControl("Half Extend X", BindGetter(&RigidbodyPhysX::GetBoxColliderHalfExtendX, &component), BindSetter(&RigidbodyPhysX::SetBoxColliderHalfExtendX, &component), 1.0f, 0.0f, FLT_MAX);
-                    EditorGUI::DrawFloatControl("Half Extend Y", BindGetter(&RigidbodyPhysX::GetBoxColliderHalfExtendY, &component), BindSetter(&RigidbodyPhysX::SetBoxColliderHalfExtendY, &component), 1.0f, 0.0f, FLT_MAX);
-                    EditorGUI::DrawFloatControl("Half Extend Z", BindGetter(&RigidbodyPhysX::GetBoxColliderHalfExtendZ, &component), BindSetter(&RigidbodyPhysX::SetBoxColliderHalfExtendZ, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Half Extend X", BindGetter(&PhysicsRigidbody::GetBoxColliderHalfExtendX, &component), BindSetter(&PhysicsRigidbody::SetBoxColliderHalfExtendX, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Half Extend Y", BindGetter(&PhysicsRigidbody::GetBoxColliderHalfExtendY, &component), BindSetter(&PhysicsRigidbody::SetBoxColliderHalfExtendY, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Half Extend Z", BindGetter(&PhysicsRigidbody::GetBoxColliderHalfExtendZ, &component), BindSetter(&PhysicsRigidbody::SetBoxColliderHalfExtendZ, &component), 1.0f, 0.0f, FLT_MAX);
                 }
                 
-                EditorGUI::DrawFloatControl("Static Friction", BindGetter(&RigidbodyPhysX::GetStaticFriction, &component), BindSetter(&RigidbodyPhysX::SetStaticFriction, &component), 1.0f, 0.0f, FLT_MAX);
-                EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&RigidbodyPhysX::GetDynamicFriction, &component), BindSetter(&RigidbodyPhysX::SetDynamicFriction, &component), 1.0f, 0.0f, FLT_MAX);
-                EditorGUI::DrawFloatControl("Restitution", BindGetter(&RigidbodyPhysX::GetRestitution, &component), BindSetter(&RigidbodyPhysX::SetRestitution, &component), 1.0f, 0.0f, 1.0f);
+                EditorGUI::DrawFloatControl("Static Friction", BindGetter(&PhysicsRigidbody::GetStaticFriction, &component), BindSetter(&PhysicsRigidbody::SetStaticFriction, &component), 1.0f, 0.0f, FLT_MAX);
+                EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&PhysicsRigidbody::GetDynamicFriction, &component), BindSetter(&PhysicsRigidbody::SetDynamicFriction, &component), 1.0f, 0.0f, FLT_MAX);
+                EditorGUI::DrawFloatControl("Restitution", BindGetter(&PhysicsRigidbody::GetRestitution, &component), BindSetter(&PhysicsRigidbody::SetRestitution, &component), 1.0f, 0.0f, 1.0f);
             }
         }
     };

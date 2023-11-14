@@ -3,6 +3,7 @@
 
 #include "../Entity.h"
 #include "Kernel/ClassCollection.h"
+#include "Physics/PhysX/PhysicsRigidbody.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
@@ -88,9 +89,9 @@ namespace LevEngine
 			auto& transform = entity.GetComponent<Transform>();
 			transform.SetParent(entitiesMap[relationships[uuid]], false);
 
-			if (entity.HasComponent<RigidbodyPhysX>())
+			if (entity.HasComponent<PhysicsRigidbody>())
 			{
-				auto& rigidbody = entity.GetComponent<RigidbodyPhysX>();
+				auto& rigidbody = entity.GetComponent<PhysicsRigidbody>();
 				rigidbody.SetRigidbodyInitialPose(transform);
 			}
 		}

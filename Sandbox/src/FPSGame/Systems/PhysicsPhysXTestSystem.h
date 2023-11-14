@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Physics/PhysX/PhysicsPhysX.h"
+#include "..\..\..\..\LevEngine\src\Physics\PhysX\PhysicsBase.h"
 namespace Sandbox
 {
     class PhysicsPhysXTestSystem : public System
@@ -7,7 +7,7 @@ namespace Sandbox
     public:
         void Update(float deltaTime, entt::registry& registry) override
         {
-            const auto physView = registry.view<RigidbodyPhysX>();
+            const auto physView = registry.view<PhysicsRigidbody>();
             if (!physView.empty()) return;
             
             //auto& scene = SceneManager::GetActiveScene();

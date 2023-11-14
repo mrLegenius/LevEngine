@@ -9,6 +9,8 @@
 #include "Physics/Physics.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Systems/EventSystem.h"
+#include "..\Physics\PhysX\PhysicsBase.h"
+
 namespace LevEngine
 {
 class Audio;

@@ -1,63 +1,10 @@
 ﻿#pragma once
-#include "Math/Vector3.h"
 #include "physx/include/PxPhysicsAPI.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
-    using namespace physx;
-    
-    class PhysicsPhysX
-    {
-    public:
-        PhysicsPhysX(const PhysicsPhysX&) = delete;
-        PhysicsPhysX& operator=(const PhysicsPhysX&) = delete;
-        
-        static void Process(entt::registry& m_Registry, float deltaTime);
-
-        [[nodiscard]] static PhysicsPhysX& GetInstance();
-        
-        [[nodiscard]] PxPhysics* GetPhysics() const;
-        [[nodiscard]] PxScene*   GetScene()   const;
-        [[nodiscard]] Vector3    GetGravity() const;
-        
-        void SetGravity(const Vector3 gravity);
-
-        // for debug
-        inline static bool usePVD = false;
-        inline static bool useDebugRender = true;
-        
-    private:
-        PhysicsPhysX();
-        ~PhysicsPhysX();
-
-        void InitPhysics();
-        void CleanupPhysics();
-
-        static bool Advance(float deltaTime);
-        static void StepPhysics(float deltaTime);
-        static void UpdateTransforms(entt::registry& registry);
-        static void DrawDebugLines();
-        
-        static PhysicsPhysX physx;
-    
-        PxDefaultAllocator      gAllocator;
-        PxDefaultErrorCallback  gErrorCallback;
-        PxTolerancesScale       gToleranceScale;
-        PxFoundation*           gFoundation      = NULL;
-        PxPvd*                  gPvd             = NULL;
-        PxPhysics*              gPhysics         = NULL;
-        PxDefaultCpuDispatcher* gDispatcher      = NULL;
-        PxScene*                gScene           = NULL;
-
-        // for physics update
-        inline static float mAccumulator = 0.0f;
-        inline static float mStepSize    = 1.0f / 60.0f;
-    };
-
-
-    
-    REGISTER_PARSE_TYPE(RigidbodyPhysX);
+    REGISTER_PARSE_TYPE(PhysicsRigidbody);
 
     enum class RigidbodyType
     {
@@ -72,12 +19,14 @@ namespace LevEngine
         Capsule,
         Box
     };
+
+    using namespace physx;
     
-    class RigidbodyPhysX
+    class PhysicsRigidbody
     {
     public:
-        RigidbodyPhysX()  = default;
-        ~RigidbodyPhysX() = default;
+        PhysicsRigidbody()  = default;
+        ~PhysicsRigidbody() = default;
 
         static void OnComponentConstruct(entt::registry& registry, entt::entity entity);
         static void OnComponentDestroy(entt::registry& registry, entt::entity entity);
