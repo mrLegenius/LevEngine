@@ -8,6 +8,8 @@
 #include "Components/Components.h"
 #include "Components/Camera/Camera.h"
 
+#include "Physics/PhysX/PhysicsRigidbody.h"
+
 namespace LevEngine
 {
 
@@ -16,8 +18,8 @@ namespace LevEngine
 
 Scene::Scene()
 {
-    m_Registry.on_construct<RigidbodyPhysX>().connect<&RigidbodyPhysX::OnComponentConstruct>();
-    m_Registry.on_destroy<RigidbodyPhysX>().connect<&RigidbodyPhysX::OnComponentDestroy>();
+    m_Registry.on_construct<PhysicsRigidbody>().connect<&PhysicsRigidbody::OnComponentConstruct>();
+    m_Registry.on_destroy<PhysicsRigidbody>().connect<&PhysicsRigidbody::OnComponentDestroy>();
 }
     
 Scene::~Scene()
@@ -84,7 +86,7 @@ void Scene::OnPhysics(const float deltaTime)
     else
     {
         Physics::Process(m_Registry, deltaTime);
-        PhysicsPhysX::Process(m_Registry, deltaTime);
+        PhysicsBase::Process(m_Registry, deltaTime);
     }
 }
 

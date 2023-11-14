@@ -10,7 +10,7 @@
 #include "Renderer/Camera/SceneCamera.h"
 #include "Systems/EventSystem.h"
 
-#include "Physics/PhysX/PhysicsPhysX.h"
+#include "..\Physics\PhysX\PhysicsBase.h"
 
 namespace LevEngine
 {
