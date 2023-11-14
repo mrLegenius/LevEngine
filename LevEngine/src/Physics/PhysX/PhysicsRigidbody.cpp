@@ -3,36 +3,34 @@
 #include "PhysicsBase.h"
 #include "PhysicsUtils.h"
 
-constexpr auto    DEFAULT_ACTOR_DENSITY    = 10;
-constexpr auto    DEFAULT_STATIC_FRICTION  = 0.5f;
-constexpr auto    DEFAULT_DYNAMIC_FRICTION = 0.5f;
-constexpr auto    DEFAULT_RESTITUTION      = 0.6f;
-constexpr auto    DEFAULT_SHAPE_SIZE       = 0.5f;
+constexpr auto DEFAULT_ACTOR_DENSITY    = 10;
+constexpr auto DEFAULT_STATIC_FRICTION  = 0.5f;
+constexpr auto DEFAULT_DYNAMIC_FRICTION = 0.5f;
+constexpr auto DEFAULT_RESTITUTION      = 0.6f;
+constexpr auto DEFAULT_SHAPE_SIZE       = 0.5f;
 
 namespace LevEngine
 {
     void PhysicsRigidbody::OnComponentConstruct(entt::registry& registry, entt::entity entity)
     {
         auto& rigidbody = registry.get<PhysicsRigidbody>(entity);
-        const auto& transform = registry.get<Transform>(entity);
-        const PxTransform pxTransform = PhysicsUtils::FromTransformToPxTransform(transform);
-        rigidbody.rbActor = PhysicsBase::GetInstance().GetPhysics()->createRigidDynamic(pxTransform);
+        // TODO: INITIAL TRANSFORM INITIALIZATION [NOW HAVE TO USE SetRigidBodyInitialPose()]
+        rigidbody.rbActor = PhysicsBase::GetInstance().GetPhysics()->createRigidDynamic(PxTransform(PxIdentity));
         PxRigidBodyExt::updateMassAndInertia(*(reinterpret_cast<PxRigidDynamic*>(rigidbody.rbActor)), DEFAULT_ACTOR_DENSITY);
         PhysicsBase::GetInstance().GetScene()->addActor(*(reinterpret_cast<PxRigidDynamic*>(rigidbody.rbActor)));
         rigidbody.AttachCollider(ColliderType::Box);
     }
-    void PhysicsRigidbody::OnComponentDestroy(entt::registry& registry, entt::entity entity)
-    {
-        auto& rigidbody = registry.get<PhysicsRigidbody>(entity);
-        rigidbody.CleanupRigidbody();
-    } 
-
     void PhysicsRigidbody::SetRigidbodyInitialPose(const Transform& transform)
     {
         const PxTransform pxTransform = PhysicsUtils::FromTransformToPxTransform(transform);
         rbActor->setGlobalPose(pxTransform);
     }
     
+    void PhysicsRigidbody::OnComponentDestroy(entt::registry& registry, entt::entity entity)
+    {
+        auto& rigidbody = registry.get<PhysicsRigidbody>(entity);
+        rigidbody.CleanupRigidbody();
+    }
     void PhysicsRigidbody::CleanupRigidbody()
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
@@ -46,6 +44,14 @@ namespace LevEngine
         PX_RELEASE(rbActor);
     }
 
+    
+    // multiple shapes //
+
+    
+    
+    // multiple shapes //
+
+    
     ColliderType PhysicsRigidbody::GetColliderType() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];

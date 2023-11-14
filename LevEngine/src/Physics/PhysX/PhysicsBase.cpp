@@ -6,10 +6,10 @@
 #include "Scene/Components/ComponentSerializer.h"
 #include "Physics/PhysX/PhysicsUtils.h"
 
-constexpr auto DEFAULT_PVD_HOST = "127.0.0.1";
-constexpr auto DEFAULT_PVD_PORT = 5425;
+constexpr auto DEFAULT_PVD_HOST            = "127.0.0.1";
+constexpr auto DEFAULT_PVD_PORT            = 5425;
 constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
-constexpr auto DEFAULT_NUMBER_CPU_THREADS = 2;
+constexpr auto DEFAULT_NUMBER_CPU_THREADS  = 2;
 
 constexpr Vector3 DEFAULT_GRAVITY_SCALE    = {0.0f, -9.81f, 0.0f};
 
