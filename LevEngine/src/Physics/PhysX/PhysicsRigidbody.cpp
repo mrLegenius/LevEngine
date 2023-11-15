@@ -36,6 +36,7 @@ namespace LevEngine
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
         const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
+        
         for(auto i = 0; i < nbShapes; ++i)
         {
             rbActor->detachShape(*shapes[i]);
@@ -47,17 +48,80 @@ namespace LevEngine
     
     // multiple shapes //
 
-    
+    void PhysicsRigidbody::AttachMultipleCollider(const ColliderType& colliderType)
+    {
+        const auto nbShapes = rbActor->getNbShapes();
+        if (nbShapes > MAX_NUM_RIGIDBODY_SHAPES)
+        {
+            Log::Debug("shape limit");
+            return;
+        }
+    }
     
     // multiple shapes //
 
+    
+    Vector3 PhysicsRigidbody::GetShapeLocalPosition() const
+    {
+        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
+        const auto nbShapes = rbActor->getNbShapes();
+        rbActor->getShapes(shapes, nbShapes);
+        
+        return PhysicsUtils::FromPxVec3ToVector3(shapes[0]->getLocalPose().p);
+    }
+
+    void PhysicsRigidbody::SetShapeLocalPosition(const Vector3 position)
+    {
+        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
+        const auto nbShapes = rbActor->getNbShapes();
+        rbActor->getShapes(shapes, nbShapes);
+        
+        const auto rotation = shapes[0]->getLocalPose().q;
+        shapes[0]->setLocalPose(PxTransform(PhysicsUtils::FromVector3ToPxVec3(position), rotation));
+    }
+
+    Vector3 PhysicsRigidbody::GetShapeLocalRotation() const
+    {
+        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
+        const auto nbShapes = rbActor->getNbShapes();
+        rbActor->getShapes(shapes, nbShapes);
+
+        const auto quaternion = PhysicsUtils::FromPxQuatToQuaternion(shapes[0]->getLocalPose().q);
+        
+        return Math::ToDegrees(quaternion.ToEuler());
+    }
+
+    void PhysicsRigidbody::SetShapeLocalRotation(const Vector3 rotation)
+    {
+        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
+        const auto nbShapes = rbActor->getNbShapes();
+        rbActor->getShapes(shapes, nbShapes);
+        
+        const auto position = shapes[0]->getLocalPose().p;
+        
+        const auto quaternion = Quaternion::CreateFromYawPitchRoll(Math::ToRadians(rotation));
+        
+        shapes[0]->setLocalPose(PxTransform(position, PhysicsUtils::FromQuaternionToPxQuat(quaternion)));
+    }
     
     ColliderType PhysicsRigidbody::GetColliderType() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
         const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
-        return static_cast<ColliderType>(static_cast<int>(shapes[0]->getGeometry().getType()));
+        
+        if (shapes[0]->getGeometry().getType() == PxGeometryType::eSPHERE)
+        {
+            return ColliderType::Sphere;
+        }
+        if (shapes[0]->getGeometry().getType() == PxGeometryType::eCAPSULE)
+        {
+            return ColliderType::Capsule;
+        }
+        if (shapes[0]->getGeometry().getType() == PxGeometryType::eBOX)
+        {
+            return ColliderType::Box;
+        }
     }
 
     void PhysicsRigidbody::AttachCollider(const ColliderType& colliderType)
@@ -85,9 +149,6 @@ namespace LevEngine
         case ColliderType::Sphere:
             shape = PhysicsBase::GetInstance().GetPhysics()->createShape(PxSphereGeometry(DEFAULT_SHAPE_SIZE), *material, true);
             break;
-        case ColliderType::Plane:
-            shape = PhysicsBase::GetInstance().GetPhysics()->createShape(PxPlaneGeometry(), *material, true);
-            break;
         case ColliderType::Capsule:
             shape = PhysicsBase::GetInstance().GetPhysics()->createShape(PxCapsuleGeometry(DEFAULT_SHAPE_SIZE, DEFAULT_SHAPE_SIZE), *material, true);
             break;
@@ -107,6 +168,7 @@ namespace LevEngine
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
         const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
+        
         for (auto i = 0; i < nbShapes; i++)
         {
             rbActor->detachShape(*shapes[i]);
@@ -149,43 +211,20 @@ namespace LevEngine
         return halfHeight;
     }
 
-    float PhysicsRigidbody::GetBoxColliderHalfExtendX() const
+    Vector3 PhysicsRigidbody::GetBoxHalfExtends() const
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
         const auto nbShapes = rbActor->getNbShapes();
         rbActor->getShapes(shapes, nbShapes);
         
         const PxGeometryHolder geom(shapes[0]->getGeometry());
-        const auto initialHalfExtendX = geom.box().halfExtents.x;
-        
-        return initialHalfExtendX;
+        const auto halfExtends = geom.box().halfExtents;
+
+        return PhysicsUtils::FromPxVec3ToVector3(halfExtends);
     }
 
-    float PhysicsRigidbody::GetBoxColliderHalfExtendY() const
-    {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
-        
-        const PxGeometryHolder geom(shapes[0]->getGeometry());
-        const auto initialHalfExtendY = geom.box().halfExtents.y;
-        
-        return initialHalfExtendY;
-    }
-
-    float PhysicsRigidbody::GetBoxColliderHalfExtendZ() const
-    {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
-        
-        const PxGeometryHolder geom(shapes[0]->getGeometry());
-        const auto initialHalfExtendZ = geom.box().halfExtents.z;
-        
-        return initialHalfExtendZ;
-    }
     
-    void PhysicsRigidbody::SetSphereColliderRadius(float radius)
+    void PhysicsRigidbody::SetSphereColliderRadius(const float radius)
     {
         if ((radius > 0.0f) && (radius <= PX_MAX_F32))
         {
@@ -197,7 +236,7 @@ namespace LevEngine
         }
     }
     
-    void PhysicsRigidbody::SetCapsuleColliderRadius(float radius)
+    void PhysicsRigidbody::SetCapsuleColliderRadius(const float radius)
     {
         if ((radius > 0.0f) && (radius <= PX_MAX_F32))
         {
@@ -212,7 +251,7 @@ namespace LevEngine
         }
     }
     
-    void PhysicsRigidbody::SetCapsuleColliderHalfHeight(float halfHeight)
+    void PhysicsRigidbody::SetCapsuleColliderHalfHeight(const float halfHeight)
     {
         if ((halfHeight >= 0.0f) && (halfHeight <= PX_MAX_F32))
         {
@@ -226,54 +265,20 @@ namespace LevEngine
             shapes[0]->setGeometry(PxCapsuleGeometry(initialRadius, halfHeight));
         }
     }
-    
-    void PhysicsRigidbody::SetBoxColliderHalfExtendX(float halfExtendX)
+
+    void PhysicsRigidbody::SetBoxHalfExtends(const Vector3 extends)
     {
-        if ((halfExtendX > 0.0f) && (halfExtendX <= PX_MAX_F32))
+        if ((extends.x > 0. && extends.y > 0.0f && extends.z > 0.0f)
+            && (extends.x < PX_MAX_F32 && extends.y < PX_MAX_F32 && extends.z < PX_MAX_F32))
         {
             PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
             const auto nbShapes = rbActor->getNbShapes();
             rbActor->getShapes(shapes, nbShapes);
-        
-            const PxGeometryHolder geom(shapes[0]->getGeometry());
-            const auto initialHalfExtendY = geom.box().halfExtents.y;
-            const auto initialHalfExtendZ = geom.box().halfExtents.z;
             
-            shapes[0]->setGeometry(PxBoxGeometry(halfExtendX, initialHalfExtendY, initialHalfExtendZ));
+            shapes[0]->setGeometry(PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(extends)));
         }
     }
 
-    void PhysicsRigidbody::SetBoxColliderHalfExtendY(float halfExtendY)
-    {
-        if ((halfExtendY > 0.0f) && (halfExtendY <= PX_MAX_F32))
-        {
-            PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const auto nbShapes = rbActor->getNbShapes();
-            rbActor->getShapes(shapes, nbShapes);
-        
-            const PxGeometryHolder geom(shapes[0]->getGeometry());
-            const auto initialHalfExtendX = geom.box().halfExtents.x;
-            const auto initialHalfExtendZ = geom.box().halfExtents.z;
-            
-            shapes[0]->setGeometry(PxBoxGeometry(initialHalfExtendX, halfExtendY, initialHalfExtendZ));
-        }
-    }
-
-    void PhysicsRigidbody::SetBoxColliderHalfExtendZ(float halfExtendZ)
-    {
-        if ((halfExtendZ > 0.0f) && (halfExtendZ <= PX_MAX_F32))
-        {
-            PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const auto nbShapes = rbActor->getNbShapes();
-            rbActor->getShapes(shapes, nbShapes);
-        
-            const PxGeometryHolder geom(shapes[0]->getGeometry());
-            const auto initialHalfExtendX = geom.box().halfExtents.x;
-            const auto initialHalfExtendY = geom.box().halfExtents.y;
-            
-            shapes[0]->setGeometry(PxBoxGeometry(initialHalfExtendX, initialHalfExtendY, halfExtendZ));
-        }
-    }
     
     PxRigidActor* PhysicsRigidbody::GetRigidbody() const
     {

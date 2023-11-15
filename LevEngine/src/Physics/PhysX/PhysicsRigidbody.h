@@ -15,7 +15,6 @@ namespace LevEngine
     enum class ColliderType
     {
         Sphere,
-        Plane,
         Capsule,
         Box
     };
@@ -38,28 +37,28 @@ namespace LevEngine
         
         // multiple shapes //
 
-        
+        void AttachMultipleCollider(const ColliderType& colliderType);
     
         // multiple shapes //
 
+        [[nodiscard]] Vector3 GetShapeLocalPosition() const;
+        void SetShapeLocalPosition(const Vector3 position);
+        [[nodiscard]] Vector3 GetShapeLocalRotation() const;
+        void SetShapeLocalRotation(const Vector3 rotation);
         
         [[nodiscard]] ColliderType GetColliderType() const;
         void AttachCollider(const ColliderType& colliderType);
         void DetachCollider();
 
-        float GetSphereColliderRadius()      const;
-        float GetCapsuleColliderRadius()     const;
-        float GetCapsuleColliderHalfHeight() const;
-        float GetBoxColliderHalfExtendX()    const;
-        float GetBoxColliderHalfExtendY()    const;
-        float GetBoxColliderHalfExtendZ()    const;
+        [[nodiscard]] float GetSphereColliderRadius()      const;
+        [[nodiscard]] float GetCapsuleColliderRadius()     const;
+        [[nodiscard]] float GetCapsuleColliderHalfHeight() const;
+        [[nodiscard]] Vector3 GetBoxHalfExtends()          const;
         
-        void SetSphereColliderRadius(float radius);
-        void SetCapsuleColliderRadius(float radius);
-        void SetCapsuleColliderHalfHeight(float halfHeight);
-        void SetBoxColliderHalfExtendX(float halfExtendX);
-        void SetBoxColliderHalfExtendY(float halfExtendY);
-        void SetBoxColliderHalfExtendZ(float halfExtendZ);
+        void SetSphereColliderRadius(const float radius);
+        void SetCapsuleColliderRadius(const float radius);
+        void SetCapsuleColliderHalfHeight(const float halfHeight);
+        void SetBoxHalfExtends(const Vector3 extends);
         
         [[nodiscard]] PxRigidActor* GetRigidbody() const;
         

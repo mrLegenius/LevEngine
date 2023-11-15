@@ -14,10 +14,17 @@ namespace LevEngine::Editor
 		static constexpr const char* EntityPayload = "ENTITY";
 
 		static bool DrawVector3Control(const String& label, Vector3& values, float resetValue = 0.0f, float labelWidth = 100.0f);
+		static void DrawVector3Control(const String& label, const Func<Vector3>& getter, const Action<Vector3>& setter,
+			float speed = 1, float min = 0, float max = 0);
+		
 		static bool DrawVector2Control(const String& label, Vector2& values, float resetValue = 0.0f, float labelWidth = 100.0f);
+		static void DrawVector2Control(const String& label, const Func<Vector2>& getter, const Action<Vector2>& setter,
+			float speed = 1, float min = 0, float max = 0);
+		
 		static void DrawFloatControl(const String& label, float& value, float speed = 1, float min = 0, float max = 0);
 		static void DrawFloatControl(const String& label, const Func<float>& getter, const Action<float>& setter,
 			float speed = 1, float min = 0, float max = 0);
+		
 		static void DrawDoubleControl(const String& label, double& value, double speed, double min = 0, double max = 0);
 		static void DrawDoubleControl(const String& label, const Func<double>& getter, const Action<double>& setter,
 			double speed, double min = 0, double max = 0);

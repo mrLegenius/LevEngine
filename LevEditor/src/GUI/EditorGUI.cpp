@@ -107,6 +107,14 @@ namespace LevEngine::Editor
 		return changed;
 	}
 
+	void EditorGUI::DrawVector3Control(const String& label, const Func<Vector3>& getter, const Action<Vector3>& setter, const float speed, const float min, const float max)
+	{
+		auto value = getter();
+		float* v = &(value.x);
+		if (ImGui::DragFloat3(label.c_str(), v, speed, min, max))
+			setter(value);
+	}
+	
 	bool EditorGUI::DrawVector2Control(const String& label, Vector2& values, const float resetValue, const float labelWidth)
 	{
 		// -- Init -------------------------------------------------------
@@ -170,6 +178,14 @@ namespace LevEngine::Editor
 		ImGui::Columns();
 
 		return changed;
+	}
+
+	void EditorGUI::DrawVector2Control(const String& label, const Func<Vector2>& getter, const Action<Vector2>& setter,float speed, float min, float max)
+	{
+		auto value = getter();
+		float* v = &(value.x);
+		if (ImGui::DragFloat2(label.c_str(), v, speed, min, max))
+			setter(value);
 	}
 
 	void EditorGUI::DrawFloatControl(const String& label, float& value, const float speed, const float min, const float max)

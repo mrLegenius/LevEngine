@@ -198,21 +198,20 @@ namespace LevEngine
             case ColliderType::Sphere:
                 out << YAML::Key << "Sphere Radius" << YAML::Value << component.GetSphereColliderRadius();
                 break;
-            case ColliderType::Plane:
-                break;
             case ColliderType::Capsule:
                 out << YAML::Key << "Capsule Radius" << YAML::Value << component.GetCapsuleColliderRadius();
                 out << YAML::Key << "Capsule Half Height" << YAML::Value << component.GetCapsuleColliderHalfHeight();
                 break;
             case ColliderType::Box:
-                out << YAML::Key << "Box Extend X" << YAML::Value << component.GetBoxColliderHalfExtendX();
-                out << YAML::Key << "Box Extend Y" << YAML::Value << component.GetBoxColliderHalfExtendY();
-                out << YAML::Key << "Box Extend Z" << YAML::Value << component.GetBoxColliderHalfExtendZ();
+                out << YAML::Key << "Box Half Extends" << YAML::Value << component.GetBoxHalfExtends();
                 break;
             default:
                 break;
             }
 
+            out << YAML::Key << "Offset Position" << YAML::Value << component.GetShapeLocalPosition();
+            out << YAML::Key << "Offset Rotation" << YAML::Value << component.GetShapeLocalRotation();
+            
             out << YAML::Key << "Static Friction" << YAML::Value << component.GetStaticFriction();
             out << YAML::Key << "Dynamic Friction" << YAML::Value << component.GetDynamicFriction();
             out << YAML::Key << "Restitution" << YAML::Value << component.GetRestitution();
@@ -230,20 +229,19 @@ namespace LevEngine
             case ColliderType::Sphere:
                 component.SetSphereColliderRadius(node["Sphere Radius"].as<float>());
                 break;
-            case ColliderType::Plane:
-                break;
             case ColliderType::Capsule:
                 component.SetCapsuleColliderRadius(node["Capsule Radius"].as<float>());
                 component.SetCapsuleColliderHalfHeight(node["Capsule Half Height"].as<float>());
                 break;
             case ColliderType::Box:
-                component.SetBoxColliderHalfExtendX(node["Box Extend X"].as<float>());
-                component.SetBoxColliderHalfExtendY(node["Box Extend Y"].as<float>());
-                component.SetBoxColliderHalfExtendZ(node["Box Extend Z"].as<float>());
+                component.SetBoxHalfExtends(node["Box Half Extends"].as<Vector3>());
                 break;
             default:
                 break;
             }
+
+            component.SetShapeLocalPosition(node["Offset Position"].as<Vector3>());
+            component.SetShapeLocalRotation(node["Offset Rotation"].as<Vector3>());
 
             component.SetStaticFriction(node["Static Friction"].as<float>());
             component.SetDynamicFriction(node["Dynamic Friction"].as<float>());
