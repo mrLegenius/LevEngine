@@ -6,10 +6,10 @@
 
 namespace LevEngine::Editor
 {
-    class RigidbodyPhysXDrawer final : public ComponentDrawer<PhysicsRigidbody, RigidbodyPhysXDrawer>
+    class PhysicsDrawer final : public ComponentDrawer<PhysicsRigidbody, PhysicsDrawer>
     {
     protected:
-        [[nodiscard]] String GetLabel() const override { return "RigidbodyPhysX"; }
+        [[nodiscard]] String GetLabel() const override { return "Physics"; }
         
         void DrawContent(PhysicsRigidbody& component) override
         {

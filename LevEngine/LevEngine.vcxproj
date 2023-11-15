@@ -877,7 +877,6 @@
     <ClInclude Include="src\Physics\Physics.h" />
     <ClInclude Include="src\Physics\PhysX\PhysicsBase.h" />
     <ClInclude Include="src\Physics\PhysX\PhysicsRigidbody.h" />
-    <ClInclude Include="src\Physics\PhysX\PhysicsSettings.h" />
     <ClInclude Include="src\Physics\PhysX\PhysicsUtils.h" />
     <ClInclude Include="src\Physics\Systems\ForcesClearSystem.h" />
     <ClInclude Include="src\Physics\Systems\PositionUpdateSystem.h" />
