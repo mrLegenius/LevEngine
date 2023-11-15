@@ -3,7 +3,6 @@
 
 #include "PhysicsRigidbody.h"
 #include "Renderer/DebugRender/DebugRender.h"
-#include "Scene/Components/ComponentSerializer.h"
 #include "Physics/PhysX/PhysicsUtils.h"
 
 constexpr auto DEFAULT_PVD_HOST            = "127.0.0.1";
@@ -11,7 +10,7 @@ constexpr auto DEFAULT_PVD_PORT            = 5425;
 constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
 constexpr auto DEFAULT_NUMBER_CPU_THREADS  = 2;
 
-constexpr Vector3 DEFAULT_GRAVITY_SCALE    = {0.0f, -9.81f, 0.0f};
+constexpr Vector3 DEFAULT_GRAVITY_SCALE = {0.0f, -9.81f, 0.0f};
 
 namespace LevEngine
 {
@@ -175,78 +174,5 @@ namespace LevEngine
         const auto gravity = PhysicsUtils::FromVector3ToPxVec3(newGravity);
         gScene->setGravity(gravity);
     }
-
-    
-    
-    class RigidbodyPhysXSerializer final : public ComponentSerializer<PhysicsRigidbody, RigidbodyPhysXSerializer>
-    {
-    protected:
-        const char* GetKey() override
-        {
-            return "RigidbodyPhysX";
-        }
-
-        void SerializeData(YAML::Emitter& out, const PhysicsRigidbody& component) override
-        {
-            out << YAML::Key << "Visualization Flag" << YAML::Value << component.GetColliderVisualizationFlag();
-            out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
-            out << YAML::Key << "Gravity Flag" << YAML::Value << component.GetRigidbodyGravityFlag();
-            out << YAML::Key << "Collider Type" << YAML::Value << static_cast<int>(component.GetColliderType());
-
-            switch (component.GetColliderType())
-            {
-            case ColliderType::Sphere:
-                out << YAML::Key << "Sphere Radius" << YAML::Value << component.GetSphereColliderRadius();
-                break;
-            case ColliderType::Capsule:
-                out << YAML::Key << "Capsule Radius" << YAML::Value << component.GetCapsuleColliderRadius();
-                out << YAML::Key << "Capsule Half Height" << YAML::Value << component.GetCapsuleColliderHalfHeight();
-                break;
-            case ColliderType::Box:
-                out << YAML::Key << "Box Half Extends" << YAML::Value << component.GetBoxHalfExtends();
-                break;
-            default:
-                break;
-            }
-
-            out << YAML::Key << "Offset Position" << YAML::Value << component.GetShapeLocalPosition();
-            out << YAML::Key << "Offset Rotation" << YAML::Value << component.GetShapeLocalRotation();
-            
-            out << YAML::Key << "Static Friction" << YAML::Value << component.GetStaticFriction();
-            out << YAML::Key << "Dynamic Friction" << YAML::Value << component.GetDynamicFriction();
-            out << YAML::Key << "Restitution" << YAML::Value << component.GetRestitution();
-        }
-
-        void DeserializeData(YAML::Node& node, PhysicsRigidbody& component) override
-        {
-            component.SetColliderVisualizationFlag(node["Visualization Flag"].as<bool>());
-            component.SetRigidbodyType(static_cast<RigidbodyType>(node["Rigidbody Type"].as<int>()));
-            component.SetRigidbodyGravityFlag(node["Gravity Flag"].as<bool>());
-            
-            component.AttachCollider(static_cast<ColliderType>(node["Collider Type"].as<int>()));
-            switch (component.GetColliderType())
-            {
-            case ColliderType::Sphere:
-                component.SetSphereColliderRadius(node["Sphere Radius"].as<float>());
-                break;
-            case ColliderType::Capsule:
-                component.SetCapsuleColliderRadius(node["Capsule Radius"].as<float>());
-                component.SetCapsuleColliderHalfHeight(node["Capsule Half Height"].as<float>());
-                break;
-            case ColliderType::Box:
-                component.SetBoxHalfExtends(node["Box Half Extends"].as<Vector3>());
-                break;
-            default:
-                break;
-            }
-
-            component.SetShapeLocalPosition(node["Offset Position"].as<Vector3>());
-            component.SetShapeLocalRotation(node["Offset Rotation"].as<Vector3>());
-
-            component.SetStaticFriction(node["Static Friction"].as<float>());
-            component.SetDynamicFriction(node["Dynamic Friction"].as<float>());
-            component.SetRestitution(node["Restitution"].as<float>());
-        }
-    };
 }
 

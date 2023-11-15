@@ -34,26 +34,23 @@ namespace LevEngine
         
         void CleanupRigidbody();
 
-        
-        // multiple shapes //
-
-        void AttachMultipleCollider(const ColliderType& colliderType);
-    
-        // multiple shapes //
+        [[nodiscard]] PxShape*    GetActorShapes()                         const;
+        [[nodiscard]] PxMaterial* GetShapeMaterials(const PxShape* shapes) const;
 
         [[nodiscard]] Vector3 GetShapeLocalPosition() const;
-        void SetShapeLocalPosition(const Vector3 position);
         [[nodiscard]] Vector3 GetShapeLocalRotation() const;
+        
+        void SetShapeLocalPosition(const Vector3 position);
         void SetShapeLocalRotation(const Vector3 rotation);
         
         [[nodiscard]] ColliderType GetColliderType() const;
         void AttachCollider(const ColliderType& colliderType);
         void DetachCollider();
 
-        [[nodiscard]] float GetSphereColliderRadius()      const;
-        [[nodiscard]] float GetCapsuleColliderRadius()     const;
-        [[nodiscard]] float GetCapsuleColliderHalfHeight() const;
-        [[nodiscard]] Vector3 GetBoxHalfExtends()          const;
+        [[nodiscard]] float   GetSphereColliderRadius()      const;
+        [[nodiscard]] float   GetCapsuleColliderRadius()     const;
+        [[nodiscard]] float   GetCapsuleColliderHalfHeight() const;
+        [[nodiscard]] Vector3 GetBoxHalfExtends()            const;
         
         void SetSphereColliderRadius(const float radius);
         void SetCapsuleColliderRadius(const float radius);

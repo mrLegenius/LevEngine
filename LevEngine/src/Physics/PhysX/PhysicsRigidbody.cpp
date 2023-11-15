@@ -2,6 +2,7 @@
 #include "PhysicsRigidbody.h"
 #include "PhysicsBase.h"
 #include "PhysicsUtils.h"
+#include "Scene/Components/ComponentSerializer.h"
 
 constexpr auto DEFAULT_ACTOR_DENSITY    = 10;
 constexpr auto DEFAULT_STATIC_FRICTION  = 0.5f;
@@ -23,12 +24,14 @@ namespace LevEngine
     void PhysicsRigidbody::SetRigidbodyInitialPose(const Transform& transform)
     {
         const PxTransform pxTransform = PhysicsUtils::FromTransformToPxTransform(transform);
+        
         rbActor->setGlobalPose(pxTransform);
     }
     
     void PhysicsRigidbody::OnComponentDestroy(entt::registry& registry, entt::entity entity)
     {
         auto& rigidbody = registry.get<PhysicsRigidbody>(entity);
+        
         rigidbody.CleanupRigidbody();
     }
     void PhysicsRigidbody::CleanupRigidbody()
@@ -41,84 +44,76 @@ namespace LevEngine
         {
             rbActor->detachShape(*shapes[i]);
         }
+        
         rbActor->getScene()->removeActor(*rbActor);
+        
         PX_RELEASE(rbActor);
     }
 
-    
-    // multiple shapes //
-
-    void PhysicsRigidbody::AttachMultipleCollider(const ColliderType& colliderType)
+    PxShape* PhysicsRigidbody::GetActorShapes() const
     {
+        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
         const auto nbShapes = rbActor->getNbShapes();
-        if (nbShapes > MAX_NUM_RIGIDBODY_SHAPES)
-        {
-            Log::Debug("shape limit");
-            return;
-        }
+        rbActor->getShapes(shapes, nbShapes);
+
+        return *shapes;
     }
-    
-    // multiple shapes //
+
+    PxMaterial* PhysicsRigidbody::GetShapeMaterials(const PxShape* shapes) const
+    {
+        PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
+        const auto nbMaterials = shapes[0].getNbMaterials();
+        shapes[0].getMaterials(materials, nbMaterials);
+
+        return *materials;
+    }
 
     
     Vector3 PhysicsRigidbody::GetShapeLocalPosition() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
+        const auto shapes = GetActorShapes();
         
-        return PhysicsUtils::FromPxVec3ToVector3(shapes[0]->getLocalPose().p);
+        return PhysicsUtils::FromPxVec3ToVector3(shapes[0].getLocalPose().p);
     }
 
     void PhysicsRigidbody::SetShapeLocalPosition(const Vector3 position)
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
+        const auto shapes = GetActorShapes();
+        const auto rotation = shapes[0].getLocalPose().q;
         
-        const auto rotation = shapes[0]->getLocalPose().q;
-        shapes[0]->setLocalPose(PxTransform(PhysicsUtils::FromVector3ToPxVec3(position), rotation));
+        shapes[0].setLocalPose(PxTransform(PhysicsUtils::FromVector3ToPxVec3(position), rotation));
     }
 
     Vector3 PhysicsRigidbody::GetShapeLocalRotation() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
-
-        const auto quaternion = PhysicsUtils::FromPxQuatToQuaternion(shapes[0]->getLocalPose().q);
+        const auto shapes = GetActorShapes();
+        const auto quaternion = PhysicsUtils::FromPxQuatToQuaternion(shapes[0].getLocalPose().q);
         
         return Math::ToDegrees(quaternion.ToEuler());
     }
 
     void PhysicsRigidbody::SetShapeLocalRotation(const Vector3 rotation)
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
-        
-        const auto position = shapes[0]->getLocalPose().p;
-        
+        const auto shapes = GetActorShapes();
+        const auto position = shapes[0].getLocalPose().p;
         const auto quaternion = Quaternion::CreateFromYawPitchRoll(Math::ToRadians(rotation));
         
-        shapes[0]->setLocalPose(PxTransform(position, PhysicsUtils::FromQuaternionToPxQuat(quaternion)));
+        shapes[0].setLocalPose(PxTransform(position, PhysicsUtils::FromQuaternionToPxQuat(quaternion)));
     }
     
     ColliderType PhysicsRigidbody::GetColliderType() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
+        const auto shapes = GetActorShapes();
         
-        if (shapes[0]->getGeometry().getType() == PxGeometryType::eSPHERE)
+        if (shapes[0].getGeometry().getType() == PxGeometryType::eSPHERE)
         {
             return ColliderType::Sphere;
         }
-        if (shapes[0]->getGeometry().getType() == PxGeometryType::eCAPSULE)
+        if (shapes[0].getGeometry().getType() == PxGeometryType::eCAPSULE)
         {
             return ColliderType::Capsule;
         }
-        if (shapes[0]->getGeometry().getType() == PxGeometryType::eBOX)
+        if (shapes[0].getGeometry().getType() == PxGeometryType::eBOX)
         {
             return ColliderType::Box;
         }
@@ -158,6 +153,7 @@ namespace LevEngine
         default:
             break;
         }
+        
         rbActor->attachShape(*shape);
         shape->release();
         material->release();
@@ -177,11 +173,8 @@ namespace LevEngine
 
     float PhysicsRigidbody::GetSphereColliderRadius() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
-
-        const PxGeometryHolder geom(shapes[0]->getGeometry());
+        const auto shapes = GetActorShapes();
+        const PxGeometryHolder geom(shapes[0].getGeometry());
         const auto radius = geom.sphere().radius;
         
         return radius;
@@ -189,11 +182,8 @@ namespace LevEngine
 
     float PhysicsRigidbody::GetCapsuleColliderRadius() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
-
-        const PxGeometryHolder geom(shapes[0]->getGeometry());
+        const auto shapes = GetActorShapes();
+        const PxGeometryHolder geom(shapes[0].getGeometry());
         const auto radius = geom.capsule().radius;
         
         return radius;
@@ -201,11 +191,8 @@ namespace LevEngine
     
     float PhysicsRigidbody::GetCapsuleColliderHalfHeight() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
-
-        const PxGeometryHolder geom(shapes[0]->getGeometry());
+        const auto shapes = GetActorShapes();
+        const PxGeometryHolder geom(shapes[0].getGeometry());
         const auto halfHeight = geom.capsule().halfHeight;
         
         return halfHeight;
@@ -213,11 +200,8 @@ namespace LevEngine
 
     Vector3 PhysicsRigidbody::GetBoxHalfExtends() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
-        
-        const PxGeometryHolder geom(shapes[0]->getGeometry());
+        const auto shapes = GetActorShapes();
+        const PxGeometryHolder geom(shapes[0].getGeometry());
         const auto halfExtends = geom.box().halfExtents;
 
         return PhysicsUtils::FromPxVec3ToVector3(halfExtends);
@@ -228,11 +212,9 @@ namespace LevEngine
     {
         if ((radius > 0.0f) && (radius <= PX_MAX_F32))
         {
-            PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const auto nbShapes = rbActor->getNbShapes();
-            rbActor->getShapes(shapes, nbShapes);
+            const auto shapes = GetActorShapes();
             
-            shapes[0]->setGeometry(PxSphereGeometry(radius));
+            shapes[0].setGeometry(PxSphereGeometry(radius));
         }
     }
     
@@ -240,14 +222,11 @@ namespace LevEngine
     {
         if ((radius > 0.0f) && (radius <= PX_MAX_F32))
         {
-            PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const auto nbShapes = rbActor->getNbShapes();
-            rbActor->getShapes(shapes, nbShapes);
-        
-            const PxGeometryHolder geom(shapes[0]->getGeometry());
+            const auto shapes = GetActorShapes();
+            const PxGeometryHolder geom(shapes[0].getGeometry());
             const auto initialHeight = geom.capsule().halfHeight;
             
-            shapes[0]->setGeometry(PxCapsuleGeometry(radius, initialHeight));
+            shapes[0].setGeometry(PxCapsuleGeometry(radius, initialHeight));
         }
     }
     
@@ -255,27 +234,21 @@ namespace LevEngine
     {
         if ((halfHeight >= 0.0f) && (halfHeight <= PX_MAX_F32))
         {
-            PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const auto nbShapes = rbActor->getNbShapes();
-            rbActor->getShapes(shapes, nbShapes);
-        
-            const PxGeometryHolder geom(shapes[0]->getGeometry());
+            const auto shapes = GetActorShapes();
+            const PxGeometryHolder geom(shapes[0].getGeometry());
             const auto initialRadius = geom.capsule().radius;
             
-            shapes[0]->setGeometry(PxCapsuleGeometry(initialRadius, halfHeight));
+            shapes[0].setGeometry(PxCapsuleGeometry(initialRadius, halfHeight));
         }
     }
 
     void PhysicsRigidbody::SetBoxHalfExtends(const Vector3 extends)
     {
-        if ((extends.x > 0. && extends.y > 0.0f && extends.z > 0.0f)
-            && (extends.x < PX_MAX_F32 && extends.y < PX_MAX_F32 && extends.z < PX_MAX_F32))
+        if ((extends.x > 0. && extends.y > 0.0f && extends.z > 0.0f) && (extends.x < PX_MAX_F32 && extends.y < PX_MAX_F32 && extends.z < PX_MAX_F32))
         {
-            PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const auto nbShapes = rbActor->getNbShapes();
-            rbActor->getShapes(shapes, nbShapes);
+            const auto shapes = GetActorShapes();
             
-            shapes[0]->setGeometry(PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(extends)));
+            shapes[0].setGeometry(PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(extends)));
         }
     }
 
@@ -302,41 +275,26 @@ namespace LevEngine
     
     float PhysicsRigidbody::GetStaticFriction() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
+        const auto shapes = GetActorShapes();
+        const auto materials = GetShapeMaterials(shapes);
         
-        PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-        const auto nbMaterials = shapes[0]->getNbMaterials();
-        shapes[0]->getMaterials(materials, nbMaterials);
-        
-        return materials[0]->getStaticFriction();
+        return materials[0].getStaticFriction();
     }
     
     float PhysicsRigidbody::GetDynamicFriction() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
+        const auto shapes = GetActorShapes();
+        const auto materials = GetShapeMaterials(shapes);
         
-        PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-        const auto nbMaterials = shapes[0]->getNbMaterials();
-        shapes[0]->getMaterials(materials, nbMaterials);
-        
-        return materials[0]->getDynamicFriction();
+        return materials[0].getDynamicFriction();
     }
     
     float PhysicsRigidbody::GetRestitution() const
     {
-        PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-        const auto nbShapes = rbActor->getNbShapes();
-        rbActor->getShapes(shapes, nbShapes);
+        const auto shapes = GetActorShapes();
+        const auto materials = GetShapeMaterials(shapes);
         
-        PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-        const auto nbMaterials = shapes[0]->getNbMaterials();
-        shapes[0]->getMaterials(materials, nbMaterials);
-        
-        return materials[0]->getRestitution();
+        return materials[0].getRestitution();
     }
     
     void PhysicsRigidbody::SetRigidbodyType(const RigidbodyType rigidbodyType)
@@ -362,6 +320,7 @@ namespace LevEngine
             default:
                 break;
             }
+            
             AttachCollider(ColliderType::Box);
         }
     }
@@ -386,15 +345,10 @@ namespace LevEngine
     {
         if ((staticFriction >= 0.0f) && (staticFriction <= PX_MAX_F32))
         {
-            PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const auto nbShapes = rbActor->getNbShapes();
-            rbActor->getShapes(shapes, nbShapes);
+            const auto shapes = GetActorShapes();
+            const auto materials = GetShapeMaterials(shapes);
             
-            PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-            const auto nbMaterials = shapes[0]->getNbMaterials();
-            shapes[0]->getMaterials(materials, nbMaterials);
-            
-            materials[0]->setStaticFriction(staticFriction);
+            materials[0].setStaticFriction(staticFriction);
         }
     }
     
@@ -402,15 +356,10 @@ namespace LevEngine
     {
         if ((dynamicFriction >= 0.0f) && (dynamicFriction <= PX_MAX_F32))
         {
-            PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const auto nbShapes = rbActor->getNbShapes();
-            rbActor->getShapes(shapes, nbShapes);
+            const auto shapes = GetActorShapes();
+            const auto materials = GetShapeMaterials(shapes);
             
-            PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-            const auto nbMaterials = shapes[0]->getNbMaterials();
-            shapes[0]->getMaterials(materials, nbMaterials);
-            
-            materials[0]->setDynamicFriction(dynamicFriction);
+            materials[0].setDynamicFriction(dynamicFriction);
         }
     }
     
@@ -418,15 +367,81 @@ namespace LevEngine
     {
         if ((restitution >= 0.0f) && (restitution <= 1.0f))
         {
-            PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
-            const auto nbShapes = rbActor->getNbShapes();
-            rbActor->getShapes(shapes, nbShapes);
+            const auto shapes = GetActorShapes();
+            const auto materials = GetShapeMaterials(shapes);
             
-            PxMaterial* materials[MAX_NUM_RIGIDBODY_MATERIALS];
-            const auto nbMaterials = shapes[0]->getNbMaterials();
-            shapes[0]->getMaterials(materials, nbMaterials);
-            
-            materials[0]->setRestitution(restitution);
+            materials[0].setRestitution(restitution);
         }
     }
+
+    class PhysicsSerializer final : public ComponentSerializer<PhysicsRigidbody, PhysicsSerializer>
+    {
+    protected:
+        const char* GetKey() override
+        {
+            return "Physics";
+        }
+
+        void SerializeData(YAML::Emitter& out, const PhysicsRigidbody& component) override
+        {
+            out << YAML::Key << "Visualization Flag" << YAML::Value << component.GetColliderVisualizationFlag();
+            out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
+            out << YAML::Key << "Gravity Flag" << YAML::Value << component.GetRigidbodyGravityFlag();
+            out << YAML::Key << "Collider Type" << YAML::Value << static_cast<int>(component.GetColliderType());
+
+            switch (component.GetColliderType())
+            {
+            case ColliderType::Sphere:
+                out << YAML::Key << "Sphere Radius" << YAML::Value << component.GetSphereColliderRadius();
+                break;
+            case ColliderType::Capsule:
+                out << YAML::Key << "Capsule Radius" << YAML::Value << component.GetCapsuleColliderRadius();
+                out << YAML::Key << "Capsule Half Height" << YAML::Value << component.GetCapsuleColliderHalfHeight();
+                break;
+            case ColliderType::Box:
+                out << YAML::Key << "Box Half Extends" << YAML::Value << component.GetBoxHalfExtends();
+                break;
+            default:
+                break;
+            }
+
+            out << YAML::Key << "Offset Position" << YAML::Value << component.GetShapeLocalPosition();
+            out << YAML::Key << "Offset Rotation" << YAML::Value << component.GetShapeLocalRotation();
+            
+            out << YAML::Key << "Static Friction" << YAML::Value << component.GetStaticFriction();
+            out << YAML::Key << "Dynamic Friction" << YAML::Value << component.GetDynamicFriction();
+            out << YAML::Key << "Restitution" << YAML::Value << component.GetRestitution();
+        }
+
+        void DeserializeData(YAML::Node& node, PhysicsRigidbody& component) override
+        {
+            component.SetColliderVisualizationFlag(node["Visualization Flag"].as<bool>());
+            component.SetRigidbodyType(static_cast<RigidbodyType>(node["Rigidbody Type"].as<int>()));
+            component.SetRigidbodyGravityFlag(node["Gravity Flag"].as<bool>());
+            
+            component.AttachCollider(static_cast<ColliderType>(node["Collider Type"].as<int>()));
+            switch (component.GetColliderType())
+            {
+            case ColliderType::Sphere:
+                component.SetSphereColliderRadius(node["Sphere Radius"].as<float>());
+                break;
+            case ColliderType::Capsule:
+                component.SetCapsuleColliderRadius(node["Capsule Radius"].as<float>());
+                component.SetCapsuleColliderHalfHeight(node["Capsule Half Height"].as<float>());
+                break;
+            case ColliderType::Box:
+                component.SetBoxHalfExtends(node["Box Half Extends"].as<Vector3>());
+                break;
+            default:
+                break;
+            }
+
+            component.SetShapeLocalPosition(node["Offset Position"].as<Vector3>());
+            component.SetShapeLocalRotation(node["Offset Rotation"].as<Vector3>());
+
+            component.SetStaticFriction(node["Static Friction"].as<float>());
+            component.SetDynamicFriction(node["Dynamic Friction"].as<float>());
+            component.SetRestitution(node["Restitution"].as<float>());
+        }
+    };
 }

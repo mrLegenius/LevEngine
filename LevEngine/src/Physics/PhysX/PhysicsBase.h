@@ -1,9 +1,7 @@
 ﻿#pragma once
-#include "Math/Vector3.h"
 #include "physx/include/PxPhysicsAPI.h"
 #include "Scene/Components/Transform/Transform.h"
 
-//constexpr auto MAX_NUM_RIGIDBODY_SCENES    = 5;
 constexpr auto MAX_NUM_RIGIDBODY_SHAPES    = 5;
 constexpr auto MAX_NUM_RIGIDBODY_MATERIALS = 5;
 
@@ -22,14 +20,10 @@ namespace LevEngine
         [[nodiscard]] static PhysicsBase& GetInstance();
         
         [[nodiscard]] PxPhysics* GetPhysics() const;
-        [[nodiscard]] PxScene* GetScene()     const;
+        [[nodiscard]] PxScene*   GetScene()   const;
+        [[nodiscard]] Vector3    GetGravity() const;
         
-        [[nodiscard]] Vector3 GetGravity() const;
         void SetGravity(const Vector3 gravity);
-
-        // for debug
-        inline static bool usePVD = false;
-        inline static bool useDebugRender = true;
         
     private:
         PhysicsBase();
@@ -53,7 +47,10 @@ namespace LevEngine
         PxPhysics*              gPhysics         = NULL;
         PxDefaultCpuDispatcher* gDispatcher      = NULL;
         PxScene*                gScene           = NULL;
-
+        
+        // for debug
+        inline static bool usePVD = false;
+        inline static bool useDebugRender = true;
         // for physics update
         inline static float mAccumulator = 0.0f;
         inline static float mStepSize    = 1.0f / 60.0f;

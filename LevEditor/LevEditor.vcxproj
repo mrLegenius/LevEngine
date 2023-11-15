@@ -127,7 +127,7 @@
     <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\MeshRendererDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\RigidbodyDrawer.cpp" />
-    <ClCompile Include="src\GUI\Drawers\Components\RigidbodyPhysXDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\PhysicsDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\SkyboxComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\TransformDrawer.cpp" />
