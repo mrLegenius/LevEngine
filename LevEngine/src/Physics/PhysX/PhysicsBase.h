@@ -22,9 +22,9 @@ namespace LevEngine
         [[nodiscard]] static PhysicsBase& GetInstance();
         
         [[nodiscard]] PxPhysics* GetPhysics() const;
-        [[nodiscard]] PxScene*   GetScene()   const;
+        [[nodiscard]] PxScene* GetScene()     const;
         
-        [[nodiscard]] Vector3    GetGravity() const;
+        [[nodiscard]] Vector3 GetGravity() const;
         void SetGravity(const Vector3 gravity);
 
         // for debug
