@@ -17,6 +17,8 @@
 
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
 #include "GUI/ScopedGUIHelpers.h"
+#include "Physics/PhysX/PhysicsRigidbody.h"
+#include "Scene/Systems/Physics/PhysicsRigidbodyInitSystem.h"
 
 namespace LevEngine::Editor
 {
@@ -609,11 +611,15 @@ namespace LevEngine::Editor
         scene->RegisterUpdateSystem<AudioSourceInitSystem>();
         scene->RegisterUpdateSystem<AudioListenerInitSystem>();
 
+        scene->RegisterUpdateSystem<PhysicsRigidbodyInitSystem>();
+        
         auto& registry = scene->GetRegistry();
         registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
         registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
         registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
 
+        registry.on_destroy<PhysicsRigidbody>().connect<&PhysicsRigidbody::OnDestroy>();
+        
         m_Game->Focus();
         m_SceneState = SceneState::Play;
         Selection::Deselect();

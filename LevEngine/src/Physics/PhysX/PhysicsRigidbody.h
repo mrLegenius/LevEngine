@@ -24,14 +24,15 @@ namespace LevEngine
     class PhysicsRigidbody
     {
     public:
-        PhysicsRigidbody()  = default;
-        ~PhysicsRigidbody() = default;
-
-        static void OnComponentConstruct(entt::registry& registry, entt::entity entity);
-        static void OnComponentDestroy(entt::registry& registry, entt::entity entity);
+        static void OnDestroy(entt::registry& registry, entt::entity entity);
+        
+        PhysicsRigidbody();
         
         void SetRigidbodyInitialPose(const Transform& transform);
-        
+        void Init(Transform& transform);
+        bool IsInitialized() const;
+        void ResetInit();
+
         void CleanupRigidbody();
 
         [[nodiscard]] PxShape*    GetActorShapes()                         const;
@@ -75,5 +76,7 @@ namespace LevEngine
         
     private:
         PxRigidActor* rbActor = NULL;
+        
+        bool m_IsInited = false;
     };
 }

@@ -12,28 +12,48 @@ constexpr auto DEFAULT_SHAPE_SIZE       = 0.5f;
 
 namespace LevEngine
 {
-    void PhysicsRigidbody::OnComponentConstruct(entt::registry& registry, entt::entity entity)
+    PhysicsRigidbody::PhysicsRigidbody()
     {
-        auto& rigidbody = registry.get<PhysicsRigidbody>(entity);
-        // TODO: INITIAL TRANSFORM INITIALIZATION [NOW HAVE TO USE SetRigidBodyInitialPose()]
-        rigidbody.rbActor = PhysicsBase::GetInstance().GetPhysics()->createRigidDynamic(PxTransform(PxIdentity));
-        PxRigidBodyExt::updateMassAndInertia(*(reinterpret_cast<PxRigidDynamic*>(rigidbody.rbActor)), DEFAULT_ACTOR_DENSITY);
-        PhysicsBase::GetInstance().GetScene()->addActor(*(reinterpret_cast<PxRigidDynamic*>(rigidbody.rbActor)));
-        rigidbody.AttachCollider(ColliderType::Box);
+        rbActor = PhysicsBase::GetInstance().GetPhysics()->createRigidDynamic(PxTransform(PxIdentity));
+        PxRigidBodyExt::updateMassAndInertia(*(reinterpret_cast<PxRigidDynamic*>(rbActor)), DEFAULT_ACTOR_DENSITY);
+        PhysicsBase::GetInstance().GetScene()->addActor(*(reinterpret_cast<PxRigidDynamic*>(rbActor)));
+        AttachCollider(ColliderType::Box);
     }
+
     void PhysicsRigidbody::SetRigidbodyInitialPose(const Transform& transform)
     {
         const PxTransform pxTransform = PhysicsUtils::FromTransformToPxTransform(transform);
-        
         rbActor->setGlobalPose(pxTransform);
     }
     
-    void PhysicsRigidbody::OnComponentDestroy(entt::registry& registry, entt::entity entity)
+    void PhysicsRigidbody::Init(Transform& transform)
+    {
+        if (IsInitialized())
+        {
+            return;
+        }
+        
+        SetRigidbodyInitialPose(transform);
+        
+        m_IsInited = true;
+    }
+
+    bool PhysicsRigidbody::IsInitialized() const
+    {
+        return m_IsInited;
+    }
+
+    void PhysicsRigidbody::ResetInit()
+    {
+        m_IsInited = false;
+    }
+    
+    void PhysicsRigidbody::OnDestroy(entt::registry& registry, entt::entity entity)
     {
         auto& rigidbody = registry.get<PhysicsRigidbody>(entity);
-        
         rigidbody.CleanupRigidbody();
     }
+    
     void PhysicsRigidbody::CleanupRigidbody()
     {
         PxShape* shapes[MAX_NUM_RIGIDBODY_SHAPES];
@@ -373,13 +393,13 @@ namespace LevEngine
             materials[0].setRestitution(restitution);
         }
     }
-
-    class PhysicsSerializer final : public ComponentSerializer<PhysicsRigidbody, PhysicsSerializer>
+    
+    class PhysicsRigidbodySerializer final : public ComponentSerializer<PhysicsRigidbody, PhysicsRigidbodySerializer>
     {
     protected:
         const char* GetKey() override
         {
-            return "Physics";
+            return "Physics Rigidbody";
         }
 
         void SerializeData(YAML::Emitter& out, const PhysicsRigidbody& component) override
@@ -418,7 +438,7 @@ namespace LevEngine
             component.SetColliderVisualizationFlag(node["Visualization Flag"].as<bool>());
             component.SetRigidbodyType(static_cast<RigidbodyType>(node["Rigidbody Type"].as<int>()));
             component.SetRigidbodyGravityFlag(node["Gravity Flag"].as<bool>());
-            
+
             component.AttachCollider(static_cast<ColliderType>(node["Collider Type"].as<int>()));
             switch (component.GetColliderType())
             {
@@ -434,7 +454,7 @@ namespace LevEngine
                 break;
             default:
                 break;
-            }
+            } 
 
             component.SetShapeLocalPosition(node["Offset Position"].as<Vector3>());
             component.SetShapeLocalRotation(node["Offset Rotation"].as<Vector3>());
@@ -442,6 +462,8 @@ namespace LevEngine
             component.SetStaticFriction(node["Static Friction"].as<float>());
             component.SetDynamicFriction(node["Dynamic Friction"].as<float>());
             component.SetRestitution(node["Restitution"].as<float>());
+
+            component.ResetInit();
         }
     };
 }

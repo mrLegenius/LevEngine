@@ -981,6 +981,7 @@
     <ClInclude Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.h" />
     <ClInclude Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />
+    <ClInclude Include="src\Scene\Systems\Physics\PhysicsRigidbodyInitSystem.h" />
     <ClInclude Include="src\Serializers\RenderSettingsSerializer.h" />
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
@@ -1311,6 +1312,7 @@
     <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\Physics\PhysicsRigidbodyInitSystem.cpp" />
     <ClCompile Include="src\Serializers\RenderSettingsSerializer.cpp" />
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>

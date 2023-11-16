@@ -16,12 +16,6 @@ namespace LevEngine
 
     constexpr bool k_IsMultiThreading = false;
     constexpr int k_SleepMicroSeconds = 10;
-
-Scene::Scene()
-{
-    m_Registry.on_construct<PhysicsRigidbody>().connect<&PhysicsRigidbody::OnComponentConstruct>();
-    m_Registry.on_destroy<PhysicsRigidbody>().connect<&PhysicsRigidbody::OnComponentDestroy>();
-}
     
 void Scene::CleanupScene()
 {

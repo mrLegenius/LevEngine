@@ -18,7 +18,8 @@ class Entity;
 class Scene
 {
 public:
-	Scene();
+	Scene() = default;
+	~Scene() = default;
 
 	void CleanupScene();
 

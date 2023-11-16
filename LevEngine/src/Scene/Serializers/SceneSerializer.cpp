@@ -88,12 +88,6 @@ namespace LevEngine
 
 			auto& transform = entity.GetComponent<Transform>();
 			transform.SetParent(entitiesMap[relationships[uuid]], false);
-
-			if (entity.HasComponent<PhysicsRigidbody>())
-			{
-				auto& rigidbody = entity.GetComponent<PhysicsRigidbody>();
-				rigidbody.SetRigidbodyInitialPose(transform);
-			}
 		}
 
 		return true;
