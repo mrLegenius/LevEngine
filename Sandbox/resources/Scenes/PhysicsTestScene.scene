@@ -1,0 +1,52 @@
+Scene: PhysicsTestScene
+Entities:
+  - Entity: 11417794673823124952
+    Tag: Camera
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+    Transform:
+      Position: [0, 5, 5]
+      Rotation: [-0.785398126, 0, -0]
+      Scale: [1, 1, 1]
+  - Entity: 15259556821187274744
+    Tag: Ground
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 7582525064410579512
+      Cast Shadow: true
+    Physics:
+      {}
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [5, 0.5, 5]
+  - Entity: 17084825332365222359
+    Tag: Directional Light
+    Directional Light:
+      Color: [1, 1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: false
+      FixedAspectRatio: false
+    Physics:
+      {}
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0.33408159, -0.757346869, 0.664612591]
+      Scale: [1, 1, 1]
