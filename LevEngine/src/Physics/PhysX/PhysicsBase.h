@@ -2,12 +2,15 @@
 #include "physx/include/PxPhysicsAPI.h"
 #include "Scene/Components/Transform/Transform.h"
 
-constexpr auto MAX_NUM_RIGIDBODY_SHAPES    = 5;
+constexpr auto MAX_NUM_RIGIDBODY_SHAPES = 5;
 constexpr auto MAX_NUM_RIGIDBODY_MATERIALS = 5;
 
 namespace LevEngine
 {
     using namespace physx;
+
+    using Collection = PxScene;
+    using Factory = PxPhysics;
     
     class PhysicsBase
     {
@@ -19,10 +22,10 @@ namespace LevEngine
 
         [[nodiscard]] static PhysicsBase& GetInstance();
         
-        [[nodiscard]] PxPhysics* GetPhysics() const;
-        [[nodiscard]] PxScene*   GetScene()   const;
-        [[nodiscard]] Vector3    GetGravity() const;
+        [[nodiscard]] Factory* GetFactory() const;
+        [[nodiscard]] Collection* GetCollection() const;
         
+        [[nodiscard]] Vector3 GetGravity() const;
         void SetGravity(const Vector3 gravity);
         
     private:
@@ -37,22 +40,23 @@ namespace LevEngine
         static void UpdateTransforms(entt::registry& registry);
         static void DrawDebugLines();
         
-        static PhysicsBase physx;
+        static PhysicsBase s_PhysicsBase;
     
-        PxDefaultAllocator      gAllocator;
-        PxDefaultErrorCallback  gErrorCallback;
-        PxTolerancesScale       gToleranceScale;
-        PxFoundation*           gFoundation      = NULL;
-        PxPvd*                  gPvd             = NULL;
-        PxPhysics*              gPhysics         = NULL;
-        PxDefaultCpuDispatcher* gDispatcher      = NULL;
-        PxScene*                gScene           = NULL;
+        PxDefaultAllocator m_Allocator;
+        PxDefaultErrorCallback m_ErrorCallback;
+        PxTolerancesScale m_ToleranceScale;
+        
+        PxFoundation* m_Foundation = NULL;
+        PxPvd* m_Pvd = NULL;
+        PxPhysics* m_Factory = NULL;
+        PxDefaultCpuDispatcher* m_Dispatcher = NULL;
+        PxScene* m_Collection = NULL;
         
         // for debug
-        inline static bool usePVD = false;
-        inline static bool useDebugRender = true;
+        inline static bool s_IsPVDEnabled = false;
+        inline static bool s_IsDebugRenderEnabled = true;
         // for physics update
-        inline static float mAccumulator = 0.0f;
-        inline static float mStepSize    = 1.0f / 60.0f;
+        inline static float s_Accumulator = 0.0f;
+        inline static float s_StepSize = 1.0f / 60.0f;
     };
 }

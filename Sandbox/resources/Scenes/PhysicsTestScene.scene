@@ -1,51 +1,5 @@
 Scene: PhysicsTestScene
 Entities:
-  - Entity: 293547088511675378
-    Tag: Directional Light
-    Directional Light:
-      Color: [1, 1, 1, 1]
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-1.55452466, 0, 0]
-      Scale: [1, 0.999998629, 0.999998629]
-  - Entity: 2286883072584602035
-    Tag: Ground
-    MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 7582525064410579512
-      Cast Shadow: true
-    Physics Rigidbody:
-      Visualization Flag: true
-      Rigidbody Type: 0
-      Gravity Flag: false
-      Collider Type: 2
-      Box Half Extends: [3, 0.25, 3]
-      Offset Position: [0, 0, 0]
-      Offset Rotation: [-0, 0, 0]
-      Static Friction: 0.5
-      Dynamic Friction: 0.5
-      Restitution: 0.600000024
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [6, 0.5, 6]
-  - Entity: 18005086127464243940
-    Tag: Camera
-    Camera:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Main: true
-      FixedAspectRatio: false
-    Transform:
-      Position: [0, 5, 5]
-      Rotation: [-0.785398066, -6.2803692e-16, -1.31708946e-08]
-      Scale: [1, 1, 1]
   - Entity: 2500217727459906061
     Tag: Rock
     MeshRenderer:
@@ -67,3 +21,49 @@ Entities:
       Position: [0, 3, 0]
       Rotation: [-0, 0, 0]
       Scale: [0.00249999994, 0.00249999994, 0.00249999994]
+  - Entity: 18005086127464243940
+    Tag: Camera
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+    Transform:
+      Position: [0, 5, 5]
+      Rotation: [-0.785398066, -6.2803692e-16, -1.31708946e-08]
+      Scale: [1, 1, 1]
+  - Entity: 2286883072584602035
+    Tag: Ground
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 7582525064410579512
+      Cast Shadow: true
+    Physics Rigidbody:
+      Visualization Flag: true
+      Rigidbody Type: 0
+      Gravity Flag: false
+      Collider Type: 2
+      Box Half Extends: [3, 0.25, 3]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [-0, 0, 0]
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [6, 0.5, 6]
+  - Entity: 293547088511675378
+    Tag: Directional Light
+    Directional Light:
+      Color: [1, 1, 1, 1]
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-1.55452466, 0, 0]
+      Scale: [1, 0.999998629, 0.999998629]

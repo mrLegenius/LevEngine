@@ -6,6 +6,14 @@ namespace LevEngine
 {
     REGISTER_PARSE_TYPE(PhysicsRigidbody);
 
+    using namespace physx;
+    
+    using Collider = PxShape;
+    using BaseActor = PxRigidActor;
+    using StaticActor = PxRigidStatic;
+    using DynamicActor = PxRigidDynamic;
+    using PhysicalMaterial = PxMaterial;
+    
     enum class RigidbodyType
     {
         Static,
@@ -18,8 +26,6 @@ namespace LevEngine
         Capsule,
         Box
     };
-
-    using namespace physx;
     
     class PhysicsRigidbody
     {
@@ -28,55 +34,72 @@ namespace LevEngine
         
         PhysicsRigidbody();
         
-        void SetRigidbodyInitialPose(const Transform& transform);
-        void Init(Transform& transform);
-        bool IsInitialized() const;
-        void ResetInit();
+        void SetPose(const Transform& transform);
+        
+        void Initialize(Transform& transform);
+        void Deinitialize();
+
+        bool GetInitializationFlag() const;
 
         void CleanupRigidbody();
 
-        [[nodiscard]] PxShape*    GetActorShapes()                         const;
-        [[nodiscard]] PxMaterial* GetShapeMaterials(const PxShape* shapes) const;
+        [[nodiscard]] int GetColliderNumber() const;
+        [[nodiscard]] Collider* GetColliders() const;
+        [[nodiscard]] PhysicalMaterial* GetPhysicalMaterials(const Collider* colliders) const;
 
-        [[nodiscard]] Vector3 GetShapeLocalPosition() const;
-        [[nodiscard]] Vector3 GetShapeLocalRotation() const;
-        
-        void SetShapeLocalPosition(const Vector3 position);
-        void SetShapeLocalRotation(const Vector3 rotation);
+        [[nodiscard]] Vector3 GetColliderLocalPosition() const;
+        [[nodiscard]] Vector3 GetColliderLocalRotation() const;
+        void SetColliderLocalPosition(const Vector3 position);
+        void SetColliderLocalRotation(const Vector3 rotation);
         
         [[nodiscard]] ColliderType GetColliderType() const;
         void AttachCollider(const ColliderType& colliderType);
         void DetachCollider();
 
-        [[nodiscard]] float   GetSphereColliderRadius()      const;
-        [[nodiscard]] float   GetCapsuleColliderRadius()     const;
-        [[nodiscard]] float   GetCapsuleColliderHalfHeight() const;
-        [[nodiscard]] Vector3 GetBoxHalfExtends()            const;
+        [[nodiscard]] float GetSphereColliderRadius() const;
+        [[nodiscard]] float GetCapsuleColliderRadius() const;
+        [[nodiscard]] float GetCapsuleColliderHalfHeight() const;
+        [[nodiscard]] Vector3 GetBoxColliderHalfExtents() const;
         
         void SetSphereColliderRadius(const float radius);
         void SetCapsuleColliderRadius(const float radius);
         void SetCapsuleColliderHalfHeight(const float halfHeight);
-        void SetBoxHalfExtends(const Vector3 extends);
+        void SetBoxColliderHalfExtents(const Vector3 extends);
         
-        [[nodiscard]] PxRigidActor* GetRigidbody() const;
+        [[nodiscard]] BaseActor* GetRigidbody() const;
         
-        [[nodiscard]] RigidbodyType GetRigidbodyType()             const;
-        [[nodiscard]] bool          GetRigidbodyGravityFlag()      const;
-        [[nodiscard]] bool          GetColliderVisualizationFlag() const;
-        [[nodiscard]] float         GetStaticFriction()            const;
-        [[nodiscard]] float         GetDynamicFriction()           const;
-        [[nodiscard]] float         GetRestitution()               const;
+        [[nodiscard]] RigidbodyType GetType() const;
+        [[nodiscard]] bool GetGravityFlag() const;
+        [[nodiscard]] bool GetColliderVisualizationFlag() const;
+        [[nodiscard]] float GetStaticFriction() const;
+        [[nodiscard]] float GetDynamicFriction() const;
+        [[nodiscard]] float GetRestitution() const;
 
-        void SetRigidbodyType(const RigidbodyType rigidbodyType);
-        void SetRigidbodyGravityFlag(const bool flag);
+        void SetType(const RigidbodyType rigidbodyType);
+        void SetGravityFlag(const bool flag);
         void SetColliderVisualizationFlag(const bool flag);
         void SetStaticFriction(const float staticFriction);
         void SetDynamicFriction(const float dynamicFriction);
         void SetRestitution(const float restitution);
         
     private:
-        PxRigidActor* rbActor = NULL;
+        BaseActor* m_Actor = NULL;
         
-        bool m_IsInited = false;
+        bool m_IsInitialized = false;
+
+        // deserialized fields
+        bool m_IsColliderVisualizationEnabled;
+        RigidbodyType m_RigidbodyType;
+        bool m_IsGravityEnabled;
+        ColliderType m_ColliderType;
+        float m_SphereRadius;
+        float m_CapsuleRadius;
+        float m_CapsuleHalfHeight;
+        Vector3 m_BoxHalfExtents;
+        Vector3 m_OffsetPosition;
+        Vector3 m_OffsetRotation;
+        float m_StaticFriction;
+        float m_DynamicFriction;
+        float m_Restitution;
     };
 }

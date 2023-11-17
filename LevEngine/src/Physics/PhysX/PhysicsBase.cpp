@@ -5,48 +5,47 @@
 #include "Renderer/DebugRender/DebugRender.h"
 #include "Physics/PhysX/PhysicsUtils.h"
 
-constexpr auto DEFAULT_PVD_HOST            = "127.0.0.1";
-constexpr auto DEFAULT_PVD_PORT            = 5425;
+constexpr auto DEFAULT_PVD_HOST = "127.0.0.1";
+constexpr auto DEFAULT_PVD_PORT = 5425;
 constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
-constexpr auto DEFAULT_NUMBER_CPU_THREADS  = 2;
+constexpr auto DEFAULT_NUMBER_CPU_THREADS = 2;
 
 constexpr Vector3 DEFAULT_GRAVITY_SCALE = {0.0f, -9.81f, 0.0f};
 
 namespace LevEngine
 {
-    PhysicsBase PhysicsBase::physx;
+    PhysicsBase PhysicsBase::s_PhysicsBase;
     
     void PhysicsBase::InitPhysics()
     {
-        gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
+        m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
 
-        if (usePVD)
+        if (s_IsPVDEnabled)
         {
-            gPvd = PxCreatePvd(*gFoundation);
+            m_Pvd = PxCreatePvd(*m_Foundation);
             PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(DEFAULT_PVD_HOST, DEFAULT_PVD_PORT, DEFAULT_PVD_CONNECT_TIMEOUT);
-            gPvd->connect(*transport,PxPvdInstrumentationFlag::eALL);
+            m_Pvd->connect(*transport,PxPvdInstrumentationFlag::eALL);
         }
         
-        gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, gToleranceScale, true, gPvd);
+        m_Factory = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
         
-        PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
+        PxSceneDesc sceneDesc(m_Factory->getTolerancesScale());
         sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(DEFAULT_GRAVITY_SCALE);
-        gDispatcher = PxDefaultCpuDispatcherCreate(DEFAULT_NUMBER_CPU_THREADS);
-        sceneDesc.cpuDispatcher	= gDispatcher;
+        m_Dispatcher = PxDefaultCpuDispatcherCreate(DEFAULT_NUMBER_CPU_THREADS);
+        sceneDesc.cpuDispatcher	= m_Dispatcher;
         sceneDesc.filterShader	= PxDefaultSimulationFilterShader;
-        gScene = gPhysics->createScene(sceneDesc);
+        m_Collection = m_Factory->createScene(sceneDesc);
 
-        if (useDebugRender)
+        if (s_IsDebugRenderEnabled)
         {
-            gScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
-            gScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.0f);
-            gScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+            m_Collection->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
+            m_Collection->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.0f);
+            m_Collection->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
         }
         
-        if (usePVD)
+        if (s_IsPVDEnabled)
         {
-            PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
-            if(pvdClient)
+            if (PxPvdSceneClient* pvdClient = m_Collection->getScenePvdClient())
             {
                 pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
                 pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
@@ -61,20 +60,20 @@ namespace LevEngine
     
     bool PhysicsBase::Advance(float deltaTime)
     {
-        mAccumulator += deltaTime;
-        if (mAccumulator < mStepSize)
-        {
-            return false;
-        }
-        mAccumulator -= mStepSize;
-        physx.gScene->simulate(mStepSize);
+        s_Accumulator += deltaTime;
+        
+        if (s_Accumulator < s_StepSize) return false;
+        
+        s_Accumulator -= s_StepSize;
+        s_PhysicsBase.m_Collection->simulate(s_StepSize);
+        
         return true;
     }
     void PhysicsBase::StepPhysics(float deltaTime)
     {
         if (Advance(deltaTime))
         {
-            physx.gScene->fetchResults(true);
+            s_PhysicsBase.m_Collection->fetchResults(true);
         }
     }
     void PhysicsBase::UpdateTransforms(entt::registry& registry)
@@ -90,7 +89,7 @@ namespace LevEngine
     }
     void PhysicsBase::DrawDebugLines()
     {
-        const PxRenderBuffer& rb = physx.gScene->getRenderBuffer();
+        const PxRenderBuffer& rb = s_PhysicsBase.m_Collection->getRenderBuffer();
         auto a = rb.getNbLines();
         for (auto i = 0; i < rb.getNbLines(); i++)
         {
@@ -123,8 +122,10 @@ namespace LevEngine
     void PhysicsBase::Process(entt::registry& m_Registry, float deltaTime)
     {
         StepPhysics(deltaTime);
+        
         UpdateTransforms(m_Registry);
-        if (useDebugRender)
+        
+        if (s_IsDebugRenderEnabled)
         {
             DrawDebugLines();
         }
@@ -132,16 +133,16 @@ namespace LevEngine
     
     void PhysicsBase::CleanupPhysics()
     {
-        PX_RELEASE(gScene)
-        PX_RELEASE(gDispatcher)
-        PX_RELEASE(gPhysics)
-        if(gPvd)
+        PX_RELEASE(m_Collection)
+        PX_RELEASE(m_Dispatcher)
+        PX_RELEASE(m_Factory)
+        if (m_Pvd)
         {
-            PxPvdTransport* transport = gPvd->getTransport();
-            PX_RELEASE(gPvd)
+            PxPvdTransport* transport = m_Pvd->getTransport();
+            PX_RELEASE(m_Pvd)
             PX_RELEASE(transport)
         }
-        PX_RELEASE(gFoundation)
+        PX_RELEASE(m_Foundation)
     }
     PhysicsBase::~PhysicsBase()
     {
@@ -150,29 +151,29 @@ namespace LevEngine
 
     PhysicsBase& PhysicsBase::GetInstance()
     {
-        return physx;
+        return s_PhysicsBase;
     }
     
-    PxPhysics* PhysicsBase::GetPhysics() const
+    PxPhysics* PhysicsBase::GetFactory() const
     {
-        return gPhysics;
+        return m_Factory;
     }
 
-    PxScene* PhysicsBase::GetScene() const
+    PxScene* PhysicsBase::GetCollection() const
     {
-        return gScene;
+        return m_Collection;
     }
 
     Vector3 PhysicsBase::GetGravity() const
     {
-        const auto gravity = gScene->getGravity();
+        const auto gravity = m_Collection->getGravity();
         return PhysicsUtils::FromPxVec3ToVector3(gravity);
     }
 
     void PhysicsBase::SetGravity(const Vector3 newGravity)
     {
         const auto gravity = PhysicsUtils::FromVector3ToPxVec3(newGravity);
-        gScene->setGravity(gravity);
+        m_Collection->setGravity(gravity);
     }
 }
 
