@@ -97,6 +97,7 @@
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
+    <ClCompile Include="src\GUI\Drawers\Assets\AnimationAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />

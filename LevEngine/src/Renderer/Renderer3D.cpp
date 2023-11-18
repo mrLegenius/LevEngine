@@ -1,7 +1,7 @@
 #include "levpch.h"
 #include "Renderer3D.h"
 #include "RenderCommand.h"
-#include "Assets.h"
+#include "3D/Mesh.h"
 #include "3D/Primitives.h"
 #include "Kernel/Application.h"
 

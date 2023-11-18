@@ -13,7 +13,8 @@
 #include "Kernel/UUID.h"
 #include "Kernel/ClassCollection.h"
 
-#include "MeshLoader.h"
+#include "Renderer/3D/MeshLoading/MeshLoader.h"
+#include "Renderer/3D/MeshLoading/AnimationLoader.h"
 #include "TextureLibrary.h"
 
 #include "Debugging/Profiler.h"

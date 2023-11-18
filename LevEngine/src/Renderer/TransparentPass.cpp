@@ -3,6 +3,7 @@
 
 #include "Renderer3D.h"
 #include "RenderSettings.h"
+#include "3D/Mesh.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 
 namespace LevEngine

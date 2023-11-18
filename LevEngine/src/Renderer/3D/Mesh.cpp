@@ -73,6 +73,22 @@ void Mesh::Init()
 		const auto buffer = VertexBuffer::Create(&uvs[0].x, static_cast<uint32_t>(uvs.size()), sizeof Vector2);
 		AddVertexBuffer(BufferBinding("TEXCOORD", 0), buffer);
 	}
+
+	if (m_BoneIDs.size())
+	{
+		const auto buffer = VertexBuffer::Create(&m_BoneIDs[0][0], static_cast<uint32_t>(m_BoneIDs.size()), 
+			sizeof(Array<float,MaxBoneInfluence>));
+
+		AddVertexBuffer(BufferBinding("BONEIDS", 0), buffer);
+	}
+
+	if (m_Weights.size())
+	{
+		const auto buffer = VertexBuffer::Create(&m_Weights[0][0], static_cast<uint32_t>(m_Weights.size()),
+			sizeof(Array<float, MaxBoneInfluence>));
+
+		AddVertexBuffer(BufferBinding("BONEWEIGHTS", 0), buffer);
+	}
 }
 
 void Mesh::Bind(const Ref<Shader>& shader) const
@@ -92,4 +108,27 @@ bool Mesh::IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) c
 {
 	return m_BoundingVolume.IsOnFrustum(frustum, meshTransform);
 }
+
+void Mesh::SetVertexBoneDataToDefault(int vertexIdx)
+{
+	for (int i = 0; i < MaxBoneInfluence; i++)
+	{
+		m_BoneIDs[vertexIdx][i] = -1;
+		m_Weights[vertexIdx][i] = 0.0f;
+	}
+}
+
+void Mesh::SetVertexBoneData(int vertexIdx, int boneID, float weight)
+{
+	for (int i = 0; i < Mesh::MaxBoneInfluence; ++i)
+	{
+		if (m_BoneIDs[vertexIdx][i] < 0)
+		{
+			m_Weights[vertexIdx][i] = weight;
+			m_BoneIDs[vertexIdx][i] = boneID;
+			break;
+		}
+	}
+}
+
 }

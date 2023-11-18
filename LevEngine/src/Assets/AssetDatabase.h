@@ -94,7 +94,7 @@ namespace LevEngine
 		static bool IsAssetAudioBank(const Path& path)
 		{
 			const String pathString = ToString(path);
-			int index = pathString.find('.');
+			const size_t index = pathString.find('.');
 			if (index == eastl::string::npos)
 			{
 				return false;
@@ -103,32 +103,6 @@ namespace LevEngine
 			const auto extension = pathString.right(pathString.length() - index);
 
 			return extension == ".bank";
-		}
-
-		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid)
-		{
-			if (IsAssetTexture(path))
-				return CreateRef<TextureAsset>(path, uuid);
-
-			if (IsAssetMaterial(path))
-				return CreateRef<MaterialSimpleAsset>(path, uuid);
-
-			if (IsAssetPBRMaterial(path))
-				return CreateRef<MaterialPBRAsset>(path, uuid);
-			
-			if (IsAssetSkybox(path))
-				return CreateRef<SkyboxAsset>(path, uuid);
-
-			if (IsAssetMesh(path))
-				return CreateRef<MeshAsset>(path, uuid);
-
-			if (IsAssetPrefab(path))
-				return CreateRef<PrefabAsset>(path, uuid);
-
-			if (IsAssetAudioBank(path))
-				return CreateRef<AudioBankAsset>(path, uuid);
-
-			return CreateRef<DefaultAsset>(path, uuid);
 		}
 
 		template<class T>
@@ -144,7 +118,7 @@ namespace LevEngine
 			
 			const auto uuid = UUID();
 
-			auto asset = CreateAsset(path, uuid);
+			Ref<Asset> asset = CreateAsset(path, uuid);
 			asset->Serialize();
 
 			String metaPath = path.string().c_str();
@@ -162,22 +136,6 @@ namespace LevEngine
 		{
 			if (!exists(path))
 				create_directory(path);
-		}
-
-		[[nodiscard]] static Ref<Asset> GetAsset(const Path& path, const bool deserialize = true)
-		{
-			const auto assetIt = m_AssetsByPath.find(path);
-			if (assetIt == m_AssetsByPath.end())
-			{
-				Log::CoreWarning("Asset in {0} is not found", path.string());
-				return nullptr;
-			}
-			
-			const auto& asset = assetIt->second;
-			if (!asset->IsDeserialized() && deserialize)
-				asset->Deserialize();
-
-			return asset;
 		}
 
 		[[nodiscard]] static Ref<Asset> GetAsset(const UUID uuid)
@@ -201,15 +159,31 @@ namespace LevEngine
 		{
 			static_assert(eastl::is_base_of_v<Asset, T>, "T must be an asset");
 
-			return GetAsset<T>(GetAsset(uuid));
+			return CastAsset<T>(GetAsset(uuid));
+		}
+
+		[[nodiscard]] static Ref<Asset> GetAsset(const Path& path, const bool deserialize = true)
+		{
+			const auto assetIt = m_AssetsByPath.find(path);
+			if (assetIt == m_AssetsByPath.end())
+			{
+				Log::CoreWarning("Asset in {0} is not found", path.string());
+				return nullptr;
+			}
+			
+			const auto& asset = assetIt->second;
+			if (!asset->IsDeserialized() && deserialize)
+				asset->Deserialize();
+
+			return asset;
 		}
 
 		template<class T>
-		[[nodiscard]] static Ref<T> GetAsset(const Path& path)
+		[[nodiscard]] static Ref<T> GetAsset(const Path& path, const bool deserialize = true)
 		{
 			static_assert(eastl::is_base_of_v<Asset, T>, "T must be an asset");
 
-			return GetAsset<T>(GetAsset(path));
+			return CastAsset<T>(GetAsset(path, deserialize));
 		}
 
 		static void RenameAsset(const Ref<Asset>& asset, const String& name);
@@ -221,8 +195,48 @@ namespace LevEngine
 		inline static UnorderedMap<UUID, Ref<Asset>> m_Assets;
 		inline static UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
 
+		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid)
+		{
+			if (IsAssetTexture(path))
+			{
+				return CreateRef<TextureAsset>(path, uuid);
+			}
+
+			if (IsAssetMaterial(path))
+			{
+				return CreateRef<MaterialSimpleAsset>(path, uuid);
+			}
+
+			if (IsAssetPBRMaterial(path))
+			{
+				return CreateRef<MaterialPBRAsset>(path, uuid);
+			}
+
+			if (IsAssetSkybox(path))
+			{
+				return CreateRef<SkyboxAsset>(path, uuid);
+			}
+
+			if (IsAssetMesh(path))
+			{
+				return CreateRef<MeshAsset>(path, uuid);
+			}
+
+			if (IsAssetPrefab(path))
+			{
+				return CreateRef<PrefabAsset>(path, uuid);
+			}
+
+			if (IsAssetAudioBank(path))
+			{
+				return CreateRef<AudioBankAsset>(path, uuid);
+			}
+
+			return CreateRef<DefaultAsset>(path, uuid);
+		}
+
 		template<class T>
-		[[nodiscard]] static Ref<T> GetAsset(const Ref<Asset>& asset)
+		[[nodiscard]] static Ref<T> CastAsset(const Ref<Asset>& asset)
 		{
 			static_assert(std::is_base_of_v<Asset, T>, "T must be an asset");
 			if (!asset) return nullptr;

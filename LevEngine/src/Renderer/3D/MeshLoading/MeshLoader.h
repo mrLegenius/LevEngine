@@ -11,6 +11,8 @@
 
 #include "DataTypes/Path.h"
 #include "Renderer/3D/Mesh.h"
+#include "Renderer/3D/MeshLoading/AssimpConverter.h"
+#include "Kernel/Asserts.h"
 
 namespace LevEngine
 {
@@ -65,12 +67,14 @@ public:
 		{
 			const aiVector3D vertex = vertices[i];
 
+			resultMesh->SetVertexBoneDataToDefault(static_cast<int>(i));
+
 			const auto point = Vector3(vertex.x, vertex.y, vertex.z);
 
 			const auto uv = Vector2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
-			const auto normal = Vector3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
-			const auto tangent = Vector3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
-			const auto biTangent = Vector3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z);
+			const auto normal = AssimpConverter::ToVector3(mesh->mNormals[i]);
+			const auto tangent = AssimpConverter::ToVector3(mesh->mTangents[i]);
+			const auto biTangent = AssimpConverter::ToVector3(mesh->mNormals[i]);
 
 			resultMesh->AddVertex(point);
 			resultMesh->AddUV(uv);
@@ -78,6 +82,8 @@ public:
 			resultMesh->AddTangent(tangent);
 			resultMesh->AddBiTangent(biTangent);
 		}
+
+		ExtractBoneWeightForVertices(resultMesh, mesh, scene);
 
 		const size_t nFaces = mesh->mNumFaces;
 		const aiFace* meshFaces = mesh->mFaces;
@@ -89,13 +95,55 @@ public:
 		}
 
 		const auto aabb = mesh->mAABB;
-		const auto aabbMin = Vector3{aabb.mMin.x, aabb.mMin.y, aabb.mMin.z};
-		const auto aabbMax = Vector3{aabb.mMax.x, aabb.mMax.y, aabb.mMax.z};
+		const auto aabbMin = AssimpConverter::ToVector3(aabb.mMin);
+		const auto aabbMax = AssimpConverter::ToVector3(aabb.mMax);
 		resultMesh->SetAABBBoundingVolume(aabbMin, aabbMax);
 		
 		resultMesh->Init();
 
 		return resultMesh;
+	}
+
+	static void ExtractBoneWeightForVertices(Ref<Mesh>& resultMesh, const aiMesh* mesh, const aiScene* scene)
+	{
+		for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+		{
+			int boneID = -1;
+			String boneName = mesh->mBones[boneIndex]->mName.C_Str();
+			UnorderedMap<String, BoneInfo>& boneInfoMap = resultMesh->GetBoneInfoMap();
+
+			if (!boneInfoMap.count(boneName))
+			{
+				BoneInfo newBoneInfo;
+				int boneCount = resultMesh->GetBoneCount();
+
+				newBoneInfo.id = boneCount;
+				newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix);
+
+				boneInfoMap[boneName] = newBoneInfo;
+				boneID = boneCount;
+				boneCount++;
+
+				resultMesh->SetBoneCount(boneCount);
+			}
+			else
+			{
+				boneID = boneInfoMap[boneName].id;
+			}
+
+			LEV_CORE_ASSERT(boneID != -1)
+
+			const auto weights = mesh->mBones[boneIndex]->mWeights;
+			const unsigned int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+			for (unsigned int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+			{
+				const unsigned int vertexId = weights[weightIndex].mVertexId;
+				const float weight = weights[weightIndex].mWeight;
+				LEV_CORE_ASSERT(vertexId <= resultMesh->GetVerticesCount())
+				resultMesh->SetVertexBoneData(vertexId, boneID, weight);
+			}
+		}
 	}
 };
 }

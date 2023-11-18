@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "Asset.h"
-#include "MeshLoader.h"
-#include "Renderer/3D/Mesh.h"
 
 namespace LevEngine
 {
+	class Mesh;
+
 	class MeshAsset final : public Asset
 	{
 	public:
@@ -21,17 +21,7 @@ namespace LevEngine
 		bool ReadDataFromFile() const override { return false; }
 
 		void SerializeData(YAML::Emitter& out) override { }
-		void DeserializeData(YAML::Node& node) override
-		{
-			try
-			{
-				m_Mesh = MeshLoader::LoadMesh(m_Path);
-			}
-			catch (std::exception& e)
-			{
-				Log::CoreWarning("Failed to load mesh in {0}. Error: {1}", m_Path.string(), e.what());
-			}
-		}
+		void DeserializeData(YAML::Node& node) override;
 
 	private:
 		Ref<Mesh> m_Mesh;

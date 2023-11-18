@@ -1,7 +1,10 @@
 #pragma once
 
+#include "DataTypes/Array.h"
 #include "DataTypes/Map.h"
 #include "DataTypes/Vector.h"
+#include "DataTypes/UnorderedMap.h"
+#include "DataTypes/String.h"
 #include "Math/BoundingVolume.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
@@ -9,6 +12,7 @@
 #include "Renderer/IndexBuffer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexBuffer.h"
+#include "BoneInfo.h"
 
 namespace LevEngine
 {
@@ -22,6 +26,8 @@ class Mesh
 	};
 
 public:
+	static const int MaxBoneInfluence = 4;
+
 	Mesh() = default;
 	
 	Ref<IndexBuffer> CreateIndexBuffer() const;
@@ -58,6 +64,14 @@ public:
 
 	[[nodiscard]] bool IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) const;
 
+	[[nodiscard]] UnorderedMap<String, BoneInfo>& GetBoneInfoMap() { return m_BoneInfoMap; }
+
+	[[nodiscard]] int& GetBoneCount() { return m_BoneCounter; }
+	void SetBoneCount(int value) { m_BoneCounter = value; }
+
+	void SetVertexBoneDataToDefault(int vertexIdx);
+	void SetVertexBoneData(int vertexIdx, int boneID, float weight);
+
 	Ref<IndexBuffer> IndexBuffer;
 
 private:
@@ -70,6 +84,12 @@ private:
 	Vector<Vector3> tangents;
 	Vector<Vector3> biTangents;
 	Vector<Color> colors;
+
+	Vector<Array<float, MaxBoneInfluence>> m_BoneIDs;
+	Vector<Array<float, MaxBoneInfluence>> m_Weights;
+
+	UnorderedMap<String, BoneInfo> m_BoneInfoMap;
+	int m_BoneCounter = 0;
 
 	AABBBoundingVolume m_BoundingVolume{};
 };

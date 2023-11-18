@@ -2,6 +2,7 @@
 #include "OpaquePass.h"
 
 #include "Renderer3D.h"
+#include "3D/Mesh.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine

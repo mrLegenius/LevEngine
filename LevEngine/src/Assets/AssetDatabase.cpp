@@ -80,14 +80,22 @@ namespace LevEngine
 	{
 		if (asset->GetName() == name) return;
 
-		const auto directory = asset->GetPath().parent_path();
+		const auto oldPath = asset->GetPath();
+		const auto directory = oldPath.parent_path();
 		const auto newPath = directory / (name + asset->GetExtension()).c_str();
 
-		m_AssetsByPath.erase(asset->GetPath());
-		std::filesystem::rename(asset->GetPath(), newPath);
-		std::filesystem::rename(
-			asset->GetPath().string().append(".meta").c_str(), 
-			newPath.string().append(".meta").c_str());
+		m_AssetsByPath.erase(oldPath);
+
+		if (std::filesystem::exists(oldPath))
+		{
+			std::filesystem::rename(oldPath, newPath);
+		}
+
+		const auto oldMetaPath = oldPath.string().append(".meta").c_str();
+		if (std::filesystem::exists(oldPath))
+		{
+			std::filesystem::rename(oldMetaPath, newPath.string().append(".meta").c_str());
+		}
 
 		asset->Rename(newPath);
 		m_AssetsByPath.emplace(newPath, asset);
@@ -111,10 +119,16 @@ namespace LevEngine
 
 		try
 		{
-			std::filesystem::rename(oldPath, newPath);
-			std::filesystem::rename(
-				oldPath.string().append(".meta"),
-				newPath.string().append(".meta"));
+			if (std::filesystem::exists(oldPath))
+			{
+				std::filesystem::rename(oldPath, newPath);
+			}
+
+			auto oldMetaPath = oldPath.string().append(".meta");
+			if (std::filesystem::exists(oldMetaPath))
+			{
+				std::filesystem::rename(oldMetaPath, newPath.string().append(".meta"));
+			}
 		}
 		catch (std::filesystem::filesystem_error& e)
 		{
@@ -134,8 +148,16 @@ namespace LevEngine
 		const auto path = asset->GetPath();
 		const auto uuid = asset->GetUUID();
 
-		std::filesystem::remove(path);
-		std::filesystem::remove(path.string().append(".meta"));
+		if (std::filesystem::exists(path))
+		{
+			std::filesystem::remove(path);
+		}
+
+		auto metaPath = path.string().append(".meta");
+		if (std::filesystem::exists(metaPath))
+		{
+			std::filesystem::remove(metaPath);
+		}
 
 		m_AssetsByPath.erase(path);
 		m_Assets.erase(uuid);
@@ -143,6 +165,6 @@ namespace LevEngine
 
 	bool AssetDatabase::AssetExists(const Path& path)
 	{
-		return exists(path);
+		return m_AssetsByPath.count(path);
 	}
 }

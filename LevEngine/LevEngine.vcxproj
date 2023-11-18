@@ -92,6 +92,15 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Assets\AssetDatabase.h" />
+    <ClInclude Include="src\Renderer\3D\BoneInfo.h" />
+    <ClInclude Include="src\Assets\AnimationAsset.h" />
+    <ClInclude Include="src\Renderer\3D\Animator.h" />
+    <ClInclude Include="src\Renderer\3D\Animation.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\AnimationLoader.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\AssimpConverter.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\MeshLoader.h" />
+    <ClInclude Include="src\Renderer\3D\Bone.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
@@ -439,7 +448,6 @@
     <ClInclude Include="external\yaml-cpp\src\token.h" />
     <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Assets\Asset.h" />
-    <ClInclude Include="src\Assets\AssetDatabase.h" />
     <ClInclude Include="src\Assets\AudioBankAsset.h" />
     <ClInclude Include="src\Assets\DefaultAsset.h" />
     <ClInclude Include="src\Assets\MaterialAsset.h" />
@@ -501,7 +509,6 @@
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\DataTypes\String.h" />
-    <ClInclude Include="src\MeshLoader.h" />
     <ClInclude Include="src\levpch.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Physics\Components\CollisionEvents.h" />
@@ -616,6 +623,11 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Assets\AnimationAsset.cpp" />
+    <ClCompile Include="src\Assets\AssetDatabase.cpp" />
+    <ClCompile Include="src\Renderer\3D\Animator.cpp" />
+    <ClCompile Include="src\Renderer\3D\Animation.cpp" />
+    <ClCompile Include="src\Renderer\3D\Bone.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />
@@ -828,7 +840,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Assets\Asset.cpp" />
-    <ClCompile Include="src\Assets\AssetDatabase.cpp" />
     <ClCompile Include="src\Assets\AudioBankAsset.cpp" />
     <ClCompile Include="src\Assets\MaterialSimpleAsset.cpp" />
     <ClCompile Include="src\Assets\MaterialPBRAsset.cpp" />
