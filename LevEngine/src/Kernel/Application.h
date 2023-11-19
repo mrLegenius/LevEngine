@@ -72,4 +72,6 @@ private:
 
 	static Application* s_Instance;
 };
+
+using App = Application;
 }
