@@ -27,6 +27,7 @@ namespace LevEngine
 			worldPos *= parentTransform.GetWorldScale();
 			worldPos = Vector3::Transform(worldPos, parentTransform.GetWorldRotation());
 			worldPos += parentTransform.GetWorldPosition();
+			return worldPos;
 		}
 		return position;
 	}
