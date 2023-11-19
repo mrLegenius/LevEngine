@@ -32,6 +32,7 @@ namespace LevEngine::Editor
         m_SaveData.Load();
 
         m_ProjectEditor = CreateScope<ProjectEditor>(std::bind(&EditorLayer::OnProjectLoaded, this));
+        m_SceneEditor = CreateScope<SceneEditor>([this]{ return m_SceneState; });
 
         if (Project::Load(m_SaveData.GetLastOpenedProject()))
         {
@@ -133,60 +134,21 @@ namespace LevEngine::Editor
         DrawStatusbar();
     }
 
-    void EditorLayer::OnDuplicateEntity()
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& event) const
     {
-        if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
-        {
-            SceneManager::GetActiveScene()->DuplicateEntity(entitySelection->Get());
-        }
-    }
-
-    bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
-    {
-        //Shortcuts
         if (event.GetRepeatCount() > 0)
             return false;
 
-        const bool control = Input::IsKeyDown(KeyCode::LeftControl) ||
-            Input::IsKeyDown(KeyCode::RightControl);
-        const bool shift = Input::IsKeyDown(KeyCode::LeftShift) ||
-            Input::IsKeyDown(KeyCode::RightShift);
-        const bool alt = Input::IsKeyDown(KeyCode::LeftAlt) ||
-            Input::IsKeyDown(KeyCode::RightAlt);
+        if (m_SceneEditor->OnKeyPressed(event))
+            return true;
+        
+         if (m_Hierarchy->OnKeyPressed(event))
+             return true;
 
-        switch (event.GetKeyCode())
-        {
-
-        case KeyCode::N:
-            {
-                if (control) { CreateNewScene(); }
-                break;
-            }
-        case KeyCode::O:
-            {
-                if (control) { OpenScene(); }
-                break;
-            }
-        case KeyCode::S:
-            {
-                if (control && shift) { SaveSceneAs(); }
-                else if (control) { SaveScene(); }
-                break;
-            }
-        case KeyCode::D:
-            {
-                if (control)
-                    OnDuplicateEntity();
-
-                break;
-            }
-
-        default:
-            break;
-        }
-
-        m_Hierarchy->OnKeyPressed(event);
-        return m_Viewport->OnKeyPressed(event);
+        if (m_Viewport->OnKeyPressed(event))
+            return true;
+        
+        return false;
     }
 
     bool EditorLayer::OnWindowResized(const WindowResizedEvent& e) const
@@ -200,8 +162,7 @@ namespace LevEngine::Editor
         Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
         return false;
     }
-
-
+    
     constexpr float toolbarSize = 10;
     float menuBarHeight;
 
@@ -420,80 +381,10 @@ namespace LevEngine::Editor
 
         ImGui::End();
     }
-
-    void EditorLayer::CreateNewScene()
-    {
-        SceneManager::LoadEmptyScene();
-    }
-
-    void EditorLayer::OpenScene()
-    {
-        const auto filepath = FileDialogs::OpenFile("LevEngine Scene (*.scene)\0*.scene\0");
-        if (!filepath.empty())
-        {
-            OpenScene(filepath.c_str());
-        }
-    }
-
-    bool EditorLayer::OpenScene(const Path& path)
-    {
-        if (path.extension().string() != ".scene")
-        {
-            Log::Warning("Failed to open scene. {0} is not a scene file", path.filename().string());
-            return false;
-        }
-
-        if (m_SceneState != SceneState::Edit)
-            OnSceneStop();
-        
-        if (SceneManager::LoadScene(path))
-        {
-            Selection::Deselect();
-            return true;
-        }
-
-        return false;
-    }
-
-    bool EditorLayer::SaveScene()
-    {
-        if (m_SceneState == SceneState::Play)
-        {
-            Log::CoreWarning("Can't save scene in play mode");
-            return false;
-        }
-
-        const auto scenePath = SceneManager::GetActiveScenePath();
-        if (!scenePath.empty())
-        {
-            SceneManager::SaveScene(scenePath.string().c_str());
-            return true;
-        }
-
-        return SaveSceneAs();
-    }
-
-    bool EditorLayer::SaveSceneAs()
-    {
-        if (m_SceneState == SceneState::Play)
-        {
-            Log::CoreWarning("Can't save scene in play mode");
-            return false;
-        }
-
-        const auto filepath = FileDialogs::SaveFile("LevEngine Scene (*.scene)\0*.scene\0", "scene");
-        if (!filepath.empty())
-        {
-            SceneManager::SaveScene(filepath);
-            return true;
-        }
-
-        return false;
-    }
-
+    
     void EditorLayer::OnScenePlay()
     {
-        if (!SaveScene()) return;
+        if (!m_SceneEditor->SaveScene()) return;
 
         auto& scene = SceneManager::GetActiveScene();
         scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
@@ -515,8 +406,8 @@ namespace LevEngine::Editor
     {
         m_SceneState = SceneState::Edit;
         Selection::Deselect();
-
-        OpenScene(SceneManager::GetActiveScenePath());
+        
+        m_SceneEditor->OpenScene(SceneManager::GetActiveScenePath());
     }
     
     void EditorLayer::DoComponentRenderDebug()
@@ -540,7 +431,7 @@ namespace LevEngine::Editor
         AssetDatabase::ProcessAllAssets();
 
         const auto startScene = Project::GetStartScene();
-        if (startScene.empty() || !OpenScene(startScene))
+        if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))
             SceneManager::LoadEmptyScene();
         
         m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
@@ -551,13 +442,10 @@ namespace LevEngine::Editor
         m_Settings = CreateRef<SettingsPanel>();
         m_MainMenuBar = CreateRef<MenuBar>();
 
-        m_MainMenuBar->AddMenuItem("File/New Scene", "Ctrl+N", [this] {CreateNewScene();});
-        m_MainMenuBar->AddMenuItem("File/Open Scene...", "Ctrl+O", [this] {OpenScene();});
-        m_MainMenuBar->AddMenuItem("File/Save Scene", "Ctrl+S", [this] {SaveScene();});
-        m_MainMenuBar->AddMenuItem("File/Save Scene As...", "Ctrl+Shift+S", [this] {SaveSceneAs();});
-        m_MainMenuBar->AddMenuItem("File/Exit", String(), [this] { Application::Get().Close();});
-
+        m_SceneEditor->AddMainMenuItems(m_MainMenuBar);
         m_ProjectEditor->AddMainMenuItems(m_MainMenuBar);
+        
+        m_MainMenuBar->AddMenuItem("File/Exit", String(), [this] { Application::Get().Close();});
     }
     
 }

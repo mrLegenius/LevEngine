@@ -1,6 +1,8 @@
 #pragma once
 #include "EditorSaveData.h"
 #include "ProjectEditor.h"
+#include "SceneEditor.h"
+#include "SceneState.h"
 #include "Essentials/MenuBar.h"
 #include "Events/ApplicationEvent.h"
 #include "Panels/AssetBrowserPanel.h"
@@ -25,14 +27,8 @@ namespace LevEngine::Editor
         void DrawToolbar();
         void DrawStatusbar();
         void DrawDockSpace();
-        void CreateNewScene();
-        void OpenScene();
-        bool OpenScene(const Path& path);
-        bool SaveScene();
-        bool SaveSceneAs();
         void OnEvent(Event& event) override;
-        static void OnDuplicateEntity();
-        bool OnKeyPressed(KeyPressedEvent& event);
+        bool OnKeyPressed(KeyPressedEvent& event) const;
         bool OnWindowResized(const WindowResizedEvent& e) const;
         void OnGUIRender() override;
 
@@ -40,6 +36,7 @@ namespace LevEngine::Editor
         static void DoComponentRenderDebug();
 
         Scope<ProjectEditor> m_ProjectEditor;
+        Scope<SceneEditor> m_SceneEditor;
         
         Ref<ViewportPanel> m_Viewport;
         Ref<HierarchyPanel> m_Hierarchy;
@@ -51,13 +48,7 @@ namespace LevEngine::Editor
         Ref<MenuBar> m_MainMenuBar;
 
         EditorSaveData m_SaveData{"SaveData.editor"};
-
-        enum class SceneState
-        {
-            Edit = 0,
-            Play = 1
-        };
-
+        
         SceneState m_SceneState = SceneState::Edit;
     };
 }
