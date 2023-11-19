@@ -212,9 +212,9 @@ void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
     {
         auto& camera = view.get<CameraComponent>(entity);
 
-        if (camera.fixedAspectRatio) continue;
+        if (camera.FixedAspectRatio) continue;
 
-        camera.camera.SetViewportSize(width, height);
+        camera.Camera.SetViewportSize(width, height);
     }
 }
 

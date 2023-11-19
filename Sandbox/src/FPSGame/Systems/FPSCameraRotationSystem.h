@@ -16,7 +16,7 @@ namespace Sandbox
                 constexpr auto rotationSpeed = 45;
                 auto [transform, camera] = view.get<Transform, CameraComponent>(entity);
 
-                if (!camera.isMain) continue;
+                if (!camera.IsMain) continue;
 				
                 const auto delta = mouse * rotationSpeed * deltaTime;
 

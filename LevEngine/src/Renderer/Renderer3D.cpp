@@ -42,7 +42,7 @@ void Renderer3D::Init()
     s_LightningData.GlobalAmbient = RenderSettings::GlobalAmbient;
 }
 
-void Renderer3D::SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position)
+void Renderer3D::SetCameraBuffer(const SceneCamera* camera, const Matrix& viewMatrix, const Vector3& position)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -50,13 +50,13 @@ void Renderer3D::SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMa
     const float width = static_cast<float>(window.GetWidth());
     const float height = static_cast<float>(window.GetHeight());
 
-    const auto viewProjection = viewMatrix * camera.GetProjection();
+    const auto viewProjection = viewMatrix * camera->GetProjection();
 
     const CameraData cameraData{  viewMatrix, viewProjection, position };
     m_CameraConstantBuffer->SetData(&cameraData);
     m_CameraConstantBuffer->Bind(ShaderType::Vertex | ShaderType::Pixel);
 
-    const ScreenToViewParams params{ camera.GetProjection().Invert(), Vector2{width, height} };
+    const ScreenToViewParams params{ camera->GetProjection().Invert(), Vector2{width, height} };
     m_ScreenToViewParamsConstantBuffer->SetData(&params);
     m_ScreenToViewParamsConstantBuffer->Bind(ShaderType::Pixel);
 }

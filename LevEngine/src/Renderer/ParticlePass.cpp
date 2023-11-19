@@ -117,7 +117,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	m_ComputeData->SetData(&handler);
 	m_ComputeData->Bind(ShaderType::Compute);
 
-	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
+	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera->GetProjection(), params.CameraPosition };
 	m_CameraData->SetData(&cameraData);
 	m_CameraData->Bind(ShaderType::Compute);
 
@@ -205,7 +205,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 
 	//<--- Render ---<<
 	{
-		const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
+		const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera->GetProjection(), params.CameraPosition };
 		m_CameraData->SetData(&cameraData);
 		m_CameraData->Bind(ShaderType::Vertex | ShaderType::Geometry);
 	}

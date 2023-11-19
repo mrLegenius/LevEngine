@@ -12,9 +12,9 @@ namespace LevEngine::Editor
 
 		void DrawContent(CameraComponent& component) override
 		{
-			auto& camera = component.camera;
-			ImGui::Checkbox("Main", &component.isMain);
-			ImGui::Checkbox("Fixed aspect ratio", &component.fixedAspectRatio);
+			auto& camera = component.Camera;
+			ImGui::Checkbox("Main", &component.IsMain);
+			ImGui::Checkbox("Fixed aspect ratio", &component.FixedAspectRatio);
 			
 			const Array<String, 2> stringValues{"Perspective", "Orthographic" };
 			EditorGUI::DrawComboBox<SceneCamera::ProjectionType>("Projection", stringValues,

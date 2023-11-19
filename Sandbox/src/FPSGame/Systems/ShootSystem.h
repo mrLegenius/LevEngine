@@ -26,7 +26,7 @@ namespace Sandbox
             {
                 auto [cameraTransform, camera] = view.get<Transform, CameraComponent>(entity);
 
-                if (!camera.isMain) continue;
+                if (!camera.IsMain) continue;
 
                 if (Input::IsMouseButtonPressed(MouseButton::Left))
                 {
