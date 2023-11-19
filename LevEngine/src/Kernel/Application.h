@@ -1,7 +1,7 @@
 #pragma once
 
 #include "LayerStack.h"
-#define NOMINMAX
+
 #include "Window.h"
 
 #include "../Events/ApplicationEvent.h"

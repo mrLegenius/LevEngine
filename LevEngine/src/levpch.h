@@ -35,6 +35,13 @@
 
 #include "DataTypes/Pointers.h"
 
+#define LEV_PLATFORM_WINDOWS
+
 #ifdef LEV_PLATFORM_WINDOWS
-	#include <Windows.h>
+
+#define NOMINMAX
+#include <Windows.h>
+#include <windowsx.h>
+#include <commdlg.h>
+
 #endif
