@@ -1,9 +1,8 @@
 #pragma once
-#include <unordered_map>
 #include "KeyCodes.h"
 #include "MouseButtonCodes.h"
-#include "DataTypes/Pair.h"
 #include "DataTypes/UnorderedMap.h"
+#include "Math/Vector2.h"
 
 namespace LevEngine
 {
@@ -23,8 +22,8 @@ public:
 	static bool IsMouseButtonUp(MouseButton button);
 
 	static float GetMouseWheelOffset();
-	static Pair<float, float> GetMousePosition();
-	static Pair<float, float> GetMouseDelta();
+	static Vector2 GetMousePosition();
+	static Vector2 GetMouseDelta();
 	static float GetMouseX();
 	static float GetMouseY();
 

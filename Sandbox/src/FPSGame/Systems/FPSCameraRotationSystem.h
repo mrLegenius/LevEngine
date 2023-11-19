@@ -9,7 +9,7 @@ namespace Sandbox
         {
             const auto view = registry.view<Transform, CameraComponent>();
 
-            const Vector2 mouse{ Input::GetMouseDelta().first, Input::GetMouseDelta().second };
+            const Vector2 mouse{ Input::GetMouseDelta().x, Input::GetMouseDelta().y };
 			
             for (const auto entity : view)
             {
