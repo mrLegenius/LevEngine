@@ -7,10 +7,13 @@
 #include "Events/ApplicationEvent.h"
 #include "Panels/AssetBrowserPanel.h"
 #include "Panels/ConsolePanel.h"
+#include "Panels/DockSpace.h"
 #include "Panels/GamePanel.h"
 #include "Panels/HierarchyPanel.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/SettingsPanel.h"
+#include "Panels/StatusBar.h"
+#include "Panels/Toolbar.h"
 #include "Panels/ViewportPanel.h"
 
 namespace LevEngine::Editor
@@ -18,26 +21,25 @@ namespace LevEngine::Editor
     class EditorLayer final : public Layer
     {
     public:
-        void OnProjectLoaded();
         void OnAttach() override;
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnScenePlay();
         void OnSceneStop();
-        void DrawToolbar();
-        void DrawStatusbar();
-        void DrawDockSpace();
         void OnEvent(Event& event) override;
         bool OnKeyPressed(KeyPressedEvent& event) const;
-        bool OnWindowResized(const WindowResizedEvent& e) const;
+        static bool OnWindowResized(const WindowResizedEvent& e);
         void OnGUIRender() override;
 
     private:
         static void DoComponentRenderDebug();
+        void OnProjectLoaded();
+        void OnPlayButtonClicked();
 
         Scope<ProjectEditor> m_ProjectEditor;
         Scope<SceneEditor> m_SceneEditor;
-        
+
+        Ref<DockSpace> m_DockSpace;
         Ref<ViewportPanel> m_Viewport;
         Ref<HierarchyPanel> m_Hierarchy;
         Ref<PropertiesPanel> m_Properties;
@@ -46,9 +48,12 @@ namespace LevEngine::Editor
         Ref<SettingsPanel> m_Settings;
         std::shared_ptr<ConsolePanel> m_Console;
         Ref<MenuBar> m_MainMenuBar;
+        Ref<Toolbar> m_MainToolbar;
+        Ref<StatusBar> m_MainStatusBar;
 
         EditorSaveData m_SaveData{"SaveData.editor"};
         
         SceneState m_SceneState = SceneState::Edit;
+        
     };
 }
