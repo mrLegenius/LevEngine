@@ -15,27 +15,11 @@ namespace LevEngine::Editor
 			auto& camera = component.camera;
 			ImGui::Checkbox("Main", &component.isMain);
 			ImGui::Checkbox("Fixed aspect ratio", &component.fixedAspectRatio);
-			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-			const char* currentProjectionTypeString = projectionTypeStrings[static_cast<int>(camera.GetProjectionType())];
-			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-			{
-				for (int i = 0; i < 2; i++)
-				{
-					const bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-					if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
-					{
-						currentProjectionTypeString = projectionTypeStrings[i];
-						camera.SetProjectionType(static_cast<SceneCamera::ProjectionType>(i));
-					}
-
-					if (isSelected)
-					{
-						ImGui::SetItemDefaultFocus();
-					}
-				}
-
-				ImGui::EndCombo();
-			}
+			
+			const Array<String, 2> stringValues{"Perspective", "Orthographic" };
+			EditorGUI::DrawComboBox<SceneCamera::ProjectionType>("Projection", stringValues,
+				BindGetter(&SceneCamera::GetProjectionType, &camera),
+				BindSetter(&SceneCamera::SetProjectionType, &camera));
 
 			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 			{

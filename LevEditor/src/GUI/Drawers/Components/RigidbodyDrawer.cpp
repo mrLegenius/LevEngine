@@ -12,29 +12,7 @@ namespace LevEngine::Editor
 
         void DrawContent(Rigidbody& component) override
         {
-            const char* bodyTypeStrings[] = { "Static", "Kinematic", "Dynamic" };
-            const char* currentBodyTypeString = bodyTypeStrings[static_cast<int>(component.bodyType)];
-
-            if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    const bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
-                    if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
-                    {
-                        currentBodyTypeString = bodyTypeStrings[i];
-                        component.bodyType = static_cast<BodyType>(i);
-                    }
-
-                    if (isSelected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-
-                ImGui::EndCombo();
-            }
-
+            EditorGUI::DrawComboBox("Body Type", BodyTypeStrings, component.bodyType);
             EditorGUI::DrawFloatControl("Gravity Scale", component.gravityScale);
             EditorGUI::DrawFloatControl("Mass", component.mass);
             EditorGUI::DrawFloatControl("Elasticity", component.elasticity);

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "DataTypes/Array.h"
 #include "Math/Math.h"
 #include "Scene/Components/Transform/Transform.h"
 
@@ -13,11 +14,12 @@ namespace LevEngine
 		Dynamic,
 	};
 
+	const Array<String, 3> BodyTypeStrings{"Static", "Kinematic", "Dynamic"};
+
 	REGISTER_PARSE_TYPE(Rigidbody);
 
-	class Rigidbody
+	struct Rigidbody
 	{
-	public:
 		Rigidbody();
 		Rigidbody(const Rigidbody&) = default;
 

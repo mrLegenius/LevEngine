@@ -18,55 +18,54 @@ namespace LevEngine::Editor
         	}
         	
 	        {
-				const char* filterStrings[] = { "Nearest", "Linear" };
+		        const Array<String, 2> stringValues{"Nearest", "Linear" };
 				SamplerState::MinFilter minFilter;
 				SamplerState::MagFilter magFilter;
 				SamplerState::MipFilter mipFilter;
 				assetRef->SamplerState->GetFilter(minFilter, magFilter, mipFilter);
 				bool changed = false;
-				changed |= EditorGUI::DrawComboBox("Min Filter", filterStrings, 2, &minFilter);
-				changed |= EditorGUI::DrawComboBox("Mag Filter", filterStrings, 2, &magFilter);
-				changed |= EditorGUI::DrawComboBox("Mip Filter", filterStrings, 2, &mipFilter);
+				changed |= EditorGUI::DrawComboBox("Min Filter", stringValues, minFilter);
+				changed |= EditorGUI::DrawComboBox("Mag Filter", stringValues, magFilter);
+				changed |= EditorGUI::DrawComboBox("Mip Filter", stringValues, mipFilter);
 
 				if (changed)
 					assetRef->SamplerState->SetFilter(minFilter, magFilter, mipFilter);
 	        }
 
 			{
-				const char* wrapStrings[] = { "Repeat", "Mirror", "Clamp", "Border" };
+        		const Array<String, 4> stringValues{"Repeat", "Mirror", "Clamp", "Border" };
 				SamplerState::WrapMode wrapModeU;
 				SamplerState::WrapMode wrapModeV;
 				SamplerState::WrapMode wrapModeW;
 				assetRef->SamplerState->GetWrapMode(wrapModeU, wrapModeV, wrapModeW);
 
 				bool changed = false;
-				changed |= EditorGUI::DrawComboBox("Wrap Mode U", wrapStrings, 4, &wrapModeU);
-				changed |= EditorGUI::DrawComboBox("Wrap Mode V", wrapStrings, 4, &wrapModeV);
-				changed |= EditorGUI::DrawComboBox("Wrap Mode W", wrapStrings, 4, &wrapModeW);
+				changed |= EditorGUI::DrawComboBox("Wrap Mode U", stringValues, wrapModeU);
+				changed |= EditorGUI::DrawComboBox("Wrap Mode V", stringValues, wrapModeV);
+				changed |= EditorGUI::DrawComboBox("Wrap Mode W", stringValues, wrapModeW);
 
 				if (changed)
 					assetRef->SamplerState->SetWrapMode(wrapModeU, wrapModeV, wrapModeW);
 			}
 			
 			{
-				const char* compareModeStrings[] = { "None", "CompareRefToTexture" };
+        		const Array<String, 2> stringValues{"None", "CompareRefToTexture" };
 
 				SamplerState::CompareMode compareMode = assetRef->SamplerState->GetCompareMode();
 
-				bool changed = EditorGUI::DrawComboBox("Compare Mode", compareModeStrings, 2, &compareMode);
-
-				if (changed)
+		        if (EditorGUI::DrawComboBox("Compare Mode", stringValues, compareMode))
 					assetRef->SamplerState->SetCompareMode(compareMode);
 			}
 
 			{
-				const char* compareModeStrings[] = { "Never", "Less", "Equal", "LessOrEqual", "Greater", "NotEqual", "GreaterOrEqual", "Always" };
+        		const Array<String, 8> stringValues{"Never", "Less",
+        			"Equal", "LessOrEqual",
+        			"Greater", "NotEqual",
+        			"GreaterOrEqual", "Always" };
 
 				SamplerState::CompareFunc compareMode = assetRef->SamplerState->GetCompareFunction();
 
-				bool changed = EditorGUI::DrawComboBox("Compare Function", compareModeStrings, 8, &compareMode);
-
-				if (changed)
+				if (EditorGUI::DrawComboBox("Compare Function", stringValues, compareMode))
 					assetRef->SamplerState->SetCompareFunction(compareMode);
 			}
 

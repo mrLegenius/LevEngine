@@ -182,21 +182,21 @@ bool EditorGUI::DrawSelectableComponent(const String& componentTypeName, Entity&
 	
 	return changed;
 }
-
-template<class T>
-bool EditorGUI::DrawComboBox(const char* label, const char* strings[], const size_t stringCount, T* current)
+	
+template<class T, int N>
+bool EditorGUI::DrawComboBox(const String label, Array<String, N> stringValues, T& value)
 {
 	bool changed = false;
-	auto currentString = strings[static_cast<int>(*current)];
-	if (ImGui::BeginCombo(label, currentString))
+	auto currentString = stringValues[static_cast<int>(value)];
+	if (ImGui::BeginCombo(label.c_str(), currentString.c_str()))
 	{
-		for (int i = 0; i < stringCount; i++)
+		for (int i = 0; i < stringValues.size(); i++)
 		{
-			const bool isSelected = currentString == strings[i];
-			if (ImGui::Selectable(strings[i], isSelected))
+			const bool isSelected = currentString == stringValues[i];
+			if (ImGui::Selectable(stringValues[i].c_str(), isSelected))
 			{
-				currentString = strings[i];
-				*current = static_cast<T>(i);
+				currentString = stringValues[i];
+				value = static_cast<T>(i);
 				changed = true;
 			}
 
@@ -208,5 +208,17 @@ bool EditorGUI::DrawComboBox(const char* label, const char* strings[], const siz
 	}
 
 	return changed;
+}
+	
+template<class T, int N>
+bool EditorGUI::DrawComboBox(const String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter)
+{
+	if (T value = getter(); DrawComboBox(label, stringValues, value))
+	{
+		setter(value);
+		return true;
+	}
+
+	return false;
 }
 }
