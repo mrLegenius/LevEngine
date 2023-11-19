@@ -156,7 +156,7 @@ namespace LevEngine
 	void Transform::MoveRight(const float value) { Move(GetRightDirection() * value); }
 	void Transform::MoveLeft(const float value) { Move(-GetRightDirection() * value); }
 	void Transform::MoveUp(const float value) { Move(GetUpDirection() * value); }
-	void Transform::MoveDown(const float value) { Move(GetUpDirection() * value); }
+	void Transform::MoveDown(const float value) { Move(-GetUpDirection() * value); }
 
 	Vector3 Transform::GetUpDirection() const
 	{
