@@ -172,40 +172,56 @@ namespace LevEngine::Editor
 		return changed;
 	}
 
-	void EditorGUI::DrawFloatControl(const String& label, float& value, const float speed, const float min, const float max)
+	bool EditorGUI::DrawFloatControl(const String& label, float& value, const float speed, const float min, const float max)
 	{
-		DrawFloatControl(label, [&value] {return value; }, [&value](const float& newValue) {value = newValue; }, speed, min, max);
+		return ImGui::DragFloat(label.c_str(), &value, speed, min, max);
 	}
 
-	void EditorGUI::DrawFloatControl(const String& label, const Func<float>& getter, const Action<float>& setter, const float speed, const float min, const float max)
+	bool EditorGUI::DrawFloatControl(const String& label, const Func<float>& getter, const Action<float>& setter, const float speed, const float min, const float max)
 	{
-		auto value = getter();
-		if (ImGui::DragFloat(label.c_str(), &value, speed, min, max))
+		if (auto value = getter(); DrawFloatControl(label, value, speed, min, max))
+		{
 			setter(value);
+			return true;
+		}
+
+		return false;
 	}
 
-	void EditorGUI::DrawDoubleControl(const String& label, double& value, double speed, double min, double max)
+	bool EditorGUI::DrawDoubleControl(const String& label, double& value, const float speed, const double min, const double max)
 	{
-		DrawDoubleControl(label, [&value] {return value; },
-			[&value](const float& newValue) {value = newValue; }, speed, min, max);
+		return ImGui::DragScalar(label.c_str(), ImGuiDataType_Double, &value, speed, &min, &max);
 	}
 
-	void EditorGUI::DrawDoubleControl(const String& label, const Func<double>& getter,
-		const Action<double>& setter, double speed, double min, double max)
+	bool EditorGUI::DrawDoubleControl(const String& label, const Func<double>& getter,
+		const Action<double>& setter, const float speed, const double min, const double max)
 	{
-		auto value = getter();
-		if (ImGui::DragScalar(label.c_str(), ImGuiDataType_Double, &value, speed, &min, &max))
+		if (auto value = getter(); DrawDoubleControl(label, value, speed, min, max))
+		{
 			setter(value);
+			return true;
+		}
+
+		return false;
 	}
 
-	void EditorGUI::DrawIntControl(const String& label,
+	bool EditorGUI::DrawIntControl(const String& label, int& value, const int speed, const int min, const int max)
+	{
+		return ImGui::DragInt(label.c_str(), &value, static_cast<float>(speed), min, max);
+	}
+	
+	bool EditorGUI::DrawIntControl(const String& label,
 		const Func<int>& getter,
 		const Action<int>& setter,
 		const int speed, const int min, const int max)
 	{
-		auto value = getter();
-		if (ImGui::DragInt(label.c_str(), &value, static_cast<float>(speed), min, max))
+		if (auto value = getter(); DrawIntControl(label, value, speed, min, max))
+		{
 			setter(value);
+			return true;
+		}
+
+		return false;
 	}
 
 	void EditorGUI::DrawColor3Control(const String& label, Color& value)

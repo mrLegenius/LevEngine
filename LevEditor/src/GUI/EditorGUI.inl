@@ -84,13 +84,13 @@ bool EditorGUI::DrawSelectableComponentList(const String& label, Vector<Entity>&
 		if (const ImGuiPayload* payloadEntity = ImGui::AcceptDragDropPayload(EntityPayload))
 		{
 			entities.emplace_back(*static_cast<Entity*>(payloadEntity->Data));
-			itemSelectedIdx = entities.size() - 1;
+			itemSelectedIdx = static_cast<int>(entities.size() - 1);
 			changed = true;
 		}
 		else if (const ImGuiPayload* payloadFromComponentDrawer = ImGui::AcceptDragDropPayload(typeName))
 		{
 			entities.emplace_back(*static_cast<Entity*>(payloadFromComponentDrawer->Data));
-			itemSelectedIdx = entities.size() - 1;
+			itemSelectedIdx = static_cast<int>(entities.size() - 1);
 			changed = true;
 		}
 		
@@ -101,7 +101,7 @@ bool EditorGUI::DrawSelectableComponentList(const String& label, Vector<Entity>&
 	if (ImGui::Button("+"))
 	{
 		entities.emplace_back(Entity());
-		itemSelectedIdx = entities.size() - 1;
+		itemSelectedIdx = static_cast<int>(entities.size() - 1);
 		changed = true;
 	}
 	ImGui::SameLine();

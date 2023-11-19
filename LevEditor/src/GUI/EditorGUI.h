@@ -15,23 +15,26 @@ namespace LevEngine::Editor
 
 		static bool DrawVector3Control(const String& label, Vector3& values, float resetValue = 0.0f, float labelWidth = 100.0f);
 		static bool DrawVector2Control(const String& label, Vector2& values, float resetValue = 0.0f, float labelWidth = 100.0f);
-		static void DrawFloatControl(const String& label, float& value, float speed = 1, float min = 0, float max = 0);
-		static void DrawFloatControl(const String& label, const Func<float>& getter, const Action<float>& setter,
+		
+		static bool DrawFloatControl(const String& label, float& value, float speed = 1, float min = 0, float max = 0);
+		static bool DrawFloatControl(const String& label, const Func<float>& getter, const Action<float>& setter,
 			float speed = 1, float min = 0, float max = 0);
-		static void DrawDoubleControl(const String& label, double& value, double speed, double min = 0, double max = 0);
-		static void DrawDoubleControl(const String& label, const Func<double>& getter, const Action<double>& setter,
-			double speed, double min = 0, double max = 0);
-
-		static void DrawIntControl(const String& label, const Func<int>& getter, const Action<int>& setter,
-			int speed = 1, int min = 0, int max = 0);
+		
+		static bool DrawDoubleControl(const String& label, double& value, float speed, double min = 0, double max = 0);
+		static bool DrawDoubleControl(const String& label, const Func<double>& getter, const Action<double>& setter,
+			float speed, double min = 0, double max = 0);
+		
+		static bool DrawIntControl(const String& label, int& value, int speed, int min, int max);
+		static bool DrawIntControl(const String& label, const Func<int>& getter, const Action<int>& setter,
+		                           int speed = 1, int min = 0, int max = 0);
 
 		static void DrawColor3Control(const String& label, Color& value);
-
-		static void DrawColor3Control(const String& label, const Func<Color>& getter,
-									  const Action<Color>& setter);
-		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
+		static void DrawColor3Control(const String& label, const Func<Color>& getter, const Action<Color>& setter);
+		
 		static bool DrawTextureAsset(const String& label, Ref<TextureAsset>& assetPtr);
 		static bool DrawTextureAsset(Ref<TextureAsset>& assetPtr, Vector2 size);
+		
+		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
 		static void DrawTexture2D(const Func<Ref<Texture>>& getter,
 								  const Action<Ref<Texture>>& setter, Vector2 size = { 32, 32 });
 

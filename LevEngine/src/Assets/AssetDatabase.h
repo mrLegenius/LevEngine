@@ -94,11 +94,9 @@ namespace LevEngine
 		static bool IsAssetAudioBank(const Path& path)
 		{
 			const String pathString = ToString(path);
-			int index = pathString.find('.');
-			if (index == eastl::string::npos)
-			{
-				return false;
-			}
+			const auto index = pathString.find('.');
+			
+			if (index == eastl::string::npos) return false;
 
 			const auto extension = pathString.right(pathString.length() - index);
 
