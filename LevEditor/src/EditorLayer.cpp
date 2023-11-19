@@ -1,10 +1,6 @@
 #include "pch.h"
 #include "EditorLayer.h"
 
-#include <imgui.h>
-#include <imgui_internal.h>
-
-#include "EntitySelection.h"
 #include "ModalPopup.h"
 #include "Project.h"
 #include "Selection.h"
