@@ -6,8 +6,9 @@ namespace LevEngine::Editor
     {
     public:
         void AddMenuItem(const String& path, const String& shortcut, const Action<>& callback);
-
-        void Render() const;
+        void Render();
+        [[nodiscard]] float GetHeight() const { return m_Height; }
+        
     private:
         struct MenuNode
         {
@@ -23,6 +24,7 @@ namespace LevEngine::Editor
         };
         
         MenuNode m_MenuTree{};
+        float m_Height{};
     };
 }
 

@@ -164,7 +164,6 @@ namespace LevEngine::Editor
     }
     
     constexpr float toolbarSize = 10;
-    float menuBarHeight;
 
     void EditorLayer::DrawToolbar()
     {
@@ -177,7 +176,7 @@ namespace LevEngine::Editor
         static auto iconStop = Icons::Stop();
 
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuBarHeight));
+        ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + m_MainMenuBar->GetHeight()));
         ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarSize));
         ImGui::SetNextWindowViewport(viewport->ID);
 
@@ -374,9 +373,7 @@ namespace LevEngine::Editor
             ImGuiID dockMain = ImGui::GetID("MyDockspace");
             ImGui::DockSpace(dockMain);
         }
-        // Save off menu bar height for later.
-        menuBarHeight = ImGui::GetCurrentWindow()->MenuBarHeight();
-
+        
         m_MainMenuBar->Render();
 
         ImGui::End();

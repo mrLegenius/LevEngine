@@ -8,8 +8,10 @@ namespace LevEngine::Editor
         m_MenuTree.InsertItem(path, shortcut, callback);
     }
 
-    void MenuBar::Render() const
+    void MenuBar::Render()
     {
+        m_Height = ImGui::GetCurrentWindow()->MenuBarHeight();
+        
         if (ImGui::BeginMenuBar())
         {
             m_MenuTree.Draw();
