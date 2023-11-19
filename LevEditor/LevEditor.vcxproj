@@ -118,6 +118,7 @@
     <ClInclude Include="src\Panels\SettingsPanel.h" />
     <ClInclude Include="src\Panels\ViewportPanel.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\ProjectEditor.h" />
     <ClInclude Include="src\Selection.h" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +162,7 @@
     <ClCompile Include="src\Panels\Panel.cpp" />
     <ClCompile Include="src\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Panels\ViewportPanel.cpp" />
+    <ClCompile Include="src\ProjectEditor.cpp" />
     <ClCompile Include="src\Selection.cpp" />
   </ItemGroup>
   <ItemGroup>

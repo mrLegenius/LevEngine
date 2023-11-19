@@ -15,94 +15,12 @@
 #include <Scene/Components/Audio/AudioSource.h>
 #include <Scene/Components/Audio/AudioListener.h>
 
+#include "ProjectEditor.h"
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
 #include "GUI/ScopedGUIHelpers.h"
 
 namespace LevEngine::Editor
 {
-    void EditorLayer::ShowProjectSelectionPopup()
-    {
-        ModalPopup::Show("Project Selection",
-    "Open existing or create new project",
-    "Open",
-    "Create new",
-    [this] { if(!OpenProject()) ShowProjectSelectionPopup(); },
-    [this]{ if(!NewProject()) ShowProjectSelectionPopup(); });
-    }
-    
-    bool EditorLayer::OpenProject()
-    {
-        const String& path = FileDialogs::OpenFile("LevProject (*.levproject)\0*.levproject\0");
-
-        if(Project::Load(path.c_str()))
-        {
-            LoadProject();
-            return true;
-        }
-
-        return false;
-    }
-
-    bool EditorLayer::NewProject()
-    {
-        const String& path = FileDialogs::SaveFile("LevProject (*.levproject)\0*.levproject\0", "levproject");
-
-        if(Project::CreateNew(path.c_str()))
-        {
-            LoadProject();
-            return true;
-        }
-        
-        return false;
-    }
-
-
-    void EditorLayer::LoadProject()
-    {
-        m_SaveData.SetLastOpenedProject(Project::GetPath());
-        m_SaveData.Save();
-
-        ResourceManager::Init(Project::GetRoot());
-        AssetDatabase::ProcessAllAssets();
-
-        const auto startScene = Project::GetStartScene();
-        if (startScene.empty() || !OpenScene(startScene))
-            SceneManager::LoadEmptyScene();
-        
-        m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-        m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-        m_Hierarchy = CreateRef<HierarchyPanel>();
-        m_Properties = CreateRef<PropertiesPanel>();
-        m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
-        m_Settings = CreateRef<SettingsPanel>();
-        m_MainMenuBar = CreateRef<MenuBar>();
-
-        m_MainMenuBar->AddMenuItem("File/New Scene", "Ctrl+N", [this] {CreateNewScene();});
-        m_MainMenuBar->AddMenuItem("File/Open Scene...", "Ctrl+O", [this] {OpenScene();});
-        m_MainMenuBar->AddMenuItem("File/Save Scene", "Ctrl+S", [this] {SaveScene();});
-        m_MainMenuBar->AddMenuItem("File/Save Scene As...", "Ctrl+Shift+S", [this] {SaveSceneAs();});
-        m_MainMenuBar->AddMenuItem("File/Exit", String(), [this] { Application::Get().Close();});
-
-        m_MainMenuBar->AddMenuItem("Project/Open project...", String(), [this]
-        {
-            if (!OpenProject())
-                Log::CoreWarning("Failed to open project");
-        });
-        m_MainMenuBar->AddMenuItem("Project/Create New...", String(), [this]
-        {
-            if(!NewProject())
-                Log::CoreWarning("Failed to open project");
-        });
-        m_MainMenuBar->AddMenuItem("Project/Set current scene as start scene", String(), [this]
-        {
-            SetCurrentSceneAsStartScene();
-        });
-        m_MainMenuBar->AddMenuItem("Project/Build", String(), [this]
-        {
-            Project::Build();
-        });
-    }
-    
     void EditorLayer::OnAttach()
     {
         LEV_PROFILE_FUNCTION();
@@ -113,13 +31,15 @@ namespace LevEngine::Editor
 
         m_SaveData.Load();
 
+        m_ProjectEditor = CreateScope<ProjectEditor>(std::bind(&EditorLayer::OnProjectLoaded, this));
+
         if (Project::Load(m_SaveData.GetLastOpenedProject()))
         {
-            LoadProject();
+            OnProjectLoaded();
         }
         else
         {
-            ShowProjectSelectionPopup();
+            m_ProjectEditor->ShowProjectSelectionPopup();
         }
         
         Application::Get().GetWindow().EnableCursor();
@@ -462,19 +382,7 @@ namespace LevEngine::Editor
         ImGui::Begin("##statusbar", nullptr, windowFlags);
         ImGui::End();
     }
-
-    void EditorLayer::SetCurrentSceneAsStartScene() const
-    {
-        if (!SceneManager::GetActiveScene())
-        {
-            Log::CoreWarning("There is no active scene");
-            return;
-        }
-
-        Project::SetStartScene(SceneManager::GetActiveScenePath());
-        Project::Save();
-    }
-
+    
     void EditorLayer::DrawDockSpace()
     {
         LEV_PROFILE_FUNCTION();
@@ -622,4 +530,34 @@ namespace LevEngine::Editor
                 }
             });
     }
+
+    void EditorLayer::OnProjectLoaded()
+    {
+        m_SaveData.SetLastOpenedProject(Project::GetPath());
+        m_SaveData.Save();
+
+        ResourceManager::Init(Project::GetRoot());
+        AssetDatabase::ProcessAllAssets();
+
+        const auto startScene = Project::GetStartScene();
+        if (startScene.empty() || !OpenScene(startScene))
+            SceneManager::LoadEmptyScene();
+        
+        m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+        m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+        m_Hierarchy = CreateRef<HierarchyPanel>();
+        m_Properties = CreateRef<PropertiesPanel>();
+        m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
+        m_Settings = CreateRef<SettingsPanel>();
+        m_MainMenuBar = CreateRef<MenuBar>();
+
+        m_MainMenuBar->AddMenuItem("File/New Scene", "Ctrl+N", [this] {CreateNewScene();});
+        m_MainMenuBar->AddMenuItem("File/Open Scene...", "Ctrl+O", [this] {OpenScene();});
+        m_MainMenuBar->AddMenuItem("File/Save Scene", "Ctrl+S", [this] {SaveScene();});
+        m_MainMenuBar->AddMenuItem("File/Save Scene As...", "Ctrl+Shift+S", [this] {SaveSceneAs();});
+        m_MainMenuBar->AddMenuItem("File/Exit", String(), [this] { Application::Get().Close();});
+
+        m_ProjectEditor->AddMainMenuItems(m_MainMenuBar);
+    }
+    
 }

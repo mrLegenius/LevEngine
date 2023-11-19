@@ -1,5 +1,6 @@
 #pragma once
 #include "EditorSaveData.h"
+#include "ProjectEditor.h"
 #include "Essentials/MenuBar.h"
 #include "Events/ApplicationEvent.h"
 #include "Panels/AssetBrowserPanel.h"
@@ -15,10 +16,7 @@ namespace LevEngine::Editor
     class EditorLayer final : public Layer
     {
     public:
-        void ShowProjectSelectionPopup();
-        bool OpenProject();
-        bool NewProject();
-        void LoadProject();
+        void OnProjectLoaded();
         void OnAttach() override;
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
@@ -26,7 +24,6 @@ namespace LevEngine::Editor
         void OnSceneStop();
         void DrawToolbar();
         void DrawStatusbar();
-        void SetCurrentSceneAsStartScene() const;
         void DrawDockSpace();
         void CreateNewScene();
         void OpenScene();
@@ -42,6 +39,8 @@ namespace LevEngine::Editor
     private:
         static void DoComponentRenderDebug();
 
+        Scope<ProjectEditor> m_ProjectEditor;
+        
         Ref<ViewportPanel> m_Viewport;
         Ref<HierarchyPanel> m_Hierarchy;
         Ref<PropertiesPanel> m_Properties;
