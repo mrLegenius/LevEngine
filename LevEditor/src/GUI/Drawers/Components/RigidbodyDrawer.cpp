@@ -8,8 +8,7 @@ namespace LevEngine::Editor
     class RigidbodyDrawer final : public ComponentDrawer<Rigidbody, RigidbodyDrawer>
     {
     protected:
-        String GetLabel() const override { return "Rigidbody"; }
-        String GetAddMenuPath() const override { return "Physics"; }
+        String GetLabel() const override { return "Physics/Rigidbody"; }
 
         void DrawContent(Rigidbody& component) override
         {

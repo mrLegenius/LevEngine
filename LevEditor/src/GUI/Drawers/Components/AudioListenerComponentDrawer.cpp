@@ -8,8 +8,7 @@ namespace LevEngine::Editor
 	class AudioListenerComponentDrawer final : public ComponentDrawer<AudioListenerComponent, AudioListenerComponentDrawer>
 	{
 	protected:
-		[[nodiscard]] String GetLabel() const override { return "Audio Listener"; }
-		String GetAddMenuPath() const override { return "Audio"; }
+		[[nodiscard]] String GetLabel() const override { return "Audio/Audio Listener"; }
 
 		void DrawContent(AudioListenerComponent& component) override { }
 	};	
