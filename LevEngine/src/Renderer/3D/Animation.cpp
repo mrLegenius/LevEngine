@@ -40,5 +40,10 @@ namespace LevEngine
     {
         return m_BoneInfoMap;
     }
+
+    const String& Animation::GetName() const
+    {
+        return m_Name;
+    }
 }
 

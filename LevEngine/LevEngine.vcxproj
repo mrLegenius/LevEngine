@@ -101,6 +101,7 @@
     <ClInclude Include="src\Renderer\3D\MeshLoading\AssimpConverter.h" />
     <ClInclude Include="src\Renderer\3D\MeshLoading\MeshLoader.h" />
     <ClInclude Include="src\Renderer\3D\Bone.h" />
+    <ClInclude Include="src\Scene\Components\Animation\AnimatorComponent.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
@@ -628,6 +629,7 @@
     <ClCompile Include="src\Renderer\3D\Animator.cpp" />
     <ClCompile Include="src\Renderer\3D\Animation.cpp" />
     <ClCompile Include="src\Renderer\3D\Bone.cpp" />
+    <ClCompile Include="src\Scene\Components\Animation\AnimatorComponent.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />

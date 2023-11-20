@@ -31,7 +31,7 @@ namespace LevEngine
 			return animations;
 		}
 
-		static Ref<Animation> LoadAnimation(const Path& path, Ref<Mesh>& mesh, int animationIdx)
+		static Ref<Animation> LoadAnimation(const Path& path, const Ref<Mesh>& mesh, int animationIdx)
 		{
 			Assimp::Importer importer;
 			const aiScene* scene = importer.ReadFile(path.string(), aiProcess_Triangulate);
@@ -42,7 +42,7 @@ namespace LevEngine
 		}
 
 	private:
-		static Ref<Animation> ReadAnimation(const aiScene* scene, Ref<Mesh>& mesh, int animationIdx)
+		static Ref<Animation> ReadAnimation(const aiScene* scene, const Ref<Mesh>& mesh, int animationIdx)
 		{
 			const aiAnimation* animation = scene->mAnimations[animationIdx];
 
@@ -50,13 +50,14 @@ namespace LevEngine
 
 			resultAnimation->m_Duration = animation->mDuration;
 			resultAnimation->m_TicksPerSecond = animation->mTicksPerSecond;
+			resultAnimation->m_Name = animation->mName.C_Str();
 			ReadHeirarchyData(resultAnimation, resultAnimation->m_RootNode, scene->mRootNode);
 			ReadMissingBones(resultAnimation, animation, mesh);
 
 			return resultAnimation;
 		}
 
-		static void ReadHeirarchyData(Ref<Animation>& resultAnimation, NodeData& dest, const aiNode* src)
+		static void ReadHeirarchyData(const Ref<Animation>& resultAnimation, NodeData& dest, const aiNode* src)
 		{
 			LEV_CORE_ASSERT(src);
 
@@ -72,17 +73,17 @@ namespace LevEngine
 			}
 		}
 
-		static void ReadMissingBones(Ref<Animation>& resultAnimation, const aiAnimation* animation, Ref<Mesh>& mesh)
+		static void ReadMissingBones(const Ref<Animation>& resultAnimation, const aiAnimation* animation, const Ref<Mesh>& mesh)
 		{
-			int size = animation->mNumChannels;
+			const unsigned int size = animation->mNumChannels;
 
 			UnorderedMap<String, BoneInfo>& boneInfoMap = mesh->GetBoneInfoMap();//getting m_BoneInfoMap from Model class
 			int& boneCount = mesh->GetBoneCount(); //getting the m_BoneCounter from Model class
 
 			//reading channels(bones engaged in an animation and their keyframes)
-			for (int i = 0; i < size; i++)
+			for (unsigned int i = 0; i < size; i++)
 			{
-				auto channel = animation->mChannels[i];
+				const auto channel = animation->mChannels[i];
 				String boneName = channel->mNodeName.data;
 
 				if (boneInfoMap.count(boneName) == 0)

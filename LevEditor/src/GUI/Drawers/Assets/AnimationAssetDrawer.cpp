@@ -11,7 +11,7 @@ namespace LevEngine::Editor
 
         void DrawContent(const Ref<AnimationAsset> assetRef) override
         {
-            ImGui::LabelText("Duration: ", std::to_string(assetRef->GetDuration()).c_str());
+            ImGui::LabelText("Duration", ToString(assetRef->GetDuration()).c_str());
         }
     };
 }

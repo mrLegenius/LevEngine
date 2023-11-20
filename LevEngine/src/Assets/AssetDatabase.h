@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "AnimationAsset.h"
 #include "Asset.h"
 #include "AudioBankAsset.h"
 #include "DefaultAsset.h"
@@ -61,6 +62,13 @@ namespace LevEngine
 			 || extension == ".ac"
 			 || extension == ".ms3d"
 			 ;
+		}
+
+		static bool IsAssetAnimationClip(const Path& path)
+		{
+			const auto extension = path.extension().string();
+
+			return extension == ".anim";
 		}
 
 		static bool IsAssetMaterial(const Path& path)
@@ -220,6 +228,11 @@ namespace LevEngine
 			if (IsAssetMesh(path))
 			{
 				return CreateRef<MeshAsset>(path, uuid);
+			}
+
+			if (IsAssetAnimationClip(path))
+			{
+				return CreateRef<AnimationAsset>(path, uuid);
 			}
 
 			if (IsAssetPrefab(path))

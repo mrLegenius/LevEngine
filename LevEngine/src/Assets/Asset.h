@@ -11,6 +11,8 @@ namespace LevEngine
 	class Asset
 	{
 	public:
+		Asset() = default;
+		
 		explicit Asset(const Path& path, const UUID uuid)
 			: m_Name(path.stem().string().c_str())
 			, m_FullName(path.filename().string().c_str())

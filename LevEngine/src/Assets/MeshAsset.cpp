@@ -16,13 +16,23 @@ namespace LevEngine
             const auto animations = AnimationLoader::LoadAllAnimations(m_Path, m_Mesh);
             for (int animationIdx = 0; animationIdx < animations.size(); ++animationIdx)
             {
-                const Path animationAssetPath = m_Path.append(std::to_string(animationIdx));
+                String animationName = animations[animationIdx]->GetName();
+                
+                String nameToWrite = (animationName.empty()
+                    ? ToString(animationIdx)
+                      : animationName)
+                + String(".anim");
+                
+                const Path animationAssetPath = m_Path.parent_path().append(nameToWrite.c_str());
+                
                 if (!AssetDatabase::AssetExists(animationAssetPath))
                 {
                     const Ref<AnimationAsset> animationAsset =
                         AssetDatabase::CreateAsset<AnimationAsset>(animationAssetPath);
                     animationAsset->SetAnimation(animations[animationIdx]);
                     animationAsset->SetAnimationIdx(animationIdx);
+                    animationAsset->SetOwnerMesh(CreateRef<MeshAsset>(this));
+                    animationAsset->Serialize();
                 }
             }
         }

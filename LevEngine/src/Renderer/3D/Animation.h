@@ -28,6 +28,7 @@ namespace LevEngine
         [[nodiscard]] double GetDuration() const;
         [[nodiscard]] const NodeData& GetRootNode() const;
         [[nodiscard]] const UnorderedMap<String, BoneInfo>& GetBoneIDMap() const;
+        [[nodiscard]] const String& GetName() const;
 
     private:
         double m_Duration{};
@@ -35,5 +36,6 @@ namespace LevEngine
         Vector<Bone> m_Bones{};
         NodeData m_RootNode{};
         UnorderedMap<String, BoneInfo> m_BoneInfoMap{};
+        String m_Name;
     };
 }

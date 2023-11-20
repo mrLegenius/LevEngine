@@ -113,6 +113,16 @@ void Mesh::SetVertexBoneDataToDefault(int vertexIdx)
 {
 	for (int i = 0; i < MaxBoneInfluence; i++)
 	{
+		while (m_BoneIDs.size() <= vertexIdx)
+		{
+			m_BoneIDs.emplace_back(Array<float, MaxBoneInfluence>());
+		}
+
+		while (m_Weights.size() <= vertexIdx)
+		{
+			m_Weights.emplace_back(Array<float, MaxBoneInfluence>());
+		}
+		
 		m_BoneIDs[vertexIdx][i] = -1;
 		m_Weights[vertexIdx][i] = 0.0f;
 	}
