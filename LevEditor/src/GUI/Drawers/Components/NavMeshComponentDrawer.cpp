@@ -90,7 +90,7 @@ namespace LevEngine::Editor
 
             ImGui::Spacing();
             ImGui::Text("Detail mesh");
-            ImGui::SliderFloat("Sample Distance", &component.EdgeMaxError, 0.0f, 16.0f, "%1.0f");
+            ImGui::SliderFloat("Sample Distance", &component.DetailSampleDist, 0.0f, 16.0f, "%1.0f");
             ImGui::SliderFloat("Max Sample Error Distance", &component.DetailSampleMaxError, 0.0f, 16.0f, "%1.0f");
             ImGui::Spacing();
 
