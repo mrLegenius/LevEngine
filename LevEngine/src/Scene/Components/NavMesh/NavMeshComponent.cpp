@@ -17,6 +17,7 @@ namespace LevEngine
 
     void NavMeshComponent::Build()
     {
+		Cleanup();
         //
         // Step 1. Initialize build config.
         //
@@ -36,9 +37,11 @@ namespace LevEngine
         m_Config.detailSampleMaxError = CellHeight * DetailSampleMaxError;
 
         auto& registry = SceneManager::GetActiveScene()->GetRegistry();
-        const auto view = registry.view<NavMeshableComponent, MeshRendererComponent>();
-
+        const auto view = registry.view<Transform, NavMeshableComponent, MeshRendererComponent>();
+		
         const auto entity = view.begin();
+		const auto& transform = view.get<Transform>(*entity);
+		const auto& navMeshableComponent = view.get<NavMeshableComponent>(*entity);
         const auto& meshRendererComponent = view.get<MeshRendererComponent>(*entity);
 
         const auto& mesh = meshRendererComponent.mesh->GetMesh();
@@ -60,9 +63,10 @@ namespace LevEngine
 
         for(int i = 0; i < verticesCount; ++i)
         {
-            vertices[i] = meshVertices[i].x;
-            vertices[i + 1] = meshVertices[i].y;
-            vertices[i + 2] = meshVertices[i].z;
+	        const Vector3 transformed = Vector3::Transform(meshVertices[i], transform.GetModel());
+        	vertices[i] = transformed.x;
+        	vertices[i + 1] = transformed.y;
+        	vertices[i + 2] = transformed.y;
         }
 
         for(int i = 0; i < indicesCount; ++i)
@@ -393,6 +397,8 @@ namespace LevEngine
 			}
 		}
 
+		Log::Trace("Navmesh builded successfully.");
+
 		// // Show performance stats.
 		// duLogBuildTimes(*m_Context, m_Context->getAccumulatedTime(RC_TIMER_TOTAL));
 		// m_ctx->log(RC_LOG_PROGRESS, ">> Polymesh: %d vertices  %d polygons", m_PolyMesh->nverts, m_PolyMesh->npolys);
@@ -405,7 +411,25 @@ namespace LevEngine
 
 		return;
     }
-    
+
+    void NavMeshComponent::Cleanup()
+    {
+		delete [] m_TriangleAreas;
+		m_TriangleAreas = nullptr;
+		rcFreeHeightField(m_Solid);
+		m_Solid = 0;
+		rcFreeCompactHeightfield(m_CompactHeightfield);
+		m_CompactHeightfield = nullptr;
+		rcFreeContourSet(m_ContourSet);
+		m_ContourSet = nullptr;
+		rcFreePolyMesh(m_PolyMesh);
+		m_PolyMesh = nullptr;
+		rcFreePolyMeshDetail(m_PolyMeshDetail);
+		m_PolyMeshDetail = nullptr;
+		dtFreeNavMesh(m_NavMesh);
+		m_NavMesh = nullptr;
+    }
+
     class NavMeshComponentSerializer final : public ComponentSerializer<NavMeshComponent, NavMeshComponentSerializer>
     {
     protected:

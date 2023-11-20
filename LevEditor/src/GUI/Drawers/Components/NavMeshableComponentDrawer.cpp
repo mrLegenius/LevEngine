@@ -13,7 +13,7 @@ namespace LevEngine::Editor
     
         void DrawContent(NavMeshableComponent& component) override
         {
-            ImGui::Checkbox("Use in navmesh building", &component.useInNavMesh);
+            ImGui::Checkbox("Use in navmesh building", &component.UseInNavMesh);
         }
     };	
 }

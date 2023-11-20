@@ -41,17 +41,19 @@ namespace LevEngine
         bool FilterLedgeSpans;
         bool FilterWalkableLowHeightSpans;
     private:
+
+        void Cleanup();
         
-        dtNavMesh* m_NavMesh;
+        dtNavMesh* m_NavMesh = nullptr;
         dtNavMeshQuery* m_NavQuery = nullptr;
         rcConfig m_Config;
         
-        rcHeightfield* m_Solid;
-        rcCompactHeightfield* m_CompactHeightfield;
-        unsigned char* m_TriangleAreas;
-        rcContourSet* m_ContourSet;
-        rcPolyMesh* m_PolyMesh;
-        rcPolyMeshDetail* m_PolyMeshDetail;
+        rcHeightfield* m_Solid = nullptr;
+        rcCompactHeightfield* m_CompactHeightfield = nullptr;
+        unsigned char* m_TriangleAreas = nullptr;
+        rcContourSet* m_ContourSet = nullptr;
+        rcPolyMesh* m_PolyMesh = nullptr;
+        rcPolyMeshDetail* m_PolyMeshDetail = nullptr;
         
         rcContext* m_Context = new rcContext();
     };
