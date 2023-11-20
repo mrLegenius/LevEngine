@@ -5,6 +5,8 @@
 
 namespace LevEngine
 {
+    NavMeshableComponent::NavMeshableComponent() = default;
+    
     class NavMeshableComponentSerializer final : public ComponentSerializer<NavMeshableComponent, NavMeshableComponentSerializer>
     {
     protected:
@@ -12,17 +14,14 @@ namespace LevEngine
         
         void SerializeData(YAML::Emitter& out, const NavMeshableComponent& component) override
         {
-            out << YAML::Key << "Use in NavMesh" << YAML::Value << component.useInNavMesh;
+            out << YAML::Key << "Use in nav mesh" << YAML::Value << component.UseInNavMesh;
+            out << YAML::Key << "Field" << YAML::Value << component.m_Field;
         }
         
         void DeserializeData(YAML::Node& node, NavMeshableComponent& component) override
         {
-            component.useInNavMesh = node["Use in NavMesh"].as<bool>();
+            component.UseInNavMesh = node["Use in nav mesh"].as<bool>();
+            component.m_Field = node["Field"].as<int>();
         }
     };
-
-    void NavMeshableComponent::func()
-    {
-        field++;
-    }
 }

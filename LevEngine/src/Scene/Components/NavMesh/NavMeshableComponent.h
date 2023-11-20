@@ -3,7 +3,7 @@
 
 namespace LevEngine
 {
-    enum SamplePolyAreas
+    enum SamplePolyAreas : int
     {
         SAMPLE_POLYAREA_GROUND,
         SAMPLE_POLYAREA_WATER,
@@ -12,7 +12,7 @@ namespace LevEngine
         SAMPLE_POLYAREA_GRASS,
         SAMPLE_POLYAREA_JUMP
     };
-    enum SamplePolyFlags
+    enum SamplePolyFlags : int
     {
         SAMPLE_POLYFLAGS_WALK		= 0x01,		// Ability to walk (ground, grass, road)
         SAMPLE_POLYFLAGS_SWIM		= 0x02,		// Ability to swim (water).
@@ -25,12 +25,13 @@ namespace LevEngine
 	
     struct NavMeshableComponent
     {
-        NavMeshableComponent() = default;
+        NavMeshableComponent();
         NavMeshableComponent(const NavMeshableComponent&) = default;
-
-        void func();
-        int field = 0;
         
-        bool useInNavMesh = true;
+        void Function();
+        void Build();
+        int m_Field = 0;
+        
+        bool UseInNavMesh = true;
     };
 }
