@@ -1,6 +1,7 @@
 ﻿#pragma once
+#include "PhysicsRigidbody.h"
+#include "PhysicsUtils.h"
 #include "physx/include/PxPhysicsAPI.h"
-#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
@@ -8,11 +9,38 @@ namespace LevEngine
 
     using namespace physx;
     
-    using Collider = PxShape;
-    using BaseActor = PxRigidActor;
-    using StaticActor = PxRigidStatic;
-    using DynamicActor = PxRigidDynamic;
-    using PhysicalMaterial = PxMaterial;
+    using PCollider = PxShape;
+    using PPhysicalMaterial = PxMaterial;
+    using PBaseRigidbody = PxRigidActor;
+    using PStaticRigidbody = PxRigidStatic;
+    using PDynamicRigidbody = PxRigidDynamic;
+
+    struct PhysicalMaterial
+    {
+        float StaticFriction;
+        float DynamicFriction;
+        float Restitution;
+    };
+    struct Collider
+    {
+        Vector3 OffsetPosition;
+        Vector3 OffsetRotation;
+        //TODO: CHANGE LOGIC FOR MULTIPLE MATERIAL ATTACHMENT
+        Vector<PhysicalMaterial> MaterialCollection;
+    };
+    struct Sphere : Collider
+    {
+        float Radius;
+    };
+    struct Capsule : Collider
+    {
+        float Radius;
+        float HalfHeight;
+    };
+    struct Box : Collider
+    {
+        Vector3 HalfExtents;
+    };
     
     enum class RigidbodyType
     {
@@ -31,75 +59,62 @@ namespace LevEngine
     {
     public:
         static void OnDestroy(entt::registry& registry, entt::entity entity);
-        
-        PhysicsRigidbody();
-        
-        void SetPose(const Transform& transform);
-        
-        void Initialize(Transform& transform);
-        void Deinitialize();
 
+        [[nodiscard]] PBaseRigidbody* GetRigidbody() const;
+        
         bool GetInitializationFlag() const;
-
-        void CleanupRigidbody();
-
-        [[nodiscard]] int GetColliderNumber() const;
-        [[nodiscard]] Collider* GetColliders() const;
-        [[nodiscard]] PhysicalMaterial* GetPhysicalMaterials(const Collider* colliders) const;
-
-        [[nodiscard]] Vector3 GetColliderLocalPosition() const;
-        [[nodiscard]] Vector3 GetColliderLocalRotation() const;
-        void SetColliderLocalPosition(const Vector3 position);
-        void SetColliderLocalRotation(const Vector3 rotation);
+        void Initialize(const Transform& transform);
+        void SetRigidbodyPose(const Transform& transform);
+        
+        [[nodiscard]] RigidbodyType GetRigidbodyType() const;
+        void SetRigidbodyType(const RigidbodyType& rigidbodyType);
+        void AttachRigidbody(const RigidbodyType& rigidbodyType);
+        void DetachRigidbody();
+        [[nodiscard]] bool GetRigidbodyGravityFlag() const;
+        void SetRigidbodyGravityFlag(const bool flag);
         
         [[nodiscard]] ColliderType GetColliderType() const;
+        void SetColliderType(const ColliderType& colliderType);
         void AttachCollider(const ColliderType& colliderType);
         void DetachCollider();
-
-        [[nodiscard]] float GetSphereColliderRadius() const;
-        [[nodiscard]] float GetCapsuleColliderRadius() const;
-        [[nodiscard]] float GetCapsuleColliderHalfHeight() const;
-        [[nodiscard]] Vector3 GetBoxColliderHalfExtents() const;
-        
-        void SetSphereColliderRadius(const float radius);
-        void SetCapsuleColliderRadius(const float radius);
-        void SetCapsuleColliderHalfHeight(const float halfHeight);
-        void SetBoxColliderHalfExtents(const Vector3 extends);
-        
-        [[nodiscard]] BaseActor* GetRigidbody() const;
-        
-        [[nodiscard]] RigidbodyType GetType() const;
-        [[nodiscard]] bool GetGravityFlag() const;
+        [[nodiscard]] int GetColliderNumber() const;
         [[nodiscard]] bool GetColliderVisualizationFlag() const;
-        [[nodiscard]] float GetStaticFriction() const;
-        [[nodiscard]] float GetDynamicFriction() const;
-        [[nodiscard]] float GetRestitution() const;
-
-        void SetType(const RigidbodyType rigidbodyType);
-        void SetGravityFlag(const bool flag);
         void SetColliderVisualizationFlag(const bool flag);
+        
+        [[nodiscard]] Vector3 GetColliderOffsetPosition() const;
+        void SetColliderOffsetPosition(const Vector3 position);
+        [[nodiscard]] Vector3 GetColliderOffsetRotation() const;
+        void SetColliderOffsetRotation(const Vector3 rotation);
+
+        [[nodiscard]] float GetSphereRadius() const;
+        void SetSphereRadius(const float radius);
+        [[nodiscard]] float GetCapsuleRadius() const;
+        void SetCapsuleRadius(const float radius);
+        [[nodiscard]] float GetCapsuleHalfHeight() const;
+        void SetCapsuleHalfHeight(const float halfHeight);
+        [[nodiscard]] Vector3 GetBoxHalfExtents() const;
+        void SetBoxHalfExtents(const Vector3 halfExtents);
+        
+        [[nodiscard]] float GetStaticFriction() const;
         void SetStaticFriction(const float staticFriction);
+        [[nodiscard]] float GetDynamicFriction() const;
         void SetDynamicFriction(const float dynamicFriction);
+        [[nodiscard]] float GetRestitution() const;
         void SetRestitution(const float restitution);
         
     private:
-        BaseActor* m_Actor = NULL;
+        [[nodiscard]] PCollider* GetColliders() const;
+        [[nodiscard]] PPhysicalMaterial* GetPhysicalMaterials(const PCollider* colliders) const;
         
         bool m_IsInitialized = false;
-
-        // deserialized fields
+        
+        PBaseRigidbody* m_Rigidbody = NULL;
+        
         bool m_IsColliderVisualizationEnabled;
         RigidbodyType m_RigidbodyType;
-        bool m_IsGravityEnabled;
+        bool m_IsRigidbodyGravityEnabled;
         ColliderType m_ColliderType;
-        float m_SphereRadius;
-        float m_CapsuleRadius;
-        float m_CapsuleHalfHeight;
-        Vector3 m_BoxHalfExtents;
-        Vector3 m_OffsetPosition;
-        Vector3 m_OffsetRotation;
-        float m_StaticFriction;
-        float m_DynamicFriction;
-        float m_Restitution;
+        //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
+        Vector<Ref<Collider>> m_ColliderCollection;
     };
 }

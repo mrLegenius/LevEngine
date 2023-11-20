@@ -2,6 +2,7 @@
 #include "Math/Vector3.h"
 #include "physx/include/PxPhysicsAPI.h"
 #include "Math/Quaternion.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {

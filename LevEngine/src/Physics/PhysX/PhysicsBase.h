@@ -2,9 +2,6 @@
 #include "physx/include/PxPhysicsAPI.h"
 #include "Scene/Components/Transform/Transform.h"
 
-constexpr auto MAX_NUM_RIGIDBODY_SHAPES = 5;
-constexpr auto MAX_NUM_RIGIDBODY_MATERIALS = 5;
-
 namespace LevEngine
 {
     using namespace physx;
@@ -27,6 +24,8 @@ namespace LevEngine
         
         [[nodiscard]] Vector3 GetGravity() const;
         void SetGravity(const Vector3 gravity);
+
+        static void DrawDebugLines();
         
     private:
         PhysicsBase();
@@ -38,7 +37,6 @@ namespace LevEngine
         static bool Advance(float deltaTime);
         static void StepPhysics(float deltaTime);
         static void UpdateTransforms(entt::registry& registry);
-        static void DrawDebugLines();
         
         static PhysicsBase s_PhysicsBase;
     

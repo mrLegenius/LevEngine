@@ -22,10 +22,11 @@ namespace LevEngine
         m_Shapes.emplace(cube);
     }
 
-    void DebugRender::DrawWireCube(const Vector3 position, const Vector3 size, const Color color)
+    void DebugRender::DrawWireCube(const Vector3 position, Quaternion rotation, const Vector3 size, const Color color)
     {
         const Matrix model =
             Matrix::CreateScale(size)
+            * Matrix::CreateFromQuaternion(rotation)
             * Matrix::CreateTranslation(position);
 
         const auto cube = CreateRef<DebugWireCube>(model, color);

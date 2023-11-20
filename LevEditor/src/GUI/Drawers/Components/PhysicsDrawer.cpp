@@ -16,7 +16,7 @@ namespace LevEngine::Editor
             EditorGUI::DrawCheckBox("Draw Collider", BindGetter(&PhysicsRigidbody::GetColliderVisualizationFlag, &component), BindSetter(&PhysicsRigidbody::SetColliderVisualizationFlag, &component));
             
             const char* rigidbodyTypeStrings[] = { "STATIC", "DYNAMIC" };
-            const char* currentRigidbodyTypeString = rigidbodyTypeStrings[static_cast<int>(component.GetType())];
+            const char* currentRigidbodyTypeString = rigidbodyTypeStrings[static_cast<int>(component.GetRigidbodyType())];
             if (ImGui::BeginCombo("Rigidbody Type", currentRigidbodyTypeString))
             {
                 for (auto& rigidbodyTypeString : rigidbodyTypeStrings)
@@ -27,11 +27,13 @@ namespace LevEngine::Editor
                         currentRigidbodyTypeString = rigidbodyTypeString;
                         if (currentRigidbodyTypeString == "STATIC")
                         {
-                            component.SetType(RigidbodyType::Static);
+                            component.SetRigidbodyType(RigidbodyType::Static);
+                            component.SetColliderType(ColliderType::Box);
                         }
                         if (currentRigidbodyTypeString == "DYNAMIC")
                         {
-                            component.SetType(RigidbodyType::Dynamic);
+                            component.SetRigidbodyType(RigidbodyType::Dynamic);
+                            component.SetColliderType(ColliderType::Box);
                         }
                     }
                     if (isSelected)
@@ -44,7 +46,7 @@ namespace LevEngine::Editor
 
             if (currentRigidbodyTypeString == "DYNAMIC")
             {
-                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&PhysicsRigidbody::GetGravityFlag, &component), BindSetter(&PhysicsRigidbody::SetGravityFlag, &component));
+                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&PhysicsRigidbody::GetRigidbodyGravityFlag, &component), BindSetter(&PhysicsRigidbody::SetRigidbodyGravityFlag, &component));
             }
             
             if (component.GetColliderNumber() > 0)
@@ -61,15 +63,15 @@ namespace LevEngine::Editor
                             currentColliderTypeString = colliderTypeString;
                             if (currentColliderTypeString == "SPHERE")
                             {
-                                component.AttachCollider(ColliderType::Sphere);
+                                component.SetColliderType(ColliderType::Sphere);
                             }
                             if (currentColliderTypeString == "CAPSULE")
                             {
-                                component.AttachCollider(ColliderType::Capsule);
+                                component.SetColliderType(ColliderType::Capsule);
                             }
                             if (currentColliderTypeString == "BOX")
                             {
-                                component.AttachCollider(ColliderType::Box);
+                                component.SetColliderType(ColliderType::Box);
                             }
                         }
                         if (isSelected)
@@ -80,21 +82,21 @@ namespace LevEngine::Editor
                     ImGui::EndCombo();
                 }
 
-                EditorGUI::DrawVector3Control("Offset Position", BindGetter(&PhysicsRigidbody::GetColliderLocalPosition, &component), BindSetter(&PhysicsRigidbody::SetColliderLocalPosition, &component), 1.0f, 0.0f, FLT_MAX);
-                EditorGUI::DrawVector3Control("Offset Rotation", BindGetter(&PhysicsRigidbody::GetColliderLocalRotation, &component), BindSetter(&PhysicsRigidbody::SetColliderLocalRotation, &component), 1.0f, 0.0f, FLT_MAX);
+                EditorGUI::DrawVector3Control("Offset Position", BindGetter(&PhysicsRigidbody::GetColliderOffsetPosition, &component), BindSetter(&PhysicsRigidbody::SetColliderOffsetPosition, &component));
+                EditorGUI::DrawVector3Control("Offset Rotation", BindGetter(&PhysicsRigidbody::GetColliderOffsetRotation, &component), BindSetter(&PhysicsRigidbody::SetColliderOffsetRotation, &component));
                 
                 if (currentColliderTypeString == "SPHERE")
                 {
-                    EditorGUI::DrawFloatControl("Radius", BindGetter(&PhysicsRigidbody::GetSphereColliderRadius, &component), BindSetter(&PhysicsRigidbody::SetSphereColliderRadius, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Radius", BindGetter(&PhysicsRigidbody::GetSphereRadius, &component), BindSetter(&PhysicsRigidbody::SetSphereRadius, &component), 1.0f, 0.0f, FLT_MAX);
                 }
                 if (currentColliderTypeString == "CAPSULE")
                 {
-                    EditorGUI::DrawFloatControl("Radius", BindGetter(&PhysicsRigidbody::GetCapsuleColliderRadius, &component), BindSetter(&PhysicsRigidbody::SetCapsuleColliderRadius, &component), 1.0f, 0.0f, FLT_MAX);
-                    EditorGUI::DrawFloatControl("Half Height", BindGetter(&PhysicsRigidbody::GetCapsuleColliderHalfHeight, &component), BindSetter(&PhysicsRigidbody::SetCapsuleColliderHalfHeight, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Radius", BindGetter(&PhysicsRigidbody::GetCapsuleRadius, &component), BindSetter(&PhysicsRigidbody::SetCapsuleRadius, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Half Height", BindGetter(&PhysicsRigidbody::GetCapsuleHalfHeight, &component), BindSetter(&PhysicsRigidbody::SetCapsuleHalfHeight, &component), 1.0f, 0.0f, FLT_MAX);
                 }
                 if (currentColliderTypeString == "BOX")
                 {
-                    EditorGUI::DrawVector3Control("Half Extends", BindGetter(&PhysicsRigidbody::GetBoxColliderHalfExtents, &component), BindSetter(&PhysicsRigidbody::SetBoxColliderHalfExtents, &component),1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawVector3Control("Half Extends", BindGetter(&PhysicsRigidbody::GetBoxHalfExtents, &component), BindSetter(&PhysicsRigidbody::SetBoxHalfExtents, &component),1.0f, 0.0f, FLT_MAX);
                 }
                 
                 EditorGUI::DrawFloatControl("Static Friction", BindGetter(&PhysicsRigidbody::GetStaticFriction, &component), BindSetter(&PhysicsRigidbody::SetStaticFriction, &component), 1.0f, 0.0f, FLT_MAX);

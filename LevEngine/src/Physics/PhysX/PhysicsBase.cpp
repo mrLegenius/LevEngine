@@ -124,7 +124,7 @@ namespace LevEngine
         StepPhysics(deltaTime);
         
         UpdateTransforms(m_Registry);
-        
+
         if (s_IsDebugRenderEnabled)
         {
             DrawDebugLines();
