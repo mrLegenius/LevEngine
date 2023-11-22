@@ -3,7 +3,7 @@
 
 #include "../Entity.h"
 #include "Kernel/ClassCollection.h"
-#include "Physics/PhysX/PhysicsRigidbody.h"
+#include "Physics/Components/Rigidbody.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine

@@ -145,11 +145,11 @@
 #include "Physics/Events/CollisionBeginEvent.h"
 #include "Physics/Events/CollisionEndEvent.h"
 
-#include "Physics/Components/Collider.h"
-#include "Physics/Components/CollisionEvents.h"
-#include "Physics/Components/Rigidbody.h"
+#include "Physics\Components\LegacyCollider.h"
+#include "Physics\Components\LegacyCollisionEvents.h"
+#include "Physics\Components\LegacyRigidbody.h"
 
-#include "Physics/Physics.h"
+#include "Physics/LegacyPhysics.h"
 
 // /////////////////////////////////////////////////////////
 // -- Assets -----------------------------------------------

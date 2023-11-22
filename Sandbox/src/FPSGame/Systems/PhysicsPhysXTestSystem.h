@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "..\..\..\..\LevEngine\src\Physics\PhysX\PhysicsBase.h"
+#include "..\..\..\..\LevEngine\src\Physics\PhysX\Physics.h"
 namespace Sandbox
 {
     class PhysicsPhysXTestSystem : public System

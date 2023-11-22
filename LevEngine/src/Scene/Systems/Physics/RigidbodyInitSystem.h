@@ -3,7 +3,7 @@
 
 namespace LevEngine
 {
-    class PhysicsRigidbodyInitSystem : public System
+    class RigidbodyInitSystem : public System
     {
     public:
         void Update(float deltaTime, entt::registry& registry) override;

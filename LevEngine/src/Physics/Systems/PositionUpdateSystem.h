@@ -1,18 +1,18 @@
 #pragma once
 #include "entt/entt.hpp"
-#include "Physics/Components/Rigidbody.h"
+#include "..\Components\LegacyRigidbody.h"
 namespace LevEngine
 {
 inline void UpdatePositionSystem(const float deltaTime, entt::registry& registry)
 {
     LEV_PROFILE_FUNCTION();
 
-    const auto group = registry.group<>(entt::get<Transform, Rigidbody>);
+    const auto group = registry.group<>(entt::get<Transform, LegacyRigidbody>);
     for (const auto entity : group)
     {
-        auto [transform, rigidbody] = group.get<Transform, Rigidbody>(entity);
+        auto [transform, rigidbody] = group.get<Transform, LegacyRigidbody>(entity);
 
-        if (rigidbody.bodyType != BodyType::Dynamic || !rigidbody.enabled) continue;
+        if (rigidbody.bodyType != LegacyBodyType::Dynamic || !rigidbody.enabled) continue;
 
         //Linear movement
         Vector3 position = transform.GetLocalPosition();

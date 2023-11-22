@@ -1,17 +1,17 @@
 #pragma once
-#include "Physics/Components/Rigidbody.h"
+#include "..\Components\LegacyRigidbody.h"
 namespace LevEngine
 {
 inline void VelocityUpdateSystem(const float deltaTime, entt::registry& registry)
 {
 	LEV_PROFILE_FUNCTION();
 
-	auto group = registry.group<>(entt::get<Transform, Rigidbody>);
+	auto group = registry.group<>(entt::get<Transform, LegacyRigidbody>);
 	for (auto entity : group)
 	{
-		auto [transform, rigidbody] = group.get<Transform, Rigidbody>(entity);
+		auto [transform, rigidbody] = group.get<Transform, LegacyRigidbody>(entity);
 
-		if (rigidbody.bodyType != BodyType::Dynamic || !rigidbody.enabled) continue;
+		if (rigidbody.bodyType != LegacyBodyType::Dynamic || !rigidbody.enabled) continue;
 
 		const auto inverseMass = rigidbody.GetInverseMass();
 		Vector3 acceleration = rigidbody.force * inverseMass;

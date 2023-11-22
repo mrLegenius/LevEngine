@@ -5,13 +5,13 @@
 
 namespace LevEngine::Editor
 {
-    class RigidbodyDrawer final : public ComponentDrawer<Rigidbody, RigidbodyDrawer>
+    class LegacyRigidbodyDrawer final : public ComponentDrawer<LegacyRigidbody, LegacyRigidbodyDrawer>
     {
     protected:
-        String GetLabel() const override { return "Rigidbody"; }
-        String GetAddMenuPath() const override { return "Physics"; }
+        String GetLabel() const override { return "Legacy Rigidbody"; }
+        String GetAddMenuPath() const override { return "Legacy Physics"; }
 
-        void DrawContent(Rigidbody& component) override
+        void DrawContent(LegacyRigidbody& component) override
         {
             const char* bodyTypeStrings[] = { "Static", "Kinematic", "Dynamic" };
             const char* currentBodyTypeString = bodyTypeStrings[static_cast<int>(component.bodyType)];
@@ -24,7 +24,7 @@ namespace LevEngine::Editor
                     if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
                     {
                         currentBodyTypeString = bodyTypeStrings[i];
-                        component.bodyType = static_cast<BodyType>(i);
+                        component.bodyType = static_cast<LegacyBodyType>(i);
                     }
 
                     if (isSelected)

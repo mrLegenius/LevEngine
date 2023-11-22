@@ -2,12 +2,13 @@
 #include "Scene.h"
 
 #include "Audio/Audio.h"
-#include "Physics/Physics.h"
+#include "Physics/LegacyPhysics.h"
 #include "Renderer/Renderer.h"
 
 #include "Entity.h"
 #include "Components/Components.h"
 #include "Components/Camera/Camera.h"
+#include "Physics/Physics.h"
 
 namespace LevEngine
 {
@@ -63,7 +64,7 @@ namespace LevEngine
 
     void Scene::RequestPhysicsUpdates(const float deltaTime)
     {
-        Physics::Process(m_Registry, deltaTime);
+        LegacyPhysics::Process(m_Registry, deltaTime);
         
 	    vgjs::continuation([this]() {m_IsPhysicsDone = true; });
     }
@@ -83,8 +84,8 @@ namespace LevEngine
         }
         else
         {
+            LegacyPhysics::Process(m_Registry, deltaTime);
             Physics::Process(m_Registry, deltaTime);
-            PhysicsBase::Process(m_Registry, deltaTime);
         }
     }
 

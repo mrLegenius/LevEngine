@@ -2,19 +2,19 @@
 
 #include "ComponentDrawer.h"
 #include "GUI/EditorGUI.h"
-#include "Physics/PhysX/PhysicsRigidbody.h"
+#include "Physics/Components/Rigidbody.h"
 
 namespace LevEngine::Editor
 {
-    class PhysicsDrawer final : public ComponentDrawer<PhysicsRigidbody, PhysicsDrawer>
+    class PhysicsDrawer final : public ComponentDrawer<Rigidbody, PhysicsDrawer>
     {
     protected:
         [[nodiscard]] String GetLabel() const override { return "Physics"; }
         
-        void DrawContent(PhysicsRigidbody& component) override
+        void DrawContent(Rigidbody& component) override
         {
-            EditorGUI::DrawCheckBox("Draw Collider", BindGetter(&PhysicsRigidbody::GetColliderVisualizationFlag, &component), BindSetter(&PhysicsRigidbody::SetColliderVisualizationFlag, &component));
-            
+            EditorGUI::DrawCheckBox("Draw Collider", BindGetter(&Rigidbody::GetColliderVisualizationFlag, &component), BindSetter(&Rigidbody::SetColliderVisualizationFlag, &component));
+
             const char* rigidbodyTypeStrings[] = { "STATIC", "DYNAMIC" };
             const char* currentRigidbodyTypeString = rigidbodyTypeStrings[static_cast<int>(component.GetRigidbodyType())];
             if (ImGui::BeginCombo("Rigidbody Type", currentRigidbodyTypeString))
@@ -28,12 +28,30 @@ namespace LevEngine::Editor
                         if (currentRigidbodyTypeString == "STATIC")
                         {
                             component.SetRigidbodyType(RigidbodyType::Static);
+                            if (component.GetInitializationFlag())
+                            {
+                                component.AttachRigidbody(RigidbodyType::Static);
+                            }
                             component.SetColliderType(ColliderType::Box);
+                            if (component.GetInitializationFlag())
+                            {
+                                component.AttachCollider(ColliderType::Box);
+                            }
+                            component.ApplyTransformScale();
                         }
                         if (currentRigidbodyTypeString == "DYNAMIC")
                         {
                             component.SetRigidbodyType(RigidbodyType::Dynamic);
+                            if (component.GetInitializationFlag())
+                            {
+                                component.AttachRigidbody(RigidbodyType::Dynamic);
+                            }
                             component.SetColliderType(ColliderType::Box);
+                            if (component.GetInitializationFlag())
+                            {
+                                component.AttachCollider(ColliderType::Box);
+                            }
+                            component.ApplyTransformScale();
                         }
                     }
                     if (isSelected)
@@ -46,7 +64,7 @@ namespace LevEngine::Editor
 
             if (currentRigidbodyTypeString == "DYNAMIC")
             {
-                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&PhysicsRigidbody::GetRigidbodyGravityFlag, &component), BindSetter(&PhysicsRigidbody::SetRigidbodyGravityFlag, &component));
+                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&Rigidbody::GetRigidbodyGravityFlag, &component), BindSetter(&Rigidbody::SetRigidbodyGravityFlag, &component));
             }
             
             if (component.GetColliderNumber() > 0)
@@ -64,14 +82,29 @@ namespace LevEngine::Editor
                             if (currentColliderTypeString == "SPHERE")
                             {
                                 component.SetColliderType(ColliderType::Sphere);
+                                if (component.GetInitializationFlag())
+                                {
+                                    component.AttachCollider(ColliderType::Sphere);
+                                }
+                                component.ApplyTransformScale();
                             }
                             if (currentColliderTypeString == "CAPSULE")
                             {
                                 component.SetColliderType(ColliderType::Capsule);
+                                if (component.GetInitializationFlag())
+                                {
+                                    component.AttachCollider(ColliderType::Capsule);
+                                }
+                                component.ApplyTransformScale();
                             }
                             if (currentColliderTypeString == "BOX")
                             {
                                 component.SetColliderType(ColliderType::Box);
+                                if (component.GetInitializationFlag())
+                                {
+                                    component.AttachCollider(ColliderType::Box);
+                                }
+                                component.ApplyTransformScale();
                             }
                         }
                         if (isSelected)
@@ -82,26 +115,26 @@ namespace LevEngine::Editor
                     ImGui::EndCombo();
                 }
 
-                EditorGUI::DrawVector3Control("Offset Position", BindGetter(&PhysicsRigidbody::GetColliderOffsetPosition, &component), BindSetter(&PhysicsRigidbody::SetColliderOffsetPosition, &component));
-                EditorGUI::DrawVector3Control("Offset Rotation", BindGetter(&PhysicsRigidbody::GetColliderOffsetRotation, &component), BindSetter(&PhysicsRigidbody::SetColliderOffsetRotation, &component));
+                EditorGUI::DrawVector3Control("Offset Position", BindGetter(&Rigidbody::GetColliderOffsetPosition, &component), BindSetter(&Rigidbody::SetColliderOffsetPosition, &component));
+                EditorGUI::DrawVector3Control("Offset Rotation", BindGetter(&Rigidbody::GetColliderOffsetRotation, &component), BindSetter(&Rigidbody::SetColliderOffsetRotation, &component));
                 
                 if (currentColliderTypeString == "SPHERE")
                 {
-                    EditorGUI::DrawFloatControl("Radius", BindGetter(&PhysicsRigidbody::GetSphereRadius, &component), BindSetter(&PhysicsRigidbody::SetSphereRadius, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Radius", BindGetter(&Rigidbody::GetSphereRadius, &component), BindSetter(&Rigidbody::SetSphereRadius, &component), 1.0f, 0.0f, FLT_MAX);
                 }
                 if (currentColliderTypeString == "CAPSULE")
                 {
-                    EditorGUI::DrawFloatControl("Radius", BindGetter(&PhysicsRigidbody::GetCapsuleRadius, &component), BindSetter(&PhysicsRigidbody::SetCapsuleRadius, &component), 1.0f, 0.0f, FLT_MAX);
-                    EditorGUI::DrawFloatControl("Half Height", BindGetter(&PhysicsRigidbody::GetCapsuleHalfHeight, &component), BindSetter(&PhysicsRigidbody::SetCapsuleHalfHeight, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Radius", BindGetter(&Rigidbody::GetCapsuleRadius, &component), BindSetter(&Rigidbody::SetCapsuleRadius, &component), 1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Half Height", BindGetter(&Rigidbody::GetCapsuleHalfHeight, &component), BindSetter(&Rigidbody::SetCapsuleHalfHeight, &component), 1.0f, 0.0f, FLT_MAX);
                 }
                 if (currentColliderTypeString == "BOX")
                 {
-                    EditorGUI::DrawVector3Control("Half Extends", BindGetter(&PhysicsRigidbody::GetBoxHalfExtents, &component), BindSetter(&PhysicsRigidbody::SetBoxHalfExtents, &component),1.0f, 0.0f, FLT_MAX);
+                    EditorGUI::DrawVector3Control("Half Extends", BindGetter(&Rigidbody::GetBoxHalfExtents, &component), BindSetter(&Rigidbody::SetBoxHalfExtents, &component),1.0f, 0.0f, FLT_MAX);
                 }
                 
-                EditorGUI::DrawFloatControl("Static Friction", BindGetter(&PhysicsRigidbody::GetStaticFriction, &component), BindSetter(&PhysicsRigidbody::SetStaticFriction, &component), 1.0f, 0.0f, FLT_MAX);
-                EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&PhysicsRigidbody::GetDynamicFriction, &component), BindSetter(&PhysicsRigidbody::SetDynamicFriction, &component), 1.0f, 0.0f, FLT_MAX);
-                EditorGUI::DrawFloatControl("Restitution", BindGetter(&PhysicsRigidbody::GetRestitution, &component), BindSetter(&PhysicsRigidbody::SetRestitution, &component), 1.0f, 0.0f, 1.0f);
+                EditorGUI::DrawFloatControl("Static Friction", BindGetter(&Rigidbody::GetStaticFriction, &component), BindSetter(&Rigidbody::SetStaticFriction, &component), 1.0f, 0.0f, FLT_MAX);
+                EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&Rigidbody::GetDynamicFriction, &component), BindSetter(&Rigidbody::SetDynamicFriction, &component), 1.0f, 0.0f, FLT_MAX);
+                EditorGUI::DrawFloatControl("Restitution", BindGetter(&Rigidbody::GetRestitution, &component), BindSetter(&Rigidbody::SetRestitution, &component), 1.0f, 0.0f, 1.0f);
             }
         }
     };

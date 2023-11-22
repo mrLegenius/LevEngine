@@ -2,21 +2,21 @@ Scene: PhysicsTestScene
 Entities:
   - Entity: 2500217727459906061
     Tag: Box
-    Physics Rigidbody:
-      Visualization Flag: true
-      Rigidbody Type: 1
-      Gravity Flag: true
-      Collider Type: 2
-      Box Half Extends: [0.5, 0.5, 0.5]
-      Offset Position: [1, 0, 1]
-      Offset Rotation: [0, 0, 0]
-      Static Friction: 0.5
-      Dynamic Friction: 0.5
-      Restitution: 0.600000024
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 13469868196253741728
       Cast Shadow: true
+    Rigidbody:
+      Visualization Flag: false
+      Rigidbody Type: 1
+      Gravity Flag: true
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Static Friction: 1
+      Dynamic Friction: 1
+      Restitution: 1
     Transform:
       Position: [0, 4, 0]
       Rotation: [-0, 0, 0]
@@ -40,25 +40,25 @@ Entities:
       Scale: [1, 1, 1]
   - Entity: 2286883072584602035
     Tag: Ground
-    Physics Rigidbody:
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 7582525064410579512
+      Cast Shadow: true
+    Rigidbody:
       Visualization Flag: false
       Rigidbody Type: 0
       Gravity Flag: true
       Collider Type: 2
-      Box Half Extends: [3, 0.25, 3]
+      Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
       Offset Rotation: [0, 0, 0]
       Static Friction: 0.5
       Dynamic Friction: 0.5
       Restitution: 0.600000024
-    MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 7582525064410579512
-      Cast Shadow: true
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
-      Scale: [6, 0.5, 6]
+      Scale: [10, 1, 10]
   - Entity: 293547088511675378
     Tag: Directional Light
     Directional Light:

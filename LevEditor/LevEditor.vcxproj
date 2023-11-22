@@ -100,6 +100,7 @@
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
     <ClCompile Include="src\ComponentDebugRenderers\ColliderComponentsDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\RigidbodyDebugRenderer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
@@ -129,11 +130,11 @@
     <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
-    <ClCompile Include="src\GUI\Drawers\Components\ColliderDrawers.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LegacyColliderDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\MeshRendererDrawer.cpp" />
-    <ClCompile Include="src\GUI\Drawers\Components\RigidbodyDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LegacyRigidbodyDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\PhysicsDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\SkyboxComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp" />

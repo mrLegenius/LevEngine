@@ -1,59 +1,58 @@
-#pragma once
-#include "Components/Rigidbody.h"
-#include "Components/Collider.h"
-#include "entt/entt.hpp"
+﻿#pragma once
+#include "physx/include/PxPhysicsAPI.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
-struct CollisionInfo;
-class Entity;
-
-inline constexpr int NumCollisionFrames = 10;
-
-struct ContactPoint
-{
-	Vector3 localA; // where did the collision occur ...
-	Vector3 localB; // in the frame of each object !
-	Vector3 normal;
-	float penetration = 0;
-};
-
-struct CollisionInfo
-{
-    ContactPoint point;
-
-    void SetContactPoint(const Vector3& localA, const Vector3& localB, const Vector3& normal, float p)
-    {
-        point.localA = localA;
-        point.localB = localB;
-        point.normal = normal;
-        point.penetration = p;
-    }
-};
-
-class Physics
-{
-public:
+    using namespace physx;
     
-    static void HandleCollision(Transform& transformA, Rigidbody& rigidbodyA, Transform& transformB, Rigidbody& rigidbodyB, ContactPoint p);
-    static void Process(entt::registry& registry, float deltaTime);
-
-    static bool AABBTest(
-        const Vector3& posA, const Vector3& posB,
-        const Vector3& halfSizeA, const Vector3& halfSizeB);
-
-    static bool HasAABBIntersection(const BoxCollider& colliderA, const Transform& transformA, const BoxCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo);
-
-    static bool HasSphereIntersection(const SphereCollider& colliderA, const Transform& transformA, const SphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo);
-
-    static bool HasAABBSphereIntersection(const BoxCollider& colliderA, const Transform& transformA, const SphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo);
-
-    static void UpdateConstraints(const float deltaTime)
+    class Physics
     {
-        /*for (const auto gameObject : objects)
-            for (const auto& constraint : gameObject->GetConstraints())
-                constraint->Update(deltaTime);*/
-    }
-};
+    public:
+        Physics(const Physics&) = delete;
+        Physics& operator=(const Physics&) = delete;
+        
+        static void Process(entt::registry& registry, float deltaTime);
+
+        [[nodiscard]] static Physics& GetInstance();
+        
+        [[nodiscard]] Vector3 GetGravity() const;
+        void SetGravity(const Vector3 gravity);
+
+        friend struct Rigidbody;
+        
+    private:
+        Physics();
+        ~Physics();
+        
+        void Initialize();
+        void Deinitialize();
+
+        static bool Advance(float deltaTime);
+        static void StepPhysics(float deltaTime);
+        static void UpdateTransforms(entt::registry& registry);
+        static void DrawDebugLines();
+
+        [[nodiscard]] PxScene* GetScene() const;
+        [[nodiscard]] PxPhysics* GetPhysics() const;
+        
+        static Physics s_Physics;
+        
+        PxDefaultAllocator m_Allocator;
+        PxDefaultErrorCallback m_ErrorCallback;
+        PxTolerancesScale m_ToleranceScale;
+        
+        PxFoundation* m_Foundation = NULL;
+        PxPvd* m_Pvd = NULL;
+        PxDefaultCpuDispatcher* m_Dispatcher = NULL;
+        PxPhysics* m_Physics = NULL;
+        PxScene* m_Scene = NULL;
+        
+        // for debug
+        inline static bool s_IsPVDEnabled = false;
+        inline static bool s_IsDebugRenderEnabled = true;
+        // for physics update
+        inline static float s_Accumulator = 0.0f;
+        inline static float s_StepSize = 1.0f / 60.0f;
+    };
 }

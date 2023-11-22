@@ -8,7 +8,7 @@ namespace Sandbox
     public:
         void Update(float deltaTime, entt::registry& registry) override
         {
-            const auto enemyView = registry.view<Transform, Rigidbody, Enemy>();
+            const auto enemyView = registry.view<Transform, LegacyRigidbody, Enemy>();
 
             const auto playerView = registry.view<Transform, Player>();
 
@@ -25,7 +25,7 @@ namespace Sandbox
 			
             for (const auto entity : enemyView)
             {
-                auto [transform, rigidbody, enemy] = enemyView.get<Transform, Rigidbody, Enemy>(entity);
+                auto [transform, rigidbody, enemy] = enemyView.get<Transform, LegacyRigidbody, Enemy>(entity);
 				
                 auto enemyPosition = transform.GetWorldPosition();
 
