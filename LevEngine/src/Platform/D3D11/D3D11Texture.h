@@ -104,7 +104,7 @@ protected:
 
 	uint8_t m_BPP{};
 
-	uint16_t m_Pitch{};
+	uint32_t m_Pitch{};
 
 	bool m_IsTransparent{};
 

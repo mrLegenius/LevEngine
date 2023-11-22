@@ -1500,7 +1500,7 @@ DXGI_FORMAT GetUAVFormat(const DXGI_FORMAT format)
     return GetRTVFormat(format);
 }
 
-uint8_t GetBPP(const DXGI_FORMAT format)
+uint8_t GetBytesPerPixel(const DXGI_FORMAT format)
 {
     uint8_t bpp = 0;
 
@@ -1653,7 +1653,7 @@ DXGI_SAMPLE_DESC GetSupportedSampleCount(const DXGI_FORMAT format, const uint8_t
 
     return sampleDesc;
 }
-
+    
 Ref<Texture> D3D11Texture::CreateTexture2D(
     const uint16_t width,
     const uint16_t height,
@@ -1694,7 +1694,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
     // Convert typeless format to Unordered Access View formats.
     texture->m_UnorderedAccessViewFormat = GetUAVFormat(dxgiFormat);
 
-    texture->m_BPP = LevEngine::GetBPP(texture->m_TextureResourceFormat);
+    texture->m_BPP = GetBytesPerPixel(texture->m_TextureResourceFormat);
 
     // Query for texture format support.
     auto res = device->CheckFormatSupport(texture->m_TextureResourceFormat, &texture->m_TextureResourceFormatSupport);
@@ -1777,7 +1777,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
     // Convert typeless format to Unordered Access View formats.
     texture->m_UnorderedAccessViewFormat = GetUAVFormat(dxgiFormat);
 
-    texture->m_BPP = LevEngine::GetBPP(texture->m_TextureResourceFormat);
+    texture->m_BPP = GetBytesPerPixel(texture->m_TextureResourceFormat);
 
     // Query for texture format support.
     auto res = device->CheckFormatSupport(texture->m_TextureResourceFormat, &texture->m_TextureResourceFormatSupport);
@@ -1880,8 +1880,16 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
 	stbi_set_flip_vertically_on_load(1);
 
 	int width, height, channels;
-    
-    void* data = stbi_load(path.c_str(), &width, &height, &channels, 4);
+    bool isHDR = false;
+    bool is16Bit = false;
+
+    isHDR |= stbi_is_hdr(path.c_str());
+    is16Bit |= stbi_is_16_bit(path.c_str());
+    void* data;
+    if (isHDR)
+        data = stbi_loadf(path.c_str(), &width, &height, &channels, 4);
+    else
+        data = stbi_load(path.c_str(), &width, &height, &channels, 4);
     
     if (!data)
     {
@@ -1893,7 +1901,9 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
     
     if (channels == 4 || channels == 3)
     {
-        if (isLinear)
+        if (isHDR)
+            m_TextureResourceFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        else if (isLinear)
             m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
         else
             m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
@@ -1914,8 +1924,8 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
     LEV_CORE_ASSERT(textureFormatSupported, "Unsupported texture format for 2D textures")
 
 	// Texture
-
-    m_Pitch = width * 4;
+    m_BPP = GetBytesPerPixel(m_TextureResourceFormat);
+    m_Pitch = (static_cast<uint64_t>(width) * m_BPP + 7u) / 8u;;
 
     m_IsLoaded = true;
     m_Width = width;
@@ -2048,6 +2058,8 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
 
 	LEV_CORE_ASSERT(m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURECUBE, "Format is not supported");
 
+    m_BPP = GetBytesPerPixel(m_TextureResourceFormat);
+    
     m_Pitch = width * 4;
 
     m_IsLoaded = true;
