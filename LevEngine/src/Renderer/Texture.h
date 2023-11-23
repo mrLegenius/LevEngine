@@ -112,7 +112,11 @@ namespace LevEngine
 			CPUAccess cpuAccess = CPUAccess::None,
 			bool uav = false,
 			bool generateMipMaps = false);
-		
+		static Ref<Texture> CreateTextureCube(uint16_t width, uint16_t height,
+											  const TextureFormat& format,
+		                                      CPUAccess cpuAccess = CPUAccess::None,
+		                                      bool uav = false, bool generateMipMaps = true);
+
 		static Ref<Texture> CreateTextureCube(const String paths[6]);
 		static Ref<Texture> CreateTextureCube(const String paths[6], const bool isLinear);
 		static Ref<Texture> Create(const String& path, bool isLinear);

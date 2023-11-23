@@ -70,6 +70,27 @@ namespace LevEngine
 		}
 	}
 
+	Ref<Texture> Texture::CreateTextureCube(
+		const uint16_t width, const uint16_t height,
+		const TextureFormat& format,
+		const CPUAccess cpuAccess,
+		const bool uav,
+		const bool generateMipMaps)
+	{
+		switch (RenderSettings::RendererAPI)
+		{
+		case RendererAPI::None:
+			LEV_THROW("None for API was chosen");
+		case RendererAPI::OpenGL:
+			LEV_NOT_IMPLEMENTED
+		case RendererAPI::D3D11:
+			return D3D11Texture::CreateTextureCube(width, height, format, cpuAccess, uav, generateMipMaps);
+		default:
+			LEV_THROW("Unknown Renderer API")
+			break;
+		}
+	}
+	
 	Ref<Texture> Texture::CreateTextureCube(const String paths[6])
 	{
 		return CreateTextureCube(paths, false);

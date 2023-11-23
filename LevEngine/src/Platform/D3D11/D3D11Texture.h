@@ -27,6 +27,13 @@ public:
 		CPUAccess cpuAccess,
 		bool uav,
 		bool generateMipMaps);
+
+	static Ref<Texture> CreateTextureCube(const uint16_t width, const uint16_t height,
+		const TextureFormat& format,
+		const CPUAccess cpuAccess,
+		const bool uav,
+		const bool generateMipMaps);
+	
 	
 	explicit D3D11Texture(const String& path, bool isLinear);
 	explicit D3D11Texture(const String paths[6], bool isLinear);
@@ -42,6 +49,7 @@ public:
 
 	ID3D11Resource* GetTextureResource() const;
 	void Resize2D(uint16_t width, uint16_t height);
+	void ResizeCube(uint16_t width, uint16_t height);
 	ID3D11ShaderResourceView* GetShaderResourceView() const { return m_ShaderResourceView; }
 	ID3D11RenderTargetView* GetRenderTargetView() const { return m_RenderTargetView; }
 	ID3D11DepthStencilView* GetDepthStencilView() const { return m_DepthStencilView; }
@@ -50,6 +58,7 @@ public:
 	[[nodiscard]] Ref<Texture> GetSlice(unsigned slice) const override { return nullptr; }
 	[[nodiscard]] uint16_t GetDepth() const override { return m_NumSlices; }
 	[[nodiscard]] bool IsTransparent() const override { return m_IsTransparent; }
+
 	void Resize(uint16_t width, uint16_t height = 0, uint16_t depth = 0) override;
 	void CopyFrom(Ref<Texture> sourceTexture) override;
 	Ref<Texture> Clone() override;

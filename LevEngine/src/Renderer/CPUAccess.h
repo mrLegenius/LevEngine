@@ -1,4 +1,6 @@
 #pragma once
+#include "Essentials/EnumUtils.h"
+
 namespace LevEngine
 {
 // CPU Access. Used for textures and Buffers
@@ -9,4 +11,6 @@ enum class CPUAccess
     Write = 2, // CPU writes permitted.
     ReadWrite = Read | Write
 };
+
+    ENUM_AS_FLAG(CPUAccess);
 }
