@@ -20,11 +20,9 @@ PS_IN VSMain(VS_IN input)
 {
 	PS_IN output;
 
-	float4 pos = float4(input.pos * 1000, 0.0f);
+	float4 pos = float4(input.pos, 0.0f);
 	output.pos = mul(pos, viewProjection).xyww;
-    output.uv = pos;
-
-	output.uv.xy = -pos.xy;
+    output.uv = input.pos;
 
 	return output;
 }
@@ -35,6 +33,5 @@ SamplerState sam;
 float4 PSMain(PS_IN input) : SV_Target
 {
 	float3 finalColor = tex.Sample(sam, input.uv).rgb;
-	//finalColor = pow(finalColor, 0.45);
 	return float4(finalColor, 1.0f);
 }
