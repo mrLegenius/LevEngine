@@ -14,8 +14,8 @@ namespace LevEngine::Editor
         {
             const auto& transform = entity.GetComponent<Transform>();
             constexpr int rays = 8;
-            constexpr float radius = 0.2;
-            constexpr float length = 1;
+            constexpr float radius = 0.2f;
+            constexpr float length = 1.0f;
             
             for (int i = 0; i < rays; i++)
             {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "LayerStack.h"
-#define NOMINMAX
+
 #include "Window.h"
 
 #include "../Events/ApplicationEvent.h"
@@ -72,4 +72,6 @@ private:
 
 	static Application* s_Instance;
 };
+
+using App = Application;
 }

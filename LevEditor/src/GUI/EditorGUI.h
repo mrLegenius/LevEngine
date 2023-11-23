@@ -29,16 +29,17 @@ namespace LevEngine::Editor
 		static void DrawDoubleControl(const String& label, const Func<double>& getter, const Action<double>& setter,
 			double speed, double min = 0, double max = 0);
 
+		static bool DrawIntControl(const String& label, int& value, int speed, int min, int max);
 		static void DrawIntControl(const String& label, const Func<int>& getter, const Action<int>& setter,
 			int speed = 1, int min = 0, int max = 0);
 
 		static void DrawColor3Control(const String& label, Color& value);
-
-		static void DrawColor3Control(const String& label, const Func<Color>& getter,
-									  const Action<Color>& setter);
-		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
+		static void DrawColor3Control(const String& label, const Func<Color>& getter, const Action<Color>& setter);
+		
 		static bool DrawTextureAsset(const String& label, Ref<TextureAsset>& assetPtr);
 		static bool DrawTextureAsset(Ref<TextureAsset>& assetPtr, Vector2 size);
+		
+		static void DrawTexture2D(Ref<Texture>& texture, Vector2 size = { 100, 100 });
 		static void DrawTexture2D(const Func<Ref<Texture>>& getter,
 								  const Action<Ref<Texture>>& setter, Vector2 size = { 32, 32 });
 
@@ -55,8 +56,11 @@ namespace LevEngine::Editor
 		static bool DrawSelectableComponent(const String& componentTypeName, Entity& entity, bool wasSelected,
 			bool& isSelected, int selectableIdx = 0);
 
-		template<class T>
-		static bool DrawComboBox(const char* label, const char* strings[], const size_t stringCount, T* current);
+		template<class T, int N>
+		static bool DrawComboBox(String label, Array<String, N> stringValues, T& value);
+
+		template<class T, int N>
+		static bool DrawComboBox(String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter);
 	};
 }
 

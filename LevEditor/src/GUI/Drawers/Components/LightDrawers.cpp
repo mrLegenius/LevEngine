@@ -7,8 +7,7 @@ namespace LevEngine::Editor
     class DirectionalLightDrawer final : public ComponentDrawer<DirectionalLightComponent, DirectionalLightDrawer>
     {
     protected:
-        String GetLabel() const override { return "Directional Light"; }
-        String GetAddMenuPath() const override { return "Lights"; }
+        String GetLabel() const override { return "Lights/Directional Light"; }
 
         void DrawContent(DirectionalLightComponent& component) override
         {
@@ -19,8 +18,7 @@ namespace LevEngine::Editor
     class PointLightDrawer final : public ComponentDrawer<PointLightComponent, PointLightDrawer>
     {
     protected:
-        String GetLabel() const override { return "Point Light"; }
-        String GetAddMenuPath() const override { return "Lights"; }
+        String GetLabel() const override { return "Lights/Point Light"; }
         
         void DrawContent(PointLightComponent& component) override
         {

@@ -12,6 +12,7 @@ namespace LevEngine
 	class IComponentSerializer
 	{
 	public:
+		virtual ~IComponentSerializer() = default;
 		virtual void Serialize(YAML::Emitter& out, Entity entity) = 0;
 		virtual void Deserialize(YAML::Node& node, Entity entity) = 0;
 	};

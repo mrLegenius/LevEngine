@@ -44,7 +44,7 @@ namespace LevEngine
 			if (RenderSettings::UseFrustumCulling)
 			{
 				auto sphereBoundingVolume = SphereBoundingVolume{worldPosition, light.Range};
-				if (!sphereBoundingVolume.IsOnFrustum(params.Camera.GetFrustum()))
+				if (!sphereBoundingVolume.IsOnFrustum(params.Camera->GetFrustum()))
 				{
 					m_LightParams.LightIndex++;
 					continue;

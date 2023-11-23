@@ -9,7 +9,7 @@ namespace Sandbox
             const auto view = registry.view<Transform, Player, LegacyRigidbody>();
 
             constexpr auto rotationSpeed = 45;
-            const Vector2 mouse{ Input::GetMouseDelta().first, Input::GetMouseDelta().second };
+            const Vector2 mouse{ Input::GetMouseDelta().x, Input::GetMouseDelta().y };
 			
             for (const auto entity : view)
             {
@@ -33,6 +33,9 @@ namespace Sandbox
 
                 if (Input::IsKeyPressed(KeyCode::Space))
                     rigidbody.AddImpulse(Vector3::Up * 10);
+
+                auto worldPos =  transform.GetWorldPosition();
+                Log::Info("Current position = {0}, {1}, {2}", worldPos.x, worldPos.y, worldPos.z);
             }
         }
     };

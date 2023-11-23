@@ -37,9 +37,9 @@ ParticlePass::ParticlePass(const Ref<PipelineState>& pipelineState, const Ref<Te
 	m_RandomData = ConstantBuffer::Create(sizeof RandomGPUData, 3);
 
 	const auto particles = new GPUParticleData[RenderSettings::MaxParticles];
-	auto indices = new uint32_t[RenderSettings::MaxParticles];
+	const auto indices = new uint32_t[RenderSettings::MaxParticles];
 
-	for (int i = 0; i < RenderSettings::MaxParticles; ++i)
+	for (uint32_t i = 0; i < RenderSettings::MaxParticles; ++i)
 	{
 		//particles[i].Age = -1;
 		indices[i] = RenderSettings::MaxParticles - 1 - i;
@@ -117,7 +117,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 	m_ComputeData->SetData(&handler);
 	m_ComputeData->Bind(ShaderType::Compute);
 
-	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
+	const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera->GetProjection(), params.CameraPosition };
 	m_CameraData->SetData(&cameraData);
 	m_CameraData->Bind(ShaderType::Compute);
 
@@ -205,7 +205,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 
 	//<--- Render ---<<
 	{
-		const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera.GetProjection(), params.CameraPosition };
+		const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera->GetProjection(), params.CameraPosition };
 		m_CameraData->SetData(&cameraData);
 		m_CameraData->Bind(ShaderType::Vertex | ShaderType::Geometry);
 	}

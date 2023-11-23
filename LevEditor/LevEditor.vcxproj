@@ -96,11 +96,13 @@
     <ClInclude Include="src\EditorSaveData.h" />
     <ClInclude Include="src\EntitySelection.h" />
     <ClInclude Include="src\EditorLayer.h" />
+    <ClInclude Include="src\Essentials\MenuBar.h" />
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
     <ClCompile Include="src\ComponentDebugRenderers\ColliderComponentsDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\RigidbodyDebugRenderer.cpp" />
+    <ClCompile Include="src\Essentials\MenuBar.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
@@ -110,13 +112,19 @@
     <ClInclude Include="src\ModalPopup.h" />
     <ClInclude Include="src\Panels\AssetBrowserPanel.h" />
     <ClInclude Include="src\Panels\ConsolePanel.h" />
+    <ClInclude Include="src\Panels\DockSpace.h" />
     <ClInclude Include="src\Panels\GamePanel.h" />
     <ClInclude Include="src\Panels\HierarchyPanel.h" />
     <ClInclude Include="src\Panels\Panel.h" />
     <ClInclude Include="src\Panels\PropertiesPanel.h" />
     <ClInclude Include="src\Panels\SettingsPanel.h" />
+    <ClInclude Include="src\Panels\StatusBar.h" />
+    <ClInclude Include="src\Panels\Toolbar.h" />
     <ClInclude Include="src\Panels\ViewportPanel.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\ProjectEditor.h" />
+    <ClInclude Include="src\SceneEditor.h" />
+    <ClInclude Include="src\SceneState.h" />
     <ClInclude Include="src\Selection.h" />
   </ItemGroup>
   <ItemGroup>
@@ -143,8 +151,11 @@
     <ClCompile Include="src\GUI\EditorGUI.cpp" />
     <ClCompile Include="src\ModalPopup.cpp" />
     <ClCompile Include="src\Panels\ConsolePanel.cpp" />
+    <ClCompile Include="src\Panels\DockSpace.cpp" />
     <ClCompile Include="src\Panels\GamePanel.cpp" />
     <ClCompile Include="src\Panels\SettingsPanel.cpp" />
+    <ClCompile Include="src\Panels\StatusBar.cpp" />
+    <ClCompile Include="src\Panels\Toolbar.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -161,6 +172,8 @@
     <ClCompile Include="src\Panels\Panel.cpp" />
     <ClCompile Include="src\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Panels\ViewportPanel.cpp" />
+    <ClCompile Include="src\ProjectEditor.cpp" />
+    <ClCompile Include="src\SceneEditor.cpp" />
     <ClCompile Include="src\Selection.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,6 @@
 ﻿#include "levpch.h"
 #include "WindowsWindow.h"
 
-#include <windowsx.h>
-
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"

@@ -35,7 +35,7 @@ namespace LevEngine
 
             if (RenderSettings::UseFrustumCulling)
             {
-                if (!mesh->IsOnFrustum(params.Camera.GetFrustum(), transform)) continue;
+                if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
             
             material.Bind(shader);

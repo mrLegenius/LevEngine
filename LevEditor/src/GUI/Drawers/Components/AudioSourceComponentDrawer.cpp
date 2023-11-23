@@ -10,8 +10,7 @@ namespace LevEngine::Editor
     class AudioSourceComponentDrawer final : public ComponentDrawer<AudioSourceComponent, AudioSourceComponentDrawer>
     {
     protected:
-        [[nodiscard]] String GetLabel() const override { return "Audio Source"; }
-        String GetAddMenuPath() const override { return "Audio"; }
+        [[nodiscard]] String GetLabel() const override { return "Audio/Audio Source"; }
 
         void DrawContent(AudioSourceComponent& component) override
         {

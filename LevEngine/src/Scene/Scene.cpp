@@ -160,6 +160,9 @@ namespace LevEngine
             system->Update(deltaTime, m_Registry);
         }
 
+        if (camera.FixedAspectRatio) continue;
+        camera.Camera.SetViewportSize(width, height);
+
         vgjs::continuation([this]() {m_IsEventUpdateDone = true; });
     }
 
