@@ -13,7 +13,7 @@ namespace LevEngine
         {
             auto [rigidbody, transform] = view.get<Rigidbody, Transform>(entity);
             
-            if (rigidbody.GetInitializationFlag())
+            if (rigidbody.IsInitialized())
             {
                 const Vector3 transformScale = transform.GetWorldScale();
                 if (m_TransformScale != transformScale)

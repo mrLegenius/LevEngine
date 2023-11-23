@@ -25,7 +25,7 @@ namespace LevEngine::Editor
             
             switch (component.GetColliderType())
             {
-            case Rigidbody::ColliderType::Sphere:
+            case Collider::Type::Sphere:
                 colliderModel =
                     Matrix::CreateScale(component.GetSphereRadius() * maxScale)
                     * colliderRotationTranslationModel;
@@ -33,7 +33,7 @@ namespace LevEngine::Editor
                 DebugRender::DrawWireSphere(colliderModel, Color::Green);
                 break;
                 
-            case Rigidbody::ColliderType::Capsule:
+            case Collider::Type::Capsule:
                 colliderModel =
                     Matrix::CreateScale(maxScale)
                     * colliderRotationTranslationModel;
@@ -41,7 +41,7 @@ namespace LevEngine::Editor
                 DebugRender::DrawWireCapsule(colliderModel, component.GetCapsuleHalfHeight(), component.GetCapsuleRadius(), Color::Green);
                 break;
                 
-            case Rigidbody::ColliderType::Box:
+            case Collider::Type::Box:
                 colliderModel =
                     Matrix::CreateScale(component.GetBoxHalfExtents() * 2 * transformScale)
                     * colliderRotationTranslationModel;

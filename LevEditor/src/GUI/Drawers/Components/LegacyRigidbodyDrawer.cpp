@@ -9,7 +9,6 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Legacy Rigidbody"; }
-        String GetAddMenuPath() const override { return "Legacy Physics"; }
 
         void DrawContent(LegacyRigidbody& component) override
         {

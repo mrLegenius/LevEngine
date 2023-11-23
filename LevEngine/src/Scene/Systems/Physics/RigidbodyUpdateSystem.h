@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "Math/Vector3.h"
 #include "Scene/System.h"
+#include "Math/Vector3.h"
 
 namespace LevEngine
 {

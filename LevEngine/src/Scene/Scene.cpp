@@ -160,9 +160,6 @@ namespace LevEngine
             system->Update(deltaTime, m_Registry);
         }
 
-        if (camera.FixedAspectRatio) continue;
-        camera.Camera.SetViewportSize(width, height);
-
         vgjs::continuation([this]() {m_IsEventUpdateDone = true; });
     }
 
@@ -216,9 +213,9 @@ namespace LevEngine
         {
             auto& camera = view.get<CameraComponent>(entity);
 
-            if (camera.fixedAspectRatio) continue;
+            if (camera.FixedAspectRatio) continue;
 
-            camera.camera.SetViewportSize(width, height);
+            camera.Camera.SetViewportSize(width, height);
         }
     }
 

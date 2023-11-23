@@ -5,8 +5,6 @@
 
 namespace LevEngine
 {
-    using namespace physx;
-    
     class Physics
     {
     public:
@@ -18,7 +16,7 @@ namespace LevEngine
         [[nodiscard]] static Physics& GetInstance();
         
         [[nodiscard]] Vector3 GetGravity() const;
-        void SetGravity(const Vector3 gravity);
+        void SetGravity(Vector3 gravity);
 
         friend struct Rigidbody;
         
@@ -27,27 +25,27 @@ namespace LevEngine
         ~Physics();
         
         void Initialize();
-        void Deinitialize();
+        void Reset();
 
         static bool Advance(float deltaTime);
         static void StepPhysics(float deltaTime);
         static void UpdateTransforms(entt::registry& registry);
         static void DrawDebugLines();
 
-        [[nodiscard]] PxScene* GetScene() const;
-        [[nodiscard]] PxPhysics* GetPhysics() const;
+        [[nodiscard]] physx::PxScene* GetScene() const;
+        [[nodiscard]] physx::PxPhysics* GetPhysics() const;
         
         static Physics s_Physics;
         
-        PxDefaultAllocator m_Allocator;
-        PxDefaultErrorCallback m_ErrorCallback;
-        PxTolerancesScale m_ToleranceScale;
+        physx::PxDefaultAllocator m_Allocator;
+        physx::PxDefaultErrorCallback m_ErrorCallback;
+        physx::PxTolerancesScale m_ToleranceScale;
         
-        PxFoundation* m_Foundation = NULL;
-        PxPvd* m_Pvd = NULL;
-        PxDefaultCpuDispatcher* m_Dispatcher = NULL;
-        PxPhysics* m_Physics = NULL;
-        PxScene* m_Scene = NULL;
+        physx::PxFoundation* m_Foundation = NULL;
+        physx::PxPvd* m_Pvd = NULL;
+        physx::PxDefaultCpuDispatcher* m_Dispatcher = NULL;
+        physx::PxPhysics* m_Physics = NULL;
+        physx::PxScene* m_Scene = NULL;
         
         // for debug
         inline static bool s_IsPVDEnabled = false;

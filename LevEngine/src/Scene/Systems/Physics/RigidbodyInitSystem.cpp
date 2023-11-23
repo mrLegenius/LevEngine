@@ -9,7 +9,7 @@ void LevEngine::RigidbodyInitSystem::Update(float deltaTime, entt::registry& reg
 
     for (const auto entity : view)
     {
-        if (auto [rigidbody, transform] = view.get<Rigidbody, Transform>(entity); !rigidbody.GetInitializationFlag())
+        if (auto [rigidbody, transform] = view.get<Rigidbody, Transform>(entity); !rigidbody.IsInitialized())
         {
             rigidbody.Initialize(transform);
         }

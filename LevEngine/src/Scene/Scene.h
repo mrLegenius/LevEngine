@@ -17,7 +17,6 @@ class Scene
 {
 public:
 	Scene() = default;
-	~Scene() = default;
 
 	void CleanupScene();
 

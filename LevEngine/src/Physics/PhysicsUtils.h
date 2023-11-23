@@ -6,29 +6,27 @@
 
 namespace LevEngine
 {
-    using namespace physx;
-    
     struct PhysicsUtils
     {
-        static PxVec3 FromVector3ToPxVec3(const Vector3& vector)
+        static physx::PxVec3 FromVector3ToPxVec3(const Vector3& vector)
         {
-            return PxVec3(vector.x, vector.y, vector.z);
+            return {vector.x, vector.y, vector.z};
         }
-        static Vector3 FromPxVec3ToVector3(const PxVec3& vector)
+        static Vector3 FromPxVec3ToVector3(const physx::PxVec3& vector)
         {
-            return Vector3(vector.x, vector.y, vector.z);
+            return {vector.x, vector.y, vector.z};
         }
-        static PxQuat FromQuaternionToPxQuat(const Quaternion& quaternion)
+        static physx::PxQuat FromQuaternionToPxQuat(const Quaternion& quaternion)
         {
-            return PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+            return {quaternion.x, quaternion.y, quaternion.z, quaternion.w};
         }
-        static Quaternion FromPxQuatToQuaternion(const PxQuat& quaternion)
+        static Quaternion FromPxQuatToQuaternion(const physx::PxQuat& quaternion)
         {
-            return Quaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+            return {quaternion.x, quaternion.y, quaternion.z, quaternion.w};
         }
-        static PxTransform FromTransformToPxTransform(const Transform& transform)
+        static physx::PxTransform FromTransformToPxTransform(const Transform& transform)
         {
-            return PxTransform(FromVector3ToPxVec3(transform.GetWorldPosition()), FromQuaternionToPxQuat(transform.GetWorldRotation()));
+            return {FromVector3ToPxVec3(transform.GetWorldPosition()), FromQuaternionToPxQuat(transform.GetWorldRotation())};
         }
     };
 }

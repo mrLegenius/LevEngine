@@ -23,33 +23,33 @@ namespace LevEngine
         if (s_IsPVDEnabled)
         {
             m_Pvd = PxCreatePvd(*m_Foundation);
-            PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(DEFAULT_PVD_HOST, DEFAULT_PVD_PORT, DEFAULT_PVD_CONNECT_TIMEOUT);
-            m_Pvd->connect(*transport,PxPvdInstrumentationFlag::eALL);
+            physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate(DEFAULT_PVD_HOST, DEFAULT_PVD_PORT, DEFAULT_PVD_CONNECT_TIMEOUT);
+            m_Pvd->connect(*transport,physx::PxPvdInstrumentationFlag::eALL);
         }
         
         m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
         
-        PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
+        physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
         sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(DEFAULT_GRAVITY_SCALE);
-        m_Dispatcher = PxDefaultCpuDispatcherCreate(DEFAULT_NUMBER_CPU_THREADS);
+        m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(DEFAULT_NUMBER_CPU_THREADS);
         sceneDesc.cpuDispatcher	= m_Dispatcher;
-        sceneDesc.filterShader	= PxDefaultSimulationFilterShader;
+        sceneDesc.filterShader	= physx::PxDefaultSimulationFilterShader;
         m_Scene = m_Physics->createScene(sceneDesc);
 
         if (s_IsDebugRenderEnabled)
         {
-            m_Scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
-            m_Scene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.0f);
-            m_Scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
+            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
+            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
         }
         
         if (s_IsPVDEnabled)
         {
-            if (PxPvdSceneClient* pvdClient = m_Scene->getScenePvdClient())
+            if (physx::PxPvdSceneClient* pvdClient = m_Scene->getScenePvdClient())
             {
-                pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-                pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-                pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+                pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+                pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+                pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
             }
         }
     }
@@ -82,32 +82,32 @@ namespace LevEngine
         for (const auto entity : view)
         {
             auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
-            const PxTransform actorPose = rigidbody.GetRigidbody()->getGlobalPose();
+            const physx::PxTransform actorPose = rigidbody.GetRigidbody()->getGlobalPose();
             transform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
             transform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
         }
     }
     void Physics::DrawDebugLines()
     {
-        const PxRenderBuffer& rb = s_Physics.m_Scene->getRenderBuffer();
+        const physx::PxRenderBuffer& rb = s_Physics.m_Scene->getRenderBuffer();
         auto a = rb.getNbLines();
         for (auto i = 0; i < rb.getNbLines(); i++)
         {
-            const PxDebugLine& line = rb.getLines()[i];
+            const physx::PxDebugLine& line = rb.getLines()[i];
             DebugRender::DrawLine(Vector3(line.pos0.x, line.pos0.y, line.pos0.z),
                                     Vector3(line.pos1.x, line.pos1.y, line.pos1.z),
                                         Color(1.0f, 0.0f, 0.0f, 1.0f));
         }
         for (auto i = 0; i < rb.getNbPoints(); i++)
         {
-            const PxDebugPoint& point = rb.getPoints()[i];
+            const physx::PxDebugPoint& point = rb.getPoints()[i];
             DebugRender::DrawPoint(Vector3(point.pos.x, point.pos.y, point.pos.z),
                                             Color(0.8f, 0.8f, 0.8f, 1.0f));
         }
         auto b = rb.getNbTriangles();
         for (auto i = 0; i < rb.getNbTriangles(); i++)
         {
-            const PxDebugTriangle& tri = rb.getTriangles()[i];
+            const physx::PxDebugTriangle& tri = rb.getTriangles()[i];
             DebugRender::DrawLine(Vector3(tri.pos0.x, tri.pos0.y, tri.pos0.z),
                                     Vector3(tri.pos1.x, tri.pos1.y, tri.pos1.z),
                                         Color(1.0f, 0.0f, 0.0f, 1.0f));
@@ -131,14 +131,14 @@ namespace LevEngine
         }
     }
     
-    void Physics::Deinitialize()
+    void Physics::Reset()
     {
         PX_RELEASE(m_Scene)
         PX_RELEASE(m_Dispatcher)
         PX_RELEASE(m_Physics)
         if (m_Pvd)
         {
-            PxPvdTransport* transport = m_Pvd->getTransport();
+            physx::PxPvdTransport* transport = m_Pvd->getTransport();
             PX_RELEASE(m_Pvd)
             PX_RELEASE(transport)
         }
@@ -146,7 +146,7 @@ namespace LevEngine
     }
     Physics::~Physics()
     {
-        Deinitialize();
+        Reset();
     }
 
     Physics& Physics::GetInstance()
@@ -154,12 +154,12 @@ namespace LevEngine
         return s_Physics;
     }
     
-    PxScene* Physics::GetScene() const
+    physx::PxScene* Physics::GetScene() const
     {
         return m_Scene;
     }
 
-    PxPhysics* Physics::GetPhysics() const
+    physx::PxPhysics* Physics::GetPhysics() const
     {
         return m_Physics;
     }

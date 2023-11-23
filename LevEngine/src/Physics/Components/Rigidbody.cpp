@@ -1,5 +1,6 @@
 ﻿#include "levpch.h"
 #include "Rigidbody.h"
+
 #include "Physics/Physics.h"
 #include "Physics/PhysicsUtils.h"
 #include "Scene/Components/ComponentSerializer.h"
@@ -9,9 +10,9 @@ constexpr auto MAX_MATERIAL_NUMBER = 1;
 
 constexpr auto DEFAULT_RIGIDBODY_DENSITY = 10;
 constexpr auto DEFAULT_VISUALIZATION_FLAG = true;
-constexpr auto DEFAULT_RIGIDBODY_TYPE = Rigidbody::RigidbodyType::Dynamic;
+constexpr auto DEFAULT_RIGIDBODY_TYPE = Rigidbody::Type::Dynamic;
 constexpr auto DEFAULT_GRAVITY_FLAG = true;
-constexpr auto DEFAULT_COLLIDER_TYPE = Rigidbody::ColliderType::Box;
+constexpr auto DEFAULT_COLLIDER_TYPE = Collider::Type::Box;
 constexpr auto DEFAULT_COLLIDER_SIZE = 0.5f;
 constexpr auto DEFAULT_STATIC_FRICTION = 0.5f;
 constexpr auto DEFAULT_DYNAMIC_FRICTION = 0.5f;
@@ -27,23 +28,23 @@ namespace LevEngine
 
     
 
-    PxRigidActor* Rigidbody::GetRigidbody() const
+    physx::PxRigidActor* Rigidbody::GetRigidbody() const
     {
-        return m_Rigidbody;
+        return m_Actor;
     }
     
-    PxShape* Rigidbody::GetColliders() const
+    physx::PxShape* Rigidbody::GetColliders() const
     {
-        PxShape* colliders[MAX_COLLIDER_NUMBER];
-        const auto nbColliders = m_Rigidbody->getNbShapes();
-        m_Rigidbody->getShapes(colliders, nbColliders);
+        physx::PxShape* colliders[MAX_COLLIDER_NUMBER];
+        const auto nbColliders = m_Actor->getNbShapes();
+        m_Actor->getShapes(colliders, nbColliders);
 
         return *colliders;
     }
 
-    PxMaterial* Rigidbody::GetPhysicalMaterials(const PxShape* colliders) const
+    physx::PxMaterial* Rigidbody::GetPhysicalMaterials(const physx::PxShape* colliders) const
     {
-        PxMaterial* physicalMaterials[MAX_MATERIAL_NUMBER];
+        physx::PxMaterial* physicalMaterials[MAX_MATERIAL_NUMBER];
         const auto nbMaterials = colliders[0].getNbMaterials();
         colliders[0].getMaterials(physicalMaterials, nbMaterials);
 
@@ -60,35 +61,20 @@ namespace LevEngine
     void Rigidbody::SetTransformScale(const Vector3 transformScale)
     {
         m_TransformScale = transformScale;
-        switch(m_ColliderType)
-        {
-        case ColliderType::Sphere:
-            SetSphereRadius(GetSphereRadius());
-            break;
-        case ColliderType::Capsule:
-            SetCapsuleRadius(GetCapsuleRadius());
-            SetCapsuleHalfHeight(GetCapsuleHalfHeight());
-            break;
-        case ColliderType::Box:
-            SetBoxHalfExtents(GetBoxHalfExtents());
-            break;
-        default:
-            break;
-        }
     }
 
     void Rigidbody::ApplyTransformScale()
     {
-        switch(m_ColliderType)
+        switch(GetColliderType())
         {
-        case ColliderType::Sphere:
+        case Collider::Type::Sphere:
             SetSphereRadius(GetSphereRadius());
             break;
-        case ColliderType::Capsule:
+        case Collider::Type::Capsule:
             SetCapsuleRadius(GetCapsuleRadius());
             SetCapsuleHalfHeight(GetCapsuleHalfHeight());
             break;
-        case ColliderType::Box:
+        case Collider::Type::Box:
             SetBoxHalfExtents(GetBoxHalfExtents());
             break;
         default:
@@ -98,7 +84,7 @@ namespace LevEngine
 
     
     
-    bool Rigidbody::GetInitializationFlag() const
+    bool Rigidbody::IsInitialized() const
     {
         return m_IsInitialized;
     }
@@ -107,11 +93,11 @@ namespace LevEngine
     {
         if (m_IsInitialized) return;
         
-        AttachRigidbody(m_RigidbodyType);
+        AttachRigidbody(m_Type);
         SetRigidbodyPose(transform);
-        SetColliderVisualizationFlag(m_IsColliderVisualizationEnabled);
-        SetRigidbodyGravityFlag(m_IsRigidbodyGravityEnabled);
-        AttachCollider(m_ColliderType);
+        SetColliderVisualizationFlag(m_IsVisualizationEnabled);
+        SetRigidbodyGravityFlag(m_IsGravityEnabled);
+        AttachCollider(GetColliderType());
         SetColliderOffsetPosition(GetColliderOffsetPosition());
         SetColliderOffsetRotation(GetColliderOffsetRotation());
         
@@ -123,168 +109,167 @@ namespace LevEngine
 
     void Rigidbody::SetRigidbodyPose(const Transform& transform)
     {
-        const PxTransform pxTransform = PhysicsUtils::FromTransformToPxTransform(transform);
-        m_Rigidbody->setGlobalPose(pxTransform);
+        const physx::PxTransform pxTransform = PhysicsUtils::FromTransformToPxTransform(transform);
+        m_Actor->setGlobalPose(pxTransform);
     }
 
 
     
-    Rigidbody::RigidbodyType Rigidbody::GetRigidbodyType() const
+    Rigidbody::Type Rigidbody::GetRigidbodyType() const
     {
-        return m_RigidbodyType;
+        return m_Type;
     }
 
-    void Rigidbody::SetRigidbodyType(const RigidbodyType& rigidbodyType)
+    void Rigidbody::SetRigidbodyType(const Type& rigidbodyType)
     {
-        m_RigidbodyType = rigidbodyType;
+        m_Type = rigidbodyType;
     }
 
-    void Rigidbody::AttachRigidbody(const RigidbodyType& rigidbodyType)
+    void Rigidbody::AttachRigidbody(const Type& rigidbodyType)
     {
-        auto initialPose = PxTransform(PxIdentity);
-        if (m_Rigidbody != NULL)
+        auto initialPose = physx::PxTransform(physx::PxIdentity);
+        if (m_Actor != NULL)
         {
-            initialPose = m_Rigidbody->getGlobalPose();
+            initialPose = m_Actor->getGlobalPose();
             DetachRigidbody();
         }
     
         switch (rigidbodyType)
         {
-        case RigidbodyType::Static:
-            m_Rigidbody = Physics::GetInstance().GetPhysics()->createRigidStatic(initialPose);
-            Physics::GetInstance().GetScene()->addActor(*(reinterpret_cast<PxRigidStatic*>(m_Rigidbody)));
+        case Type::Static:
+            m_Actor = Physics::GetInstance().GetPhysics()->createRigidStatic(initialPose);
+            Physics::GetInstance().GetScene()->addActor(*(reinterpret_cast<physx::PxRigidStatic*>(m_Actor)));
             SetRigidbodyGravityFlag(!DEFAULT_GRAVITY_FLAG);
             break;
-        case RigidbodyType::Dynamic:
-            m_Rigidbody = Physics::GetInstance().GetPhysics()->createRigidDynamic(initialPose);
-            PxRigidBodyExt::updateMassAndInertia(*(reinterpret_cast<PxRigidDynamic*>(m_Rigidbody)), DEFAULT_RIGIDBODY_DENSITY);
-            Physics::GetInstance().GetScene()->addActor(*(reinterpret_cast<PxRigidDynamic*>(m_Rigidbody)));
-            SetRigidbodyGravityFlag(GetRigidbodyGravityFlag());
+        case Type::Dynamic:
+            m_Actor = Physics::GetInstance().GetPhysics()->createRigidDynamic(initialPose);
+            physx::PxRigidBodyExt::updateMassAndInertia(*(reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)), DEFAULT_RIGIDBODY_DENSITY);
+            Physics::GetInstance().GetScene()->addActor(*(reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)));
+            SetRigidbodyGravityFlag(IsGravityEnabled());
             break;
         default:
             break;
         }
+
+        SetColliderVisualizationFlag(IsVisualizationEnabled());
     }
 
     void Rigidbody::DetachRigidbody()
     {
         DetachCollider();
 
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
-            m_Rigidbody->getScene()->removeActor(*m_Rigidbody);
-            PX_RELEASE(m_Rigidbody); 
+            m_Actor->getScene()->removeActor(*m_Actor);
+            PX_RELEASE(m_Actor); 
         }
     }
     
-    bool Rigidbody::GetRigidbodyGravityFlag() const
+    bool Rigidbody::IsGravityEnabled() const
     {
-        return m_IsRigidbodyGravityEnabled;
+        return m_IsGravityEnabled;
     }
     
     void Rigidbody::SetRigidbodyGravityFlag(const bool flag)
     {
-        m_IsRigidbodyGravityEnabled = flag;
+        m_IsGravityEnabled = flag;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
-            m_Rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !flag);
+            m_Actor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !flag);
         }
     }
     
     
     
-    Rigidbody::ColliderType Rigidbody::GetColliderType() const
+    Collider::Type Rigidbody::GetColliderType() const
     {
-        return m_ColliderType;
+        return m_ColliderCollection[0].get()->m_Type;
     }
 
-    void Rigidbody::SetColliderType(const ColliderType& colliderType)
+    void Rigidbody::SetColliderType(const Collider::Type& colliderType)
     {
-        m_ColliderType = colliderType;
-
-        if (GetColliderNumber() >= MAX_COLLIDER_NUMBER)
+        if (GetColliderCount() >= MAX_COLLIDER_NUMBER)
         {
             DetachCollider();
         }
         
         switch (colliderType)
         {
-        case ColliderType::Sphere:
+        case Collider::Type::Sphere:
             m_ColliderCollection.push_back(CreateRef<Sphere>());
             break;
-        case ColliderType::Capsule:
+        case Collider::Type::Capsule:
             m_ColliderCollection.push_back(CreateRef<Capsule>());
             break;
-        case ColliderType::Box:
+        case Collider::Type::Box:
             m_ColliderCollection.push_back(CreateRef<Box>());
             break;
         default:
             break;
         }
 
-        m_ColliderCollection[0]->MaterialCollection.push_back(PhysicalMaterial());
+        m_ColliderCollection[0].get()->m_Type = colliderType;
     }
 
-    void Rigidbody::AttachCollider(const ColliderType& colliderType)
+    void Rigidbody::AttachCollider(const Collider::Type& colliderType)
     {
         const auto physicalMaterial = Physics::GetInstance().GetPhysics()->createMaterial(GetStaticFriction(), GetDynamicFriction(), GetRestitution());
         
-        PxShape* collider = nullptr;
+        physx::PxShape* collider = nullptr;
         switch (colliderType)
         {
-        case ColliderType::Sphere:
-            collider = Physics::GetInstance().GetPhysics()->createShape(PxSphereGeometry(GetSphereRadius()), *physicalMaterial, true);
+        case Collider::Type::Sphere:
+            collider = Physics::GetInstance().GetPhysics()->createShape(physx::PxSphereGeometry(GetSphereRadius()), *physicalMaterial, true);
             break;
-        case ColliderType::Capsule:
-            collider = Physics::GetInstance().GetPhysics()->createShape(PxCapsuleGeometry(GetCapsuleRadius(), GetCapsuleHalfHeight()), *physicalMaterial, true);
+        case Collider::Type::Capsule:
+            collider = Physics::GetInstance().GetPhysics()->createShape(physx::PxCapsuleGeometry(GetCapsuleRadius(), GetCapsuleHalfHeight()), *physicalMaterial, true);
             break;
-        case ColliderType::Box:
-            collider = Physics::GetInstance().GetPhysics()->createShape(PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(GetBoxHalfExtents())), *physicalMaterial, true);
+        case Collider::Type::Box:
+            collider = Physics::GetInstance().GetPhysics()->createShape(physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(GetBoxHalfExtents())), *physicalMaterial, true);
             break;
         default:
             break;
         }
     
-        m_Rigidbody->attachShape(*collider);
+        m_Actor->attachShape(*collider);
         collider->release();
         physicalMaterial->release();  
     }
     
     void Rigidbody::DetachCollider()
     {
-        if (GetColliderNumber() <= 0) return;
+        if (GetColliderCount() <= 0) return;
 
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
             const auto colliders = GetColliders();
-            for (auto i = 0; i < GetColliderNumber(); i++)
+            for (auto i = 0; i < GetColliderCount(); i++)
             {
-                m_Rigidbody->detachShape(colliders[i]);
+                m_Actor->detachShape(colliders[i]);
             }
         }
         
-        m_ColliderCollection[0]->MaterialCollection.clear();
         m_ColliderCollection.clear();
     }
 
-    int Rigidbody::GetColliderNumber() const
+    int Rigidbody::GetColliderCount() const
     {
         return m_ColliderCollection.size();
     }
 
-    bool Rigidbody::GetColliderVisualizationFlag() const
+    bool Rigidbody::IsVisualizationEnabled() const
     {
-        return m_IsColliderVisualizationEnabled;
+        return m_IsVisualizationEnabled;
     }
     
     void Rigidbody::SetColliderVisualizationFlag(const bool flag)
     {
-        m_IsColliderVisualizationEnabled = flag;
+        m_IsVisualizationEnabled = flag;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
-            m_Rigidbody->setActorFlag(PxActorFlag::eVISUALIZATION, flag);
+            m_Actor->setActorFlag(physx::PxActorFlag::eVISUALIZATION, flag);
         }
     }
     
@@ -299,11 +284,11 @@ namespace LevEngine
     {
         m_ColliderCollection[0]->OffsetPosition = position;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
             const auto colliders = GetColliders();
             const auto rotation = colliders[0].getLocalPose().q;
-            colliders[0].setLocalPose(PxTransform(PhysicsUtils::FromVector3ToPxVec3(position), rotation));
+            colliders[0].setLocalPose(physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(position), rotation));
         }
     }
 
@@ -316,12 +301,12 @@ namespace LevEngine
     {
         m_ColliderCollection[0]->OffsetRotation = rotation;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
             const auto colliders = GetColliders();
             const auto position = colliders[0].getLocalPose().p;
             const auto quaternion = Quaternion::CreateFromYawPitchRoll(Math::ToRadians(rotation));
-            colliders[0].setLocalPose(PxTransform(position, PhysicsUtils::FromQuaternionToPxQuat(quaternion)));
+            colliders[0].setLocalPose(physx::PxTransform(position, PhysicsUtils::FromQuaternionToPxQuat(quaternion)));
         }
     }
 
@@ -334,16 +319,16 @@ namespace LevEngine
 
     void Rigidbody::SetSphereRadius(const float radius)
     {
-        if (radius <= 0.0f || radius >= FLT_MAX) return;
+        if (radius <= 0.0f) return;
         
         static_cast<Sphere*>(m_ColliderCollection[0].get())->Radius = radius;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
-            const float maxTransformScale = std::max(m_TransformScale.x, std::max(m_TransformScale.y, m_TransformScale.z));
+            const float maxTransformScale = Math::MaxElement(m_TransformScale);
             
             const auto colliders = GetColliders();
-            colliders[0].setGeometry(PxSphereGeometry(radius * maxTransformScale));
+            colliders[0].setGeometry(physx::PxSphereGeometry(radius * maxTransformScale));
         }
     }
 
@@ -354,18 +339,18 @@ namespace LevEngine
 
     void Rigidbody::SetCapsuleRadius(const float radius)
     {
-        if (radius <= 0.0f || radius >= FLT_MAX) return;
+        if (radius <= 0.0f) return;
         
         static_cast<Capsule*>(m_ColliderCollection[0].get())->Radius = radius;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
-            const float maxTransformScale = std::max(m_TransformScale.x, std::max(m_TransformScale.y, m_TransformScale.z));
+            const float maxTransformScale = Math::MaxElement(m_TransformScale);
             
             const auto colliders = GetColliders();
-            const PxGeometryHolder geom(colliders[0].getGeometry());
+            const physx::PxGeometryHolder geom(colliders[0].getGeometry());
             const auto initialHeight = geom.capsule().halfHeight;
-            colliders[0].setGeometry(PxCapsuleGeometry(radius * maxTransformScale, initialHeight));
+            colliders[0].setGeometry(physx::PxCapsuleGeometry(radius * maxTransformScale, initialHeight));
         }
     }
     
@@ -376,18 +361,18 @@ namespace LevEngine
 
     void Rigidbody::SetCapsuleHalfHeight(const float halfHeight)
     {
-        if (halfHeight < 0.0f || halfHeight >= FLT_MAX) return;
+        if (halfHeight < 0.0f) return;
         
         static_cast<Capsule*>(m_ColliderCollection[0].get())->HalfHeight = halfHeight;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
-            const float maxTransformScale = std::max(m_TransformScale.x, std::max(m_TransformScale.y, m_TransformScale.z));
+            const float maxTransformScale = Math::MaxElement(m_TransformScale);
             
             const auto colliders = GetColliders();
-            const PxGeometryHolder geom(colliders[0].getGeometry());
+            const physx::PxGeometryHolder geom(colliders[0].getGeometry());
             const auto initialRadius = geom.capsule().radius;
-            colliders[0].setGeometry(PxCapsuleGeometry(initialRadius, halfHeight * maxTransformScale));
+            colliders[0].setGeometry(physx::PxCapsuleGeometry(initialRadius, halfHeight * maxTransformScale));
         }
     }
 
@@ -398,14 +383,14 @@ namespace LevEngine
 
     void Rigidbody::SetBoxHalfExtents(const Vector3 halfExtents)
     {
-        if ((halfExtents.x <= 0.0f || halfExtents.x >= FLT_MAX) || (halfExtents.y <= 0.0f || halfExtents.y >= FLT_MAX) || (halfExtents.z <= 0.0f || halfExtents.z >= FLT_MAX)) return;
+        if (halfExtents.x <= 0.0f || halfExtents.y <= 0.0f || halfExtents.z <= 0.0f) return;
         
         static_cast<Box*>(m_ColliderCollection[0].get())->HalfExtents = halfExtents;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
             const auto colliders = GetColliders();
-            colliders[0].setGeometry(PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents * m_TransformScale)));
+            colliders[0].setGeometry(physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents * m_TransformScale)));
         }
     }
     
@@ -413,16 +398,16 @@ namespace LevEngine
     
     float Rigidbody::GetStaticFriction() const
     {
-        return m_ColliderCollection[0]->MaterialCollection[0].StaticFriction;
+        return m_ColliderCollection[0]->PhysicalMaterial.StaticFriction;
     }
 
     void Rigidbody::SetStaticFriction(const float staticFriction)
     {
-        if (staticFriction < 0.0f || staticFriction > FLT_MAX) return;
+        if (staticFriction < 0.0f) return;
         
-        m_ColliderCollection[0]->MaterialCollection[0].StaticFriction = staticFriction;
+        m_ColliderCollection[0]->PhysicalMaterial.StaticFriction = staticFriction;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
             const auto colliders = GetColliders();
             const auto physicalMaterials = GetPhysicalMaterials(colliders);
@@ -433,16 +418,16 @@ namespace LevEngine
     
     float Rigidbody::GetDynamicFriction() const
     {
-        return m_ColliderCollection[0]->MaterialCollection[0].DynamicFriction;
+        return m_ColliderCollection[0]->PhysicalMaterial.DynamicFriction;
     }
 
     void Rigidbody::SetDynamicFriction(const float dynamicFriction)
     {
-        if (dynamicFriction < 0.0f || dynamicFriction > FLT_MAX) return;
+        if (dynamicFriction < 0.0f) return;
         
-        m_ColliderCollection[0]->MaterialCollection[0].DynamicFriction = dynamicFriction;
+        m_ColliderCollection[0]->PhysicalMaterial.DynamicFriction = dynamicFriction;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
             const auto colliders = GetColliders();
             const auto physicalMaterials = GetPhysicalMaterials(colliders);
@@ -453,16 +438,16 @@ namespace LevEngine
     
     float Rigidbody::GetRestitution() const
     {
-        return m_ColliderCollection[0]->MaterialCollection[0].Restitution;
+        return m_ColliderCollection[0]->PhysicalMaterial.Restitution;
     }
 
     void Rigidbody::SetRestitution(const float restitution)
     {
         if (restitution < 0.0f || restitution > 1.0f) return;
         
-        m_ColliderCollection[0]->MaterialCollection[0].Restitution = restitution;
+        m_ColliderCollection[0]->PhysicalMaterial.Restitution = restitution;
         
-        if (m_Rigidbody != NULL)
+        if (m_Actor != NULL)
         {
             const auto colliders = GetColliders();
             const auto physicalMaterials = GetPhysicalMaterials(colliders);
@@ -478,21 +463,21 @@ namespace LevEngine
 
         void SerializeData(YAML::Emitter& out, const Rigidbody& component) override
         {
-            out << YAML::Key << "Visualization Flag" << YAML::Value << component.GetColliderVisualizationFlag();
+            out << YAML::Key << "Visualization Flag" << YAML::Value << component.IsVisualizationEnabled();
             out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
-            out << YAML::Key << "Gravity Flag" << YAML::Value << component.GetRigidbodyGravityFlag();
+            out << YAML::Key << "Gravity Flag" << YAML::Value << component.IsGravityEnabled();
             out << YAML::Key << "Collider Type" << YAML::Value << static_cast<int>(component.GetColliderType());
 
             switch (component.GetColliderType())
             {
-            case Rigidbody::ColliderType::Sphere:
+            case Collider::Type::Sphere:
                 out << YAML::Key << "Sphere Radius" << YAML::Value << component.GetSphereRadius();
                 break;
-            case Rigidbody::ColliderType::Capsule:
+            case Collider::Type::Capsule:
                 out << YAML::Key << "Capsule Radius" << YAML::Value << component.GetCapsuleRadius();
                 out << YAML::Key << "Capsule Half Height" << YAML::Value << component.GetCapsuleHalfHeight();
                 break;
-            case Rigidbody::ColliderType::Box:
+            case Collider::Type::Box:
                 out << YAML::Key << "Box Half Extends" << YAML::Value << component.GetBoxHalfExtents();
                 break;
             default:
@@ -516,7 +501,7 @@ namespace LevEngine
             
             if (const auto rigidbodyTypeNode = node["Rigidbody Type"])
             {
-                component.SetRigidbodyType(static_cast<Rigidbody::RigidbodyType>(rigidbodyTypeNode.as<int>()));
+                component.SetRigidbodyType(static_cast<Rigidbody::Type>(rigidbodyTypeNode.as<int>()));
             }
 
             if (const auto rigidbodyGravityFlagNode = node["Gravity Flag"])
@@ -526,16 +511,16 @@ namespace LevEngine
 
             if (const auto colliderTypeNode = node["Collider Type"])
             {
-                switch (const auto colliderType = static_cast<Rigidbody::ColliderType>(colliderTypeNode.as<int>()))
+                switch (const auto colliderType = static_cast<Collider::Type>(colliderTypeNode.as<int>()))
                 {
-                case Rigidbody::ColliderType::Sphere:
+                case Collider::Type::Sphere:
                     component.SetColliderType(colliderType);
                     if (const auto sphereRadiusNode = node["Sphere Radius"])
                     {
                         component.SetSphereRadius(sphereRadiusNode.as<float>());
                     }
                     break;
-                case Rigidbody::ColliderType::Capsule:
+                case Collider::Type::Capsule:
                     component.SetColliderType(colliderType);
                     if (const auto capsuleRadiusNode = node["Capsule Radius"])
                     {
@@ -546,7 +531,7 @@ namespace LevEngine
                         component.SetCapsuleHalfHeight(capsuleHalfHeightNode.as<float>());
                     }
                     break;
-                case Rigidbody::ColliderType::Box:
+                case Collider::Type::Box:
                     component.SetColliderType(colliderType);
                     if (const auto boxExtents = node["Box Half Extends"])
                     {

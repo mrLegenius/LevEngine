@@ -9,7 +9,6 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Legacy Sphere Collider"; }
-        String GetAddMenuPath() const override { return "Legacy Physics"; }
 
         void DrawContent(LegacySphereCollider& component) override
         {
@@ -22,7 +21,6 @@ namespace LevEngine::Editor
     {
     protected:
         String GetLabel() const override { return "Legacy Box Collider"; }
-        String GetAddMenuPath() const override { return "Legacy Physics"; }
 
         void DrawContent(LegacyBoxCollider& component) override
         {
