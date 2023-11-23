@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "physx/include/PxPhysicsAPI.h"
-#include "Scene/Components/Transform/Transform.h"
+#include "Scene/Entity.h"
+#include "Math/Vector3.h"
 
 namespace LevEngine
 {

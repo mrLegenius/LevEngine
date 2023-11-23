@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Physics/Physics.h"
 #include "Physics/PhysicsUtils.h"
 #include "physx/include/PxPhysicsAPI.h"
 
@@ -36,21 +35,21 @@ namespace LevEngine
         Vector3 HalfExtents = Vector3(0.5f, 0.5f, 0.5f);
     };
     
-    enum class RigidbodyType
-    {
-        Static,
-        Dynamic
-    };
-    
-    enum class ColliderType
-    {
-        Sphere,
-        Capsule,
-        Box
-    };
-    
     struct Rigidbody
     {
+        enum class RigidbodyType
+        {
+            Static,
+            Dynamic
+        };
+    
+        enum class ColliderType
+        {
+            Sphere,
+            Capsule,
+            Box
+        };
+        
         static void OnDestroy(entt::registry& registry, entt::entity entity);
 
         Vector3 GetTransformScale() const;

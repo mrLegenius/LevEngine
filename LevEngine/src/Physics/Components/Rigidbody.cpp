@@ -9,9 +9,9 @@ constexpr auto MAX_MATERIAL_NUMBER = 1;
 
 constexpr auto DEFAULT_RIGIDBODY_DENSITY = 10;
 constexpr auto DEFAULT_VISUALIZATION_FLAG = true;
-constexpr auto DEFAULT_RIGIDBODY_TYPE = RigidbodyType::Dynamic;
+constexpr auto DEFAULT_RIGIDBODY_TYPE = Rigidbody::RigidbodyType::Dynamic;
 constexpr auto DEFAULT_GRAVITY_FLAG = true;
-constexpr auto DEFAULT_COLLIDER_TYPE = ColliderType::Box;
+constexpr auto DEFAULT_COLLIDER_TYPE = Rigidbody::ColliderType::Box;
 constexpr auto DEFAULT_COLLIDER_SIZE = 0.5f;
 constexpr auto DEFAULT_STATIC_FRICTION = 0.5f;
 constexpr auto DEFAULT_DYNAMIC_FRICTION = 0.5f;
@@ -129,7 +129,7 @@ namespace LevEngine
 
 
     
-    RigidbodyType Rigidbody::GetRigidbodyType() const
+    Rigidbody::RigidbodyType Rigidbody::GetRigidbodyType() const
     {
         return m_RigidbodyType;
     }
@@ -194,7 +194,7 @@ namespace LevEngine
     
     
     
-    ColliderType Rigidbody::GetColliderType() const
+    Rigidbody::ColliderType Rigidbody::GetColliderType() const
     {
         return m_ColliderType;
     }
@@ -485,14 +485,14 @@ namespace LevEngine
 
             switch (component.GetColliderType())
             {
-            case ColliderType::Sphere:
+            case Rigidbody::ColliderType::Sphere:
                 out << YAML::Key << "Sphere Radius" << YAML::Value << component.GetSphereRadius();
                 break;
-            case ColliderType::Capsule:
+            case Rigidbody::ColliderType::Capsule:
                 out << YAML::Key << "Capsule Radius" << YAML::Value << component.GetCapsuleRadius();
                 out << YAML::Key << "Capsule Half Height" << YAML::Value << component.GetCapsuleHalfHeight();
                 break;
-            case ColliderType::Box:
+            case Rigidbody::ColliderType::Box:
                 out << YAML::Key << "Box Half Extends" << YAML::Value << component.GetBoxHalfExtents();
                 break;
             default:
@@ -516,7 +516,7 @@ namespace LevEngine
             
             if (const auto rigidbodyTypeNode = node["Rigidbody Type"])
             {
-                component.SetRigidbodyType(static_cast<RigidbodyType>(rigidbodyTypeNode.as<int>()));
+                component.SetRigidbodyType(static_cast<Rigidbody::RigidbodyType>(rigidbodyTypeNode.as<int>()));
             }
 
             if (const auto rigidbodyGravityFlagNode = node["Gravity Flag"])
@@ -526,16 +526,16 @@ namespace LevEngine
 
             if (const auto colliderTypeNode = node["Collider Type"])
             {
-                switch (const auto colliderType = static_cast<ColliderType>(colliderTypeNode.as<int>()))
+                switch (const auto colliderType = static_cast<Rigidbody::ColliderType>(colliderTypeNode.as<int>()))
                 {
-                case ColliderType::Sphere:
+                case Rigidbody::ColliderType::Sphere:
                     component.SetColliderType(colliderType);
                     if (const auto sphereRadiusNode = node["Sphere Radius"])
                     {
                         component.SetSphereRadius(sphereRadiusNode.as<float>());
                     }
                     break;
-                case ColliderType::Capsule:
+                case Rigidbody::ColliderType::Capsule:
                     component.SetColliderType(colliderType);
                     if (const auto capsuleRadiusNode = node["Capsule Radius"])
                     {
@@ -546,7 +546,7 @@ namespace LevEngine
                         component.SetCapsuleHalfHeight(capsuleHalfHeightNode.as<float>());
                     }
                     break;
-                case ColliderType::Box:
+                case Rigidbody::ColliderType::Box:
                     component.SetColliderType(colliderType);
                     if (const auto boxExtents = node["Box Half Extends"])
                     {

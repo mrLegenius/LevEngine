@@ -17,9 +17,6 @@
 
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
 #include "GUI/ScopedGUIHelpers.h"
-#include "Physics/Components/Rigidbody.h"
-#include "Scene/Systems/Physics/RigidbodyInitSystem.h"
-#include "Scene/Systems/Physics/RigidbodyUpdateSystem.h"
 
 namespace LevEngine::Editor
 {
@@ -611,9 +608,9 @@ namespace LevEngine::Editor
         scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
         scene->RegisterUpdateSystem<AudioSourceInitSystem>();
         scene->RegisterUpdateSystem<AudioListenerInitSystem>();
-
-        scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
         
+        scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
+
         scene->RegisterUpdateSystem<RigidbodyInitSystem>();
         
         auto& registry = scene->GetRegistry();

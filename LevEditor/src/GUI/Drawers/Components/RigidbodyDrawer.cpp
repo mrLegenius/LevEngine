@@ -6,7 +6,7 @@
 
 namespace LevEngine::Editor
 {
-    class PhysicsDrawer final : public ComponentDrawer<Rigidbody, PhysicsDrawer>
+    class RigidbodyDrawer final : public ComponentDrawer<Rigidbody, RigidbodyDrawer>
     {
     protected:
         [[nodiscard]] String GetLabel() const override { return "Physics"; }
@@ -27,29 +27,29 @@ namespace LevEngine::Editor
                         currentRigidbodyTypeString = rigidbodyTypeString;
                         if (currentRigidbodyTypeString == "STATIC")
                         {
-                            component.SetRigidbodyType(RigidbodyType::Static);
+                            component.SetRigidbodyType(Rigidbody::RigidbodyType::Static);
                             if (component.GetInitializationFlag())
                             {
-                                component.AttachRigidbody(RigidbodyType::Static);
+                                component.AttachRigidbody(Rigidbody::RigidbodyType::Static);
                             }
-                            component.SetColliderType(ColliderType::Box);
+                            component.SetColliderType(Rigidbody::ColliderType::Box);
                             if (component.GetInitializationFlag())
                             {
-                                component.AttachCollider(ColliderType::Box);
+                                component.AttachCollider(Rigidbody::ColliderType::Box);
                             }
                             component.ApplyTransformScale();
                         }
                         if (currentRigidbodyTypeString == "DYNAMIC")
                         {
-                            component.SetRigidbodyType(RigidbodyType::Dynamic);
+                            component.SetRigidbodyType(Rigidbody::RigidbodyType::Dynamic);
                             if (component.GetInitializationFlag())
                             {
-                                component.AttachRigidbody(RigidbodyType::Dynamic);
+                                component.AttachRigidbody(Rigidbody::RigidbodyType::Dynamic);
                             }
-                            component.SetColliderType(ColliderType::Box);
+                            component.SetColliderType(Rigidbody::ColliderType::Box);
                             if (component.GetInitializationFlag())
                             {
-                                component.AttachCollider(ColliderType::Box);
+                                component.AttachCollider(Rigidbody::ColliderType::Box);
                             }
                             component.ApplyTransformScale();
                         }
@@ -81,28 +81,28 @@ namespace LevEngine::Editor
                             currentColliderTypeString = colliderTypeString;
                             if (currentColliderTypeString == "SPHERE")
                             {
-                                component.SetColliderType(ColliderType::Sphere);
+                                component.SetColliderType(Rigidbody::ColliderType::Sphere);
                                 if (component.GetInitializationFlag())
                                 {
-                                    component.AttachCollider(ColliderType::Sphere);
+                                    component.AttachCollider(Rigidbody::ColliderType::Sphere);
                                 }
                                 component.ApplyTransformScale();
                             }
                             if (currentColliderTypeString == "CAPSULE")
                             {
-                                component.SetColliderType(ColliderType::Capsule);
+                                component.SetColliderType(Rigidbody::ColliderType::Capsule);
                                 if (component.GetInitializationFlag())
                                 {
-                                    component.AttachCollider(ColliderType::Capsule);
+                                    component.AttachCollider(Rigidbody::ColliderType::Capsule);
                                 }
                                 component.ApplyTransformScale();
                             }
                             if (currentColliderTypeString == "BOX")
                             {
-                                component.SetColliderType(ColliderType::Box);
+                                component.SetColliderType(Rigidbody::ColliderType::Box);
                                 if (component.GetInitializationFlag())
                                 {
-                                    component.AttachCollider(ColliderType::Box);
+                                    component.AttachCollider(Rigidbody::ColliderType::Box);
                                 }
                                 component.ApplyTransformScale();
                             }

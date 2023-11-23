@@ -875,12 +875,12 @@
     <ClInclude Include="src\Physics\Components\LegacyCollider.h" />
     <ClInclude Include="src\Physics\Components\LegacyCollisionEvents.h" />
     <ClInclude Include="src\Physics\Components\LegacyRigidbody.h" />
-    <ClInclude Include="src\Physics\Events\CollisionBeginEvent.h" />
-    <ClInclude Include="src\Physics\Events\CollisionEndEvent.h" />
+    <ClInclude Include="src\Physics\Events\LegacyCollisionBeginEvent.h" />
+    <ClInclude Include="src\Physics\Events\LegacyCollisionEndEvent.h" />
     <ClInclude Include="src\Physics\LegacyPhysics.h" />
-    <ClInclude Include="src\Physics\Systems\ForcesClearSystem.h" />
-    <ClInclude Include="src\Physics\Systems\PositionUpdateSystem.h" />
-    <ClInclude Include="src\Physics\Systems\VelocityUpdateSystem.h" />
+    <ClInclude Include="src\Physics\Systems\LegacyForcesClearSystem.h" />
+    <ClInclude Include="src\Physics\Systems\LegacyPositionUpdateSystem.h" />
+    <ClInclude Include="src\Physics\Systems\LegacyVelocityUpdateSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11BlendState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h" />

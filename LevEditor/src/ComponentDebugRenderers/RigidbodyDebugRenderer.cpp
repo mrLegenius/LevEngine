@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
 #include "ComponentDebugRenderer.h"
-#include "Physics/Components/Rigidbody.h"
 
 namespace LevEngine::Editor
 {
@@ -11,42 +10,45 @@ namespace LevEngine::Editor
         void DrawContent(Rigidbody& component, const Entity entity) override
         {
             auto transform = entity.GetComponent<Transform>();
-            transform.ForceRecalculateModel();
             
-            Matrix child;
-            Matrix parent =
+            Matrix colliderModel;
+            Matrix transformModel =
                 Matrix::CreateFromQuaternion(transform.GetWorldRotation())
                 * Matrix::CreateTranslation(transform.GetWorldPosition());
 
+            Matrix colliderRotationTranslationModel =
+                Matrix::CreateFromQuaternion(Quaternion::CreateFromYawPitchRoll(Math::ToRadians(component.GetColliderOffsetRotation())))
+                * Matrix::CreateTranslation(component.GetColliderOffsetPosition());
+            
             Vector3 transformScale = transform.GetWorldScale();
-            const float maxScale = std::max(transformScale.x, std::max(transformScale.y, transformScale.z));
+            const float maxScale = Math::MaxElement(transformScale);
             
             switch (component.GetColliderType())
             {
-            case ColliderType::Sphere:
-                child =
+            case Rigidbody::ColliderType::Sphere:
+                colliderModel =
                     Matrix::CreateScale(component.GetSphereRadius() * maxScale)
-                    * Matrix::CreateFromQuaternion(Quaternion::CreateFromYawPitchRoll(Math::ToRadians(component.GetColliderOffsetRotation())))
-                    * Matrix::CreateTranslation(component.GetColliderOffsetPosition());
-                child *= parent;
-                DebugRender::DrawWireSphere(child, Color::Green);
+                    * colliderRotationTranslationModel;
+                colliderModel *= transformModel;
+                DebugRender::DrawWireSphere(colliderModel, Color::Green);
                 break;
-            case ColliderType::Capsule:
-                child =
+                
+            case Rigidbody::ColliderType::Capsule:
+                colliderModel =
                     Matrix::CreateScale(maxScale)
-                    * Matrix::CreateFromQuaternion(Quaternion::CreateFromYawPitchRoll(Math::ToRadians(component.GetColliderOffsetRotation())))
-                    * Matrix::CreateTranslation(component.GetColliderOffsetPosition());
-                child *= parent;
-                DebugRender::DrawWireCapsule(child, component.GetCapsuleHalfHeight(), component.GetCapsuleRadius(), Color::Green);
+                    * colliderRotationTranslationModel;
+                colliderModel *= transformModel;
+                DebugRender::DrawWireCapsule(colliderModel, component.GetCapsuleHalfHeight(), component.GetCapsuleRadius(), Color::Green);
                 break;
-            case ColliderType::Box:
-                child =
+                
+            case Rigidbody::ColliderType::Box:
+                colliderModel =
                     Matrix::CreateScale(component.GetBoxHalfExtents() * 2 * transformScale)
-                    * Matrix::CreateFromQuaternion(Quaternion::CreateFromYawPitchRoll(Math::ToRadians(component.GetColliderOffsetRotation())))
-                    * Matrix::CreateTranslation(component.GetColliderOffsetPosition());
-                child *= parent;
-                DebugRender::DrawWireCube(child, Color::Green); 
+                    * colliderRotationTranslationModel;
+                colliderModel *= transformModel;
+                DebugRender::DrawWireCube(colliderModel, Color::Green); 
                 break;
+                
             default:
                 break;
             }

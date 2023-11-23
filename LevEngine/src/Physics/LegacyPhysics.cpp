@@ -6,9 +6,9 @@
 #include "DataTypes/Pair.h"
 #include "DataTypes/Vector.h"
 #include "Scene/Entity.h"
-#include "Systems/ForcesClearSystem.h"
-#include "Systems/PositionUpdateSystem.h"
-#include "Systems/VelocityUpdateSystem.h"
+#include "Systems\LegacyForcesClearSystem.h"
+#include "Systems\LegacyPositionUpdateSystem.h"
+#include "Systems\LegacyVelocityUpdateSystem.h"
 
 #include "PxPhysicsAPI.h"
 
