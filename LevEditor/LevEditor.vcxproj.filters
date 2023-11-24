@@ -197,5 +197,11 @@
     <ClCompile Include="src\Panels\SettingsPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshableComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

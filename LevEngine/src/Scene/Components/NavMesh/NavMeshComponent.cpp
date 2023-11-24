@@ -2,8 +2,8 @@
 #include "NavMeshComponent.h"
 
 #include "NavMeshableComponent.h"
-#include "RecastDetour/Detour/DetourNavMesh.h"
-#include "RecastDetour/Detour/DetourNavMeshBuilder.h"
+#include "DetourNavMeshBuilder.h"
+#include "DetourNavMeshQuery.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
