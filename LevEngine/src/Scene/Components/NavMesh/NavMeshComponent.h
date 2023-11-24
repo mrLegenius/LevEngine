@@ -2,6 +2,9 @@
 #include "Recast.h"
 #include "Scene/Components/TypeParseTraits.h"
 
+class dtNavMeshQuery;
+class dtNavMesh;
+
 namespace LevEngine
 {
     enum SamplePartitionType : int

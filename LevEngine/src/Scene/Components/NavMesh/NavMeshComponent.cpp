@@ -15,6 +15,24 @@ namespace LevEngine
 		m_NavQuery = dtAllocNavMeshQuery();
 	}
 
+	void NavMeshComponent::Cleanup()
+	{
+		delete [] m_TriangleAreas;
+		m_TriangleAreas = nullptr;
+		rcFreeHeightField(m_Solid);
+		m_Solid = 0;
+		rcFreeCompactHeightfield(m_CompactHeightfield);
+		m_CompactHeightfield = nullptr;
+		rcFreeContourSet(m_ContourSet);
+		m_ContourSet = nullptr;
+		rcFreePolyMesh(m_PolyMesh);
+		m_PolyMesh = nullptr;
+		rcFreePolyMeshDetail(m_PolyMeshDetail);
+		m_PolyMeshDetail = nullptr;
+		dtFreeNavMesh(m_NavMesh);
+		m_NavMesh = nullptr;
+	}
+
     void NavMeshComponent::Build()
     {
 		Cleanup();
@@ -48,26 +66,30 @@ namespace LevEngine
         
         const Vector3& boundingBoxMin = mesh->GetAABBBoundingVolume().GetMin();
         const Vector3& boundingBoxMax = mesh->GetAABBBoundingVolume().GetMax();
-        const Vector<Vector3>& meshVertices = mesh->GetVertices();
+		Vector<Vector3> meshVertices = mesh->GetVertices();
         const uint32_t verticesCount = mesh->GetVerticesCount();
         const Vector<uint32_t>& meshIndices = mesh->GetIndices();
         const uint32_t indicesCount = mesh->GetIndicesCount();
         
         const float bmin[3] = {boundingBoxMin.x, boundingBoxMin.y, boundingBoxMin.z};
         const float bmax[3] = {boundingBoxMax.x, boundingBoxMax.y, boundingBoxMax.z};
-
-        float* vertices = new float[verticesCount * 3];
-
+		
         const int trianglesCount = indicesCount / 3;
-        int* triangles = new int[trianglesCount];
+        int* triangles = new int[indicesCount];
 
         for(int i = 0; i < verticesCount; ++i)
         {
 	        const Vector3 transformed = Vector3::Transform(meshVertices[i], transform.GetModel());
-        	vertices[i] = transformed.x;
-        	vertices[i + 1] = transformed.y;
-        	vertices[i + 2] = transformed.y;
+        	meshVertices[i] = transformed;
         }
+
+		float* vertices = new float[verticesCount * 3];
+		for (int i = 0; i < verticesCount; ++i)
+		{
+			vertices[i] = meshVertices[i].x;
+			vertices[i + 1] = meshVertices[i].y;
+			vertices[i + 2] = meshVertices[i].z;
+		}
 
         for(int i = 0; i < indicesCount; ++i)
         {
@@ -397,6 +419,7 @@ namespace LevEngine
 			}
 		}
 
+		delete[] triangles;
 		Log::Trace("Navmesh builded successfully.");
 
 		// // Show performance stats.
@@ -410,24 +433,6 @@ namespace LevEngine
 		// initToolStates(this);
 
 		return;
-    }
-
-    void NavMeshComponent::Cleanup()
-    {
-		delete [] m_TriangleAreas;
-		m_TriangleAreas = nullptr;
-		rcFreeHeightField(m_Solid);
-		m_Solid = 0;
-		rcFreeCompactHeightfield(m_CompactHeightfield);
-		m_CompactHeightfield = nullptr;
-		rcFreeContourSet(m_ContourSet);
-		m_ContourSet = nullptr;
-		rcFreePolyMesh(m_PolyMesh);
-		m_PolyMesh = nullptr;
-		rcFreePolyMeshDetail(m_PolyMeshDetail);
-		m_PolyMeshDetail = nullptr;
-		dtFreeNavMesh(m_NavMesh);
-		m_NavMesh = nullptr;
     }
 
     class NavMeshComponentSerializer final : public ComponentSerializer<NavMeshComponent, NavMeshComponentSerializer>
