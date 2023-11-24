@@ -50,7 +50,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external;external/recastnavigation/include;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
       <AdditionalModuleDependencies>
@@ -62,7 +62,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -85,7 +85,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;;Detour.lib;DetourCrowd.lib;DetourTileCache.lib;Recast.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
@@ -1038,30 +1038,6 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourCrowd.cpp" />
-    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.cpp" />
-    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.cpp" />
-    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.cpp" />
-    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourPathQueue.cpp" />
-    <ClCompile Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.cpp" />
-    <ClCompile Include="external\RecastDetour\Detour\DetourAlloc.cpp" />
-    <ClCompile Include="external\RecastDetour\Detour\DetourAssert.cpp" />
-    <ClCompile Include="external\RecastDetour\Detour\DetourCommon.cpp" />
-    <ClCompile Include="external\RecastDetour\Detour\DetourNavMesh.cpp" />
-    <ClCompile Include="external\RecastDetour\Detour\DetourNavMeshBuilder.cpp" />
-    <ClCompile Include="external\RecastDetour\Detour\DetourNavMeshQuery.cpp" />
-    <ClCompile Include="external\RecastDetour\Detour\DetourNode.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\Recast.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastAlloc.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastArea.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastAssert.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastContour.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastFilter.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastLayers.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastMesh.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastMeshDetail.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastRasterization.cpp" />
-    <ClCompile Include="external\RecastDetour\Recast\RecastRegion.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp" />
     <ClCompile Include="src\Assets\EngineAssets.cpp" />

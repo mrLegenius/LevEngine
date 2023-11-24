@@ -1,7 +1,5 @@
 #pragma once
-#include "RecastDetour/Detour/DetourNavMesh.h"
-#include "RecastDetour/Recast/Recast.h"
-#include "RecastDetour/Detour/DetourNavMeshQuery.h"
+#include "Recast.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
