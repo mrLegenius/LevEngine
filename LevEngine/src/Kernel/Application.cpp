@@ -31,6 +31,8 @@ Application::Application(const ApplicationSpecification& specification)
 	m_Window = Window::Create(WindowAttributes(specification.Name, specification.WindowWidth, specification.WindowHeight));
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
+	m_Physics = Physics::Create();
+
 	Renderer::Init();
 	Random::Init();
 	Audio::Init(Audio::MaxAudioChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE,

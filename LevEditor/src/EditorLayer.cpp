@@ -232,5 +232,4 @@ namespace LevEngine::Editor
         else if (m_SceneState == SceneState::Play)
             OnSceneStop();
     }
-    
 }

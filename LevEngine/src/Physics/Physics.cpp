@@ -10,11 +10,14 @@ constexpr auto DEFAULT_PVD_PORT = 5425;
 constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
 constexpr auto DEFAULT_NUMBER_CPU_THREADS = 2;
 
-constexpr Vector3 DEFAULT_GRAVITY_SCALE = {0.0f, -9.81f, 0.0f};
-
 namespace LevEngine
 {
-    Physics Physics::s_Physics;
+    Scope<Physics> Physics::Create()
+    {
+        return CreateScope<Physics>();
+    }
+
+    
     
     void Physics::Initialize()
     {
@@ -30,7 +33,7 @@ namespace LevEngine
         m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
         
         physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
-        sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(DEFAULT_GRAVITY_SCALE);
+        sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(m_Gravity);
         m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(DEFAULT_NUMBER_CPU_THREADS);
         sceneDesc.cpuDispatcher	= m_Dispatcher;
         sceneDesc.filterShader	= physx::PxDefaultSimulationFilterShader;
@@ -53,29 +56,34 @@ namespace LevEngine
             }
         }
     }
+    
     Physics::Physics()
     {
         Initialize();
     }
+
+
     
-    bool Physics::Advance(float deltaTime)
+    bool Physics::IsAdvanced(const float deltaTime) const
     {
         s_Accumulator += deltaTime;
         
         if (s_Accumulator < s_StepSize) return false;
         
         s_Accumulator -= s_StepSize;
-        s_Physics.m_Scene->simulate(s_StepSize);
+        m_Scene->simulate(s_StepSize);
         
         return true;
     }
-    void Physics::StepPhysics(float deltaTime)
+    
+    void Physics::StepPhysics(const float deltaTime)
     {
-        if (Advance(deltaTime))
+        if (IsAdvanced(deltaTime))
         {
-            s_Physics.m_Scene->fetchResults(true);
+            m_Scene->fetchResults(true);
         }
     }
+    
     void Physics::UpdateTransforms(entt::registry& registry)
     {
         const auto view = registry.view<Rigidbody, Transform>();
@@ -87,25 +95,24 @@ namespace LevEngine
             transform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
         }
     }
+    
     void Physics::DrawDebugLines()
     {
-        const physx::PxRenderBuffer& rb = s_Physics.m_Scene->getRenderBuffer();
-        auto a = rb.getNbLines();
-        for (auto i = 0; i < rb.getNbLines(); i++)
+        const physx::PxRenderBuffer& rb = m_Scene->getRenderBuffer();
+        for (size_t i = 0; i < rb.getNbLines(); i++)
         {
             const physx::PxDebugLine& line = rb.getLines()[i];
             DebugRender::DrawLine(Vector3(line.pos0.x, line.pos0.y, line.pos0.z),
                                     Vector3(line.pos1.x, line.pos1.y, line.pos1.z),
                                         Color(1.0f, 0.0f, 0.0f, 1.0f));
         }
-        for (auto i = 0; i < rb.getNbPoints(); i++)
+        for (size_t i = 0; i < rb.getNbPoints(); i++)
         {
             const physx::PxDebugPoint& point = rb.getPoints()[i];
             DebugRender::DrawPoint(Vector3(point.pos.x, point.pos.y, point.pos.z),
                                             Color(0.8f, 0.8f, 0.8f, 1.0f));
         }
-        auto b = rb.getNbTriangles();
-        for (auto i = 0; i < rb.getNbTriangles(); i++)
+        for (size_t i = 0; i < rb.getNbTriangles(); i++)
         {
             const physx::PxDebugTriangle& tri = rb.getTriangles()[i];
             DebugRender::DrawLine(Vector3(tri.pos0.x, tri.pos0.y, tri.pos0.z),
@@ -119,6 +126,7 @@ namespace LevEngine
                                         Color(1.0f, 0.0f, 0.0f, 1.0f));
         }
     }
+    
     void Physics::Process(entt::registry& registry, float deltaTime)
     {
         StepPhysics(deltaTime);
@@ -130,6 +138,8 @@ namespace LevEngine
             DrawDebugLines();
         }
     }
+
+
     
     void Physics::Reset()
     {
@@ -144,15 +154,13 @@ namespace LevEngine
         }
         PX_RELEASE(m_Foundation)
     }
+    
     Physics::~Physics()
     {
         Reset();
     }
 
-    Physics& Physics::GetInstance()
-    {
-        return s_Physics;
-    }
+    
     
     physx::PxScene* Physics::GetScene() const
     {
@@ -162,18 +170,6 @@ namespace LevEngine
     physx::PxPhysics* Physics::GetPhysics() const
     {
         return m_Physics;
-    }
-
-    Vector3 Physics::GetGravity() const
-    {
-        const auto gravity = m_Scene->getGravity();
-        return PhysicsUtils::FromPxVec3ToVector3(gravity);
-    }
-
-    void Physics::SetGravity(const Vector3 newGravity)
-    {
-        const auto gravity = PhysicsUtils::FromVector3ToPxVec3(newGravity);
-        m_Scene->setGravity(gravity);
     }
 }
 

@@ -32,9 +32,8 @@ namespace LevEngine
 
         m_Shapes.emplace(cube);
     }
-
     
-    void DebugRender::DrawWireCube(const Matrix model, const Color color)
+    void DebugRender::DrawWireCube(const Matrix& model, const Color color)
     {
         const auto cube = CreateRef<DebugWireCube>(model, color);
         
@@ -76,14 +75,14 @@ namespace LevEngine
         m_Shapes.emplace(shape);
     }
 
-    void DebugRender::DrawWireSphere(const Matrix model, const Color color)
+    void DebugRender::DrawWireSphere(const Matrix& model, const Color color)
     {
         const auto shape = CreateRef<DebugWireSphere>(model, color);
 
         m_Shapes.emplace(shape);
     }
 
-    void DebugRender::DrawWireCapsule(const Matrix model, float halfHeight, float radius, Color color)
+    void DebugRender::DrawWireCapsule(const Matrix& model, float halfHeight, float radius, Color color)
     {
         const auto line0 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, radius, 0.0f), model), Vector3::Transform(Vector3(halfHeight, radius, 0.0f), model), color);
         const auto line1 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, 0.0f, radius), model), Vector3::Transform(Vector3(halfHeight, 0.0f, radius), model), color);

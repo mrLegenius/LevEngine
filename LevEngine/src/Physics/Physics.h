@@ -8,34 +8,26 @@ namespace LevEngine
     class Physics
     {
     public:
-        Physics(const Physics&) = delete;
-        Physics& operator=(const Physics&) = delete;
-        
-        static void Process(entt::registry& registry, float deltaTime);
-
-        [[nodiscard]] static Physics& GetInstance();
-        
-        [[nodiscard]] Vector3 GetGravity() const;
-        void SetGravity(Vector3 gravity);
-
-        friend struct Rigidbody;
-        
-    private:
         Physics();
         ~Physics();
         
-        void Initialize();
-        void Reset();
-
-        static bool Advance(float deltaTime);
-        static void StepPhysics(float deltaTime);
-        static void UpdateTransforms(entt::registry& registry);
-        static void DrawDebugLines();
+        static Scope<Physics> Create();
 
         [[nodiscard]] physx::PxScene* GetScene() const;
         [[nodiscard]] physx::PxPhysics* GetPhysics() const;
         
-        static Physics s_Physics;
+        void Process(entt::registry& registry, float deltaTime);
+
+        friend struct Rigidbody;
+        
+    private:
+        void Initialize();
+        void Reset();
+
+        bool IsAdvanced(float deltaTime) const;
+        void StepPhysics(float deltaTime);
+        void UpdateTransforms(entt::registry& registry);
+        void DrawDebugLines();
         
         physx::PxDefaultAllocator m_Allocator;
         physx::PxDefaultErrorCallback m_ErrorCallback;
@@ -46,6 +38,8 @@ namespace LevEngine
         physx::PxDefaultCpuDispatcher* m_Dispatcher = NULL;
         physx::PxPhysics* m_Physics = NULL;
         physx::PxScene* m_Scene = NULL;
+
+        Vector3 m_Gravity = Vector3(0.0f, -9.81f, 0.0f);
         
         // for debug
         inline static bool s_IsPVDEnabled = false;

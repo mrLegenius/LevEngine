@@ -8,6 +8,7 @@
 #include "Entity.h"
 #include "Components/Components.h"
 #include "Components/Camera/Camera.h"
+#include "Kernel/Application.h"
 #include "Physics/Physics.h"
 
 namespace LevEngine
@@ -85,7 +86,7 @@ namespace LevEngine
         else
         {
             LegacyPhysics::Process(m_Registry, deltaTime);
-            Physics::Process(m_Registry, deltaTime);
+            App::Get().GetPhysics().Process(m_Registry, deltaTime);
         }
     }
 

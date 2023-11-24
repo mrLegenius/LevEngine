@@ -15,9 +15,8 @@ namespace LevEngine
 
 	REGISTER_PARSE_TYPE(LegacyRigidbody);
 
-	class LegacyRigidbody
+	struct LegacyRigidbody
 	{
-	public:
 		LegacyRigidbody();
 		LegacyRigidbody(const LegacyRigidbody&) = default;
 

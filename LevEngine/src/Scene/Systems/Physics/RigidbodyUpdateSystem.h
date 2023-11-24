@@ -8,8 +8,5 @@ namespace LevEngine
     {
     public:
         void Update(float deltaTime, entt::registry& registry) override;
-
-    private:
-        Vector3 m_TransformScale = Vector3::One;
     };
 }

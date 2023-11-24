@@ -19,7 +19,6 @@ namespace LevEngine
 
         Vector3 GetTransformScale() const;
         void SetTransformScale(Vector3 transformScale);
-        void ApplyTransformScale();
         
         bool IsInitialized() const;
         void Initialize(const Transform& transform);
@@ -30,7 +29,7 @@ namespace LevEngine
         void AttachRigidbody(const Type& rigidbodyType);
         void DetachRigidbody();
         [[nodiscard]] bool IsGravityEnabled() const;
-        void SetRigidbodyGravityFlag(bool flag);
+        void EnableGravity(bool flag);
         
         [[nodiscard]] Collider::Type GetColliderType() const;
         void SetColliderType(const Collider::Type& colliderType);
@@ -38,7 +37,7 @@ namespace LevEngine
         void DetachCollider();
         [[nodiscard]] int GetColliderCount() const;
         [[nodiscard]] bool IsVisualizationEnabled() const;
-        void SetColliderVisualizationFlag(bool flag);
+        void EnableVisualization(bool flag);
         
         [[nodiscard]] Vector3 GetColliderOffsetPosition() const;
         void SetColliderOffsetPosition(Vector3 position);
@@ -76,7 +75,7 @@ namespace LevEngine
         
         bool m_IsInitialized = false;
         bool m_IsVisualizationEnabled = false;
-        bool m_IsGravityEnabled = true;;
+        bool m_IsGravityEnabled = true;
         //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
     };

@@ -11,107 +11,22 @@ namespace LevEngine::Editor
         
         void DrawContent(Rigidbody& component) override
         {
-            EditorGUI::DrawCheckBox("Draw Collider", BindGetter(&Rigidbody::IsVisualizationEnabled, &component), BindSetter(&Rigidbody::SetColliderVisualizationFlag, &component));
+            EditorGUI::DrawCheckBox("Draw Collider", BindGetter(&Rigidbody::IsVisualizationEnabled, &component), BindSetter(&Rigidbody::EnableVisualization, &component));
 
-            const char* rigidbodyTypeStrings[] = { "STATIC", "DYNAMIC" };
-            const char* currentRigidbodyTypeString = rigidbodyTypeStrings[static_cast<int>(component.GetRigidbodyType())];
-            if (ImGui::BeginCombo("Rigidbody Type", currentRigidbodyTypeString))
-            {
-                for (auto& rigidbodyTypeString : rigidbodyTypeStrings)
-                {
-                    const bool isSelected = (currentRigidbodyTypeString == rigidbodyTypeString);
-                    if (ImGui::Selectable(rigidbodyTypeString, isSelected))
-                    {
-                        currentRigidbodyTypeString = rigidbodyTypeString;
-                        if (currentRigidbodyTypeString == "STATIC")
-                        {
-                            component.SetRigidbodyType(Rigidbody::Type::Static);
-                            if (component.IsInitialized())
-                            {
-                                component.AttachRigidbody(Rigidbody::Type::Static);
-                            }
-                            component.SetColliderType(Collider::Type::Box);
-                            if (component.IsInitialized())
-                            {
-                                component.AttachCollider(Collider::Type::Box);
-                            }
-                            component.ApplyTransformScale();
-                        }
-                        if (currentRigidbodyTypeString == "DYNAMIC")
-                        {
-                            component.SetRigidbodyType(Rigidbody::Type::Dynamic);
-                            if (component.IsInitialized())
-                            {
-                                component.AttachRigidbody(Rigidbody::Type::Dynamic);
-                            }
-                            component.SetColliderType(Collider::Type::Box);
-                            if (component.IsInitialized())
-                            {
-                                component.AttachCollider(Collider::Type::Box);
-                            }
-                            component.ApplyTransformScale();
-                        }
-                    }
-                    if (isSelected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-                ImGui::EndCombo();
-            }
+            const Array<String, 2> rigidbodyTypeStrings{"Static","Dynamic"};
+            EditorGUI::DrawComboBox<Rigidbody::Type, 2>("Rigidbody Type", rigidbodyTypeStrings,
+                BindGetter(&Rigidbody::GetRigidbodyType, &component), BindSetter(&Rigidbody::SetRigidbodyType, &component));
             
             if (component.GetRigidbodyType() == Rigidbody::Type::Dynamic)
             {
-                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&Rigidbody::IsGravityEnabled, &component), BindSetter(&Rigidbody::SetRigidbodyGravityFlag, &component));
+                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&Rigidbody::IsGravityEnabled, &component), BindSetter(&Rigidbody::EnableGravity, &component));
             }
             
             if (component.GetColliderCount() > 0)
             {
-                const char* colliderTypeStrings[] = { "SPHERE", "CAPSULE", "BOX" };
-                const char* currentColliderTypeString = colliderTypeStrings[static_cast<int>(component.GetColliderType())];
-                if (ImGui::BeginCombo("Collider Type", currentColliderTypeString))
-                {
-                    for (auto& colliderTypeString : colliderTypeStrings)
-                    {
-                        const bool isSelected = (currentColliderTypeString == colliderTypeString);
-                        if (ImGui::Selectable(colliderTypeString, isSelected))
-                        {
-                            currentColliderTypeString = colliderTypeString;
-                            if (currentColliderTypeString == "SPHERE")
-                            {
-                                component.SetColliderType(Collider::Type::Sphere);
-                                if (component.IsInitialized())
-                                {
-                                    component.AttachCollider(Collider::Type::Sphere);
-                                }
-                                component.ApplyTransformScale();
-                            }
-                            if (currentColliderTypeString == "CAPSULE")
-                            {
-                                component.SetColliderType(Collider::Type::Capsule);
-                                if (component.IsInitialized())
-                                {
-                                    component.AttachCollider(Collider::Type::Capsule);
-                                }
-                                component.ApplyTransformScale();
-                            }
-                            if (currentColliderTypeString == "BOX")
-                            {
-                                component.SetColliderType(Collider::Type::Box);
-                                if (component.IsInitialized())
-                                {
-                                    component.AttachCollider(Collider::Type::Box);
-                                }
-                                component.ApplyTransformScale();
-                            }
-                        }
-                        if (isSelected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
-                    }
-                    ImGui::EndCombo();
-                }
+                const Array<String, 3> colliderTypeStrings{"Sphere","Capsule", "Box"};
+                EditorGUI::DrawComboBox<Collider::Type, 3>("Collider Type", colliderTypeStrings,
+                    BindGetter(&Rigidbody::GetColliderType, &component), BindSetter(&Rigidbody::SetColliderType, &component));
                 
                 EditorGUI::DrawVector3Control("Offset Position", BindGetter(&Rigidbody::GetColliderOffsetPosition, &component), BindSetter(&Rigidbody::SetColliderOffsetPosition, &component));
                 EditorGUI::DrawVector3Control("Offset Rotation", BindGetter(&Rigidbody::GetColliderOffsetRotation, &component), BindSetter(&Rigidbody::SetColliderOffsetRotation, &component));
