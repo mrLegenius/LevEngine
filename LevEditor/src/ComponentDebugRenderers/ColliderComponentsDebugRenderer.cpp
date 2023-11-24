@@ -4,10 +4,10 @@
 namespace LevEngine::Editor
 {
     class SphereColliderComponentDebugRenderer final
-        : public ComponentDebugRenderer<SphereCollider, SphereColliderComponentDebugRenderer>
+        : public ComponentDebugRenderer<LegacySphereCollider, SphereColliderComponentDebugRenderer>
     {
     protected:
-        void DrawContent(SphereCollider& component, const Entity entity) override
+        void DrawContent(LegacySphereCollider& component, const Entity entity) override
         {
             const auto& transform = entity.GetComponent<Transform>();
             DebugRender::DrawWireSphere(transform.GetWorldPosition() + component.offset, component.radius, Color::Green);
@@ -15,10 +15,10 @@ namespace LevEngine::Editor
     };
 
     class BoxColliderComponentDebugRenderer final
-       : public ComponentDebugRenderer<BoxCollider, BoxColliderComponentDebugRenderer>
+       : public ComponentDebugRenderer<LegacyBoxCollider, BoxColliderComponentDebugRenderer>
     {
     protected:
-        void DrawContent(BoxCollider& component, const Entity entity) override
+        void DrawContent(LegacyBoxCollider& component, const Entity entity) override
         {
             const auto& transform = entity.GetComponent<Transform>();
             DebugRender::DrawWireCube(transform.GetWorldPosition() + component.offset, component.extents * 2, Color::Green);

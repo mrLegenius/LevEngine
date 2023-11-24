@@ -47,10 +47,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external/physx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
       <AdditionalModuleDependencies>
@@ -62,7 +62,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -71,10 +71,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;external/vgjs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;external/assimp/include;external/vgjs/include;external/physx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -92,6 +92,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Physics\Components\Collider.h" />
+    <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
+    <ClInclude Include="src\Physics\Components\Rigidbody.h" />
+    <ClInclude Include="src\Physics\Physics.h" />
+    <ClInclude Include="src\Physics\PhysicsUtils.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
@@ -378,6 +383,371 @@
     <ClInclude Include="external\imgui\imstb_rectpack.h" />
     <ClInclude Include="external\imgui\imstb_textedit.h" />
     <ClInclude Include="external\imgui\imstb_truetype.h" />
+    <ClInclude Include="external\physx\include\characterkinematic\PxBoxController.h" />
+    <ClInclude Include="external\physx\include\characterkinematic\PxCapsuleController.h" />
+    <ClInclude Include="external\physx\include\characterkinematic\PxController.h" />
+    <ClInclude Include="external\physx\include\characterkinematic\PxControllerBehavior.h" />
+    <ClInclude Include="external\physx\include\characterkinematic\PxControllerManager.h" />
+    <ClInclude Include="external\physx\include\characterkinematic\PxControllerObstacles.h" />
+    <ClInclude Include="external\physx\include\characterkinematic\PxExtended.h" />
+    <ClInclude Include="external\physx\include\collision\PxCollisionDefs.h" />
+    <ClInclude Include="external\physx\include\common\PxBase.h" />
+    <ClInclude Include="external\physx\include\common\PxCollection.h" />
+    <ClInclude Include="external\physx\include\common\PxCoreUtilityTypes.h" />
+    <ClInclude Include="external\physx\include\common\PxInsertionCallback.h" />
+    <ClInclude Include="external\physx\include\common\PxMetaData.h" />
+    <ClInclude Include="external\physx\include\common\PxMetaDataFlags.h" />
+    <ClInclude Include="external\physx\include\common\PxPhysXCommonConfig.h" />
+    <ClInclude Include="external\physx\include\common\PxProfileZone.h" />
+    <ClInclude Include="external\physx\include\common\PxRenderBuffer.h" />
+    <ClInclude Include="external\physx\include\common\PxRenderOutput.h" />
+    <ClInclude Include="external\physx\include\common\PxSerialFramework.h" />
+    <ClInclude Include="external\physx\include\common\PxSerializer.h" />
+    <ClInclude Include="external\physx\include\common\PxStringTable.h" />
+    <ClInclude Include="external\physx\include\common\PxTolerancesScale.h" />
+    <ClInclude Include="external\physx\include\common\PxTypeInfo.h" />
+    <ClInclude Include="external\physx\include\common\windows\PxWindowsDelayLoadHook.h" />
+    <ClInclude Include="external\physx\include\cooking\PxBVH33MidphaseDesc.h" />
+    <ClInclude Include="external\physx\include\cooking\PxBVH34MidphaseDesc.h" />
+    <ClInclude Include="external\physx\include\cooking\PxBVHDesc.h" />
+    <ClInclude Include="external\physx\include\cooking\Pxc.h" />
+    <ClInclude Include="external\physx\include\cooking\PxConvexMeshDesc.h" />
+    <ClInclude Include="external\physx\include\cooking\PxCooking.h" />
+    <ClInclude Include="external\physx\include\cooking\PxCookingInternal.h" />
+    <ClInclude Include="external\physx\include\cooking\PxMidphaseDesc.h" />
+    <ClInclude Include="external\physx\include\cooking\PxSDFDesc.h" />
+    <ClInclude Include="external\physx\include\cooking\PxTetrahedronMeshDesc.h" />
+    <ClInclude Include="external\physx\include\cooking\PxTriangleMeshDesc.h" />
+    <ClInclude Include="external\physx\include\cudamanager\PxCudaContext.h" />
+    <ClInclude Include="external\physx\include\cudamanager\PxCudaContextManager.h" />
+    <ClInclude Include="external\physx\include\cudamanager\PxCudaTypes.h" />
+    <ClInclude Include="external\physx\include\extensions\PxBinaryConverter.h" />
+    <ClInclude Include="external\physx\include\extensions\PxBroadPhaseExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxCollectionExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxConstraintExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxContactJoint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxConvexMeshExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxCustomGeometryExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxCustomSceneQuerySystem.h" />
+    <ClInclude Include="external\physx\include\extensions\PxD6Joint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxD6JointCreate.h" />
+    <ClInclude Include="external\physx\include\extensions\PxDefaultAllocator.h" />
+    <ClInclude Include="external\physx\include\extensions\PxDefaultCpuDispatcher.h" />
+    <ClInclude Include="external\physx\include\extensions\PxDefaultErrorCallback.h" />
+    <ClInclude Include="external\physx\include\extensions\PxDefaultSimulationFilterShader.h" />
+    <ClInclude Include="external\physx\include\extensions\PxDefaultStreams.h" />
+    <ClInclude Include="external\physx\include\extensions\PxDistanceJoint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxExtensionsAPI.h" />
+    <ClInclude Include="external\physx\include\extensions\PxFixedJoint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxGearJoint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxGjkQueryExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxJoint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxJointLimit.h" />
+    <ClInclude Include="external\physx\include\extensions\PxMassProperties.h" />
+    <ClInclude Include="external\physx\include\extensions\PxParticleClothCooker.h" />
+    <ClInclude Include="external\physx\include\extensions\PxParticleExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxPrismaticJoint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxRackAndPinionJoint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxRaycastCCD.h" />
+    <ClInclude Include="external\physx\include\extensions\PxRemeshingExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxRepXSerializer.h" />
+    <ClInclude Include="external\physx\include\extensions\PxRepXSimpleType.h" />
+    <ClInclude Include="external\physx\include\extensions\PxRevoluteJoint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxRigidActorExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxRigidBodyExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxSamplingExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxSceneQueryExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxSceneQuerySystemExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxSerialization.h" />
+    <ClInclude Include="external\physx\include\extensions\PxShapeExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxSimpleFactory.h" />
+    <ClInclude Include="external\physx\include\extensions\PxSmoothNormals.h" />
+    <ClInclude Include="external\physx\include\extensions\PxSoftBodyExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxSphericalJoint.h" />
+    <ClInclude Include="external\physx\include\extensions\PxStringTableExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxTetMakerExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxTetrahedronMeshAnalysisResult.h" />
+    <ClInclude Include="external\physx\include\extensions\PxTetrahedronMeshExt.h" />
+    <ClInclude Include="external\physx\include\extensions\PxTriangleMeshAnalysisResult.h" />
+    <ClInclude Include="external\physx\include\extensions\PxTriangleMeshExt.h" />
+    <ClInclude Include="external\physx\include\filebuf\PxFileBuf.h" />
+    <ClInclude Include="external\physx\include\foundation\Px.h" />
+    <ClInclude Include="external\physx\include\foundation\PxAlignedMalloc.h" />
+    <ClInclude Include="external\physx\include\foundation\PxAlloca.h" />
+    <ClInclude Include="external\physx\include\foundation\PxAllocator.h" />
+    <ClInclude Include="external\physx\include\foundation\PxAllocatorCallback.h" />
+    <ClInclude Include="external\physx\include\foundation\PxAoS.h" />
+    <ClInclude Include="external\physx\include\foundation\PxArray.h" />
+    <ClInclude Include="external\physx\include\foundation\PxAssert.h" />
+    <ClInclude Include="external\physx\include\foundation\PxAtomic.h" />
+    <ClInclude Include="external\physx\include\foundation\PxBasicTemplates.h" />
+    <ClInclude Include="external\physx\include\foundation\PxBitAndData.h" />
+    <ClInclude Include="external\physx\include\foundation\PxBitMap.h" />
+    <ClInclude Include="external\physx\include\foundation\PxBitUtils.h" />
+    <ClInclude Include="external\physx\include\foundation\PxBounds3.h" />
+    <ClInclude Include="external\physx\include\foundation\PxBroadcast.h" />
+    <ClInclude Include="external\physx\include\foundation\PxErrorCallback.h" />
+    <ClInclude Include="external\physx\include\foundation\PxErrors.h" />
+    <ClInclude Include="external\physx\include\foundation\PxFlags.h" />
+    <ClInclude Include="external\physx\include\foundation\PxFoundation.h" />
+    <ClInclude Include="external\physx\include\foundation\PxFoundationConfig.h" />
+    <ClInclude Include="external\physx\include\foundation\PxFPU.h" />
+    <ClInclude Include="external\physx\include\foundation\PxHash.h" />
+    <ClInclude Include="external\physx\include\foundation\PxHashInternals.h" />
+    <ClInclude Include="external\physx\include\foundation\PxHashMap.h" />
+    <ClInclude Include="external\physx\include\foundation\PxHashSet.h" />
+    <ClInclude Include="external\physx\include\foundation\PxInlineAllocator.h" />
+    <ClInclude Include="external\physx\include\foundation\PxInlineAoS.h" />
+    <ClInclude Include="external\physx\include\foundation\PxInlineArray.h" />
+    <ClInclude Include="external\physx\include\foundation\PxIntrinsics.h" />
+    <ClInclude Include="external\physx\include\foundation\PxIO.h" />
+    <ClInclude Include="external\physx\include\foundation\PxMat33.h" />
+    <ClInclude Include="external\physx\include\foundation\PxMat34.h" />
+    <ClInclude Include="external\physx\include\foundation\PxMat44.h" />
+    <ClInclude Include="external\physx\include\foundation\PxMath.h" />
+    <ClInclude Include="external\physx\include\foundation\PxMathIntrinsics.h" />
+    <ClInclude Include="external\physx\include\foundation\PxMathUtils.h" />
+    <ClInclude Include="external\physx\include\foundation\PxMemory.h" />
+    <ClInclude Include="external\physx\include\foundation\PxMutex.h" />
+    <ClInclude Include="external\physx\include\foundation\PxPhysicsVersion.h" />
+    <ClInclude Include="external\physx\include\foundation\PxPinnedArray.h" />
+    <ClInclude Include="external\physx\include\foundation\PxPlane.h" />
+    <ClInclude Include="external\physx\include\foundation\PxPool.h" />
+    <ClInclude Include="external\physx\include\foundation\PxPreprocessor.h" />
+    <ClInclude Include="external\physx\include\foundation\PxProfiler.h" />
+    <ClInclude Include="external\physx\include\foundation\PxQuat.h" />
+    <ClInclude Include="external\physx\include\foundation\PxSIMDHelpers.h" />
+    <ClInclude Include="external\physx\include\foundation\PxSimpleTypes.h" />
+    <ClInclude Include="external\physx\include\foundation\PxSList.h" />
+    <ClInclude Include="external\physx\include\foundation\PxSocket.h" />
+    <ClInclude Include="external\physx\include\foundation\PxSort.h" />
+    <ClInclude Include="external\physx\include\foundation\PxSortInternals.h" />
+    <ClInclude Include="external\physx\include\foundation\PxStrideIterator.h" />
+    <ClInclude Include="external\physx\include\foundation\PxString.h" />
+    <ClInclude Include="external\physx\include\foundation\PxSync.h" />
+    <ClInclude Include="external\physx\include\foundation\PxTempAllocator.h" />
+    <ClInclude Include="external\physx\include\foundation\PxThread.h" />
+    <ClInclude Include="external\physx\include\foundation\PxTime.h" />
+    <ClInclude Include="external\physx\include\foundation\PxTransform.h" />
+    <ClInclude Include="external\physx\include\foundation\PxUnionCast.h" />
+    <ClInclude Include="external\physx\include\foundation\PxUserAllocated.h" />
+    <ClInclude Include="external\physx\include\foundation\PxUtilities.h" />
+    <ClInclude Include="external\physx\include\foundation\PxVec2.h" />
+    <ClInclude Include="external\physx\include\foundation\PxVec3.h" />
+    <ClInclude Include="external\physx\include\foundation\PxVec4.h" />
+    <ClInclude Include="external\physx\include\foundation\PxVecMath.h" />
+    <ClInclude Include="external\physx\include\foundation\PxVecMathAoSScalar.h" />
+    <ClInclude Include="external\physx\include\foundation\PxVecMathAoSScalarInline.h" />
+    <ClInclude Include="external\physx\include\foundation\PxVecMathSSE.h" />
+    <ClInclude Include="external\physx\include\foundation\PxVecQuat.h" />
+    <ClInclude Include="external\physx\include\foundation\PxVecTransform.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\neon\PxUnixNeonAoS.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\neon\PxUnixNeonInlineAoS.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\PxUnixAoS.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\PxUnixFPU.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\PxUnixInlineAoS.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\PxUnixIntrinsics.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\PxUnixMathIntrinsics.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\PxUnixTrigConstants.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\sse2\PxUnixSse2AoS.h" />
+    <ClInclude Include="external\physx\include\foundation\unix\sse2\PxUnixSse2InlineAoS.h" />
+    <ClInclude Include="external\physx\include\foundation\windows\PxWindowsAoS.h" />
+    <ClInclude Include="external\physx\include\foundation\windows\PxWindowsFPU.h" />
+    <ClInclude Include="external\physx\include\foundation\windows\PxWindowsInclude.h" />
+    <ClInclude Include="external\physx\include\foundation\windows\PxWindowsInlineAoS.h" />
+    <ClInclude Include="external\physx\include\foundation\windows\PxWindowsIntrinsics.h" />
+    <ClInclude Include="external\physx\include\foundation\windows\PxWindowsMathIntrinsics.h" />
+    <ClInclude Include="external\physx\include\foundation\windows\PxWindowsTrigConstants.h" />
+    <ClInclude Include="external\physx\include\geometry\PxBoxGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxBVH.h" />
+    <ClInclude Include="external\physx\include\geometry\PxBVHBuildStrategy.h" />
+    <ClInclude Include="external\physx\include\geometry\PxCapsuleGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxConvexMesh.h" />
+    <ClInclude Include="external\physx\include\geometry\PxConvexMeshGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxCustomGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxGeometryHelpers.h" />
+    <ClInclude Include="external\physx\include\geometry\PxGeometryHit.h" />
+    <ClInclude Include="external\physx\include\geometry\PxGeometryInternal.h" />
+    <ClInclude Include="external\physx\include\geometry\PxGeometryQuery.h" />
+    <ClInclude Include="external\physx\include\geometry\PxGeometryQueryContext.h" />
+    <ClInclude Include="external\physx\include\geometry\PxGeometryQueryFlags.h" />
+    <ClInclude Include="external\physx\include\geometry\PxGjkQuery.h" />
+    <ClInclude Include="external\physx\include\geometry\PxHairSystemDesc.h" />
+    <ClInclude Include="external\physx\include\geometry\PxHairSystemGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxHeightField.h" />
+    <ClInclude Include="external\physx\include\geometry\PxHeightFieldDesc.h" />
+    <ClInclude Include="external\physx\include\geometry\PxHeightFieldFlag.h" />
+    <ClInclude Include="external\physx\include\geometry\PxHeightFieldGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxHeightFieldSample.h" />
+    <ClInclude Include="external\physx\include\geometry\PxMeshQuery.h" />
+    <ClInclude Include="external\physx\include\geometry\PxMeshScale.h" />
+    <ClInclude Include="external\physx\include\geometry\PxParticleSystemGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxPlaneGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxReportCallback.h" />
+    <ClInclude Include="external\physx\include\geometry\PxSimpleTriangleMesh.h" />
+    <ClInclude Include="external\physx\include\geometry\PxSphereGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxTetrahedron.h" />
+    <ClInclude Include="external\physx\include\geometry\PxTetrahedronMesh.h" />
+    <ClInclude Include="external\physx\include\geometry\PxTetrahedronMeshGeometry.h" />
+    <ClInclude Include="external\physx\include\geometry\PxTriangle.h" />
+    <ClInclude Include="external\physx\include\geometry\PxTriangleMesh.h" />
+    <ClInclude Include="external\physx\include\geometry\PxTriangleMeshGeometry.h" />
+    <ClInclude Include="external\physx\include\geomutils\PxContactBuffer.h" />
+    <ClInclude Include="external\physx\include\geomutils\PxContactPoint.h" />
+    <ClInclude Include="external\physx\include\gpu\PxGpu.h" />
+    <ClInclude Include="external\physx\include\gpu\PxPhysicsGpu.h" />
+    <ClInclude Include="external\physx\include\omnipvd\PxOmniPvd.h" />
+    <ClInclude Include="external\physx\include\pvd\PxPvd.h" />
+    <ClInclude Include="external\physx\include\pvd\PxPvdSceneClient.h" />
+    <ClInclude Include="external\physx\include\pvd\PxPvdTransport.h" />
+    <ClInclude Include="external\physx\include\PxActor.h" />
+    <ClInclude Include="external\physx\include\PxActorData.h" />
+    <ClInclude Include="external\physx\include\PxAggregate.h" />
+    <ClInclude Include="external\physx\include\PxAnisotropy.h" />
+    <ClInclude Include="external\physx\include\PxArrayConverter.h" />
+    <ClInclude Include="external\physx\include\PxArticulationFlag.h" />
+    <ClInclude Include="external\physx\include\PxArticulationJointReducedCoordinate.h" />
+    <ClInclude Include="external\physx\include\PxArticulationLink.h" />
+    <ClInclude Include="external\physx\include\PxArticulationReducedCoordinate.h" />
+    <ClInclude Include="external\physx\include\PxArticulationTendon.h" />
+    <ClInclude Include="external\physx\include\PxArticulationTendonData.h" />
+    <ClInclude Include="external\physx\include\PxAttachment.h" />
+    <ClInclude Include="external\physx\include\PxBaseMaterial.h" />
+    <ClInclude Include="external\physx\include\PxBroadPhase.h" />
+    <ClInclude Include="external\physx\include\PxClient.h" />
+    <ClInclude Include="external\physx\include\PxConeLimitedConstraint.h" />
+    <ClInclude Include="external\physx\include\PxConfig.h" />
+    <ClInclude Include="external\physx\include\PxConstraint.h" />
+    <ClInclude Include="external\physx\include\PxConstraintDesc.h" />
+    <ClInclude Include="external\physx\include\PxContact.h" />
+    <ClInclude Include="external\physx\include\PxContactModifyCallback.h" />
+    <ClInclude Include="external\physx\include\PxDeletionListener.h" />
+    <ClInclude Include="external\physx\include\PxFEMClothFlags.h" />
+    <ClInclude Include="external\physx\include\PxFEMClothMaterial.h" />
+    <ClInclude Include="external\physx\include\PxFEMMaterial.h" />
+    <ClInclude Include="external\physx\include\PxFEMParameter.h" />
+    <ClInclude Include="external\physx\include\PxFEMSoftBodyMaterial.h" />
+    <ClInclude Include="external\physx\include\PxFiltering.h" />
+    <ClInclude Include="external\physx\include\PxFLIPMaterial.h" />
+    <ClInclude Include="external\physx\include\PxForceMode.h" />
+    <ClInclude Include="external\physx\include\PxHairSystemFlag.h" />
+    <ClInclude Include="external\physx\include\PxImmediateMode.h" />
+    <ClInclude Include="external\physx\include\PxIsosurfaceExtraction.h" />
+    <ClInclude Include="external\physx\include\PxLineStripSkinning.h" />
+    <ClInclude Include="external\physx\include\PxLockedData.h" />
+    <ClInclude Include="external\physx\include\PxMaterial.h" />
+    <ClInclude Include="external\physx\include\PxMPMMaterial.h" />
+    <ClInclude Include="external\physx\include\PxNodeIndex.h" />
+    <ClInclude Include="external\physx\include\PxParticleBuffer.h" />
+    <ClInclude Include="external\physx\include\PxParticleGpu.h" />
+    <ClInclude Include="external\physx\include\PxParticleMaterial.h" />
+    <ClInclude Include="external\physx\include\PxParticleNeighborhoodProvider.h" />
+    <ClInclude Include="external\physx\include\PxParticleSolverType.h" />
+    <ClInclude Include="external\physx\include\PxParticleSystem.h" />
+    <ClInclude Include="external\physx\include\PxParticleSystemFlag.h" />
+    <ClInclude Include="external\physx\include\PxPBDMaterial.h" />
+    <ClInclude Include="external\physx\include\PxPBDParticleSystem.h" />
+    <ClInclude Include="external\physx\include\PxPhysics.h" />
+    <ClInclude Include="external\physx\include\PxPhysicsAPI.h" />
+    <ClInclude Include="external\physx\include\PxPhysicsSerialization.h" />
+    <ClInclude Include="external\physx\include\PxPhysXConfig.h" />
+    <ClInclude Include="external\physx\include\PxPruningStructure.h" />
+    <ClInclude Include="external\physx\include\PxQueryFiltering.h" />
+    <ClInclude Include="external\physx\include\PxQueryReport.h" />
+    <ClInclude Include="external\physx\include\PxRigidActor.h" />
+    <ClInclude Include="external\physx\include\PxRigidBody.h" />
+    <ClInclude Include="external\physx\include\PxRigidDynamic.h" />
+    <ClInclude Include="external\physx\include\PxRigidStatic.h" />
+    <ClInclude Include="external\physx\include\PxScene.h" />
+    <ClInclude Include="external\physx\include\PxSceneDesc.h" />
+    <ClInclude Include="external\physx\include\PxSceneLock.h" />
+    <ClInclude Include="external\physx\include\PxSceneQueryDesc.h" />
+    <ClInclude Include="external\physx\include\PxSceneQuerySystem.h" />
+    <ClInclude Include="external\physx\include\PxSDFBuilder.h" />
+    <ClInclude Include="external\physx\include\PxShape.h" />
+    <ClInclude Include="external\physx\include\PxSimulationEventCallback.h" />
+    <ClInclude Include="external\physx\include\PxSimulationStatistics.h" />
+    <ClInclude Include="external\physx\include\PxSmoothing.h" />
+    <ClInclude Include="external\physx\include\PxSoftBody.h" />
+    <ClInclude Include="external\physx\include\PxSoftBodyFlag.h" />
+    <ClInclude Include="external\physx\include\PxSparseGridParams.h" />
+    <ClInclude Include="external\physx\include\PxVisualizationParameter.h" />
+    <ClInclude Include="external\physx\include\solver\PxSolverDefs.h" />
+    <ClInclude Include="external\physx\include\task\PxCpuDispatcher.h" />
+    <ClInclude Include="external\physx\include\task\PxTask.h" />
+    <ClInclude Include="external\physx\include\task\PxTaskManager.h" />
+    <ClInclude Include="external\physx\include\vehicle2\braking\PxVehicleBrakingFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\braking\PxVehicleBrakingParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\commands\PxVehicleCommandHelpers.h" />
+    <ClInclude Include="external\physx\include\vehicle2\commands\PxVehicleCommandParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\commands\PxVehicleCommandStates.h" />
+    <ClInclude Include="external\physx\include\vehicle2\drivetrain\PxVehicleDrivetrainComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle2\drivetrain\PxVehicleDrivetrainFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\drivetrain\PxVehicleDrivetrainHelpers.h" />
+    <ClInclude Include="external\physx\include\vehicle2\drivetrain\PxVehicleDrivetrainParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\drivetrain\PxVehicleDrivetrainStates.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxActor\PxVehiclePhysXActorComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxActor\PxVehiclePhysXActorFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxActor\PxVehiclePhysXActorHelpers.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxActor\PxVehiclePhysXActorStates.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxConstraints\PxVehiclePhysXConstraintComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxConstraints\PxVehiclePhysXConstraintFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxConstraints\PxVehiclePhysXConstraintHelpers.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxConstraints\PxVehiclePhysXConstraintParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxConstraints\PxVehiclePhysXConstraintStates.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxRoadGeometry\PxVehiclePhysXRoadGeometryComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxRoadGeometry\PxVehiclePhysXRoadGeometryFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxRoadGeometry\PxVehiclePhysXRoadGeometryHelpers.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxRoadGeometry\PxVehiclePhysXRoadGeometryParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\physxRoadGeometry\PxVehiclePhysXRoadGeometryState.h" />
+    <ClInclude Include="external\physx\include\vehicle2\pvd\PxVehiclePvdComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle2\pvd\PxVehiclePvdFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\pvd\PxVehiclePvdHelpers.h" />
+    <ClInclude Include="external\physx\include\vehicle2\PxVehicleAPI.h" />
+    <ClInclude Include="external\physx\include\vehicle2\PxVehicleComponent.h" />
+    <ClInclude Include="external\physx\include\vehicle2\PxVehicleComponentSequence.h" />
+    <ClInclude Include="external\physx\include\vehicle2\PxVehicleFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\PxVehicleLimits.h" />
+    <ClInclude Include="external\physx\include\vehicle2\PxVehicleMaths.h" />
+    <ClInclude Include="external\physx\include\vehicle2\PxVehicleParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\rigidBody\PxVehicleRigidBodyComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle2\rigidBody\PxVehicleRigidBodyFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\rigidBody\PxVehicleRigidBodyParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\rigidBody\PxVehicleRigidBodyStates.h" />
+    <ClInclude Include="external\physx\include\vehicle2\roadGeometry\PxVehicleRoadGeometryState.h" />
+    <ClInclude Include="external\physx\include\vehicle2\steering\PxVehicleSteeringFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\steering\PxVehicleSteeringParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\suspension\PxVehicleSuspensionComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle2\suspension\PxVehicleSuspensionFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\suspension\PxVehicleSuspensionHelpers.h" />
+    <ClInclude Include="external\physx\include\vehicle2\suspension\PxVehicleSuspensionParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\suspension\PxVehicleSuspensionStates.h" />
+    <ClInclude Include="external\physx\include\vehicle2\tire\PxVehicleTireComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle2\tire\PxVehicleTireFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\tire\PxVehicleTireHelpers.h" />
+    <ClInclude Include="external\physx\include\vehicle2\tire\PxVehicleTireParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\tire\PxVehicleTireStates.h" />
+    <ClInclude Include="external\physx\include\vehicle2\wheel\PxVehicleWheelComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle2\wheel\PxVehicleWheelFunctions.h" />
+    <ClInclude Include="external\physx\include\vehicle2\wheel\PxVehicleWheelHelpers.h" />
+    <ClInclude Include="external\physx\include\vehicle2\wheel\PxVehicleWheelParams.h" />
+    <ClInclude Include="external\physx\include\vehicle2\wheel\PxVehicleWheelStates.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleComponents.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleDrive.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleDrive4W.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleDriveNW.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleDriveTank.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleNoDrive.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleSDK.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleShaders.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleTireFriction.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleUpdate.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleUtil.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleUtilControl.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleUtilSetup.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleUtilTelemetry.h" />
+    <ClInclude Include="external\physx\include\vehicle\PxVehicleWheels.h" />
     <ClInclude Include="external\stb\include\stb_image.h" />
     <ClInclude Include="external\yaml-cpp\include\yaml-cpp\anchor.h" />
     <ClInclude Include="external\yaml-cpp\include\yaml-cpp\binary.h" />
@@ -504,15 +874,15 @@
     <ClInclude Include="src\DataTypes\String.h" />
     <ClInclude Include="src\MeshLoader.h" />
     <ClInclude Include="src\levpch.h" />
-    <ClInclude Include="src\Physics\Components\Collider.h" />
-    <ClInclude Include="src\Physics\Components\CollisionEvents.h" />
-    <ClInclude Include="src\Physics\Components\Rigidbody.h" />
-    <ClInclude Include="src\Physics\Events\CollisionBeginEvent.h" />
-    <ClInclude Include="src\Physics\Events\CollisionEndEvent.h" />
-    <ClInclude Include="src\Physics\Physics.h" />
-    <ClInclude Include="src\Physics\Systems\ForcesClearSystem.h" />
-    <ClInclude Include="src\Physics\Systems\PositionUpdateSystem.h" />
-    <ClInclude Include="src\Physics\Systems\VelocityUpdateSystem.h" />
+    <ClInclude Include="src\Physics\Components\LegacyCollider.h" />
+    <ClInclude Include="src\Physics\Components\LegacyCollisionEvents.h" />
+    <ClInclude Include="src\Physics\Components\LegacyRigidbody.h" />
+    <ClInclude Include="src\Physics\Events\LegacyCollisionBeginEvent.h" />
+    <ClInclude Include="src\Physics\Events\LegacyCollisionEndEvent.h" />
+    <ClInclude Include="src\Physics\LegacyPhysics.h" />
+    <ClInclude Include="src\Physics\Systems\LegacyForcesClearSystem.h" />
+    <ClInclude Include="src\Physics\Systems\LegacyPositionUpdateSystem.h" />
+    <ClInclude Include="src\Physics\Systems\LegacyVelocityUpdateSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11BlendState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h" />
@@ -613,10 +983,14 @@
     <ClInclude Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.h" />
     <ClInclude Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />
+    <ClInclude Include="src\Scene\Systems\Physics\RigidbodyInitSystem.h" />
+    <ClInclude Include="src\Scene\Systems\Physics\RigidbodyUpdateSystem.h" />
     <ClInclude Include="src\Serializers\RenderSettingsSerializer.h" />
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Physics\Physics.cpp" />
+    <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />
@@ -860,9 +1234,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Physics\Components\Collider.cpp" />
-    <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
-    <ClCompile Include="src\Physics\Physics.cpp" />
+    <ClCompile Include="src\Physics\Components\LegacyCollider.cpp" />
+    <ClCompile Include="src\Physics\Components\LegacyRigidbody.cpp" />
+    <ClCompile Include="src\Physics\LegacyPhysics.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11BlendState.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11ConstantBuffer.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DepthStencilState.cpp" />
@@ -941,6 +1315,8 @@
     <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\Physics\RigidbodyInitSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\Physics\RigidbodyUpdateSystem.cpp" />
     <ClCompile Include="src\Serializers\RenderSettingsSerializer.cpp" />
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>

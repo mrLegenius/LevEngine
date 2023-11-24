@@ -8,6 +8,7 @@
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
 #include "GUI/ImGuiLayer.h"
+#include "Physics/Physics.h"
 
 namespace LevEngine
 {
@@ -49,6 +50,9 @@ public:
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
 	[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
+	
+	[[nodiscard]] Physics& GetPhysics() const { return *m_Physics; }
+	
 private:
 	bool OnWindowClosed(WindowClosedEvent& e);
 	bool OnWindowResized(WindowResizedEvent& e);
@@ -63,6 +67,8 @@ private:
 	Scope<Window> m_Window;
 	bool m_IsRunning = true;
 
+	Scope<Physics> m_Physics;
+	
 	LayerStack m_LayerStack;
 
 	float m_LastFrameTime = 0.0f;

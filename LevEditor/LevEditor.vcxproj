@@ -47,9 +47,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;LEV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;LEV_DEBUG;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;$(SolutionDir)LevEngine\external\physx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -70,9 +70,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;$(SolutionDir)LevEngine\external\physx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -101,6 +101,7 @@
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
     <ClCompile Include="src\ComponentDebugRenderers\ColliderComponentsDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\RigidbodyDebugRenderer.cpp" />
     <ClCompile Include="src\Essentials\MenuBar.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
@@ -137,10 +138,11 @@
     <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
-    <ClCompile Include="src\GUI\Drawers\Components\ColliderDrawers.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LegacyColliderDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\MeshRendererDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LegacyRigidbodyDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\RigidbodyDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\SkyboxComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp" />

@@ -1,58 +1,51 @@
-#pragma once
-#include "Components/Rigidbody.h"
-#include "Components/Collider.h"
-#include "entt/entt.hpp"
-#include "Scene/Components/Transform/Transform.h"
+﻿#pragma once
+#include "physx/include/PxPhysicsAPI.h"
+#include "Scene/Entity.h"
+#include "Math/Vector3.h"
 
 namespace LevEngine
 {
-struct CollisionInfo;
-class Entity;
-
-inline constexpr int NumCollisionFrames = 10;
-
-struct ContactPoint
-{
-	Vector3 localA; // where did the collision occur ...
-	Vector3 localB; // in the frame of each object !
-	Vector3 normal;
-	float penetration = 0;
-};
-
-struct CollisionInfo
-{
-    ContactPoint point;
-
-    void SetContactPoint(const Vector3& localA, const Vector3& localB, const Vector3& normal, float p)
+    class Physics
     {
-        point.localA = localA;
-        point.localB = localB;
-        point.normal = normal;
-        point.penetration = p;
-    }
-};
+    public:
+        Physics();
+        ~Physics();
+        
+        static Scope<Physics> Create();
 
-class Physics
-{
-public:
-    static void HandleCollision(Transform& transformA, Rigidbody& rigidbodyA, Transform& transformB, Rigidbody& rigidbodyB, ContactPoint p);
-    static void Process(entt::registry& registry, float deltaTime);
+        [[nodiscard]] physx::PxScene* GetScene() const;
+        [[nodiscard]] physx::PxPhysics* GetPhysics() const;
+        
+        void Process(entt::registry& registry, float deltaTime);
 
-    static bool AABBTest(
-        const Vector3& posA, const Vector3& posB,
-        const Vector3& halfSizeA, const Vector3& halfSizeB);
+        friend struct Rigidbody;
+        
+    private:
+        void Initialize();
+        void Reset();
 
-    static bool HasAABBIntersection(const BoxCollider& colliderA, const Transform& transformA, const BoxCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo);
+        bool IsAdvanced(float deltaTime) const;
+        void StepPhysics(float deltaTime);
+        void UpdateTransforms(entt::registry& registry);
+        void DrawDebugLines();
+        
+        physx::PxDefaultAllocator m_Allocator;
+        physx::PxDefaultErrorCallback m_ErrorCallback;
+        physx::PxTolerancesScale m_ToleranceScale;
+        
+        physx::PxFoundation* m_Foundation = NULL;
+        physx::PxPvd* m_Pvd = NULL;
+        physx::PxDefaultCpuDispatcher* m_Dispatcher = NULL;
+        physx::PxPhysics* m_Physics = NULL;
+        physx::PxScene* m_Scene = NULL;
 
-    static bool HasSphereIntersection(const SphereCollider& colliderA, const Transform& transformA, const SphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo);
-
-    static bool HasAABBSphereIntersection(const BoxCollider& colliderA, const Transform& transformA, const SphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo);
-
-    static void UpdateConstraints(const float deltaTime)
-    {
-        /*for (const auto gameObject : objects)
-            for (const auto& constraint : gameObject->GetConstraints())
-                constraint->Update(deltaTime);*/
-    }
-};
+        Vector3 m_Gravity = Vector3(0.0f, -9.81f, 0.0f);
+        
+        // for debug
+        inline static bool s_IsPVDEnabled = false;
+        inline static bool s_IsDebugRenderEnabled = true;
+        // for physics update
+        inline static float s_Accumulator = 0.0f;
+        inline static float s_StepSize = 1.0f / 60.0f;
+    };
 }

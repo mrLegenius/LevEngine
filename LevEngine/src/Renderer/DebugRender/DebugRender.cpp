@@ -32,6 +32,13 @@ namespace LevEngine
 
         m_Shapes.emplace(cube);
     }
+    
+    void DebugRender::DrawWireCube(const Matrix& model, const Color color)
+    {
+        const auto cube = CreateRef<DebugWireCube>(model, color);
+        
+        m_Shapes.emplace(cube);
+    }
 
     void DebugRender::DrawSphere(const Vector3 position, const float radius, const Color color)
     {
@@ -66,6 +73,32 @@ namespace LevEngine
         const auto shape = CreateRef<DebugWireSphere>(model, color);
 
         m_Shapes.emplace(shape);
+    }
+
+    void DebugRender::DrawWireSphere(const Matrix& model, const Color color)
+    {
+        const auto shape = CreateRef<DebugWireSphere>(model, color);
+
+        m_Shapes.emplace(shape);
+    }
+
+    void DebugRender::DrawWireCapsule(const Matrix& model, float halfHeight, float radius, Color color)
+    {
+        const auto line0 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, radius, 0.0f), model), Vector3::Transform(Vector3(halfHeight, radius, 0.0f), model), color);
+        const auto line1 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, 0.0f, radius), model), Vector3::Transform(Vector3(halfHeight, 0.0f, radius), model), color);
+        const auto line2 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, -radius, 0.0f), model), Vector3::Transform(Vector3(halfHeight, -radius, 0.0f), model), color);
+        const auto line3 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, 0.0f, -radius), model), Vector3::Transform(Vector3(halfHeight, 0.0f, -radius), model), color);
+        
+        m_Shapes.emplace(line0);
+        m_Shapes.emplace(line1);
+        m_Shapes.emplace(line2);
+        m_Shapes.emplace(line3);
+        
+        const auto sphere0 = CreateRef<DebugWireSphere>(Matrix::CreateScale(radius) * Matrix::CreateTranslation(Vector3(halfHeight, 0.0f, 0.0f)) * model, color);
+        const auto sphere1 = CreateRef<DebugWireSphere>(Matrix::CreateScale(radius) * Matrix::CreateTranslation(Vector3(-halfHeight, 0.0f, 0.0f)) * model, color);
+        
+        m_Shapes.emplace(sphere0);
+        m_Shapes.emplace(sphere1);
     }
 
     void DebugRender::DrawLine(Vector3 start, Vector3 end, const Color color)
