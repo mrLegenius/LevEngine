@@ -5,6 +5,7 @@
 #include "ClearPass.h"
 #include "CopyTexturePass.h"
 #include "DeferredLightingPass.h"
+#include "EnvironmentPass.h"
 #include "DepthStencilState.h"
 #include "OpaquePass.h"
 #include "ParticlePass.h"
@@ -245,6 +246,8 @@ void Renderer::Init()
 		s_ParticlesPipelineState->GetRasterizerState().SetCullMode(CullMode::None);
 		s_ParticlesPipelineState->SetRenderTarget(mainRenderTarget);
 	}
+
+	auto environmentPass = CreateRef<EnvironmentPass>();
 	
 	{
 		LEV_PROFILE_SCOPE("Deferred technique creation");
@@ -254,26 +257,27 @@ void Renderer::Init()
 		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget));
 		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_GBufferRenderTarget));
 		s_DeferredTechnique->AddPass(CreateRef<OpaquePass>(s_GBufferPipeline));
+		s_DeferredTechnique->AddPass(environmentPass);
 		s_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(s_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture));
 		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, ClearFlags::Stencil, Vector4::Zero, 1.0f, 1));
 		s_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_AlbedoTexture, m_MetallicRoughnessAOTexture, m_NormalTexture, m_DepthTexture));
-		s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));
+		s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline, environmentPass));
 		s_DeferredTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
-		//s_DeferredTechnique->AddPass(CreateRef<QuadRenderPass>(s_DeferredQuadPipeline, m_ColorTexture));
 		s_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<TransparentPass>(s_TransparentPipeline));
 		s_DeferredTechnique->AddPass(CreateRef<ParticlePass>(s_ParticlesPipelineState, m_DepthTexture, m_NormalTexture));
 	}
-
+	
 	{
 		LEV_PROFILE_SCOPE("Forward technique creation");
 
 		s_ForwardTechnique = CreateRef<RenderTechnique>();
 		s_ForwardTechnique->AddPass(CreateRef<ShadowMapPass>());
 		s_ForwardTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget));
+		s_DeferredTechnique->AddPass(environmentPass);
 		s_ForwardTechnique->AddPass(CreateRef<OpaquePass>(s_OpaquePipeline));
 		s_ForwardTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
-		s_ForwardTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline));
+		s_ForwardTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline, environmentPass));
 		//TODO: Fix particle bounce
 		s_ForwardTechnique->AddPass(CreateRef<TransparentPass>(s_TransparentPipeline));
 		s_ForwardTechnique->AddPass(CreateRef<ParticlePass>(s_ParticlesPipelineState, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_NormalTexture));

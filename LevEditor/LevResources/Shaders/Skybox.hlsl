@@ -27,11 +27,11 @@ PS_IN VSMain(VS_IN input)
 	return output;
 }
 
-TextureCube tex;
-SamplerState sam;
+TextureCube Cubemap;
+SamplerState Sampler;
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-	float3 finalColor = tex.Sample(sam, input.uv).rgb;
+	float3 finalColor = Cubemap.Sample(Sampler, input.uv).rgb;
 	return float4(finalColor, 1.0f);
 }

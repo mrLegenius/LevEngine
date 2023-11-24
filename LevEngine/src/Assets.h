@@ -246,6 +246,15 @@ struct ShaderAssets
 			ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
 		return shader;
 	}
+
+	static auto CubemapConvolution()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		static Ref<Shader> shader = Shader::Create(GetShaderPath("CubemapConvolution.hlsl"),
+			ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
+		return shader;
+	}
 };
 
 struct TextureAssets
