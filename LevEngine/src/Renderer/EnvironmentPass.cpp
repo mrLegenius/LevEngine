@@ -14,28 +14,34 @@
 
 namespace LevEngine
 {
-    EnvironmentPass::EnvironmentPass() : m_Cube(Primitives::CreateCube()) { }
+    EnvironmentPass::EnvironmentPass() : m_Cube(Primitives::CreateCube())
+    {
+    }
 
     void EnvironmentPass::Process(entt::registry& registry, RenderParams& params)
     {
         const auto group = registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
-        for (const auto entity : group)
+        if (group.empty()) return;
+        
+        const auto firstEntity = group[0];
+        Transform transform = group.get<Transform>(firstEntity);
+        const SkyboxRendererComponent skybox = group.get<SkyboxRendererComponent>(firstEntity);
+
+        if (!skybox.SkyboxTexture) return;
+
+        const auto& environmentMap = skybox.SkyboxTexture->GetTexture();
+
+        if (!environmentMap) return;
+
+        if (environmentMap == m_EnvironmentMap)
         {
-            Transform transform = group.get<Transform>(entity);
-            const SkyboxRendererComponent skybox = group.get<SkyboxRendererComponent>(entity);
-
-            if (!skybox.SkyboxTexture) return;
-
-            const auto& environmentMap = skybox.SkyboxTexture->GetTexture();
-
-            if (!environmentMap) continue;
-
-            if (environmentMap == m_EnvironmentMap) continue;
-
-            m_EnvironmentMap = environmentMap;
-            m_EnvironmentCubemap = CreateEnvironmentCubemap(environmentMap);
-            m_EnvironmentIrradianceCubemap = CreateIrradianceCubemap(m_EnvironmentCubemap);
+            m_EnvironmentIrradianceCubemap->Bind(10, ShaderType::Pixel);
+            return;
         }
+
+        m_EnvironmentMap = environmentMap;
+        m_EnvironmentCubemap = CreateEnvironmentCubemap(environmentMap);
+        m_EnvironmentIrradianceCubemap = CreateIrradianceCubemap(m_EnvironmentCubemap);
     }
 
     Ref<Texture> EnvironmentPass::CreateEnvironmentCubemap(const Ref<Texture>& environmentMap) const
@@ -48,7 +54,8 @@ namespace LevEngine
         return CreateCubemap(environmentCubemap, 512, ShaderAssets::CubemapConvolution());
     }
 
-    Ref<Texture> EnvironmentPass::CreateCubemap(const Ref<Texture>& sourceTexture, const uint32_t resolution, const Ref<Shader>& shader) const
+    Ref<Texture> EnvironmentPass::CreateCubemap(const Ref<Texture>& sourceTexture, const uint32_t resolution,
+                                                const Ref<Shader>& shader) const
     {
         const Texture::TextureFormat format{Texture::Components::RGBA, Texture::Type::Float, 1, 16, 16, 16, 16};
         auto renderTexture = Texture::CreateTextureCube(resolution, resolution, format, CPUAccess::None, false, false);
@@ -77,9 +84,9 @@ namespace LevEngine
         const auto constantBuffer = ConstantBuffer::Create(sizeof(Matrix) * 6, 6);
         constantBuffer->SetData(captureViews.data());
         pipe->GetShader(ShaderType::Geometry)->GetShaderParameterByName("cubeMapConstantBuffer").Set(constantBuffer);
-        
+
         sourceTexture->Bind(0, ShaderType::Pixel);
-        
+
         pipe->GetRasterizerState().SetViewport({0, 0, static_cast<float>(resolution), static_cast<float>(resolution)});
         pipe->Bind();
 

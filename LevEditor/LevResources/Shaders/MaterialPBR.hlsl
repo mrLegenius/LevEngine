@@ -36,10 +36,18 @@ SamplerState ambientOcclusionMapSampler : register(s4);
 Texture2D emissiveMap : register(t5);
 SamplerState emissiveMapSampler : register(s5);
 
+TextureCube irradianceMap : register(t10);
+SamplerState irradianceMapSampler : register(s11);
+
 float3 FresnelSchlick(float cosTheta, float3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
+
+float3 FresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
+{
+    return F0 + (max((float3)(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+} 
 
 float DistributionGGX(float3 N, float3 H, float roughness)
 {
@@ -103,6 +111,22 @@ float3 CalcPBR(
     float3 Lo = (kD * albedo / pi + specular) * color * NdotL;
 
     return Lo;
+}
+
+float3 CalcAmbient(
+    float3 normal, float3 viewDir, 
+    float3 albedo, float metallic, float roughness, float ao)
+{
+    float3 F0 = float3(0.04, 0.04, 0.04);
+    float3 kS = FresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, roughness);
+    float3 kD = 1.0 - kS;
+    kD *= 1.0 - metallic;
+
+    float3 irradiance = irradianceMap.Sample(irradianceMapSampler, normal).rgb;
+    float3 diffuse = irradiance * albedo;
+    float3 ambient = (kD * diffuse) * ao;
+
+    return ambient;
 }
 
 float3 CalcDirLight(
