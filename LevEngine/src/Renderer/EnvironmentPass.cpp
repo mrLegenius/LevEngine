@@ -3,6 +3,7 @@
 
 #include "PipelineState.h"
 #include "RenderCommand.h"
+#include "Renderer3D.h"
 #include "RenderTarget.h"
 #include "Texture.h"
 #include "3D/Mesh.h"
@@ -22,6 +23,15 @@ namespace LevEngine
             ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
         return shader;
     }
+
+    static auto BRDFIntegration()
+    {
+        LEV_PROFILE_FUNCTION();
+
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/BRDFIntegration.hlsl"),
+            ShaderType::Pixel | ShaderType::Vertex);
+        return shader;
+    }
     
     EnvironmentPass::EnvironmentPass() : m_Cube(Primitives::CreateCube())
     {
@@ -35,7 +45,7 @@ namespace LevEngine
         const auto firstEntity = group[0];
         Transform transform = group.get<Transform>(firstEntity);
         const SkyboxRendererComponent skybox = group.get<SkyboxRendererComponent>(firstEntity);
-
+        
         if (!skybox.SkyboxTexture) return;
 
         const auto& environmentMap = skybox.SkyboxTexture->GetTexture();
@@ -49,12 +59,19 @@ namespace LevEngine
         m_EnvironmentCubemap->GenerateMipMaps();
         m_EnvironmentIrradianceCubemap = CreateIrradianceCubemap(m_EnvironmentCubemap);
         m_EnvironmentPrefilterCubemap = CreatePrefilterCubemap(m_EnvironmentCubemap);
+        m_BRDFLutTexture = CreateBRDFLutTexture();
     }
 
     void EnvironmentPass::End(entt::registry& registry, RenderParams& params)
     {
         if (m_EnvironmentIrradianceCubemap)
             m_EnvironmentIrradianceCubemap->Bind(10, ShaderType::Pixel);
+
+        if (m_EnvironmentPrefilterCubemap)
+            m_EnvironmentPrefilterCubemap->Bind(11, ShaderType::Pixel);
+        
+        if (m_BRDFLutTexture)
+            m_BRDFLutTexture->Bind(12, ShaderType::Pixel);
     }
 
     Ref<Texture> EnvironmentPass::CreateEnvironmentCubemap(const Ref<Texture>& environmentMap) const
@@ -111,6 +128,35 @@ namespace LevEngine
         
         pipe->Unbind();
 
+        return renderTexture;
+    }
+
+    Ref<Texture> EnvironmentPass::CreateBRDFLutTexture() const
+    {
+        constexpr uint32_t resolution = 512;
+        const auto shader = BRDFIntegration();
+        const auto textureFormat = Texture::TextureFormat { Texture::Components::RG, Texture::Type::Float,
+            1,
+            16, 16, 0, 0};
+
+        const auto renderTexture = Texture::CreateTexture2D(resolution, resolution, 1, textureFormat);
+
+        const auto renderTarget = RenderTarget::Create();
+        renderTarget->AttachTexture(AttachmentPoint::Color0, renderTexture);
+
+        const auto pipe = CreateRef<PipelineState>();
+        pipe->SetShader(ShaderType::Pixel, shader);
+        pipe->SetShader(ShaderType::Vertex, shader);
+        pipe->SetRenderTarget(renderTarget);
+        pipe->GetRasterizerState().SetCullMode(CullMode::None);
+        pipe->GetRasterizerState().SetDepthClipEnabled(false);
+
+        pipe->GetRasterizerState().SetViewport({0, 0, static_cast<float>(resolution), static_cast<float>(resolution)});
+        pipe->Bind();
+
+        RenderCommand::DrawFullScreenQuad();
+        
+        pipe->Unbind();
         return renderTexture;
     }
 
