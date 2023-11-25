@@ -74,7 +74,7 @@ float4 PSMain(GS_OUT input) : SV_Target
         for(float theta = 0.0f; theta < 0.5f * PI; theta += sampleDelta)
         {
             // spherical to cartesian (in tangent space)
-            float3 tangentSample = float3(sin(theta) * cos(phi),  sin(theta) * sin(phi), cos(theta));
+            float3 tangentSample = float3(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
             // tangent space to world
             float3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal; 
 

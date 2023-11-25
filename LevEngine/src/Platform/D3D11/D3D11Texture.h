@@ -60,6 +60,7 @@ public:
 	[[nodiscard]] bool IsTransparent() const override { return m_IsTransparent; }
 
 	void Resize(uint16_t width, uint16_t height = 0, uint16_t depth = 0) override;
+	Ref<Texture> GetMipMapLevel(int level) const override;
 	void CopyFrom(Ref<Texture> sourceTexture) override;
 	Ref<Texture> Clone() override;
 	uint8_t GetBPP() const override { return m_BPP; }

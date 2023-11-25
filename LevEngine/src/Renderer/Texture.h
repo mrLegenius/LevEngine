@@ -129,7 +129,8 @@ namespace LevEngine
 		[[nodiscard]] const String& GetPath() const { return m_Path; }
 
 		[[nodiscard]] virtual Ref<Texture> GetSlice(unsigned int slice) const = 0;
-
+		[[nodiscard]] virtual Ref<Texture> GetMipMapLevel(int level) const = 0;
+		
 		[[nodiscard]] virtual uint16_t GetWidth() const = 0;
 		[[nodiscard]] virtual uint16_t GetHeight() const = 0;
 		[[nodiscard]] virtual uint16_t GetDepth() const = 0;

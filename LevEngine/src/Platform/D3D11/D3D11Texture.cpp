@@ -2671,13 +2671,53 @@ void D3D11Texture::Resize(uint16_t width, uint16_t height, uint16_t depth)
 		//Resize3D(width, height, depth); //TODO: Texture3D Support
 		break;
 	case Dimension::TextureCube:
-		ResizeCube(width, height); //TODO: TextureCube Support
+		ResizeCube(width, height);
 		break;
 	default:
 		LEV_THROW("Unknown texture dimension")
         break;
 	}
 }
+
+Ref<Texture> D3D11Texture::GetMipMapLevel(int level) const
+{
+    //TODO: Support for other dimensions
+
+    //<--- Texture Cube ---<<
+    Ref<D3D11Texture> mipMapTexture = CreateRef<D3D11Texture>();
+    {
+        D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+        renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+        renderTargetViewDesc.Format = m_RenderTargetViewFormat;
+        renderTargetViewDesc.Texture2DArray.MipSlice = level;
+        renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
+        renderTargetViewDesc.Texture2DArray.ArraySize = m_NumSlices;
+
+        const auto res = device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &mipMapTexture->m_RenderTargetView);
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create render target view")
+    }
+    
+    ID3D11Resource* mipRes;
+    mipMapTexture->m_RenderTargetView->GetResource(&mipRes);
+    {
+        D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc;
+        resourceViewDesc.Format = m_ShaderResourceViewFormat;
+
+        resourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+        resourceViewDesc.Texture2DArray.FirstArraySlice = 0;
+        resourceViewDesc.Texture2DArray.ArraySize = 6;
+        resourceViewDesc.Texture2DArray.MipLevels = 1;
+        resourceViewDesc.Texture2DArray.MostDetailedMip = level;
+        
+        const auto res = device->CreateShaderResourceView(mipRes, &resourceViewDesc, &mipMapTexture->m_ShaderResourceView);
+        LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
+    }
+
+    mipRes->Release();
+
+    return mipMapTexture;
+}
+    
 
 void D3D11Texture::CopyFrom(const Ref<Texture> sourceTexture)
 {
