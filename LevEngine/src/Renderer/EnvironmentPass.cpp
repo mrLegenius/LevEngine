@@ -76,17 +76,17 @@ namespace LevEngine
 
     Ref<Texture> EnvironmentPass::CreateEnvironmentCubemap(const Ref<Texture>& environmentMap) const
     {
-        return CreateCubemap(environmentMap, 512, ShaderAssets::EquirectangularToCubemap());
+        return CreateCubemap(environmentMap, 1024, ShaderAssets::EquirectangularToCubemap());
     }
 
     Ref<Texture> EnvironmentPass::CreateIrradianceCubemap(const Ref<Texture>& environmentCubemap) const
     {
-        return CreateCubemap(environmentCubemap, 512, ShaderAssets::CubemapConvolution());
+        return CreateCubemap(environmentCubemap, 32, ShaderAssets::CubemapConvolution());
     }
     
     Ref<Texture> EnvironmentPass::CreatePrefilterCubemap(const Ref<Texture>& sourceTexture) const
     {
-        constexpr uint32_t resolution = 512;
+        constexpr uint32_t resolution = 128;
         const Ref<Shader> shader = EnvironmentPreFiltering();
         auto renderTexture = CreateRenderTexture(resolution, true);
         
