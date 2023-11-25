@@ -37,7 +37,13 @@ Texture2D emissiveMap : register(t5);
 SamplerState emissiveMapSampler : register(s5);
 
 TextureCube irradianceMap : register(t10);
-SamplerState irradianceMapSampler : register(s11);
+SamplerState irradianceMapSampler : register(s10);
+
+TextureCube prefilterMap : register(t11);
+SamplerState prefilterMapSampler : register(s11);
+
+Texture2D brdfLUT : register(t12);
+SamplerState brdfLUTSampler : register(s12);
 
 float3 FresnelSchlick(float cosTheta, float3 F0)
 {
@@ -118,13 +124,21 @@ float3 CalcAmbient(
     float3 albedo, float metallic, float roughness, float ao)
 {
     float3 F0 = float3(0.04, 0.04, 0.04);
-    float3 kS = FresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, roughness);
+    float3 F = FresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, roughness);
+    float3 kS = F;
     float3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;
 
     float3 irradiance = irradianceMap.Sample(irradianceMapSampler, normal).rgb;
     float3 diffuse = irradiance * albedo;
-    float3 ambient = (kD * diffuse) * ao;
+
+    float3 R = reflect(-viewDir, normal);
+    const float MAX_REFLECTION_LOD = 4.0;
+    float3 prefilteredColor = prefilterMap.SampleLevel(prefilterMapSampler, R, roughness * MAX_REFLECTION_LOD).rgb; 
+    float2 brdf  = brdfLUT.Sample(brdfLUTSampler, float2(max(dot(normal, viewDir), 0.0), roughness)).rg;
+    float3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+
+    float3 ambient = (kD * diffuse + specular) * ao;
 
     return ambient;
 }
