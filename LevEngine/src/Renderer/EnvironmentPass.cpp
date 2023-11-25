@@ -204,12 +204,12 @@ namespace LevEngine
         const Matrix captureProjection = Matrix::CreatePerspectiveFieldOfView(Math::PiDiv2, 1.0f, 0.1f, 10.0f);
         const Array<Matrix, 6> captureViews =
         {
-            Matrix::CreateLookAt(Vector3::Zero, Vector3::Right, Vector3::Down) * captureProjection,
-            Matrix::CreateLookAt(Vector3::Zero, Vector3::Left, Vector3::Down) * captureProjection,
-            Matrix::CreateLookAt(Vector3::Zero, Vector3::Down, Vector3::Forward) * captureProjection,
+            Matrix::CreateLookAt(Vector3::Zero, Vector3::Right, Vector3::Up) * captureProjection,
+            Matrix::CreateLookAt(Vector3::Zero, Vector3::Left, Vector3::Up) * captureProjection,
             Matrix::CreateLookAt(Vector3::Zero, Vector3::Up, Vector3::Backward) * captureProjection,
-            Matrix::CreateLookAt(Vector3::Zero, Vector3::Backward, Vector3::Down) * captureProjection,
-            Matrix::CreateLookAt(Vector3::Zero, Vector3::Forward, Vector3::Down) * captureProjection
+            Matrix::CreateLookAt(Vector3::Zero, Vector3::Down, Vector3::Forward) * captureProjection,
+            Matrix::CreateLookAt(Vector3::Zero, Vector3::Forward, Vector3::Up) * captureProjection,
+            Matrix::CreateLookAt(Vector3::Zero, Vector3::Backward, Vector3::Up) * captureProjection,
         };
 
         return captureViews;
