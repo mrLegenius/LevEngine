@@ -202,6 +202,51 @@ namespace LevEngine
 			Matrix::CreateFromQuaternion(GetWorldRotation()) *
 			Matrix::CreateTranslation(GetWorldPosition());
 	}
+	
+	void Transform::CreateLuaBind(sol::state& lua)
+	{
+		lua.new_usertype <Transform>(
+			"Transform",
+			"type_id", &entt::type_hash<Transform>::value,
+			sol::call_constructor,
+			sol::factories(
+				[]()
+				{
+					return Transform();
+				},
+				[](const Entity entity)
+				{
+					return Transform(entity);
+				}),
+			"position", &Transform::position,
+			"getWorldPosition", [](Transform& transform) 
+			{
+				return transform.GetWorldPosition();
+			},
+			"setWorldPosition", [](Transform& transform, const Vector3& position)
+			{
+				return transform.SetWorldPosition(position);
+			},
+			"scale", &Transform::scale,
+			"getWorldScale", [](Transform& transform)
+			{
+				return transform.GetWorldScale();
+			},
+			"setWorldScale", [](Transform& transform, const Vector3& scale)
+			{
+				return transform.SetWorldScale(scale);
+			},
+			"rotation", &Transform::rotation,
+			"getWorldRotation", [](Transform& transform)
+			{
+				return transform.GetWorldRotation();
+			},
+			"setWorldRotation", [](Transform& transform, const Quaternion& rotation)
+			{
+				return transform.SetWorldRotation(rotation);
+			}
+		);
+	}
 
 	class TransformSerializer final : public ComponentSerializer<Transform, TransformSerializer>
 	{

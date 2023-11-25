@@ -15,6 +15,8 @@
 #include "Math/Random.h"
 #include "Time/Time.h"
 #include "Time/TimelineRunner.h"
+#include "Scripting/ScriptingManager.h"
+#include "Scene/SceneManager.h"
 
 namespace LevEngine
 {
@@ -35,6 +37,8 @@ Application::Application(const ApplicationSpecification& specification)
 
 	Renderer::Init();
 	Random::Init();
+	m_Lua = CreateRef<sol::state>();
+	Scripting::ScriptingManager::Init(*m_Lua);
 	Audio::Init(Audio::MaxAudioChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE,
 		FMOD_INIT_VOL0_BECOMES_VIRTUAL | FMOD_INIT_3D_RIGHTHANDED);
 
@@ -50,6 +54,8 @@ Application::~Application()
 {
 	Renderer::Shutdown();
 	Audio::Shutdown();
+	Scripting::ScriptingManager::Shutdown();
+	SceneManager::Shutdown();
 }
 
 void Application::Run()

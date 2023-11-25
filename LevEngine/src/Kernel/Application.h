@@ -9,6 +9,7 @@
 #include "../Events/MouseEvent.h"
 #include "GUI/ImGuiLayer.h"
 #include "Physics/Physics.h"
+#include "sol/sol.hpp"
 
 namespace LevEngine
 {
@@ -46,6 +47,9 @@ public:
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
 	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
+	Ref<sol::state> GetLuaState() {
+		return m_Lua;
+	}
 
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
@@ -77,6 +81,8 @@ private:
 	ApplicationSpecification m_Specification;
 
 	static Application* s_Instance;
+
+	Ref<sol::state> m_Lua;
 };
 
 using App = Application;

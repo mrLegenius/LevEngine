@@ -3,6 +3,7 @@
 #include "MouseButtonCodes.h"
 #include "DataTypes/UnorderedMap.h"
 #include "Math/Vector2.h"
+#include <sol/sol.hpp>
 
 namespace LevEngine
 {
@@ -26,6 +27,8 @@ public:
 	static Vector2 GetMouseDelta();
 	static float GetMouseX();
 	static float GetMouseY();
+
+	static void CreateLuaBind(sol::state& lua);
 
 private:
 	enum class State

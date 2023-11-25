@@ -1,9 +1,11 @@
 #pragma once
 #include "entt/entt.hpp"
 #include "Components/Components.h"
+#include <sol/sol.hpp>
 
 namespace LevEngine
 {
+class Scene;
 class Entity
 {
 public:
@@ -12,56 +14,30 @@ public:
 
 	~Entity() = default;
 
+	static void CreateLuaEntityBind(sol::state& lua, Scene* scene);
+
+	template<class TComponent>
+	static void RegisterMetaComponent();
+
 	template<typename T>
-	bool HasComponent() const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-		return m_Handle.any_of<T>();
-	}
+	bool HasComponent() const;
 
 	template<typename T, typename ... Args>
-	T& AddComponent(Args&& ... args) const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-		LEV_CORE_ASSERT(!HasComponent<T>(), "Entity already has this component");
-
-		T& component = m_Handle.emplace<T>(std::forward<Args>(args)...);
-		return component;
-	}
+	T& AddComponent(Args&& ... args) const;
 
 	template<typename T, typename... Args>
-	T& AddOrReplaceComponent(Args&&... args) const
-	{
-		T& component = m_Handle.emplace_or_replace<T>(std::forward<Args>(args)...);
-		return component;
-	}
+	T& AddOrReplaceComponent(Args&&... args) const;
 
 	template<typename T>
-	T& GetComponent() const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-		LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
-
-		return m_Handle.get<T>();
-	}
+	T& GetComponent() const;
 
 	template<typename T>
-	T& GetOrAddComponent() const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-
-		return m_Handle.get_or_emplace<T>();
-	}
+	T& GetOrAddComponent() const;
 
 	template<typename T>
-	void RemoveComponent() const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-		LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
+	void RemoveComponent() const;
 
-		auto _ = m_Handle.remove<T>();
-	}
-
+	// TODO Remove
 	template <typename T>
 	void AddScript();
 
@@ -82,14 +58,25 @@ public:
 	}
 
 	template<typename  T>
-	Entity GetOtherEntity(const T& component)
-	{
-		auto& registry = *m_Handle.registry();
-		const auto entity = entt::to_entity(registry, component);
-		return Entity{ entt::handle{registry, entity} };
-	}
+	Entity GetOtherEntity(const T& component);
 
 private:
 	entt::handle m_Handle;
 };
+
+// Lua functions
+
+template <class TComponent>
+auto add_component(Entity& entity, const sol::table& component, sol::this_state state);
+
+template <class TComponent>
+auto has_component(Entity& entity);
+
+template <class TComponent>
+auto get_component(Entity& entity, sol::this_state state);
+
+template <class TComponent>
+auto remove_component(Entity& entity);
 }
+
+#include "Entity.inl"

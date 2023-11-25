@@ -1,5 +1,6 @@
 #include "levpch.h"
 #include "Input.h"
+#include "Math/Vector2.h"
 
 namespace LevEngine
 {
@@ -84,6 +85,18 @@ float Input::GetMouseX()
 float Input::GetMouseY()
 {
 	return s_MousePositionY;
+}
+
+void Input::CreateLuaBind(sol::state& lua)
+{
+	lua.new_usertype<Input>(
+		"Input",
+		sol::no_constructor,
+		"getMouseDelta", []()
+		{
+			return GetMouseDelta();
+		}
+	);
 }
 
 void Input::OnKeyPressed(const KeyCode keyCode)

@@ -7,6 +7,22 @@ namespace LevEngine
 {
 	CameraComponent::CameraComponent() = default;
 
+	void CameraComponent::CreateLuaBind(sol::state& lua)
+	{
+		lua.new_usertype<CameraComponent>(
+			"CameraComponent",
+			"type_id", &entt::type_hash<CameraComponent>::value,
+			sol::call_constructor,
+			sol::factories(
+				[]()
+				{
+					return CameraComponent{};
+				}),
+			"isMain", &CameraComponent::IsMain,
+			"fixAspectRatio", &CameraComponent::FixedAspectRatio
+		);
+	}
+
 	class CameraSerializer final : public ComponentSerializer<CameraComponent, CameraSerializer>
 	{
 	protected:
