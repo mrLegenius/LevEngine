@@ -58,13 +58,16 @@ namespace Sandbox
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
 
+		scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
+		scene->RegisterUpdateSystem<RigidbodyInitSystem>();
 
 		auto& registry = scene->GetRegistry();
 		registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
 		registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
 
 		registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
-
+		
+		registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
 
 		Application::Get().GetWindow().DisableCursor();
 	}
