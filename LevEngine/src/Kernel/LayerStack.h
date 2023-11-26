@@ -1,10 +1,11 @@
 ﻿#pragma once
-#include "Layer.h"
 #include "DataTypes/Vector.h"
 
 namespace LevEngine
 {
-class LayerStack
+	class Layer;
+
+	class LayerStack
 {
 public:
 	LayerStack();

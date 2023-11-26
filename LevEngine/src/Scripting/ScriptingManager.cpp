@@ -1,13 +1,16 @@
 #include "levpch.h"
 #include "ScriptingManager.h"
-#include "Scene/Serializers/SerializerUtils.h"
 #include "ScriptingSystems.h"
 #include "ScriptingComponent.h"
+
 #include "MetaUtilities.h"
-#include "Scene/Scene.h"
 #include "MathLuaBindings.h"
 #include "LuaComponentsBinder.h"
 
+#include "Scene/Scene.h"
+#include "Scene/Serializers/SerializerUtils.h"
+
+#include "Scene/Components/Transform/Transform.h"
 #include "Scene/Components/Camera/Camera.h"
 
 #define RegisterComponent(x)    LuaComponentsBinder::Create##x##LuaBind(*m_Lua);\
@@ -55,8 +58,8 @@ namespace LevEngine::Scripting
 	            auto scriptName = script.as<String>();
                 try
                 {
-                    auto result = m_Lua->safe_script_file((scriptsDir / (scriptName + ".m_Lua").c_str()).string().c_str());
-                    Log::CoreInfo("Loading m_Lua script: {0}", scriptName);
+                    auto result = m_Lua->safe_script_file((scriptsDir / (scriptName + ".lua").c_str()).string().c_str());
+                    Log::CoreInfo("Loading lua script: {0}", scriptName);
 
                     sol::table system = (*m_Lua)[scriptName.c_str()];
                     
@@ -64,21 +67,21 @@ namespace LevEngine::Scripting
                 }
                 catch (const sol::error& err)
                 {
-                    Log::CoreError("Error loading m_Lua script {0}: {1}", scriptName, err.what());
+                    Log::CoreError("Error loading lua script {0}: {1}", scriptName, err.what());
                     return false;
                 }
             }
         }
         catch (std::exception& e)
         {
-            Log::CoreWarning("Failed to load m_Lua scripts. Error: {}", e.what());
+            Log::CoreWarning("Failed to load lua scripts. Error: {}", e.what());
             return false;
         }
 
         return true;
     }
 
-    void ScriptingManager::RegisterSystems(Scene* const scene)
+    void ScriptingManager::RegisterSystems(Scene* scene)
     {
         for (const auto& [name, system] : m_Systems)
         {

@@ -1,5 +1,4 @@
 #pragma once
-
 namespace Sandbox
 {
     class EnemySpawnSystem final : public System

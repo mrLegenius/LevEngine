@@ -3,6 +3,7 @@
 
 #include "RenderCommand.h"
 #include "3D/Primitives.h"
+#include "Assets/SkyboxAsset.h"
 #include "Scene/Components/SkyboxRenderer/SkyboxRenderer.h"
 #include "Scene/Components/Transform/Transform.h"
 

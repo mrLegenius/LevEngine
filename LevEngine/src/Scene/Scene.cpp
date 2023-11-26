@@ -23,12 +23,12 @@ namespace LevEngine
     {
         using namespace Scripting;
 
-        const auto ScriptingManager = Application::Get().GetScriptingManager();
-        ScriptingManager->CreateRegistryBind(m_Registry);
+        auto ScriptingManager = Application::Get().GetScriptingManager();
+        ScriptingManager.CreateRegistryBind(m_Registry);
 
-        LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager->GetLuaState()), this);
+        LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager.GetLuaState()), this);
 
-        ScriptingManager->RegisterSystems(this);
+        ScriptingManager.RegisterSystems(this);
     }
 
     void Scene::CleanupScene()

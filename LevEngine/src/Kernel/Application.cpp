@@ -10,9 +10,10 @@
 #include "../Events/MouseEvent.h"
 #include "../Input/Input.h"
 #include "../Events/Event.h"
-#include "Assets/AssetDatabase.h"
 #include "Audio/Audio.h"
+#include "GUI/ImGuiLayer.h"
 #include "Math/Random.h"
+#include "Physics/Physics.h"
 #include "Time/Time.h"
 #include "Time/TimelineRunner.h"
 #include "Scripting/ScriptingManager.h"
@@ -35,7 +36,7 @@ Application::Application(const ApplicationSpecification& specification)
 
 	m_Physics = Physics::Create();
 
-	m_ScriptingManager = CreateRef<Scripting::ScriptingManager>();
+	m_ScriptingManager = CreateScope<Scripting::ScriptingManager>();
 
 	Renderer::Init();
 	Random::Init();
@@ -177,9 +178,14 @@ void Application::OnEvent(Event& e)
 	}
 }
 
-Ref<Scripting::ScriptingManager> Application::GetScriptingManager()
+Physics& Application::GetPhysics() const
 {
-	return m_ScriptingManager;
+	return *m_Physics;
+}
+
+Scripting::ScriptingManager& Application::GetScriptingManager()
+{
+	return *m_ScriptingManager;
 }
 
 bool Application::OnWindowClosed(WindowClosedEvent& e)

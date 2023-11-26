@@ -1,10 +1,9 @@
 ﻿#pragma once
 #include "Asset.h"
-#include "TextureLibrary.h"
-#include "Renderer/Texture.h"
 
 namespace LevEngine
 {
+	class Texture;
 	class TextureAsset final : public Asset
 	{
 	public:

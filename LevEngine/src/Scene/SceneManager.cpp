@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "SceneManager.h"
 
+#include "Scene.h"
 #include "Audio/Audio.h"
 #include "Serializers/SceneSerializer.h"
 #include "Kernel/Application.h"

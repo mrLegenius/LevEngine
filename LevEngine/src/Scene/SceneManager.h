@@ -1,9 +1,10 @@
 #pragma once
-#include "Scene.h"
 #include "DataTypes/Path.h"
 
 namespace LevEngine
 {
+    class Scene;
+
     class SceneManager
     {
     public:

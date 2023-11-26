@@ -7,7 +7,9 @@
 
 namespace LevEngine
 {
-struct MeshModelBufferData
+	class Mesh;
+
+	struct MeshModelBufferData
 {
 	Matrix Model;
 	Matrix TransposedInvertedModel;

@@ -1,8 +1,8 @@
 ﻿#include "levpch.h"
 #include "SkyboxRenderer.h"
+#include "Assets/SkyboxAsset.h"
 
 #include "../ComponentSerializer.h"
-#include "Assets/AssetDatabase.h"
 
 namespace LevEngine
 {

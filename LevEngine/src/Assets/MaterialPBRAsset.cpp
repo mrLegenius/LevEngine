@@ -1,5 +1,6 @@
 #include "levpch.h"
 #include "MaterialPBRAsset.h"
+#include "TextureAsset.h"
 
 #include "Scene/Serializers/SerializerUtils.h"
 

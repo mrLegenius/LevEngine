@@ -4,6 +4,7 @@
 #include "../Entity.h"
 #include "Kernel/ClassCollection.h"
 #include "Physics/Components/Rigidbody.h"
+#include "Scene/Scene.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine

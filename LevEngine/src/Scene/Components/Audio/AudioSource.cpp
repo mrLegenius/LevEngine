@@ -4,6 +4,7 @@
 #include "Audio/AudioPlayer.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/SceneManager.h"
+#include "Assets/AudioBankAsset.h"
 
 namespace LevEngine
 {

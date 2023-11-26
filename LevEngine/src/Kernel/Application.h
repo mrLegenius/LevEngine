@@ -4,15 +4,19 @@
 
 #include "Window.h"
 
-#include "../Events/ApplicationEvent.h"
-#include "../Events/KeyEvent.h"
-#include "../Events/MouseEvent.h"
-#include "GUI/ImGuiLayer.h"
-#include "Physics/Physics.h"
-#include "sol/sol.hpp"
-
 namespace LevEngine
 {
+	class WindowResizedEvent;
+	class WindowClosedEvent;
+	class KeyReleasedEvent;
+	class KeyPressedEvent;
+	class MouseScrolledEvent;
+	class MouseButtonReleasedEvent;
+	class MouseButtonPressedEvent;
+	class MouseMovedEvent;
+	class Physics;
+	class ImGuiLayer;
+
 	namespace Scripting
 	{
 		class ScriptingManager;
@@ -52,13 +56,13 @@ public:
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
 	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
-	Ref<Scripting::ScriptingManager> GetScriptingManager();
 	
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
 	[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 	
-	[[nodiscard]] Physics& GetPhysics() const { return *m_Physics; }
+	[[nodiscard]] Physics& GetPhysics() const;
+	[[nodiscard]] Scripting::ScriptingManager& GetScriptingManager();
 	
 private:
 	bool OnWindowClosed(WindowClosedEvent& e);
@@ -85,7 +89,7 @@ private:
 
 	static Application* s_Instance;
 
-	Ref<Scripting::ScriptingManager> m_ScriptingManager;
+	Scope<Scripting::ScriptingManager> m_ScriptingManager;
 };
 
 using App = Application;

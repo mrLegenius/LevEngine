@@ -4,6 +4,15 @@
 
 namespace LevEngine
 {
+	Asset::Asset(const Path& path, const UUID uuid): m_Name(path.stem().string().c_str())
+	                                                 , m_FullName(path.filename().string().c_str())
+	                                                 , m_Extension(path.extension().string().c_str())
+	                                                 , m_MetaPath(path.string().append(".meta").c_str())
+	                                                 , m_Path(path)
+	                                                 , m_UUID(uuid)
+	{
+	}
+
 	void Asset::Serialize()
 	{
 		SerializeData();
@@ -53,6 +62,15 @@ namespace LevEngine
 		{
 			Log::CoreWarning("Failed to serialize meta of '{0}' asset. Error: {1}", m_Name, e.what());
 		}
+	}
+
+	void Asset::Rename(const Path& path)
+	{
+		m_Name = path.stem().string().c_str();
+		m_FullName = path.filename().string().c_str();
+		m_Extension = path.extension().string().c_str();
+		m_MetaPath = path.string().append(".meta").c_str();
+		m_Path = path;
 	}
 
 	bool Asset::Deserialize()

@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "FPSGame.h"
 
+#include "Project.h"
+#include "Assets/PrefabAsset.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
