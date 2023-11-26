@@ -44,7 +44,6 @@ namespace LevEngine::Editor
     {
         EventDispatcher dispatcher{ event };
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
-        dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResized));
     }
     void EditorLayer::OnUpdate(const float deltaTime)
     {
@@ -139,17 +138,6 @@ namespace LevEngine::Editor
         if (m_Viewport->OnKeyPressed(event))
             return true;
         
-        return false;
-    }
-    bool EditorLayer::OnWindowResized(const WindowResizedEvent& e)
-    {
-        const auto height = e.GetHeight();
-        const auto width = e.GetWidth();
-        
-        if (width == 0 || height == 0) return false;
-
-        SceneManager::GetActiveScene()->OnViewportResized(e.GetWidth(), e.GetHeight());
-        Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
         return false;
     }
     

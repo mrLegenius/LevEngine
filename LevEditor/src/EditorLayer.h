@@ -28,7 +28,6 @@ namespace LevEngine::Editor
         void OnSceneStop();
         void OnEvent(Event& event) override;
         bool OnKeyPressed(KeyPressedEvent& event) const;
-        static bool OnWindowResized(const WindowResizedEvent& e);
         void OnGUIRender() override;
 
     private:

@@ -190,15 +190,23 @@ bool Application::OnWindowClosed(WindowClosedEvent& e)
 
 bool Application::OnWindowResized(WindowResizedEvent& e)
 {
-	if (e.GetWidth() == 0 || e.GetHeight() == 0)
+	const auto height = e.GetHeight();
+	const auto width = e.GetWidth();
+	
+	if (width == 0 || height == 0)
 	{
 		m_Minimized = true;
 
 		return false;
 	}
 
-	m_Window->GetContext()->ResizeBackBuffer(e.GetWidth(), e.GetHeight());
+	m_Window->GetContext()->ResizeBackBuffer(width, height);
 
+	if (width == 0 || height == 0) return false;
+		
+	SceneManager::GetActiveScene()->OnViewportResized(width, height);
+	Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
+	
 	m_Minimized = false;
 
 	return false;
