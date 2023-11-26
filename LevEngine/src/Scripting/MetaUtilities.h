@@ -14,18 +14,7 @@ namespace LevEngine::Scripting
 	template <class... Args>
 	inline auto InvokeMetaFunction(entt::id_type typeId, entt::id_type functionId, Args &&...args);
 
-	template <typename T> [[nodiscard]] entt::id_type deduce_type(T&& obj) {
-		switch (obj.get_type()) {
-			// in m_Lua: registry:has(e, Transform.type_id())
-		case sol::type::number:
-			return obj.as<entt::id_type>();
-			// in m_Lua: registry:has(e, Transform)
-		case sol::type::table:
-			return get_type_id(obj);
-		}
-		assert(false);
-		return -1;
-	}
+	template <typename T> [[nodiscard]] entt::id_type DeduceType(T&& obj);
 }
 
 #include "MetaUtilities.inl"

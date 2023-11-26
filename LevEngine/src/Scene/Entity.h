@@ -1,7 +1,6 @@
 #pragma once
 #include "entt/entt.hpp"
 #include "Components/Components.h"
-#include <sol/sol.hpp>
 
 namespace LevEngine
 {
@@ -31,10 +30,6 @@ public:
 
 	template<typename T>
 	void RemoveComponent() const;
-
-	// TODO Remove
-	template <typename T>
-	void AddScript();
 
 	UUID GetUUID() const { return GetComponent<IDComponent>().ID; }
 	const String& GetName() const { return GetComponent<TagComponent>().tag; }
