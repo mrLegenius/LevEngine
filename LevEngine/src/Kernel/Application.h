@@ -1,17 +1,28 @@
 #pragma once
 
 #include "LayerStack.h"
-#define NOMINMAX
-#include "Window.h"
 
-#include "../Events/ApplicationEvent.h"
-#include "../Events/KeyEvent.h"
-#include "../Events/MouseEvent.h"
-#include "GUI/ImGuiLayer.h"
+#include "Window.h"
 
 namespace LevEngine
 {
-struct ApplicationCommandLineArgs
+	class WindowResizedEvent;
+	class WindowClosedEvent;
+	class KeyReleasedEvent;
+	class KeyPressedEvent;
+	class MouseScrolledEvent;
+	class MouseButtonReleasedEvent;
+	class MouseButtonPressedEvent;
+	class MouseMovedEvent;
+	class Physics;
+	class ImGuiLayer;
+
+	namespace Scripting
+	{
+		class ScriptingManager;
+	}
+
+	struct ApplicationCommandLineArgs
 {
 	int Count = 0;
 	char** Args = nullptr;
@@ -45,10 +56,14 @@ public:
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
 	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
-
+	
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
 	[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
+	
+	[[nodiscard]] Physics& GetPhysics() const;
+	[[nodiscard]] Scripting::ScriptingManager& GetScriptingManager();
+	
 private:
 	bool OnWindowClosed(WindowClosedEvent& e);
 	bool OnWindowResized(WindowResizedEvent& e);
@@ -63,6 +78,8 @@ private:
 	Scope<Window> m_Window;
 	bool m_IsRunning = true;
 
+	Scope<Physics> m_Physics;
+	
 	LayerStack m_LayerStack;
 
 	float m_LastFrameTime = 0.0f;
@@ -71,5 +88,9 @@ private:
 	ApplicationSpecification m_Specification;
 
 	static Application* s_Instance;
+
+	Scope<Scripting::ScriptingManager> m_ScriptingManager;
 };
+
+using App = Application;
 }

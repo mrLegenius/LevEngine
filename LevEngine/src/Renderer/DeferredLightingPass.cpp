@@ -1,7 +1,11 @@
 ﻿#include "levpch.h"
 #include "DeferredLightingPass.h"
 
+#include "PipelineState.h"
 #include "Renderer3D.h"
+#include "RenderTarget.h"
+#include "Camera/SceneCamera.h"
+#include "Math/BoundingVolume.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
@@ -44,7 +48,7 @@ namespace LevEngine
 			if (RenderSettings::UseFrustumCulling)
 			{
 				auto sphereBoundingVolume = SphereBoundingVolume{worldPosition, light.Range};
-				if (!sphereBoundingVolume.IsOnFrustum(params.Camera.GetFrustum()))
+				if (!sphereBoundingVolume.IsOnFrustum(params.Camera->GetFrustum()))
 				{
 					m_LightParams.LightIndex++;
 					continue;

@@ -1,8 +1,9 @@
 ﻿#include "levpch.h"
 #include "MeshRenderer.h"
+#include "Assets/MaterialAsset.h"
+#include "Assets/MeshAsset.h"
 
 #include "../ComponentSerializer.h"
-#include "Assets/AssetDatabase.h"
 
 namespace LevEngine
 {

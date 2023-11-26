@@ -1,13 +1,17 @@
 #pragma once
-#include "ConstantBuffer.h"
-#include "RenderTechnique.h"
 #include "RenderSettings.h"
+#include "Math/Math.h"
 #include "Scene/Components/Lights/Lights.h"
-#include "Scene/Components/MeshRenderer/MeshRenderer.h"
+
 
 namespace LevEngine
 {
-struct MeshModelBufferData
+	struct DirectionalLightComponent;
+	struct MeshRendererComponent;
+	class SceneCamera;
+	class Mesh;
+
+	struct MeshModelBufferData
 {
 	Matrix Model;
 	Matrix TransposedInvertedModel;
@@ -42,7 +46,7 @@ class Renderer3D
 public:
 	static void Init();
 
-	static void SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
+	static void SetCameraBuffer(const SceneCamera* camera, const Matrix& viewMatrix, const Vector3& position);
 	static void DrawMesh(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);
 	static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader);
 	

@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "SceneManager.h"
 
+#include "Scene.h"
 #include "Audio/Audio.h"
 #include "Serializers/SceneSerializer.h"
 #include "Kernel/Application.h"
@@ -41,6 +42,10 @@ namespace LevEngine
     {
         m_ActiveScenePath = Path();
         return m_ActiveScene = CreateRef<Scene>();
+    }
+    void SceneManager::Shutdown()
+    {
+        m_ActiveScene = nullptr;
     }
 }
 

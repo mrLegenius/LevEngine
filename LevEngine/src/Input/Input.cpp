@@ -1,5 +1,6 @@
 #include "levpch.h"
 #include "Input.h"
+#include "Math/Vector2.h"
 
 namespace LevEngine
 {
@@ -66,12 +67,12 @@ float Input::GetMouseWheelOffset()
 	return s_MouseWheelOffset;
 }
 
-Pair<float, float> Input::GetMousePosition()
+Vector2 Input::GetMousePosition()
 {
 	return { s_MousePositionX, s_MousePositionY };
 }
 
-Pair<float, float> Input::GetMouseDelta()
+Vector2 Input::GetMouseDelta()
 {
 	return { s_MousePositionX - s_MousePreviousX, s_MousePositionY - s_MousePreviousY };
 }

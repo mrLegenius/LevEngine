@@ -1,12 +1,13 @@
 #pragma once
-#include "ConstantBuffer.h"
 #include "RenderPass.h"
-#include "PipelineState.h"
-#include "3D/Mesh.h"
 
 namespace LevEngine
 {
-class SkyboxPass final : public RenderPass
+	class ConstantBuffer;
+	class Mesh;
+	class PipelineState;
+
+	class SkyboxPass final : public RenderPass
 {
 public:
 	explicit SkyboxPass(const Ref<PipelineState>& pipeline);

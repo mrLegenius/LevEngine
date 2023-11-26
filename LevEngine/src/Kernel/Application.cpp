@@ -10,11 +10,17 @@
 #include "../Events/MouseEvent.h"
 #include "../Input/Input.h"
 #include "../Events/Event.h"
-#include "Assets/AssetDatabase.h"
 #include "Audio/Audio.h"
+#include "GUI/ImGuiLayer.h"
 #include "Math/Random.h"
+#include "Physics/Physics.h"
+#include "Renderer/RendererContext.h"
+#include "Renderer/RenderTarget.h"
+#include "Scene/Scene.h"
 #include "Time/Time.h"
 #include "Time/TimelineRunner.h"
+#include "Scripting/ScriptingManager.h"
+#include "Scene/SceneManager.h"
 
 namespace LevEngine
 {
@@ -31,8 +37,13 @@ Application::Application(const ApplicationSpecification& specification)
 	m_Window = Window::Create(WindowAttributes(specification.Name, specification.WindowWidth, specification.WindowHeight));
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
+	m_Physics = Physics::Create();
+
+	m_ScriptingManager = CreateScope<Scripting::ScriptingManager>();
+
 	Renderer::Init();
 	Random::Init();
+	m_ScriptingManager->Init();
 	Audio::Init(Audio::MaxAudioChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE,
 		FMOD_INIT_VOL0_BECOMES_VIRTUAL | FMOD_INIT_3D_RIGHTHANDED);
 
@@ -48,6 +59,8 @@ Application::~Application()
 {
 	Renderer::Shutdown();
 	Audio::Shutdown();
+	m_ScriptingManager->Shutdown();
+	SceneManager::Shutdown();
 }
 
 void Application::Run()
@@ -168,6 +181,16 @@ void Application::OnEvent(Event& e)
 	}
 }
 
+Physics& Application::GetPhysics() const
+{
+	return *m_Physics;
+}
+
+Scripting::ScriptingManager& Application::GetScriptingManager()
+{
+	return *m_ScriptingManager;
+}
+
 bool Application::OnWindowClosed(WindowClosedEvent& e)
 {
 	Close();
@@ -176,15 +199,23 @@ bool Application::OnWindowClosed(WindowClosedEvent& e)
 
 bool Application::OnWindowResized(WindowResizedEvent& e)
 {
-	if (e.GetWidth() == 0 || e.GetHeight() == 0)
+	const auto height = e.GetHeight();
+	const auto width = e.GetWidth();
+	
+	if (width == 0 || height == 0)
 	{
 		m_Minimized = true;
 
 		return false;
 	}
 
-	m_Window->GetContext()->ResizeBackBuffer(e.GetWidth(), e.GetHeight());
+	m_Window->GetContext()->ResizeBackBuffer(width, height);
 
+	if (width == 0 || height == 0) return false;
+		
+	SceneManager::GetActiveScene()->OnViewportResized(width, height);
+	Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
+	
 	m_Minimized = false;
 
 	return false;

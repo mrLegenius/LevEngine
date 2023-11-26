@@ -2,7 +2,10 @@
 #include "PrefabAsset.h"
 
 #include "DataTypes/Queue.h"
+#include "Scene/Scene.h"
+#include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {

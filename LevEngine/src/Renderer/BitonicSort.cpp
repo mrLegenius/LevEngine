@@ -2,7 +2,9 @@
 #include <d3d11.h>
 
 #include "BitonicSort.h"
+
 #include "Assets.h"
+#include "StructuredBuffer.h"
 
 namespace LevEngine
 {

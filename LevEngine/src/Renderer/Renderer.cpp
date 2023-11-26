@@ -1,12 +1,19 @@
 #include "levpch.h"
 #include "Renderer.h"
 
+#include "BlendState.h"
 #include "ClearPass.h"
 #include "CopyTexturePass.h"
 #include "DeferredLightingPass.h"
+#include "DepthStencilState.h"
+#include "OpaquePass.h"
 #include "ParticlePass.h"
 #include "QuadRenderPass.h"
+#include "RasterizerState.h"
 #include "Renderer3D.h"
+#include "RendererContext.h"
+#include "RenderTarget.h"
+#include "RenderTechnique.h"
 #include "ShadowMapPass.h"
 #include "SkyboxPass.h"
 #include "TransparentPass.h"
@@ -333,11 +340,11 @@ void Renderer::LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, 
 	{
 		auto [transform, camera] = group.get<Transform, CameraComponent>(entity);
 
-		if (camera.isMain)
+		if (camera.IsMain)
 		{
 			using namespace entt::literals;
 			registry.ctx().emplace_as<Entity>("mainCameraEntity"_hs, Entity(entt::handle(registry, entity)));
-			mainCamera = &camera.camera;
+			mainCamera = &camera.Camera;
 			transform.RecalculateModel();
 			cameraTransform = &transform;
 			return;
@@ -353,7 +360,7 @@ RenderParams Renderer::CreateRenderParams(SceneCamera* mainCamera, Transform* ca
 	const auto cameraViewMatrix = cameraTransform->GetModel().Invert();
 	const auto cameraPosition = cameraTransform->GetWorldPosition();
 	const auto perspectiveViewProjectionMatrix = cameraViewMatrix * mainCamera->GetPerspectiveProjection();
-	return { *mainCamera, cameraPosition, cameraViewMatrix, perspectiveViewProjectionMatrix };
+	return { mainCamera, cameraPosition, cameraViewMatrix, perspectiveViewProjectionMatrix };
 }
 
 void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform)

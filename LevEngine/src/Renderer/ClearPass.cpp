@@ -1,5 +1,9 @@
 #include "levpch.h"
 #include "ClearPass.h"
+
+#include "RenderTarget.h"
+#include "Texture.h"
+
 namespace LevEngine
 {
 ClearPass::ClearPass(const Ref<RenderTarget>& renderTarget, const ClearFlags clearFlags, const Vector4& color, const float depth, const uint8_t stencil)

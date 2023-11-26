@@ -1,7 +1,13 @@
 ﻿#include "levpch.h"
 #include "OpaquePass.h"
 
+#include "PipelineState.h"
 #include "Renderer3D.h"
+#include "3D/Mesh.h"
+#include "Assets/MaterialAsset.h"
+#include "Assets/MeshAsset.h"
+#include "Camera/SceneCamera.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
@@ -35,7 +41,7 @@ namespace LevEngine
 
             if (RenderSettings::UseFrustumCulling)
             {
-                if (!mesh->IsOnFrustum(params.Camera.GetFrustum(), transform)) continue;
+                if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
             
             material.Bind(shader);

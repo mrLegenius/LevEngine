@@ -1,11 +1,13 @@
 ﻿#pragma once
-#include "ConstantBuffer.h"
-#include "PipelineState.h"
+
 #include "RenderPass.h"
-#include "Texture.h"
 
 namespace LevEngine
 {
+	class ConstantBuffer;
+	class Texture;
+	class PipelineState;
+
 	class DeferredLightingPass final : public RenderPass
 	{
 	public:

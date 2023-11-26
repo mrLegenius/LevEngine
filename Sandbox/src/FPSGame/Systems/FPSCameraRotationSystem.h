@@ -9,14 +9,14 @@ namespace Sandbox
         {
             const auto view = registry.view<Transform, CameraComponent>();
 
-            const Vector2 mouse{ Input::GetMouseDelta().first, Input::GetMouseDelta().second };
+            const Vector2 mouse{ Input::GetMouseDelta().x, Input::GetMouseDelta().y };
 			
             for (const auto entity : view)
             {
                 constexpr auto rotationSpeed = 45;
                 auto [transform, camera] = view.get<Transform, CameraComponent>(entity);
 
-                if (!camera.isMain) continue;
+                if (!camera.IsMain) continue;
 				
                 const auto delta = mouse * rotationSpeed * deltaTime;
 

@@ -1,12 +1,28 @@
 ﻿#include "levpch.h"
 
 #include "AssetDatabase.h"
-
+#include "AudioBankAsset.h"
+#include "DefaultAsset.h"
+#include "MaterialPBRAsset.h"
+#include "MaterialSimpleAsset.h"
+#include "MeshAsset.h"
+#include "PrefabAsset.h"
+#include "Project.h"
+#include "SkyboxAsset.h"
+#include "TextureAsset.h"
 #include "DataTypes/Queue.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
+	Path AssetDatabase::GetAssetsPath()
+	{
+		if (Project::GetProject())
+			return Project::GetRoot() / AssetsRoot;
+
+		return AssetsRoot;
+	}
+
 	void AssetDatabase::ImportAsset(const Path& path)
 	{
 		auto uuid = UUID();
@@ -74,6 +90,152 @@ namespace LevEngine
 					ImportAsset(path);
 			}
 		} while (!directories.empty());
+	}
+
+	bool AssetDatabase::IsAssetTexture(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".tga";
+	}
+
+	bool AssetDatabase::IsAssetMesh(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return
+			extension == ".obj"
+			|| extension == ".fbx"
+			|| extension == ".dae"
+			|| extension == ".gltf"
+			|| extension == ".glb"
+			|| extension == ".blend"
+			|| extension == ".3ds"
+			|| extension == ".ase"
+			|| extension == ".ifc"
+			|| extension == ".xgl"
+			|| extension == ".zgl"
+			|| extension == ".ply"
+			|| extension == ".dxf"
+			|| extension == ".lwo"
+			|| extension == ".lws"
+			|| extension == ".lxo"
+			|| extension == ".stl"
+			|| extension == ".x"
+			|| extension == ".ac"
+			|| extension == ".ms3d"
+			;
+	}
+
+	bool AssetDatabase::IsAssetMaterial(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return extension == ".mat";
+	}
+
+	bool AssetDatabase::IsAssetPBRMaterial(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return extension == ".pbr";
+	}
+
+	bool AssetDatabase::IsAssetSkybox(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return extension == ".skybox";
+	}
+
+	bool AssetDatabase::IsAssetPrefab(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return extension == ".prefab";
+	}
+
+	bool AssetDatabase::IsAssetScript(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return extension == ".lua";
+	}
+
+	bool AssetDatabase::IsAssetAudioBank(const Path& path)
+	{
+		const String pathString = ToString(path);
+		const auto index = pathString.find('.');
+			
+		if (index == eastl::string::npos) return false;
+
+		const auto extension = pathString.right(pathString.length() - index);
+
+		return extension == ".bank";
+	}
+
+	Ref<Asset> AssetDatabase::CreateAsset(const Path& path, UUID uuid)
+	{
+		if (IsAssetTexture(path))
+			return CreateRef<TextureAsset>(path, uuid);
+
+		if (IsAssetMaterial(path))
+			return CreateRef<MaterialSimpleAsset>(path, uuid);
+
+		if (IsAssetPBRMaterial(path))
+			return CreateRef<MaterialPBRAsset>(path, uuid);
+			
+		if (IsAssetSkybox(path))
+			return CreateRef<SkyboxAsset>(path, uuid);
+
+		if (IsAssetMesh(path))
+			return CreateRef<MeshAsset>(path, uuid);
+
+		if (IsAssetPrefab(path))
+			return CreateRef<PrefabAsset>(path, uuid);
+
+		if (IsAssetAudioBank(path))
+			return CreateRef<AudioBankAsset>(path, uuid);
+
+		return CreateRef<DefaultAsset>(path, uuid);
+	}
+
+	void AssetDatabase::CreateFolder(const Path& path)
+	{
+		if (!exists(path))
+			create_directory(path);
+	}
+
+	Ref<Asset> AssetDatabase::GetAsset(const Path& path, const bool deserialize)
+	{
+		const auto assetIt = m_AssetsByPath.find(path);
+		if (assetIt == m_AssetsByPath.end())
+		{
+			Log::CoreWarning("Asset in {0} is not found", path.string());
+			return nullptr;
+		}
+			
+		const auto& asset = assetIt->second;
+		if (!asset->IsDeserialized() && deserialize)
+			asset->Deserialize();
+
+		return asset;
+	}
+
+	Ref<Asset> AssetDatabase::GetAsset(const UUID uuid)
+	{
+		const auto assetIt = m_Assets.find(uuid);
+		if (assetIt == m_Assets.end())
+		{
+			Log::CoreWarning("Asset with {0} is not found", static_cast<std::uint64_t>(uuid));
+			return nullptr;
+		}
+
+		const auto& asset = assetIt->second;
+		if (!asset->IsDeserialized())
+			asset->Deserialize();
+
+		return asset;
 	}
 
 	void AssetDatabase::RenameAsset(const Ref<Asset>& asset, const String& name)
@@ -144,5 +306,18 @@ namespace LevEngine
 	bool AssetDatabase::AssetExists(const Path& path)
 	{
 		return exists(path);
+	}
+
+	void AssetDatabase::CreateMeta(const Path& path, const UUID uuid, const YAML::Node* extraInfo)
+	{
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+		out << YAML::Key << "UUID" << YAML::Value << uuid;
+		if (extraInfo) out << *extraInfo;
+		out << YAML::EndMap;
+
+		auto fout = std::ofstream{ path };
+		fout << out.c_str();
 	}
 }

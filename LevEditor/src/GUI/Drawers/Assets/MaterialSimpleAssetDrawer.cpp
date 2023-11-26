@@ -2,6 +2,8 @@
 
 #include "AssetDrawer.h"
 #include "imgui.h"
+#include "Assets/MaterialSimpleAsset.h"
+#include "Assets/TextureAsset.h"
 #include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor

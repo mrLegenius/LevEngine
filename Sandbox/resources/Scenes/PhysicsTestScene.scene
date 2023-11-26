@@ -1,0 +1,69 @@
+Scene: PhysicsTestScene
+Entities:
+  - Entity: 293547088511675378
+    Tag: Directional Light
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-1.55452466, 0, 0]
+      Scale: [1, 0.999998629, 0.999998629]
+    Directional Light:
+      Color: [1, 1, 1, 1]
+  - Entity: 2286883072584602035
+    Tag: Ground
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [10, 1, 10]
+    Rigidbody:
+      Visualization Flag: false
+      Rigidbody Type: 0
+      Gravity Flag: true
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 7582525064410579512
+      Cast Shadow: true
+  - Entity: 18005086127464243940
+    Tag: Camera
+    Transform:
+      Position: [0, 5, 5]
+      Rotation: [-0.785398066, -6.2803692e-16, -1.31708946e-08]
+      Scale: [1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+  - Entity: 2500217727459906061
+    Tag: Box
+    Transform:
+      Position: [0, 4, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Rigidbody:
+      Visualization Flag: true
+      Rigidbody Type: 1
+      Gravity Flag: true
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 13469868196253741728
+      Cast Shadow: true

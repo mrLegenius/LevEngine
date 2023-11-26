@@ -1,6 +1,8 @@
 ﻿#include "levpch.h"
 #include "CopyTexturePass.h"
 
+#include "Texture.h"
+
 namespace LevEngine
 {
 	void CopyTexturePass::Process(entt::registry& registry, RenderParams& params)

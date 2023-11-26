@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include <yaml-cpp/yaml.h>
 
-#include "Assets/Asset.h"
 #include "Assets/AssetDatabase.h"
 #include "Math/Color.h"
+#include "Math/Math.h"
+#include "Scene/Entity.h"
 
 namespace YAML
 {

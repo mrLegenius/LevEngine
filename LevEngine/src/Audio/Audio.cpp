@@ -3,6 +3,7 @@
 
 #include "fmod_studio.hpp"
 #include "Scene/Components/Audio/AudioListener.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {

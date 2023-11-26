@@ -3,7 +3,7 @@
 
 namespace LevEngine
 {
-class RenderCommand
+	class RenderCommand
 {
 public:
 	static void DrawIndexed(const Ref<IndexBuffer>& indexBuffer)

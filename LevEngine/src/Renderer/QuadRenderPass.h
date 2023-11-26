@@ -4,7 +4,9 @@
 
 namespace LevEngine
 {
-class QuadRenderPass : public RenderPass
+    class Texture;
+
+    class QuadRenderPass : public RenderPass
 {
 public:
     explicit QuadRenderPass(const Ref<PipelineState>& pipeline, const Ref<Texture>& colorTexture)

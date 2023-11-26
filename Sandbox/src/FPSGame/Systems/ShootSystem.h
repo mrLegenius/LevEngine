@@ -26,7 +26,7 @@ namespace Sandbox
             {
                 auto [cameraTransform, camera] = view.get<Transform, CameraComponent>(entity);
 
-                if (!camera.isMain) continue;
+                if (!camera.IsMain) continue;
 
                 if (Input::IsMouseButtonPressed(MouseButton::Left))
                 {
@@ -44,7 +44,7 @@ namespace Sandbox
                     transform.SetWorldPosition(origin);
                     transform.SetWorldRotation(childTransform.GetWorldRotation());
 
-                    auto& events = projectile.AddComponent<CollisionEvents>();
+                    auto& events = projectile.AddComponent<LegacyCollisionEvents>();
                     events.onCollisionBegin.connect<&OnProjectileCollided>();
 					
                     auto projectileMeshEntity = transform.GetChildren()[0];

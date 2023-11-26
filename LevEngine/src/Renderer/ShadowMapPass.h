@@ -1,14 +1,14 @@
 #pragma once
-#include "Assets.h"
-#include "CascadeShadowMap.h"
-#include "Renderer3D.h"
-#include "RenderParams.h"
 #include "RenderPass.h"
 #include "RenderSettings.h"
+#include "DataTypes/Vector.h"
+
 
 namespace LevEngine
 {
-class ShadowMapPass : public RenderPass
+    class CascadeShadowMap;
+
+    class ShadowMapPass : public RenderPass
 {
     struct ShadowData
     {

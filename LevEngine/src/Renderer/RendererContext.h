@@ -1,8 +1,9 @@
 ﻿#pragma once
-#include "RenderTarget.h"
 
 namespace LevEngine
 {
+	class RenderTarget;
+
 	class RendererContext
 	{
 	public:

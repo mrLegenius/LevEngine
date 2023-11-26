@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "FPSGame.h"
 
+#include "Project.h"
+#include "Assets/PrefabAsset.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
@@ -24,6 +26,7 @@ namespace Sandbox
 	
 	void FPSGame::OnAttach()
 	{
+
 		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
 
@@ -40,7 +43,7 @@ namespace Sandbox
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
-		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
+		//scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
 		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
@@ -57,13 +60,16 @@ namespace Sandbox
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
 
+		scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
+		scene->RegisterUpdateSystem<RigidbodyInitSystem>();
 
 		auto& registry = scene->GetRegistry();
 		registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
 		registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
 
 		registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
-
+		
+		registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
 
 		Application::Get().GetWindow().DisableCursor();
 	}

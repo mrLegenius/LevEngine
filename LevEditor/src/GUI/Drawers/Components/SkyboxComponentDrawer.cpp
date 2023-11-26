@@ -8,8 +8,7 @@ namespace LevEngine::Editor
     class SkyboxComponentDrawer final : public ComponentDrawer<SkyboxRendererComponent, SkyboxComponentDrawer>
     {
     protected:
-        String GetLabel() const override { return "Skybox Renderer"; }
-        String GetAddMenuPath() const override { return "Renderers"; }
+        String GetLabel() const override { return "Renderers/Skybox Renderer"; }
 
         void DrawContent(SkyboxRendererComponent& component) override
         {

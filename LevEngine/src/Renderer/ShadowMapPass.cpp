@@ -1,7 +1,12 @@
 #include "levpch.h"
 #include "ShadowMapPass.h"
+
+#include "CascadeShadowMap.h"
 #include "RenderCommand.h"
+#include "Renderer3D.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/Lights/Lights.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
@@ -81,7 +86,7 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
         lightDirection = transform.GetForwardDirection();
 	}
 
-	const auto cameraCascadeProjections = params.Camera.GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
+	const auto cameraCascadeProjections = params.Camera->GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
 
 	for (int cascadeIndex = 0; cascadeIndex < RenderSettings::CascadeCount; ++cascadeIndex)
 	{
@@ -97,14 +102,14 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 		const auto lightViewMatrix = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + lightDirection, Vector3::Up);
 
 		m_ShadowData.ViewProjection[cascadeIndex] = lightViewMatrix * GetCascadeProjection(lightViewMatrix, frustumCorners);
-		m_ShadowData.Distances[cascadeIndex] = params.Camera.GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
+		m_ShadowData.Distances[cascadeIndex] = params.Camera->GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
 
 		m_ShadowData.ShadowMapDimensions = RenderSettings::ShadowMapResolution;
 	}
 	m_CascadeShadowMap->SetRenderTarget();
 	ShaderAssets::CascadeShadowPass()->Bind();
 
-	params.Camera.SetViewportSize( static_cast<uint32_t>(RenderSettings::ShadowMapResolution),  static_cast<uint32_t>(RenderSettings::ShadowMapResolution));
+	params.Camera->SetViewportSize( static_cast<uint32_t>(RenderSettings::ShadowMapResolution),  static_cast<uint32_t>(RenderSettings::ShadowMapResolution));
 
 	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);

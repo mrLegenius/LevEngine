@@ -1,12 +1,11 @@
 ﻿#include "levpch.h"
 #include "WindowsWindow.h"
 
-#include <windowsx.h>
-
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 #include "Input/KeyCodes.h"
+#include "Renderer/RendererContext.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

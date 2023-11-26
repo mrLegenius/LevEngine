@@ -4,9 +4,13 @@
 #include "NavMeshableComponent.h"
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMeshQuery.h"
+#include "Assets/MeshAsset.h"
+#include "Renderer/3D/Mesh.h"
+#include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
@@ -53,7 +57,7 @@ namespace LevEngine
         m_Config.maxVertsPerPoly = static_cast<int>(VertsPerPoly);
         m_Config.detailSampleDist = DetailSampleDist < 0.9f ? 0 : CellSize * DetailSampleDist;
         m_Config.detailSampleMaxError = CellHeight * DetailSampleMaxError;
-
+		
         auto& registry = SceneManager::GetActiveScene()->GetRegistry();
         const auto view = registry.view<Transform, NavMeshableComponent, MeshRendererComponent>();
 		

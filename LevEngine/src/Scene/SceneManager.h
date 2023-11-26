@@ -1,9 +1,10 @@
 #pragma once
-#include "Scene.h"
 #include "DataTypes/Path.h"
 
 namespace LevEngine
 {
+    class Scene;
+
     class SceneManager
     {
     public:
@@ -22,6 +23,8 @@ namespace LevEngine
         }
         
         static const Ref<Scene>& LoadEmptyScene();
+
+        static void Shutdown();
 
     private:
         static inline Ref<Scene> m_ActiveScene;

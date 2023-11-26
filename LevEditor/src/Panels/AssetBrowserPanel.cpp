@@ -4,7 +4,9 @@
 #include <imgui.h>
 
 #include "AssetSelection.h"
+#include "Project.h"
 #include "Selection.h"
+#include "Assets/MaterialPBRAsset.h"
 #include "GUI/EditorGUI.h"
 #include "GUI/ScopedGUIHelpers.h"
 

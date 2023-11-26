@@ -1,10 +1,11 @@
 #pragma once
-#include "Shader.h"
 #include "ConstantBuffer.h"
 
 namespace LevEngine
 {
-class Material
+    class Shader;
+
+    class Material
 {
 public:
     virtual ~Material() = default;

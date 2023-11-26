@@ -1,8 +1,11 @@
 #include "levpch.h"
 #include "SkyboxPass.h"
 
+#include "PipelineState.h"
 #include "RenderCommand.h"
+#include "3D/Mesh.h"
 #include "3D/Primitives.h"
+#include "Assets/SkyboxAsset.h"
 #include "Scene/Components/SkyboxRenderer/SkyboxRenderer.h"
 #include "Scene/Components/Transform/Transform.h"
 

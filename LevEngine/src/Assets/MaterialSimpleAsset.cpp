@@ -1,7 +1,6 @@
 ﻿#include "levpch.h"
 #include "MaterialSimpleAsset.h"
-
-#include "Renderer/MaterialSimple.h"
+#include "TextureAsset.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
