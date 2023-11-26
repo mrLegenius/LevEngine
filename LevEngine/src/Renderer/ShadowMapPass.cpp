@@ -108,9 +108,7 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 	}
 	m_CascadeShadowMap->SetRenderTarget();
 	ShaderAssets::CascadeShadowPass()->Bind();
-
-	params.Camera->SetViewportSize( static_cast<uint32_t>(RenderSettings::ShadowMapResolution),  static_cast<uint32_t>(RenderSettings::ShadowMapResolution));
-
+	
 	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);
 
