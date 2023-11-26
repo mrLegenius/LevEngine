@@ -2,9 +2,6 @@
 
 #include "Renderer/RenderCommands.h"
 
-#include "Renderer/IndexBuffer.h"
-#include "Renderer/VertexBuffer.h"
-
 namespace LevEngine
 {
 class D3D11RenderCommands final : public RenderCommands
@@ -15,7 +12,7 @@ public:
 	void DrawIndexed(const Ref<IndexBuffer>& indexBuffer) override;
 	void DrawFullScreenQuad() override;
 	void DrawLineList(const Ref<IndexBuffer>& indexBuffer) override;
-	void DrawLineStrip(uint32_t vertexCount);
+	void DrawLineStrip(uint32_t vertexCount) override;
 	void DrawPointList(uint32_t count) override;
 };
 }

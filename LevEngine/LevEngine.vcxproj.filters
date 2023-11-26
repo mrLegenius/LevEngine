@@ -2717,6 +2717,9 @@
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Assets\ScriptAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input\Input.cpp">
@@ -3245,6 +3248,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Assets\ScriptAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

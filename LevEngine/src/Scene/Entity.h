@@ -1,6 +1,5 @@
 #pragma once
 #include "entt/entt.hpp"
-#include "Components/Components.h"
 
 namespace LevEngine
 {
@@ -31,8 +30,8 @@ public:
 	template<typename T>
 	void RemoveComponent() const;
 
-	UUID GetUUID() const { return GetComponent<IDComponent>().ID; }
-	const String& GetName() const { return GetComponent<TagComponent>().tag; }
+	UUID GetUUID() const;
+	String GetName() const;
 
 	operator bool() const { return m_Handle.entity() != entt::null && m_Handle.valid(); }
 	operator uint32_t() const { return static_cast<uint32_t>(m_Handle.entity()); }

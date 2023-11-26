@@ -1,6 +1,7 @@
 ﻿#include "levpch.h"
 #include "WaypointMovement.h"
 
+#include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/ComponentSerializer.h"
 

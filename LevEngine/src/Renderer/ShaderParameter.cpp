@@ -1,6 +1,10 @@
 ﻿#include "levpch.h"
 #include "ShaderParameter.h"
 
+#include "ConstantBuffer.h"
+#include "SamplerState.h"
+#include "Texture.h"
+
 namespace LevEngine
 {
 void ShaderParameter::Set(const Ref<ConstantBuffer>& constantBuffer)

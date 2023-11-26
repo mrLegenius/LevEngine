@@ -5,6 +5,7 @@
 
 #include "EntitySelection.h"
 #include "ModalPopup.h"
+#include "Assets/PrefabAsset.h"
 #include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor

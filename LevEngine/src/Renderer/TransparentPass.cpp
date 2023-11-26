@@ -1,9 +1,15 @@
 #include "levpch.h"
 #include "TransparentPass.h"
 
+#include "PipelineState.h"
 #include "Renderer3D.h"
 #include "RenderSettings.h"
+#include "3D/Mesh.h"
+#include "Assets/MaterialAsset.h"
+#include "Assets/MeshAsset.h"
+#include "Camera/SceneCamera.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {

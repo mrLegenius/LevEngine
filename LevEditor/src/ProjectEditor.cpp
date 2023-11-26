@@ -2,6 +2,7 @@
 #include "ProjectEditor.h"
 
 #include "ModalPopup.h"
+#include "Project.h"
 #include "Essentials/MenuBar.h"
 
 namespace LevEngine::Editor

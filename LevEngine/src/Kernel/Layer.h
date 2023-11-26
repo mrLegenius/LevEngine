@@ -1,10 +1,11 @@
 ﻿#pragma once
 
-#include "../Events/Event.h"
 
 namespace LevEngine
 {
-class Layer
+	class Event;
+	
+	class Layer
 {
 public:
 	explicit Layer(String name = "Layer");

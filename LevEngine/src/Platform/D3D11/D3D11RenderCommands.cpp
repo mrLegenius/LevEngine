@@ -3,6 +3,8 @@
 
 #include "D3D11RenderCommands.h"
 
+#include "Renderer/IndexBuffer.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;

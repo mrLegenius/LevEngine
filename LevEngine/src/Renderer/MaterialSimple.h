@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Material.h"
-#include "Shader.h"
-#include "Texture.h"
 #include "DataTypes/Map.h"
 #include "Math/Color.h"
+#include "Math/Vector2.h"
 
 namespace LevEngine
 {
-class MaterialSimple final : public Material
+	class Texture;
+
+	class MaterialSimple final : public Material
 {
 public:
 	enum class TextureType

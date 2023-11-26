@@ -2,8 +2,12 @@
 #include "Renderer3D.h"
 #include "RenderCommand.h"
 #include "Assets.h"
+#include "3D/Mesh.h"
 #include "3D/Primitives.h"
+#include "Assets/MeshAsset.h"
+#include "Camera/SceneCamera.h"
 #include "Kernel/Application.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 
 namespace LevEngine
 {

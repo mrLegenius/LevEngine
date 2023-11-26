@@ -1,13 +1,17 @@
 #pragma once
-#include "OpaquePass.h"
-#include "ParticlePass.h"
+
 #include "RenderParams.h"
-#include "ShadowMapPass.h"
 #include "entt/entt.hpp"
 
 namespace LevEngine
 {
-class Renderer
+	class RenderTechnique;
+	class PipelineState;
+	class RenderTarget;
+	class Texture;
+	struct Transform;
+
+	class Renderer
 {
 public:
 	static void Init();

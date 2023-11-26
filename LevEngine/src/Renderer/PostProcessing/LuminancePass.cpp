@@ -9,6 +9,7 @@
 #include "Renderer/RasterizerState.h"
 
 #include "Renderer/RenderSettings.h"
+#include "Renderer/RenderTarget.h"
 
 namespace LevEngine
 {

@@ -5,14 +5,10 @@
 #include "Kernel/Logger.h"
 #include "DataTypes/UnorderedMap.h"
 #include "DataTypes/Vector.h"
+#include "Math/Vector3.h"
 #include "Scene/Entity.h"
 #include <source_location>
-#include "Scene/Components/Transform/Transform.h"
 
-namespace LevEngine
-{
-    
-}
 
 namespace LevEngine
 {

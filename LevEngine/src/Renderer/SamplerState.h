@@ -2,7 +2,6 @@
 #include "DataTypes/Pointers.h"
 #include "ShaderType.h"
 #include "Math/Color.h"
-#include "Math/Math.h"
 
 namespace LevEngine
 {

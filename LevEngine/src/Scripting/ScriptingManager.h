@@ -18,7 +18,7 @@ namespace LevEngine {
 			void Init();
 			bool LoadScripts(const Path& projectPath);
 
-			void RegisterSystems(Scene* const scene);
+			void RegisterSystems(Scene* scene);
 
 			template <class TComponent>
 			void RegisterMetaComponent();

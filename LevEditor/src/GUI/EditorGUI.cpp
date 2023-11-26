@@ -7,6 +7,7 @@
 
 #include "TextureLibrary.h"
 #include "Assets/AssetDatabase.h"
+#include "Assets/TextureAsset.h"
 
 namespace LevEngine::Editor
 {

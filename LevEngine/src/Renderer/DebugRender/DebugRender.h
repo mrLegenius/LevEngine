@@ -1,10 +1,13 @@
 #pragma once
-#include "DebugShape.h"
-#include "Renderer/Renderer3D.h"
 #include "DataTypes/Queue.h"
+#include "Math/Color.h"
+#include "Math/Matrix.h"
+#include "Math/Quaternion.h"
 
 namespace LevEngine
 {
+    class DebugShape;
+
     class DebugRender
     {
     public:

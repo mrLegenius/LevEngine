@@ -1,6 +1,7 @@
 ﻿#include "levpch.h"
 #include "SkyboxAsset.h"
 #include "Scene/Serializers/SerializerUtils.h"
+#include "TextureAsset.h"
 
 namespace LevEngine
 {

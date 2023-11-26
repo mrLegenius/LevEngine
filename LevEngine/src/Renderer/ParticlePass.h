@@ -1,15 +1,19 @@
 #pragma once
-
-#include "BitonicSort.h"
-#include "PipelineState.h"
 #include "RenderPass.h"
-#include "entt/entt.hpp"
+#include "Math/Color.h"
 #include "Scene/Components/Emitter/EmitterComponent.h"
 #include "Scene/Components/Transform/Transform.h"
 
+
 namespace LevEngine
 {
-class ParticlePass : public RenderPass
+	class BitonicSort;
+	class ConstantBuffer;
+	class StructuredBuffer;
+	class Texture;
+	class PipelineState;
+
+	class ParticlePass : public RenderPass
 {
 	struct GPUParticleData
 	{

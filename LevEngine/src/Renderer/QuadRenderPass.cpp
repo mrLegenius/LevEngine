@@ -2,6 +2,7 @@
 #include "QuadRenderPass.h"
 
 #include "RenderCommand.h"
+#include "Texture.h"
 
 namespace LevEngine
 {

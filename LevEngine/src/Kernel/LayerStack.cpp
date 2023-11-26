@@ -1,5 +1,8 @@
 ﻿#include "levpch.h"
 #include "LayerStack.h"
+
+#include "Layer.h"
+
 namespace LevEngine
 {
 LayerStack::LayerStack() = default;

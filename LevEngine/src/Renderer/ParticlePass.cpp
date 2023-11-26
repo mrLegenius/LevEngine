@@ -2,12 +2,18 @@
 #include "ParticlePass.h"
 
 #include "Assets.h"
+#include "BitonicSort.h"
+#include "PipelineState.h"
 #include "Kernel/Time/Time.h"
 #include "RenderCommand.h"
 #include "RenderSettings.h"
+#include "StructuredBuffer.h"
+#include "Assets/TextureAsset.h"
+#include "Camera/SceneCamera.h"
 #include "Math/Random.h"
 #include "Platform/D3D11/D3D11SamplerState.h"
 #include "Platform/D3D11/D3D11Texture.h"
+#include "Scene/Components/Components.h"
 
 namespace LevEngine
 {

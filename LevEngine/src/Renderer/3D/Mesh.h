@@ -3,16 +3,18 @@
 #include "DataTypes/Map.h"
 #include "DataTypes/Vector.h"
 #include "Math/BoundingVolume.h"
+#include "Math/Color.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Renderer/BufferBinding.h"
-#include "Renderer/IndexBuffer.h"
-#include "Renderer/Shader.h"
-#include "Renderer/VertexBuffer.h"
 
 namespace LevEngine
 {
-class Mesh
+	class Shader;
+	class VertexBuffer;
+	class IndexBuffer;
+
+	class Mesh
 {
 	struct MeshVertex
 	{

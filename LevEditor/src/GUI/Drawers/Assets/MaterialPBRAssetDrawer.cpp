@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 
 #include "AssetDrawer.h"
+#include "Assets/MaterialPBRAsset.h"
+#include "Assets/TextureAsset.h"
 #include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor

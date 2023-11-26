@@ -1,10 +1,13 @@
 ﻿#pragma once
+#include <entt/entt.hpp>
 #include "physx/include/PxPhysicsAPI.h"
-#include "Scene/Components/Transform/Transform.h"
 #include "Collider.h"
+#include "DataTypes/Vector.h"
+#include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
+    struct Transform;
     REGISTER_PARSE_TYPE(Rigidbody);
     
     struct Rigidbody

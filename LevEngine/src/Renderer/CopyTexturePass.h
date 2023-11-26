@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "RenderPass.h"
-#include "Texture.h"
 
 namespace LevEngine
 {
-class CopyTexturePass final : public RenderPass
+	class Texture;
+
+	class CopyTexturePass final : public RenderPass
 {
 public:
 	CopyTexturePass(const Ref<Texture>& destinationTexture, const Ref<Texture>& sourceTexture)

@@ -1,14 +1,17 @@
 #pragma once
-#include "BlendState.h"
-#include "DepthStencilState.h"
-#include "RasterizerState.h"
-#include "RenderTarget.h"
-#include "Shader.h"
+
+#include "ShaderType.h"
 #include "DataTypes/Map.h"
 
 namespace LevEngine
 {
-class PipelineState
+    class RenderTarget;
+    class DepthStencilState;
+    class RasterizerState;
+    class BlendState;
+    class Shader;
+
+    class PipelineState
 {
 public:
     using ShaderMap = Map<ShaderType, Ref<Shader>>;

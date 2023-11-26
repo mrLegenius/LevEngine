@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "Scene/Scene.h"
-#include <yaml-cpp/yaml.h>
 
 #include "DataTypes/Path.h"
 
 namespace LevEngine
 {
+	class Scene;
+
 	class SceneSerializer
 	{
 	public:
