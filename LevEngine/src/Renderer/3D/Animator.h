@@ -1,6 +1,8 @@
 #pragma once
-#include <DataTypes/Vector.h>
 #include <Math/Matrix.h>
+
+#include "AnimationConstants.h"
+#include "DataTypes/Array.h"
 
 namespace LevEngine
 {
@@ -10,22 +12,18 @@ namespace LevEngine
     class Animator
     {
     public:
-        Animator(const Ref<Animation>& Animation);
+        Animator();
 
         void UpdateAnimation(float deltaTime);
-
         void PlayAnimation(Ref<Animation> Animation);
-
-        void CalculateBoneTransform(const NodeData& node, Matrix parentTransform);
-
-        Vector<Matrix> GetFinalBoneMatrices();
+        Array<Matrix, AnimationConstants::MaxBoneCount> GetFinalBoneMatrices() const;
 
     private:
-        static const int MaxBoneCount = 100;
+        void CalculateBoneTransform(const NodeData& node, Matrix parentTransform);
 
-        Vector<Matrix> m_FinalBoneMatrices;
+        Array<Matrix, AnimationConstants::MaxBoneCount> m_FinalBoneMatrices;
         Ref<Animation> m_CurrentAnimation;
-        float m_CurrentTime;
-        float m_DeltaTime;
+        float m_CurrentTime{};
+        float m_DeltaTime{};
     };
 }

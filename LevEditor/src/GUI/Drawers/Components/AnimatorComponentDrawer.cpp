@@ -13,6 +13,8 @@ namespace LevEngine::Editor
         void DrawContent(AnimatorComponent& component) override
         {
             EditorGUI::DrawAsset("Animation Clip", component.GetAnimationClip());
+            EditorGUI::DrawCheckBox("Play On Init", BindGetter(&AnimatorComponent::GetPlayOnInit, &component),
+                BindSetter(&AnimatorComponent::SetPlayOnInit, &component));
         }
     };	
 }

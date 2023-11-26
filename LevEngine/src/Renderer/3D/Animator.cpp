@@ -1,19 +1,20 @@
 #include "levpch.h"
 #include "Animator.h"
 #include "Animation.h"
+#include "AnimationConstants.h"
 
 namespace LevEngine
 {
-	Animator::Animator(const Ref<Animation>& Animation)
+	Animator::Animator()
 	{
 		m_CurrentTime = 0.0;
-		m_CurrentAnimation = Animation;
+		m_CurrentAnimation = nullptr;
 
-		m_FinalBoneMatrices.reserve(MaxBoneCount);
+		m_FinalBoneMatrices = Array<Matrix, AnimationConstants::MaxBoneCount>();
 
-		for (int i = 0; i < MaxBoneCount; i++)
+		for (int i = 0; i < AnimationConstants::MaxBoneCount; i++)
 		{
-			m_FinalBoneMatrices.push_back(Matrix::Identity);
+			m_FinalBoneMatrices[i] = Matrix::Identity;
 		}
 	}
 
@@ -32,6 +33,11 @@ namespace LevEngine
 	{
 		m_CurrentAnimation = Animation;
 		m_CurrentTime = 0.0f;
+	}
+
+	Array<Matrix, AnimationConstants::MaxBoneCount> Animator::GetFinalBoneMatrices() const
+	{
+		return m_FinalBoneMatrices;
 	}
 
 	void Animator::CalculateBoneTransform(const NodeData& node, Matrix parentTransform)
@@ -60,10 +66,5 @@ namespace LevEngine
 		{
 			CalculateBoneTransform(node.children[i], globalTransformation);
 		}
-	}
-
-	Vector<Matrix> Animator::GetFinalBoneMatrices()
-	{
-		return m_FinalBoneMatrices;
 	}
 }

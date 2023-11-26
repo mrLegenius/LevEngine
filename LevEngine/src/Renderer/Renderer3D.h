@@ -2,6 +2,8 @@
 #include "ConstantBuffer.h"
 #include "RenderTechnique.h"
 #include "RenderSettings.h"
+#include "3D/AnimationConstants.h"
+#include "DataTypes/Array.h"
 #include "Scene/Components/Lights/Lights.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 
@@ -11,6 +13,7 @@ struct MeshModelBufferData
 {
 	Matrix Model;
 	Matrix TransposedInvertedModel;
+	Array<Matrix, AnimationConstants::MaxBoneCount> FinalBoneMatrices;
 };
 
 struct DirLightData
@@ -44,6 +47,8 @@ public:
 
 	static void SetCameraBuffer(const SceneCamera& camera, const Matrix& viewMatrix, const Vector3& position);
 	static void DrawMesh(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);
+	static void DrawMesh(const Matrix& model, const Array<Matrix, AnimationConstants::MaxBoneCount>& finalBoneMatrices,
+		const Ref<Mesh>& mesh, const Ref<Shader>& shader);
 	static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader);
 	
 	static void DrawLineList(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);

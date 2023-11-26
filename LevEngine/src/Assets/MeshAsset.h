@@ -5,7 +5,7 @@ namespace LevEngine
 {
 	class Mesh;
 
-	class MeshAsset final : public Asset
+	class MeshAsset final : public Asset, public eastl::enable_shared_from_this<MeshAsset>
 	{
 	public:
 		MeshAsset() = default;

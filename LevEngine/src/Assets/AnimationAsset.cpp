@@ -47,7 +47,7 @@ namespace LevEngine
 				m_Path.string(), m_AnimationIdx);
 		}
 
-		m_OwnerMesh = DeserializeAsset<MeshAsset>(node);
+		m_OwnerMesh = DeserializeAsset<MeshAsset>(node[c_OwnerMeshKey]);
 		if (m_OwnerMesh == nullptr)
 		{
 			Log::CoreWarning("Failed to deserialize owner mesh of animation in {0}",

@@ -31,7 +31,7 @@ namespace LevEngine
                         AssetDatabase::CreateAsset<AnimationAsset>(animationAssetPath);
                     animationAsset->SetAnimation(animations[animationIdx]);
                     animationAsset->SetAnimationIdx(animationIdx);
-                    animationAsset->SetOwnerMesh(CreateRef<MeshAsset>(this));
+                    animationAsset->SetOwnerMesh(shared_from_this());
                     animationAsset->Serialize();
                 }
             }

@@ -74,6 +74,21 @@ void Renderer3D::DrawMesh(const Matrix& model, const Ref<Mesh>& mesh, const Ref<
     RenderCommand::DrawIndexed(mesh->IndexBuffer);
 }
 
+void Renderer3D::DrawMesh(const Matrix& model, const Array<Matrix, AnimationConstants::MaxBoneCount>& finalBoneMatrices, const Ref<Mesh>& mesh,
+    const Ref<Shader>& shader)
+{
+    LEV_PROFILE_FUNCTION();
+    
+    mesh->Bind(shader);
+
+    const MeshModelBufferData data = { model, model.Transpose().Invert(), finalBoneMatrices };
+    Log::CoreInfo("{}", sizeof(MeshModelBufferData));
+    m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
+    m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+
+    RenderCommand::DrawIndexed(mesh->IndexBuffer);
+}
+
 void Renderer3D::DrawLineList(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader)
 {
     LEV_PROFILE_FUNCTION();

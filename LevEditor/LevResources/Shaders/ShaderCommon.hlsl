@@ -1,4 +1,6 @@
 #define CASCADE_COUNT 4
+#define MAX_BONE_INFLUENCE 4
+#define MAX_BONES 100
 
 struct VS_IN
 {
@@ -7,6 +9,8 @@ struct VS_IN
     float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
     float2 uv : TEXCOORD;
+    float boneIds[MAX_BONE_INFLUENCE] : BONEIDS;
+    float boneWeights[MAX_BONE_INFLUENCE] : BONEWEIGHTS;
 };
 
 struct PS_IN
@@ -29,6 +33,7 @@ cbuffer ModelConstantBuffer : register(b1)
 {
 	row_major matrix model;
 	row_major matrix transposedInvertedModel;
+	row_major matrix finalBonesMatrices[MAX_BONES];
 };
 
 //lighting cbuffer b2
@@ -157,5 +162,48 @@ float3 CalculateNormal(Texture2D normalMap, SamplerState normalMapSampler, float
 	float3 mapNormal = normalMap.Sample(normalMapSampler, uv).rgb;
 	mapNormal = mapNormal * 2.0 - 1.0;
 	return normalize(mul(mapNormal, TBN));
+}
+
+float4 CalculateBonePosition(float4 pos, float boneIds[MAX_BONE_INFLUENCE],	float boneWeights[MAX_BONE_INFLUENCE])
+{
+	float4 totalPosition = float4(0.0, 0.0, 0.0, 0.0);
+	for(int i = 0; i < MAX_BONE_INFLUENCE ; i++)
+	{
+		if (boneIds[i] == -1)
+		{
+			continue;	
+		}
+		
+		if (boneIds[i] >= MAX_BONES) 
+		{
+			totalPosition = pos;
+			break;
+		}
+		
+		float4 localPosition = mul(pos, finalBonesMatrices[boneIds[i]]);
+		totalPosition += mul(localPosition, boneWeights[i]);
+	}
+
+	return totalPosition;
+}
+
+float3 CalculateBoneNormal(float3 normal, float boneIds[MAX_BONE_INFLUENCE])
+{
+	for (int i = 0; i < MAX_BONE_INFLUENCE ; i++)
+	{
+		if (boneIds[i] == -1)
+		{
+			continue;	
+		}
+		
+		if (boneIds[i] >= MAX_BONES) 
+		{
+			break;
+		}
+		
+		mul(normal, (float3x3) finalBonesMatrices[boneIds[i]]);
+	}
+
+	return normal;
 }
 

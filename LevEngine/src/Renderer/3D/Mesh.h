@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AnimationConstants.h"
 #include "DataTypes/Array.h"
 #include "DataTypes/Map.h"
 #include "DataTypes/Vector.h"
@@ -26,8 +27,6 @@ class Mesh
 	};
 
 public:
-	static const int MaxBoneInfluence = 4;
-
 	Mesh() = default;
 	
 	Ref<IndexBuffer> CreateIndexBuffer() const;
@@ -76,7 +75,8 @@ public:
 
 private:
 	Map<BufferBinding, Ref<VertexBuffer>> m_VertexBuffers;
-
+	
+	// Mesh vertex data
 	Vector<Vector3> vertices;
 	Vector<Vector2> uvs;
 	Vector<uint32_t> indices;
@@ -85,12 +85,13 @@ private:
 	Vector<Vector3> biTangents;
 	Vector<Color> colors;
 
-	Vector<Array<float, MaxBoneInfluence>> m_BoneIDs;
-	Vector<Array<float, MaxBoneInfluence>> m_Weights;
-
+	// Mesh animation data
+	Vector<Array<float, AnimationConstants::MaxBoneInfluence>> m_BoneIds;
+	Vector<Array<float, AnimationConstants::MaxBoneInfluence>> m_Weights;
 	UnorderedMap<String, BoneInfo> m_BoneInfoMap;
 	int m_BoneCounter = 0;
 
+	// Mesh AABB
 	AABBBoundingVolume m_BoundingVolume{};
 };
 }

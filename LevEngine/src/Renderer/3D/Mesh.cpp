@@ -74,10 +74,10 @@ void Mesh::Init()
 		AddVertexBuffer(BufferBinding("TEXCOORD", 0), buffer);
 	}
 
-	if (m_BoneIDs.size())
+	if (m_BoneIds.size())
 	{
-		const auto buffer = VertexBuffer::Create(&m_BoneIDs[0][0], static_cast<uint32_t>(m_BoneIDs.size()), 
-			sizeof(Array<float,MaxBoneInfluence>));
+		const auto buffer = VertexBuffer::Create(&m_BoneIds[0][0], static_cast<uint32_t>(m_BoneIds.size()), 
+			sizeof(Array<float, AnimationConstants::MaxBoneInfluence>));
 
 		AddVertexBuffer(BufferBinding("BONEIDS", 0), buffer);
 	}
@@ -85,7 +85,7 @@ void Mesh::Init()
 	if (m_Weights.size())
 	{
 		const auto buffer = VertexBuffer::Create(&m_Weights[0][0], static_cast<uint32_t>(m_Weights.size()),
-			sizeof(Array<float, MaxBoneInfluence>));
+			sizeof(Array<float, AnimationConstants::MaxBoneInfluence>));
 
 		AddVertexBuffer(BufferBinding("BONEWEIGHTS", 0), buffer);
 	}
@@ -111,31 +111,31 @@ bool Mesh::IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) c
 
 void Mesh::SetVertexBoneDataToDefault(int vertexIdx)
 {
-	for (int i = 0; i < MaxBoneInfluence; i++)
+	for (int i = 0; i < AnimationConstants::MaxBoneInfluence; i++)
 	{
-		while (m_BoneIDs.size() <= vertexIdx)
+		while (m_BoneIds.size() <= vertexIdx)
 		{
-			m_BoneIDs.emplace_back(Array<float, MaxBoneInfluence>());
+			m_BoneIds.emplace_back(Array<float, AnimationConstants::MaxBoneInfluence>());
 		}
 
 		while (m_Weights.size() <= vertexIdx)
 		{
-			m_Weights.emplace_back(Array<float, MaxBoneInfluence>());
+			m_Weights.emplace_back(Array<float, AnimationConstants::MaxBoneInfluence>());
 		}
 		
-		m_BoneIDs[vertexIdx][i] = -1;
+		m_BoneIds[vertexIdx][i] = -1;
 		m_Weights[vertexIdx][i] = 0.0f;
 	}
 }
 
 void Mesh::SetVertexBoneData(int vertexIdx, int boneID, float weight)
 {
-	for (int i = 0; i < Mesh::MaxBoneInfluence; ++i)
+	for (int i = 0; i < AnimationConstants::MaxBoneInfluence; ++i)
 	{
-		if (m_BoneIDs[vertexIdx][i] < 0)
+		if (m_BoneIds[vertexIdx][i] < 0)
 		{
 			m_Weights[vertexIdx][i] = weight;
-			m_BoneIDs[vertexIdx][i] = boneID;
+			m_BoneIds[vertexIdx][i] = boneID;
 			break;
 		}
 	}
