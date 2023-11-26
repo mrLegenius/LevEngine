@@ -6,36 +6,35 @@ namespace Sandbox
     {
         void Update(const float deltaTime, entt::registry& registry) override
         {
-            const auto view = registry.view<Transform, Player, LegacyRigidbody>();
+            const auto view = registry.view<Transform, Player, Rigidbody>();
 
             constexpr auto rotationSpeed = 45;
-            const Vector2 mouse{ Input::GetMouseDelta().x, Input::GetMouseDelta().y };
+            constexpr auto moveSpeed = 300;
+            constexpr auto jumpImpulse = 1000;
+            const Vector2 mouse = Input::GetMouseDelta();
 			
             for (const auto entity : view)
             {
-                auto [transform, player, rigidbody] = view.get<Transform, Player, LegacyRigidbody>(entity);
+                auto [transform, player, rigidbody] = view.get<Transform, Player, Rigidbody>(entity);
 
                 const auto delta = mouse * rotationSpeed * deltaTime;
 
                 auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
                 rotation.y -= delta.x;
                 transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
-				
+                
                 if (Input::IsKeyDown(KeyCode::W))
-                    transform.MoveForward(deltaTime * 10);
+                    rigidbody.AddForce(deltaTime * moveSpeed * transform.GetForwardDirection());
                 else if (Input::IsKeyDown(KeyCode::S))
-                    transform.MoveBackward(deltaTime * 10);
+                    rigidbody.AddForce(deltaTime * moveSpeed * -transform.GetForwardDirection());
 
                 if (Input::IsKeyDown(KeyCode::A))
-                    transform.MoveLeft(deltaTime * 10);
+                    rigidbody.AddForce(deltaTime * moveSpeed * -transform.GetRightDirection());
                 else if (Input::IsKeyDown(KeyCode::D))
-                    transform.MoveRight(deltaTime * 10);
+                    rigidbody.AddForce(moveSpeed * deltaTime * transform.GetRightDirection());
 
                 if (Input::IsKeyPressed(KeyCode::Space))
-                    rigidbody.AddImpulse(Vector3::Up * 10);
-
-                auto worldPos =  transform.GetWorldPosition();
-                Log::Info("Current position = {0}, {1}, {2}", worldPos.x, worldPos.y, worldPos.z);
+                    rigidbody.AddImpulse(Vector3::Up * jumpImpulse);
             }
         }
     };

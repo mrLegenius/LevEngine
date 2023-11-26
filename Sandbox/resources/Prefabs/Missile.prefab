@@ -3,35 +3,34 @@ RootEntity: 9177273757486242227
 Entities:
   - Entity: 9177273757486242227
     Tag: Missile
-    Parent: 6442536384003582315
+    Transform:
+      Position: [0, 2.0588665, 0]
+      Rotation: [-0, 0, -0]
+      Scale: [1, 1, 1]
+    Rigidbody:
+      Visualization Flag: false
+      Rigidbody Type: 1
+      Gravity Flag: true
+      Collider Type: 0
+      Sphere Radius: 0.200000003
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
     Audio Source:
       AudioBank: 12311189374319023591
       AudioEventName: FireballFlight
       PlayOnInit: true
       IsOneShot: false
-    Sphere Collider:
-      Radius: 1
-      Offset: [0, 0, 0]
-    Rigidbody:
-      Body Type: 1
-      Gravity Scale: 0
-      Mass: 1
-      Elasticity: 0.5
-      Damping: 0.800000012
-      Angular Damping: 0.800000012
-      Enabled: true
-    Transform:
-      Position: [0, -3.19465923, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
   - Entity: 14586057746468430878
     Tag: Rock
     Parent: 9177273757486242227
-    MeshRenderer:
-      Mesh: 4915651832749162070
-      Material: 6368603494050966349
-      Cast Shadow: true
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    MeshRenderer:
+      Mesh: 4915651832749162070
+      Material: 6368603494050966349
+      Cast Shadow: true

@@ -62,6 +62,9 @@ namespace LevEngine
         void SetDynamicFriction(float dynamicFriction);
         [[nodiscard]] float GetRestitution() const;
         void SetRestitution(float restitution);
+
+        void AddForce(Vector3 value) const;
+        void AddImpulse(Vector3 value) const;
         
         friend class Physics;
         
@@ -70,7 +73,7 @@ namespace LevEngine
         [[nodiscard]] physx::PxShape* GetColliders() const;
         [[nodiscard]] physx::PxMaterial* GetPhysicalMaterials(const physx::PxShape* colliders) const;
         
-        physx::PxRigidActor* m_Actor = NULL;
+        physx::PxRigidActor* m_Actor = nullptr;
 
         Type m_Type = Type::Dynamic;
 

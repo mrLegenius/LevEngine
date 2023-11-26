@@ -465,7 +465,25 @@ namespace LevEngine
             physicalMaterials[0].setRestitution(restitution);
         }
     }
-    
+
+    void Rigidbody::AddForce(const Vector3 value) const
+    {
+        if (m_Type == Type::Static) return;
+        if (!m_Actor) return;
+        
+        if (const auto rigidbody = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
+            rigidbody->addForce(PhysicsUtils::FromVector3ToPxVec3(value));
+    }
+
+    void Rigidbody::AddImpulse(const Vector3 value) const
+    {
+        if (m_Type == Type::Static) return;
+        if (!m_Actor) return;
+        
+        if (const auto rigidbody = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
+            rigidbody->addForce(PhysicsUtils::FromVector3ToPxVec3(value), physx::PxForceMode::eIMPULSE);
+    }
+
     class RigidbodySerializer final : public ComponentSerializer<Rigidbody, RigidbodySerializer>
     {
     protected:
