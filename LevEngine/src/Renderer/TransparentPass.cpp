@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "TransparentPass.h"
 
+#include "PipelineState.h"
 #include "Renderer3D.h"
 #include "RenderSettings.h"
 #include "3D/Mesh.h"

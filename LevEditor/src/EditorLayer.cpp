@@ -13,6 +13,7 @@
 
 #include "ProjectEditor.h"
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
+#include "Renderer/RendererContext.h"
 #include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor

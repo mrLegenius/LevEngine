@@ -1,6 +1,8 @@
 #include "levpch.h"
 #include "Material.h"
 
+#include "Shader.h"
+
 namespace LevEngine
 {
     void Material::Bind(const Ref<Shader>& shader)

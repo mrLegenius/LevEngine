@@ -6,6 +6,7 @@
 
 #include "stb/include/stb_image.h"
 #include "Math/Math.h"
+#include "Renderer/SamplerState.h"
 #include "Renderer/Texture.h"
 
 namespace LevEngine

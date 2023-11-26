@@ -4,6 +4,7 @@
 #include <imgui.h>
 
 #include "Platform/Windows/WindowsWindow.h"
+#include "Renderer/RendererContext.h"
 
 namespace LevEngine
 {

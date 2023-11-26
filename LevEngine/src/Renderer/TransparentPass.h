@@ -1,10 +1,11 @@
 #pragma once
 #include "RenderPass.h"
-#include "PipelineState.h"
 
 namespace LevEngine
 {
-class TransparentPass final : public RenderPass
+    class PipelineState;
+
+    class TransparentPass final : public RenderPass
 {
 public:
     explicit TransparentPass(const Ref<PipelineState>& pipelineState);

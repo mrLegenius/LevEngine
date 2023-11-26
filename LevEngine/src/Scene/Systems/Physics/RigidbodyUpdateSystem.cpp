@@ -2,6 +2,7 @@
 #include "RigidbodyUpdateSystem.h"
 
 #include "Physics/Components/Rigidbody.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {

@@ -998,6 +998,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugGrid.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugLine.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugSphere.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugWireCube.cpp" />
+    <ClCompile Include="src\Renderer\DebugRender\DebugWireSphere.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />

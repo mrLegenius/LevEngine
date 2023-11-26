@@ -1,13 +1,13 @@
 #pragma once
 #include <cstdint>
 
-#include "ConstantBuffer.h"
-#include "Shader.h"
-#include "StructuredBuffer.h"
-
 namespace LevEngine
 {
-class BitonicSort
+    class StructuredBuffer;
+    class ConstantBuffer;
+    class Shader;
+
+    class BitonicSort
 {
     struct ConstantsGPUData
     {

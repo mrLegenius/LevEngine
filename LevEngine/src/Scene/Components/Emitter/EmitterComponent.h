@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "Renderer/Texture.h"
+#include "Math/Color.h"
+#include "Math/Vector3.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine

@@ -1,7 +1,12 @@
 #include "levpch.h"
 #include "ShadowMapPass.h"
+
+#include "CascadeShadowMap.h"
 #include "RenderCommand.h"
+#include "Renderer3D.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/Lights/Lights.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine

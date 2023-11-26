@@ -7,6 +7,7 @@
 #include "Assets.h"
 #include "Renderer/DepthStencilState.h"
 #include "Renderer/RasterizerState.h"
+#include "Renderer/RenderTarget.h"
 
 namespace LevEngine
 {

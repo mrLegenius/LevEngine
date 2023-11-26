@@ -2,6 +2,9 @@
 #include "DebugRenderPass.h"
 
 #include "DebugRender.h"
+#include "DebugShape.h"
+#include "Renderer/ConstantBuffer.h"
+#include "Renderer/PipelineState.h"
 
 namespace LevEngine
 {

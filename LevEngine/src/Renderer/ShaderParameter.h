@@ -1,10 +1,14 @@
 ﻿#pragma once
-#include "ConstantBuffer.h"
-#include "StructuredBuffer.h"
-#include "Texture.h"
+#include "ShaderType.h"
+#include "DataTypes/Utility.h"
 
 namespace LevEngine
 {
+	class SamplerState;
+	class StructuredBuffer;
+	class Texture;
+	class ConstantBuffer;
+
 	class ShaderParameter
 	{
 	public:

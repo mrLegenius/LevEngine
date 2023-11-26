@@ -2,6 +2,7 @@
 #include "RigidbodyInitSystem.h"
 
 #include "Physics/Components/Rigidbody.h"
+#include "Scene/Components/Transform/Transform.h"
 
 void LevEngine::RigidbodyInitSystem::Update(float deltaTime, entt::registry& registry)
 {

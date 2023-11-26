@@ -1,14 +1,15 @@
 #pragma once
 
 #include "ClearFlags.h"
-#include "RenderTarget.h"
-#include "Texture.h"
 #include "RenderPass.h"
 #include "entt/entt.hpp"
 
 namespace LevEngine
 {
-class ClearPass : public RenderPass
+	class Texture;
+	class RenderTarget;
+
+	class ClearPass : public RenderPass
 {
 public:
 	explicit ClearPass(const Ref<RenderTarget>& renderTarget,

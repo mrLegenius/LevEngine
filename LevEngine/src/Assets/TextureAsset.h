@@ -10,10 +10,7 @@ namespace LevEngine
 		Ref<SamplerState> SamplerState;
 		bool IsLinear = false;
 		
-		TextureAsset(const Path& path, const UUID& uuid) : Asset(path, uuid)
-		{
-			SamplerState = SamplerState::Create();
-		}
+		TextureAsset(const Path& path, const UUID& uuid);
 
 		[[nodiscard]] const Ref<Texture>& GetTexture() const { return m_Texture; }
 		

@@ -1,12 +1,14 @@
 #pragma once
-#include "ConstantBuffer.h"
-#include "RenderTechnique.h"
 #include "RenderSettings.h"
+#include "Math/Math.h"
 #include "Scene/Components/Lights/Lights.h"
-#include "Scene/Components/MeshRenderer/MeshRenderer.h"
+
 
 namespace LevEngine
 {
+	struct DirectionalLightComponent;
+	struct MeshRendererComponent;
+	class SceneCamera;
 	class Mesh;
 
 	struct MeshModelBufferData
