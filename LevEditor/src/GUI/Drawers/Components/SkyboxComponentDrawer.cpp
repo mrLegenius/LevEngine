@@ -2,6 +2,7 @@
 
 #include "ComponentDrawer.h"
 #include "GUI/EditorGUI.h"
+#include "Assets/TextureAsset.h"
 
 namespace LevEngine::Editor
 {

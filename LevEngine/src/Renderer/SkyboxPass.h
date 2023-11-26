@@ -12,7 +12,7 @@ namespace LevEngine
 	class SkyboxPass final : public RenderPass
 	{
 	public:
-		explicit SkyboxPass(const Ref<PipelineState>& pipeline);
+		explicit SkyboxPass(const Ref<PipelineState>& pipeline, const Ref<EnvironmentPass>& environmentPass);
 		bool Begin(entt::registry& registry, RenderParams& params) override;
 		void Process(entt::registry& registry, RenderParams& params) override;
 

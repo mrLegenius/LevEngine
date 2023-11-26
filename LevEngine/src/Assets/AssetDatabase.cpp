@@ -97,27 +97,13 @@ namespace LevEngine
 		const auto extension = path.extension().string();
 
 		return
-			extension == ".obj"
-		 || extension == ".fbx"
-		 || extension == ".dae"
-		 || extension == ".gltf"
-		 || extension == ".glb"
-		 || extension == ".blend"
-		 || extension == ".3ds"
-		 || extension == ".ase"
-		 || extension == ".ifc"
-		 || extension == ".xgl"
-		 || extension == ".zgl"
-		 || extension == ".ply"
-		 || extension == ".dxf"
-		 || extension == ".lwo"
-		 || extension == ".lws"
-		 || extension == ".lxo"
-		 || extension == ".stl"
-		 || extension == ".x"
-		 || extension == ".ac"
-		 || extension == ".ms3d"
-		 ;
+			extension == ".png"
+			|| extension == ".jpg"
+			|| extension == ".jpeg"
+			|| extension == ".tga"
+			|| extension == ".hdr"
+			|| extension == ".psd"
+		;
 	}
 
 	bool AssetDatabase::IsAssetMesh(const Path& path)

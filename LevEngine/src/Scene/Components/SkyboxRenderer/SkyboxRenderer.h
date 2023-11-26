@@ -3,6 +3,7 @@
 
 namespace LevEngine
 {
+	class TextureAsset;
 	class SkyboxAsset;
 	
 	REGISTER_PARSE_TYPE(SkyboxRendererComponent);

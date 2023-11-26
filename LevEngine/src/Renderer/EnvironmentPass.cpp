@@ -2,6 +2,7 @@
 #include "EnvironmentPass.h"
 
 #include "PipelineState.h"
+#include "RasterizerState.h"
 #include "RenderCommand.h"
 #include "Renderer3D.h"
 #include "RenderTarget.h"
@@ -113,7 +114,7 @@ namespace LevEngine
             
             renderTarget->AttachTexture(AttachmentPoint::Color0, renderTexture->GetMipMapLevel(mip));
 
-            float roughness = (float)mip / (float)(maxMipLevels - 1);
+            float roughness = static_cast<float>(mip) / static_cast<float>(maxMipLevels - 1);
             
             roughnessConstantBuffer->SetData(&roughness);
             roughnessConstantBuffer->Bind(7, ShaderType::Pixel);

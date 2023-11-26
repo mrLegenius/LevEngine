@@ -1,6 +1,6 @@
 ﻿#include "levpch.h"
 #include "SkyboxRenderer.h"
-#include "Assets/SkyboxAsset.h"
+#include "Assets/TextureAsset.h"
 
 #include "../ComponentSerializer.h"
 

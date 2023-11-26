@@ -30,7 +30,7 @@ SkyboxPass::SkyboxPass(const Ref<PipelineState>& pipeline, const Ref<Environment
 	: m_SkyboxPipeline(pipeline)
 	, m_EnvironmentPass(environmentPass)
 	, m_SkyboxMesh(Primitives::CreateCube())
-	, m_CameraConstantBuffer( ConstantBuffer::Create(sizeof CameraData, 6))
+	, m_CameraConstantBuffer(ConstantBuffer::Create(sizeof CameraData, 6))
 {
 	
 }
