@@ -24,6 +24,7 @@ namespace Sandbox
 	
 	void FPSGame::OnAttach()
 	{
+
 		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
 
@@ -40,7 +41,7 @@ namespace Sandbox
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
-		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
+		//scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
 		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();

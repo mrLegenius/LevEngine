@@ -4,6 +4,7 @@
 
 namespace LevEngine
 {
+class Scene;
 class Entity
 {
 public:
@@ -13,57 +14,22 @@ public:
 	~Entity() = default;
 
 	template<typename T>
-	bool HasComponent() const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-		return m_Handle.any_of<T>();
-	}
+	bool HasComponent() const;
 
 	template<typename T, typename ... Args>
-	T& AddComponent(Args&& ... args) const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-		LEV_CORE_ASSERT(!HasComponent<T>(), "Entity already has this component");
-
-		T& component = m_Handle.emplace<T>(std::forward<Args>(args)...);
-		return component;
-	}
+	T& AddComponent(Args&& ... args) const;
 
 	template<typename T, typename... Args>
-	T& AddOrReplaceComponent(Args&&... args) const
-	{
-		T& component = m_Handle.emplace_or_replace<T>(std::forward<Args>(args)...);
-		return component;
-	}
+	T& AddOrReplaceComponent(Args&&... args) const;
 
 	template<typename T>
-	T& GetComponent() const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-		LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
-
-		return m_Handle.get<T>();
-	}
+	T& GetComponent() const;
 
 	template<typename T>
-	T& GetOrAddComponent() const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-
-		return m_Handle.get_or_emplace<T>();
-	}
+	T& GetOrAddComponent() const;
 
 	template<typename T>
-	void RemoveComponent() const
-	{
-		LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid");
-		LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
-
-		auto _ = m_Handle.remove<T>();
-	}
-
-	template <typename T>
-	void AddScript();
+	void RemoveComponent() const;
 
 	UUID GetUUID() const { return GetComponent<IDComponent>().ID; }
 	const String& GetName() const { return GetComponent<TagComponent>().tag; }
@@ -82,14 +48,12 @@ public:
 	}
 
 	template<typename  T>
-	Entity GetOtherEntity(const T& component)
-	{
-		auto& registry = *m_Handle.registry();
-		const auto entity = entt::to_entity(registry, component);
-		return Entity{ entt::handle{registry, entity} };
-	}
+	Entity GetOtherEntity(const T& component);
 
 private:
 	entt::handle m_Handle;
 };
+
 }
+
+#include "Entity.inl"

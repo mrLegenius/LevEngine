@@ -16,22 +16,15 @@ class Entity;
 class Scene
 {
 public:
-	Scene() = default;
+	Scene();
 
 	void CleanupScene();
 
 	void OnUpdate(float deltaTime);
-	void RequestPhysicsUpdates(float deltaTime);
 	void OnPhysics(float deltaTime);
-	void RequestRenderUpdate();
 	void OnLateUpdate(float deltaTime);
 	void OnRender();
-	void RequestRenderUpdate(SceneCamera* mainCamera, const Transform* cameraTransform);
 	void OnRender(SceneCamera* mainCamera, const Transform* cameraTransform);
-	void RequestLateUpdate(float deltaTime);
-	void RequestEventsUpdate(float deltaTime);
-	void RequestAudioUpdate();
-	void AudioUpdate();
 
 	void OnViewportResized(uint32_t width, uint32_t height);
 
@@ -50,59 +43,37 @@ public:
 	void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 
 	template<typename T>
-	void RegisterUpdateSystem()
-	{
-		static_assert(eastl::is_base_of_v<System, T>, "T must derive from System");
-		m_UpdateSystems.emplace_back(CreateScope<T>());
-	}
+	void RegisterUpdateSystem();
 
 	template<typename T>
-	void RegisterLateUpdateSystem()
-	{
-		static_assert(eastl::is_base_of_v<System, T>, "T must derive from System");
-		m_LateUpdateSystems.emplace_back(CreateScope<T>());
-	}
+	void RegisterLateUpdateSystem();
 
 	template<typename T>
-	void RegisterOneFrame()
-	{
-		m_EventSystems.emplace_back(CreateScope<EventSystem<T>>());
-	}
+	void RegisterOneFrame();
 
 	template<typename T>
-	Entity GetEntityByComponent(T* value)
-	{
-		const auto entity = entt::to_entity(m_Registry, *value);
-		return ConvertEntity(entity);
-	}
+	Entity GetEntityByComponent(T* value);
 
-	Entity GetEntityByUUID(const UUID& uuid)
-	{
-		const auto view = m_Registry.view<IDComponent>();
-
-		for (const auto entity : view)
-		{
-			IDComponent idComponent = view.get<IDComponent>(entity);
-			if (idComponent.ID == uuid)
-				return ConvertEntity(entity);
-		}
-
-		return Entity();
-	}
+	Entity GetEntityByUUID(const UUID& uuid);
 
 	entt::registry& GetRegistry();
 
 private:
 	void RequestUpdates(float deltaTime);
+	void RequestRenderUpdate();
+	void RequestPhysicsUpdates(float deltaTime);
+	void RequestRenderUpdate(SceneCamera* mainCamera, const Transform* cameraTransform);
+	void RequestLateUpdate(float deltaTime);
+	void RequestEventsUpdate(float deltaTime);
+
+	Entity ConvertEntity(entt::entity entity);
 
 private:
 	entt::registry m_Registry;
-	uint32_t m_ViewportWidth = 0;
-	uint32_t m_ViewportHeight = 0;
+	uint32_t m_ViewportWidth;
+	uint32_t m_ViewportHeight;
 
 	friend class Entity;
-
-	Entity ConvertEntity(entt::entity entity);
 
 	Vector<Scope<System>> m_UpdateSystems;
 	Vector<Scope<System>> m_LateUpdateSystems;
@@ -116,3 +87,5 @@ private:
 	bool m_IsAudioUpdateDone = true;
 };
 }
+
+#include "Scene.inl"

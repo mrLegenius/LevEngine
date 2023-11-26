@@ -9,10 +9,16 @@
 #include "../Events/MouseEvent.h"
 #include "GUI/ImGuiLayer.h"
 #include "Physics/Physics.h"
+#include "sol/sol.hpp"
 
 namespace LevEngine
 {
-struct ApplicationCommandLineArgs
+	namespace Scripting
+	{
+		class ScriptingManager;
+	}
+
+	struct ApplicationCommandLineArgs
 {
 	int Count = 0;
 	char** Args = nullptr;
@@ -46,7 +52,8 @@ public:
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
 	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
-
+	Ref<Scripting::ScriptingManager> GetScriptingManager();
+	
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
 	[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
@@ -77,6 +84,8 @@ private:
 	ApplicationSpecification m_Specification;
 
 	static Application* s_Instance;
+
+	Ref<Scripting::ScriptingManager> m_ScriptingManager;
 };
 
 using App = Application;

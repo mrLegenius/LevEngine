@@ -1,5 +1,6 @@
 #include "levpch.h"
 #include "Input.h"
+#include "Math/Vector2.h"
 
 namespace LevEngine
 {

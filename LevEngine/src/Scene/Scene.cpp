@@ -9,19 +9,48 @@
 #include "Components/Components.h"
 #include "Components/Camera/Camera.h"
 #include "Kernel/Application.h"
+#include "Scripting/ScriptingManager.h"
 #include "Physics/Physics.h"
+#include "Scripting/LuaComponentsBinder.h"
 
 namespace LevEngine
 {
+
     constexpr bool k_IsMultiThreading = false;
     constexpr int k_SleepMicroSeconds = 10;
-    
+
+    Scene::Scene()
+    {
+        using namespace Scripting;
+
+        const auto ScriptingManager = Application::Get().GetScriptingManager();
+        ScriptingManager->CreateRegistryBind(m_Registry);
+
+        LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager->GetLuaState()), this);
+
+        ScriptingManager->RegisterSystems(this);
+    }
+
     void Scene::CleanupScene()
     {
         LEV_PROFILE_FUNCTION();
 
         m_Registry.clear();
         Audio::ReleaseAll();
+    }
+
+    Entity Scene::GetEntityByUUID(const UUID& uuid)
+    {
+        const auto view = m_Registry.view<IDComponent>();
+
+        for (const auto entity : view)
+        {
+            IDComponent idComponent = view.get<IDComponent>(entity);
+            if (idComponent.ID == uuid)
+                return ConvertEntity(entity);
+        }
+
+        return Entity();
     }
 
     entt::registry& Scene::GetRegistry()
@@ -54,7 +83,7 @@ namespace LevEngine
                 std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
             }
         }
-        else 
+        else
         {
             for (const auto& system : m_UpdateSystems)
             {
@@ -66,8 +95,8 @@ namespace LevEngine
     void Scene::RequestPhysicsUpdates(const float deltaTime)
     {
         LegacyPhysics::Process(m_Registry, deltaTime);
-        
-	    vgjs::continuation([this]() {m_IsPhysicsDone = true; });
+
+        vgjs::continuation([this]() {m_IsPhysicsDone = true; });
     }
 
     void Scene::OnPhysics(const float deltaTime)
@@ -94,7 +123,7 @@ namespace LevEngine
     {
         Renderer::Render(m_Registry);
 
-	    vgjs::continuation([this]() {m_IsRenderDone = true; });
+        vgjs::continuation([this]() {m_IsRenderDone = true; });
     }
 
     void Scene::OnRender()
@@ -120,7 +149,7 @@ namespace LevEngine
     {
         Renderer::Render(m_Registry, mainCamera, cameraTransform);
 
-	    vgjs::continuation([this]() {m_IsRenderDone = true; });
+        vgjs::continuation([this]() {m_IsRenderDone = true; });
     }
 
     void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
@@ -188,18 +217,18 @@ namespace LevEngine
                 std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
             }
         }
-	    else
-	    {
+        else
+        {
             for (const auto& system : m_LateUpdateSystems)
             {
                 system->Update(deltaTime, m_Registry);
             }
 
-		    for (const auto& system : m_EventSystems)
+            for (const auto& system : m_EventSystems)
             {
                 system->Update(deltaTime, m_Registry);
             }
-	    }
+        }
     }
 
     void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
@@ -222,13 +251,13 @@ namespace LevEngine
 
     void Scene::ForEachEntity(const Action<Entity>& callback)
     {
-	    for (const auto entityId : m_Registry.storage<entt::entity>())
-	    {
+        for (const auto entityId : m_Registry.storage<entt::entity>())
+        {
             if (!m_Registry.valid(entityId)) continue;
 
             const auto entity = ConvertEntity(entityId);
             callback(entity);
-	    }
+        }
     }
 
     Entity Scene::CreateEntity(const String& name)
@@ -259,7 +288,7 @@ namespace LevEngine
     {
         DestroyEntity(ConvertEntity(entity));
     }
-        
+
     void Scene::DestroyEntity(const Entity entity)
     {
         LEV_PROFILE_FUNCTION();
@@ -276,28 +305,28 @@ namespace LevEngine
 
     void Scene::GetAllChildren(Entity entity, Vector<Entity>& entities)
     {
-	    const auto& parentTransform = entity.GetComponent<Transform>();
+        const auto& parentTransform = entity.GetComponent<Transform>();
 
-	    for (const auto child : parentTransform.GetChildren())
-		    GetAllChildren(child, entities);
+        for (const auto child : parentTransform.GetChildren())
+            GetAllChildren(child, entities);
 
-	    entities.emplace(entities.begin(), entity);
+        entities.emplace(entities.begin(), entity);
     }
 
     Entity Scene::DuplicateEntity(const Entity entity)
     {
         return DuplicateEntity(entity, entity.GetComponent<Transform>().GetParent());
     }
-        
+
     Entity Scene::DuplicateEntity(const Entity entity, const Entity parent)
     {
         LEV_PROFILE_FUNCTION();
-        
+
         const entt::entity newEntity = m_Registry.create();
 
         //Copy component by component
-        for(auto &&curr: m_Registry.storage())
-            if(auto &storage = curr.second; storage.contains(entity))
+        for (auto&& curr : m_Registry.storage())
+            if (auto& storage = curr.second; storage.contains(entity))
                 storage.push(newEntity, storage.value(entity));
 
         //Assign new UUID
@@ -319,3 +348,6 @@ namespace LevEngine
         return duplicatedEntity;
     }
 }
+
+
+

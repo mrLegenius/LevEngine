@@ -42,5 +42,9 @@ namespace LevEngine
         m_ActiveScenePath = Path();
         return m_ActiveScene = CreateRef<Scene>();
     }
+    void SceneManager::Shutdown()
+    {
+        m_ActiveScene = nullptr;
+    }
 }
 
