@@ -35,10 +35,11 @@ Application::Application(const ApplicationSpecification& specification)
 
 	m_Physics = Physics::Create();
 
+	m_ScriptingManager = CreateRef<Scripting::ScriptingManager>();
+
 	Renderer::Init();
 	Random::Init();
-	m_Lua = CreateRef<sol::state>();
-	Scripting::ScriptingManager::Init(*m_Lua);
+	m_ScriptingManager->Init();
 	Audio::Init(Audio::MaxAudioChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE,
 		FMOD_INIT_VOL0_BECOMES_VIRTUAL | FMOD_INIT_3D_RIGHTHANDED);
 
@@ -54,7 +55,7 @@ Application::~Application()
 {
 	Renderer::Shutdown();
 	Audio::Shutdown();
-	Scripting::ScriptingManager::Shutdown();
+	m_ScriptingManager->Shutdown();
 	SceneManager::Shutdown();
 }
 
@@ -174,6 +175,11 @@ void Application::OnEvent(Event& e)
 		if (e.handled)
 			break;
 	}
+}
+
+Ref<Scripting::ScriptingManager> Application::GetScriptingManager()
+{
+	return m_ScriptingManager;
 }
 
 bool Application::OnWindowClosed(WindowClosedEvent& e)

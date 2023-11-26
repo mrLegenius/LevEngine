@@ -14,11 +14,6 @@ public:
 
 	~Entity() = default;
 
-	static void CreateLuaEntityBind(sol::state& lua, Scene* scene);
-
-	template<class TComponent>
-	static void RegisterMetaComponent();
-
 	template<typename T>
 	bool HasComponent() const;
 
@@ -64,19 +59,6 @@ private:
 	entt::handle m_Handle;
 };
 
-// Lua functions
-
-template <class TComponent>
-auto add_component(Entity& entity, const sol::table& component, sol::this_state state);
-
-template <class TComponent>
-auto has_component(Entity& entity);
-
-template <class TComponent>
-auto get_component(Entity& entity, sol::this_state state);
-
-template <class TComponent>
-auto remove_component(Entity& entity);
 }
 
 #include "Entity.inl"

@@ -11,6 +11,7 @@
 #include "Kernel/Application.h"
 #include "Scripting/ScriptingManager.h"
 #include "Physics/Physics.h"
+#include "Scripting/LuaComponentsBinder.h"
 
 namespace LevEngine
 {
@@ -21,13 +22,13 @@ namespace LevEngine
     Scene::Scene()
     {
         using namespace Scripting;
-        auto lua = Application::Get().GetLuaState();;
 
-        ScriptingManager::CreateRegistryBind(*lua, m_Registry);
+        const auto ScriptingManager = Application::Get().GetScriptingManager();
+        ScriptingManager->CreateRegistryBind(m_Registry);
 
-        Entity::CreateLuaEntityBind(*lua, this);
+        LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager->GetLuaState()), this);
 
-        ScriptingManager::RegisterSystems(this);
+        ScriptingManager->RegisterSystems(this);
     }
 
     void Scene::CleanupScene()

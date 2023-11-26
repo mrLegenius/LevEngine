@@ -60,8 +60,6 @@ namespace LevEngine
 		void RecalculateModel();
 		void ForceRecalculateModel();
 
-		static void CreateLuaBind(sol::state& lua);
-
 	private:
 
 		Vector<Entity> children;

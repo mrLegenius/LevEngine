@@ -87,18 +87,6 @@ float Input::GetMouseY()
 	return s_MousePositionY;
 }
 
-void Input::CreateLuaBind(sol::state& lua)
-{
-	lua.new_usertype<Input>(
-		"Input",
-		sol::no_constructor,
-		"getMouseDelta", []()
-		{
-			return GetMouseDelta();
-		}
-	);
-}
-
 void Input::OnKeyPressed(const KeyCode keyCode)
 {
 	s_PreviousKeyStates[keyCode] = s_CurrentKeyStates[keyCode];

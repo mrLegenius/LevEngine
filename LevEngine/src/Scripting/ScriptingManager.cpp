@@ -6,30 +6,39 @@
 #include "MetaUtilities.h"
 #include "Scene/Scene.h"
 #include "MathLuaBindings.h"
-#include "Input/Input.h"
+#include "LuaComponentsBinder.h"
 
 #include "Scene/Components/Camera/Camera.h"
 
-#define RegisterComponent(x)    x::CreateLuaBind(lua);\
-                                Entity::RegisterMetaComponent<x>();\
+#define RegisterComponent(x)    LuaComponentsBinder::Create##x##LuaBind(*m_Lua);\
+                                LuaComponentsBinder::RegisterMetaComponent<x>();\
                                 RegisterMetaComponent<x>();
 
-namespace LevEngine::Scripting {
+const String ScriptsDatabaseFilename = "ScriptsDatabase.asset";
+const String ScriptsDatabaseDir = "scripts";
 
-    void ScriptingManager::Init(sol::state& lua)
+namespace LevEngine::Scripting
+{
+
+    void ScriptingManager::Init()
     {
-        lua.open_libraries(sol::lib::base, sol::lib::package);
+        m_Lua->open_libraries(sol::lib::base, sol::lib::package);
 
-        MathLuaBindings::CreateLuaBindings(lua);
-        Input::CreateLuaBind(lua);
+        MathLuaBindings::CreateLuaBindings(*m_Lua);
+        LuaComponentsBinder::CreateInputLuaBind(*m_Lua);
         
         RegisterComponent(Transform);
         RegisterComponent(CameraComponent);
 
-        LoadScripts(lua, "");
+        LoadScripts("");
     }
 
-    bool ScriptingManager::LoadScripts(sol::state& lua,const Path& projectPath)
+    ScriptingManager::ScriptingManager()
+    {
+        m_Lua = CreateRef<sol::state>();
+    }
+
+    bool ScriptingManager::LoadScripts(const Path& projectPath)
     {
         try
         {
@@ -39,30 +48,30 @@ namespace LevEngine::Scripting {
 
             auto scripts = data["Scripts"];
 
-            Path scriptsDir = (projectPath / ScriptsDatabaseDir.c_str());
+            const Path scriptsDir = (projectPath / ScriptsDatabaseDir.c_str());
 
             for (const auto& script : scripts)
             {
-                String scriptName = script.as<String>();
+	            auto scriptName = script.as<String>();
                 try
                 {
-                    auto result = lua.safe_script_file((scriptsDir / (scriptName + ".lua").c_str()).string().c_str());
-                    Log::CoreInfo("Loading lua script: {0}", scriptName);
+                    auto result = m_Lua->safe_script_file((scriptsDir / (scriptName + ".m_Lua").c_str()).string().c_str());
+                    Log::CoreInfo("Loading m_Lua script: {0}", scriptName);
 
-                    sol::table system = lua[scriptName.c_str()];
+                    sol::table system = (*m_Lua)[scriptName.c_str()];
                     
                     m_Systems.emplace(eastl::make_pair(scriptName, eastl::move(system)));
                 }
                 catch (const sol::error& err)
                 {
-                    Log::Error("Error loading lua script {0}: {1}", scriptName, err.what());
+                    Log::CoreError("Error loading m_Lua script {0}: {1}", scriptName, err.what());
                     return false;
                 }
             }
         }
         catch (std::exception& e)
         {
-            Log::CoreWarning(e.what());
+            Log::CoreWarning("Failed to load m_Lua scripts. Error: {}", e.what());
             return false;
         }
 
@@ -104,12 +113,12 @@ namespace LevEngine::Scripting {
         scene->RegisterLateUpdateSystem<ScriptingLateUpdateSystem>();
     }
 
-    void ScriptingManager::CreateRegistryBind(sol::state& lua, entt::registry& registry)
+    void ScriptingManager::CreateRegistryBind(entt::registry& registry) const
     {
         using namespace entt::literals;
 
 
-        lua.new_usertype<entt::runtime_view>(
+        m_Lua->new_usertype<entt::runtime_view>(
             "runtime_view",
             sol::no_constructor,
             "for_each",
@@ -149,7 +158,7 @@ namespace LevEngine::Scripting {
 #pragma warning(push)
 #pragma warning(disable : 4996)
 
-        lua.new_usertype<entt::registry>(
+        m_Lua->new_usertype<entt::registry>(
             "Registry",
             sol::no_constructor,
             "get_entities", [&](const sol::variadic_args& va) {
@@ -180,5 +189,10 @@ namespace LevEngine::Scripting {
     void ScriptingManager::Shutdown()
     {
         m_Systems.clear();
+    }
+
+    Ref<sol::state> ScriptingManager::GetLuaState()
+    {
+        return m_Lua;
     }
 }

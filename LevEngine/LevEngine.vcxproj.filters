@@ -2714,6 +2714,9 @@
     <ClInclude Include="src\Scripting\ScriptingSystems.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Scripting\LuaComponentsBinder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Input\Input.cpp">
@@ -3241,6 +3244,9 @@
     <ClCompile Include="src\Scripting\ScriptingSystems.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Scripting\MetaUtilities.inl">
@@ -3253,6 +3259,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="src\Scene\Scene.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="src\Scripting\LuaComponentsBinder.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

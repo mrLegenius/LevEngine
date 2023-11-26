@@ -13,7 +13,12 @@
 
 namespace LevEngine
 {
-struct ApplicationCommandLineArgs
+	namespace Scripting
+	{
+		class ScriptingManager;
+	}
+
+	struct ApplicationCommandLineArgs
 {
 	int Count = 0;
 	char** Args = nullptr;
@@ -47,10 +52,8 @@ public:
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
 	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
-	Ref<sol::state> GetLuaState() {
-		return m_Lua;
-	}
-
+	Ref<Scripting::ScriptingManager> GetScriptingManager();
+	
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
 	[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
@@ -82,7 +85,7 @@ private:
 
 	static Application* s_Instance;
 
-	Ref<sol::state> m_Lua;
+	Ref<Scripting::ScriptingManager> m_ScriptingManager;
 };
 
 using App = Application;

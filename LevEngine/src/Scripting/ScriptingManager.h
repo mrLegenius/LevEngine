@@ -3,37 +3,36 @@
 #include <DataTypes/Path.h>
 #include <sol/sol.hpp>
 #include <entt/entt.hpp>
-#include "DataTypes/Pointers.h"
 #include "DataTypes/UnorderedMap.h"
-#include "ScriptingComponent.h"
 
 namespace LevEngine {
 	class Scene;
 
-	namespace Scripting {
-
-		
+	namespace Scripting
+	{	
 
 		class ScriptingManager
 		{
 		public:
-			static void Init(sol::state& lua);
-			static bool LoadScripts(sol::state& lua, const Path& projectPath);
+			ScriptingManager();
+			void Init();
+			bool LoadScripts(const Path& projectPath);
 
-			static void RegisterSystems(Scene* const scene);
+			void RegisterSystems(Scene* const scene);
 
 			template <class TComponent>
-			static void RegisterMetaComponent();
+			void RegisterMetaComponent();
 
-			static void CreateRegistryBind(sol::state& lua, entt::registry& registry);
+			void CreateRegistryBind(entt::registry& registry) const;
 
-			static void Shutdown();
+			void Shutdown();
+
+			Ref<sol::state> GetLuaState();
 
 		private:
-			inline static const String ScriptsDatabaseFilename = "ScriptsDatabase.asset";
-			inline static const String ScriptsDatabaseDir = "scripts";
+			UnorderedMap<String, sol::table> m_Systems;
 
-			inline static UnorderedMap<String, sol::table> m_Systems;
+			Ref<sol::state> m_Lua;
 		};
 
 		template <class TComponent>

@@ -92,6 +92,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
@@ -994,6 +995,7 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
@@ -1341,6 +1343,7 @@
   <ItemGroup>
     <None Include="src\Scene\Entity.inl" />
     <None Include="src\Scene\Scene.inl" />
+    <None Include="src\Scripting\LuaComponentsBinder.inl" />
     <None Include="src\Scripting\MetaUtilities.inl" />
     <None Include="src\Scripting\ScriptingManager.inl" />
   </ItemGroup>

@@ -2,7 +2,8 @@
 #include "ScriptingManager.h"
 #include "entt/entt.hpp"
 
-namespace LevEngine::Scripting {
+namespace LevEngine::Scripting
+{
 
 	template <class TComponent>
 	entt::runtime_view& add_component_to_view(entt::registry* registry, entt::runtime_view& view)
