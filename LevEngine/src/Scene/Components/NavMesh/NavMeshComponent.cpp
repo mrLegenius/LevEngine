@@ -5,6 +5,7 @@
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMeshQuery.h"
 #include "Assets/MeshAsset.h"
+#include "Physics/Components/LegacyCollider.h"
 #include "Renderer/3D/Mesh.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -59,46 +60,62 @@ namespace LevEngine
         m_Config.detailSampleMaxError = CellHeight * DetailSampleMaxError;
 		
         auto& registry = SceneManager::GetActiveScene()->GetRegistry();
+
+		const auto& selfView = registry.view<Transform, NavMeshComponent, LegacyBoxCollider>();
+		const auto& thisEntity = selfView.begin();
+		const auto& boxCollider = selfView.get<LegacyBoxCollider>(*thisEntity);
+		const auto& thisTransform = selfView.get<Transform>(*thisEntity);
+
+		Vector3 boxColliderMinPoint = {boxCollider.offset.x - boxCollider.extents.x,
+		boxCollider.offset.y - boxCollider.extents.y,
+		boxCollider.offset.z - boxCollider.extents.z};
+		Vector3 boxColliderMaxPoint = {boxCollider.offset.x + boxCollider.extents.x,
+			boxCollider.offset.y + boxCollider.extents.y,
+			boxCollider.offset.z + boxCollider.extents.z};
+		
+		const Vector3& transformedMinPoint = Vector3::Transform(boxColliderMinPoint, thisTransform.GetModel());
+		const Vector3& transformedMaxPoint = Vector3::Transform(boxColliderMaxPoint, thisTransform.GetModel());
+		
         const auto view = registry.view<Transform, NavMeshableComponent, MeshRendererComponent>();
+
+		Vector<Vector3> verticesOfAllMeshes;
+		Vector<uint32_t> indicesOfAllMeshes;
 		
-        const auto entity = view.begin();
-		const auto& transform = view.get<Transform>(*entity);
-		const auto& navMeshableComponent = view.get<NavMeshableComponent>(*entity);
-        const auto& meshRendererComponent = view.get<MeshRendererComponent>(*entity);
-
-        const auto& mesh = meshRendererComponent.mesh->GetMesh();
-        
-        const Vector3& boundingBoxMin = mesh->GetAABBBoundingVolume().GetMin();
-        const Vector3& boundingBoxMax = mesh->GetAABBBoundingVolume().GetMax();
-		Vector<Vector3> meshVertices = mesh->GetVertices();
-        const uint32_t verticesCount = mesh->GetVerticesCount();
-        const Vector<uint32_t>& meshIndices = mesh->GetIndices();
-        const uint32_t indicesCount = mesh->GetIndicesCount();
-        
-        const float bmin[3] = {boundingBoxMin.x, boundingBoxMin.y, boundingBoxMin.z};
-        const float bmax[3] = {boundingBoxMax.x, boundingBoxMax.y, boundingBoxMax.z};
-		
-        const int trianglesCount = indicesCount / 3;
-        int* triangles = new int[indicesCount];
-
-        for(int i = 0; i < verticesCount; ++i)
-        {
-	        const Vector3 transformed = Vector3::Transform(meshVertices[i], transform.GetModel());
-        	meshVertices[i] = transformed;
-        }
-
-		float* vertices = new float[verticesCount * 3];
-		for (int i = 0; i < verticesCount; ++i)
+		for (auto& entity : view)
 		{
-			vertices[i] = meshVertices[i].x;
-			vertices[i + 1] = meshVertices[i].y;
-			vertices[i + 2] = meshVertices[i].z;
-		}
+			const auto& navMeshableComponent = view.get<NavMeshableComponent>(entity);
+			if(!navMeshableComponent.UseInNavMesh)
+			{
+				continue;
+			}
+			
+			const auto& transform = view.get<Transform>(entity);
+			const auto& meshRendererComponent = view.get<MeshRendererComponent>(entity);
+			const auto& mesh = meshRendererComponent.mesh->GetMesh();
+		
+			Vector<Vector3> meshVertices = mesh->GetVertices();
+			Vector<uint32_t> meshIndices = mesh->GetIndices();
 
-        for(int i = 0; i < indicesCount; ++i)
-        {
-            triangles[i] = meshIndices[i];
-        }
+			for (auto& meshVertex : meshVertices)
+			{
+				meshVertex = Vector3::Transform(meshVertex, transform.GetModel());
+				verticesOfAllMeshes.push_back(meshVertex);
+			}
+
+			for (auto meshIndex : meshIndices)
+			{
+				indicesOfAllMeshes.push_back(meshIndex);
+			}
+		}
+		
+		float* vertices = &verticesOfAllMeshes.data()->x;
+		const int verticesCount = verticesOfAllMeshes.size();
+		
+		int* triangles = reinterpret_cast<int*>(indicesOfAllMeshes.data());
+		const int trianglesCount = indicesOfAllMeshes.size() / 3;
+		
+		const float bmin[3] = {transformedMinPoint.x, transformedMinPoint.y, transformedMinPoint.z};
+		const float bmax[3] = {transformedMaxPoint.x, transformedMaxPoint.y, transformedMaxPoint.z};
             
         // Set the area where the navigation will be build.
         rcVcopy(m_Config.bmin, bmin);
@@ -423,7 +440,6 @@ namespace LevEngine
 			}
 		}
 
-		delete[] triangles;
 		Log::Trace("Navmesh builded successfully.");
 
 		// // Show performance stats.
