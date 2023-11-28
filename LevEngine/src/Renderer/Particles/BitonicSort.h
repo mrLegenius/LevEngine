@@ -28,7 +28,7 @@ namespace LevEngine
 public:
     explicit BitonicSort(int numElements);
 
-    void Sort(Ref<StructuredBuffer> inBuffer, Ref<StructuredBuffer> tempBuffer) const;
+    void Sort(const Ref<StructuredBuffer>& inBuffer, const Ref<StructuredBuffer>& tempBuffer) const;
 private:
 
     void SetGPUSortConstants(uint32_t level, uint32_t levelMask, uint32_t width, uint32_t height) const;

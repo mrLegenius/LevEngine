@@ -3,10 +3,10 @@
 
 #include "BitonicSort.h"
 
-#include "ConstantBuffer.h"
-#include "Shader.h"
+#include "Renderer/ConstantBuffer.h"
+#include "Renderer/Shader.h"
 #include "Assets/EngineAssets.h"
-#include "StructuredBuffer.h"
+#include "Renderer/StructuredBuffer.h"
 
 namespace LevEngine
 {
@@ -19,7 +19,7 @@ BitonicSort::BitonicSort(const int numElements): m_NumElements(numElements)
 	m_ConstantsBuffer = ConstantBuffer::Create(sizeof ConstantsGPUData, 0);
 }
 
-void BitonicSort::Sort(const Ref<StructuredBuffer> inBuffer, const Ref<StructuredBuffer> tempBuffer) const
+void BitonicSort::Sort(const Ref<StructuredBuffer>& inBuffer, const Ref<StructuredBuffer>& tempBuffer) const
 {
 	const uint32_t numElements = m_NumElements;
 	constexpr uint32_t matrixWidth = BitonicBlockSize;
@@ -40,7 +40,7 @@ void BitonicSort::Sort(const Ref<StructuredBuffer> inBuffer, const Ref<Structure
 	const auto heightTransposeBlocks = static_cast<int>(matrixHeight / TransposeBlockSize);
 	// Then sort the rows and columns for the levels > than the block size
 	// Transpose. Sort the Columns. Transpose. Sort the Rows.
-	for (uint32_t level = (BitonicBlockSize << 1); level <= numElements; level <<= 1) {
+	for (uint32_t level = BitonicBlockSize << 1; level <= numElements; level <<= 1) {
 		// Transpose the data from buffer 1 into buffer 2
 		SetGPUSortConstants(level / BitonicBlockSize, (level & ~numElements) / BitonicBlockSize, matrixWidth, matrixHeight);
 		inBuffer->Bind(0, ShaderType::Compute, false);
@@ -48,7 +48,7 @@ void BitonicSort::Sort(const Ref<StructuredBuffer> inBuffer, const Ref<Structure
 
 		m_BitonicTransposeCS->Bind();
 		if (heightTransposeBlocks != 0)
-			context->Dispatch(static_cast<int>(matrixWidth / TransposeBlockSize), heightTransposeBlocks, 1);
+			context->Dispatch(matrixWidth / TransposeBlockSize, heightTransposeBlocks, 1);
 		inBuffer->Unbind(0, ShaderType::Compute, false);
 		// Sort the transposed column data
 		//tempBuffer->Bind(0, Shader::Type::Compute, true);
@@ -64,7 +64,7 @@ void BitonicSort::Sort(const Ref<StructuredBuffer> inBuffer, const Ref<Structure
 
 		m_BitonicTransposeCS->Bind();
 		if (heightTransposeBlocks != 0)
-			context->Dispatch(heightTransposeBlocks, static_cast<int>(matrixWidth / TransposeBlockSize), 1);
+			context->Dispatch(heightTransposeBlocks, matrixWidth / TransposeBlockSize, 1);
 		tempBuffer->Unbind(0, ShaderType::Compute, false);
 		// Sort the row data
 		//inBuffer->Bind(0, Shader::Type::Compute, true);
