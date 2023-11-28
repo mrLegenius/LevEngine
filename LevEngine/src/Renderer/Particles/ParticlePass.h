@@ -5,6 +5,7 @@
 
 namespace LevEngine
 {
+    class ParticleSortingPass;
     class ParticleSimulationPass;
     class ParticleEmissionPass;
     class BitonicSort;
@@ -42,7 +43,8 @@ namespace LevEngine
         };
     
     public:
-        ParticlePass(const Ref<PipelineState>& pipelineState, const Ref<Texture>& depthTexture,
+        ParticlePass(const Ref<PipelineState>& pipelineState,
+                    const Ref<Texture>& depthTexture,
                      const Ref<Texture>& normalTexture);
         
         String PassName() override;
@@ -51,20 +53,18 @@ namespace LevEngine
         void End(entt::registry& registry, RenderParams& params) override;
 
     private:
-        Ref<StructuredBuffer> m_ParticlesBuffer;
-        Ref<StructuredBuffer> m_DeadBuffer;
-        Ref<StructuredBuffer> m_SortedBuffer;
+        Ref<StructuredBuffer> m_ParticlesBuffer{};
+        Ref<StructuredBuffer> m_DeadBuffer{};
+        Ref<StructuredBuffer> m_SortedBuffer{};
 
         Ref<PipelineState> m_PipelineState{};
         Ref<ConstantBuffer> m_CameraData{};
-        
-        Ref<StructuredBuffer> m_TempBuffer{};
-        Ref<BitonicSort> m_BitonicSort{};
 
-        Ref<Texture> m_DepthTexture;
-        Ref<Texture> m_NormalTexture;
+        Ref<Texture> m_DepthTexture{};
+        Ref<Texture> m_NormalTexture{};
 
-        Scope<ParticleEmissionPass> m_EmissionPass;
-        Scope<ParticleSimulationPass> m_SimulationPass;
+        Scope<ParticleEmissionPass> m_EmissionPass{};
+        Scope<ParticleSimulationPass> m_SimulationPass{};
+        Scope<ParticleSortingPass> m_SortingPass{};
     };
 }

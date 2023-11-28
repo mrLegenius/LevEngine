@@ -5,6 +5,7 @@
 #include "BitonicSort.h"
 #include "ParticleEmissionPass.h"
 #include "ParticleSimulationPass.h"
+#include "ParticleSortingPass.h"
 #include "Renderer/ConstantBuffer.h"
 #include "Renderer/PipelineState.h"
 #include "Renderer/RenderCommand.h"
@@ -55,14 +56,13 @@ ParticlePass::ParticlePass(const Ref<PipelineState>& pipelineState, const Ref<Te
 	m_ParticlesBuffer = StructuredBuffer::Create(particles, RenderSettings::MaxParticles, sizeof GPUParticleData, CPUAccess::None, true);
 	m_DeadBuffer = StructuredBuffer::Create(indices, RenderSettings::MaxParticles, sizeof uint32_t, CPUAccess::None, true, StructuredBuffer::UAVType::Append);
 	m_SortedBuffer = StructuredBuffer::Create(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true, StructuredBuffer::UAVType::Counter);
-	m_TempBuffer = StructuredBuffer::Create(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true);
 
 	m_DeadBuffer->Bind(1, ShaderType::Compute, true, RenderSettings::MaxParticles);
 	m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
-
-	m_BitonicSort = CreateRef<BitonicSort>(RenderSettings::MaxParticles);
+	
 	m_EmissionPass = CreateScope<ParticleEmissionPass>(m_ParticlesBuffer, m_DeadBuffer);
 	m_SimulationPass = CreateScope<ParticleSimulationPass>(m_ParticlesBuffer, m_DeadBuffer, m_SortedBuffer);
+	m_SortingPass = CreateScope<ParticleSortingPass>(m_SortedBuffer);
 	
 	delete[] particles;
 	delete[] indices;
@@ -86,9 +86,7 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 
 	m_EmissionPass->Execute(registry, params);
 	m_SimulationPass->Execute(registry, params);
-	
-	//<--- Sort ---<<
-	m_BitonicSort->Sort(m_SortedBuffer, m_TempBuffer);
+	m_SortingPass->Execute(registry, params);
 
 	//<--- Render ---<<
 	{
