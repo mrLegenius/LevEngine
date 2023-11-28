@@ -77,12 +77,12 @@ namespace LevEngine
 
     Ref<Texture> EnvironmentPass::CreateEnvironmentCubemap(const Ref<Texture>& environmentMap) const
     {
-        return CreateCubemap(environmentMap, 1024, ShaderAssets::EquirectangularToCubemap());
+        return CreateCubemap(environmentMap, 512, ShaderAssets::EquirectangularToCubemap(), true);
     }
 
     Ref<Texture> EnvironmentPass::CreateIrradianceCubemap(const Ref<Texture>& environmentCubemap) const
     {
-        return CreateCubemap(environmentCubemap, 32, ShaderAssets::CubemapConvolution());
+        return CreateCubemap(environmentCubemap, 32, ShaderAssets::CubemapConvolution(), false);
     }
     
     Ref<Texture> EnvironmentPass::CreatePrefilterCubemap(const Ref<Texture>& sourceTexture) const
@@ -106,7 +106,7 @@ namespace LevEngine
 
         const auto roughnessConstantBuffer = ConstantBuffer::Create(sizeof(float) * 4);
         
-        constexpr uint8_t maxMipLevels = 5;
+        constexpr uint8_t maxMipLevels = 7;
         for (uint8_t mip = 0; mip < maxMipLevels; ++mip)
         {
             const unsigned int mipWidth  = static_cast<float>(resolution) * std::powf(0.5f, mip);
@@ -122,7 +122,7 @@ namespace LevEngine
             sourceTexture->Bind(0, ShaderType::Pixel);
             pipe->GetRasterizerState().SetViewport({0, 0, static_cast<float>(mipWidth), static_cast<float>(mipHeight)});
             pipe->Bind();
-
+    
             m_Cube->Bind(pipe->GetShader(ShaderType::Vertex));
             RenderCommand::DrawIndexed(m_Cube->IndexBuffer);
         }
@@ -136,7 +136,7 @@ namespace LevEngine
     {
         constexpr uint32_t resolution = 512;
         const auto shader = BRDFIntegration();
-        const auto textureFormat = Texture::TextureFormat { Texture::Components::RG, Texture::Type::Float,
+        const auto textureFormat = Texture::TextureFormat { Texture::Components::RG, Texture::Type::UnsignedNormalized,
             1,
             16, 16, 0, 0};
 
@@ -162,9 +162,9 @@ namespace LevEngine
     }
 
     Ref<Texture> EnvironmentPass::CreateCubemap(const Ref<Texture>& sourceTexture, const uint32_t resolution,
-                                                const Ref<Shader>& shader) const
+                                                const Ref<Shader>& shader, const bool generateMipMaps) const
     {
-        auto renderTexture = CreateRenderTexture(resolution, true);
+        auto renderTexture = CreateRenderTexture(resolution, generateMipMaps);
 
         const auto renderTarget = RenderTarget::Create();
         renderTarget->AttachTexture(AttachmentPoint::Color0, renderTexture);
@@ -193,7 +193,7 @@ namespace LevEngine
         return renderTexture;
     }
 
-    Ref<Texture> EnvironmentPass::CreateRenderTexture(const uint32_t resolution, bool generateMipMaps)
+    Ref<Texture> EnvironmentPass::CreateRenderTexture(const uint32_t resolution, const bool generateMipMaps)
     {
         const Texture::TextureFormat format{Texture::Components::RGBA, Texture::Type::Float, 1, 16, 16, 16, 16};
         auto renderTexture = Texture::CreateTextureCube(resolution, resolution, format, CPUAccess::None, false, generateMipMaps);

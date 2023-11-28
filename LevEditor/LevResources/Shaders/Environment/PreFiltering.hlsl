@@ -98,7 +98,10 @@ float4 PSMain(GS_OUT input) : SV_Target
 
             float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
 
-            prefilteredColor += environmentMap.SampleLevel(Sampler, L, mipLevel).rgb * NdotL;
+            float3 sample = environmentMap.SampleLevel(Sampler, L, mipLevel).rgb;
+            sample = sample / (sample + float3(1.0f, 1.0f, 1.0f));
+
+            prefilteredColor += sample * NdotL;
             totalWeight += NdotL;
         }
     }

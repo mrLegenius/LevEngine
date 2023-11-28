@@ -124,6 +124,8 @@ float3 CalcAmbient(
     float3 albedo, float metallic, float roughness, float ao)
 {
     float3 F0 = float3(0.04, 0.04, 0.04);
+	F0 = lerp(F0, albedo, metallic);
+
     float3 F = FresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, roughness);
     float3 kS = F;
     float3 kD = 1.0 - kS;
@@ -133,7 +135,7 @@ float3 CalcAmbient(
     float3 diffuse = irradiance * albedo;
 
     float3 R = reflect(-viewDir, normal);
-    const float MAX_REFLECTION_LOD = 4.0;
+    const float MAX_REFLECTION_LOD = 7.0;
     float3 prefilteredColor = prefilterMap.SampleLevel(prefilterMapSampler, R, roughness * MAX_REFLECTION_LOD).rgb; 
     float2 brdf  = brdfLUT.Sample(brdfLUTSampler, float2(max(dot(normal, viewDir), 0.0), roughness)).rg;
     float3 specular = prefilteredColor * (F * brdf.x + brdf.y);

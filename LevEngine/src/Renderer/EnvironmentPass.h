@@ -25,7 +25,7 @@ namespace LevEngine
         [[nodiscard]] Ref<Texture> CreateIrradianceCubemap(const Ref<Texture>& environmentCubemap) const;
         Ref<Texture> CreatePrefilterCubemap(const Ref<Texture>& sourceTexture) const;
         Ref<Texture> CreateBRDFLutTexture() const;
-        [[nodiscard]] Ref<Texture> CreateCubemap(const Ref<Texture>& sourceTexture, uint32_t resolution, const Ref<Shader>& shader) const;
+        [[nodiscard]] Ref<Texture> CreateCubemap(const Ref<Texture>& sourceTexture, uint32_t resolution, const Ref<Shader>& shader, bool generateMipMaps) const;
         static Ref<Texture> CreateRenderTexture(const uint32_t resolution, bool generateMipMaps);
         static Array<Matrix, 6> GetCaptureViews();
         static void SetCaptureViewToShader(const Ref<Shader>& shader, const Ref<ConstantBuffer>& constantBuffer);
