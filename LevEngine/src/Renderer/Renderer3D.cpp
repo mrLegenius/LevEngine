@@ -117,6 +117,15 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
     DrawMesh(model, mesh, shader);
 }
 
+void Renderer3D::DrawCube(const Ref<Shader>& vertexShader)
+{
+    LEV_CORE_ASSERT(vertexShader->GetType() & ShaderType::Vertex, "Cube can't be drawn without vertex shader");
+    
+    static Ref<Mesh> cube = Primitives::CreateCube();
+    cube->Bind(vertexShader);
+    RenderCommand::DrawIndexed(cube->IndexBuffer);
+}
+
 void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)
 {
     LEV_PROFILE_FUNCTION();

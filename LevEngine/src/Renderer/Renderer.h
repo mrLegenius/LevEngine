@@ -40,7 +40,6 @@ private:
 	inline static Ref<PipelineState> s_OpaquePipeline;
 	inline static Ref<PipelineState> s_TransparentPipeline;
 	inline static Ref<PipelineState> s_DebugPipeline;
-	inline static Ref<PipelineState> s_SkyboxPipeline;
 	inline static Ref<PipelineState> s_ParticlesPipelineState;
 	inline static Ref<PipelineState> m_PositionalLightPipeline1;
 	inline static Ref<PipelineState> m_PositionalLightPipeline2;

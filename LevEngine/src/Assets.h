@@ -237,24 +237,6 @@ struct ShaderAssets
 		static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Scale.hlsl"));
 		return shader;
 	}
-
-	static auto EquirectangularToCubemap()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader = Shader::Create(GetShaderPath("EquirectangularToCubemap.hlsl"),
-			ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
-		return shader;
-	}
-
-	static auto CubemapConvolution()
-	{
-		LEV_PROFILE_FUNCTION();
-
-		static Ref<Shader> shader = Shader::Create(GetShaderPath("CubemapConvolution.hlsl"),
-			ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
-		return shader;
-	}
 };
 
 struct TextureAssets
