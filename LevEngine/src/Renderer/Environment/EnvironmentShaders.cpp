@@ -10,7 +10,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("EquirectangularToCubemap.hlsl"),
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/EquirectangularToCubemap.hlsl"),
                                                    ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
         return shader;
     }
@@ -19,7 +19,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("CubemapConvolution.hlsl"),
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/CubemapConvolution.hlsl"),
                                                    ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
         return shader;
     }
@@ -45,7 +45,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
         
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Skybox.hlsl"));
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/Render.hlsl"));
         return shader;
     }
 }
