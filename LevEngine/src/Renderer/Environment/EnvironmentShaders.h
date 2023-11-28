@@ -11,5 +11,6 @@ namespace LevEngine
         static Ref<Shader> EnvironmentPreFiltering();
         static Ref<Shader> BRDFIntegration();
         static Ref<Shader> Render();
+        static Ref<Shader> CubemapRender();
     };
 }

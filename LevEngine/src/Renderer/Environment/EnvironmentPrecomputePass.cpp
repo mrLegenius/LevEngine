@@ -109,7 +109,12 @@ namespace LevEngine
         const auto renderTarget = RenderTarget::Create();
         renderTarget->AttachTexture(AttachmentPoint::Color0, renderTexture);
 
-        const auto pipe = CreateCubemapPipeline(shader, renderTarget);
+        const auto pipe = CreateRef<PipelineState>();
+        pipe->SetShader(ShaderType::Vertex, shader);
+        pipe->SetShader(ShaderType::Pixel, shader);
+        pipe->SetRenderTarget(renderTarget);
+        pipe->GetRasterizerState().SetCullMode(CullMode::None);
+        pipe->GetRasterizerState().SetDepthClipEnabled(false);
 
         pipe->GetRasterizerState().SetViewport({0, 0, static_cast<float>(resolution), static_cast<float>(resolution)});
         pipe->Bind();
@@ -154,8 +159,8 @@ namespace LevEngine
     {
         const auto pipe = CreateRef<PipelineState>();
         pipe->SetShader(ShaderType::Pixel, shader);
-        pipe->SetShader(ShaderType::Vertex, shader);
-        pipe->SetShader(ShaderType::Geometry, shader);
+        pipe->SetShader(ShaderType::Vertex, EnvironmentShaders::CubemapRender());
+        pipe->SetShader(ShaderType::Geometry, EnvironmentShaders::CubemapRender());
         pipe->SetRenderTarget(renderTarget);
         pipe->GetRasterizerState().SetCullMode(CullMode::None);
         pipe->GetRasterizerState().SetDepthClipEnabled(false);

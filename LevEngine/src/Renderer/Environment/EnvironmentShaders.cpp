@@ -10,8 +10,9 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/EquirectangularToCubemap.hlsl"),
-                                                   ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
+        static Ref<Shader> shader = Shader::Create(
+            GetShaderPath("Environment/EquirectangularToCubemap.hlsl"),
+            ShaderType::Pixel);
         return shader;
     }
 
@@ -19,8 +20,9 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/CubemapConvolution.hlsl"),
-                                                   ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
+        static Ref<Shader> shader = Shader::Create(
+            GetShaderPath("Environment/CubemapConvolution.hlsl"),
+            ShaderType::Pixel);
         return shader;
     }
 
@@ -28,8 +30,9 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/PreFiltering.hlsl"),
-                                                   ShaderType::Pixel | ShaderType::Vertex | ShaderType::Geometry);
+        static Ref<Shader> shader = Shader::Create(
+            GetShaderPath("Environment/PreFiltering.hlsl"),
+            ShaderType::Pixel);
         return shader;
     }
 
@@ -37,7 +40,8 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
         
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/BRDFIntegration.hlsl"));
+        static Ref<Shader> shader = Shader::Create(
+            GetShaderPath("Environment/BRDFIntegration.hlsl"));
         return shader;
     }
 
@@ -45,7 +49,18 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
         
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/Render.hlsl"));
+        static Ref<Shader> shader = Shader::Create(
+            GetShaderPath("Environment/Render.hlsl"));
+        return shader;
+    }
+
+    Ref<Shader> EnvironmentShaders::CubemapRender()
+    {
+        LEV_PROFILE_FUNCTION();
+        
+        static Ref<Shader> shader = Shader::Create(
+            GetShaderPath("Environment/CubemapRender.hlsl"),
+            ShaderType::Vertex | ShaderType::Geometry);
         return shader;
     }
 }

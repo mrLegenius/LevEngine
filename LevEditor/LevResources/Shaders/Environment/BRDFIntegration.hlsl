@@ -1,4 +1,3 @@
-//<--- Vertex Shader ---<<
 #include "../Quad.hlsl"
 
 //<--- Pixel Shader ---<<

@@ -1,3 +1,5 @@
+//<--- Vertex Shader ---<<
+
 cbuffer CameraConstantBuffer : register(b6)
 {
 	row_major matrix viewProjection;
@@ -24,6 +26,8 @@ PS_IN VSMain(VS_IN input)
 
 	return output;
 }
+
+//<--- Pixel Shader ---<<
 
 TextureCube Cubemap;
 SamplerState Sampler;
