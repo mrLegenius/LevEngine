@@ -1,11 +1,11 @@
 #pragma once
 
 #include "LayerStack.h"
-
 #include "Window.h"
 
 namespace LevEngine
 {
+	class Renderer;
 	class WindowResizedEvent;
 	class WindowClosedEvent;
 	class KeyReleasedEvent;
@@ -55,13 +55,14 @@ public:
 	void PushLayer(Layer* layer);
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
-	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
+	[[nodiscard]] ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
 	
-	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
 	[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
-	
+
+	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Physics& GetPhysics() const;
+	[[nodiscard]] static Renderer& Renderer();
 	[[nodiscard]] Scripting::ScriptingManager& GetScriptingManager();
 	
 private:
@@ -73,12 +74,12 @@ private:
 	bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 	bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
 	bool OnMouseScrolled(MouseScrolledEvent& e);
-
-
+	
 	Scope<Window> m_Window;
 	bool m_IsRunning = true;
 
 	Scope<Physics> m_Physics;
+	Scope<LevEngine::Renderer> m_Renderer;
 	
 	LayerStack m_LayerStack;
 
