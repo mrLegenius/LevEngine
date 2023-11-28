@@ -15,6 +15,7 @@
 #include "RenderTarget.h"
 #include "RenderTechnique.h"
 #include "ShadowMapPass.h"
+#include "Texture.h"
 #include "TransparentPass.h"
 #include "DebugRender/DebugRenderPass.h"
 #include "Environment/EnvironmentPass.h"

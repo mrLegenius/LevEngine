@@ -4,6 +4,7 @@
 #include "BloomPass.h"
 #include "LuminanceAdaptationPass.h"
 #include "LuminancePass.h"
+#include "TextureLibrary.h"
 #include "TonemappingPass.h"
 #include "VignettePass.h"
 #include "Kernel/Time/Time.h"

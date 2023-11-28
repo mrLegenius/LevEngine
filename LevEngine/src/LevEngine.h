@@ -161,7 +161,7 @@
 
 #include "Assets/AssetDatabase.h"
 #include "Assets/Asset.h"
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
 #include "Assets/MaterialAsset.h"
 #include "Assets/MeshAsset.h"
 #include "Assets/SkyboxAsset.h"

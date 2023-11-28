@@ -1,7 +1,7 @@
 #include "levpch.h"
 #include "EnvironmentShaders.h"
 
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
 #include "Renderer/Shader.h"
 
 namespace LevEngine

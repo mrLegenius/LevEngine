@@ -4,7 +4,7 @@
 #include "Renderer/PipelineState.h"
 #include "Renderer/RenderCommand.h"
 
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
 #include "Renderer/BlendState.h"
 #include "Renderer/DepthStencilState.h"
 #include "Renderer/RasterizerState.h"

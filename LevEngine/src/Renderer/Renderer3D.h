@@ -3,9 +3,9 @@
 #include "Math/Math.h"
 #include "Scene/Components/Lights/Lights.h"
 
-
 namespace LevEngine
 {
+	class ConstantBuffer;
 	struct DirectionalLightComponent;
 	struct MeshRendererComponent;
 	class SceneCamera;

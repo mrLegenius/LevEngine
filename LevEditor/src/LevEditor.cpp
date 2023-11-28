@@ -3,18 +3,18 @@
 
 #include "EditorLayer.h"
 
-class LetEditor : public Application
+class LevEditor : public LevEngine::Application
 {
 public:
-	LetEditor(const ApplicationCommandLineArgs args)
+	explicit LevEditor(const LevEngine::ApplicationCommandLineArgs args)
 		: Application({ "LevEditor", 1280, 720, args})
 	{
-		PushLayer(new Editor::EditorLayer);
+		PushLayer(new LevEngine::Editor::EditorLayer);
 	}
-	~LetEditor() = default;
+	~LevEditor() = default;
 };
 
-Application* CreateApplication(ApplicationCommandLineArgs args)
+LevEngine::Application* CreateApplication(const LevEngine::ApplicationCommandLineArgs args)
 {
-	return new LetEditor(args);
+	return new LevEditor(args);
 }

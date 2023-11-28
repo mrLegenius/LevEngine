@@ -4,10 +4,12 @@
 #include "Renderer/PipelineState.h"
 #include "Renderer/RenderCommand.h"
 
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
 #include "Renderer/DepthStencilState.h"
 #include "Renderer/RasterizerState.h"
 #include "Renderer/RenderTarget.h"
+#include "Renderer/Shader.h"
+#include "Renderer/Texture.h"
 
 namespace LevEngine
 {

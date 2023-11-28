@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <yaml-cpp/yaml.h>
 
-#include "Assets.h"
+#include "EngineAssets.h"
 #include "DataTypes/Path.h"
 #include "DataTypes/String.h"
 

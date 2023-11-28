@@ -3,9 +3,9 @@
 #include "RenderSettings.h"
 #include "DataTypes/Vector.h"
 
-
 namespace LevEngine
 {
+    class ConstantBuffer;
     class CascadeShadowMap;
 
     class ShadowMapPass : public RenderPass

@@ -92,6 +92,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPass.h" />
@@ -816,7 +817,6 @@
     <ClInclude Include="external\yaml-cpp\src\stringsource.h" />
     <ClInclude Include="external\yaml-cpp\src\tag.h" />
     <ClInclude Include="external\yaml-cpp\src\token.h" />
-    <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Assets\Asset.h" />
     <ClInclude Include="src\Assets\AssetDatabase.h" />
     <ClInclude Include="src\Assets\AudioBankAsset.h" />
@@ -1001,6 +1001,7 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
