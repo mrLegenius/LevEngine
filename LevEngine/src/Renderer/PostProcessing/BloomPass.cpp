@@ -79,6 +79,8 @@ namespace LevEngine
     void BloomPass::SetLuminanceMap(const Ref<Texture>& map) { m_LuminanceMap = map; }
     const Ref<Texture>& BloomPass::GetBloomMap() const { return m_DownScaleMaps[0]; }
 
+    String BloomPass::PassName() { return "Bloom"; }
+
     bool BloomPass::Begin(entt::registry& registry, RenderParams& params)
     {
         m_Pipeline->Bind();

@@ -14,6 +14,7 @@
 #include "GUI/ImGuiLayer.h"
 #include "Math/Random.h"
 #include "Physics/Physics.h"
+#include "Renderer/RenderDebugEvent.h"
 #include "Renderer/RendererContext.h"
 #include "Renderer/RenderTarget.h"
 #include "Scene/Scene.h"
@@ -132,6 +133,7 @@ void Application::Render()
 	//TODO: Maybe move to another place
 	m_Window->GetContext()->GetRenderTarget()->Bind();
 
+	RenderDebugEvent::Start("GUI");
 	m_ImGuiLayer->Begin();
 	{
 		LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
@@ -139,6 +141,7 @@ void Application::Render()
 			layer->OnGUIRender();
 	}
 	m_ImGuiLayer->End();
+	RenderDebugEvent::End();
 }
 
 void Application::Close()

@@ -5,6 +5,8 @@
 
 namespace LevEngine
 {
+	String CopyTexturePass::PassName() { return m_Label; }
+
 	void CopyTexturePass::Process(entt::registry& registry, RenderParams& params)
 	{
 		if (m_DestinationTexture)

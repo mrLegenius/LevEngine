@@ -39,6 +39,8 @@ namespace LevEngine
         m_VignettePass->SetViewport(viewport);
     }
 
+    String PostProcessingPass::PassName() { return "Post Processing"; }
+
     bool PostProcessingPass::Begin(entt::registry& registry, RenderParams& params)
     {
         const GPUConstants data{

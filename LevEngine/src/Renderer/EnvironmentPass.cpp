@@ -34,9 +34,9 @@ namespace LevEngine
         return shader;
     }
     
-    EnvironmentPass::EnvironmentPass() : m_Cube(Primitives::CreateCube())
-    {
-    }
+    EnvironmentPass::EnvironmentPass() : m_Cube(Primitives::CreateCube()) { }
+
+    String EnvironmentPass::PassName() { return "Environment Precompute"; }
 
     void EnvironmentPass::Process(entt::registry& registry, RenderParams& params)
     {

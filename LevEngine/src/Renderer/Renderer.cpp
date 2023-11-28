@@ -254,12 +254,12 @@ void Renderer::Init()
 
 		s_DeferredTechnique = CreateRef<RenderTechnique>();
 		s_DeferredTechnique->AddPass(CreateRef<ShadowMapPass>());
-		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget));
-		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_GBufferRenderTarget));
+		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget, "Clear Main Render Target"));
+		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_GBufferRenderTarget, "Clear G-Buffer"));
 		s_DeferredTechnique->AddPass(CreateRef<OpaquePass>(s_GBufferPipeline));
 		s_DeferredTechnique->AddPass(environmentPass);
-		s_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(s_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture));
-		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, ClearFlags::Stencil, Vector4::Zero, 1.0f, 1));
+		s_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(s_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture, "Copy Depth Buffer to Texture"));
+		s_DeferredTechnique->AddPass(CreateRef<ClearPass>(s_DepthOnlyRenderTarget, "Clear Depth Buffer", ClearFlags::Stencil, Vector4::Zero, 1.0f, 1));
 		s_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_AlbedoTexture, m_MetallicRoughnessAOTexture, m_NormalTexture, m_DepthTexture));
 		s_DeferredTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline, environmentPass));
 		s_DeferredTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
@@ -273,8 +273,8 @@ void Renderer::Init()
 
 		s_ForwardTechnique = CreateRef<RenderTechnique>();
 		s_ForwardTechnique->AddPass(CreateRef<ShadowMapPass>());
-		s_ForwardTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget));
-		s_DeferredTechnique->AddPass(environmentPass);
+		s_ForwardTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget, "Clear Main Render Target"));
+		s_ForwardTechnique->AddPass(environmentPass);
 		s_ForwardTechnique->AddPass(CreateRef<OpaquePass>(s_OpaquePipeline));
 		s_ForwardTechnique->AddPass(CreateRef<DebugRenderPass>(s_DebugPipeline));
 		s_ForwardTechnique->AddPass(CreateRef<SkyboxPass>(s_SkyboxPipeline, environmentPass));

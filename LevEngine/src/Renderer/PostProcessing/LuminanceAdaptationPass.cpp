@@ -34,6 +34,8 @@ namespace LevEngine
         m_Pipeline->GetRasterizerState().SetViewport({0, 0, 1, 1});
     }
 
+    String LuminanceAdaptationPass::PassName() { return "Luminance Adaptation"; }
+
     bool LuminanceAdaptationPass::Begin(entt::registry& registry, RenderParams& params)
     {
         m_Pipeline->GetRenderTarget()->AttachTexture(AttachmentPoint::Color0, m_LuminanceMapBuffer[m_CurrentMapInBuffer]);

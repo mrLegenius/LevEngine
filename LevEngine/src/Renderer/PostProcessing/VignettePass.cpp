@@ -26,6 +26,8 @@ namespace LevEngine
         m_Pipeline->GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
     }
 
+    String VignettePass::PassName() { return "Vignette"; }
+
     bool VignettePass::Begin(entt::registry& registry, RenderParams& params)
     {
         if (!RenderSettings::IsVignetteEnabled) return false;

@@ -27,6 +27,8 @@ namespace LevEngine
     void TonemappingPass::SetLuminanceMap(const Ref<Texture>& map) { m_LuminanceMap = map; }
     void TonemappingPass::SetBloomMap(const Ref<Texture>& map) { m_BloomMap = map; }
 
+    String TonemappingPass::PassName() { return "Tonemapping"; }
+
     bool TonemappingPass::Begin(entt::registry& registry, RenderParams& params)
     {
         m_Pipeline->Bind();

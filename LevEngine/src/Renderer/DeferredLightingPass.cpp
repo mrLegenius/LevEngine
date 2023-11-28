@@ -3,6 +3,7 @@
 
 #include "PipelineState.h"
 #include "Renderer3D.h"
+#include "RenderParams.h"
 #include "RenderTarget.h"
 #include "Camera/SceneCamera.h"
 #include "Math/BoundingVolume.h"
@@ -23,6 +24,8 @@ namespace LevEngine
 
 		m_LightIndexBuffer = ConstantBuffer::Create(sizeof m_LightParams, 4);
 	}
+
+	String DeferredLightingPass::PassName() { return "Lighting"; }
 
 	bool DeferredLightingPass::Begin(entt::registry& registry, RenderParams& params)
 	{

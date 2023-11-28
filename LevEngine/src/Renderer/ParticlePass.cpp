@@ -6,6 +6,7 @@
 #include "PipelineState.h"
 #include "Kernel/Time/Time.h"
 #include "RenderCommand.h"
+#include "RenderParams.h"
 #include "RenderSettings.h"
 #include "StructuredBuffer.h"
 #include "Assets/TextureAsset.h"
@@ -90,6 +91,8 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 	};
 	return emitterData;
 }
+
+String ParticlePass::PassName() { return "Particles"; }
 
 bool ParticlePass::Begin(entt::registry& registry, RenderParams& params)
 {

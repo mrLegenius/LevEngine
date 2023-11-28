@@ -1,11 +1,12 @@
 #pragma once
-#include "ConstantBuffer.h"
 #include "RenderPass.h"
+
 #include "DataTypes/Array.h"
-#include "Kernel/Application.h"
+#include "Math/Matrix.h"
 
 namespace LevEngine
 {
+    class ConstantBuffer;
     class Texture;
     class Mesh;
     class Shader;
@@ -14,6 +15,7 @@ namespace LevEngine
     {
     public:
         EnvironmentPass();
+        String PassName() override;
         void Process(entt::registry& registry, RenderParams& params) override;
         void End(entt::registry& registry, RenderParams& params) override;
         const Ref<Texture>& GetEnvironmentCubemap() const { return m_EnvironmentCubemap; }

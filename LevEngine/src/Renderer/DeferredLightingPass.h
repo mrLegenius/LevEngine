@@ -19,6 +19,7 @@ namespace LevEngine
 			const Ref<Texture>& normalMap,
 			const Ref<Texture>& depthMap);
 
+		String PassName() override;
 		bool Begin(entt::registry& registry, RenderParams& params) override;
 		void Process(entt::registry& registry, RenderParams& params) override;
 		void End(entt::registry& registry, RenderParams& params) override;

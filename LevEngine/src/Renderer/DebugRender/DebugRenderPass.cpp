@@ -13,6 +13,8 @@ DebugRenderPass::DebugRenderPass(const Ref<PipelineState>& pipelineState) : m_Pi
     m_ConstantBuffer = ConstantBuffer::Create(sizeof Color);
 }
 
+String DebugRenderPass::PassName() { return "Debug Render"; }
+
 bool DebugRenderPass::Begin(entt::registry& registry, RenderParams& params)
 {
     m_PipelineState->Bind();

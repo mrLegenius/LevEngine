@@ -41,6 +41,8 @@ namespace LevEngine
 
     Ref<Texture> LuminancePass::GetLuminanceMap() const { return m_RenderTarget->GetTexture(AttachmentPoint::Color0); }
 
+    String LuminancePass::PassName() { return "Luminance"; }
+
     bool LuminancePass::Begin(entt::registry& registry, RenderParams& params)
     {
         m_Pipeline->Bind();
