@@ -36,8 +36,16 @@ namespace LevEngine
     Ref<Shader> EnvironmentShaders::BRDFIntegration()
     {
         LEV_PROFILE_FUNCTION();
-
+        
         static Ref<Shader> shader = Shader::Create(GetShaderPath("Environment/BRDFIntegration.hlsl"));
+        return shader;
+    }
+
+    Ref<Shader> EnvironmentShaders::Render()
+    {
+        LEV_PROFILE_FUNCTION();
+        
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("Skybox.hlsl"));
         return shader;
     }
 }

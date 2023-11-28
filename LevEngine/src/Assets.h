@@ -66,15 +66,6 @@ struct ShaderAssets
         return shader;
 	}
 
-	static auto Skybox()
-    {
-		LEV_PROFILE_FUNCTION();
-
-	    static Ref<Shader> shader = Shader::Create(GetShaderPath("Skybox.hlsl"));
-    	
-        return shader;
-    }
-
 	static auto ShadowPass()
     {
 		LEV_PROFILE_FUNCTION();

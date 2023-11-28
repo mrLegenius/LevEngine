@@ -12,12 +12,15 @@ namespace LevEngine
 	{
 	public:
 		explicit EnvironmentRenderPass(const Ref<RenderTarget>& renderTarget);
-		String PassName() override;
+		~EnvironmentRenderPass() override = default;
+
 		void SetEnvironmentMap(const Ref<Texture>& environmentMap);
+
+		String PassName() override;
 		bool Begin(entt::registry& registry, RenderParams& params) override;
 		void Process(entt::registry& registry, RenderParams& params) override;
-
 		void SetViewport(Viewport viewport) override;
+
 	private:
         Ref<PipelineState> m_SkyboxPipeline;
         Ref<Texture> m_EnvironmentMap;
