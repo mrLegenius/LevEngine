@@ -5,7 +5,8 @@
 
 namespace LevEngine
 {
-    class ParticleEmitterPass;
+    class ParticleSimulationPass;
+    class ParticleEmissionPass;
     class BitonicSort;
     class ConstantBuffer;
     class StructuredBuffer;
@@ -63,6 +64,7 @@ namespace LevEngine
         Ref<Texture> m_DepthTexture;
         Ref<Texture> m_NormalTexture;
 
-        Scope<ParticleEmitterPass> m_ParticleEmitterPass;
+        Scope<ParticleEmissionPass> m_EmissionPass;
+        Scope<ParticleSimulationPass> m_SimulationPass;
     };
 }

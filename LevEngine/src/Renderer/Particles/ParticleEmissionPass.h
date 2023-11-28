@@ -68,16 +68,17 @@ namespace LevEngine
         alignas(16) int RandomSeed;
     };
     
-    class ParticleEmitterPass final : public RenderPass
+    class ParticleEmissionPass final : public RenderPass
     {
     public:
-        ParticleEmitterPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer);
-        ~ParticleEmitterPass() override;
+        ParticleEmissionPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer);
+        ~ParticleEmissionPass() override;
         
     protected:
         String PassName() override;
+        bool Begin(entt::registry& registry, RenderParams& params) override;
         void Process(entt::registry& registry, RenderParams& params) override;
-
+        void End(entt::registry& registry, RenderParams& params) override;
     private:
         Ref<StructuredBuffer> m_ParticlesBuffer{};
         Ref<StructuredBuffer> m_DeadBuffer;

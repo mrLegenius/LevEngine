@@ -1,5 +1,5 @@
 #include "levpch.h"
-#include "ParticleEmitterPass.h"
+#include "ParticleEmissionPass.h"
 
 #include "ParticlesUtils.h"
 #include "Assets/TextureAsset.h"
@@ -21,7 +21,7 @@ namespace LevEngine
     //TODO: Get Rid of it
     extern ID3D11DeviceContext* context;
 
-    ParticleEmitterPass::ParticleEmitterPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer)
+    ParticleEmissionPass::ParticleEmissionPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer)
         : m_ParticlesBuffer(particlesBuffer)
           , m_DeadBuffer(deadBuffer)
           , m_ComputeData(ConstantBuffer::Create(sizeof Handler, 1))
@@ -29,19 +29,12 @@ namespace LevEngine
           , m_RandomData(ConstantBuffer::Create(sizeof RandomGPUData, 3))
     { }
 
-    ParticleEmitterPass::~ParticleEmitterPass() = default;
+    ParticleEmissionPass::~ParticleEmissionPass() = default;
 
-    String ParticleEmitterPass::PassName() { return "Particle Emitter"; }
+    String ParticleEmissionPass::PassName() { return "Particle Emitter"; }
 
-    void ParticleEmitterPass::Process(entt::registry& registry, RenderParams& params)
+    bool ParticleEmissionPass::Begin(entt::registry& registry, RenderParams& params)
     {
-        LEV_PROFILE_FUNCTION();
-
-        constexpr uint32_t MaxTextureSlots = 32;
-        Array<Ref<Texture>, MaxTextureSlots> textureSlots{};
-        textureSlots[0] = TextureAssets::Particle(); //<--- default particle ---<<
-        uint32_t textureSlotIndex = 1;
-
         const float deltaTime = Time::GetScaledDeltaTime().GetSeconds();
         
         int groupSizeX = 0;
@@ -54,11 +47,25 @@ namespace LevEngine
 
         m_ParticlesBuffer->Bind(0, ShaderType::Compute, true, -1);
         m_DeadBuffer->Bind(1, ShaderType::Compute, true, -1);
+        
+        return RenderPass::Begin(registry, params);
+    }
 
-        const auto group = registry.view<Transform, EmitterComponent, IDComponent>();
+    void ParticleEmissionPass::Process(entt::registry& registry, RenderParams& params)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        constexpr uint32_t MaxTextureSlots = 32;
+        Array<Ref<Texture>, MaxTextureSlots> textureSlots{};
+        textureSlots[0] = TextureAssets::Particle(); //<--- default particle ---<<
+        uint32_t textureSlotIndex = 1;
+
+        const float deltaTime = Time::GetScaledDeltaTime().GetSeconds();
+        
+        const auto group = registry.view<Transform, EmitterComponent>();
         for (const auto entity : group)
         {
-            auto [transform, emitter, id] = group.get<Transform, EmitterComponent, IDComponent>(entity);
+            auto [transform, emitter] = group.get<Transform, EmitterComponent>(entity);
 
             int textureIndex = -1;
 
@@ -114,12 +121,19 @@ namespace LevEngine
             ShaderAssets::ParticlesEmitter()->Bind();
             const uint32_t deadParticlesCount = m_DeadBuffer->GetCounterValue();
             particlesToEmit = Math::Min(deadParticlesCount, particlesToEmit);
+            
             if (particlesToEmit > 0)
                 context->Dispatch(particlesToEmit, 1, 1);
         }
     }
 
-    Emitter ParticleEmitterPass::GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex)
+    void ParticleEmissionPass::End(entt::registry& registry, RenderParams& params)
+    {
+        m_ParticlesBuffer->Unbind(0, ShaderType::Compute, true);
+        m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
+    }
+
+    Emitter ParticleEmissionPass::GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex)
     {
         LEV_PROFILE_FUNCTION();
 

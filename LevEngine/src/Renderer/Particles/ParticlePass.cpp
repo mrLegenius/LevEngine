@@ -3,11 +3,10 @@
 
 #include "Assets/EngineAssets.h"
 #include "BitonicSort.h"
-#include "ParticleEmitterPass.h"
-#include "ParticlesUtils.h"
+#include "ParticleEmissionPass.h"
+#include "ParticleSimulationPass.h"
 #include "Renderer/ConstantBuffer.h"
 #include "Renderer/PipelineState.h"
-#include "Kernel/Time/Time.h"
 #include "Renderer/RenderCommand.h"
 #include "Renderer/RenderParams.h"
 #include "Renderer/RenderSettings.h"
@@ -62,8 +61,8 @@ ParticlePass::ParticlePass(const Ref<PipelineState>& pipelineState, const Ref<Te
 	m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
 
 	m_BitonicSort = CreateRef<BitonicSort>(RenderSettings::MaxParticles);
-
-	m_ParticleEmitterPass = CreateScope<ParticleEmitterPass>(m_ParticlesBuffer, m_DeadBuffer);
+	m_EmissionPass = CreateScope<ParticleEmissionPass>(m_ParticlesBuffer, m_DeadBuffer);
+	m_SimulationPass = CreateScope<ParticleSimulationPass>(m_ParticlesBuffer, m_DeadBuffer, m_SortedBuffer);
 	
 	delete[] particles;
 	delete[] indices;
@@ -85,27 +84,9 @@ void ParticlePass::Process(entt::registry& registry, RenderParams& params)
 {
 	LEV_PROFILE_FUNCTION();
 
-	m_ParticleEmitterPass->Execute(registry, params);
-
-	//<--- Simulate ---<<
-
-	//TODO: Bind depth and normal maps here to enable bounce again
-	m_DeadBuffer->Bind(1, ShaderType::Compute, true, -1);
-	m_SortedBuffer->Bind(2, ShaderType::Compute, true, 0);
-
-	int groupSizeX = 0;
-	int groupSizeY = 0;
-	ParticlesUtils::GetGroupSize(RenderSettings::MaxParticles, groupSizeX, groupSizeY);
+	m_EmissionPass->Execute(registry, params);
+	m_SimulationPass->Execute(registry, params);
 	
-	ShaderAssets::ParticlesCompute()->Bind();
-	context->Dispatch(groupSizeX, groupSizeY, 1);
-
-	ShaderAssets::ParticlesCompute()->Unbind();
-
-	m_ParticlesBuffer->Unbind(0, ShaderType::Compute, true);
-	m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
-	m_SortedBuffer->Unbind(2, ShaderType::Compute, true);
-
 	//<--- Sort ---<<
 	m_BitonicSort->Sort(m_SortedBuffer, m_TempBuffer);
 
