@@ -44,7 +44,6 @@ namespace LevEngine
         Ref<PipelineState> m_OpaquePipeline;
         Ref<PipelineState> m_TransparentPipeline;
         Ref<PipelineState> m_DebugPipeline;
-        Ref<PipelineState> m_ParticlesPipelineState;
         Ref<PipelineState> m_PositionalLightPipeline1;
         Ref<PipelineState> m_PositionalLightPipeline2;
 

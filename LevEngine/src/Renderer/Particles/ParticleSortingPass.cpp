@@ -13,6 +13,8 @@ namespace LevEngine
         , m_BitonicSort(CreateRef<BitonicSort>(RenderSettings::MaxParticles))
     { }
 
+    ParticleSortingPass::~ParticleSortingPass() = default;
+
     String ParticleSortingPass::PassName() { return "Particle Sorting"; }
 
     void ParticleSortingPass::Process(entt::registry& registry, RenderParams& params)

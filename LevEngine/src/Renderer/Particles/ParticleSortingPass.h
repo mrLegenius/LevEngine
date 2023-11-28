@@ -9,7 +9,8 @@ namespace LevEngine
     class ParticleSortingPass final : public RenderPass
     {
     public:
-        ParticleSortingPass(const Ref<StructuredBuffer>& sortedBuffer);
+        explicit ParticleSortingPass(const Ref<StructuredBuffer>& sortedBuffer);
+        ~ParticleSortingPass() override;
     protected:
         String PassName() override;
         void Process(entt::registry& registry, RenderParams& params) override;

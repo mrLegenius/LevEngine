@@ -21,6 +21,8 @@ namespace LevEngine
             , m_DeadBuffer(deadBuffer)
             , m_SortedBuffer(sortedBuffer) { }
 
+    ParticleSimulationPass::~ParticleSimulationPass() = default;
+
     String ParticleSimulationPass::PassName() { return "Particle Simulation"; }
 
     bool ParticleSimulationPass::Begin(entt::registry& registry, RenderParams& params)

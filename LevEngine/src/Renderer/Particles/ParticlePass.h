@@ -1,18 +1,20 @@
 #pragma once
+#include "ParticleEmissionPass.h"
+#include "ParticleRenderingPass.h"
+#include "ParticleSimulationPass.h"
+#include "ParticleSortingPass.h"
+#include "Renderer/RenderPass.h"
+
 #include "Math/Color.h"
 #include "Math/Matrix.h"
-#include "Renderer/RenderPass.h"
 
 namespace LevEngine
 {
-    class ParticleSortingPass;
-    class ParticleSimulationPass;
-    class ParticleEmissionPass;
+    class RenderTarget;
     class BitonicSort;
     class ConstantBuffer;
     class StructuredBuffer;
     class Texture;
-    class PipelineState;
 
     class ParticlePass final : public RenderPass
     {
@@ -34,16 +36,9 @@ namespace LevEngine
             uint32_t TextureIndex;
             float GravityScale;
         };
-
-        struct ParticleCameraData
-        {
-            Matrix View;
-            Matrix Projection;
-            alignas(16) Vector3 Position;
-        };
     
     public:
-        ParticlePass(const Ref<PipelineState>& pipelineState,
+        ParticlePass(const Ref<RenderTarget>& renderTarget,
                     const Ref<Texture>& depthTexture,
                      const Ref<Texture>& normalTexture);
         
@@ -51,14 +46,12 @@ namespace LevEngine
         bool Begin(entt::registry& registry, RenderParams& params) override;
         void Process(entt::registry& registry, RenderParams& params) override;
         void End(entt::registry& registry, RenderParams& params) override;
-
+        void SetViewport(Viewport viewport) override;
+        
     private:
         Ref<StructuredBuffer> m_ParticlesBuffer{};
         Ref<StructuredBuffer> m_DeadBuffer{};
         Ref<StructuredBuffer> m_SortedBuffer{};
-
-        Ref<PipelineState> m_PipelineState{};
-        Ref<ConstantBuffer> m_CameraData{};
 
         Ref<Texture> m_DepthTexture{};
         Ref<Texture> m_NormalTexture{};
@@ -66,5 +59,6 @@ namespace LevEngine
         Scope<ParticleEmissionPass> m_EmissionPass{};
         Scope<ParticleSimulationPass> m_SimulationPass{};
         Scope<ParticleSortingPass> m_SortingPass{};
+        Scope<ParticleRenderingPass> m_RenderingPass{};
     };
 }

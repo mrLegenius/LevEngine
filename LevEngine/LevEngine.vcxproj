@@ -102,6 +102,7 @@
     <ClInclude Include="src\Renderer\Particles\BitonicSort.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleEmissionPass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticlePass.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticleRenderingPass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleSimulationPass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleSortingPass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticlesUtils.h" />
@@ -1022,6 +1023,7 @@
     <ClCompile Include="src\Renderer\Particles\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleEmissionPass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticlePass.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticleRenderingPass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleSimulationPass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleSortingPass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticlesUtils.cpp" />

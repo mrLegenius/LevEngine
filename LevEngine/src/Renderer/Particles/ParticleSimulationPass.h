@@ -9,6 +9,7 @@ namespace LevEngine
     {
     public:
         ParticleSimulationPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer, const Ref<StructuredBuffer>& sortedBuffer);
+        ~ParticleSimulationPass() override;
     protected:
         String PassName() override;
         bool Begin(entt::registry& registry, RenderParams& params) override;
