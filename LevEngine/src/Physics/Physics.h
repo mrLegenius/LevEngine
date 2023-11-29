@@ -18,8 +18,6 @@ namespace LevEngine
         [[nodiscard]] physx::PxPhysics* GetPhysics() const;
         
         void Process(entt::registry& registry, float deltaTime);
-
-        friend struct Rigidbody;
         
     private:
         void Initialize();
