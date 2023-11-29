@@ -42,12 +42,6 @@ namespace LevEngine
         static Ref<Shader> DeferredPointLight();
         static Ref<Shader> DeferredQuadRender();
         
-        static Ref<Shader> Particles();
-        static Ref<Shader> ParticlesCompute();
-        static Ref<Shader> ParticlesEmitter();
-        static Ref<Shader> BitonicSort();
-        static Ref<Shader> BitonicTranspose();
-        
         static Ref<Shader> Luminance();
         static Ref<Shader> LuminanceAdaptation();
         static Ref<Shader> Tonemapping();
@@ -56,10 +50,5 @@ namespace LevEngine
         static Ref<Shader> BloomBlurH();
         static Ref<Shader> BloomBlurV();
         static Ref<Shader> Scale();
-    };
-
-    struct TextureAssets
-    {
-        static Ref<Texture> Particle();
     };
 }

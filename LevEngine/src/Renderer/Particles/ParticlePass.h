@@ -1,9 +1,10 @@
 #pragma once
+#include "Renderer/RenderPass.h"
+
 #include "ParticleEmissionPass.h"
 #include "ParticleRenderingPass.h"
 #include "ParticleSimulationPass.h"
 #include "ParticleSortingPass.h"
-#include "Renderer/RenderPass.h"
 
 #include "Math/Color.h"
 #include "Math/Matrix.h"

@@ -17,10 +17,7 @@ namespace LevEngine
         Ref<TextureAsset>& GetAmbientOcclusion() { return m_AmbientOcclusion; }
         Ref<TextureAsset>& GetEmissive() { return m_Emissive; }
 
-        explicit MaterialPBRAsset(const Path& path, const UUID uuid) : MaterialAsset(path, uuid)
-        {
-            ShaderAssets::ForwardPBR();
-        }
+        explicit MaterialPBRAsset(const Path& path, UUID uuid);
 
     protected:
         void SerializeData(YAML::Emitter& out) override;

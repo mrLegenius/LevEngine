@@ -103,6 +103,7 @@
     <ClInclude Include="src\Renderer\Environment\EnvironmentRenderPass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentShaders.h" />
     <ClInclude Include="src\Renderer\Particles\BitonicSort.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticleAssets.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleEmissionPass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticlePass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleRenderingPass.h" />
@@ -1010,6 +1011,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
+    <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
@@ -1027,6 +1029,7 @@
     <ClCompile Include="src\Renderer\Environment\EnvironmentRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentShaders.cpp" />
     <ClCompile Include="src\Renderer\Particles\BitonicSort.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticleAssets.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleEmissionPass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticlePass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleRenderingPass.cpp" />

@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "DebugLine.h"
 
+#include "Assets/EngineAssets.h"
 #include "Renderer/Renderer3D.h"
 
 namespace LevEngine

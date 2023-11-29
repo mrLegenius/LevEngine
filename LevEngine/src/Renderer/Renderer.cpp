@@ -17,6 +17,7 @@
 #include "ShadowMapPass.h"
 #include "Texture.h"
 #include "TransparentPass.h"
+#include "Assets/EngineAssets.h"
 #include "DebugRender/DebugRenderPass.h"
 #include "Environment/EnvironmentPass.h"
 #include "Kernel/Window.h"

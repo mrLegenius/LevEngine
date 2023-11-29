@@ -1,6 +1,7 @@
 #pragma once
+#include "Math/Color.h"
+#include "Math/Vector2.h"
 #include "Math/Vector3.h"
-#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {

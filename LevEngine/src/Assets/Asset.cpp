@@ -1,5 +1,6 @@
 ﻿#include "levpch.h"
 #include "Asset.h"
+#include "EngineAssets.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
@@ -72,6 +73,8 @@ namespace LevEngine
 		m_MetaPath = path.string().append(".meta").c_str();
 		m_Path = path;
 	}
+
+	Ref<Texture> Asset::GetIcon() const { return Icons::File(); }
 
 	bool Asset::Deserialize()
 	{

@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "DebugCircle.h"
 
+#include "Assets/EngineAssets.h"
 #include "Renderer/Renderer3D.h"
 #include "Renderer/3D/Primitives.h"
 

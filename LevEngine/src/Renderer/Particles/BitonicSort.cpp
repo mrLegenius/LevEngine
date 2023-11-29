@@ -2,9 +2,9 @@
 
 #include "BitonicSort.h"
 
+#include "ParticleAssets.h"
 #include "Renderer/ConstantBuffer.h"
 #include "Renderer/Shader.h"
-#include "Assets/EngineAssets.h"
 #include "Renderer/DispatchCommand.h"
 #include "Renderer/StructuredBuffer.h"
 
@@ -13,8 +13,8 @@ namespace LevEngine
 	
 BitonicSort::BitonicSort(const int numElements): m_NumElements(numElements)
 {
-	m_BitonicSortCS = ShaderAssets::BitonicSort();
-	m_BitonicTransposeCS = ShaderAssets::BitonicTranspose();
+	m_BitonicSortCS = ParticleShaders::BitonicSort();
+	m_BitonicTransposeCS = ParticleShaders::BitonicTranspose();
 	m_ConstantsBuffer = ConstantBuffer::Create(sizeof ConstantsGPUData, 0);
 }
 

@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "ParticleSimulationPass.h"
 
+#include "ParticleAssets.h"
 #include "ParticlesUtils.h"
 #include "Renderer/DispatchCommand.h"
 #include "Renderer/RenderSettings.h"
@@ -39,9 +40,9 @@ namespace LevEngine
         int groupSizeY = 0;
         ParticlesUtils::GetGroupSize(RenderSettings::MaxParticles, groupSizeX, groupSizeY);
 
-        ShaderAssets::ParticlesCompute()->Bind();
+        ParticleShaders::Simulation()->Bind();
         DispatchCommand::Dispatch(groupSizeX, groupSizeY, 1);
-        ShaderAssets::ParticlesCompute()->Unbind();
+        ParticleShaders::Simulation()->Unbind();
     }
 
     void ParticleSimulationPass::End(entt::registry& registry, RenderParams& params)

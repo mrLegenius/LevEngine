@@ -1,7 +1,7 @@
 #include "levpch.h"
 #include "ParticleRenderingPass.h"
 
-#include "Assets/EngineAssets.h"
+#include "ParticleAssets.h"
 #include "Renderer/BlendState.h"
 #include "Renderer/ConstantBuffer.h"
 #include "Renderer/DepthStencilState.h"
@@ -44,7 +44,7 @@ namespace LevEngine
             m_CameraData->Bind(ShaderType::Vertex | ShaderType::Geometry);
         }
 	
-        ShaderAssets::Particles()->Bind();
+        ParticleShaders::Rendering()->Bind();
 
         m_ParticlesBuffer->Bind(0, ShaderType::Vertex, false);
         m_SortedBuffer->Bind(2, ShaderType::Vertex, false);
@@ -52,7 +52,7 @@ namespace LevEngine
         m_PipelineState->Bind();
 
         //TODO: Restore textures
-        TextureAssets::Particle()->Bind(1, ShaderType::Pixel);
+        ParticleTextures::Default()->Bind(1, ShaderType::Pixel);
         //for (uint32_t i = 0; i < textureSlotIndex; i++)
         //	textureSlots[i]->Bind(i+1, ShaderType::Pixel);
 
@@ -60,11 +60,11 @@ namespace LevEngine
         RenderCommand::DrawPointList(particlesCount);
 
         //<--- Clean ---<<
-        m_ParticlesBuffer->Unbind(0, ShaderType::Vertex, false);
+        m_ParticlesBuffer->Unbind(1, ShaderType::Vertex, false);
         m_SortedBuffer->Unbind(2, ShaderType::Vertex, false);
         m_PipelineState->Unbind();
-        ShaderAssets::Particles()->Unbind();
-        TextureAssets::Particle()->Unbind(1, ShaderType::Pixel);
+        ParticleTextures::Default()->Unbind(0, ShaderType::Pixel);
+        ParticleShaders::Rendering()->Unbind();
 
         //TODO: Restore textures
         //for (uint32_t i = 0; i < textureSlotIndex; i++)

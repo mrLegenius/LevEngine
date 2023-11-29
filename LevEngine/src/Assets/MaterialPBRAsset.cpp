@@ -1,11 +1,18 @@
 #include "levpch.h"
 #include "MaterialPBRAsset.h"
+
+#include "EngineAssets.h"
 #include "TextureAsset.h"
 
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
+    MaterialPBRAsset::MaterialPBRAsset(const Path& path, const UUID uuid): MaterialAsset(path, uuid)
+    {
+        ShaderAssets::ForwardPBR();
+    }
+
     void MaterialPBRAsset::SerializeData(YAML::Emitter& out)
     {
         out << YAML::Key << "Tint" << YAML::Value << m_Material.GetTintColor();

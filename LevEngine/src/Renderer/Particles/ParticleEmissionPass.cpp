@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "ParticleEmissionPass.h"
 
+#include "ParticleAssets.h"
 #include "ParticlesUtils.h"
 #include "Assets/TextureAsset.h"
 #include "DataTypes/Array.h"
@@ -12,7 +13,6 @@
 #include "Renderer/Shader.h"
 #include "Renderer/StructuredBuffer.h"
 #include "Renderer/Texture.h"
-#include "Scene/Components/Components.h"
 #include "Scene/Components/Emitter/EmitterComponent.h"
 #include "Scene/Components/Transform/Transform.h"
 
@@ -54,7 +54,7 @@ namespace LevEngine
 
         constexpr uint32_t MaxTextureSlots = 32;
         Array<Ref<Texture>, MaxTextureSlots> textureSlots{};
-        textureSlots[0] = TextureAssets::Particle(); //<--- default particle ---<<
+        textureSlots[0] = ParticleTextures::Default(); //<--- default particle ---<<
         uint32_t textureSlotIndex = 1;
 
         const float deltaTime = Time::GetScaledDeltaTime().GetSeconds();
@@ -115,7 +115,7 @@ namespace LevEngine
                 emitter.Timer -= interval;
             }
 
-            ShaderAssets::ParticlesEmitter()->Bind();
+            ParticleShaders::Emission()->Bind();
             const uint32_t deadParticlesCount = m_DeadBuffer->GetCounterValue();
             particlesToEmit = Math::Min(deadParticlesCount, particlesToEmit);
             

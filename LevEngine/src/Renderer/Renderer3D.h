@@ -5,6 +5,7 @@
 
 namespace LevEngine
 {
+	class Shader;
 	class ConstantBuffer;
 	struct DirectionalLightComponent;
 	struct MeshRendererComponent;

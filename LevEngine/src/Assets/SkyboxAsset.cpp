@@ -1,5 +1,7 @@
 ﻿#include "levpch.h"
 #include "SkyboxAsset.h"
+
+#include "EngineAssets.h"
 #include "TextureAsset.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
@@ -10,6 +12,8 @@ namespace LevEngine
 		auto& texture = HDRTexture ? HDRTexture->GetTexture() : nullptr;
 		return texture;
 	}
+
+	Ref<Texture> SkyboxAsset::GetIcon() const { return Icons::Skybox(); }
 
 	void SkyboxAsset::SerializeData(YAML::Emitter& out)
 	{
