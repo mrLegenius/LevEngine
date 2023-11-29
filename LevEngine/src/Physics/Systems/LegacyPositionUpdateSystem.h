@@ -1,5 +1,4 @@
 #pragma once
-#include "entt/entt.hpp"
 #include "..\Components\LegacyRigidbody.h"
 namespace LevEngine
 {

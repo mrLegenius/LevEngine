@@ -1,7 +1,6 @@
 #pragma once
 
 #include "RenderParams.h"
-#include "entt/entt.hpp"
 
 namespace LevEngine
 {

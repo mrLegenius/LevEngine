@@ -18,6 +18,8 @@
 #include <unordered_set>
 #include <set>
 
+#include <entt/entt.hpp>
+
 #include <imgui.h>
 #include <imgui_internal.h>
 

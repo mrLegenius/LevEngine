@@ -2,7 +2,6 @@
 
 #include <DataTypes/Path.h>
 #include <sol/sol.hpp>
-#include <entt/entt.hpp>
 #include "DataTypes/UnorderedMap.h"
 
 namespace LevEngine {

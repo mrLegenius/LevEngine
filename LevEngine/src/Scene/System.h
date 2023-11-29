@@ -1,5 +1,4 @@
 #pragma once
-#include "entt/entt.hpp"
 namespace LevEngine
 {
 using namespace entt::literals;
