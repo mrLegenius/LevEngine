@@ -11,8 +11,7 @@ namespace LevEngine
     class EnvironmentPass final : public RenderPass
     {
     public:
-        explicit EnvironmentPass(Ref<RenderTarget> renderTarget);
-        ~EnvironmentPass() override = default;
+        explicit EnvironmentPass(const Ref<RenderTarget>& renderTarget);
         
         String PassName() override;
         void Process(entt::registry& registry, RenderParams& params) override;

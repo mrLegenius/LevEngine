@@ -1,12 +1,9 @@
 #include "levpch.h"
 #include "EnvironmentPass.h"
 
-#include "EnvironmentPrecomputePass.h"
-#include "EnvironmentRenderPass.h"
-
 namespace LevEngine
 {
-    EnvironmentPass::EnvironmentPass(Ref<RenderTarget> renderTarget)
+    EnvironmentPass::EnvironmentPass(const Ref<RenderTarget>& renderTarget)
     {
         m_PrecomputePass = CreateScope<EnvironmentPrecomputePass>();
         m_RenderPass = CreateScope<EnvironmentRenderPass>(renderTarget);

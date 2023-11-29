@@ -12,7 +12,6 @@ namespace LevEngine
 	{
 	public:
 		explicit EnvironmentRenderPass(const Ref<RenderTarget>& renderTarget);
-		~EnvironmentRenderPass() override = default;
 
 		void SetEnvironmentMap(const Ref<Texture>& environmentMap);
 
