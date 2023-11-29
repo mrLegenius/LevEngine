@@ -100,8 +100,7 @@ PixelOutput PSMain(PixelInput input)
         particle = ParticleTexture5.Sample(ParticleSampler5, input.UV); break;
     }
     //particle.a = particle.r;
-    //TODO: Restore textures
-    output.Color = ParticleTexture0.Sample(ParticleSampler0, input.UV) * input.Color;
+    output.Color = particle * input.Color;
 
     return output;
 }

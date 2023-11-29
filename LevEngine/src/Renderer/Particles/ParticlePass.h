@@ -11,6 +11,7 @@
 
 namespace LevEngine
 {
+    struct ParticlesTextureArray;
     class RenderTarget;
     class BitonicSort;
     class ConstantBuffer;
@@ -61,5 +62,7 @@ namespace LevEngine
         Scope<ParticleSimulationPass> m_SimulationPass{};
         Scope<ParticleSortingPass> m_SortingPass{};
         Scope<ParticleRenderingPass> m_RenderingPass{};
+
+        Ref<ParticlesTextureArray> m_ParticlesTextures{};
     };
 }

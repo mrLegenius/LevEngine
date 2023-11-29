@@ -9,11 +9,9 @@
 #include "Renderer/RenderSettings.h"
 #include "Renderer/Shader.h"
 #include "Renderer/StructuredBuffer.h"
-#include "Assets/TextureAsset.h"
-#include "Renderer/Camera/SceneCamera.h"
 #include "Math/Random.h"
 #include "Renderer/Texture.h"
-#include "Scene/Components/Components.h"
+#include "ParticlesTextureArray.h"
 
 namespace LevEngine
 {
@@ -42,10 +40,11 @@ namespace LevEngine
         m_DeadBuffer->Bind(1, ShaderType::Compute, true, RenderSettings::MaxParticles);
         m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
 
-        m_EmissionPass = CreateScope<ParticleEmissionPass>(m_ParticlesBuffer, m_DeadBuffer);
+        m_ParticlesTextures = CreateRef<ParticlesTextureArray>();
+        m_EmissionPass = CreateScope<ParticleEmissionPass>(m_ParticlesBuffer, m_DeadBuffer, m_ParticlesTextures);
         m_SimulationPass = CreateScope<ParticleSimulationPass>(m_ParticlesBuffer, m_DeadBuffer, m_SortedBuffer);
         m_SortingPass = CreateScope<ParticleSortingPass>(m_SortedBuffer);
-        m_RenderingPass = CreateScope<ParticleRenderingPass>(renderTarget, m_ParticlesBuffer, m_SortedBuffer);
+        m_RenderingPass = CreateScope<ParticleRenderingPass>(renderTarget, m_ParticlesBuffer, m_SortedBuffer, m_ParticlesTextures);
 
         delete[] particles;
         delete[] indices;

@@ -4,6 +4,8 @@
 
 namespace LevEngine
 {
+    struct ParticlesTextureArray;
+    class Texture;
     struct EmitterComponent;
     struct Transform;
     class ConstantBuffer;
@@ -70,8 +72,13 @@ namespace LevEngine
     
     class ParticleEmissionPass final : public RenderPass
     {
+
     public:
-        ParticleEmissionPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer);
+        ParticleEmissionPass(
+            const Ref<StructuredBuffer>& particlesBuffer,
+            const Ref<StructuredBuffer>& deadBuffer,
+            const Ref<ParticlesTextureArray>& particlesTextures);
+        
         ~ParticleEmissionPass() override;
         
     protected:
@@ -80,13 +87,17 @@ namespace LevEngine
         void Process(entt::registry& registry, RenderParams& params) override;
         void End(entt::registry& registry, RenderParams& params) override;
     private:
+
         Ref<StructuredBuffer> m_ParticlesBuffer{};
         Ref<StructuredBuffer> m_DeadBuffer;
         
         Ref<ConstantBuffer> m_ComputeData{};
         Ref<ConstantBuffer> m_EmitterData{};
         Ref<ConstantBuffer> m_RandomData{};
+
+        Ref<ParticlesTextureArray> m_ParticlesTextures;
         
         static Emitter GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex);
+        int GetTextureIndex(const Ref<Texture>& texture) const;
     };
 }

@@ -2,6 +2,7 @@
 #include "ParticleEmissionPass.h"
 
 #include "ParticleAssets.h"
+#include "ParticlesTextureArray.h"
 #include "ParticlesUtils.h"
 #include "Assets/TextureAsset.h"
 #include "DataTypes/Array.h"
@@ -18,13 +19,15 @@
 
 namespace LevEngine
 {
-    ParticleEmissionPass::ParticleEmissionPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer)
+    ParticleEmissionPass::ParticleEmissionPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer, const Ref<ParticlesTextureArray>& particlesTextures)
         : m_ParticlesBuffer(particlesBuffer)
           , m_DeadBuffer(deadBuffer)
           , m_ComputeData(ConstantBuffer::Create(sizeof Handler, 1))
           , m_EmitterData(ConstantBuffer::Create(sizeof Emitter, 2))
           , m_RandomData(ConstantBuffer::Create(sizeof RandomGPUData, 3))
-    { }
+          , m_ParticlesTextures(particlesTextures)
+    {
+    }
 
     ParticleEmissionPass::~ParticleEmissionPass() = default;
 
@@ -51,11 +54,9 @@ namespace LevEngine
     void ParticleEmissionPass::Process(entt::registry& registry, RenderParams& params)
     {
         LEV_PROFILE_FUNCTION();
-
-        constexpr uint32_t MaxTextureSlots = 32;
-        Array<Ref<Texture>, MaxTextureSlots> textureSlots{};
-        textureSlots[0] = ParticleTextures::Default(); //<--- default particle ---<<
-        uint32_t textureSlotIndex = 1;
+        
+        m_ParticlesTextures->TextureSlots[0] = ParticleTextures::Default();
+        m_ParticlesTextures->TextureSlotIndex = 1;
 
         const float deltaTime = Time::GetScaledDeltaTime().GetSeconds();
         
@@ -63,38 +64,9 @@ namespace LevEngine
         for (const auto entity : group)
         {
             auto [transform, emitter] = group.get<Transform, EmitterComponent>(entity);
-
-            int textureIndex = -1;
-
+            
             const auto texture = emitter.Texture ? emitter.Texture->GetTexture() : nullptr;
-            for (uint32_t i = 0; i < textureSlotIndex; i++)
-            {
-                if (!texture)
-                {
-                    textureIndex = 0;
-                    break;
-                }
-
-                if (textureSlots[i]->GetPath() == texture->GetPath())
-                {
-                    textureIndex = i;
-                    break;
-                }
-            }
-
-            if (textureIndex == -1)
-            {
-                if (textureSlotIndex >= MaxTextureSlots)
-                {
-                    textureIndex = 0;
-                }
-                else
-                {
-                    textureIndex = textureSlotIndex;
-                    textureSlots[textureSlotIndex] = texture;
-                    textureSlotIndex++;
-                }
-            }
+            const int textureIndex = GetTextureIndex(texture);
 
             auto emitterData = GetEmitterData(emitter, transform, textureIndex);
             m_EmitterData->SetData(&emitterData);
@@ -135,7 +107,7 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION();
 
         RandomColor color{emitter.Birth.StartColor, emitter.Birth.StartColorB, emitter.Birth.RandomStartColor};
-        RandomVector3 velocity{(Vector4)emitter.Birth.Velocity, emitter.Birth.VelocityB, emitter.Birth.RandomVelocity};
+        RandomVector3 velocity{static_cast<Vector4>(emitter.Birth.Velocity), emitter.Birth.VelocityB, emitter.Birth.RandomVelocity};
         RandomVector3 position{
             static_cast<Vector4>(transform.GetWorldPosition()) + emitter.Birth.Position,
             transform.GetWorldPosition() + emitter.Birth.PositionB, emitter.Birth.RandomStartPosition
@@ -157,5 +129,35 @@ namespace LevEngine
             },
         };
         return emitterData;
+    }
+
+    int ParticleEmissionPass::GetTextureIndex(const Ref<Texture>& texture) const
+    {
+        if (!texture) return 0;
+
+        int textureIndex = -1;
+        for (uint32_t i = 0; i < m_ParticlesTextures->TextureSlotIndex; i++)
+        {
+            if (m_ParticlesTextures->TextureSlots[i]->GetPath() != texture->GetPath()) continue;
+            
+            textureIndex = i;
+            break;
+        }
+
+        if (textureIndex == -1)
+        {
+            if (m_ParticlesTextures->TextureSlotIndex >= ParticlesTextureArray::MaxTextureSlots)
+            {
+                textureIndex = 0;
+            }
+            else
+            {
+                textureIndex = static_cast<int>(m_ParticlesTextures->TextureSlotIndex);
+                m_ParticlesTextures->TextureSlots[m_ParticlesTextures->TextureSlotIndex] = texture;
+                m_ParticlesTextures->TextureSlotIndex++;
+            }
+        }
+
+        return textureIndex;
     }
 }
