@@ -20,6 +20,14 @@ namespace LevEngine::Editor
             if (component.GetRigidbodyType() == Rigidbody::Type::Dynamic)
             {
                 EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&Rigidbody::IsGravityEnabled, &component), BindSetter(&Rigidbody::EnableGravity, &component));
+
+                EditorGUI::DrawCheckBox("Lock X Pos Axis", BindGetter(&Rigidbody::IsPosAxisXLocked, &component), BindSetter(&Rigidbody::LockPosAxisX, &component));
+                EditorGUI::DrawCheckBox("Lock Y Pos Axis", BindGetter(&Rigidbody::IsPosAxisYLocked, &component), BindSetter(&Rigidbody::LockPosAxisY, &component));
+                EditorGUI::DrawCheckBox("Lock Z Pos Axis", BindGetter(&Rigidbody::IsPosAxisZLocked, &component), BindSetter(&Rigidbody::LockPosAxisZ, &component));
+
+                EditorGUI::DrawCheckBox("Lock X Rot Axis", BindGetter(&Rigidbody::IsRotAxisXLocked, &component), BindSetter(&Rigidbody::LockRotAxisX, &component));
+                EditorGUI::DrawCheckBox("Lock Y Rot Axis", BindGetter(&Rigidbody::IsRotAxisYLocked, &component), BindSetter(&Rigidbody::LockRotAxisY, &component));
+                EditorGUI::DrawCheckBox("Lock Z Rot Axis", BindGetter(&Rigidbody::IsRotAxisZLocked, &component), BindSetter(&Rigidbody::LockRotAxisZ, &component));
             }
             
             if (component.GetColliderCount() > 0)

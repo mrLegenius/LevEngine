@@ -98,6 +98,14 @@ namespace LevEngine
         SetColliderOffsetPosition(GetColliderOffsetPosition());
         SetColliderOffsetRotation(GetColliderOffsetRotation());
 
+        LockPosAxisX(m_IsPosAxisXLocked);
+        LockPosAxisY(m_IsPosAxisYLocked);
+        LockPosAxisZ(m_IsPosAxisZLocked);
+
+        LockRotAxisX(m_IsRotAxisXLocked);
+        LockRotAxisY(m_IsRotAxisYLocked);
+        LockRotAxisZ(m_IsRotAxisZLocked);
+
         m_IsInitialized = true;
         
         SetTransformScale(transform.GetWorldScale());
@@ -484,6 +492,112 @@ namespace LevEngine
             rigidbody->addForce(PhysicsUtils::FromVector3ToPxVec3(value), physx::PxForceMode::eIMPULSE);
     }
 
+
+    
+    bool Rigidbody::IsPosAxisXLocked() const
+    {
+        return m_IsPosAxisXLocked;
+    }
+
+    void Rigidbody::LockPosAxisX(const bool flag)
+    {
+        if (m_Type != Type::Dynamic) return;
+        
+        m_IsPosAxisXLocked = flag;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, flag);
+        }
+    }
+
+    bool Rigidbody::IsPosAxisYLocked() const
+    {
+        return m_IsPosAxisYLocked;
+    }
+
+    void Rigidbody::LockPosAxisY(const bool flag)
+    {
+        if (m_Type != Type::Dynamic) return;
+        
+        m_IsPosAxisYLocked = flag;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, flag);
+        }
+    }
+
+    bool Rigidbody::IsPosAxisZLocked() const
+    {
+        return m_IsPosAxisZLocked;
+    }
+
+    void Rigidbody::LockPosAxisZ(const bool flag)
+    {
+        if (m_Type != Type::Dynamic) return;
+        
+        m_IsPosAxisZLocked = flag;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, flag);
+        }
+    }
+
+    bool Rigidbody::IsRotAxisXLocked() const
+    {
+        return m_IsRotAxisXLocked;
+    }
+
+    void Rigidbody::LockRotAxisX(const bool flag)
+    {
+        if (m_Type != Type::Dynamic) return;
+        
+        m_IsRotAxisXLocked = flag;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, flag);
+        }
+    }
+
+    bool Rigidbody::IsRotAxisYLocked() const
+    {
+        return m_IsRotAxisYLocked;
+    }
+
+    void Rigidbody::LockRotAxisY(const bool flag)
+    {
+        if (m_Type != Type::Dynamic) return;
+        
+        m_IsRotAxisYLocked = flag;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, flag);
+        }
+    }
+
+    bool Rigidbody::IsRotAxisZLocked() const
+    {
+        return m_IsRotAxisZLocked;
+    }
+
+    void Rigidbody::LockRotAxisZ(const bool flag)
+    {
+        if (m_Type != Type::Dynamic) return;
+        
+        m_IsRotAxisZLocked = flag;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, flag);
+        }
+    }
+
+    
+
     class RigidbodySerializer final : public ComponentSerializer<Rigidbody, RigidbodySerializer>
     {
     protected:
@@ -517,14 +631,22 @@ namespace LevEngine
             
             out << YAML::Key << "Static Friction" << YAML::Value << component.GetStaticFriction();
             out << YAML::Key << "Dynamic Friction" << YAML::Value << component.GetDynamicFriction();
-            out << YAML::Key << "Restitution" << YAML::Value << component.GetRestitution(); 
+            out << YAML::Key << "Restitution" << YAML::Value << component.GetRestitution();
+            
+            out << YAML::Key << "IsPosAxisXLocked" << YAML::Value << component.IsPosAxisXLocked();
+            out << YAML::Key << "IsPosAxisYLocked" << YAML::Value << component.IsPosAxisYLocked();
+            out << YAML::Key << "IsPosAxisZLocked" << YAML::Value << component.IsPosAxisZLocked();
+
+            out << YAML::Key << "IsRotAxisXLocked" << YAML::Value << component.IsRotAxisXLocked();
+            out << YAML::Key << "IsRotAxisYLocked" << YAML::Value << component.IsRotAxisYLocked();
+            out << YAML::Key << "IsRotAxisZLocked" << YAML::Value << component.IsRotAxisZLocked();
         }
 
         void DeserializeData(YAML::Node& node, Rigidbody& component) override
         {
-            if (const auto colliderVisualizationFlagNode = node["Visualization Flag"])
+            if (const auto visualizationEnableNode = node["Visualization Flag"])
             {
-                component.EnableVisualization(colliderVisualizationFlagNode.as<bool>());
+                component.EnableVisualization(visualizationEnableNode.as<bool>());
             }
             
             if (const auto rigidbodyTypeNode = node["Rigidbody Type"])
@@ -532,9 +654,9 @@ namespace LevEngine
                 component.SetRigidbodyType(static_cast<Rigidbody::Type>(rigidbodyTypeNode.as<int>()));
             }
 
-            if (const auto rigidbodyGravityFlagNode = node["Gravity Flag"])
+            if (const auto gravityEnableNode = node["Gravity Flag"])
             {
-                component.EnableGravity(rigidbodyGravityFlagNode.as<bool>());
+                component.EnableGravity(gravityEnableNode.as<bool>());
             }
 
             if (const auto colliderTypeNode = node["Collider Type"])
@@ -594,6 +716,36 @@ namespace LevEngine
             if (const auto restitutionNode = node["Restitution"])
             {
                 component.SetRestitution(restitutionNode.as<float>());
+            }
+            
+            if (const auto posAxisXLockNode = node["IsPosAxisXLocked"])
+            {
+                component.LockPosAxisX(posAxisXLockNode.as<bool>());
+            }
+
+            if (const auto posAxisYLockNode = node["IsPosAxisYLocked"])
+            {
+                component.LockPosAxisY(posAxisYLockNode.as<bool>());
+            }
+
+            if (const auto posAxisZLockNode = node["IsPosAxisZLocked"])
+            {
+                component.LockPosAxisZ(posAxisZLockNode.as<bool>());
+            }
+
+            if (const auto rotAxisXLockNode = node["IsRotAxisXLocked"])
+            {
+                component.LockRotAxisX(rotAxisXLockNode.as<bool>());
+            }
+
+            if (const auto rotAxisYLockNode = node["IsRotAxisYLocked"])
+            {
+                component.LockRotAxisY(rotAxisYLockNode.as<bool>());
+            }
+
+            if (const auto rotAxisZLockNode = node["IsRotAxisZLocked"])
+            {
+                component.LockRotAxisZ(rotAxisZLockNode.as<bool>());
             }
         } 
     };

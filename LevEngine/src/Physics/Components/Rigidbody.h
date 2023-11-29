@@ -63,6 +63,19 @@ namespace LevEngine
 
         void AddForce(Vector3 value) const;
         void AddImpulse(Vector3 value) const;
+
+        [[nodiscard]] bool IsPosAxisXLocked() const;
+        void LockPosAxisX(bool flag);
+        [[nodiscard]] bool IsPosAxisYLocked() const;
+        void LockPosAxisY(bool flag);
+        [[nodiscard]] bool IsPosAxisZLocked() const;
+        void LockPosAxisZ(bool flag);
+        [[nodiscard]] bool IsRotAxisXLocked() const;
+        void LockRotAxisX(bool flag);
+        [[nodiscard]] bool IsRotAxisYLocked() const;
+        void LockRotAxisY(bool flag);
+        [[nodiscard]] bool IsRotAxisZLocked() const;
+        void LockRotAxisZ(bool flag);
         
         friend class Physics;
         
@@ -80,7 +93,16 @@ namespace LevEngine
         bool m_IsInitialized = false;
         bool m_IsVisualizationEnabled = false;
         bool m_IsGravityEnabled = true;
+        
         //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
+
+        bool m_IsPosAxisXLocked = false;
+        bool m_IsPosAxisYLocked = false;
+        bool m_IsPosAxisZLocked = false;
+
+        bool m_IsRotAxisXLocked = false;
+        bool m_IsRotAxisYLocked = false;
+        bool m_IsRotAxisZLocked = false;
     };
 }
