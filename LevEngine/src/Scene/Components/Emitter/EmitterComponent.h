@@ -45,6 +45,6 @@ namespace LevEngine
 
 	private:
 		float Timer = 0.0f;
-		friend class ParticlePass;
+		friend class ParticleEmissionPass;
 	};
 }

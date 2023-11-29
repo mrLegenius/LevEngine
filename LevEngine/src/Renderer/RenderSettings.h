@@ -1,6 +1,7 @@
 #pragma once
+#include "Math/Color.h"
+#include "Math/Vector2.h"
 #include "Math/Vector3.h"
-#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
@@ -21,16 +22,16 @@ enum class RenderTechniqueType
 struct RenderSettings
 {
 	//General
-	inline static RenderTechniqueType RenderTechnique = RenderTechniqueType::Deferred;
-	inline static RendererAPI RendererAPI = RendererAPI::D3D11;
+	static RenderTechniqueType RenderTechnique;
+	static RendererAPI RendererAPI;
 
-	inline static bool UseFrustumCulling = true;
+	static bool UseFrustumCulling;
 	
 	static constexpr bool EnableShaderDebug = false;
 	static constexpr uint32_t ShadowMapSlot = 9;
 	static constexpr uint32_t MaterialSlot = 4;
 
-	inline static uint32_t MaxParticles = 1024 * 8;
+	static uint32_t MaxParticles;
 	
 	//Shadows
 	static constexpr int CascadeCount = 4;

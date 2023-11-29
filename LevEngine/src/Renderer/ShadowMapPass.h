@@ -2,6 +2,8 @@
 #include "RenderPass.h"
 #include "RenderSettings.h"
 
+#include "Math/Matrix.h"
+
 namespace LevEngine
 {
     class ConstantBuffer;
@@ -29,7 +31,7 @@ namespace LevEngine
         Ref<CascadeShadowMap> m_CascadeShadowMap = nullptr;
         Ref<ConstantBuffer> m_ShadowMapConstantBuffer;
 
-        [[nodiscard]] Vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const;
-        [[nodiscard]] Matrix GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners) const;
+        [[nodiscard]] static Vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj);
+        [[nodiscard]] static Matrix GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners);
     };
 }

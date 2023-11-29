@@ -94,11 +94,23 @@
   <ItemGroup>
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
+    <ClInclude Include="src\Renderer\DispatchCommand.h" />
+    <ClInclude Include="src\Renderer\DispatchCommandBase.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPrecomputePass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentRenderPass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentShaders.h" />
+    <ClInclude Include="src\Renderer\Particles\BitonicSort.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticleAssets.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticleEmissionPass.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticlePass.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticleRenderingPass.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticleSimulationPass.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticleSortingPass.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticlesTextureArray.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticlesUtils.h" />
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
@@ -907,7 +919,6 @@
     <ClInclude Include="src\Project.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
     <ClInclude Include="src\Renderer\3D\Primitives.h" />
-    <ClInclude Include="src\Renderer\BitonicSort.h" />
     <ClInclude Include="src\Renderer\BlendState.h" />
     <ClInclude Include="src\Renderer\BufferBinding.h" />
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
@@ -944,7 +955,6 @@
     <ClInclude Include="src\Renderer\IndexBuffer.h" />
     <ClInclude Include="src\Renderer\MaterialSimple.h" />
     <ClInclude Include="src\Renderer\OpaquePass.h" />
-    <ClInclude Include="src\Renderer\ParticlePass.h" />
     <ClInclude Include="src\Renderer\PipelineState.h" />
     <ClInclude Include="src\Renderer\RasterizerState.h" />
     <ClInclude Include="src\Renderer\Rect.h" />
@@ -1002,7 +1012,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
+    <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
@@ -1011,12 +1023,23 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugSphere.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireSphere.cpp" />
+    <ClCompile Include="src\Renderer\DispatchCommand.cpp" />
+    <ClCompile Include="src\Renderer\DispatchCommandBase.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentPass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentPrecomputePass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentShaders.cpp" />
+    <ClCompile Include="src\Renderer\Particles\BitonicSort.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticleAssets.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticleEmissionPass.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticlePass.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticleRenderingPass.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticleSimulationPass.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticleSortingPass.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticlesUtils.cpp" />
     <ClCompile Include="src\Renderer\RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\RenderPass.cpp" />
+    <ClCompile Include="src\Renderer\RenderSettings.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
@@ -1282,7 +1305,6 @@
     <ClCompile Include="src\Project.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
     <ClCompile Include="src\Renderer\3D\Primitives.cpp" />
-    <ClCompile Include="src\Renderer\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\BlendState.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="src\Renderer\CascadeShadowMap.cpp" />
@@ -1309,7 +1331,6 @@
     <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
     <ClCompile Include="src\Renderer\MaterialSimple.cpp" />
     <ClCompile Include="src\Renderer\OpaquePass.cpp" />
-    <ClCompile Include="src\Renderer\ParticlePass.cpp" />
     <ClCompile Include="src\Renderer\PipelineState.cpp" />
     <ClCompile Include="src\Renderer\RasterizerState.cpp" />
     <ClCompile Include="src\Renderer\RenderCommands.cpp" />

@@ -1,15 +1,14 @@
 #include "ParticlesCommon.hlsl"
 
-StructuredBuffer<Particle> Particles : register(t0); // буфер частиц
-StructuredBuffer<float2> SortedParticles : register(t2); // буфер частиц
+StructuredBuffer<Particle> Particles : register(t0);
+StructuredBuffer<float2> SortedParticles : register(t2);
 
-// т.к. вертексов у нас нет, мы можем получить текущий ID вертекса при рисовании без использовани€ Vertex Buffer
 struct VertexInput
 {
     uint VertexID : SV_VertexID;
 };
 
-struct PixelInput // описывает вертекс на выходе из Vertex Shader
+struct PixelInput
 {
     float4 Position : SV_POSITION;
     float2 UV : TEXCOORD0;
@@ -18,7 +17,7 @@ struct PixelInput // описывает вертекс на выходе из Vertex Shader
     uint TextureIndex : COLOR2;
 };
 
-struct PixelOutput // цвет результирующего пиксел€
+struct PixelOutput
 {
     float4 Color : SV_TARGET0;
 };
@@ -41,7 +40,6 @@ PixelInput VSMain(VertexInput input)
     return output;
 }
 
-// функци€ изменени€ вертекса и последующа€ проекци€ его в Projection Space
 PixelInput _offsetNprojected(PixelInput data, float2 offset, float2 uv)
 {
     data.Position.xy += offset;
@@ -51,20 +49,18 @@ PixelInput _offsetNprojected(PixelInput data, float2 offset, float2 uv)
     return data;
 }
 
-[maxvertexcount(4)] // результат работы GS Ц 4 вертекса, которые образуют TriangleStrip
+[maxvertexcount(4)]
 void GSMain(point PixelInput input[1], inout TriangleStream<PixelInput> stream)
 {
     PixelInput pointOut = input[0];
 
     const float size = pointOut.Size;
 
-    // описание квадрата
     stream.Append(_offsetNprojected(pointOut, float2(-1, -1) * size, float2(0, 0)));
     stream.Append(_offsetNprojected(pointOut, float2(-1, 1) * size, float2(0, 1)));
     stream.Append(_offsetNprojected(pointOut, float2(1, -1) * size, float2(1, 0)));
     stream.Append(_offsetNprojected(pointOut, float2(1, 1) * size, float2(1, 1)));
 
-    // создать TriangleStrip
     stream.RestartStrip();
 }
 

@@ -6,9 +6,8 @@
 
 namespace LevEngine
 {
-    String GetShaderPath(const String& name) { return (EngineResourcesRoot / "Shaders" / name.c_str()).string().c_str(); }
-    static String GetTexturePath(const String& name) { return (EngineResourcesRoot / "Textures" / name.c_str()).string().c_str(); }
-    static String GetIconsPath(const String& name) { return (EngineResourcesRoot / "Icons" / name.c_str()).string().c_str(); }
+    String GetShaderPath(const String& name) { return ToString(EngineResourcesRoot / "Shaders" / name.c_str()); }
+    static String GetIconsPath(const String& name) { return ToString(EngineResourcesRoot / "Icons" / name.c_str()); }
 
     static auto GetIcon(const String& name) { return TextureLibrary::GetTexture(GetIconsPath(name)); }
 
@@ -114,56 +113,6 @@ namespace LevEngine
         return shader;
     }
 
-    Ref<Shader> ShaderAssets::Particles()
-    {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/Particles.hlsl"),
-                                                   ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
-
-        return shader;
-    }
-
-    Ref<Shader> ShaderAssets::ParticlesCompute()
-    {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/ParticlesCompute.hlsl"),
-                                                   ShaderType::Compute);
-
-        return shader;
-    }
-
-    Ref<Shader> ShaderAssets::ParticlesEmitter()
-    {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/ParticlesEmitter.hlsl"),
-                                                   ShaderType::Compute);
-
-        return shader;
-    }
-
-    Ref<Shader> ShaderAssets::BitonicSort()
-    {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader =
-            Shader::Create(GetShaderPath("Particles/BitonicSort.hlsl"), ShaderType::Compute);
-
-        return shader;
-    }
-
-    Ref<Shader> ShaderAssets::BitonicTranspose()
-    {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/BitonicTranspose.hlsl"),
-                                                   ShaderType::Compute);
-
-        return shader;
-    }
-
     Ref<Shader> ShaderAssets::Luminance()
     {
         LEV_PROFILE_FUNCTION();
@@ -226,11 +175,5 @@ namespace LevEngine
 
         static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Scale.hlsl"));
         return shader;
-    }
-
-    Ref<Texture> TextureAssets::Particle()
-    {
-        static auto texture = TextureLibrary::GetTexture(GetTexturePath("particle.png"));
-        return texture;
     }
 }

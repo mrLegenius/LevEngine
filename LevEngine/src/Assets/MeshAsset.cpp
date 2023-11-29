@@ -1,14 +1,12 @@
 ﻿#include "levpch.h"
 #include "MeshAsset.h"
 
+#include "EngineAssets.h"
 #include "MeshLoader.h"
 
 namespace LevEngine
 {
-    Ref<Texture> MeshAsset::GetIcon() const
-    {
-        return Icons::Mesh();
-    }
+    Ref<Texture> MeshAsset::GetIcon() const { return Icons::Mesh(); }
 
     void MeshAsset::DeserializeData(YAML::Node& node)
     {

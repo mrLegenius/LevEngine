@@ -7,7 +7,7 @@
 #include "DeferredLightingPass.h"
 #include "DepthStencilState.h"
 #include "OpaquePass.h"
-#include "ParticlePass.h"
+#include "Particles/ParticlePass.h"
 #include "PipelineState.h"
 #include "RasterizerState.h"
 #include "Renderer3D.h"
@@ -17,12 +17,14 @@
 #include "ShadowMapPass.h"
 #include "Texture.h"
 #include "TransparentPass.h"
+#include "Assets/EngineAssets.h"
 #include "DebugRender/DebugRenderPass.h"
 #include "Environment/EnvironmentPass.h"
 #include "Kernel/Window.h"
 #include "PostProcessing/PostProcessingPass.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
@@ -233,16 +235,6 @@ namespace LevEngine
         }
 
         {
-            LEV_PROFILE_SCOPE("Particles pipeline creation");
-
-            m_ParticlesPipelineState = CreateRef<PipelineState>();
-            m_ParticlesPipelineState->GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
-            m_ParticlesPipelineState->GetDepthStencilState()->SetDepthMode(DepthMode::DisableDepthWrites);
-            m_ParticlesPipelineState->GetRasterizerState().SetCullMode(CullMode::None);
-            m_ParticlesPipelineState->SetRenderTarget(mainRenderTarget);
-        }
-
-        {
             LEV_PROFILE_SCOPE("Deferred technique creation");
 
             m_DeferredTechnique = CreateRef<RenderTechnique>();
@@ -263,7 +255,7 @@ namespace LevEngine
             m_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(m_DebugPipeline));
             m_DeferredTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
             m_DeferredTechnique->AddPass(
-                CreateRef<ParticlePass>(m_ParticlesPipelineState, m_DepthTexture, m_NormalTexture));
+                CreateRef<ParticlePass>(mainRenderTarget, m_DepthTexture, m_NormalTexture));
         }
 
         {
@@ -278,7 +270,7 @@ namespace LevEngine
 
             //TODO: Fix particle bounce
             m_ForwardTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
-            m_ForwardTechnique->AddPass(CreateRef<ParticlePass>(m_ParticlesPipelineState,
+            m_ForwardTechnique->AddPass(CreateRef<ParticlePass>(mainRenderTarget,
                                                                 mainRenderTarget->GetTexture(
                                                                     AttachmentPoint::DepthStencil), m_NormalTexture));
         }
@@ -299,7 +291,6 @@ namespace LevEngine
         m_OpaquePipeline->GetRasterizerState().SetViewport(viewport);
         m_TransparentPipeline->GetRasterizerState().SetViewport(viewport);
         m_DebugPipeline->GetRasterizerState().SetViewport(viewport);
-        m_ParticlesPipelineState->GetRasterizerState().SetViewport(viewport);
         m_DeferredQuadPipeline->GetRasterizerState().SetViewport(viewport);
 
         m_DepthOnlyRenderTarget->Resize(static_cast<uint16_t>(width), static_cast<uint16_t>(height));

@@ -7,6 +7,7 @@
 #include "Renderer3D.h"
 #include "RenderParams.h"
 #include "Shader.h"
+#include "Assets/EngineAssets.h"
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Lights/Lights.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
@@ -14,7 +15,7 @@
 
 namespace LevEngine
 {
-Vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const
+Vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const Matrix& proj)
 {
     const auto viewProj = view * proj;
     const auto inv = viewProj.Invert();
@@ -37,7 +38,7 @@ Vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const 
     return corners;
 }
 
-Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners) const
+Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners)
 {
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();

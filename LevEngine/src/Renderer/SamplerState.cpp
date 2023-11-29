@@ -2,6 +2,7 @@
 #include "SamplerState.h"
 
 #include "RenderSettings.h"
+#include "Math/Math.h"
 #include "Platform/D3D11/D3D11SamplerState.h"
 
 namespace LevEngine

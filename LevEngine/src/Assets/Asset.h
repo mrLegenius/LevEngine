@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "EngineAssets.h"
-
 namespace LevEngine
 {
     class Texture;
@@ -9,7 +7,7 @@ namespace LevEngine
     class Asset
     {
     public:
-        explicit Asset(const Path& path, const UUID uuid);
+        explicit Asset(const Path& path, UUID uuid);
 
         virtual ~Asset() = default;
 
@@ -29,10 +27,7 @@ namespace LevEngine
 
         void Rename(const Path& path);
 
-        [[nodiscard]] virtual Ref<Texture> GetIcon() const
-        {
-            return Icons::File();
-        }
+        [[nodiscard]] virtual Ref<Texture> GetIcon() const;
 
     protected:
         [[nodiscard]] virtual bool WriteDataToFile() const { return true; }

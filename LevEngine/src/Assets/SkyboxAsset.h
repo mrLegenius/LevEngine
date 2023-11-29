@@ -14,8 +14,8 @@ namespace LevEngine
 		explicit SkyboxAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
 
 		[[nodiscard]] const Ref<Texture>& GetTexture() const;
-		[[nodiscard]] Ref<Texture> GetIcon() const override { return Icons::Skybox(); }
-		
+		[[nodiscard]] Ref<Texture> GetIcon() const override;
+
 	protected:
 		void SerializeData(YAML::Emitter& out) override;
 		void DeserializeData(YAML::Node& node) override;
