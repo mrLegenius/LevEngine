@@ -20,6 +20,10 @@ namespace Sandbox
 			
             auto& playerComponent = player.AddComponent<Player>();
             playerComponent.speed = 10;
+
+            auto& rigidbodyComponent = player.GetComponent<Rigidbody>();
+            rigidbodyComponent.LockRotAxisX(true);
+            rigidbodyComponent.LockRotAxisZ(true);
         }
     };
 }
