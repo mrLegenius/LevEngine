@@ -2,7 +2,6 @@
 #include <dxgiformat.h>
 #include <d3d11.h>
 
-#include "DataTypes/Vector.h"
 #include "Renderer/ClearFlags.h"
 #include "Renderer/CPUAccess.h"
 #include "Renderer/Texture.h"

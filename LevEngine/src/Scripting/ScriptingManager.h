@@ -1,8 +1,6 @@
 #pragma once
 
-#include <DataTypes/Path.h>
 #include <sol/sol.hpp>
-#include "DataTypes/UnorderedMap.h"
 
 namespace LevEngine {
 	class Scene;

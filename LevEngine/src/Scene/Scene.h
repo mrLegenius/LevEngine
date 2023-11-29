@@ -1,7 +1,5 @@
 #pragma once
 #include "System.h"
-#include "DataTypes/Delegates.h"
-#include "DataTypes/Vector.h"
 
 namespace LevEngine
 {

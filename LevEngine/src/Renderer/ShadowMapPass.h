@@ -1,7 +1,6 @@
 #pragma once
 #include "RenderPass.h"
 #include "RenderSettings.h"
-#include "DataTypes/Vector.h"
 
 namespace LevEngine
 {

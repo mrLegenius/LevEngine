@@ -1,9 +1,6 @@
 ﻿#pragma once
-#include <yaml-cpp/yaml.h>
 
 #include "EngineAssets.h"
-#include "DataTypes/Path.h"
-#include "DataTypes/String.h"
 
 namespace LevEngine
 {

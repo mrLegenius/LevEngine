@@ -3,6 +3,21 @@
 // -- Core -------------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+// -- Data Types -------------------------------------------
+
+#include "DataTypes/Array.h"
+#include "DataTypes/Delegates.h"
+#include "DataTypes/Map.h"
+#include "DataTypes/Pair.h"
+#include "DataTypes/Path.h"
+#include "DataTypes/Pointers.h"
+#include "DataTypes/Queue.h"
+#include "DataTypes/String.h"
+#include "DataTypes/UnorderedMap.h"
+#include "DataTypes/Vector.h"
+#include "DataTypes/Utility.h"
+
+// -- Kernel -------------------------------------------
 #include "Kernel/Logger.h"
 #include "Kernel/Asserts.h"
 #include "Kernel/Application.h"
@@ -20,20 +35,6 @@
 
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
-
-// -- Data Types -------------------------------------------
-
-#include "DataTypes/Array.h"
-#include "DataTypes/Delegates.h"
-#include "DataTypes/Map.h"
-#include "DataTypes/Pair.h"
-#include "DataTypes/Path.h"
-#include "DataTypes/Pointers.h"
-#include "DataTypes/Queue.h"
-#include "DataTypes/String.h"
-#include "DataTypes/UnorderedMap.h"
-#include "DataTypes/Vector.h"
-#include "DataTypes/Utility.h"
 
 // -- GUI --------------------------------------------------
 

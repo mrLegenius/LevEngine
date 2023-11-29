@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "DataTypes/Vector.h"
 #include "Renderer/Viewport.h"
 #include "Renderer/Rect.h"
 

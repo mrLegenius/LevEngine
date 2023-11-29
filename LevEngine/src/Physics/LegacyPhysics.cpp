@@ -2,9 +2,6 @@
 #include "LegacyPhysics.h"
 
 #include "Components\LegacyCollisionEvents.h"
-#include "DataTypes/Map.h"
-#include "DataTypes/Pair.h"
-#include "DataTypes/Vector.h"
 #include "Scene/Entity.h"
 #include "Systems\LegacyForcesClearSystem.h"
 #include "Systems\LegacyPositionUpdateSystem.h"

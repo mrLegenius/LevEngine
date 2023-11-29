@@ -5,7 +5,6 @@
 #include <assimp/postprocess.h>
 #include <assimp/mesh.h>
 
-#include "DataTypes/Path.h"
 #include "Renderer/3D/Mesh.h"
 
 namespace LevEngine

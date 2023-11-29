@@ -1,7 +1,4 @@
 ﻿#pragma once
-#include "DataTypes/Pair.h"
-#include "DataTypes/Vector.h"
-#include "DataTypes/Pointers.h"
 
 namespace LevEngine
 {

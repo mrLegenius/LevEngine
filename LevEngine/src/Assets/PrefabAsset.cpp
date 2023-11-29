@@ -1,7 +1,6 @@
 #include "levpch.h"
 #include "PrefabAsset.h"
 
-#include "DataTypes/Queue.h"
 #include "Scene/Scene.h"
 #include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"

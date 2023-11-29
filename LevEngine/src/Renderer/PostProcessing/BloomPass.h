@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DataTypes/Array.h"
 #include "Renderer/RenderPass.h"
 
 namespace LevEngine

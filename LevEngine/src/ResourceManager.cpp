@@ -1,7 +1,6 @@
 #include "levpch.h"
 #include "ResourceManager.h"
 
-#include "DataTypes/Queue.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine

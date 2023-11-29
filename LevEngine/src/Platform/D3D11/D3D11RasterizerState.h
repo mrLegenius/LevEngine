@@ -1,7 +1,6 @@
 #pragma once
 #include <d3d11.h>
 
-#include "DataTypes/Vector.h"
 #include "Renderer/RasterizerState.h"
 
 namespace LevEngine

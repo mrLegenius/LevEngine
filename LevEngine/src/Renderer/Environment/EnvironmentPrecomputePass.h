@@ -1,5 +1,4 @@
 #pragma once
-#include "DataTypes/Array.h"
 #include "Math/Matrix.h"
 
 #include "Renderer/RenderPass.h"
