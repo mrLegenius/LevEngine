@@ -14,6 +14,7 @@
 #include "GUI/ImGuiLayer.h"
 #include "Math/Random.h"
 #include "Physics/Physics.h"
+#include "Renderer/RenderDebugEvent.h"
 #include "Renderer/RendererContext.h"
 #include "Renderer/RenderTarget.h"
 #include "Scene/Scene.h"
@@ -38,10 +39,10 @@ Application::Application(const ApplicationSpecification& specification)
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 	m_Physics = Physics::Create();
+	m_Renderer = CreateScope<LevEngine::Renderer>(*m_Window);
 
 	m_ScriptingManager = CreateScope<Scripting::ScriptingManager>();
-
-	Renderer::Init();
+	
 	Random::Init();
 	m_ScriptingManager->Init();
 	Audio::Init(Audio::MaxAudioChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE,
@@ -57,7 +58,6 @@ Application::Application(const ApplicationSpecification& specification)
 
 Application::~Application()
 {
-	Renderer::Shutdown();
 	Audio::Shutdown();
 	m_ScriptingManager->Shutdown();
 	SceneManager::Shutdown();
@@ -132,6 +132,7 @@ void Application::Render()
 	//TODO: Maybe move to another place
 	m_Window->GetContext()->GetRenderTarget()->Bind();
 
+	RenderDebugEvent::Start("GUI");
 	m_ImGuiLayer->Begin();
 	{
 		LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
@@ -139,6 +140,7 @@ void Application::Render()
 			layer->OnGUIRender();
 	}
 	m_ImGuiLayer->End();
+	RenderDebugEvent::End();
 }
 
 void Application::Close()
@@ -181,10 +183,8 @@ void Application::OnEvent(Event& e)
 	}
 }
 
-Physics& Application::GetPhysics() const
-{
-	return *m_Physics;
-}
+Physics& Application::GetPhysics() const { return *m_Physics; }
+Renderer& Application::Renderer() { return *Get().m_Renderer; }
 
 Scripting::ScriptingManager& Application::GetScriptingManager()
 {
@@ -214,7 +214,7 @@ bool Application::OnWindowResized(WindowResizedEvent& e)
 	if (width == 0 || height == 0) return false;
 		
 	SceneManager::GetActiveScene()->OnViewportResized(width, height);
-	Renderer::SetViewport(static_cast<float>(width), static_cast<float>(height));
+	m_Renderer->SetViewport(static_cast<float>(width), static_cast<float>(height));
 	
 	m_Minimized = false;
 

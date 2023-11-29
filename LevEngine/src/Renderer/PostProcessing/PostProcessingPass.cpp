@@ -4,6 +4,7 @@
 #include "BloomPass.h"
 #include "LuminanceAdaptationPass.h"
 #include "LuminancePass.h"
+#include "TextureLibrary.h"
 #include "TonemappingPass.h"
 #include "VignettePass.h"
 #include "Kernel/Time/Time.h"
@@ -38,6 +39,8 @@ namespace LevEngine
         m_BloomPass->SetViewport(viewport);
         m_VignettePass->SetViewport(viewport);
     }
+
+    String PostProcessingPass::PassName() { return "Post Processing"; }
 
     bool PostProcessingPass::Begin(entt::registry& registry, RenderParams& params)
     {

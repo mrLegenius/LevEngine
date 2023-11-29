@@ -2,6 +2,7 @@
 #include "TextureAsset.h"
 
 #include "Renderer/SamplerState.h"
+#include "Renderer/Texture.h"
 
 namespace LevEngine
 {

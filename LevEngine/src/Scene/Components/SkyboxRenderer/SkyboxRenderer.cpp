@@ -1,6 +1,6 @@
 ﻿#include "levpch.h"
 #include "SkyboxRenderer.h"
-#include "Assets/SkyboxAsset.h"
+#include "Assets/TextureAsset.h"
 
 #include "../ComponentSerializer.h"
 
@@ -15,11 +15,11 @@ namespace LevEngine
 
 		void SerializeData(YAML::Emitter& out, const SkyboxRendererComponent& component) override
 		{
-			SerializeAsset(out, "Skybox", component.skybox);
+			SerializeAsset(out, "Skybox", component.SkyboxTexture);
 		}
 		void DeserializeData(YAML::Node& node, SkyboxRendererComponent& component) override
 		{
-			component.skybox = DeserializeAsset<SkyboxAsset>(node["Skybox"]);
+			component.SkyboxTexture = DeserializeAsset<TextureAsset>(node["Skybox"]);
 		}
 	};
 }

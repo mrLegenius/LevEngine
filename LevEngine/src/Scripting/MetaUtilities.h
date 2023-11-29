@@ -1,6 +1,5 @@
 #pragma once
 
-#include <entt/entt.hpp>
 #include <sol/sol.hpp>
 
 namespace LevEngine::Scripting

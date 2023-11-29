@@ -5,6 +5,8 @@
 
 namespace LevEngine
 {
+    Entity::Entity(const entt::handle handle) : m_Handle(handle) { }
+
     UUID Entity::GetUUID() const
     {
         return GetComponent<IDComponent>().ID;

@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <entt/entt.hpp>
 
 #include "physx/include/PxPhysicsAPI.h"
 #include "Math/Vector3.h"

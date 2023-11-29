@@ -8,18 +8,19 @@ namespace LevEngine
     class PipelineState;
 
     class DebugRenderPass final : public RenderPass
-{
-public:
-    DebugRenderPass(const Ref<PipelineState>& pipelineState);
-    
-protected:
-    bool Begin(entt::registry& registry, RenderParams& params) override;
-    void Process(entt::registry& registry, RenderParams& params) override;
-    void End(entt::registry& registry, RenderParams& params) override;
+    {
+    public:
+        DebugRenderPass(const Ref<PipelineState>& pipelineState);
 
-private:
-    Ref<ConstantBuffer> m_ConstantBuffer;
+    protected:
+        String PassName() override;
+        bool Begin(entt::registry& registry, RenderParams& params) override;
+        void Process(entt::registry& registry, RenderParams& params) override;
+        void End(entt::registry& registry, RenderParams& params) override;
 
-    Ref<PipelineState> m_PipelineState;
-};
+    private:
+        Ref<ConstantBuffer> m_ConstantBuffer;
+
+        Ref<PipelineState> m_PipelineState;
+    };
 }

@@ -1,12 +1,15 @@
 #include "levpch.h"
 #include "ParticlePass.h"
 
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
 #include "BitonicSort.h"
+#include "ConstantBuffer.h"
 #include "PipelineState.h"
 #include "Kernel/Time/Time.h"
 #include "RenderCommand.h"
+#include "RenderParams.h"
 #include "RenderSettings.h"
+#include "Shader.h"
 #include "StructuredBuffer.h"
 #include "Assets/TextureAsset.h"
 #include "Camera/SceneCamera.h"
@@ -90,6 +93,8 @@ ParticlePass::Emitter ParticlePass::GetEmitterData(EmitterComponent emitter, Tra
 	};
 	return emitterData;
 }
+
+String ParticlePass::PassName() { return "Particles"; }
 
 bool ParticlePass::Begin(entt::registry& registry, RenderParams& params)
 {

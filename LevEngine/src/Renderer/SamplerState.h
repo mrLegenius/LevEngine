@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "DataTypes/Pointers.h"
 #include "ShaderType.h"
 #include "Math/Color.h"
 

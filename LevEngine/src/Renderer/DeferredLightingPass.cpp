@@ -1,9 +1,12 @@
 ﻿#include "levpch.h"
 #include "DeferredLightingPass.h"
 
+#include "ConstantBuffer.h"
 #include "PipelineState.h"
 #include "Renderer3D.h"
+#include "RenderParams.h"
 #include "RenderTarget.h"
+#include "Texture.h"
 #include "Camera/SceneCamera.h"
 #include "Math/BoundingVolume.h"
 #include "Scene/Components/Transform/Transform.h"
@@ -23,6 +26,8 @@ namespace LevEngine
 
 		m_LightIndexBuffer = ConstantBuffer::Create(sizeof m_LightParams, 4);
 	}
+
+	String DeferredLightingPass::PassName() { return "Lighting"; }
 
 	bool DeferredLightingPass::Begin(entt::registry& registry, RenderParams& params)
 	{

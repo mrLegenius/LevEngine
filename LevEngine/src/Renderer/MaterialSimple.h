@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Material.h"
-#include "DataTypes/Map.h"
 #include "Math/Color.h"
 #include "Math/Vector2.h"
 

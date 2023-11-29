@@ -1,8 +1,6 @@
 #include "levpch.h"
 #include "LuaComponentsBinder.h"
 
-#include <entt/entt.hpp>
-
 #include "MetaUtilities.h"
 #include "Input/Input.h"
 #include "Scene/Entity.h"

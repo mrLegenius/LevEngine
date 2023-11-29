@@ -1,8 +1,6 @@
 ﻿#pragma once
-#include <entt/entt.hpp>
 #include "physx/include/PxPhysicsAPI.h"
 #include "Collider.h"
-#include "DataTypes/Vector.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine

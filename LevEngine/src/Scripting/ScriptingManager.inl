@@ -1,6 +1,5 @@
 #pragma once
 #include "ScriptingManager.h"
-#include "entt/entt.hpp"
 
 namespace LevEngine::Scripting
 {

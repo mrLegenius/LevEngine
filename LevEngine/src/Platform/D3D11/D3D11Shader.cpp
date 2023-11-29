@@ -4,7 +4,6 @@
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 
-#include "DataTypes/Vector.h"
 #include "Renderer/RenderSettings.h"
 
 namespace LevEngine

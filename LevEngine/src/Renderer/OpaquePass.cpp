@@ -1,8 +1,10 @@
 ﻿#include "levpch.h"
 #include "OpaquePass.h"
 
+#include "Material.h"
 #include "PipelineState.h"
 #include "Renderer3D.h"
+#include "RenderParams.h"
 #include "3D/Mesh.h"
 #include "Assets/MaterialAsset.h"
 #include "Assets/MeshAsset.h"
@@ -13,6 +15,8 @@
 namespace LevEngine
 {
     OpaquePass::OpaquePass(const Ref<PipelineState>& pipelineState) : m_PipelineState(pipelineState) { }
+
+    String OpaquePass::PassName() { return "Opaque"; }
 
     bool OpaquePass::Begin(entt::registry& registry, RenderParams& params)
     {

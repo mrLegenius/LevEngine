@@ -1,7 +1,5 @@
 #pragma once
 
-#include "DataTypes/Map.h"
-#include "DataTypes/Vector.h"
 #include "Math/BoundingVolume.h"
 #include "Math/Color.h"
 #include "Math/Vector2.h"

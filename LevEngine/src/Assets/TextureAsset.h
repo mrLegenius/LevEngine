@@ -3,6 +3,7 @@
 
 namespace LevEngine
 {
+	class SamplerState;
 	class Texture;
 	class TextureAsset final : public Asset
 	{

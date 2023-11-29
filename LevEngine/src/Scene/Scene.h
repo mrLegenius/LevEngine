@@ -1,11 +1,5 @@
 #pragma once
-#include <entt/entt.hpp>
-
 #include "System.h"
-#include "DataTypes/Delegates.h"
-#include "DataTypes/Pointers.h"
-#include "DataTypes/Vector.h"
-#include "Kernel/UUID.h"
 
 namespace LevEngine
 {

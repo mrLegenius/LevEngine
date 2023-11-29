@@ -1,28 +1,27 @@
 #pragma once
-#include "ConstantBuffer.h"
 
 namespace LevEngine
 {
+    class ConstantBuffer;
     class Shader;
 
     class Material
-{
-public:
-    virtual ~Material() = default;
+    {
+    public:
+        virtual ~Material() = default;
 
-    virtual void Bind(const Ref<Shader>& shader);
-    virtual void Unbind(const Ref<Shader>& shader);
+        virtual void Bind(const Ref<Shader>& shader);
+        virtual void Unbind(const Ref<Shader>& shader);
 
-    [[nodiscard]] virtual bool IsTransparent() = 0;
+        [[nodiscard]] virtual bool IsTransparent() = 0;
 
-protected:
-    explicit Material(const uint32_t gpuDataSize)
-        : m_ConstantBuffer(ConstantBuffer::Create(gpuDataSize)) { }
+    protected:
+        explicit Material(uint32_t gpuDataSize);
 
-    virtual void* GetGPUData() = 0;
-    
-    Ref<ConstantBuffer> m_ConstantBuffer;
+        virtual void* GetGPUData() = 0;
 
-    bool m_IsDirty{true};
-};
+        Ref<ConstantBuffer> m_ConstantBuffer;
+
+        bool m_IsDirty{true};
+    };
 }

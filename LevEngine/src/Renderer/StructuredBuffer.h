@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "CPUAccess.h"
 #include "ShaderType.h"
-#include "DataTypes/Vector.h"
 
 namespace LevEngine
 {

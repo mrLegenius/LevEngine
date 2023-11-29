@@ -1,5 +1,6 @@
 #include "levpch.h"
 #include "RenderTechnique.h"
+#include "RenderParams.h"
 
 namespace LevEngine
 {

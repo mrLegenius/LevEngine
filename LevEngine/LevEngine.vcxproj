@@ -92,8 +92,14 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Assets\AssetDatabase.inl" />
+    <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
+    <ClInclude Include="src\Renderer\Environment\EnvironmentPass.h" />
+    <ClInclude Include="src\Renderer\Environment\EnvironmentPrecomputePass.h" />
+    <ClInclude Include="src\Renderer\Environment\EnvironmentRenderPass.h" />
+    <ClInclude Include="src\Renderer\Environment\EnvironmentShaders.h" />
+    <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
@@ -811,7 +817,6 @@
     <ClInclude Include="external\yaml-cpp\src\stringsource.h" />
     <ClInclude Include="external\yaml-cpp\src\tag.h" />
     <ClInclude Include="external\yaml-cpp\src\token.h" />
-    <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\Assets\Asset.h" />
     <ClInclude Include="src\Assets\AssetDatabase.h" />
     <ClInclude Include="src\Assets\AudioBankAsset.h" />
@@ -957,7 +962,6 @@
     <ClInclude Include="src\Renderer\ShaderParameter.h" />
     <ClInclude Include="src\Renderer\ShaderType.h" />
     <ClInclude Include="src\Renderer\ShadowMapPass.h" />
-    <ClInclude Include="src\Renderer\SkyboxPass.h" />
     <ClInclude Include="src\Renderer\StructuredBuffer.h" />
     <ClInclude Include="src\Renderer\Texture.h" />
     <ClInclude Include="src\Renderer\TransparentPass.h" />
@@ -997,7 +1001,9 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugGrid.cpp" />
@@ -1005,6 +1011,12 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugSphere.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireSphere.cpp" />
+    <ClCompile Include="src\Renderer\Environment\EnvironmentPass.cpp" />
+    <ClCompile Include="src\Renderer\Environment\EnvironmentPrecomputePass.cpp" />
+    <ClCompile Include="src\Renderer\Environment\EnvironmentRenderPass.cpp" />
+    <ClCompile Include="src\Renderer\Environment\EnvironmentShaders.cpp" />
+    <ClCompile Include="src\Renderer\RenderDebugEvent.cpp" />
+    <ClCompile Include="src\Renderer\RenderPass.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
@@ -1309,7 +1321,6 @@
     <ClCompile Include="src\Renderer\Shader.cpp" />
     <ClCompile Include="src\Renderer\ShaderParameter.cpp" />
     <ClCompile Include="src\Renderer\ShadowMapPass.cpp" />
-    <ClCompile Include="src\Renderer\SkyboxPass.cpp" />
     <ClCompile Include="src\Renderer\StructuredBuffer.cpp" />
     <ClCompile Include="src\Renderer\Texture.cpp" />
     <ClCompile Include="src\Renderer\TransparentPass.cpp" />
@@ -1342,6 +1353,14 @@
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\Scene\Entity.inl" />
+    <None Include="src\Scene\Scene.inl" />
+    <None Include="src\Scripting\LuaComponentsBinder.inl" />
+    <None Include="src\Scripting\MetaUtilities.inl" />
+    <None Include="src\Scripting\ScriptingManager.inl" />
+    <None Include="src\Assets\AssetDatabase.inl" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\DirectXTK\DirectXTK_Desktop_2022.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
     </ProjectReference>
@@ -1349,13 +1368,6 @@
       <Project>{d6169991-3a39-41af-9b3a-e497de7ff55c}</Project>
       <Name>FMODStudio</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Scene\Entity.inl" />
-    <None Include="src\Scene\Scene.inl" />
-    <None Include="src\Scripting\LuaComponentsBinder.inl" />
-    <None Include="src\Scripting\MetaUtilities.inl" />
-    <None Include="src\Scripting\ScriptingManager.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

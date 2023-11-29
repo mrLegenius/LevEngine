@@ -1,14 +1,15 @@
 RenderSettings:
   PostProcessing:
-    IsBloomEnabled: true
-    BloomThreshold: 1.04999995
-    BloomMagnitude: 2
+    IsBloomEnabled: false
+    BloomThreshold: 3
+    BloomMagnitude: 0.5
     BloomBlurSigma: 0.5
+    IsEyeAdaptationEnabled: false
     AdaptationRate: 0.5
     KeyValue: 0.200000003
     MinExposure: 1.5
     MaxExposure: 2
-    IsVignetteEnabled: true
+    IsVignetteEnabled: false
     VignetteRadius: 0.49000001
     VignetteSoftness: 0.200000003
     VignetteColor: [0.0593220592, 0.832591414, 1, 0]

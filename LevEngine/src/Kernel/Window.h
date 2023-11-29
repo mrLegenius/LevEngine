@@ -1,9 +1,6 @@
 #pragma once
 
 #include "../Events/Event.h"
-#include "DataTypes/Delegates.h"
-#include "DataTypes/Utility.h"
-#include "DataTypes/Pointers.h"
 
 namespace LevEngine
 {

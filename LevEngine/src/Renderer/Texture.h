@@ -2,7 +2,6 @@
 #include "ClearFlags.h"
 #include "CPUAccess.h"
 #include "ShaderType.h"
-#include "DataTypes/Utility.h"
 #include "Math/Vector4.h"
 
 namespace LevEngine
@@ -112,7 +111,11 @@ namespace LevEngine
 			CPUAccess cpuAccess = CPUAccess::None,
 			bool uav = false,
 			bool generateMipMaps = false);
-		
+		static Ref<Texture> CreateTextureCube(uint16_t width, uint16_t height,
+											  const TextureFormat& format,
+		                                      CPUAccess cpuAccess = CPUAccess::None,
+		                                      bool uav = false, bool generateMipMaps = true);
+
 		static Ref<Texture> CreateTextureCube(const String paths[6]);
 		static Ref<Texture> CreateTextureCube(const String paths[6], const bool isLinear);
 		static Ref<Texture> Create(const String& path, bool isLinear);
@@ -125,7 +128,8 @@ namespace LevEngine
 		[[nodiscard]] const String& GetPath() const { return m_Path; }
 
 		[[nodiscard]] virtual Ref<Texture> GetSlice(unsigned int slice) const = 0;
-
+		[[nodiscard]] virtual Ref<Texture> GetMipMapLevel(int level) const = 0;
+		
 		[[nodiscard]] virtual uint16_t GetWidth() const = 0;
 		[[nodiscard]] virtual uint16_t GetHeight() const = 0;
 		[[nodiscard]] virtual uint16_t GetDepth() const = 0;

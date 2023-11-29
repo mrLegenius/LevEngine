@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "ClearFlags.h"
-#include "DataTypes/Vector.h"
 #include "Math/Vector4.h"
 
 namespace LevEngine

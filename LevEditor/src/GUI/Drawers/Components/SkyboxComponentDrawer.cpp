@@ -2,6 +2,7 @@
 
 #include "ComponentDrawer.h"
 #include "GUI/EditorGUI.h"
+#include "Assets/TextureAsset.h"
 
 namespace LevEngine::Editor
 {
@@ -12,7 +13,7 @@ namespace LevEngine::Editor
 
         void DrawContent(SkyboxRendererComponent& component) override
         {
-            EditorGUI::DrawAsset<SkyboxAsset>("Skybox", component.skybox);
+            EditorGUI::DrawAsset<TextureAsset>("Skybox Texture", component.SkyboxTexture);
         }
     };
 }

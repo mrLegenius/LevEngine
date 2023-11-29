@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "DataTypes/Path.h"
-
 namespace LevEngine
 {
 	class Scene;

@@ -14,6 +14,8 @@ namespace LevEngine
 
 		static constexpr float FloatEpsilon = 0.000001f;
 		static constexpr float Pi = 3.141592653589793238463f;
+		static constexpr float PiDiv2 = Pi / 2.0f;
+		static constexpr float Pi2 = Pi * 2.0f;
 		static constexpr float RadToDeg = 180.0f / 3.141592653589793238463f;
 		static constexpr float DegToRad = 3.141592653589793238463f / 180.0f;
 

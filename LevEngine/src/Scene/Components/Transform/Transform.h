@@ -1,5 +1,4 @@
 #pragma once
-#include "DataTypes/Vector.h"
 #include "Scene/Entity.h"
 #include "Math/Math.h"
 #include "Scene/Components/TypeParseTraits.h"

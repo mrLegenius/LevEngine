@@ -3,7 +3,9 @@
 
 #include "BitonicSort.h"
 
-#include "Assets.h"
+#include "ConstantBuffer.h"
+#include "Shader.h"
+#include "Assets/EngineAssets.h"
 #include "StructuredBuffer.h"
 
 namespace LevEngine

@@ -1,10 +1,6 @@
 ﻿#pragma once
 
-#include "Assets/AssetDatabase.h"
 #include "Math/Color.h"
-#include "Renderer/Texture.h"
-#include "Scene/Entity.h"
-#include "DataTypes/String.h"
 
 namespace LevEngine::Editor
 {

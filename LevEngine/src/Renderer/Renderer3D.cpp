@@ -1,7 +1,10 @@
 #include "levpch.h"
 #include "Renderer3D.h"
+
+#include "ConstantBuffer.h"
 #include "RenderCommand.h"
-#include "Assets.h"
+#include "Shader.h"
+#include "Assets/EngineAssets.h"
 #include "3D/Mesh.h"
 #include "3D/Primitives.h"
 #include "Assets/MeshAsset.h"
@@ -115,6 +118,15 @@ void Renderer3D::DrawMesh(const Matrix& model, const MeshRendererComponent& mesh
     if (!mesh) return;
 
     DrawMesh(model, mesh, shader);
+}
+
+void Renderer3D::DrawCube(const Ref<Shader>& vertexShader)
+{
+    LEV_CORE_ASSERT(vertexShader->GetType() & ShaderType::Vertex, "Cube can't be drawn without vertex shader");
+    
+    static Ref<Mesh> cube = Primitives::CreateCube();
+    cube->Bind(vertexShader);
+    RenderCommand::DrawIndexed(cube->IndexBuffer);
 }
 
 void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)

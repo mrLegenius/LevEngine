@@ -2,6 +2,7 @@
 #include "RenderTarget.h"
 
 #include "RenderSettings.h"
+#include "Texture.h"
 #include "Platform/D3D11/D3D11RenderTarget.h"
 
 namespace LevEngine

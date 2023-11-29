@@ -2,8 +2,11 @@
 #include "ShadowMapPass.h"
 
 #include "CascadeShadowMap.h"
+#include "ConstantBuffer.h"
 #include "RenderCommand.h"
 #include "Renderer3D.h"
+#include "RenderParams.h"
+#include "Shader.h"
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Lights/Lights.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
@@ -72,6 +75,8 @@ ShadowMapPass::ShadowMapPass()
 		static_cast<uint32_t>(RenderSettings::ShadowMapResolution));
 	m_ShadowMapConstantBuffer = ConstantBuffer::Create(sizeof ShadowData, 3);
 }
+
+String ShadowMapPass::PassName() { return "Shadow Map"; }
 
 bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 {

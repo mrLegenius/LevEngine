@@ -1,8 +1,5 @@
 #pragma once
-#include <ostream>
 
-#include "DataTypes/Delegates.h"
-#include "DataTypes/String.h"
 
 namespace LevEngine
 {

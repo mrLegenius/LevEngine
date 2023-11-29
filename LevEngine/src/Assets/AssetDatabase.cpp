@@ -10,7 +10,6 @@
 #include "Project.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
-#include "DataTypes/Queue.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
@@ -96,7 +95,14 @@ namespace LevEngine
 	{
 		const auto extension = path.extension().string();
 
-		return extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".tga";
+		return
+			extension == ".png"
+			|| extension == ".jpg"
+			|| extension == ".jpeg"
+			|| extension == ".tga"
+			|| extension == ".hdr"
+			|| extension == ".psd"
+		;
 	}
 
 	bool AssetDatabase::IsAssetMesh(const Path& path)

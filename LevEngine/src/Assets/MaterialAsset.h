@@ -3,6 +3,8 @@
 
 namespace LevEngine
 {
+    class Material;
+
     class MaterialAsset : public Asset
     {
     public:

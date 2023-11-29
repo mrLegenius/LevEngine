@@ -15,7 +15,8 @@ namespace LevEngine
 
         void SetLuminanceMap(const Ref<Texture>& map);
         void SetBloomMap(const Ref<Texture>& map);
-    
+
+        String PassName() override;
         bool Begin(entt::registry& registry, RenderParams& params) override;
         void Process(entt::registry& registry, RenderParams& params) override;
         void End(entt::registry& registry, RenderParams& params) override;

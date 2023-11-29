@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "Project.h"
 
+#include "Assets/EngineAssets.h"
 #include "ResourceManager.h"
 #include "Renderer/RenderSettings.h"
 #include "Scene/Serializers/SerializerUtils.h"

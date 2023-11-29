@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "ShaderType.h"
-#include "DataTypes/Utility.h"
 
 namespace LevEngine
 {

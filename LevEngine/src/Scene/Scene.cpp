@@ -121,7 +121,7 @@ namespace LevEngine
 
     void Scene::RequestRenderUpdate()
     {
-        Renderer::Render(m_Registry);
+        App::Renderer().Render(m_Registry);
 
         vgjs::continuation([this]() {m_IsRenderDone = true; });
     }
@@ -141,13 +141,13 @@ namespace LevEngine
         }
         else
         {
-            Renderer::Render(m_Registry);
+            App::Renderer().Render(m_Registry);
         }
     }
 
     void Scene::RequestRenderUpdate(SceneCamera* mainCamera, const Transform* cameraTransform)
     {
-        Renderer::Render(m_Registry, mainCamera, cameraTransform);
+        App::Renderer().Render(m_Registry, mainCamera, cameraTransform);
 
         vgjs::continuation([this]() {m_IsRenderDone = true; });
     }
@@ -167,7 +167,7 @@ namespace LevEngine
         }
         else
         {
-            Renderer::Render(m_Registry, mainCamera, cameraTransform);
+            App::Renderer().Render(m_Registry, mainCamera, cameraTransform);
         }
     }
 

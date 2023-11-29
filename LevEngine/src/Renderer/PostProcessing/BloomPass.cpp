@@ -4,10 +4,12 @@
 #include "Renderer/PipelineState.h"
 #include "Renderer/RenderCommand.h"
 
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
 #include "Renderer/DepthStencilState.h"
 #include "Renderer/RasterizerState.h"
 #include "Renderer/RenderTarget.h"
+#include "Renderer/Shader.h"
+#include "Renderer/Texture.h"
 
 namespace LevEngine
 {
@@ -78,6 +80,8 @@ namespace LevEngine
 
     void BloomPass::SetLuminanceMap(const Ref<Texture>& map) { m_LuminanceMap = map; }
     const Ref<Texture>& BloomPass::GetBloomMap() const { return m_DownScaleMaps[0]; }
+
+    String BloomPass::PassName() { return "Bloom"; }
 
     bool BloomPass::Begin(entt::registry& registry, RenderParams& params)
     {
