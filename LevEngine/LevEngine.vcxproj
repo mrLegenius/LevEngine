@@ -94,7 +94,10 @@
   <ItemGroup>
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
+    <ClInclude Include="src\Renderer\DispatchCommand.h" />
+    <ClInclude Include="src\Renderer\DispatchCommandBase.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPrecomputePass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentRenderPass.h" />
@@ -1008,6 +1011,7 @@
   <ItemGroup>
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
@@ -1016,6 +1020,8 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugSphere.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireSphere.cpp" />
+    <ClCompile Include="src\Renderer\DispatchCommand.cpp" />
+    <ClCompile Include="src\Renderer\DispatchCommandBase.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentPass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentPrecomputePass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentRenderPass.cpp" />

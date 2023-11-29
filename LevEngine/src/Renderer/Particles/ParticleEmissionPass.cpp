@@ -6,8 +6,8 @@
 #include "DataTypes/Array.h"
 #include "Kernel/Time/Time.h"
 #include "Math/Random.h"
-#include "Platform/D3D11/D3D11RendererContext.h"
 #include "Renderer/ConstantBuffer.h"
+#include "Renderer/DispatchCommand.h"
 #include "Renderer/RenderSettings.h"
 #include "Renderer/Shader.h"
 #include "Renderer/StructuredBuffer.h"
@@ -18,9 +18,6 @@
 
 namespace LevEngine
 {
-    //TODO: Get Rid of it
-    extern ID3D11DeviceContext* context;
-
     ParticleEmissionPass::ParticleEmissionPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer)
         : m_ParticlesBuffer(particlesBuffer)
           , m_DeadBuffer(deadBuffer)
@@ -123,7 +120,7 @@ namespace LevEngine
             particlesToEmit = Math::Min(deadParticlesCount, particlesToEmit);
             
             if (particlesToEmit > 0)
-                context->Dispatch(particlesToEmit, 1, 1);
+                DispatchCommand::Dispatch(particlesToEmit, 1, 1);
         }
     }
 

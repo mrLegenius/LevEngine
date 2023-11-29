@@ -1,17 +1,16 @@
 #include "levpch.h"
-#include <d3d11.h>
 
 #include "BitonicSort.h"
 
 #include "Renderer/ConstantBuffer.h"
 #include "Renderer/Shader.h"
 #include "Assets/EngineAssets.h"
+#include "Renderer/DispatchCommand.h"
 #include "Renderer/StructuredBuffer.h"
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-
+	
 BitonicSort::BitonicSort(const int numElements): m_NumElements(numElements)
 {
 	m_BitonicSortCS = ShaderAssets::BitonicSort();
@@ -32,7 +31,7 @@ void BitonicSort::Sort(const Ref<StructuredBuffer>& inBuffer, const Ref<Structur
 		// Sort the row data
 		inBuffer->Bind(0, ShaderType::Compute, true, -1);
 		m_BitonicSortCS->Bind();
-		context->Dispatch(static_cast<int>(numElements / BitonicBlockSize), 1, 1);
+		DispatchCommand::Dispatch(numElements / BitonicBlockSize, 1, 1);
 	}
 
 	inBuffer->Unbind(0, ShaderType::Compute, true);
@@ -48,12 +47,12 @@ void BitonicSort::Sort(const Ref<StructuredBuffer>& inBuffer, const Ref<Structur
 
 		m_BitonicTransposeCS->Bind();
 		if (heightTransposeBlocks != 0)
-			context->Dispatch(matrixWidth / TransposeBlockSize, heightTransposeBlocks, 1);
+			DispatchCommand::Dispatch(matrixWidth / TransposeBlockSize, heightTransposeBlocks, 1);
 		inBuffer->Unbind(0, ShaderType::Compute, false);
 		// Sort the transposed column data
 		//tempBuffer->Bind(0, Shader::Type::Compute, true);
 		m_BitonicSortCS->Bind();
-		context->Dispatch(static_cast<int>(numElements / BitonicBlockSize), 1, 1);
+		DispatchCommand::Dispatch(numElements / BitonicBlockSize, 1, 1);
 		tempBuffer->Unbind(0, ShaderType::Compute, true);
 
 		// Transpose the data from buffer 2 back into buffer 1
@@ -64,12 +63,12 @@ void BitonicSort::Sort(const Ref<StructuredBuffer>& inBuffer, const Ref<Structur
 
 		m_BitonicTransposeCS->Bind();
 		if (heightTransposeBlocks != 0)
-			context->Dispatch(heightTransposeBlocks, matrixWidth / TransposeBlockSize, 1);
+			DispatchCommand::Dispatch(heightTransposeBlocks, matrixWidth / TransposeBlockSize, 1);
 		tempBuffer->Unbind(0, ShaderType::Compute, false);
 		// Sort the row data
 		//inBuffer->Bind(0, Shader::Type::Compute, true);
 		m_BitonicSortCS->Bind();
-		context->Dispatch(static_cast<int>(numElements / BitonicBlockSize), 1, 1);
+		DispatchCommand::Dispatch(numElements / BitonicBlockSize, 1, 1);
 		inBuffer->Unbind(0, ShaderType::Compute, true);
 	}
 }
@@ -77,7 +76,12 @@ void BitonicSort::Sort(const Ref<StructuredBuffer>& inBuffer, const Ref<Structur
 void BitonicSort::SetGPUSortConstants(const uint32_t level, const uint32_t levelMask, const uint32_t width,
 	const uint32_t height) const
 {
-	const ConstantsGPUData data {(int)level, (int)levelMask, (int)width, (int)height};
+	const ConstantsGPUData data {
+		static_cast<int>(level),
+		static_cast<int>(levelMask),
+		static_cast<int>(width),
+		static_cast<int>(height)};
+	
 	m_ConstantsBuffer->SetData(&data);
 	m_ConstantsBuffer->Bind(ShaderType::Compute);
 }

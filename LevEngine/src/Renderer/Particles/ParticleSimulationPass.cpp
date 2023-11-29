@@ -2,7 +2,7 @@
 #include "ParticleSimulationPass.h"
 
 #include "ParticlesUtils.h"
-#include "Platform/D3D11/D3D11RendererContext.h"
+#include "Renderer/DispatchCommand.h"
 #include "Renderer/RenderSettings.h"
 #include "Renderer/Shader.h"
 #include "Renderer/ShaderType.h"
@@ -10,9 +10,6 @@
 
 namespace LevEngine
 {
-    //TODO: Get Rid of it
-    extern ID3D11DeviceContext* context;
-
     ParticleSimulationPass::ParticleSimulationPass(
     const Ref<StructuredBuffer>& particlesBuffer,
         const Ref<StructuredBuffer>& deadBuffer,
@@ -43,7 +40,7 @@ namespace LevEngine
         ParticlesUtils::GetGroupSize(RenderSettings::MaxParticles, groupSizeX, groupSizeY);
 
         ShaderAssets::ParticlesCompute()->Bind();
-        context->Dispatch(groupSizeX, groupSizeY, 1);
+        DispatchCommand::Dispatch(groupSizeX, groupSizeY, 1);
         ShaderAssets::ParticlesCompute()->Unbind();
     }
 
