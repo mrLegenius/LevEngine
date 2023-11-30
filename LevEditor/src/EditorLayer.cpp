@@ -13,7 +13,7 @@
 
 #include "ProjectEditor.h"
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
-#include "Renderer/RendererContext.h"
+#include "Panels/StatisticsPanel.h"
 #include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor
@@ -121,7 +121,7 @@ namespace LevEngine::Editor
         m_Game->Render();
         m_Console->Render();
         m_Settings->Render();
-        //TODO: Render Statistics Window
+        m_Statistics->Render();
         m_MainToolbar->Render();
         m_MainStatusBar->Render();
     }
@@ -211,6 +211,7 @@ namespace LevEngine::Editor
         m_MainMenuBar = CreateRef<MenuBar>();
         m_MainToolbar = CreateRef<Toolbar>(m_MainMenuBar, [this]{ return m_SceneState; }, std::bind(&EditorLayer::OnPlayButtonClicked, this));
         m_DockSpace = CreateRef<DockSpace>(m_MainToolbar, m_MainMenuBar);
+        m_Statistics = CreateRef<StatisticsPanel>();
 
         m_SceneEditor->AddMainMenuItems(m_MainMenuBar);
         m_ProjectEditor->AddMainMenuItems(m_MainMenuBar);

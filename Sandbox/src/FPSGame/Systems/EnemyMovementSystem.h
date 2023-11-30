@@ -3,6 +3,7 @@
 #include "FPSGame/Components/Player.h"
 namespace Sandbox
 {
+    using namespace LevEngine;
     class EnemyMovementSystem final : public System
     {
     public:

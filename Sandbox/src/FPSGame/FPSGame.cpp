@@ -22,6 +22,7 @@
  */
 namespace Sandbox
 {
+	using namespace LevEngine;
 	int score = 0;
 	
 	void FPSGame::OnAttach()

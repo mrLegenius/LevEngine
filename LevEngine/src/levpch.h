@@ -9,6 +9,7 @@
 #include <functional>
 #include <cstdint>
 #include <filesystem>
+#include <chrono>
 
 #include <string>
 #include <ostream>

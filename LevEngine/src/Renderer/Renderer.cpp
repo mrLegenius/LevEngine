@@ -1,14 +1,17 @@
 #include "levpch.h"
 #include "Renderer.h"
 
+#include "BeginQueryPass.h"
 #include "BlendState.h"
 #include "ClearPass.h"
 #include "CopyTexturePass.h"
 #include "DeferredLightingPass.h"
 #include "DepthStencilState.h"
+#include "EndQueryPass.h"
 #include "OpaquePass.h"
 #include "Particles/ParticlePass.h"
 #include "PipelineState.h"
+#include "Query.h"
 #include "RasterizerState.h"
 #include "Renderer3D.h"
 #include "RendererContext.h"
@@ -25,6 +28,7 @@
 #include "Scene/Entity.h"
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Transform/Transform.h"
+#include "Kernel/Time/Time.h"
 
 namespace LevEngine
 {
@@ -234,6 +238,15 @@ namespace LevEngine
             m_DebugPipeline->GetRasterizerState().SetCullMode(CullMode::None);
         }
 
+        m_FrameQuery = Query::Create(Query::QueryType::Timer, 2);
+        
+        m_EnvironmentQuery = Query::Create(Query::QueryType::Timer, 2);
+        m_DeferredGeometryQuery = Query::Create(Query::QueryType::Timer, 2);
+        m_DeferredLightingQuery = Query::Create(Query::QueryType::Timer, 2);
+        m_DeferredTransparentQuery = Query::Create(Query::QueryType::Timer, 2);
+        m_PostProcessingQuery = Query::Create(Query::QueryType::Timer, 2);
+        m_ParticlesQuery = Query::Create(Query::QueryType::Timer, 2);
+
         {
             LEV_PROFILE_SCOPE("Deferred technique creation");
 
@@ -241,21 +254,41 @@ namespace LevEngine
             m_DeferredTechnique->AddPass(CreateRef<ShadowMapPass>());
             m_DeferredTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget, "Clear Main Render Target"));
             m_DeferredTechnique->AddPass(CreateRef<ClearPass>(m_GBufferRenderTarget, "Clear G-Buffer"));
+            
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_EnvironmentQuery));
             m_DeferredTechnique->AddPass(CreateRef<EnvironmentPass>(m_GBufferRenderTarget));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_EnvironmentQuery));
+
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredGeometryQuery));
             m_DeferredTechnique->AddPass(CreateRef<OpaquePass>(m_GBufferPipeline));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredGeometryQuery));
+            
             m_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(
                 m_DepthOnlyRenderTarget->GetTexture(AttachmentPoint::DepthStencil), m_DepthTexture,
                 "Copy Depth Buffer to Texture"));
             m_DeferredTechnique->AddPass(CreateRef<ClearPass>(m_DepthOnlyRenderTarget, "Clear Depth Buffer",
                                                               ClearFlags::Stencil, Vector4::Zero, 1.0f, 1));
+            
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredLightingQuery));
             m_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(
                 m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_AlbedoTexture, m_MetallicRoughnessAOTexture,
                 m_NormalTexture, m_DepthTexture));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredLightingQuery));
+            
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredTransparentQuery));
             m_DeferredTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
-            m_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(m_DebugPipeline));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredTransparentQuery));
+
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredTransparentQuery));
             m_DeferredTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
-            m_DeferredTechnique->AddPass(
-                CreateRef<ParticlePass>(mainRenderTarget, m_DepthTexture, m_NormalTexture));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredTransparentQuery));
+            
+            m_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(m_DebugPipeline));
+            
+            // m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ParticlesQuery));
+            // m_DeferredTechnique->AddPass(
+            //     CreateRef<ParticlePass>(mainRenderTarget, m_DepthTexture, m_NormalTexture));
+            // m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ParticlesQuery));
         }
 
         {
@@ -308,6 +341,38 @@ namespace LevEngine
         m_MainRenderTarget->Clear(ClearFlags::All);
     }
 
+    Statistic Renderer::GetFrameStatistic() const { return m_FrameStat; }
+
+    Statistic Renderer::GetDeferredGeometryStatistic() const
+    {
+        return m_DeferredGeometryStat;
+    }
+
+    Statistic Renderer::GetDeferredLightingStatistic() const
+    {
+        return m_DeferredLightingStat;
+    }
+
+    Statistic Renderer::GetDeferredTransparentStatistic() const
+    {
+        return m_DeferredTransparentStat;
+    }
+
+    Statistic Renderer::GetEnvironmentStatistic() const
+    {
+        return m_EnvironmentStat;
+    }
+
+    Statistic Renderer::GetPostProcessingStatistic() const
+    {
+        return m_PostProcessingStat;
+    }
+
+    Statistic Renderer::GetParticlesStatistic() const
+    {
+        return m_ParticlesStat;
+    }
+
     void Renderer::RecalculateAllTransforms(entt::registry& registry)
     {
         LEV_PROFILE_FUNCTION();
@@ -352,7 +417,7 @@ namespace LevEngine
         return {mainCamera, cameraPosition, cameraViewMatrix, perspectiveViewProjectionMatrix};
     }
 
-    void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform) const
+    void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform)
     {
         LEV_PROFILE_FUNCTION();
 
@@ -362,6 +427,10 @@ namespace LevEngine
             return;
         }
 
+        ResetStatistics();
+        
+
+        
         RecalculateAllTransforms(registry);
 
         mainCamera->RecalculateFrustum(*cameraTransform);
@@ -376,6 +445,8 @@ namespace LevEngine
         //TODO: Maybe move to its own pass?
         Renderer3D::SetCameraBuffer(renderParams.Camera, renderParams.CameraViewMatrix, renderParams.CameraPosition);
 
+        m_FrameQuery->Begin(Time::GetFrameNumber());
+        
         switch (RenderSettings::RenderTechnique)
         {
         case RenderTechniqueType::Forward:
@@ -387,6 +458,42 @@ namespace LevEngine
         case RenderTechniqueType::ForwardPlus:
             LEV_NOT_IMPLEMENTED
             break;
+        }
+
+        m_FrameQuery->End(Time::GetFrameNumber());
+        
+        SampleQuery(m_FrameQuery, m_FrameStat);
+        SampleQuery(m_DeferredGeometryQuery, m_DeferredGeometryStat);
+        SampleQuery(m_DeferredLightingQuery, m_DeferredLightingStat);
+        SampleQuery(m_DeferredTransparentQuery, m_DeferredTransparentStat);
+        SampleQuery(m_EnvironmentQuery, m_EnvironmentStat);
+        SampleQuery(m_PostProcessingQuery, m_PostProcessingStat);
+        SampleQuery(m_ParticlesQuery, m_ParticlesStat);
+    }
+
+    void Renderer::ResetStatistics()
+    {
+        m_FrameStat.Reset();
+
+        m_DeferredGeometryStat.Reset();
+        m_DeferredLightingStat.Reset();
+        m_DeferredTransparentStat.Reset();
+        
+        m_EnvironmentStat.Reset();
+        m_PostProcessingStat.Reset();
+        m_ParticlesStat.Reset();
+    }
+
+    void Renderer::SampleQuery(const Ref<Query>& query, Statistic& stat)
+    {
+        // Retrieve GPU timer results.
+        // Don't retrieve the immediate query result, but from the previous frame.
+        // Checking previous frame counters will alleviate GPU stalls.
+        
+        const auto queryResult = query->GetQueryResult(Time::GetFrameNumber() - (query->GetBufferCount() - 1));
+        if (queryResult.IsValid)
+        {
+            stat.Sample(queryResult.ElapsedTime * 1000.0);
         }
     }
 

@@ -118,6 +118,7 @@
     <ClInclude Include="src\Panels\Panel.h" />
     <ClInclude Include="src\Panels\PropertiesPanel.h" />
     <ClInclude Include="src\Panels\SettingsPanel.h" />
+    <ClInclude Include="src\Panels\StatisticsPanel.h" />
     <ClInclude Include="src\Panels\StatusBar.h" />
     <ClInclude Include="src\Panels\Toolbar.h" />
     <ClInclude Include="src\Panels\ViewportPanel.h" />
@@ -154,6 +155,7 @@
     <ClCompile Include="src\Panels\DockSpace.cpp" />
     <ClCompile Include="src\Panels\GamePanel.cpp" />
     <ClCompile Include="src\Panels\SettingsPanel.cpp" />
+    <ClCompile Include="src\Panels\StatisticsPanel.cpp" />
     <ClCompile Include="src\Panels\StatusBar.cpp" />
     <ClCompile Include="src\Panels\Toolbar.cpp" />
     <ClCompile Include="src\pch.cpp">

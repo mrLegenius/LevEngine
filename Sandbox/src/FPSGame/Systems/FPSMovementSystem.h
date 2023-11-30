@@ -10,7 +10,7 @@ namespace Sandbox
 
             constexpr auto rotationSpeed = 45;
             constexpr auto moveSpeed = 300;
-            constexpr auto jumpImpulse = 1000;
+            constexpr auto jumpImpulse = 1;
             const Vector2 mouse = Input::GetMouseDelta();
 			
             for (const auto entity : view)

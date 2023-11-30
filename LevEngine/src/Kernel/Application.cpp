@@ -1,9 +1,8 @@
 #include "levpch.h"
 #include "Application.h"
 
-#include <chrono>
-
 #include "Utils.h"
+#include "Window.h"
 #include "../Renderer/Renderer.h"
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
@@ -83,17 +82,14 @@ void Application::Run()
 		totalTime += deltaTime;
 		frameCount++;
 
+		m_FrameStat.Sample(deltaTime * 1000);
+
 		if (totalTime > 1.0f)
 		{
-			const float fps = frameCount / totalTime;
-
 			totalTime -= 1.0f;
-
-			String text("FPS: ");
-			text.append(ToString(fps));
-			m_Window->SetWindowTitle(text);
-
 			frameCount = 0;
+
+			m_FrameStat.Reset();
 		}
 
 		if (deltaTime > 1.0f) // Maybe breakpoint is hit
@@ -115,6 +111,8 @@ void Application::Run()
 
 		Input::Reset();
 		m_Window->Update();
+
+		Time::s_FrameNumber++;
 	}
 
 	vgjs::terminate();
@@ -190,6 +188,8 @@ Scripting::ScriptingManager& Application::GetScriptingManager()
 {
 	return *m_ScriptingManager;
 }
+
+Statistic Application::GetFrameStat() const { return m_FrameStat; }
 
 bool Application::OnWindowClosed(WindowClosedEvent& e)
 {

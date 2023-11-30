@@ -21,6 +21,7 @@
 #include "Kernel/Logger.h"
 #include "Kernel/Asserts.h"
 #include "Kernel/Application.h"
+#include "Kernel/Window.h"
 #include "Kernel/Layer.h"
 
 #include "Kernel/PlatformUtils.h"
@@ -81,6 +82,7 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #include "Renderer/Renderer.h"
+#include "Renderer/RendererContext.h"
 #include "Renderer/RenderCommand.h"
 
 #include "Renderer/BlendState.h"

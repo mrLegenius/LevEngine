@@ -9,6 +9,7 @@
 #include "Assets/MeshAsset.h"
 #include "Camera/SceneCamera.h"
 #include "Kernel/Application.h"
+#include "Kernel/Window.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 
 namespace LevEngine

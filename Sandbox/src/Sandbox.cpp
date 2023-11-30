@@ -4,10 +4,10 @@
 #include "EntryPoint.h"
 #include "FPSGame/FPSGame.h"
 
-class SandboxApp : public Application
+class SandboxApp : public LevEngine::Application
 {
 public:
-	SandboxApp(const ApplicationCommandLineArgs args)
+	SandboxApp(const LevEngine::ApplicationCommandLineArgs args)
 		: Application({ "Sandbox", 1600, 900, args})
 	{
 		PushLayer(new Sandbox::FPSGame);
@@ -15,7 +15,7 @@ public:
 	~SandboxApp() = default;
 };
 
-Application* CreateApplication(ApplicationCommandLineArgs args)
+LevEngine::Application* CreateApplication(LevEngine::ApplicationCommandLineArgs args)
 {
 	return new SandboxApp(args);
 }

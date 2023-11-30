@@ -1,10 +1,11 @@
 #pragma once
 
 #include "LayerStack.h"
-#include "Window.h"
+#include "Statistic.h"
 
 namespace LevEngine
 {
+	class Event;
 	class Renderer;
 	class WindowResizedEvent;
 	class WindowClosedEvent;
@@ -16,6 +17,7 @@ namespace LevEngine
 	class MouseMovedEvent;
 	class Physics;
 	class ImGuiLayer;
+	class Window;
 
 	namespace Scripting
 	{
@@ -64,7 +66,8 @@ public:
 	[[nodiscard]] Physics& GetPhysics() const;
 	[[nodiscard]] static Renderer& Renderer();
 	[[nodiscard]] Scripting::ScriptingManager& GetScriptingManager();
-	
+
+	[[nodiscard]] Statistic GetFrameStat() const;
 private:
 	bool OnWindowClosed(WindowClosedEvent& e);
 	bool OnWindowResized(WindowResizedEvent& e);
@@ -83,6 +86,8 @@ private:
 	
 	LayerStack m_LayerStack;
 
+	Statistic m_FrameStat;
+	
 	float m_LastFrameTime = 0.0f;
 	bool m_Minimized = false;
 	ImGuiLayer* m_ImGuiLayer;

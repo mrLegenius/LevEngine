@@ -2,6 +2,7 @@
 #include "Kernel/PlatformUtils.h"
 
 #include "Kernel/Application.h"
+#include "Kernel/Window.h"
 
 namespace LevEngine
 {
