@@ -3,13 +3,26 @@ Entities:
   - Entity: 2500217727459906061
     Tag: Box
     Transform:
-      Position: [0, 4, 0]
+      Position: [0, 3, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Rigidbody:
-      Visualization Flag: true
+      Is Visualization Enabled: true
       Rigidbody Type: 1
-      Gravity Flag: true
+      Mass: 1
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Is Gravity Enabled: false
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Applied Force: [0, 0, 0]
+      Applied Torque: [0, 0, 0]
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
@@ -17,12 +30,6 @@ Entities:
       Static Friction: 0.5
       Dynamic Friction: 0.5
       Restitution: 0.600000024
-      IsPosAxisXLocked: false
-      IsPosAxisYLocked: false
-      IsPosAxisZLocked: false
-      IsRotAxisXLocked: false
-      IsRotAxisYLocked: false
-      IsRotAxisZLocked: false
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 13469868196253741728
@@ -30,7 +37,7 @@ Entities:
   - Entity: 18005086127464243940
     Tag: Camera
     Transform:
-      Position: [0, 5, 5]
+      Position: [0, 7, 7]
       Rotation: [-0.785398066, -6.2803692e-16, -1.31708946e-08]
       Scale: [1, 1, 1]
     Camera:
@@ -49,11 +56,24 @@ Entities:
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
-      Scale: [10, 1, 10]
+      Scale: [100, 1, 100]
     Rigidbody:
-      Visualization Flag: false
+      Is Visualization Enabled: false
       Rigidbody Type: 0
-      Gravity Flag: true
+      Mass: 1
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Is Gravity Enabled: true
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Applied Force: [0, 0, 0]
+      Applied Torque: [0, 0, 0]
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
@@ -61,12 +81,6 @@ Entities:
       Static Friction: 0.5
       Dynamic Friction: 0.5
       Restitution: 0.600000024
-      IsPosAxisXLocked: false
-      IsPosAxisYLocked: false
-      IsPosAxisZLocked: false
-      IsRotAxisXLocked: false
-      IsRotAxisYLocked: false
-      IsRotAxisZLocked: false
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 7582525064410579512

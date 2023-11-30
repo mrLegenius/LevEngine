@@ -14,6 +14,9 @@ namespace LevEngine
         {
             auto [rigidbody, transform] = view.get<Rigidbody, Transform>(entity);
             rigidbody.SetTransformScale(transform.GetWorldScale());
+
+            rigidbody.ApplyForce(rigidbody.GetAppliedForce());
+            rigidbody.ApplyTorque(rigidbody.GetAppliedTorque());
         }
     }
 }

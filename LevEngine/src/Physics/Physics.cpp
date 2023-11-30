@@ -44,6 +44,7 @@ namespace LevEngine
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eBODY_MASS_AXES, 1.0f);
         }
         
         if (s_IsPVDEnabled)
