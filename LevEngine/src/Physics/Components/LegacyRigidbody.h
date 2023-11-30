@@ -41,7 +41,7 @@ namespace LevEngine
 		void AddImpulse(const Vector3 value) { velocity += value * GetInverseMass(); }
 		void AddAngularImpulse(const Vector3 value) { angularVelocity += Vector3::Transform(value, inverseInteriaTensor); }
 		void AddForce(const Vector3 value) { force += value; }
-		void AddTorque(const Vector3& value) { torque += value; }
+		//void AddTorque(const Vector3& value) { torque += value; }
 		void AddForceAtPosition(const Vector3& addedForce, const Vector3& localPosition)
 		{
 			force += addedForce;

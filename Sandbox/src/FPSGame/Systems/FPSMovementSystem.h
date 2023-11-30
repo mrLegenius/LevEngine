@@ -22,7 +22,8 @@ namespace Sandbox
                 auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
                 rotation.y -= delta.x;
                 transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
-                
+
+                /*
                 if (Input::IsKeyDown(KeyCode::W))
                     rigidbody.AddForce(deltaTime * moveSpeed * transform.GetForwardDirection());
                 else if (Input::IsKeyDown(KeyCode::S))
@@ -35,6 +36,7 @@ namespace Sandbox
 
                 if (Input::IsKeyPressed(KeyCode::Space))
                     rigidbody.AddImpulse(Vector3::Up * jumpImpulse);
+                */
             }
         }
     };

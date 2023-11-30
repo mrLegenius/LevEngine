@@ -33,6 +33,36 @@ namespace LevEngine
         void DetachRigidbody();
         [[nodiscard]] bool IsGravityEnabled() const;
         void EnableGravity(bool flag);
+
+        [[nodiscard]] float GetMass() const;
+        void SetMass(float value);
+        [[nodiscard]] Vector3 GetCenterOfMass() const;
+        void SetCenterOfMass(Vector3 value);
+        [[nodiscard]] Vector3 GetInertiaTensor() const;
+        void SetInertiaTensor(Vector3 value);
+        
+        [[nodiscard]] float GetLinearDamping() const;
+        void SetLinearDamping(float value);
+        [[nodiscard]] float GetAngularDamping() const;
+        void SetAngularDamping(float value);
+        
+        [[nodiscard]] bool IsPosAxisXLocked() const;
+        void LockPosAxisX(bool flag);
+        [[nodiscard]] bool IsPosAxisYLocked() const;
+        void LockPosAxisY(bool flag);
+        [[nodiscard]] bool IsPosAxisZLocked() const;
+        void LockPosAxisZ(bool flag);
+        [[nodiscard]] bool IsRotAxisXLocked() const;
+        void LockRotAxisX(bool flag);
+        [[nodiscard]] bool IsRotAxisYLocked() const;
+        void LockRotAxisY(bool flag);
+        [[nodiscard]] bool IsRotAxisZLocked() const;
+        void LockRotAxisZ(bool flag);
+
+        [[nodiscard]] Vector3 GetAppliedForce() const;
+        void ApplyForce(Vector3 value);
+        [[nodiscard]] Vector3 GetAppliedTorque() const;
+        void ApplyTorque(Vector3 value);
         
         [[nodiscard]] Collider::Type GetColliderType() const;
         void SetColliderType(const Collider::Type& colliderType);
@@ -62,22 +92,6 @@ namespace LevEngine
         void SetDynamicFriction(float dynamicFriction);
         [[nodiscard]] float GetRestitution() const;
         void SetRestitution(float restitution);
-
-        void AddForce(Vector3 value) const;
-        void AddImpulse(Vector3 value) const;
-
-        [[nodiscard]] bool IsPosAxisXLocked() const;
-        void LockPosAxisX(bool flag);
-        [[nodiscard]] bool IsPosAxisYLocked() const;
-        void LockPosAxisY(bool flag);
-        [[nodiscard]] bool IsPosAxisZLocked() const;
-        void LockPosAxisZ(bool flag);
-        [[nodiscard]] bool IsRotAxisXLocked() const;
-        void LockRotAxisX(bool flag);
-        [[nodiscard]] bool IsRotAxisYLocked() const;
-        void LockRotAxisY(bool flag);
-        [[nodiscard]] bool IsRotAxisZLocked() const;
-        void LockRotAxisZ(bool flag);
         
         friend class Physics;
         
@@ -98,7 +112,13 @@ namespace LevEngine
         
         //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
-
+        
+        float m_Mass = 1.0f;
+        float m_LinearDamping = 0.0f;
+        float m_AngularDamping = 0.05f;
+        Vector3 m_CenterOfMass = Vector3::Zero;
+        Vector3 m_InertiaTensor = Vector3::One;
+        
         bool m_IsPosAxisXLocked = false;
         bool m_IsPosAxisYLocked = false;
         bool m_IsPosAxisZLocked = false;
@@ -106,5 +126,8 @@ namespace LevEngine
         bool m_IsRotAxisXLocked = false;
         bool m_IsRotAxisYLocked = false;
         bool m_IsRotAxisZLocked = false;
+
+        Vector3 m_AppliedForce = Vector3::Zero;
+        Vector3 m_AppliedTorque = Vector3::Zero;
     };
 }
