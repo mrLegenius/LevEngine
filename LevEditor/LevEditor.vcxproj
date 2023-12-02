@@ -138,6 +138,7 @@
     <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\ForceDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\LegacyColliderDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />

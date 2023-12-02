@@ -19,10 +19,10 @@ namespace LevEngine
         auto& rigidbody = registry.get<Rigidbody>(entity);
         rigidbody.DetachRigidbody();
     }
-
+    
     
 
-    physx::PxRigidActor* Rigidbody::GetRigidbody() const
+    physx::PxRigidActor* Rigidbody::GetActor() const
     {
         return m_Actor;
     }
@@ -59,7 +59,7 @@ namespace LevEngine
             m_TransformScale = transformScale;
         }
 
-        if (IsInitialized())
+        if (m_IsInitialized)
         {
             switch(GetColliderType())
             {
@@ -145,12 +145,13 @@ namespace LevEngine
         case Type::Dynamic:
             m_Actor = App::Get().GetPhysics().GetPhysics()->createRigidDynamic(initialPose);
             App::Get().GetPhysics().GetScene()->addActor(*(reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)));
+            EnableGravity(m_IsGravityEnabled);
+            EnableKinematic(m_IsKinematicEnabled);
             SetMass(m_Mass);
-            SetLinearDamping(m_LinearDamping);
-            SetAngularDamping(m_AngularDamping);
             SetCenterOfMass(m_CenterOfMass);
             SetInertiaTensor(m_InertiaTensor);
-            EnableGravity(m_IsGravityEnabled);
+            SetLinearDamping(m_LinearDamping);
+            SetAngularDamping(m_AngularDamping);
             LockPosAxisX(m_IsPosAxisXLocked);
             LockPosAxisY(m_IsPosAxisYLocked);
             LockPosAxisZ(m_IsPosAxisZLocked);
@@ -188,6 +189,23 @@ namespace LevEngine
         if (m_Actor != NULL)
         {
             m_Actor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !flag);
+        }
+    }
+
+
+
+    bool Rigidbody::IsKinematicEnabled() const
+    {
+        return m_IsKinematicEnabled;
+    }
+
+    void Rigidbody::EnableKinematic(const bool flag)
+    {
+        m_IsKinematicEnabled = flag;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, flag);
         }
     }
 
@@ -285,49 +303,7 @@ namespace LevEngine
             reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setMassSpaceInertiaTensor(PhysicsUtils::FromVector3ToPxVec3(value));
         }
     }
-
     
-    
-    Vector3 Rigidbody::GetAppliedForce() const
-    {
-        return m_AppliedForce;
-    }
-
-    void Rigidbody::ApplyForce(const Vector3 value)
-    {
-        if (m_Type != Type::Dynamic) return;
-
-        m_AppliedForce = value;
-
-        if (m_Actor != NULL)
-        {
-            if (const auto rigidbody = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
-            {
-                rigidbody->addForce(PhysicsUtils::FromVector3ToPxVec3(value));
-            }
-        }
-    }
-
-    Vector3 Rigidbody::GetAppliedTorque() const
-    {
-        return m_AppliedTorque;
-    }
-
-    void Rigidbody::ApplyTorque(Vector3 value)
-    {
-        if (m_Type != Type::Dynamic) return;
-
-        m_AppliedTorque = value;
-
-        if (m_Actor != NULL)
-        {
-            if (const auto rigidbody = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
-            {
-                rigidbody->addTorque(PhysicsUtils::FromVector3ToPxVec3(value));
-            }
-        }
-    }
-
     
     
     bool Rigidbody::IsPosAxisXLocked() const
@@ -463,7 +439,7 @@ namespace LevEngine
 
         m_ColliderCollection[0].get()->m_Type = colliderType;
 
-        if (IsInitialized())
+        if (m_IsInitialized)
         {
             AttachCollider(colliderType);
             SetTransformScale(m_TransformScale);
@@ -724,14 +700,18 @@ namespace LevEngine
         void SerializeData(YAML::Emitter& out, const Rigidbody& component) override
         {
             out << YAML::Key << "Is Visualization Enabled" << YAML::Value << component.IsVisualizationEnabled();
+            
             out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
-
+            
+            out << YAML::Key << "Is Kinematic Enabled" << YAML::Value << component.IsKinematicEnabled();
+            
+            out << YAML::Key << "Is Gravity Enabled" << YAML::Value << component.IsGravityEnabled();
+            
             out << YAML::Key << "Mass" << YAML::Value << component.GetMass();
             out << YAML::Key << "Linear Damping" << YAML::Value << component.GetLinearDamping();
             out << YAML::Key << "Angular Damping" << YAML::Value << component.GetAngularDamping();
             out << YAML::Key << "Center Of Mass" << YAML::Value << component.GetCenterOfMass();
             out << YAML::Key << "Inertia Tensor" << YAML::Value << component.GetInertiaTensor();
-            out << YAML::Key << "Is Gravity Enabled" << YAML::Value << component.IsGravityEnabled();
             
             out << YAML::Key << "Is Pos Axis X Locked" << YAML::Value << component.IsPosAxisXLocked();
             out << YAML::Key << "Is Pos Axis Y Locked" << YAML::Value << component.IsPosAxisYLocked();
@@ -739,9 +719,6 @@ namespace LevEngine
             out << YAML::Key << "Is Rot Axis X Locked" << YAML::Value << component.IsRotAxisXLocked();
             out << YAML::Key << "Is Rot Axis Y Locked" << YAML::Value << component.IsRotAxisYLocked();
             out << YAML::Key << "Is Rot Axis Z Locked" << YAML::Value << component.IsRotAxisZLocked();
-
-            out << YAML::Key << "Applied Force" << YAML::Value << component.GetAppliedForce();
-            out << YAML::Key << "Applied Torque" << YAML::Value << component.GetAppliedTorque();
             
             out << YAML::Key << "Collider Type" << YAML::Value << static_cast<int>(component.GetColliderType());
             switch (component.GetColliderType())
@@ -779,6 +756,16 @@ namespace LevEngine
             {
                 component.SetRigidbodyType(static_cast<Rigidbody::Type>(rigidbodyTypeNode.as<int>()));
             }
+
+            if (const auto kinematicEnableNode = node["Is Kinematic Enabled"])
+            {
+                component.EnableKinematic(kinematicEnableNode.as<bool>());
+            }
+
+            if (const auto gravityEnableNode = node["Is Gravity Enabled"])
+            {
+                component.EnableGravity(gravityEnableNode.as<bool>());
+            }
             
             if (const auto massNode = node["Mass"])
             {
@@ -803,11 +790,6 @@ namespace LevEngine
             if (const auto inertiaTensorNode = node["Inertia Tensor"])
             {
                 component.SetInertiaTensor(inertiaTensorNode.as<Vector3>());
-            }
-
-            if (const auto gravityEnableNode = node["Is Gravity Enabled"])
-            {
-                component.EnableGravity(gravityEnableNode.as<bool>());
             }
 
             if (const auto posAxisXLockNode = node["Is Pos Axis X Locked"])
@@ -838,16 +820,6 @@ namespace LevEngine
             if (const auto rotAxisZLockNode = node["Is Rot Axis Z Locked"])
             {
                 component.LockRotAxisZ(rotAxisZLockNode.as<bool>());
-            }
-
-            if (const auto applyForceNode = node["Applied Force"])
-            {
-                component.ApplyForce(applyForceNode.as<Vector3>());
-            }
-
-            if (const auto applyTorqueNode = node["Applied Torque"])
-            {
-                component.ApplyTorque(applyTorqueNode.as<Vector3>());
             }
             
             if (const auto colliderTypeNode = node["Collider Type"])

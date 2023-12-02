@@ -1,8 +1,9 @@
 #pragma once
 namespace Sandbox
 {
+    /*
     extern int score;
-
+    
     inline void OnProjectileCollided(const Entity entity, const Entity other)
     {
         if (!other.HasComponent<Enemy>()) return;
@@ -15,6 +16,7 @@ namespace Sandbox
         scene->DestroyEntity(other);
         score++;
     }
+    */
     
     class ShootSystem final : public System
     {
@@ -32,32 +34,30 @@ namespace Sandbox
                 {
                     const auto projectilePrefab = ResourceManager::LoadAsset<PrefabAsset>("MissilePrefab");
                     auto projectile = projectilePrefab->Instantiate(SceneManager::GetActiveScene());
-					
-                    auto& transform = projectile.GetComponent<Transform>();
 
-                    auto childTransform = cameraTransform.GetChildren()[0].GetComponent<Transform>();
-                    Vector3 offset = 2.5f * childTransform.GetForwardDirection();
-                    offset += 0.1f * childTransform.GetUpDirection();
+                    auto& projectileTransform = projectile.GetComponent<Transform>();
+                    projectileTransform.SetWorldPosition(cameraTransform.GetWorldPosition() + cameraTransform.GetForwardDirection() * 2);
+                    
+                    auto& projectileParams = projectile.AddComponent<Projectile>();
+                    projectileParams.Speed = 25;
+                    projectileParams.Lifetime = 1;
+                    projectileParams.Timer = 0;
+                    
+                    auto& projectileRigidbody = projectile.GetComponent<Rigidbody>();
+                    projectileRigidbody.EnableGravity(false);
+                    projectileRigidbody.SetStaticFriction(0.0f);
+                    projectileRigidbody.SetDynamicFriction(0.0f);
+                    projectileRigidbody.SetRestitution(0.0f);
+                    projectileRigidbody.LockRotAxisX(true);
+                    projectileRigidbody.LockRotAxisY(true);
+                    projectileRigidbody.LockRotAxisZ(true);
 
-                    Vector3 origin = childTransform.GetWorldPosition() + offset;
-					
-                    transform.SetWorldPosition(origin);
-                    transform.SetWorldRotation(childTransform.GetWorldRotation());
+                    auto& force = projectile.AddComponent<Force>();
+                    force.SetForceType(Force::Type::Impulse);
+                    force.SetLinearForce(projectileParams.Speed * cameraTransform.GetForwardDirection());
+                    force.CompleteAction(false);
 
-                    auto& events = projectile.AddComponent<LegacyCollisionEvents>();
-                    events.onCollisionBegin.connect<&OnProjectileCollided>();
-					
-                    auto projectileMeshEntity = transform.GetChildren()[0];
-                    auto& meshTransform = projectileMeshEntity.GetComponent<Transform>();
-                    meshTransform.SetLocalRotation(Random::Rotation());
-
-                    auto& projectileComp = projectile.AddComponent<Projectile>();
-
-                    projectileComp.speed = 100;
-                    projectileComp.lifetime = 1;
-                    projectileComp.timer = 0;
-
-                    Audio::PlayOneShot("event:/Shot", projectile);
+                    //Audio::PlayOneShot("event:/Shot", projectile);
                 }
             }
         }

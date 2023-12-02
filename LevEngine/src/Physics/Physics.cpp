@@ -91,7 +91,7 @@ namespace LevEngine
         for (const auto entity : view)
         {
             auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
-            const physx::PxTransform actorPose = rigidbody.GetRigidbody()->getGlobalPose();
+            const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
             transform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
             transform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
         }

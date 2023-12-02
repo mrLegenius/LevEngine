@@ -14,10 +14,11 @@ namespace Sandbox
             {
                 auto [transform, projectile] = view.get<Transform, Projectile>(entity);
 
-                projectile.timer += deltaTime;
-				
-                if (projectile.timer >= projectile.lifetime)
+                projectile.Timer += deltaTime;
+                if (projectile.Timer >= projectile.Lifetime)
+                {
                     SceneManager::GetActiveScene()->DestroyEntity(entity);
+                }
             }
         }
     };

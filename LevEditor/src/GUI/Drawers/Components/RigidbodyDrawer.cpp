@@ -19,15 +19,15 @@ namespace LevEngine::Editor
             
             if (component.GetRigidbodyType() == Rigidbody::Type::Dynamic)
             {
-                EditorGUI::DrawFloatControl("Mass", BindGetter(&Rigidbody::GetMass, &component), BindSetter(&Rigidbody::SetMass, &component));
-
-                EditorGUI::DrawFloatControl("Linear Damping", BindGetter(&Rigidbody::GetLinearDamping, &component), BindSetter(&Rigidbody::SetLinearDamping, &component));
-                EditorGUI::DrawFloatControl("Angular Damping", BindGetter(&Rigidbody::GetAngularDamping, &component), BindSetter(&Rigidbody::SetAngularDamping, &component));
+                EditorGUI::DrawCheckBox("Enable Kinematic", BindGetter(&Rigidbody::IsKinematicEnabled, &component), BindSetter(&Rigidbody::EnableKinematic, &component));
                 
+                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&Rigidbody::IsGravityEnabled, &component), BindSetter(&Rigidbody::EnableGravity, &component));
+                
+                EditorGUI::DrawFloatControl("Mass", BindGetter(&Rigidbody::GetMass, &component), BindSetter(&Rigidbody::SetMass, &component));
                 EditorGUI::DrawVector3Control("Center Of Mass", BindGetter(&Rigidbody::GetCenterOfMass, &component), BindSetter(&Rigidbody::SetCenterOfMass, &component));
                 EditorGUI::DrawVector3Control("Diagonal Inertia", BindGetter(&Rigidbody::GetInertiaTensor, &component), BindSetter(&Rigidbody::SetInertiaTensor, &component));
-
-                EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&Rigidbody::IsGravityEnabled, &component), BindSetter(&Rigidbody::EnableGravity, &component));
+                EditorGUI::DrawFloatControl("Linear Damping", BindGetter(&Rigidbody::GetLinearDamping, &component), BindSetter(&Rigidbody::SetLinearDamping, &component));
+                EditorGUI::DrawFloatControl("Angular Damping", BindGetter(&Rigidbody::GetAngularDamping, &component), BindSetter(&Rigidbody::SetAngularDamping, &component));
                 
                 EditorGUI::DrawCheckBox("Lock X Pos Axis", BindGetter(&Rigidbody::IsPosAxisXLocked, &component), BindSetter(&Rigidbody::LockPosAxisX, &component));
                 EditorGUI::DrawCheckBox("Lock Y Pos Axis", BindGetter(&Rigidbody::IsPosAxisYLocked, &component), BindSetter(&Rigidbody::LockPosAxisY, &component));
@@ -36,9 +36,6 @@ namespace LevEngine::Editor
                 EditorGUI::DrawCheckBox("Lock X Rot Axis", BindGetter(&Rigidbody::IsRotAxisXLocked, &component), BindSetter(&Rigidbody::LockRotAxisX, &component));
                 EditorGUI::DrawCheckBox("Lock Y Rot Axis", BindGetter(&Rigidbody::IsRotAxisYLocked, &component), BindSetter(&Rigidbody::LockRotAxisY, &component));
                 EditorGUI::DrawCheckBox("Lock Z Rot Axis", BindGetter(&Rigidbody::IsRotAxisZLocked, &component), BindSetter(&Rigidbody::LockRotAxisZ, &component));
-
-                EditorGUI::DrawVector3Control("Force", BindGetter(&Rigidbody::GetAppliedForce, &component), BindSetter(&Rigidbody::ApplyForce, &component));
-                EditorGUI::DrawVector3Control("Torque", BindGetter(&Rigidbody::GetAppliedTorque, &component), BindSetter(&Rigidbody::ApplyTorque, &component));
             }
             
             if (component.GetColliderCount() > 0)

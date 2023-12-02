@@ -8,15 +8,12 @@ namespace LevEngine
 {
     void RigidbodyUpdateSystem::Update(const float deltaTime, entt::registry& registry)
     {
-        const auto view = registry.view<Rigidbody, Transform>();
+        const auto view = registry.view<Transform, Rigidbody>();
         
         for (const auto entity : view)
         {
-            auto [rigidbody, transform] = view.get<Rigidbody, Transform>(entity);
+            auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
             rigidbody.SetTransformScale(transform.GetWorldScale());
-
-            rigidbody.ApplyForce(rigidbody.GetAppliedForce());
-            rigidbody.ApplyTorque(rigidbody.GetAppliedTorque());
         }
     }
 }

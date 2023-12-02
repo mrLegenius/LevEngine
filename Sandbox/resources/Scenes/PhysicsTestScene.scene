@@ -9,20 +9,19 @@ Entities:
     Rigidbody:
       Is Visualization Enabled: true
       Rigidbody Type: 1
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
       Mass: 1
       Linear Damping: 0
       Angular Damping: 0.0500000007
       Center Of Mass: [0, 0, 0]
       Inertia Tensor: [1, 1, 1]
-      Is Gravity Enabled: false
       Is Pos Axis X Locked: false
       Is Pos Axis Y Locked: false
       Is Pos Axis Z Locked: false
       Is Rot Axis X Locked: false
       Is Rot Axis Y Locked: false
       Is Rot Axis Z Locked: false
-      Applied Force: [0, 0, 0]
-      Applied Torque: [0, 0, 0]
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
@@ -30,6 +29,10 @@ Entities:
       Static Friction: 0.5
       Dynamic Friction: 0.5
       Restitution: 0.600000024
+    Force:
+      Force Type: 0
+      Linear Force: [0, 0, 0]
+      Angular Force: [0, 0, 0]
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 13469868196253741728
@@ -60,20 +63,19 @@ Entities:
     Rigidbody:
       Is Visualization Enabled: false
       Rigidbody Type: 0
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
       Mass: 1
       Linear Damping: 0
       Angular Damping: 0.0500000007
       Center Of Mass: [0, 0, 0]
       Inertia Tensor: [1, 1, 1]
-      Is Gravity Enabled: true
       Is Pos Axis X Locked: false
       Is Pos Axis Y Locked: false
       Is Pos Axis Z Locked: false
       Is Rot Axis X Locked: false
       Is Rot Axis Y Locked: false
       Is Rot Axis Z Locked: false
-      Applied Force: [0, 0, 0]
-      Applied Torque: [0, 0, 0]
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]

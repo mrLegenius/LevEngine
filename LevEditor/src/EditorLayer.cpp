@@ -14,6 +14,7 @@
 #include "ProjectEditor.h"
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
 #include "Renderer/RendererContext.h"
+#include "Scene/Systems/Physics/ForceUpdateSystem.h"
 #include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor
@@ -156,6 +157,8 @@ namespace LevEngine::Editor
         scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
 
         scene->RegisterUpdateSystem<RigidbodyInitSystem>();
+
+        scene->RegisterUpdateSystem<ForceUpdateSystem>();
         
         auto& registry = scene->GetRegistry();
         registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
