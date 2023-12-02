@@ -1,11 +1,14 @@
 ﻿#pragma once
 #include "physx/include/PxPhysicsAPI.h"
 #include "Collider.h"
+#include "DataTypes/Vector.h"
 #include "Scene/Components/TypeParseTraits.h"
+#include "Collider.h"
+#include "Force.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
-    struct Transform;
     REGISTER_PARSE_TYPE(Rigidbody);
     
     struct Rigidbody
@@ -23,15 +26,21 @@ namespace LevEngine
         
         bool IsInitialized() const;
         void Initialize(const Transform& transform);
-        void SetRigidbodyPose(const Transform& transform);
-        
+
+        [[nodiscard]] bool IsVisualizationEnabled() const;
+        void EnableVisualization(bool flag);
+
         [[nodiscard]] Type GetRigidbodyType() const;
         void SetRigidbodyType(const Type& rigidbodyType);
         void AttachRigidbody(const Type& rigidbodyType);
         void DetachRigidbody();
+
+        [[nodiscard]] bool IsKinematicEnabled() const;
+        void EnableKinematic(bool flag);
+        
         [[nodiscard]] bool IsGravityEnabled() const;
         void EnableGravity(bool flag);
-
+        
         [[nodiscard]] float GetMass() const;
         void SetMass(float value);
         [[nodiscard]] Vector3 GetCenterOfMass() const;
@@ -56,19 +65,12 @@ namespace LevEngine
         void LockRotAxisY(bool flag);
         [[nodiscard]] bool IsRotAxisZLocked() const;
         void LockRotAxisZ(bool flag);
-
-        [[nodiscard]] Vector3 GetAppliedForce() const;
-        void ApplyForce(Vector3 value);
-        [[nodiscard]] Vector3 GetAppliedTorque() const;
-        void ApplyTorque(Vector3 value);
         
         [[nodiscard]] Collider::Type GetColliderType() const;
         void SetColliderType(const Collider::Type& colliderType);
         void AttachCollider(const Collider::Type& colliderType);
         void DetachCollider();
         [[nodiscard]] int GetColliderCount() const;
-        [[nodiscard]] bool IsVisualizationEnabled() const;
-        void EnableVisualization(bool flag);
         
         [[nodiscard]] Vector3 GetColliderOffsetPosition() const;
         void SetColliderOffsetPosition(Vector3 position);
@@ -92,11 +94,14 @@ namespace LevEngine
         void SetRestitution(float restitution);
         
         friend class Physics;
+        friend struct Force;
         
     private:
-        [[nodiscard]] physx::PxRigidActor* GetRigidbody() const;
+        [[nodiscard]] physx::PxRigidActor* GetActor() const;
         [[nodiscard]] physx::PxShape* GetColliders() const;
         [[nodiscard]] physx::PxMaterial* GetPhysicalMaterials(const physx::PxShape* colliders) const;
+
+        void SetRigidbodyPose(const Transform& transform);
         
         physx::PxRigidActor* m_Actor = nullptr;
 
@@ -106,6 +111,7 @@ namespace LevEngine
         
         bool m_IsInitialized = false;
         bool m_IsVisualizationEnabled = false;
+        bool m_IsKinematicEnabled = false;
         bool m_IsGravityEnabled = true;
         
         //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
@@ -120,12 +126,8 @@ namespace LevEngine
         bool m_IsPosAxisXLocked = false;
         bool m_IsPosAxisYLocked = false;
         bool m_IsPosAxisZLocked = false;
-
         bool m_IsRotAxisXLocked = false;
         bool m_IsRotAxisYLocked = false;
         bool m_IsRotAxisZLocked = false;
-
-        Vector3 m_AppliedForce = Vector3::Zero;
-        Vector3 m_AppliedTorque = Vector3::Zero;
     };
 }

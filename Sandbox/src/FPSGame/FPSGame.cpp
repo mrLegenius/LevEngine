@@ -4,6 +4,7 @@
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
 #include "Scripting/ScriptingManager.h"
+#include "Scene/Systems/Physics/ForceUpdateSystem.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
@@ -46,13 +47,13 @@ namespace Sandbox
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
-		//scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
+		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
-		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
-		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
-		scene->RegisterUpdateSystem<EnemySpawnSystem>();
+		//scene->RegisterUpdateSystem<ProjectileMovementSystem>();
+		//scene->RegisterUpdateSystem<ProjectileLifeSystem>();
+		//scene->RegisterUpdateSystem<EnemySpawnSystem>();
 		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
-		scene->RegisterUpdateSystem<EnemyMovementSystem>();
+		//scene->RegisterUpdateSystem<EnemyMovementSystem>();
 		
 		scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
 		scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
@@ -62,9 +63,11 @@ namespace Sandbox
 		
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
-
+		
 		scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
 		scene->RegisterUpdateSystem<RigidbodyInitSystem>();
+
+		scene->RegisterUpdateSystem<ForceUpdateSystem>();
 
 		auto& registry = scene->GetRegistry();
 		registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();

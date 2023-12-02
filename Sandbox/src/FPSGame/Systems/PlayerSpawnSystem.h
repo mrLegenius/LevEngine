@@ -1,4 +1,5 @@
 #pragma once
+
 namespace Sandbox
 {
     class PlayerSpawnSystem final : public System
@@ -7,23 +8,31 @@ namespace Sandbox
         void Update(float deltaTime, entt::registry& registry) override
         {
             const auto playerView = registry.view<Player>();
-
             if (!playerView.empty()) return;
 			
             auto& scene = SceneManager::GetActiveScene();
 
             const auto prefab = ResourceManager::LoadAsset<PrefabAsset>("PlayerPrefab");
-            const auto player = prefab->Instantiate(scene);
+            const auto playerEntity = prefab->Instantiate(scene);
 
-            auto& playerTransform = player.GetComponent<Transform>();
-            playerTransform.SetWorldPosition(Vector3{0, 1, 15});
+            const auto& startPosition = Vector3(0.0f, 1.0f, 15.0f);
+            auto& transform = playerEntity.GetComponent<Transform>();
+            transform.SetWorldPosition(startPosition);
 			
-            auto& playerComponent = player.AddComponent<Player>();
-            playerComponent.speed = 10;
+            auto& player = playerEntity.AddComponent<Player>();
 
-            auto& rigidbodyComponent = player.GetComponent<Rigidbody>();
-            rigidbodyComponent.LockRotAxisX(true);
-            rigidbodyComponent.LockRotAxisZ(true);
+            auto& rigidbody = playerEntity.GetComponent<Rigidbody>();
+            rigidbody.LockRotAxisX(true);
+            rigidbody.LockRotAxisY(true);
+            rigidbody.LockRotAxisZ(true);
+            rigidbody.SetStaticFriction(0.5f);
+            rigidbody.SetDynamicFriction(0.8f);
+            rigidbody.SetRestitution(0.0f);
+            rigidbody.SetLinearDamping(1.0f);
+
+            // it's used for movement
+            auto& force = playerEntity.AddComponent<Force>();
+            force.SetForceType(Force::Type::Velocity);
         }
     };
 }

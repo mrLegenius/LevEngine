@@ -1,42 +1,69 @@
 #pragma once
 
+constexpr auto WALK_SPEED = 15.0f;
+constexpr auto SPRINT_SPEED = 25.0f;
+constexpr auto JUMP_FORCE = 50.0f;
+
 namespace Sandbox
 {
     class FPSMovementSystem final : public System
     {
         void Update(const float deltaTime, entt::registry& registry) override
         {
-            const auto view = registry.view<Transform, Player, Rigidbody>();
-
-            constexpr auto rotationSpeed = 45;
-            constexpr auto moveSpeed = 300;
-            constexpr auto jumpImpulse = 1;
-            const Vector2 mouse = Input::GetMouseDelta();
-			
-            for (const auto entity : view)
+            const auto playerView = registry.view<Transform, Player, Rigidbody, Force>();
+            
+            for (const auto entity : playerView)
             {
-                auto [transform, player, rigidbody] = view.get<Transform, Player, Rigidbody>(entity);
-
-                const auto delta = mouse * rotationSpeed * deltaTime;
-
-                auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
-                rotation.y -= delta.x;
-                transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
-
-                /*
-                if (Input::IsKeyDown(KeyCode::W))
-                    rigidbody.AddForce(deltaTime * moveSpeed * transform.GetForwardDirection());
-                else if (Input::IsKeyDown(KeyCode::S))
-                    rigidbody.AddForce(deltaTime * moveSpeed * -transform.GetForwardDirection());
-
-                if (Input::IsKeyDown(KeyCode::A))
-                    rigidbody.AddForce(deltaTime * moveSpeed * -transform.GetRightDirection());
-                else if (Input::IsKeyDown(KeyCode::D))
-                    rigidbody.AddForce(moveSpeed * deltaTime * transform.GetRightDirection());
-
-                if (Input::IsKeyPressed(KeyCode::Space))
-                    rigidbody.AddImpulse(Vector3::Up * jumpImpulse);
-                */
+                auto [transform, player, rigidbody, force] = playerView.get<Transform, Player, Rigidbody, Force>(entity);
+                
+                if (force.GetForceType() == Force::Type::Velocity)
+                {
+                    const auto cameraTransform = transform.GetChildren()[0].GetComponent<Transform>();
+                    auto movement = Vector3::Zero;
+                    if (Input::IsKeyDown(KeyCode::W))
+                    {
+                        movement += cameraTransform.GetForwardDirection();
+                        movement.y = 0.0f;
+                    }
+                    else if (Input::IsKeyDown(KeyCode::S))
+                    {
+                        movement -= cameraTransform.GetForwardDirection();
+                        movement.y = 0.0f;
+                    }
+                    if (Input::IsKeyDown(KeyCode::A))
+                    {
+                        movement -= cameraTransform.GetRightDirection();
+                        movement.y = 0.0f;
+                    }
+                    else if (Input::IsKeyDown(KeyCode::D))
+                    {
+                        movement += cameraTransform.GetRightDirection();
+                        movement.y = 0.0f;
+                    }
+                    if (Input::IsKeyDown(KeyCode::Space))
+                    {
+                        movement += Vector3::Up;
+                    }
+                    
+                    if (Input::IsKeyDown(KeyCode::LeftShift))
+                    {
+                        player.Speed = SPRINT_SPEED;
+                    }
+                    else
+                    {
+                        player.Speed = WALK_SPEED;
+                    }
+                    
+                    movement.Normalize();
+                    force.SetLinearForce(
+                        Vector3(
+                            deltaTime * player.Speed * movement.x,
+                            deltaTime * JUMP_FORCE * movement.y,
+                            deltaTime * player.Speed * movement.z
+                        )
+                    );
+                    force.CompleteAction(false);
+                }
             }
         }
     };

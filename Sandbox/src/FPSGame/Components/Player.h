@@ -4,6 +4,6 @@ namespace Sandbox
 {
     struct Player
     {
-        float speed;
+        float Speed = 15.0f;
     };
 }
