@@ -7,6 +7,7 @@
 #include "Project.h"
 #include "Selection.h"
 #include "Assets/MaterialPBRAsset.h"
+#include "Assets/ScriptAsset.h"
 #include "GUI/EditorGUI.h"
 #include "GUI/ScopedGUIHelpers.h"
 
@@ -46,7 +47,7 @@ namespace LevEngine::Editor
         const float cellSize = thumbnailSize + padding;
 
         const float panelWidth = ImGui::GetContentRegionAvail().x;
-        int columnCount = (int)(panelWidth / cellSize);
+        int columnCount = static_cast<int>(panelWidth / cellSize);
         if (columnCount < 1)
             columnCount = 1;
 
@@ -135,6 +136,13 @@ namespace LevEngine::Editor
                     {
                         DrawCreateMenu<MaterialPBRAsset>("Material", "Material.pbr");
                         DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
+                        if (ImGui::BeginMenu("Script"))
+                        {
+                            DrawCreateMenu<ScriptAsset>("Script System", "System.lua", ScriptAsset::Type::System);
+                            DrawCreateMenu<ScriptAsset>("Script Component (TODO)", "Component.lua", ScriptAsset::Type::Component);
+                            
+                            ImGui::EndMenu();
+                        }
                         if (ImGui::MenuItem("Folder"))
                             AssetDatabase::CreateFolder(m_CurrentDirectory / "Folder");
                         
@@ -154,14 +162,14 @@ namespace LevEngine::Editor
         ImGui::Columns(1);
     }
 
-    template <typename AssetType>
-    void AssetBrowserPanel::DrawCreateMenu(const String& label, const String& defaultName) const
+    template <typename AssetType, class ...Args>
+    void AssetBrowserPanel::DrawCreateMenu(const String& label, const String& defaultName, Args... args) const
     {
         static_assert(eastl::is_base_of_v<Asset, AssetType>, "AssetType must derive from Asset");
 
         if (ImGui::MenuItem(label.c_str()))
         {
-            if (const Ref<Asset> asset = AssetDatabase::CreateAsset<AssetType>(m_CurrentDirectory / defaultName.c_str()))
+            if (const Ref<Asset> asset = AssetDatabase::CreateNewAsset<AssetType>(m_CurrentDirectory / defaultName.c_str(), eastl::forward<Args>(args)...))
                 Selection::Select(CreateRef<AssetSelection>(asset));
         }
     }

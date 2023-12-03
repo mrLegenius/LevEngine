@@ -31,8 +31,8 @@ namespace LevEngine
 
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid);
 
-		template<class T>
-		[[nodiscard]] static Ref<T> CreateAsset(const Path& path);
+		template<class T, class ...Args>
+		[[nodiscard]] static Ref<T> CreateNewAsset(const Path& path, Args ...args);
 
 		static void CreateFolder(const Path& path);
 

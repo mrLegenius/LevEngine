@@ -8,6 +8,7 @@
 #include "MeshAsset.h"
 #include "PrefabAsset.h"
 #include "Project.h"
+#include "ScriptAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
 #include "Scene/Serializers/SerializerUtils.h"
@@ -202,6 +203,9 @@ namespace LevEngine
 
 		if (IsAssetAudioBank(path))
 			return CreateRef<AudioBankAsset>(path, uuid);
+
+		if (IsAssetScript(path))
+			return CreateRef<ScriptAsset>(path, uuid);
 
 		return CreateRef<DefaultAsset>(path, uuid);
 	}
