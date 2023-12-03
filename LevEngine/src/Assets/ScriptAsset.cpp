@@ -15,7 +15,7 @@ namespace LevEngine
             YAML::Node meta = YAML::LoadFile(m_MetaPath.string());
             DeserializeMeta(meta);
         }
-        catch (std::exception& e)
+        catch ([[maybe_unused]] std::exception& e)
         {
             m_Type = Type::Undefined;
         }
@@ -77,7 +77,7 @@ namespace LevEngine
             if (const auto address = node["Type"])
                 m_Type = static_cast<Type>(address.as<int>());
         }
-        catch (std::exception& e)
+        catch ([[maybe_unused]] std::exception& e)
         {
             m_Type = Type::Undefined;
         }

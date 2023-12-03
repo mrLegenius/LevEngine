@@ -13,12 +13,21 @@ namespace LevEngine::Editor
 
         void DrawContent(Ref<ScriptAsset> assetRef) override
         {
-            const Array<String, 3> typeValues {"Undefined", "System", "Component"};
-
-            ScriptAsset::Type type = assetRef->GetType();
-            if (EditorGUI::DrawComboBox("ScriptType", typeValues, type))
             {
-                assetRef->SetType(type);
+                const Array<String, 3> typeValues {"Undefined", "System", "Component"};
+
+                ScriptAsset::Type type = assetRef->GetType();
+                if (EditorGUI::DrawComboBox("ScriptType", typeValues, type))
+                {
+                    assetRef->SetType(type);
+                }
+            }
+
+            {
+                if (ImGui::Button("Open", ImVec2{ 64, 24 }))
+                {
+                    FileDialogs::OpenFileInEditor(assetRef->GetPath());
+                }
             }
             
         }
