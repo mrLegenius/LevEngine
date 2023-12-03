@@ -2,6 +2,7 @@
 #include "SceneSerializer.h"
 
 #include "../Entity.h"
+#include "Assets/ScriptAsset.h"
 #include "Kernel/ClassCollection.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Scene/Scene.h"
@@ -29,6 +30,18 @@ namespace LevEngine
 			});
 
 		out << YAML::EndSeq;
+		out << YAML::Key << "Systems" << YAML::Value << YAML::BeginSeq;
+
+		auto scriptAssets = m_Scene->GetActiveScriptSystems();
+
+		for (const auto & scriptAsset : scriptAssets)
+		{
+			out << YAML::BeginMap;
+			out << YAML::Key << "System" << YAML::Value << scriptAsset->GetUUID();
+			out << YAML::EndMap;
+		}
+		
+		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
 		std::ofstream fout(filepath.c_str());
@@ -50,48 +63,61 @@ namespace LevEngine
 		auto sceneName = data["Scene"].as<String>();
 		Log::CoreTrace("Deserializing scene '{0}'", sceneName);
 
-		auto entities = data["Entities"];
-		if (!entities) return true;
-
-		std::unordered_map<UUID, Entity> entitiesMap;
-		std::unordered_map<UUID, Pair<Entity, YAML::Node>> entitiesToDeserialize;
-		std::unordered_map<UUID, UUID> relationships;
-
-		for (auto entity : entities)
+		if (auto entities = data["Entities"])
 		{
-			auto uuid = entity["Entity"].as<uint64_t>();
-			auto name = entity["Tag"].as<String>();
+			std::unordered_map<UUID, Entity> entitiesMap;
+			std::unordered_map<UUID, Pair<Entity, YAML::Node>> entitiesToDeserialize;
+			std::unordered_map<UUID, UUID> relationships;
 
-			if (auto parent = entity["Parent"])
+			for (auto entity : entities)
 			{
-				auto parentUuid = UUID(parent.as<uint64_t>());
-				relationships.emplace(uuid, parentUuid);
+				auto uuid = entity["Entity"].as<uint64_t>();
+				auto name = entity["Tag"].as<String>();
+
+				if (auto parent = entity["Parent"])
+				{
+					auto parentUuid = UUID(parent.as<uint64_t>());
+					relationships.emplace(uuid, parentUuid);
+				}
+
+				Log::Trace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
+
+				Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
+
+				entitiesToDeserialize.try_emplace(uuid, Pair<Entity, YAML::Node>(deserializedEntity, entity));
+				entitiesMap.try_emplace(uuid, deserializedEntity);
 			}
 
-			Log::Trace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
+			for (auto& [uuid, pair] : entitiesToDeserialize)
+			{
+				auto deserializedEntity = pair.first;
+				auto entityNode = pair.second;
+				for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
+					serializer->Deserialize(entityNode, deserializedEntity);
+			}
 
-			Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
+			for (auto& [uuid, entity] : entitiesMap)
+			{
+				if (!entity) continue;
 
-			entitiesToDeserialize.try_emplace(uuid, Pair<Entity, YAML::Node>(deserializedEntity, entity));
-			entitiesMap.try_emplace(uuid, deserializedEntity);
+				auto& transform = entity.GetComponent<Transform>();
+				transform.SetParent(entitiesMap[relationships[uuid]], false);
+			}
 		}
 
-		for (auto& [uuid, pair] : entitiesToDeserialize)
+		if (auto systems = data["Systems"])
 		{
-			auto deserializedEntity = pair.first;
-			auto entityNode = pair.second;
-			for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
-				serializer->Deserialize(entityNode, deserializedEntity);
+			for (const auto& system : systems)
+			{
+				auto uuid = system["System"].as<uint64_t>();
+
+				if (auto script = AssetDatabase::GetAsset<ScriptAsset>(uuid))
+				{
+					m_Scene->SetScriptSystemActive(script, true);
+				}
+			}
 		}
-
-		for (auto& [uuid, entity] : entitiesMap)
-		{
-			if (!entity) continue;
-
-			auto& transform = entity.GetComponent<Transform>();
-			transform.SetParent(entitiesMap[relationships[uuid]], false);
-		}
-
+		
 		return true;
 	}
 

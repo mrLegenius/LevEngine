@@ -18,6 +18,11 @@
 
 namespace LevEngine::Editor
 {
+    class ScriptsPanel;
+}
+
+namespace LevEngine::Editor
+{
     class StatisticsPanel;
     
     class EditorLayer final : public Layer
@@ -52,6 +57,7 @@ namespace LevEngine::Editor
         Ref<Toolbar> m_MainToolbar;
         Ref<StatusBar> m_MainStatusBar;
         Ref<StatisticsPanel> m_Statistics;
+        Ref<ScriptsPanel> m_ScriptsPanel;
 
         EditorSaveData m_SaveData{"SaveData.editor"};
         

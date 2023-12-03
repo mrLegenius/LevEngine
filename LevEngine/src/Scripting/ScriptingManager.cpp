@@ -60,10 +60,10 @@ namespace LevEngine::Scripting
                     {
                         switch (script->GetType()) {
                         case ScriptAsset::Type::System:
-                            m_Systems.emplace(make_pair(scriptName, eastl::move(luaScriptTable.value())));
+                            m_Systems.emplace(make_pair(script, eastl::move(luaScriptTable.value())));
                             break;
                         case ScriptAsset::Type::Component:
-                            m_Components.emplace(make_pair(scriptName, eastl::move(luaScriptTable.value())));
+                            m_Components.emplace(make_pair(script, eastl::move(luaScriptTable.value())));
                             break;
                         default: ;
                         }
@@ -87,11 +87,17 @@ namespace LevEngine::Scripting
 
     void ScriptingManager::RegisterSystems(Scene* scene)
     {
-        for (const auto& [name, system] : m_Systems)
+        for (const auto& [scriptAsset, luaSystemTable] : m_Systems)
         {
+            if (!scene->IsScriptSystemActive(scriptAsset))
+            {
+                continue;
+            }
+            
+            auto name = scriptAsset->GetName();
             auto scriptingEntity = scene->CreateEntity("ScriptingEntity_" + name);
                 
-            if (sol::optional<sol::protected_function> init = system["init"]; 
+            if (sol::optional<sol::protected_function> init = luaSystemTable["init"]; 
                 init != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingInitComponent>();
@@ -99,7 +105,7 @@ namespace LevEngine::Scripting
             }
 
                 
-            if (sol::optional<sol::protected_function> update = system["update"]; 
+            if (sol::optional<sol::protected_function> update = luaSystemTable["update"]; 
                 update != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingUpdateComponent>();
@@ -107,7 +113,7 @@ namespace LevEngine::Scripting
             }
 
                 
-            if (sol::optional<sol::protected_function> lateUpdate = system["lateUpdate"]; 
+            if (sol::optional<sol::protected_function> lateUpdate = luaSystemTable["lateUpdate"]; 
                 lateUpdate != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingLateUpdateComponent>();

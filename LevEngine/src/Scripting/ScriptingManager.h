@@ -2,6 +2,11 @@
 
 #include <sol/sol.hpp>
 
+namespace LevEngine
+{
+	class ScriptAsset;
+}
+
 namespace LevEngine {
 	class Scene;
 
@@ -27,8 +32,8 @@ namespace LevEngine {
 			Ref<sol::state> GetLuaState();
 
 		private:
-			UnorderedMap<String, sol::table> m_Systems;
-			UnorderedMap<String, sol::table> m_Components;
+			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Systems;
+			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Components;
 
 			Ref<sol::state> m_Lua;
 		};

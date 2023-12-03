@@ -1,5 +1,29 @@
 Scene: TestScene
 Entities:
+  - Entity: 12249984449612849683
+    Tag: ScriptingEntity_System
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 16982242349008117918
+    Tag: ScriptingEntity_FPSCameraRotation
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 9569062319613015446
+    Tag: ScriptingEntity_System
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 8628945917599154320
+    Tag: ScriptingEntity_FPSCameraRotation
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
   - Entity: 8940989960097836712
     Tag: Floor
     Parent: 11837398838170000115
@@ -27,7 +51,7 @@ Entities:
     Parent: 11837398838170000115
     Transform:
       Position: [-1.20967243e-05, 5.0001483, 25.5]
-      Rotation: [1.57078934, -1.6393825e-06, 3.14159083]
+      Rotation: [1.57078934, -1.59455158e-06, 3.14159083]
       Scale: [50, 0.999938488, 9.99950695]
     Rigidbody:
       Visualization Flag: false
@@ -48,7 +72,7 @@ Entities:
     Tag: Skybox
     Transform:
       Position: [0, 0, 2.37524009]
-      Rotation: [-0, 0, -0]
+      Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Skybox Renderer:
       Skybox: 17530323575141006770
@@ -248,3 +272,17 @@ Entities:
       Angle: 19.7999992
       Smoothness: 0.75
       Intensity: 15.1000004
+  - Entity: 12676208971028318032
+    Tag: ScriptingEntity_FPSCameraRotation
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 1711096820271522700
+    Tag: ScriptingEntity_System
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+Systems:
+  - System: 12364856122512646631

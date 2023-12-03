@@ -94,6 +94,7 @@
   <ItemGroup>
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
+    <ClInclude Include="src\DataTypes\Set.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />

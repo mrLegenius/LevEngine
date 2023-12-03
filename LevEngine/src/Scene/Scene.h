@@ -1,5 +1,11 @@
 #pragma once
 #include "System.h"
+#include "DataTypes/Set.h"
+
+namespace LevEngine
+{
+	class ScriptAsset;
+}
 
 namespace LevEngine
 {
@@ -54,6 +60,10 @@ namespace LevEngine
 
 		entt::registry& GetRegistry();
 
+		bool IsScriptSystemActive(const Ref<ScriptAsset>& scriptAsset) const;
+		void SetScriptSystemActive(const Ref<ScriptAsset>& scriptAsset, bool isActive);
+		Set<Ref<ScriptAsset>> GetActiveScriptSystems() const;
+
 	private:
 		void RequestUpdates(float deltaTime);
 		void RequestRenderUpdate();
@@ -81,6 +91,8 @@ namespace LevEngine
 		bool m_IsPhysicsDone = true;
 		bool m_IsRenderDone = true;
 		bool m_IsAudioUpdateDone = true;
+
+		Set<Ref<ScriptAsset>> m_ScriptSystems;
 	};
 }
 

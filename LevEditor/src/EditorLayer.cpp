@@ -13,6 +13,7 @@
 
 #include "ProjectEditor.h"
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
+#include "Panels/ScriptsPanel.h"
 #include "Panels/StatisticsPanel.h"
 #include "Scripting/ScriptingManager.h"
 
@@ -122,6 +123,7 @@ namespace LevEngine::Editor
         m_Console->Render();
         m_Settings->Render();
         m_Statistics->Render();
+        m_ScriptsPanel->Render();
         m_MainToolbar->Render();
         m_MainStatusBar->Render();
     }
@@ -211,6 +213,7 @@ namespace LevEngine::Editor
         m_MainToolbar = CreateRef<Toolbar>(m_MainMenuBar, [this]{ return m_SceneState; }, std::bind(&EditorLayer::OnPlayButtonClicked, this));
         m_DockSpace = CreateRef<DockSpace>(m_MainToolbar, m_MainMenuBar);
         m_Statistics = CreateRef<StatisticsPanel>();
+        m_ScriptsPanel = CreateRef<ScriptsPanel>();
 
         m_SceneEditor->AddMainMenuItems(m_MainMenuBar);
         m_ProjectEditor->AddMainMenuItems(m_MainMenuBar);
