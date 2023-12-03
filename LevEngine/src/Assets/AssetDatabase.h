@@ -46,6 +46,9 @@ namespace LevEngine
 		template<class T>
 		[[nodiscard]] static Ref<T> GetAsset(const Path& path);
 
+		template<class T>
+		[[nodiscard]] static Vector<Ref<T>> GetAllAssetsOfClass();
+
 		static void RenameAsset(const Ref<Asset>& asset, const String& name);
 		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);

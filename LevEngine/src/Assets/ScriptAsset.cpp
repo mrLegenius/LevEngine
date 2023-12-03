@@ -42,6 +42,11 @@ namespace LevEngine
         return m_Type;
     }
 
+    void ScriptAsset::SetType(Type type)
+    {
+        m_Type = type;
+    }
+
     bool ScriptAsset::WriteDataToFile() const
     {
         return false;
@@ -62,7 +67,7 @@ namespace LevEngine
 
     void ScriptAsset::SerializeMeta(YAML::Emitter& out)
     {
-        out << YAML::Key << "Type" << YAML::Value << static_cast<uint8_t>(m_Type);
+        out << YAML::Key << "Type" << YAML::Value << static_cast<int>(m_Type);
     }
 
     void ScriptAsset::DeserializeMeta(YAML::Node& node)
@@ -70,7 +75,7 @@ namespace LevEngine
         try
         {
             if (const auto address = node["Type"])
-                m_Type = static_cast<Type>(address.as<uint8_t>());
+                m_Type = static_cast<Type>(address.as<int>());
         }
         catch (std::exception& e)
         {

@@ -42,6 +42,23 @@ namespace LevEngine
     }
 
     template <class T>
+    Vector<Ref<T>> AssetDatabase::GetAllAssetsOfClass()
+    {
+        static_assert(std::is_base_of_v<Asset, T>, "T must be an asset");
+
+        Vector<Ref<T>> foundAssets;
+        for (const auto& asset : m_Assets)
+        {
+            if (auto assetT = CastRef<T>(asset.second))
+            {
+                foundAssets.push_back(assetT);
+            }
+        }
+
+        return foundAssets;
+    }
+
+    template <class T>
     Ref<T> AssetDatabase::GetAsset(const Ref<Asset>& asset)
     {
         static_assert(std::is_base_of_v<Asset, T>, "T must be an asset");

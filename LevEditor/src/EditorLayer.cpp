@@ -194,8 +194,7 @@ namespace LevEngine::Editor
 
         ResourceManager::Init(Project::GetRoot());
         AssetDatabase::ProcessAllAssets();
-        //TODO
-        //Application::Get().GetScriptingManager().LoadScripts(Project::GetRoot());
+        Application::Get().GetScriptingManager().LoadScripts();
 
         const auto startScene = Project::GetStartScene();
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))

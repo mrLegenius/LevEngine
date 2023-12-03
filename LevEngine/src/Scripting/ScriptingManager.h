@@ -13,7 +13,7 @@ namespace LevEngine {
 		public:
 			ScriptingManager();
 			void Init();
-			bool LoadScripts(const Path& projectPath);
+			bool LoadScripts();
 
 			void RegisterSystems(Scene* scene);
 
@@ -28,6 +28,7 @@ namespace LevEngine {
 
 		private:
 			UnorderedMap<String, sol::table> m_Systems;
+			UnorderedMap<String, sol::table> m_Components;
 
 			Ref<sol::state> m_Lua;
 		};

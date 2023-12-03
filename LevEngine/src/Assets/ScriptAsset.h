@@ -3,10 +3,10 @@
 
 namespace LevEngine
 {
-    class ScriptAsset : public Asset
+    class ScriptAsset final : public Asset
     {
     public:
-        enum class Type : uint8_t
+        enum class Type
         {
             Undefined,
             System,
@@ -16,6 +16,7 @@ namespace LevEngine
         ScriptAsset(const Path& path, const UUID uuid, Type type);
 
         [[nodiscard]] Type GetType() const;
+        void SetType(Type type);
 
     protected:
         [[nodiscard]] bool WriteDataToFile() const override;
