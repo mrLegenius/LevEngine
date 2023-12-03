@@ -3003,6 +3003,66 @@
     </ClCompile>
     <ClCompile Include="src\Renderer\Renderer3D.cpp">
       <Filter>Source Files</Filter>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Recast\Recast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     </ClCompile>
     <ClCompile Include="src\Renderer\RenderTarget.cpp">
       <Filter>Source Files</Filter>
@@ -3336,5 +3396,11 @@
     <None Include="src\Scripting\LuaComponentsBinder.inl">
       <Filter>Header Files</Filter>
     </None>
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

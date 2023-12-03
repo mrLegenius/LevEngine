@@ -62,7 +62,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -85,7 +85,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp-vc143-mt.lib;;Detour.lib;DetourCrowd.lib;DetourTileCache.lib;Recast.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib;Detour.lib;DetourCrowd.lib;DetourTileCache.lib;Recast.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
@@ -146,6 +146,26 @@
     <ClInclude Include="src\Physics\Physics.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h" />
+    <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
+    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
+    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
@@ -1078,6 +1098,8 @@
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />

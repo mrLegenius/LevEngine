@@ -9,7 +9,6 @@ namespace LevEngine::Editor
     {
     protected:
         [[nodiscard]] String GetLabel() const override { return "NavMeshable"; }
-        String GetAddMenuPath() const override { return "NavMesh"; }
     
         void DrawContent(NavMeshableComponent& component) override
         {
