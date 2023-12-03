@@ -22,6 +22,9 @@ namespace LevEngine
         NavMeshComponent(const NavMeshComponent&) = default;
         
         void Build();
+
+        bool IsBuilded = false;
+        const rcPolyMesh& GetPolyMesh() const;
         
         float CellSize = 0.3f;
         float CellHeight = 0.2f;
@@ -41,6 +44,7 @@ namespace LevEngine
         bool FilterLowHangingObstacles;
         bool FilterLedgeSpans;
         bool FilterWalkableLowHeightSpans;
+        
     private:
 
         void Cleanup();

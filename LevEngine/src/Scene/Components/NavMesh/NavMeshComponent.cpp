@@ -36,6 +36,8 @@ namespace LevEngine
 		m_PolyMeshDetail = nullptr;
 		dtFreeNavMesh(m_NavMesh);
 		m_NavMesh = nullptr;
+
+		IsBuilded = false;
 	}
 
     void NavMeshComponent::Build()
@@ -452,8 +454,13 @@ namespace LevEngine
 		// 	m_tool->init(this);
 		// initToolStates(this);
 
-		return;
+		IsBuilded = true;
     }
+
+	const rcPolyMesh& NavMeshComponent::GetPolyMesh() const
+	{
+		return *m_PolyMesh;
+	}
 
     class NavMeshComponentSerializer final : public ComponentSerializer<NavMeshComponent, NavMeshComponentSerializer>
     {
