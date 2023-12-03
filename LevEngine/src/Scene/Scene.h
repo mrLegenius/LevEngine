@@ -5,10 +5,6 @@
 namespace LevEngine
 {
 	class ScriptAsset;
-}
-
-namespace LevEngine
-{
 	class SceneCamera;
 	class Audio;
 	class Entity;

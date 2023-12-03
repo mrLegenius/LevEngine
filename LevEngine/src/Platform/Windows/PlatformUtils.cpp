@@ -48,7 +48,7 @@ namespace LevEngine
 		return result.string().c_str();
 	}
 
-	void FileDialogs::OpenFileInEditor(const Path& path)
+	void FileDialogs::OpenFileByExtension(const Path& path)
 	{
 		ShellExecute(nullptr, nullptr, path.c_str(), nullptr, nullptr, SW_SHOW);
 	}

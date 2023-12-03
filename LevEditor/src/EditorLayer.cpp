@@ -11,10 +11,20 @@
 #include <Scene/Components/Audio/AudioSource.h>
 #include <Scene/Components/Audio/AudioListener.h>
 
-#include "ProjectEditor.h"
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
+#include "Essentials/MenuBar.h"
+#include "Panels/AssetBrowserPanel.h"
+#include "Panels/ConsolePanel.h"
+#include "Panels/DockSpace.h"
+#include "Panels/GamePanel.h"
+#include "Panels/HierarchyPanel.h"
+#include "Panels/PropertiesPanel.h"
 #include "Panels/ScriptsPanel.h"
+#include "Panels/SettingsPanel.h"
 #include "Panels/StatisticsPanel.h"
+#include "Panels/StatusBar.h"
+#include "Panels/Toolbar.h"
+#include "Panels/ViewportPanel.h"
 #include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor

@@ -8,6 +8,6 @@ namespace LevEngine
 		//These return empty string if cancelled
 		static String OpenFile(const char* filter);
 		static String SaveFile(const char* filter, const String& extension);
-		static void OpenFileInEditor(const Path& path);
+		static void OpenFileByExtension(const Path& path);
 	};
 }

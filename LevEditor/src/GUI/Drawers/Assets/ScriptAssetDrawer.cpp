@@ -9,7 +9,7 @@ namespace LevEngine::Editor
     class ScriptAssetDrawer final : public AssetDrawer<ScriptAsset, ScriptAssetDrawer>
     {
     protected:
-        [[nodiscard]] String GetLabel() const override { return "ScriptAsset"; }
+        [[nodiscard]] String GetLabel() const override { return "Script"; }
 
         void DrawContent(Ref<ScriptAsset> assetRef) override
         {
@@ -26,7 +26,7 @@ namespace LevEngine::Editor
             {
                 if (ImGui::Button("Open", ImVec2{ 64, 24 }))
                 {
-                    FileDialogs::OpenFileInEditor(assetRef->GetPath());
+                    FileDialogs::OpenFileByExtension(assetRef->GetPath());
                 }
             }
             

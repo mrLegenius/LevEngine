@@ -5,9 +5,6 @@
 namespace LevEngine
 {
 	class ScriptAsset;
-}
-
-namespace LevEngine {
 	class Scene;
 
 	namespace Scripting

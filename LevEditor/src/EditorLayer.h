@@ -3,26 +3,21 @@
 #include "ProjectEditor.h"
 #include "SceneEditor.h"
 #include "SceneState.h"
-#include "Essentials/MenuBar.h"
-#include "Events/ApplicationEvent.h"
-#include "Panels/AssetBrowserPanel.h"
-#include "Panels/ConsolePanel.h"
-#include "Panels/DockSpace.h"
-#include "Panels/GamePanel.h"
-#include "Panels/HierarchyPanel.h"
-#include "Panels/PropertiesPanel.h"
-#include "Panels/SettingsPanel.h"
-#include "Panels/StatusBar.h"
-#include "Panels/Toolbar.h"
-#include "Panels/ViewportPanel.h"
 
 namespace LevEngine::Editor
 {
+    class StatusBar;
+    class Toolbar;
+    class MenuBar;
+    class ConsolePanel;
+    class SettingsPanel;
+    class GamePanel;
+    class AssetBrowserPanel;
+    class PropertiesPanel;
+    class HierarchyPanel;
+    class ViewportPanel;
+    class DockSpace;
     class ScriptsPanel;
-}
-
-namespace LevEngine::Editor
-{
     class StatisticsPanel;
     
     class EditorLayer final : public Layer
@@ -62,6 +57,5 @@ namespace LevEngine::Editor
         EditorSaveData m_SaveData{"SaveData.editor"};
         
         SceneState m_SceneState = SceneState::Edit;
-        
     };
 }
