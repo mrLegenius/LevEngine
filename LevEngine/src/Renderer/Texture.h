@@ -2,7 +2,6 @@
 #include "ClearFlags.h"
 #include "CPUAccess.h"
 #include "ShaderType.h"
-#include "Math/Vector4.h"
 
 namespace LevEngine
 {

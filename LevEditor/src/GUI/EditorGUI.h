@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Math/Color.h"
-
 namespace LevEngine::Editor
 {
 	struct EditorGUI

@@ -2,7 +2,6 @@
 
 #include "ClearFlags.h"
 #include "RenderPass.h"
-#include "Math/Vector4.h"
 
 namespace LevEngine
 {

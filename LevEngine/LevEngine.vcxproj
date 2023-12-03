@@ -106,6 +106,7 @@
     <ClInclude Include="src\Renderer\Environment\EnvironmentPrecomputePass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentRenderPass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentShaders.h" />
+    <ClInclude Include="src\Renderer\LightCollection.h" />
     <ClInclude Include="src\Renderer\Particles\BitonicSort.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleAssets.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleEmissionPass.h" />
@@ -117,6 +118,7 @@
     <ClInclude Include="src\Renderer\Particles\ParticlesUtils.h" />
     <ClInclude Include="src\Renderer\Query.h" />
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
+    <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
@@ -1038,6 +1040,7 @@
     <ClCompile Include="src\Renderer\Environment\EnvironmentPrecomputePass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentShaders.cpp" />
+    <ClCompile Include="src\Renderer\LightCollection.cpp" />
     <ClCompile Include="src\Renderer\Particles\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleAssets.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleEmissionPass.cpp" />

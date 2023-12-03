@@ -1,7 +1,4 @@
 #pragma once
-#include "Math/Color.h"
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
 
 namespace LevEngine
 {
@@ -38,9 +35,8 @@ struct RenderSettings
 	static constexpr float CascadeDistances[CascadeCount] = { 0.1f, 0.3f, 0.5f, 1.0f };
 	static constexpr float ShadowMapResolution = 2048;
 
-	//Lightning
-	static constexpr int MaxPointLights = 200;
-	static constexpr Vector3 GlobalAmbient{ 0.03f, 0.03f, 0.03f };
+	//Lighting
+	static constexpr int MaxLights = 100;
 	
 	//Post-processing
 	static constexpr uint32_t LuminanceMapSize = 1024;

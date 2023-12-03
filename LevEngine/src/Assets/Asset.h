@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <yaml-cpp/yaml.h>
+
 namespace LevEngine
 {
     class Texture;
@@ -36,13 +38,8 @@ namespace LevEngine
         virtual void SerializeData(YAML::Emitter& out) = 0;
         virtual void DeserializeData(YAML::Node& node) = 0;
 
-        virtual void SerializeMeta(YAML::Emitter& out)
-        {
-        }
-
-        virtual void DeserializeMeta(YAML::Node& node)
-        {
-        }
+        virtual void SerializeMeta(YAML::Emitter& out) { }
+        virtual void DeserializeMeta(YAML::Node& node) { }
 
         String m_Name;
         String m_FullName;

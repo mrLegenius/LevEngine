@@ -1,9 +1,6 @@
 #pragma once
 #include "Renderer/RenderPass.h"
 
-#include "Math/Matrix.h"
-#include "Math/Vector3.h"
-
 namespace LevEngine
 {
     struct ParticlesTextureArray;

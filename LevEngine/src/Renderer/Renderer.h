@@ -6,6 +6,7 @@
 
 namespace LevEngine
 {
+    class LightCollection;
     class Query;
     class Window;
     class RenderTechnique;
@@ -42,6 +43,7 @@ namespace LevEngine
         void ResetStatistics();
         static void SampleQuery(const Ref<Query>& query, Statistic& stat);
 
+        Ref<LightCollection> m_Lights;
         Ref<RenderTarget> m_MainRenderTarget;
         
         Ref<Texture> m_ColorTexture;

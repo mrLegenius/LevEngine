@@ -107,6 +107,7 @@
 #include "Renderer/Texture.h"
 #include "Renderer/VertexBuffer.h"
 #include "Renderer/Viewport.h"
+#include "Renderer/LightCollection.h"
 
 #include "Renderer/Camera/SceneCamera.h"
 
@@ -133,7 +134,7 @@
 #include "Scene/Components/ComponentSerializer.h"
 
 // /////////////////////////////////////////////////////////
-// -- Systems -------------------------------------------
+// -- Systems ----------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"

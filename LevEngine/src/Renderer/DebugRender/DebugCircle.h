@@ -1,8 +1,5 @@
 #pragma once
 #include "DebugShape.h"
-#include "Math/Matrix.h"
-#include "Math/Quaternion.h"
-
 
 namespace LevEngine
 {

@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "physx/include/PxPhysicsAPI.h"
-#include "Math/Vector3.h"
 
 namespace LevEngine
 {

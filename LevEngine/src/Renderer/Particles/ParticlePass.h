@@ -6,9 +6,6 @@
 #include "ParticleSimulationPass.h"
 #include "ParticleSortingPass.h"
 
-#include "Math/Color.h"
-#include "Math/Matrix.h"
-
 namespace LevEngine
 {
     struct ParticlesTextureArray;

@@ -7,7 +7,7 @@
 
 namespace LevEngine
 {
-	const Ref<Texture>& SkyboxAsset::GetTexture() const
+	Ref<Texture> SkyboxAsset::GetTexture() const
 	{
 		auto& texture = HDRTexture ? HDRTexture->GetTexture() : nullptr;
 		return texture;

@@ -5,11 +5,9 @@ PS_IN VSMain(VS_IN input)
 {
     PS_IN output;
 
-    float4 pos = float4(input.pos, 1.0f);
-    float4 fragPos = mul(pos, model);
+    float4 fragPos = mul(float4(input.pos, 1.0f), model);
 
     output.pos = mul(fragPos, viewProjection);
-    output.uv = input.uv;
     output.fragPos = fragPos.xyz;
     output.depth = mul(fragPos, cameraView).z;
 
@@ -52,6 +50,14 @@ float3 CalcLighting(float3 fragPos, float3 normal, float depth, float3 albedo, f
 {
     float4 cameraPos = { 0, 0, 0, 1 };
     float3 viewDir = normalize(cameraPos - fragPos);
+    
+    Light light = lights[LightIndex];
 
-    return CalcPointLightInViewSpace(pointLights[LightIndex], normal, fragPos, viewDir, albedo, metallic, roughness);
+    float3 lit = 0.0f;
+    if (light.type == POINT_LIGHT)
+        lit = CalcPointLightInViewSpace(light, normal, fragPos, viewDir, albedo, metallic, roughness);
+    else if (light.type == SPOT_LIGHT)
+        lit = CalcSpotLightInViewSpace(light, normal, fragPos, viewDir, albedo, metallic, roughness);
+
+    return lit;
 }

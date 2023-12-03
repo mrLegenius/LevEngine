@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <yaml-cpp/yaml.h>
 
 #include "Kernel/ClassCollection.h"
 #include "Scene/Entity.h"

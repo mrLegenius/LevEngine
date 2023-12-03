@@ -50,6 +50,13 @@
 #include "Kernel/Asserts.h"
 #include "Kernel/UUID.h"
 
+#include "Math/Vector2.h"
+#include "Math/Vector3.h"
+#include "Math/Vector4.h"
+#include "Math/Quaternion.h"
+#include "Math/Matrix.h"
+#include "Math/Color.h"
+
 #define LEV_PLATFORM_WINDOWS
 
 #ifdef LEV_PLATFORM_WINDOWS

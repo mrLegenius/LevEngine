@@ -1,5 +1,4 @@
 #pragma once
-#include "Math/Color.h"
 #include "Renderer/RenderPass.h"
 
 namespace LevEngine

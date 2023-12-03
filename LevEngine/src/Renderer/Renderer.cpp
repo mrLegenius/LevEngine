@@ -8,6 +8,7 @@
 #include "DeferredLightingPass.h"
 #include "DepthStencilState.h"
 #include "EndQueryPass.h"
+#include "LightCollection.h"
 #include "OpaquePass.h"
 #include "Particles/ParticlePass.h"
 #include "PipelineState.h"
@@ -45,6 +46,8 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION();
 
         Renderer3D::Init();
+
+        m_Lights = CreateRef<LightCollection>();
         
         const auto width = window.GetWidth();
         const auto height = window.GetHeight();
@@ -335,6 +338,7 @@ namespace LevEngine
 
     void DirectionalLightSystem(entt::registry& registry);
     void PointLightsSystem(entt::registry& registry, const RenderParams& params);
+    void SpotLightsSystem(entt::registry& registry, const RenderParams& params);
 
     void Renderer::Clear() const
     {
@@ -437,10 +441,7 @@ namespace LevEngine
 
         const auto renderParams = CreateRenderParams(mainCamera, const_cast<Transform*>(cameraTransform));
 
-        //TODO: Maybe move to its own pass?
-        DirectionalLightSystem(registry);
-        PointLightsSystem(registry, renderParams);
-        Renderer3D::UpdateLights();
+        m_Lights->Prepare(registry, renderParams);
 
         //TODO: Maybe move to its own pass?
         Renderer3D::SetCameraBuffer(renderParams.Camera, renderParams.CameraViewMatrix, renderParams.CameraPosition);
@@ -507,34 +508,5 @@ namespace LevEngine
         LocateCamera(registry, mainCamera, cameraTransform);
 
         Render(registry, mainCamera, cameraTransform);
-    }
-
-    void DirectionalLightSystem(entt::registry& registry)
-    {
-        LEV_PROFILE_FUNCTION();
-
-        const auto view = registry.group<>(entt::get<Transform, DirectionalLightComponent>);
-        for (const auto entity : view)
-        {
-            auto [transform, light] = view.get<Transform, DirectionalLightComponent>(entity);
-
-            Renderer3D::SetDirLight(transform.GetForwardDirection(), light);
-        }
-    }
-
-    void PointLightsSystem(entt::registry& registry, const RenderParams& params)
-    {
-        LEV_PROFILE_FUNCTION();
-
-        const auto view = registry.group<>(entt::get<Transform, PointLightComponent>);
-        for (const auto entity : view)
-        {
-            auto [transform, light] = view.get<Transform, PointLightComponent>(entity);
-
-            auto worldPosition = transform.GetWorldPosition();
-            auto positionViewSpace = Vector4::Transform(
-                Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0f), params.CameraViewMatrix);
-            Renderer3D::AddPointLights(positionViewSpace, worldPosition, light);
-        }
     }
 }

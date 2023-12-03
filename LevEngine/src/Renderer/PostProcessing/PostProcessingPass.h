@@ -1,9 +1,6 @@
 #pragma once
 #include "Renderer/RenderPass.h"
 
-#include "Math/Color.h"
-#include "Math/Vector2.h"
-
 namespace LevEngine
 {
     class RenderTarget;

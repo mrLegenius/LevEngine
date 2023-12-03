@@ -76,11 +76,6 @@ float4 ScreenToView(float4 screen)
 	return ClipToView(clip);
 }
 
-float CalcAttenuation(float range, float smoothness, float distance)
-{
-	return 1.0f - smoothstep(range * smoothness, range, distance);
-}
-
 float GetCascadeIndex(float depth)
 {
 	float absDepth = abs(depth);

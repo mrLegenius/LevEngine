@@ -16,13 +16,9 @@ namespace LevEngine
 {
     Ref<ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
     Ref<ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
-    Ref<ConstantBuffer> Renderer3D::m_LightningConstantBuffer;
     Ref<ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
 
     Matrix Renderer3D::m_ViewProjection;
-
-    PointLightData Renderer3D::s_PointLights[RenderSettings::MaxPointLights];
-    LightningData Renderer3D::s_LightningData;
 
     struct alignas(16) CameraData
     {
@@ -43,10 +39,7 @@ namespace LevEngine
 
         m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
         m_ModelConstantBuffer = ConstantBuffer::Create(sizeof MeshModelBufferData, 1);
-        m_LightningConstantBuffer = ConstantBuffer::Create(sizeof LightningData, 2);
         m_ScreenToViewParamsConstantBuffer = ConstantBuffer::Create(sizeof ScreenToViewParams, 5);
-
-        s_LightningData.GlobalAmbient = RenderSettings::GlobalAmbient;
     }
 
     void Renderer3D::SetCameraBuffer(const SceneCamera* camera, const Matrix& viewMatrix, const Vector3& position)
@@ -129,51 +122,41 @@ namespace LevEngine
         RenderCommand::DrawIndexed(cube->IndexBuffer);
     }
 
-    void Renderer3D::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)
-    {
-        LEV_PROFILE_FUNCTION();
-
-        s_LightningData.DirLight.Direction = dirLightDirection;
-        s_LightningData.DirLight.Color = static_cast<Vector3>(dirLight.color);
-    }
-
-    void Renderer3D::AddPointLights(const Vector4& positionViewSpace, const Vector3& position,
-                                    const PointLightComponent& pointLight)
-    {
-        LEV_PROFILE_FUNCTION();
-
-        if (s_LightningData.PointLightsCount >= RenderSettings::MaxPointLights)
-        {
-            Log::CoreWarning("Trying to add point light beyond maximum");
-            return;
-        }
-
-        PointLightData& pointLightData = s_LightningData.PointLightsData[s_LightningData.PointLightsCount];
-
-        pointLightData.PositionViewSpace = positionViewSpace;
-        pointLightData.Position = position;
-        pointLightData.Color = static_cast<Vector3>(pointLight.color);
-        pointLightData.Range = pointLight.Range;
-        pointLightData.Intensity = pointLight.Intensity;
-        pointLightData.Smoothness = 1 - pointLight.Smoothness;
-
-        s_LightningData.PointLightsCount++;
-    }
-
-    void Renderer3D::UpdateLights()
-    {
-        LEV_PROFILE_FUNCTION();
-
-        m_LightningConstantBuffer->SetData(&s_LightningData);
-        m_LightningConstantBuffer->Bind(ShaderType::Pixel);
-        s_LightningData.PointLightsCount = 0;
-    }
-
     void Renderer3D::RenderSphere(const Matrix& model, const Ref<Shader>& shader)
     {
         LEV_PROFILE_FUNCTION();
 
         static Ref<Mesh> mesh = Primitives::CreateSphere(20);
+
+        const MeshModelBufferData data = {model};
+        m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
+        m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+
+        mesh->Bind(shader);
+
+        RenderCommand::DrawIndexed(mesh->IndexBuffer);
+    }
+
+    void Renderer3D::RenderCone(const Matrix& model, const Ref<Shader>& shader)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        static Ref<Mesh> mesh = Primitives::CreateCone(1, 1, 20);
+
+        const MeshModelBufferData data = {model};
+        m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
+        m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+
+        mesh->Bind(shader);
+
+        RenderCommand::DrawIndexed(mesh->IndexBuffer);
+    }
+
+    void Renderer3D::RenderCube(const Matrix& model, const Ref<Shader>& shader)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        static Ref<Mesh> mesh = Primitives::CreateCube();
 
         const MeshModelBufferData data = {model};
         m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));

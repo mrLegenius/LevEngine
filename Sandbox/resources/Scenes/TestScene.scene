@@ -1,35 +1,5 @@
 Scene: TestScene
 Entities:
-  - Entity: 5320316740071404394
-    Tag: Fire Particles
-    Parent: 3187912942755661022
-    Transform:
-      Position: [0.186893448, -13.7385082, 2.861035e-06]
-      Rotation: [-0, 0, 0]
-      Scale: [0.5, 0.49999696, 0.49999696]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-8.5, 4.19999981, -1.60000002]
-        PositionB: [7.5, 0, 5.80000019]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0.988235295]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.699999988
-        StartSizeB: 0.899999976
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.200000003
-        LifeTimeB: 0.600000024
-        GravityScale: 0
-      Texture: 788160533914043389
-      MaxParticles: 100
-      Rate: 1000
   - Entity: 8940989960097836712
     Tag: Floor
     Parent: 11837398838170000115
@@ -57,7 +27,7 @@ Entities:
     Parent: 11837398838170000115
     Transform:
       Position: [-1.20967243e-05, 5.0001483, 25.5]
-      Rotation: [1.57078934, -1.77225115e-06, 3.14159083]
+      Rotation: [1.57078934, -1.6393825e-06, 3.14159083]
       Scale: [50, 0.999938488, 9.99950695]
     Rigidbody:
       Visualization Flag: false
@@ -77,8 +47,8 @@ Entities:
   - Entity: 13631027794021233931
     Tag: Skybox
     Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
+      Position: [0, 0, 2.37524009]
+      Rotation: [-0, 0, -0]
       Scale: [1, 1, 1]
     Skybox Renderer:
       Skybox: 17530323575141006770
@@ -223,18 +193,36 @@ Entities:
       Range: 10
       Smoothness: 0.75
       Intensity: 10
-  - Entity: 17529679922283546918
-    Tag: CyanLight
-    Parent: 6442536384003582315
+  - Entity: 5320316740071404394
+    Tag: Fire Particles
+    Parent: 3187912942755661022
     Transform:
-      Position: [22.7348824, 6.31169748, -22.457468]
+      Position: [0.186893448, -13.7385082, 2.861035e-06]
       Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Point Light:
-      Color: [0, 1, 0.94915247, 1]
-      Range: 10
-      Smoothness: 0.75
-      Intensity: 15
+      Scale: [0.5, 0.49999696, 0.49999696]
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [0, 4, 0]
+        VelocityB: [0, 8, 0]
+        RandomStartPosition: true
+        Position: [-8.5, 4.19999981, -1.60000002]
+        PositionB: [7.5, 0, 5.80000019]
+        RandomStartColor: false
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0, 0, 0.988235295]
+        EndColor: [1, 1, 1, 0]
+        RandomStartSize: true
+        StartSize: 0.699999988
+        StartSizeB: 0.899999976
+        EndSize: 0.100000001
+        RandomStartLifeTime: true
+        LifeTime: 0.200000003
+        LifeTimeB: 0.600000024
+        GravityScale: 0
+      Texture: 788160533914043389
+      MaxParticles: 100
+      Rate: 1000
   - Entity: 15067421120708529696
     Tag: BlueLight
     Parent: 6442536384003582315
@@ -247,3 +235,16 @@ Entities:
       Range: 20
       Smoothness: 0.75
       Intensity: 10
+  - Entity: 18248931055692955122
+    Tag: SpotLight
+    Parent: 6442536384003582315
+    Transform:
+      Position: [14.3904839, 14.9357433, -8.88151073]
+      Rotation: [-0.720606327, -0.549428582, -2.87914896]
+      Scale: [0.999968171, 0.999939978, 0.999969959]
+    Spot Light:
+      Color: [0, 1, 0.923728704, 1]
+      Range: 26.3999996
+      Angle: 19.7999992
+      Smoothness: 0.75
+      Intensity: 15.1000004

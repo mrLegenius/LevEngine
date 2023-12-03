@@ -1,4 +1,4 @@
-#include "Lightning.hlsl"
+#include "Lighting.hlsl"
 
 static const float pi = 3.14159265359;
 
@@ -160,7 +160,7 @@ float3 CalcDirLight(
 }
 
 float3 CalcPointLight(
-    PointLight light,
+    Light light,
     float3 normal, float3 fragPos, float3 viewDir,
     float3 albedo, float metallic, float roughness)
 {
@@ -176,8 +176,25 @@ float3 CalcPointLight(
     return Lo;
 }
 
+float3 CalcSpotLight(
+    Light light,
+    float3 normal, float3 fragPos, float3 viewDir,
+    float3 albedo, float metallic, float roughness)
+{
+    float3 lightDir = light.position - fragPos.xyz;
+    float distance = length(lightDir);
+    lightDir = lightDir / distance;
+
+    float spotIntensity = CalcSpotCone(light, lightDir);
+    float3 color = light.color * spotIntensity * light.intensity;
+    
+    float3 Lo = CalcPBR(lightDir, normal, viewDir, color, albedo, metallic, roughness);
+
+    return Lo;
+}
+
 float3 CalcPointLightInViewSpace(
-    PointLight light, 
+    Light light, 
     float3 normal, float3 fragPos, float3 viewDir,
     float3 albedo, float metallic, float roughness)
 {
@@ -189,6 +206,24 @@ float3 CalcPointLightInViewSpace(
     float3 color = light.color * attenuation * light.intensity;
 
     float3 Lo = CalcPBR(lightDir, normal, viewDir, color, albedo, metallic, roughness);
+
+    return Lo;
+}
+
+
+float3 CalcSpotLightInViewSpace(
+    Light light,
+    float3 normal, float3 fragPos, float3 viewDir,
+    float3 albedo, float metallic, float roughness)
+{
+    float3 lightDir = light.positionViewSpace - fragPos;
+    float distance = length(lightDir);
+    lightDir = lightDir / distance;
+
+    float spotIntensity = CalcSpotCone(light, lightDir);
+    float3 color = light.color * spotIntensity * light.intensity;
+    
+    float3 Lo = CalcPBR(lightDir.xyz, normal, viewDir, color, albedo, metallic, roughness);
 
     return Lo;
 }

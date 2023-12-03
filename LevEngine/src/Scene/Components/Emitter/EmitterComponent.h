@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include "Math/Color.h"
-#include "Math/Vector3.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine

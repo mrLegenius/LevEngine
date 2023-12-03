@@ -1,5 +1,4 @@
 #pragma once
-#include "Math/Vector3.h"
 
 namespace LevEngine
 {
@@ -14,5 +13,7 @@ namespace LevEngine
         static Ref<Mesh> CreateSphere(uint32_t sliceCount);
         static Ref<Mesh> CreateRing(Vector3 majorAxis, Vector3 minorAxis);
         static Ref<Mesh> CreateGrid(Vector3 xAxis, Vector3 yAxis, uint32_t xDivisions, uint32_t yDivisions);
+        //Z-aligned cone with an apex at 0
+        static Ref<Mesh> CreateCone(float radius, float height, uint32_t sliceCount);
     };
 }

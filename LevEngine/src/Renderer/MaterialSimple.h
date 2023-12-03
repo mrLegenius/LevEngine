@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Material.h"
-#include "Math/Color.h"
-#include "Math/Vector2.h"
 
 namespace LevEngine
 {

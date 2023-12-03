@@ -3,7 +3,6 @@
 #include "fmod_studio.hpp"
 #include "fmod_errors.h"
 #include "Kernel/Logger.h"
-#include "Math/Vector3.h"
 #include "Scene/Entity.h"
 #include <source_location>
 
