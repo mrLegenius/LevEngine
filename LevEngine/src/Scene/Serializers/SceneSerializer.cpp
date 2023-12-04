@@ -4,7 +4,6 @@
 #include "../Entity.h"
 #include "Assets/ScriptAsset.h"
 #include "Kernel/ClassCollection.h"
-#include "Physics/Components/Rigidbody.h"
 #include "Scene/Scene.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/Transform/Transform.h"
@@ -16,11 +15,8 @@ namespace LevEngine
 	{
 	}
 
-	void SceneSerializer::Serialize(const Path& filepath) const
+	void SceneSerializer::SerializeEntities(YAML::Emitter& out) const
 	{
-		YAML::Emitter out;
-		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << filepath.stem().string();
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 		m_Scene->ForEachEntity(
@@ -30,6 +26,10 @@ namespace LevEngine
 			});
 
 		out << YAML::EndSeq;
+	}
+
+	void SceneSerializer::SerializeScriptSystems(YAML::Emitter& out) const
+	{
 		out << YAML::Key << "Systems" << YAML::Value << YAML::BeginSeq;
 
 		auto scriptAssets = m_Scene->GetActiveScriptSystems();
@@ -42,27 +42,26 @@ namespace LevEngine
 		}
 		
 		out << YAML::EndSeq;
+	}
+
+	void SceneSerializer::Serialize(const Path& filepath) const
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "Scene" << YAML::Value << filepath.stem().string();
+		
+		SerializeEntities(out);
+		
+		SerializeScriptSystems(out);
+		
 		out << YAML::EndMap;
 
 		std::ofstream fout(filepath.c_str());
 		fout << out.c_str();
 	}
 
-	bool SceneSerializer::Deserialize(const String& filepath) const
+	void SceneSerializer::DeserializeEntities(const YAML::Node& data) const
 	{
-		YAML::Node data;
-		if (!LoadYAMLFileSafe(filepath.c_str(), data))
-		{
-			Log::CoreError("Failed to load scene data");
-			return false;
-		}
-
-		if (!data["Scene"])
-			return false;
-
-		auto sceneName = data["Scene"].as<String>();
-		Log::CoreTrace("Deserializing scene '{0}'", sceneName);
-
 		if (auto entities = data["Entities"])
 		{
 			std::unordered_map<UUID, Entity> entitiesMap;
@@ -104,7 +103,10 @@ namespace LevEngine
 				transform.SetParent(entitiesMap[relationships[uuid]], false);
 			}
 		}
+	}
 
+	void SceneSerializer::DeserializeScriptSystems(const YAML::Node& data) const
+	{
 		if (auto systems = data["Systems"])
 		{
 			for (const auto& system : systems)
@@ -117,6 +119,26 @@ namespace LevEngine
 				}
 			}
 		}
+	}
+
+	bool SceneSerializer::Deserialize(const String& filepath) const
+	{
+		YAML::Node data;
+		if (!LoadYAMLFileSafe(filepath.c_str(), data))
+		{
+			Log::CoreError("Failed to load scene data");
+			return false;
+		}
+
+		if (!data["Scene"])
+			return false;
+
+		auto sceneName = data["Scene"].as<String>();
+		Log::CoreTrace("Deserializing scene '{0}'", sceneName);
+
+		DeserializeEntities(data);
+
+		DeserializeScriptSystems(data);
 		
 		return true;
 	}
