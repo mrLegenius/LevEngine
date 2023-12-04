@@ -47,6 +47,11 @@ namespace LevEngine
         void SetCenterOfMass(Vector3 value);
         [[nodiscard]] Vector3 GetInertiaTensor() const;
         void SetInertiaTensor(Vector3 value);
+
+        [[nodiscard]] float GetMaxLinearVelocity() const;
+        void SetMaxLinearVelocity(float value);
+        [[nodiscard]] float GetMaxAngularVelocity() const;
+        void SetMaxAngularVelocity(float value);
         
         [[nodiscard]] float GetLinearDamping() const;
         void SetLinearDamping(float value);
@@ -105,23 +110,24 @@ namespace LevEngine
         
         physx::PxRigidActor* m_Actor = nullptr;
 
-        Type m_Type = Type::Dynamic;
-
         Vector3 m_TransformScale = Vector3::One;
         
         bool m_IsInitialized = false;
         bool m_IsVisualizationEnabled = false;
+
+        Type m_Type = Type::Dynamic;
+        
         bool m_IsKinematicEnabled = false;
         bool m_IsGravityEnabled = true;
         
-        //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
-        Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
-        
         float m_Mass = 1.0f;
-        float m_LinearDamping = 0.0f;
-        float m_AngularDamping = 0.05f;
         Vector3 m_CenterOfMass = Vector3::Zero;
         Vector3 m_InertiaTensor = Vector3::One;
+        float m_LinearDamping = 0.0f;
+        float m_AngularDamping = 0.05f;
+
+        float m_MaxLinearVelocity = 100.0f;
+        float m_MaxAngularVelocity = 100.0f;
         
         bool m_IsPosAxisXLocked = false;
         bool m_IsPosAxisYLocked = false;
@@ -129,5 +135,8 @@ namespace LevEngine
         bool m_IsRotAxisXLocked = false;
         bool m_IsRotAxisYLocked = false;
         bool m_IsRotAxisZLocked = false;
+
+        //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
+        Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
     };
 }

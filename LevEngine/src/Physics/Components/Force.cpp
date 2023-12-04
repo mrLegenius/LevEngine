@@ -18,14 +18,14 @@ namespace LevEngine
     }
 
 
-    bool Force::IsCompletedAction() const
+    bool Force::IsCompletedForce() const
     {
-        return m_IsCompletedAction;
+        return m_IsCompletedForce;
     }
 
-    void Force::CompleteAction(const bool flag)
+    void Force::CompleteForce(const bool flag)
     {
-        m_IsCompletedAction = flag;
+        m_IsCompletedForce = flag;
     }
     
 
@@ -63,17 +63,17 @@ namespace LevEngine
                     rigidDynamic->addForce(PhysicsUtils::FromVector3ToPxVec3(m_LinearForce), physx::PxForceMode::eFORCE);
                     rigidDynamic->addTorque(PhysicsUtils::FromVector3ToPxVec3(m_AngularForce), physx::PxForceMode::eFORCE);
                 }
-                else if (m_Type == Type::Impulse && !m_IsCompletedAction)
+                else if (m_Type == Type::Impulse && !m_IsCompletedForce)
                 {
                     rigidDynamic->addForce(PhysicsUtils::FromVector3ToPxVec3(m_LinearForce), physx::PxForceMode::eIMPULSE);
                     rigidDynamic->addTorque(PhysicsUtils::FromVector3ToPxVec3(m_AngularForce), physx::PxForceMode::eIMPULSE);
-                    m_IsCompletedAction = true;
+                    m_IsCompletedForce = true;
                 }
-                else if (m_Type == Type::Velocity && !m_IsCompletedAction)
+                else if (m_Type == Type::Velocity && !m_IsCompletedForce)
                 {
                     rigidDynamic->addForce(PhysicsUtils::FromVector3ToPxVec3(m_LinearForce), physx::PxForceMode::eVELOCITY_CHANGE);
                     rigidDynamic->addTorque(PhysicsUtils::FromVector3ToPxVec3(m_AngularForce), physx::PxForceMode::eVELOCITY_CHANGE);
-                    m_IsCompletedAction = true;
+                    m_IsCompletedForce = true;
                 }
                 else if (m_Type == Type::Acceleration)
                 {

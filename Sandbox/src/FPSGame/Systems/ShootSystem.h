@@ -55,9 +55,9 @@ namespace Sandbox
                     auto& force = projectile.AddComponent<Force>();
                     force.SetForceType(Force::Type::Impulse);
                     force.SetLinearForce(projectileParams.Speed * cameraTransform.GetForwardDirection());
-                    force.CompleteAction(false);
+                    force.CompleteForce(false);
 
-                    //Audio::PlayOneShot("event:/Shot", projectile);
+                    Audio::PlayOneShot("event:/Shot", projectile);
                 }
             }
         }

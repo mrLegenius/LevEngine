@@ -14,25 +14,27 @@ namespace Sandbox
 
             const auto prefab = ResourceManager::LoadAsset<PrefabAsset>("PlayerPrefab");
             const auto playerEntity = prefab->Instantiate(scene);
-
-            const auto& startPosition = Vector3(0.0f, 1.0f, 15.0f);
+            
             auto& transform = playerEntity.GetComponent<Transform>();
+            const auto& startPosition = Vector3(0.0f, 1.0f, 15.0f);
             transform.SetWorldPosition(startPosition);
 			
             auto& player = playerEntity.AddComponent<Player>();
+            player.Speed = 15.0f;
 
             auto& rigidbody = playerEntity.GetComponent<Rigidbody>();
+            rigidbody.SetLinearDamping(1.0f);
+            rigidbody.SetMaxLinearVelocity(30.0f);
             rigidbody.LockRotAxisX(true);
             rigidbody.LockRotAxisY(true);
             rigidbody.LockRotAxisZ(true);
             rigidbody.SetStaticFriction(0.5f);
             rigidbody.SetDynamicFriction(0.8f);
             rigidbody.SetRestitution(0.0f);
-            rigidbody.SetLinearDamping(1.0f);
 
-            // it's used for movement
+            // force is used to implement physics-based movement
             auto& force = playerEntity.AddComponent<Force>();
-            force.SetForceType(Force::Type::Velocity);
+            force.SetForceType(Force::Type::Impulse);
         }
     };
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 constexpr auto WALK_SPEED = 15.0f;
-constexpr auto SPRINT_SPEED = 25.0f;
+constexpr auto SPRINT_SPEED = 30.0f;
 constexpr auto JUMP_FORCE = 50.0f;
 
 namespace Sandbox
@@ -16,7 +16,7 @@ namespace Sandbox
             {
                 auto [transform, player, rigidbody, force] = playerView.get<Transform, Player, Rigidbody, Force>(entity);
                 
-                if (force.GetForceType() == Force::Type::Velocity)
+                if (force.GetForceType() == Force::Type::Impulse)
                 {
                     const auto cameraTransform = transform.GetChildren()[0].GetComponent<Transform>();
                     auto movement = Vector3::Zero;
@@ -62,7 +62,7 @@ namespace Sandbox
                             deltaTime * player.Speed * movement.z
                         )
                     );
-                    force.CompleteAction(false);
+                    force.CompleteForce(false);
                 }
             }
         }

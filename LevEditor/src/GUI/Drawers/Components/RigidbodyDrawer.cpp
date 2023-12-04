@@ -26,6 +26,10 @@ namespace LevEngine::Editor
                 EditorGUI::DrawFloatControl("Mass", BindGetter(&Rigidbody::GetMass, &component), BindSetter(&Rigidbody::SetMass, &component));
                 EditorGUI::DrawVector3Control("Center Of Mass", BindGetter(&Rigidbody::GetCenterOfMass, &component), BindSetter(&Rigidbody::SetCenterOfMass, &component));
                 EditorGUI::DrawVector3Control("Diagonal Inertia", BindGetter(&Rigidbody::GetInertiaTensor, &component), BindSetter(&Rigidbody::SetInertiaTensor, &component));
+
+                EditorGUI::DrawFloatControl("Max Linear Velocity", BindGetter(&Rigidbody::GetMaxLinearVelocity, &component), BindSetter(&Rigidbody::SetMaxLinearVelocity, &component));
+                EditorGUI::DrawFloatControl("Max Angular Velocity", BindGetter(&Rigidbody::GetMaxAngularVelocity, &component), BindSetter(&Rigidbody::SetMaxAngularVelocity, &component));
+                
                 EditorGUI::DrawFloatControl("Linear Damping", BindGetter(&Rigidbody::GetLinearDamping, &component), BindSetter(&Rigidbody::SetLinearDamping, &component));
                 EditorGUI::DrawFloatControl("Angular Damping", BindGetter(&Rigidbody::GetAngularDamping, &component), BindSetter(&Rigidbody::SetAngularDamping, &component));
                 

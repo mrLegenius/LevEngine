@@ -13,6 +13,7 @@
 
 #include "ProjectEditor.h"
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
+#include "Physics/Physics.h"
 #include "Renderer/RendererContext.h"
 #include "Scene/Systems/Physics/ForceUpdateSystem.h"
 #include "Scripting/ScriptingManager.h"
@@ -153,11 +154,10 @@ namespace LevEngine::Editor
         scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
         scene->RegisterUpdateSystem<AudioSourceInitSystem>();
         scene->RegisterUpdateSystem<AudioListenerInitSystem>();
-        
+
+        App::Get().GetPhysics().ClearAccumulator();
         scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
-
         scene->RegisterUpdateSystem<RigidbodyInitSystem>();
-
         scene->RegisterUpdateSystem<ForceUpdateSystem>();
         
         auto& registry = scene->GetRegistry();
