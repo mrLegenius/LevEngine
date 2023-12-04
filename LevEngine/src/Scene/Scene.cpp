@@ -6,6 +6,7 @@
 #include "Renderer/Renderer.h"
 
 #include "Entity.h"
+#include "Assets/ScriptAsset.h"
 #include "Components/Components.h"
 #include "Components/Camera/Camera.h"
 #include "Kernel/Application.h"
@@ -28,7 +29,8 @@ namespace LevEngine
 
         LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager.GetLuaState()), this);
 
-        ScriptingManager.RegisterSystems(this);
+        //TODO move this to new "BeginPlay" or "Init" function
+        //ScriptingManager.RegisterSystems(this);
     }
 
     void Scene::CleanupScene()
@@ -56,6 +58,31 @@ namespace LevEngine
     entt::registry& Scene::GetRegistry()
     {
         return m_Registry;
+    }
+
+    bool Scene::IsScriptSystemActive(const Ref<ScriptAsset>& scriptAsset) const
+    {
+        return  m_ScriptSystems.find(scriptAsset) != m_ScriptSystems.end();
+    }
+
+    void Scene::SetScriptSystemActive(const Ref<ScriptAsset>& scriptAsset, bool isActive)
+    {
+        if (isActive)
+        {
+            m_ScriptSystems.insert(scriptAsset);
+            return;
+        }
+
+        const auto it = m_ScriptSystems.find(scriptAsset);
+        if (it != m_ScriptSystems.end())
+        {
+            m_ScriptSystems.erase(it);
+        }
+    }
+
+    Set<Ref<ScriptAsset>> Scene::GetActiveScriptSystems() const
+    {
+        return m_ScriptSystems;
     }
 
     void Scene::RequestUpdates(const float deltaTime)

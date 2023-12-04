@@ -3,6 +3,7 @@
 
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
+#include "Scripting/ScriptingManager.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
@@ -30,6 +31,7 @@ namespace Sandbox
 
 		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
+		Application::Get().GetScriptingManager().LoadScripts();
 
 		//TODO: Remove hard coded project name
 		Project::Load("Sandbox.levproject");

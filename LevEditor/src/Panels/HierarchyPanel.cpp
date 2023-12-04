@@ -89,7 +89,7 @@ namespace LevEngine::Editor
 
 	void HierarchyPanel::CreatePrefab(const Entity entity, const Path& path)
 	{
-		if (const auto& asset = AssetDatabase::CreateAsset<PrefabAsset>(path))
+		if (const auto& asset = AssetDatabase::CreateNewAsset<PrefabAsset>(path))
 			asset->SaveEntity(entity);
 
 		Log::CoreInfo("Prefab '{0}' is created at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());

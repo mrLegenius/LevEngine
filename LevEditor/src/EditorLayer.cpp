@@ -11,9 +11,20 @@
 #include <Scene/Components/Audio/AudioSource.h>
 #include <Scene/Components/Audio/AudioListener.h>
 
-#include "ProjectEditor.h"
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
+#include "Essentials/MenuBar.h"
+#include "Panels/AssetBrowserPanel.h"
+#include "Panels/ConsolePanel.h"
+#include "Panels/DockSpace.h"
+#include "Panels/GamePanel.h"
+#include "Panels/HierarchyPanel.h"
+#include "Panels/PropertiesPanel.h"
+#include "Panels/ScriptsPanel.h"
+#include "Panels/SettingsPanel.h"
 #include "Panels/StatisticsPanel.h"
+#include "Panels/StatusBar.h"
+#include "Panels/Toolbar.h"
+#include "Panels/ViewportPanel.h"
 #include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor
@@ -122,6 +133,7 @@ namespace LevEngine::Editor
         m_Console->Render();
         m_Settings->Render();
         m_Statistics->Render();
+        m_ScriptsPanel->Render();
         m_MainToolbar->Render();
         m_MainStatusBar->Render();
     }
@@ -194,8 +206,7 @@ namespace LevEngine::Editor
 
         ResourceManager::Init(Project::GetRoot());
         AssetDatabase::ProcessAllAssets();
-        //TODO
-        //Application::Get().GetScriptingManager().LoadScripts(Project::GetRoot());
+        Application::Get().GetScriptingManager().LoadScripts();
 
         const auto startScene = Project::GetStartScene();
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))
@@ -212,6 +223,7 @@ namespace LevEngine::Editor
         m_MainToolbar = CreateRef<Toolbar>(m_MainMenuBar, [this]{ return m_SceneState; }, std::bind(&EditorLayer::OnPlayButtonClicked, this));
         m_DockSpace = CreateRef<DockSpace>(m_MainToolbar, m_MainMenuBar);
         m_Statistics = CreateRef<StatisticsPanel>();
+        m_ScriptsPanel = CreateRef<ScriptsPanel>();
 
         m_SceneEditor->AddMainMenuItems(m_MainMenuBar);
         m_ProjectEditor->AddMainMenuItems(m_MainMenuBar);

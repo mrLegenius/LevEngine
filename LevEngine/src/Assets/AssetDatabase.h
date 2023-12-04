@@ -31,8 +31,8 @@ namespace LevEngine
 
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid);
 
-		template<class T>
-		[[nodiscard]] static Ref<T> CreateAsset(const Path& path);
+		template<class T, class ...Args>
+		[[nodiscard]] static Ref<T> CreateNewAsset(const Path& path, Args ...args);
 
 		static void CreateFolder(const Path& path);
 
@@ -45,6 +45,9 @@ namespace LevEngine
 
 		template<class T>
 		[[nodiscard]] static Ref<T> GetAsset(const Path& path);
+
+		template<class T>
+		[[nodiscard]] static Vector<Ref<T>> GetAllAssetsOfClass();
 
 		static void RenameAsset(const Ref<Asset>& asset, const String& name);
 		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);

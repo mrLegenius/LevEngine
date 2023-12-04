@@ -1,5 +1,10 @@
 ﻿#pragma once
 
+namespace YAML
+{
+	class Emitter;
+	class Node;
+}
 namespace LevEngine
 {
 	class Scene;
@@ -15,6 +20,15 @@ namespace LevEngine
 
 		bool Deserialize(const String& filepath) const;
 		bool DeserializeRuntime(const String& filepath);
+
+	private:
+		
+		void SerializeEntities(YAML::Emitter& out) const;
+		void SerializeScriptSystems(YAML::Emitter& out) const;
+		
+		void DeserializeEntities(const YAML::Node& data) const;
+		void DeserializeScriptSystems(const YAML::Node& data) const;
+		
 	private:
 		Ref<Scene> m_Scene;
 	};

@@ -13,8 +13,8 @@ namespace LevEngine::Editor
         void DrawContent() override;
 
     private:
-        template<typename Asset>
-        void DrawCreateMenu(const String& label, const String& defaultName) const;
+        template <class AssetType, class ... Args>
+        void DrawCreateMenu(const String& label, const String& defaultName, Args ... args) const;
 
         Path m_CurrentDirectory;
     };

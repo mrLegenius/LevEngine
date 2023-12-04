@@ -6,6 +6,7 @@
 #include "MetaUtilities.h"
 #include "MathLuaBindings.h"
 #include "LuaComponentsBinder.h"
+#include "Assets/ScriptAsset.h"
 
 #include "Scene/Scene.h"
 #include "Scene/Serializers/SerializerUtils.h"
@@ -16,9 +17,6 @@
 #define RegisterComponent(x)    LuaComponentsBinder::Create##x##LuaBind(*m_Lua);\
                                 LuaComponentsBinder::RegisterMetaComponent<x>();\
                                 RegisterMetaComponent<x>();
-
-const String ScriptsDatabaseFilename = "ScriptsDatabase.asset";
-const String ScriptsDatabaseDir = "scripts";
 
 namespace LevEngine::Scripting
 {
@@ -32,8 +30,6 @@ namespace LevEngine::Scripting
         
         RegisterComponent(Transform);
         RegisterComponent(CameraComponent);
-
-        LoadScripts("");
     }
 
     ScriptingManager::ScriptingManager()
@@ -41,29 +37,37 @@ namespace LevEngine::Scripting
         m_Lua = CreateRef<sol::state>();
     }
 
-    bool ScriptingManager::LoadScripts(const Path& projectPath)
+    bool ScriptingManager::LoadScripts()
     {
         try
         {
-            YAML::Node data = YAML::LoadFile((projectPath / ScriptsDatabaseFilename.c_str()).string().c_str());
-
-            if (!data["Scripts"]) return true;
-
-            auto scripts = data["Scripts"];
-
-            const Path scriptsDir = (projectPath / ScriptsDatabaseDir.c_str());
+            auto scripts = AssetDatabase::GetAllAssetsOfClass<ScriptAsset>();
 
             for (const auto& script : scripts)
             {
-	            auto scriptName = script.as<String>();
+                auto scriptName = script->GetName();
                 try
                 {
-                    auto result = m_Lua->safe_script_file((scriptsDir / (scriptName + ".lua").c_str()).string().c_str());
+                    auto result = m_Lua->safe_script_file(script->GetPath().string());
                     Log::CoreInfo("Loading lua script: {0}", scriptName);
-
-                    sol::table system = (*m_Lua)[scriptName.c_str()];
                     
-                    m_Systems.emplace(eastl::make_pair(scriptName, eastl::move(system)));
+                    sol::optional<sol::table> luaScriptTable = (*m_Lua)[scriptName.c_str()];
+                    if (luaScriptTable == sol::nullopt)
+                    {
+                        Log::CoreError("Error loading lua script {0}: lua table should be named as lua script file", scriptName);
+                    }
+                    else
+                    {
+                        switch (script->GetType()) {
+                        case ScriptAsset::Type::System:
+                            m_Systems.emplace(make_pair(script, eastl::move(luaScriptTable.value())));
+                            break;
+                        case ScriptAsset::Type::Component:
+                            m_Components.emplace(make_pair(script, eastl::move(luaScriptTable.value())));
+                            break;
+                        default: ;
+                        }
+                    }                    
                 }
                 catch (const sol::error& err)
                 {
@@ -83,11 +87,17 @@ namespace LevEngine::Scripting
 
     void ScriptingManager::RegisterSystems(Scene* scene)
     {
-        for (const auto& [name, system] : m_Systems)
+        for (const auto& [scriptAsset, luaSystemTable] : m_Systems)
         {
+            if (!scene->IsScriptSystemActive(scriptAsset))
+            {
+                continue;
+            }
+            
+            auto name = scriptAsset->GetName();
             auto scriptingEntity = scene->CreateEntity("ScriptingEntity_" + name);
                 
-            if (sol::optional<sol::protected_function> init = system["init"]; 
+            if (sol::optional<sol::protected_function> init = luaSystemTable["init"]; 
                 init != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingInitComponent>();
@@ -95,7 +105,7 @@ namespace LevEngine::Scripting
             }
 
                 
-            if (sol::optional<sol::protected_function> update = system["update"]; 
+            if (sol::optional<sol::protected_function> update = luaSystemTable["update"]; 
                 update != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingUpdateComponent>();
@@ -103,7 +113,7 @@ namespace LevEngine::Scripting
             }
 
                 
-            if (sol::optional<sol::protected_function> lateUpdate = system["lateUpdate"]; 
+            if (sol::optional<sol::protected_function> lateUpdate = luaSystemTable["lateUpdate"]; 
                 lateUpdate != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingLateUpdateComponent>();

@@ -2,7 +2,9 @@
 
 #include <sol/sol.hpp>
 
-namespace LevEngine {
+namespace LevEngine
+{
+	class ScriptAsset;
 	class Scene;
 
 	namespace Scripting
@@ -13,7 +15,7 @@ namespace LevEngine {
 		public:
 			ScriptingManager();
 			void Init();
-			bool LoadScripts(const Path& projectPath);
+			bool LoadScripts();
 
 			void RegisterSystems(Scene* scene);
 
@@ -27,7 +29,8 @@ namespace LevEngine {
 			Ref<sol::state> GetLuaState();
 
 		private:
-			UnorderedMap<String, sol::table> m_Systems;
+			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Systems;
+			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Components;
 
 			Ref<sol::state> m_Lua;
 		};
