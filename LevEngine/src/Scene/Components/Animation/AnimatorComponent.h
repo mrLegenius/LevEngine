@@ -2,7 +2,9 @@
 #include "DataTypes/Vector.h"
 #include "EASTL/array.h"
 #include "Math/Matrix.h"
+#include "Renderer/3D/AnimationConstants.h"
 #include "Scene/Components/TypeParseTraits.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
@@ -18,6 +20,7 @@ namespace LevEngine
 
         void Init();
         bool IsInitialized() const;
+        void ResetInit();
 
         const Ref<AnimationAsset>& GetAnimationClipConst() const;
         Ref<AnimationAsset>& GetAnimationClip();
@@ -29,11 +32,12 @@ namespace LevEngine
         void PlayAnimation() const;
         void UpdateAnimation(float deltaTime) const;
 
-        [[nodiscard]] eastl::array<Matrix, 100> GetFinalBoneMatrices() const;
+        [[nodiscard]] eastl::array<Matrix, AnimationConstants::MaxBoneCount> GetFinalBoneMatrices() const;
+        void DrawDebugPose(const Vector3& meshPosition);
+        void DrawDebugSkeleton(const Vector3& meshPosition);
 
     private:        
         Ref<Animator> m_Animator;
-        Ref<AnimationAsset> m_AnimationClip;
         bool m_PlayOnInit{};
         bool m_IsInited{};
     };

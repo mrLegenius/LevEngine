@@ -9,6 +9,7 @@
 #include "Project.h"
 #include "Selection.h"
 #include "GUI/ScopedGUIHelpers.h"
+#include "Scene/Systems/Animation/AnimatorDebugSystem.h"
 
 namespace LevEngine::Editor
 {
@@ -89,6 +90,9 @@ namespace LevEngine::Editor
         }
         
         Application::Get().GetWindow().EnableCursor();
+
+        auto& scene = SceneManager::GetActiveScene();
+        scene->RegisterUpdateSystem<AnimatorDebugSystem>();
     }
 
     void EditorLayer::OnEvent(Event& event)
@@ -116,6 +120,7 @@ namespace LevEngine::Editor
         {
 	        case SceneState::Edit:
 	        {
+	            activeScene->OnUpdate(deltaTime); // TODO: remove me
 	            break;
 	        }
 	        case SceneState::Play:

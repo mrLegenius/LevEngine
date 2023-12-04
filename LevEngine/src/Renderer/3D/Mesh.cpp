@@ -77,7 +77,7 @@ void Mesh::Init()
 	if (m_BoneIds.size())
 	{
 		const auto buffer = VertexBuffer::Create(&m_BoneIds[0][0], static_cast<uint32_t>(m_BoneIds.size()), 
-			sizeof(Array<float, AnimationConstants::MaxBoneInfluence>));
+			sizeof(Array<int, AnimationConstants::MaxBoneInfluence>));
 
 		AddVertexBuffer(BufferBinding("BONEIDS", 0), buffer);
 	}
@@ -113,18 +113,13 @@ void Mesh::SetVertexBoneDataToDefault(int vertexIdx)
 {
 	for (int i = 0; i < AnimationConstants::MaxBoneInfluence; i++)
 	{
-		while (m_BoneIds.size() <= vertexIdx)
-		{
-			m_BoneIds.emplace_back(Array<float, AnimationConstants::MaxBoneInfluence>());
-		}
-
-		while (m_Weights.size() <= vertexIdx)
-		{
-			m_Weights.emplace_back(Array<float, AnimationConstants::MaxBoneInfluence>());
-		}
-		
-		m_BoneIds[vertexIdx][i] = -1;
+		m_BoneIds[vertexIdx][i] = 0;
 		m_Weights[vertexIdx][i] = 0.0f;
+	}
+
+	if constexpr (AnimationConstants::MaxBoneInfluence > 0)
+	{
+		m_Weights[vertexIdx][0] = 1.0f;	
 	}
 }
 
@@ -132,13 +127,19 @@ void Mesh::SetVertexBoneData(int vertexIdx, int boneID, float weight)
 {
 	for (int i = 0; i < AnimationConstants::MaxBoneInfluence; ++i)
 	{
-		if (m_BoneIds[vertexIdx][i] < 0)
+		if (m_Weights[vertexIdx][i] < Math::FloatEpsilon
+			|| (i == 0 && m_Weights[vertexIdx][i] + Math::FloatEpsilon > 1.0f))
 		{
-			m_Weights[vertexIdx][i] = weight;
 			m_BoneIds[vertexIdx][i] = boneID;
+			m_Weights[vertexIdx][i] = weight;
 			break;
 		}
 	}
 }
 
+void Mesh::ResizeBoneArrays(size_t size)
+{
+	m_BoneIds.resize(size, Array<int, AnimationConstants::MaxBoneInfluence>());
+	m_Weights.resize(size, Array<float, AnimationConstants::MaxBoneInfluence>());
+}
 }

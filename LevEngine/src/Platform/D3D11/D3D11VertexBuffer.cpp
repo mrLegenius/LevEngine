@@ -44,6 +44,26 @@ D3D11VertexBuffer::D3D11VertexBuffer(const float* data, const uint32_t count, co
 	LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create Vertex Buffer")
 }
 
+D3D11VertexBuffer::D3D11VertexBuffer(const int* data, const uint32_t count, const uint32_t stride) : VertexBuffer(count, stride)
+{
+	D3D11_BUFFER_DESC vertexBufDesc = {};
+	vertexBufDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufDesc.CPUAccessFlags = 0;
+	vertexBufDesc.MiscFlags = 0;
+	vertexBufDesc.StructureByteStride = 0;
+	vertexBufDesc.ByteWidth = count * stride;
+
+	D3D11_SUBRESOURCE_DATA vertexData = {};
+	vertexData.pSysMem = data;
+	vertexData.SysMemPitch = 0;
+	vertexData.SysMemSlicePitch = 0;
+
+	const auto res = device->CreateBuffer(&vertexBufDesc, &vertexData, &m_Buffer);
+
+	LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create Vertex Buffer")
+}
+
 D3D11VertexBuffer::~D3D11VertexBuffer()
 {
 	if (m_Buffer)

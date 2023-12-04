@@ -70,6 +70,7 @@ public:
 
 	void SetVertexBoneDataToDefault(int vertexIdx);
 	void SetVertexBoneData(int vertexIdx, int boneID, float weight);
+	void ResizeBoneArrays(size_t size);
 
 	Ref<IndexBuffer> IndexBuffer;
 
@@ -86,7 +87,7 @@ private:
 	Vector<Color> colors;
 
 	// Mesh animation data
-	Vector<Array<float, AnimationConstants::MaxBoneInfluence>> m_BoneIds;
+	Vector<Array<int, AnimationConstants::MaxBoneInfluence>> m_BoneIds;
 	Vector<Array<float, AnimationConstants::MaxBoneInfluence>> m_Weights;
 	UnorderedMap<String, BoneInfo> m_BoneInfoMap;
 	int m_BoneCounter = 0;

@@ -10,6 +10,7 @@ class D3D11VertexBuffer final : public VertexBuffer
 public:
 	D3D11VertexBuffer(uint32_t count, uint32_t stride);
 	D3D11VertexBuffer(const float* data, uint32_t count, uint32_t stride);
+	D3D11VertexBuffer(const int* data, uint32_t count, uint32_t stride);
 	~D3D11VertexBuffer() override;
 
 	void Bind(uint32_t slot = 0) const override;

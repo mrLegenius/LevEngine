@@ -11,7 +11,7 @@ namespace LevEngine
 
         for (const auto entity : view)
         {
-            auto animatorComponent = view.get<AnimatorComponent>(entity);
+            AnimatorComponent& animatorComponent = view.get<AnimatorComponent>(entity);
 
             if (!animatorComponent.IsInitialized())
             {

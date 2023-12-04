@@ -10,10 +10,12 @@ namespace LevEngine
 {
     struct NodeData
     {
-        Matrix transformation;
+        Matrix originalTransform;
+        Matrix localTransform;
+        Matrix globalTransform;
         String name;
-        unsigned int childrenCount;
-        Vector<NodeData> children;
+        Vector<NodeData*> children;
+        NodeData* parent;
     };
 
     class Animation
@@ -26,16 +28,18 @@ namespace LevEngine
 
         [[nodiscard]] double GetTicksPerSecond() const;
         [[nodiscard]] double GetDuration() const;
-        [[nodiscard]] const NodeData& GetRootNode() const;
+        [[nodiscard]] NodeData* GetRootNode();
         [[nodiscard]] const UnorderedMap<String, BoneInfo>& GetBoneIDMap() const;
         [[nodiscard]] const String& GetName() const;
+        Matrix& GetRootInverseTransform();
 
     private:
         double m_Duration{};
         double m_TicksPerSecond{};
         Vector<Bone> m_Bones{};
-        NodeData m_RootNode{};
+        NodeData* m_RootNode = new NodeData();
         UnorderedMap<String, BoneInfo> m_BoneInfoMap{};
         String m_Name;
+        Matrix m_RootInverseTransform;
     };
 }

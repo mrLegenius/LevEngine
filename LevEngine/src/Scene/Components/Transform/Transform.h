@@ -62,7 +62,7 @@ namespace LevEngine
 		}
 
 		[[nodiscard]] const Vector<Entity>& GetChildren() const { return children; }
-		[[nodiscard]] uint32_t GetChildrenCount() const { return children.size(); }
+		[[nodiscard]] size_t GetChildrenCount() const { return children.size(); }
 
 		[[nodiscard]] Entity GetParent() const { return parent; }
 		void RemoveChild(const Entity entity)

@@ -34,7 +34,17 @@ namespace LevEngine
 		static Ref<Animation> LoadAnimation(const Path& path, const Ref<Mesh>& mesh, int animationIdx)
 		{
 			Assimp::Importer importer;
-			const aiScene* scene = importer.ReadFile(path.string(), aiProcess_Triangulate);
+			const aiScene* scene = importer.ReadFile(path.string(),
+				aiProcess_CalcTangentSpace
+				| aiProcess_Triangulate
+				| aiProcess_RemoveRedundantMaterials
+				| aiProcess_JoinIdenticalVertices
+				| aiProcess_GenSmoothNormals
+				//| aiProcess_SortByPType // Do not split mesh to sub meshes with different primitives types
+				//| aiProcess_FlipWindingOrder
+				//| aiProcess_ImproveCacheLocality // It may help with rendering large models
+				| aiProcess_FixInfacingNormals //May help to fix inwards normals
+			);
 
 			LEV_CORE_ASSERT(scene && scene->mRootNode);
 
@@ -49,27 +59,31 @@ namespace LevEngine
 			Ref<Animation> resultAnimation = CreateRef<Animation>();
 
 			resultAnimation->m_Duration = animation->mDuration;
-			resultAnimation->m_TicksPerSecond = animation->mTicksPerSecond;
+			resultAnimation->m_TicksPerSecond = animation->mTicksPerSecond != 0.0 ? animation->mTicksPerSecond : 25.0;
 			resultAnimation->m_Name = animation->mName.C_Str();
-			ReadHeirarchyData(resultAnimation, resultAnimation->m_RootNode, scene->mRootNode);
+			NodeData* rootNode = resultAnimation->m_RootNode;
+			ReadHeirarchyData(resultAnimation, rootNode, scene->mRootNode);
 			ReadMissingBones(resultAnimation, animation, mesh);
+
+			resultAnimation->m_RootInverseTransform = rootNode->localTransform.Invert();
 
 			return resultAnimation;
 		}
 
-		static void ReadHeirarchyData(const Ref<Animation>& resultAnimation, NodeData& dest, const aiNode* src)
+		static void ReadHeirarchyData(const Ref<Animation>& resultAnimation, NodeData* dest, const aiNode* src)
 		{
 			LEV_CORE_ASSERT(src);
 
-			dest.name = src->mName.data;
-			dest.transformation = AssimpConverter::ToMatrix(src->mTransformation);
-			dest.childrenCount = src->mNumChildren;
+			dest->name = src->mName.data;
+			dest->originalTransform = AssimpConverter::ToMatrix(src->mTransformation, true);
+			dest->localTransform = dest->originalTransform;
 
 			for (unsigned int i = 0; i < src->mNumChildren; i++)
 			{
-				NodeData newData;
+				NodeData* newData = new NodeData();
+				newData->parent = dest;
 				ReadHeirarchyData(resultAnimation, newData, src->mChildren[i]);
-				dest.children.push_back(newData);
+				dest->children.emplace_back(newData);
 			}
 		}
 
@@ -84,7 +98,7 @@ namespace LevEngine
 			for (unsigned int i = 0; i < size; i++)
 			{
 				const auto channel = animation->mChannels[i];
-				String boneName = channel->mNodeName.data;
+				const String& boneName = channel->mNodeName.data;
 
 				if (boneInfoMap.count(boneName) == 0)
 				{

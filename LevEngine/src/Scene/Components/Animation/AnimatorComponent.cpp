@@ -10,22 +10,21 @@ namespace LevEngine
     AnimatorComponent::AnimatorComponent()
     {
         m_Animator = CreateRef<Animator>();
-        m_AnimationClip = nullptr;
     }
 
     const Ref<AnimationAsset>& AnimatorComponent::GetAnimationClipConst() const
     {
-        return m_AnimationClip;
+        return m_Animator->GetAnimationClip();
     }
 
     Ref<AnimationAsset>& AnimatorComponent::GetAnimationClip()
     {
-        return m_AnimationClip;
+        return m_Animator->GetAnimationClip();
     }
 
     void AnimatorComponent::SetAnimationClip(const Ref<AnimationAsset>& animationClip)
     {
-        m_AnimationClip = animationClip;
+        m_Animator->SetAnimationClip(animationClip);
     }
 
     bool AnimatorComponent::GetPlayOnInit() const
@@ -40,7 +39,7 @@ namespace LevEngine
 
     void AnimatorComponent::PlayAnimation() const
     {
-        m_Animator->PlayAnimation(m_AnimationClip->GetAnimation());
+        m_Animator->PlayAnimation();
     }
 
     void AnimatorComponent::UpdateAnimation(float deltaTime) const
@@ -51,6 +50,16 @@ namespace LevEngine
     Array<Matrix, AnimationConstants::MaxBoneCount> AnimatorComponent::GetFinalBoneMatrices() const
     {
         return m_Animator->GetFinalBoneMatrices();
+    }
+
+    void AnimatorComponent::DrawDebugPose(const Vector3& meshPosition)
+    {
+        m_Animator->DrawDebugPose(meshPosition);
+    }
+
+    void AnimatorComponent::DrawDebugSkeleton(const Vector3& meshPosition)
+    {
+        m_Animator->DrawDebugSkeleton(meshPosition);
     }
 
     void AnimatorComponent::Init()
@@ -66,6 +75,11 @@ namespace LevEngine
     bool AnimatorComponent::IsInitialized() const
     {
         return m_IsInited;
+    }
+
+    void AnimatorComponent::ResetInit()
+    {
+        m_IsInited = false;
     }
 
     class AnimatorComponentSerializer final
@@ -88,6 +102,8 @@ namespace LevEngine
             {
                 component.SetPlayOnInit(playOnInitNode.as<bool>());
             }
+
+            component.ResetInit();
         }
 
     private:

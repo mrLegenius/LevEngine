@@ -2,6 +2,7 @@
 #include "AnimatorUpdateSystem.h"
 
 #include "Scene/Components/Animation/AnimatorComponent.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
@@ -11,7 +12,7 @@ namespace LevEngine
 
         for (const auto entity : view)
         {
-            auto animatorComponent = view.get<AnimatorComponent>(entity);
+            AnimatorComponent& animatorComponent = view.get<AnimatorComponent>(entity);
             animatorComponent.UpdateAnimation(deltaTime);
         }
     }

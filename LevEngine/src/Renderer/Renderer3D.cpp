@@ -82,7 +82,6 @@ void Renderer3D::DrawMesh(const Matrix& model, const Array<Matrix, AnimationCons
     mesh->Bind(shader);
 
     const MeshModelBufferData data = { model, model.Transpose().Invert(), finalBoneMatrices };
-    Log::CoreInfo("{}", sizeof(MeshModelBufferData));
     m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
     m_ModelConstantBuffer->Bind(ShaderType::Vertex);
 

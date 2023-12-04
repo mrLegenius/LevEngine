@@ -64,8 +64,7 @@ public:
 
 	static void ParseMesh(const aiNode* node, const aiScene* scene, Ref<Mesh>& resultMesh, Matrix cumulativeTransform)
 	{
-		Matrix currentNodeTransform = AssimpConverter::ToMatrix(node->mTransformation);
-		currentNodeTransform = currentNodeTransform.Transpose();
+		const Matrix currentNodeTransform = AssimpConverter::ToMatrix(node->mTransformation, true);
 		cumulativeTransform *= currentNodeTransform;
 
 		for (int i = 0; i < node->mNumMeshes; ++i)
@@ -75,7 +74,8 @@ public:
 	
 			const size_t nvertices = mesh->mNumVertices;
 			const aiVector3D* vertices = mesh->mVertices;
-			const uint32_t previousVerticesCount = resultMesh->GetVerticesCount();
+			const uint32_t firstVertexId = resultMesh->GetVerticesCount(); // offset to first vertex in current aiMesh
+			resultMesh->ResizeBoneArrays(firstVertexId + nvertices);
 
 			for (size_t vertexIdx = 0; vertexIdx < nvertices; vertexIdx++)
 			{
@@ -101,15 +101,15 @@ public:
 				resultMesh->AddBiTangent(biTangent);
 			}
 
-			ExtractBoneWeightForVertices(resultMesh, mesh);
+			ExtractBoneWeightForVertices(resultMesh, mesh, firstVertexId);
 
 			const size_t nFaces = mesh->mNumFaces;
 			const aiFace* meshFaces = mesh->mFaces;
 			for (size_t faceIdx = 0; faceIdx < nFaces; faceIdx++)
 			{
-				resultMesh->AddIndex(meshFaces[faceIdx].mIndices[0] + previousVerticesCount);
-				resultMesh->AddIndex(meshFaces[faceIdx].mIndices[1] + previousVerticesCount);
-				resultMesh->AddIndex(meshFaces[faceIdx].mIndices[2] + previousVerticesCount);
+				resultMesh->AddIndex(meshFaces[faceIdx].mIndices[0] + firstVertexId);
+				resultMesh->AddIndex(meshFaces[faceIdx].mIndices[1] + firstVertexId);
+				resultMesh->AddIndex(meshFaces[faceIdx].mIndices[2] + firstVertexId);
 			}
 		}
 
@@ -119,7 +119,13 @@ public:
 		}
 	}
 
-	static void ExtractBoneWeightForVertices(Ref<Mesh>& resultMesh, const aiMesh* mesh)
+	/*
+	 * <params>
+	 * firstVertexId: ID offset to a first vertex in current aiMesh.
+	 * Assimp stores meshes in hierarchy, but we flatten them to one mesh, so we require offsets.
+	 * </params>
+	 */
+	static void ExtractBoneWeightForVertices(Ref<Mesh>& resultMesh, const aiMesh* mesh, const uint32_t firstVertexId)
 	{
 		for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
 		{
@@ -133,8 +139,8 @@ public:
 				int boneCount = resultMesh->GetBoneCount();
 
 				newBoneInfo.id = boneCount;
-				newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix);
-
+				newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix, true);
+				
 				boneInfoMap[boneName] = newBoneInfo;
 				boneID = boneCount;
 				boneCount++;
@@ -153,9 +159,9 @@ public:
 
 			for (unsigned int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
 			{
-				const unsigned int vertexId = weights[weightIndex].mVertexId;
+				const unsigned int vertexId = weights[weightIndex].mVertexId + firstVertexId;
 				const float weight = weights[weightIndex].mWeight;
-				LEV_CORE_ASSERT(vertexId <= resultMesh->GetVerticesCount())
+				LEV_CORE_ASSERT(vertexId < resultMesh->GetVerticesCount())
 				resultMesh->SetVertexBoneData(vertexId, boneID, weight);
 			}
 		}

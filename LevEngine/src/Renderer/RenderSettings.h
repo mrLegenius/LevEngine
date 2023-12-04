@@ -25,8 +25,14 @@ struct RenderSettings
 	inline static RendererAPI RendererAPI = RendererAPI::D3D11;
 
 	inline static bool UseFrustumCulling = true;
+
+	static constexpr bool EnableShaderDebug =
+#ifdef _DEBUG
+	true;
+#else
+	false;
+#endif
 	
-	static constexpr bool EnableShaderDebug = false;
 	static constexpr uint32_t ShadowMapSlot = 9;
 	static constexpr uint32_t MaterialSlot = 4;
 

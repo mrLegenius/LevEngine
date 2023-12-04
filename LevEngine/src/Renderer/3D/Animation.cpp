@@ -31,7 +31,7 @@ namespace LevEngine
         return m_Duration;
     }
 
-    const NodeData& Animation::GetRootNode() const
+    NodeData* Animation::GetRootNode()
     {
         return m_RootNode;
     }
@@ -44,6 +44,11 @@ namespace LevEngine
     const String& Animation::GetName() const
     {
         return m_Name;
+    }
+
+    Matrix& Animation::GetRootInverseTransform()
+    {
+        return m_RootInverseTransform;
     }
 }
 

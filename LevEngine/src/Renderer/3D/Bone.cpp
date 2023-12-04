@@ -8,12 +8,9 @@ namespace LevEngine
     Bone::Bone(const String& name, int ID, const aiNodeAnim* channel)
         :
         m_Name(name),
-        m_ID(ID),
-        m_LocalTransform(Matrix::Identity)
+        m_ID(ID)
     {
-        m_NumPositions = channel->mNumPositionKeys;
-
-        for (int positionIndex = 0; positionIndex < m_NumPositions; ++positionIndex)
+        for (unsigned int positionIndex = 0; positionIndex < channel->mNumPositionKeys; ++positionIndex)
         {
             aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
             double timeStamp = channel->mPositionKeys[positionIndex].mTime;
@@ -23,113 +20,118 @@ namespace LevEngine
             m_Positions.push_back(data);
         }
 
-        m_NumRotations = channel->mNumRotationKeys;
-        for (int rotationIndex = 0; rotationIndex < m_NumRotations; ++rotationIndex)
+        for (unsigned int rotationIndex = 0; rotationIndex < channel->mNumRotationKeys; ++rotationIndex)
         {
             aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
-            float timeStamp = channel->mRotationKeys[rotationIndex].mTime;
+            double timeStamp = channel->mRotationKeys[rotationIndex].mTime;
             KeyRotation data;
             data.orientation = AssimpConverter::ToQuaternion(aiOrientation);
             data.timeStamp = timeStamp;
             m_Rotations.push_back(data);
         }
 
-        m_NumScalings = channel->mNumScalingKeys;
-        for (int keyIndex = 0; keyIndex < m_NumScalings; ++keyIndex)
+        for (unsigned int scaleIndex = 0; scaleIndex < channel->mNumScalingKeys; ++scaleIndex)
         {
-            aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
-            float timeStamp = channel->mScalingKeys[keyIndex].mTime;
+            aiVector3D scale = channel->mScalingKeys[scaleIndex].mValue;
+            double timeStamp = channel->mScalingKeys[scaleIndex].mTime;
             KeyScale data;
             data.scale = AssimpConverter::ToVector3(scale);
             data.timeStamp = timeStamp;
             m_Scales.push_back(data);
         }
+
+        // Set bone to starting pose
+        Update(0.0f);
     }
 
     /*interpolates  b/w positions,rotations & scaling keys based on the curren time of
     the animation and prepares the local transformation matrix by combining all keys
-    tranformations*/
+    transformations*/
     void Bone::Update(float animationTime)
     {
-        Matrix translation = InterpolatePosition(animationTime);
-        Matrix rotation = InterpolateRotation(animationTime);
-        Matrix scale = InterpolateScaling(animationTime);
-        m_LocalTransform = translation * rotation * scale;
+        const Matrix translation = InterpolatePosition(animationTime);
+        const Matrix rotation = InterpolateRotation(animationTime);
+        const Matrix scale = InterpolateScaling(animationTime);
+        m_LocalTransform = scale * rotation * translation;
     }
 
-    Matrix Bone::GetLocalTransform() { return m_LocalTransform; }
-    String Bone::GetBoneName() const { return m_Name; }
-    int Bone::GetBoneID() { return m_ID; }
+    const Matrix& Bone::GetLocalTransform() const { return m_LocalTransform; }
+    const String& Bone::GetBoneName() const { return m_Name; }
+    int Bone::GetBoneID() const { return m_ID; }
 
 
     /* Gets the current index on mKeyPositions to interpolate to based on
     the current animation time*/
     int Bone::GetPositionIndex(float animationTime)
     {
-        for (int index = 0; index < m_NumPositions - 1; ++index)
+        for (size_t index = 0; index < m_Positions.size() - 1; ++index)
         {
             if (animationTime < m_Positions[index + 1].timeStamp)
             {
                 return index;
             }
         }
+        
         LEV_CORE_ASSERT(0)
+        return -1;
     }
 
     /* Gets the current index on mKeyRotations to interpolate to based on the
     current animation time*/
     int Bone::GetRotationIndex(float animationTime)
     {
-        for (int index = 0; index < m_NumRotations - 1; ++index)
+        for (size_t index = 0; index < m_Rotations.size() - 1; ++index)
         {
             if (animationTime < m_Rotations[index + 1].timeStamp)
             {
                 return index;
             }
         }
+        
         LEV_CORE_ASSERT(0)
+        return -1;
     }
 
-    /* Gets the current index on mKeyScalings to interpolate to based on the
+    /* Gets the current index on m_Scales to interpolate to based on the
     current animation time */
     int Bone::GetScaleIndex(float animationTime)
     {
-        for (int index = 0; index < m_NumScalings - 1; ++index)
+        for (size_t index = 0; index < m_Scales.size() - 1; ++index)
         {
             if (animationTime < m_Scales[index + 1].timeStamp)
             {
                 return index;
             }
         }
+        
         LEV_CORE_ASSERT(0)
+        return -1;
     }
 
 
     /* Gets normalized value for Lerp & Slerp*/
-    float Bone::GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
+    float Bone::GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const
     {
-        float scaleFactor = 0.0f;
-        float midWayLength = animationTime - lastTimeStamp;
-        float framesDiff = nextTimeStamp - lastTimeStamp;
-        scaleFactor = midWayLength / framesDiff;
-        return scaleFactor;
+        const float midWayLength = animationTime - lastTimeStamp;
+        const float framesDiff = nextTimeStamp - lastTimeStamp;
+        return midWayLength / framesDiff;
     }
 
     /*figures out which position keys to interpolate b/w and performs the interpolation
     and returns the translation matrix*/
     Matrix Bone::InterpolatePosition(float animationTime)
     {
-        if (1 == m_NumPositions)
+        if (1 == m_Positions.size())
         {
             return Matrix::CreateTranslation(m_Positions[0].position);
         }
 
-        int p0Index = GetPositionIndex(animationTime);
-        int p1Index = p0Index + 1;
-        float scaleFactor = GetScaleFactor(m_Positions[p0Index].timeStamp,
-            m_Positions[p1Index].timeStamp, animationTime);
-        Vector3 finalPosition = Vector3::Lerp(m_Positions[p0Index].position,
-            m_Positions[p1Index].position, scaleFactor);
+        const int p0Index = GetPositionIndex(animationTime);
+        const int p1Index = p0Index + 1;
+        const float scaleFactor = GetScaleFactor(m_Positions[p0Index].timeStamp,
+                                                 m_Positions[p1Index].timeStamp, animationTime);
+        const Vector3 finalPosition = Vector3::Lerp(m_Positions[p0Index].position,
+                                                    m_Positions[p1Index].position, scaleFactor);
 
         return Matrix::CreateTranslation(finalPosition);
     }
@@ -138,17 +140,17 @@ namespace LevEngine
     and returns the rotation matrix*/
     Matrix Bone::InterpolateRotation(float animationTime)
     {
-        if (1 == m_NumRotations)
+        if (1 == m_Rotations.size())
         {
             Quaternion rotation = m_Rotations[0].orientation;
             rotation.Normalize();
             return Matrix::CreateFromQuaternion(rotation);
         }
 
-        int p0Index = GetRotationIndex(animationTime);
-        int p1Index = p0Index + 1;
-        float scaleFactor = GetScaleFactor(m_Rotations[p0Index].timeStamp,
-            m_Rotations[p1Index].timeStamp, animationTime);
+        const int p0Index = GetRotationIndex(animationTime);
+        const int p1Index = p0Index + 1;
+        const float scaleFactor = GetScaleFactor(m_Rotations[p0Index].timeStamp,
+                                                 m_Rotations[p1Index].timeStamp, animationTime);
         Quaternion finalRotation = Quaternion::Slerp(m_Rotations[p0Index].orientation,
             m_Rotations[p1Index].orientation, scaleFactor);
         finalRotation.Normalize();
@@ -159,17 +161,17 @@ namespace LevEngine
     and returns the scale matrix*/
     Matrix Bone::InterpolateScaling(float animationTime)
     {
-        if (1 == m_NumScalings)
+        if (1 == m_Scales.size())
         {
             return Matrix::CreateScale(m_Scales[0].scale);
         }
 
-        int p0Index = GetScaleIndex(animationTime);
-        int p1Index = p0Index + 1;
-        float scaleFactor = GetScaleFactor(m_Scales[p0Index].timeStamp,
-            m_Scales[p1Index].timeStamp, animationTime);
-        Vector3 finalScale = Vector3::Lerp(m_Scales[p0Index].scale, m_Scales[p1Index].scale,
-            scaleFactor);
+        const int p0Index = GetScaleIndex(animationTime);
+        const int p1Index = p0Index + 1;
+        const float scaleFactor = GetScaleFactor(m_Scales[p0Index].timeStamp,
+                                                 m_Scales[p1Index].timeStamp, animationTime);
+        const Vector3 finalScale = Vector3::Lerp(m_Scales[p0Index].scale, m_Scales[p1Index].scale,
+                                                 scaleFactor);
         return Matrix::CreateScale(finalScale);
     }
 }

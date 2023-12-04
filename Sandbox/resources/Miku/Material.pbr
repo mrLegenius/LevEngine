@@ -2,7 +2,6 @@ Tint: [1, 1, 1, 1]
 Metallic: 0.0399999991
 Roughness: 0
 EnableTransparency: false
-Albedo: 13627174246446759904
-MetallicTexture: 18111719302984563580
+Albedo: 8224862841016116062
 Tiling: [1, 1]
 Offset: [0, 0]

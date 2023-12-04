@@ -36,27 +36,27 @@ namespace LevEngine
         tranformations*/
         void Update(float animationTime);
 
-        Matrix GetLocalTransform();
-        String GetBoneName() const;
-        int GetBoneID();
+        [[nodiscard]] const Matrix& GetLocalTransform() const;
+        [[nodiscard]] const String& GetBoneName() const;
+        [[nodiscard]] int GetBoneID() const;
 
 
         /* Gets the current index on mKeyPositions to interpolate to based on
         the current animation time*/
-        int GetPositionIndex(float animationTime);
+        [[nodiscard]] int GetPositionIndex(float animationTime);
 
         /* Gets the current index on mKeyRotations to interpolate to based on the
         current animation time*/
-        int GetRotationIndex(float animationTime);
+        [[nodiscard]] int GetRotationIndex(float animationTime);
 
         /* Gets the current index on mKeyScalings to interpolate to based on the
         current animation time */
-        int GetScaleIndex(float animationTime);
+        [[nodiscard]] int GetScaleIndex(float animationTime);
 
     private:
 
         /* Gets normalized value for Lerp & Slerp*/
-        float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime);
+        [[nodiscard]] float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const;
 
         /*figures out which position keys to interpolate b/w and performs the interpolation
         and returns the translation matrix*/
@@ -74,9 +74,6 @@ namespace LevEngine
         Vector<KeyPosition> m_Positions;
         Vector<KeyRotation> m_Rotations;
         Vector<KeyScale> m_Scales;
-        int m_NumPositions;
-        int m_NumRotations;
-        int m_NumScalings;
 
         Matrix m_LocalTransform;
         String m_Name;
