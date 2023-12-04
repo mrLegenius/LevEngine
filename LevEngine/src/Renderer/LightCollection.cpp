@@ -122,7 +122,7 @@ namespace LevEngine
         lightGPUData.Range = light.Range;
         lightGPUData.Angle = light.Angle;
         lightGPUData.Intensity = light.Intensity;
-        lightGPUData.Smoothness = light.Smoothness;
+        lightGPUData.Smoothness = 1 - light.Smoothness;
         lightGPUData.Type = LightType::Spot;
 
         m_LightningData.LightsCount++;

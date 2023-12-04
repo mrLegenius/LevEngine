@@ -41,7 +41,7 @@ float CalcSpotCone(Light light, float3 lightDir)
     // If the cosine angle of the light's direction vector
     // and the vector from the light source to the point being shaded
     // is greater than maxCos, then the spotlight contribution will be 1.
-    float maxCos = lerp(minCos, 1, light.smoothness);
+    float maxCos = lerp(minCos, 1, 0.5);
     float cosAngle = dot(light.directionViewSpace.xyz, -lightDir);
     // Blend between the maxixmum and minimum cosine angles.
     return smoothstep(minCos, maxCos, cosAngle);
