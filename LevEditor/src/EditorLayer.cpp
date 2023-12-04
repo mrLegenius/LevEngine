@@ -25,6 +25,9 @@
 #include "Panels/StatusBar.h"
 #include "Panels/Toolbar.h"
 #include "Panels/ViewportPanel.h"
+#include "Physics/Physics.h"
+#include "Renderer/RendererContext.h"
+#include "Scene/Systems/Physics/ForceUpdateSystem.h"
 #include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor
@@ -164,10 +167,11 @@ namespace LevEngine::Editor
         scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
         scene->RegisterUpdateSystem<AudioSourceInitSystem>();
         scene->RegisterUpdateSystem<AudioListenerInitSystem>();
-        
-        scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
 
+        App::Get().GetPhysics().ClearAccumulator();
+        scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
         scene->RegisterUpdateSystem<RigidbodyInitSystem>();
+        scene->RegisterUpdateSystem<ForceUpdateSystem>();
         
         auto& registry = scene->GetRegistry();
         registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();

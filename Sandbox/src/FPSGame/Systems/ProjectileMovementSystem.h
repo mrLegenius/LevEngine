@@ -6,7 +6,6 @@ namespace Sandbox
     public:
         void Update(float deltaTime, entt::registry& registry) override
         {
-            /*
             const auto view = registry.view<Transform, Projectile>();
 
             for (const auto entity : view)
@@ -15,7 +14,6 @@ namespace Sandbox
 
                 transform.Move(projectile.Speed * deltaTime * transform.GetForwardDirection());
             }
-            */
         }
     };
 }

@@ -152,6 +152,8 @@ namespace LevEngine
             SetInertiaTensor(m_InertiaTensor);
             SetLinearDamping(m_LinearDamping);
             SetAngularDamping(m_AngularDamping);
+            SetMaxLinearVelocity(m_MaxLinearVelocity);
+            SetMaxAngularVelocity(m_MaxAngularVelocity);
             LockPosAxisX(m_IsPosAxisXLocked);
             LockPosAxisY(m_IsPosAxisYLocked);
             LockPosAxisZ(m_IsPosAxisZLocked);
@@ -247,6 +249,25 @@ namespace LevEngine
         }
     }
 
+    Vector3 Rigidbody::GetInertiaTensor() const
+    {
+        return m_InertiaTensor;
+    }
+
+    void Rigidbody::SetInertiaTensor(const Vector3 value)
+    {
+        if (value.x < 0.0f || value.y < 0.0f || value.z < 0.0f) return;
+        
+        if (m_Type != Type::Dynamic) return;
+
+        m_InertiaTensor = value;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setMassSpaceInertiaTensor(PhysicsUtils::FromVector3ToPxVec3(value));
+        }
+    }
+    
     float Rigidbody::GetLinearDamping() const
     {
         return m_LinearDamping;
@@ -285,26 +306,47 @@ namespace LevEngine
         }
     }
 
-    Vector3 Rigidbody::GetInertiaTensor() const
+
+    
+    float Rigidbody::GetMaxLinearVelocity() const
     {
-        return m_InertiaTensor;
+        return m_MaxLinearVelocity;
     }
 
-    void Rigidbody::SetInertiaTensor(const Vector3 value)
+    void Rigidbody::SetMaxLinearVelocity(const float value)
     {
-        if (value.x < 0.0f || value.y < 0.0f || value.z < 0.0f) return;
+        if (value < 0.0f) return;
         
         if (m_Type != Type::Dynamic) return;
-
-        m_InertiaTensor = value;
+        
+        m_MaxLinearVelocity = value;
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setMassSpaceInertiaTensor(PhysicsUtils::FromVector3ToPxVec3(value));
+            reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setMaxLinearVelocity(value);
+        }
+    }
+
+    float Rigidbody::GetMaxAngularVelocity() const
+    {
+        return m_MaxAngularVelocity;
+    }
+
+    void Rigidbody::SetMaxAngularVelocity(const float value)
+    {
+        if (value < 0.0f) return;
+        
+        if (m_Type != Type::Dynamic) return;
+        
+        m_MaxAngularVelocity = value;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setMaxAngularVelocity(value);
         }
     }
     
-    
+
     
     bool Rigidbody::IsPosAxisXLocked() const
     {
@@ -708,10 +750,13 @@ namespace LevEngine
             out << YAML::Key << "Is Gravity Enabled" << YAML::Value << component.IsGravityEnabled();
             
             out << YAML::Key << "Mass" << YAML::Value << component.GetMass();
-            out << YAML::Key << "Linear Damping" << YAML::Value << component.GetLinearDamping();
-            out << YAML::Key << "Angular Damping" << YAML::Value << component.GetAngularDamping();
             out << YAML::Key << "Center Of Mass" << YAML::Value << component.GetCenterOfMass();
             out << YAML::Key << "Inertia Tensor" << YAML::Value << component.GetInertiaTensor();
+            out << YAML::Key << "Linear Damping" << YAML::Value << component.GetLinearDamping();
+            out << YAML::Key << "Angular Damping" << YAML::Value << component.GetAngularDamping();
+
+            out << YAML::Key << "Max Linear Velocity" << YAML::Value << component.GetMaxLinearVelocity();
+            out << YAML::Key << "Max Angular Velocity" << YAML::Value << component.GetMaxAngularVelocity();
             
             out << YAML::Key << "Is Pos Axis X Locked" << YAML::Value << component.IsPosAxisXLocked();
             out << YAML::Key << "Is Pos Axis Y Locked" << YAML::Value << component.IsPosAxisYLocked();
@@ -771,6 +816,16 @@ namespace LevEngine
             {
                 component.SetMass(massNode.as<float>());
             }
+            
+            if (const auto centerOfMassNode = node["Center Of Mass"])
+            {
+                component.SetCenterOfMass(centerOfMassNode.as<Vector3>());
+            }
+
+            if (const auto inertiaTensorNode = node["Inertia Tensor"])
+            {
+                component.SetInertiaTensor(inertiaTensorNode.as<Vector3>());
+            }
 
             if (const auto linearDampingNode = node["Linear Damping"])
             {
@@ -782,16 +837,16 @@ namespace LevEngine
                 component.SetAngularDamping(angularDampingNode.as<float>());
             }
 
-            if (const auto centerOfMassNode = node["Center Of Mass"])
+            if (const auto maxLinearVelocityNode = node["Max Linear Velocity"])
             {
-                component.SetCenterOfMass(centerOfMassNode.as<Vector3>());
+                component.SetMaxLinearVelocity(maxLinearVelocityNode.as<float>());
             }
 
-            if (const auto inertiaTensorNode = node["Inertia Tensor"])
+            if (const auto maxAngularVelocityNode = node["Max Angular Velocity"])
             {
-                component.SetInertiaTensor(inertiaTensorNode.as<Vector3>());
+                component.SetMaxAngularVelocity(maxAngularVelocityNode.as<float>());
             }
-
+            
             if (const auto posAxisXLockNode = node["Is Pos Axis X Locked"])
             {
                 component.LockPosAxisX(posAxisXLockNode.as<bool>());

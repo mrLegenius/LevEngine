@@ -17,13 +17,18 @@ namespace LevEngine
         return CreateScope<Physics>();
     }
 
+    void Physics::ClearAccumulator()
+    {
+        m_Accumulator = 0.0f;
+    }
     
+
     
     void Physics::Initialize()
     {
         m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
 
-        if (s_IsPVDEnabled)
+        if (m_IsPVDEnabled)
         {
             m_Pvd = PxCreatePvd(*m_Foundation);
             physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate(DEFAULT_PVD_HOST, DEFAULT_PVD_PORT, DEFAULT_PVD_CONNECT_TIMEOUT);
@@ -36,10 +41,10 @@ namespace LevEngine
         sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(m_Gravity);
         m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(DEFAULT_NUMBER_CPU_THREADS);
         sceneDesc.cpuDispatcher	= m_Dispatcher;
-        sceneDesc.filterShader	= physx::PxDefaultSimulationFilterShader;
+        sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
         m_Scene = m_Physics->createScene(sceneDesc);
 
-        if (s_IsDebugRenderEnabled)
+        if (m_IsDebugRenderEnabled)
         {
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
@@ -47,7 +52,7 @@ namespace LevEngine
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eBODY_MASS_AXES, 1.0f);
         }
         
-        if (s_IsPVDEnabled)
+        if (m_IsPVDEnabled)
         {
             if (physx::PxPvdSceneClient* pvdClient = m_Scene->getScenePvdClient())
             {
@@ -65,14 +70,14 @@ namespace LevEngine
 
 
     
-    bool Physics::IsAdvanced(const float deltaTime) const
+    bool Physics::IsAdvanced(const float deltaTime)
     {
-        s_Accumulator += deltaTime;
+        m_Accumulator += deltaTime;
         
-        if (s_Accumulator < s_StepSize) return false;
+        if (m_Accumulator < m_StepSize) return false;
         
-        s_Accumulator -= s_StepSize;
-        m_Scene->simulate(s_StepSize);
+        m_Accumulator -= m_StepSize;
+        m_Scene->simulate(m_StepSize);
         
         return true;
     }
@@ -87,7 +92,7 @@ namespace LevEngine
     
     void Physics::UpdateTransforms(entt::registry& registry)
     {
-        const auto view = registry.view<Rigidbody, Transform>();
+        const auto view = registry.view<Transform, Rigidbody>();
         for (const auto entity : view)
         {
             auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
@@ -97,7 +102,7 @@ namespace LevEngine
         }
     }
     
-    void Physics::DrawDebugLines()
+    void Physics::DrawDebugLines() const
     {
         const physx::PxRenderBuffer& rb = m_Scene->getRenderBuffer();
         for (size_t i = 0; i < rb.getNbLines(); i++)
@@ -134,7 +139,7 @@ namespace LevEngine
         
         UpdateTransforms(registry);
 
-        if (s_IsDebugRenderEnabled)
+        if (m_IsDebugRenderEnabled)
         {
             DrawDebugLines();
         }
@@ -173,4 +178,3 @@ namespace LevEngine
         return m_Physics;
     }
 }
-

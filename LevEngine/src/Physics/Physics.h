@@ -9,22 +9,24 @@ namespace LevEngine
     public:
         Physics();
         ~Physics();
-        
+
         static Scope<Physics> Create();
+        void ClearAccumulator();
+
+        void Process(entt::registry& registry, float deltaTime);
 
         [[nodiscard]] physx::PxScene* GetScene() const;
         [[nodiscard]] physx::PxPhysics* GetPhysics() const;
         
-        void Process(entt::registry& registry, float deltaTime);
-        
     private:
         void Initialize();
         void Reset();
-
-        bool IsAdvanced(float deltaTime) const;
+        
+        bool IsAdvanced(float deltaTime);
         void StepPhysics(float deltaTime);
-        void UpdateTransforms(entt::registry& registry);
-        void DrawDebugLines();
+        void DrawDebugLines() const;
+
+        static void UpdateTransforms(entt::registry& registry);
         
         physx::PxDefaultAllocator m_Allocator;
         physx::PxDefaultErrorCallback m_ErrorCallback;
@@ -39,10 +41,10 @@ namespace LevEngine
         Vector3 m_Gravity = Vector3(0.0f, -9.81f, 0.0f);
         
         // for debug
-        inline static bool s_IsPVDEnabled = false;
-        inline static bool s_IsDebugRenderEnabled = true;
+        bool m_IsPVDEnabled = false;
+        bool m_IsDebugRenderEnabled = true;
         // for physics update
-        inline static float s_Accumulator = 0.0f;
-        inline static float s_StepSize = 1.0f / 60.0f;
+        float m_Accumulator = 0.0f;
+        float m_StepSize = 1.0f / 60.0f;
     };
 }

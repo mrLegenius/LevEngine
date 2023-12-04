@@ -23,8 +23,8 @@ namespace LevEngine
         [[nodiscard]] Type GetForceType() const;
         void SetForceType(const Type& type);
 
-        [[nodiscard]] bool IsCompletedAction() const;
-        void CompleteAction(bool flag);
+        [[nodiscard]] bool IsCompletedForce() const;
+        void CompleteForce(bool flag);
         
         [[nodiscard]] Vector3 GetLinearForce() const;
         void SetLinearForce(Vector3 value);
@@ -36,7 +36,7 @@ namespace LevEngine
     private:
         Type m_Type = Type::Force;
 
-        bool m_IsCompletedAction = false;
+        bool m_IsCompletedForce = false;
 
         Vector3 m_LinearForce = Vector3::Zero;
         Vector3 m_AngularForce = Vector3::Zero;

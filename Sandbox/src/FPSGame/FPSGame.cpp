@@ -4,6 +4,7 @@
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
 #include "Scripting/ScriptingManager.h"
+#include "Physics/Physics.h"
 #include "Scene/Systems/Physics/ForceUpdateSystem.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
@@ -45,7 +46,7 @@ namespace Sandbox
 
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
-
+		
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
@@ -63,10 +64,10 @@ namespace Sandbox
 		
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
-		
+
+		App::Get().GetPhysics().ClearAccumulator();
 		scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
 		scene->RegisterUpdateSystem<RigidbodyInitSystem>();
-
 		scene->RegisterUpdateSystem<ForceUpdateSystem>();
 
 		auto& registry = scene->GetRegistry();
