@@ -17,13 +17,18 @@ namespace LevEngine
         return CreateScope<Physics>();
     }
 
+    void Physics::ClearAccumulator()
+    {
+        m_Accumulator = 0.0f;
+    }
     
+
     
     void Physics::Initialize()
     {
         m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
 
-        if (s_IsPVDEnabled)
+        if (m_IsPVDEnabled)
         {
             m_Pvd = PxCreatePvd(*m_Foundation);
             physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate(DEFAULT_PVD_HOST, DEFAULT_PVD_PORT, DEFAULT_PVD_CONNECT_TIMEOUT);
@@ -36,17 +41,18 @@ namespace LevEngine
         sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(m_Gravity);
         m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(DEFAULT_NUMBER_CPU_THREADS);
         sceneDesc.cpuDispatcher	= m_Dispatcher;
-        sceneDesc.filterShader	= physx::PxDefaultSimulationFilterShader;
+        sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
         m_Scene = m_Physics->createScene(sceneDesc);
 
-        if (s_IsDebugRenderEnabled)
+        if (m_IsDebugRenderEnabled)
         {
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eBODY_MASS_AXES, 1.0f);
         }
         
-        if (s_IsPVDEnabled)
+        if (m_IsPVDEnabled)
         {
             if (physx::PxPvdSceneClient* pvdClient = m_Scene->getScenePvdClient())
             {
@@ -64,39 +70,28 @@ namespace LevEngine
 
 
     
-    bool Physics::IsAdvanced(const float deltaTime) const
+    bool Physics::IsAdvanced(const float deltaTime)
     {
-        s_Accumulator += deltaTime;
+        m_Accumulator += deltaTime;
         
-        if (s_Accumulator < s_StepSize) return false;
+        if (m_Accumulator < m_StepSize) return false;
         
-        s_Accumulator -= s_StepSize;
-        m_Scene->simulate(s_StepSize);
+        m_Accumulator -= m_StepSize;
+        m_Scene->simulate(m_StepSize);
         
         return true;
     }
     
-    void Physics::StepPhysics(const float deltaTime)
+    bool Physics::StepPhysics(const float deltaTime)
     {
-        if (IsAdvanced(deltaTime))
-        {
-            m_Scene->fetchResults(true);
-        }
+        if (!IsAdvanced(deltaTime)) return false;
+
+        m_Scene->fetchResults(true);
+        
+        return true;
     }
     
-    void Physics::UpdateTransforms(entt::registry& registry)
-    {
-        const auto view = registry.view<Rigidbody, Transform>();
-        for (const auto entity : view)
-        {
-            auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
-            const physx::PxTransform actorPose = rigidbody.GetRigidbody()->getGlobalPose();
-            transform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
-            transform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
-        }
-    }
-    
-    void Physics::DrawDebugLines()
+    void Physics::DrawDebugLines() const
     {
         const physx::PxRenderBuffer& rb = m_Scene->getRenderBuffer();
         for (size_t i = 0; i < rb.getNbLines(); i++)
@@ -129,14 +124,14 @@ namespace LevEngine
     
     void Physics::Process(entt::registry& registry, float deltaTime)
     {
-        StepPhysics(deltaTime);
-        
-        UpdateTransforms(registry);
+        if (!StepPhysics(deltaTime)) return;
 
-        if (s_IsDebugRenderEnabled)
-        {
-            DrawDebugLines();
-        }
+        m_PhysicsUpdate.UpdateTransforms(registry);
+        m_PhysicsUpdate.UpdateConstantForces(registry);
+        
+        if (!m_IsDebugRenderEnabled) return;
+        
+        DrawDebugLines();
     }
 
 
@@ -171,5 +166,35 @@ namespace LevEngine
     {
         return m_Physics;
     }
-}
 
+    void PhysicsUpdate::UpdateTransforms(entt::registry& registry)
+    {
+        const auto rigidbodyView = registry.view<Transform, Rigidbody>();
+        for (const auto entity : rigidbodyView)
+        {
+            auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
+        
+            const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
+            rigidbodyTransform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
+            rigidbodyTransform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
+        
+            rigidbody.SetTransformScale(rigidbodyTransform.GetWorldScale());
+        }
+    }
+
+    void PhysicsUpdate::UpdateConstantForces(entt::registry& registry)
+    {
+        const auto constantForceView = registry.view<Rigidbody, ConstantForce>();
+        for (const auto entity : constantForceView)
+        {
+            auto [constantForceRigidbody, constantForce] = constantForceView.get<Rigidbody, ConstantForce>(entity);
+
+            if (constantForceRigidbody.GetActor() != NULL)
+            {
+                constantForceRigidbody.AddForce(constantForce.GetForce(), Rigidbody::ForceMode::Force);
+                constantForceRigidbody.AddTorque(constantForce.GetTorque(), Rigidbody::ForceMode::Force);
+            }
+        }
+    }
+
+}

@@ -4,13 +4,13 @@
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
 #include "Scripting/ScriptingManager.h"
+#include "Physics/Physics.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
 #include "Systems/FPSMovementSystem.h"
 #include "Systems/PlayerSpawnSystem.h"
 #include "Systems/ProjectileLifeSystem.h"
-#include "Systems/ProjectileMovementSystem.h"
 #include "Systems/ShootSystem.h"
 
 /*
@@ -45,14 +45,13 @@ namespace Sandbox
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
-		scene->RegisterUpdateSystem<FPSMovementSystem>();
-		//scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
-		scene->RegisterUpdateSystem<ShootSystem>();
-		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
-		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
-		scene->RegisterUpdateSystem<EnemySpawnSystem>();
 		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
-		scene->RegisterUpdateSystem<EnemyMovementSystem>();
+		scene->RegisterUpdateSystem<FPSMovementSystem>();
+		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
+		scene->RegisterUpdateSystem<ShootSystem>();
+		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
+		//scene->RegisterUpdateSystem<EnemySpawnSystem>();
+		//scene->RegisterUpdateSystem<EnemyMovementSystem>();
 		
 		scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
 		scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
@@ -63,7 +62,7 @@ namespace Sandbox
 		scene->RegisterOneFrame<CollisionBeginEvent>();
 		scene->RegisterOneFrame<CollisionEndEvent>();
 
-		scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
+		App::Get().GetPhysics().ClearAccumulator();
 		scene->RegisterUpdateSystem<RigidbodyInitSystem>();
 
 		auto& registry = scene->GetRegistry();

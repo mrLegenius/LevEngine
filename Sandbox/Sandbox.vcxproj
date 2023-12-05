@@ -190,10 +190,8 @@
     <ClInclude Include="src\FPSGame\Systems\EnemySpawnSystem.h" />
     <ClInclude Include="src\FPSGame\Systems\FPSCameraRotationSystem.h" />
     <ClInclude Include="src\FPSGame\Systems\FPSMovementSystem.h" />
-    <ClInclude Include="src\FPSGame\Systems\PhysicsPhysXTestSystem.h" />
     <ClInclude Include="src\FPSGame\Systems\PlayerSpawnSystem.h" />
     <ClInclude Include="src\FPSGame\Systems\ProjectileLifeSystem.h" />
-    <ClInclude Include="src\FPSGame\Systems\ProjectileMovementSystem.h" />
     <ClInclude Include="src\FPSGame\Systems\ShootSystem.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>

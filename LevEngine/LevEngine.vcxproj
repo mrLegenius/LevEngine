@@ -120,6 +120,7 @@
     <ClInclude Include="src\Renderer\Query.h" />
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
+    <ClInclude Include="src\Physics\Components\ConstantForce.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
@@ -1009,7 +1010,6 @@
     <ClInclude Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />
     <ClInclude Include="src\Scene\Systems\Physics\RigidbodyInitSystem.h" />
-    <ClInclude Include="src\Scene\Systems\Physics\RigidbodyUpdateSystem.h" />
     <ClInclude Include="src\Scripting\MathLuaBindings.h" />
     <ClInclude Include="src\Scripting\MetaUtilities.h" />
     <ClInclude Include="src\Scripting\ScriptingComponent.h" />
@@ -1027,6 +1027,7 @@
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\BeginQueryPass.cpp" />
+    <ClCompile Include="src\Physics\Components\ConstantForce.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugGrid.cpp" />
@@ -1379,7 +1380,6 @@
     <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Physics\RigidbodyInitSystem.cpp" />
-    <ClCompile Include="src\Scene\Systems\Physics\RigidbodyUpdateSystem.cpp" />
     <ClCompile Include="src\Scripting\MathLuaBindings.cpp" />
     <ClCompile Include="src\Scripting\MetaUtilities.cpp" />
     <ClCompile Include="src\Scripting\ScriptingManager.cpp" />

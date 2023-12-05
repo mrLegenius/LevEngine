@@ -1,109 +1,138 @@
 Scene: TestScene
 Entities:
-  - Entity: 18248931055692955122
-    Tag: SpotLight
-    Parent: 6442536384003582315
-    Transform:
-      Position: [14.3904839, 14.9357433, -8.88151073]
-      Rotation: [-0.720606327, -0.549428582, -2.87914896]
-      Scale: [0.999968171, 0.999939978, 0.999969959]
-    Spot Light:
-      Color: [0, 1, 0.923728704, 1]
-      Range: 26.3999996
-      Angle: 19.7999992
-      Smoothness: 0.75
-      Intensity: 15.1000004
-  - Entity: 15067421120708529696
-    Tag: BlueLight
-    Parent: 6442536384003582315
-    Transform:
-      Position: [-21.1934109, 5.20373106, -22.0686836]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Point Light:
-      Color: [0, 0.0338988304, 1, 1]
-      Range: 20
-      Smoothness: 0.75
-      Intensity: 10
-  - Entity: 5320316740071404394
-    Tag: Fire Particles
-    Parent: 3187912942755661022
-    Transform:
-      Position: [0.186893448, -13.7385082, 2.861035e-06]
-      Rotation: [-0, 0, 0]
-      Scale: [0.5, 0.49999696, 0.49999696]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [0, 4, 0]
-        VelocityB: [0, 8, 0]
-        RandomStartPosition: true
-        Position: [-8.5, 4.19999981, -1.60000002]
-        PositionB: [7.5, 0, 5.80000019]
-        RandomStartColor: false
-        StartColor: [1, 1, 1, 1]
-        StartColorB: [0, 0, 0, 0.988235295]
-        EndColor: [1, 1, 1, 0]
-        RandomStartSize: true
-        StartSize: 0.699999988
-        StartSizeB: 0.899999976
-        EndSize: 0.100000001
-        RandomStartLifeTime: true
-        LifeTime: 0.200000003
-        LifeTimeB: 0.600000024
-        GravityScale: 0
-      Texture: 788160533914043389
-      MaxParticles: 100
-      Rate: 1000
-  - Entity: 9352633774523005039
-    Tag: RedLight
-    Parent: 6442536384003582315
-    Transform:
-      Position: [22.9844856, 5.8570466, 23.5509262]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Point Light:
-      Color: [1, 0, 0, 1]
-      Range: 10
-      Smoothness: 0.75
-      Intensity: 10
-  - Entity: 6442536384003582315
-    Tag: Lights
+  - Entity: 8940989960097836712
+    Tag: Floor
+    Parent: 11837398838170000115
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 11837398838170000115
-    Tag: Environment
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 3187912942755661022
-    Tag: Rock
-    Transform:
-      Position: [6.00920486, 7.35727882, 26.0943642]
-      Rotation: [1.28208852, 0, 0]
-      Scale: [0.5, 0.499997914, 0.499997914]
+      Scale: [50, 1, 50]
+    Rigidbody:
+      Is Visualization Enabled: false
+      Rigidbody Type: 0
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Max Linear Velocity: 100
+      Max Angular Velocity: 100
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
     MeshRenderer:
-      Mesh: 4915651832749162070
-      Material: 6368603494050966349
-      Cast Shadow: true
-  - Entity: 12685685000942160993
-    Tag: Chest
-    Transform:
-      Position: [21.8600311, 1.42722619, -21.6200256]
-      Rotation: [-0, -0.86742866, 0]
-      Scale: [1.50000012, 1.49999988, 1.50000179]
-    MeshRenderer:
-      Mesh: 1600610067072245332
-      Material: 35745855355570945
-      Cast Shadow: true
-  - Entity: 3572382593622191945
+      Mesh: 6362171717149004471
+      Material: 7582525064410579512
+      Cast Shadow: false
+  - Entity: 2539448613340456345
     Tag: Wall
     Parent: 11837398838170000115
     Transform:
-      Position: [-25.5, 5, 5.15551474e-05]
+      Position: [-1.20967243e-05, 5.0001483, 25.5]
+      Rotation: [1.57078934, -1.56602289e-06, 3.14159083]
+      Scale: [50, 0.999938488, 9.99950695]
+    Rigidbody:
+      Is Visualization Enabled: false
+      Rigidbody Type: 0
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Max Linear Velocity: 100
+      Max Angular Velocity: 100
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+  - Entity: 13631027794021233931
+    Tag: Skybox
+    Transform:
+      Position: [0, 0, 2.37524009]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Skybox Renderer:
+      Skybox: 17530323575141006770
+  - Entity: 2864383947918519609
+    Tag: VioletLight
+    Parent: 6442536384003582315
+    Transform:
+      Position: [-21.368433, 6.31169748, 21.5256653]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Point Light:
+      Color: [0.906779289, 0, 1, 1]
+      Range: 10
+      Smoothness: 0.75
+      Intensity: 10
+  - Entity: 4309460406928129217
+    Tag: Wall
+    Parent: 11837398838170000115
+    Transform:
+      Position: [0, 4.9998107, -25.4999962]
+      Rotation: [1.57079613, 0, -3.14159203]
+      Scale: [50, 0.999977112, 9.99981594]
+    Rigidbody:
+      Is Visualization Enabled: false
+      Rigidbody Type: 0
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Max Linear Velocity: 100
+      Max Angular Velocity: 100
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+  - Entity: 5052278192581293938
+    Tag: Wall
+    Parent: 11837398838170000115
+    Transform:
+      Position: [25.5, 5, 3.73348342e-07]
       Rotation: [1.57079613, 0, 1.5707953]
       Scale: [50, 0.999999702, 10]
     Rigidbody:
@@ -133,7 +162,7 @@ Entities:
     Tag: Wall
     Parent: 11837398838170000115
     Transform:
-      Position: [25.5, 5, 3.73348342e-07]
+      Position: [-25.5, 5, 5.15551474e-05]
       Rotation: [1.57079613, 0, 1.5707953]
       Scale: [50, 0.999999702, 10]
     Rigidbody:
@@ -151,9 +180,8 @@ Entities:
       Mesh: 6362171717149004471
       Material: 16895830209131566910
       Cast Shadow: true
-  - Entity: 4309460406928129217
-    Tag: Wall
-    Parent: 11837398838170000115
+  - Entity: 12685685000942160993
+    Tag: Chest
     Transform:
       Position: [0, 4.9998107, -25.4999962]
       Rotation: [1.57079613, 0, -3.14159203]
@@ -170,25 +198,47 @@ Entities:
       Dynamic Friction: 0.5
       Restitution: 0.600000024
     MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 16895830209131566910
+      Mesh: 1600610067072245332
+      Material: 35745855355570945
       Cast Shadow: true
-  - Entity: 2864383947918519609
-    Tag: VioletLight
+  - Entity: 3187912942755661022
+    Tag: Rock
+    Transform:
+      Position: [6.00920486, 7.35727882, 26.0943642]
+      Rotation: [1.28208852, 0, 0]
+      Scale: [0.5, 0.499997914, 0.499997914]
+    MeshRenderer:
+      Mesh: 4915651832749162070
+      Material: 6368603494050966349
+      Cast Shadow: true
+  - Entity: 11837398838170000115
+    Tag: Environment
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 6442536384003582315
+    Tag: Lights
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 9352633774523005039
+    Tag: RedLight
     Parent: 6442536384003582315
     Transform:
-      Position: [-21.368433, 6.31169748, 21.5256653]
+      Position: [22.9844856, 5.8570466, 23.5509262]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
-      Color: [0.906779289, 0, 1, 1]
+      Color: [1, 0, 0, 1]
       Range: 10
       Smoothness: 0.75
       Intensity: 10
   - Entity: 13631027794021233931
     Tag: Environment
     Transform:
-      Position: [0, 0, 2.37524009]
+      Position: [0.186893448, -13.7385082, 2.861035e-06]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Skybox Renderer:
@@ -219,7 +269,7 @@ Entities:
     Tag: Floor
     Parent: 11837398838170000115
     Transform:
-      Position: [0, 0, 0]
+      Position: [-21.1934109, 5.20373106, -22.0686836]
       Rotation: [-0, 0, 0]
       Scale: [50, 1, 50]
     Rigidbody:

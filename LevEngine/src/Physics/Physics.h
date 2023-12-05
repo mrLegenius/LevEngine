@@ -4,29 +4,35 @@
 
 namespace LevEngine
 {
+    class PhysicsUpdate
+    {
+    public:
+        void UpdateTransforms(entt::registry& registry);
+        void UpdateConstantForces(entt::registry& registry);
+    };
+    
     class Physics
     {
     public:
         Physics();
         ~Physics();
-        
+
         static Scope<Physics> Create();
+
+        void Process(entt::registry& registry, float deltaTime);
+
+        void ClearAccumulator();
 
         [[nodiscard]] physx::PxScene* GetScene() const;
         [[nodiscard]] physx::PxPhysics* GetPhysics() const;
         
-        void Process(entt::registry& registry, float deltaTime);
-
-        friend struct Rigidbody;
-        
     private:
         void Initialize();
         void Reset();
-
-        bool IsAdvanced(float deltaTime) const;
-        void StepPhysics(float deltaTime);
-        void UpdateTransforms(entt::registry& registry);
-        void DrawDebugLines();
+        
+        bool IsAdvanced(float deltaTime);
+        bool StepPhysics(float deltaTime);
+        void DrawDebugLines() const;
         
         physx::PxDefaultAllocator m_Allocator;
         physx::PxDefaultErrorCallback m_ErrorCallback;
@@ -41,10 +47,12 @@ namespace LevEngine
         Vector3 m_Gravity = Vector3(0.0f, -9.81f, 0.0f);
         
         // for debug
-        inline static bool s_IsPVDEnabled = false;
-        inline static bool s_IsDebugRenderEnabled = true;
+        bool m_IsPVDEnabled = false;
+        bool m_IsDebugRenderEnabled = true;
         // for physics update
-        inline static float s_Accumulator = 0.0f;
-        inline static float s_StepSize = 1.0f / 60.0f;
+        float m_Accumulator = 0.0f;
+        float m_StepSize = 1.0f / 60.0f;
+
+        PhysicsUpdate m_PhysicsUpdate;
     };
 }

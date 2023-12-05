@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "EditorLayer.h"
 
 #include "ModalPopup.h"
@@ -25,6 +25,8 @@
 #include "Panels/StatusBar.h"
 #include "Panels/Toolbar.h"
 #include "Panels/ViewportPanel.h"
+#include "Physics/Physics.h"
+#include "Renderer/RendererContext.h"
 #include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor
@@ -164,9 +166,8 @@ namespace LevEngine::Editor
         scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
         scene->RegisterUpdateSystem<AudioSourceInitSystem>();
         scene->RegisterUpdateSystem<AudioListenerInitSystem>();
-        
-        scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
 
+        App::Get().GetPhysics().ClearAccumulator();
         scene->RegisterUpdateSystem<RigidbodyInitSystem>();
         
         auto& registry = scene->GetRegistry();

@@ -6,13 +6,15 @@
 
 void LevEngine::RigidbodyInitSystem::Update(float deltaTime, entt::registry& registry)
 {
-    const auto view = registry.view<Rigidbody, Transform>();
+    const auto view = registry.view<Transform, Rigidbody>();
 
     for (const auto entity : view)
     {
-        if (auto [rigidbody, transform] = view.get<Rigidbody, Transform>(entity); !rigidbody.IsInitialized())
+        auto [rigidbodyTransform, rigidbody] = view.get<Transform, Rigidbody>(entity);
+        
+        if (!rigidbody.IsInitialized())
         {
-            rigidbody.Initialize(transform);
+            rigidbody.Initialize(rigidbodyTransform);
         }
     }
 }
