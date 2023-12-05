@@ -8,8 +8,6 @@ namespace LevEngine
     
     struct ConstantForce
     {
-        static void UpdateConstantForces(entt::registry& registry);
-        
         [[nodiscard]] Vector3 GetForce() const;
         void SetForce(Vector3 value);
         [[nodiscard]] Vector3 GetTorque() const;

@@ -33,13 +33,22 @@ namespace LevEngine::Editor
                 EditorGUI::DrawFloatControl("Linear Damping", BindGetter(&Rigidbody::GetLinearDamping, &component), BindSetter(&Rigidbody::SetLinearDamping, &component));
                 EditorGUI::DrawFloatControl("Angular Damping", BindGetter(&Rigidbody::GetAngularDamping, &component), BindSetter(&Rigidbody::SetAngularDamping, &component));
                 
-                EditorGUI::DrawCheckBox("Lock X Pos Axis", BindGetter(&Rigidbody::IsPosAxisXLocked, &component), BindSetter(&Rigidbody::LockPosAxisX, &component));
-                EditorGUI::DrawCheckBox("Lock Y Pos Axis", BindGetter(&Rigidbody::IsPosAxisYLocked, &component), BindSetter(&Rigidbody::LockPosAxisY, &component));
-                EditorGUI::DrawCheckBox("Lock Z Pos Axis", BindGetter(&Rigidbody::IsPosAxisZLocked, &component), BindSetter(&Rigidbody::LockPosAxisZ, &component));
-
-                EditorGUI::DrawCheckBox("Lock X Rot Axis", BindGetter(&Rigidbody::IsRotAxisXLocked, &component), BindSetter(&Rigidbody::LockRotAxisX, &component));
-                EditorGUI::DrawCheckBox("Lock Y Rot Axis", BindGetter(&Rigidbody::IsRotAxisYLocked, &component), BindSetter(&Rigidbody::LockRotAxisY, &component));
-                EditorGUI::DrawCheckBox("Lock Z Rot Axis", BindGetter(&Rigidbody::IsRotAxisZLocked, &component), BindSetter(&Rigidbody::LockRotAxisZ, &component));
+                if (ImGui::TreeNode("Constraints"))
+                {
+                    EditorGUI::DrawCheckBox3Control(
+                        "Position",
+                        "X", BindGetter(&Rigidbody::IsPosAxisXLocked, &component), BindSetter(&Rigidbody::LockPosAxisX, &component),
+                        "Y", BindGetter(&Rigidbody::IsPosAxisYLocked, &component), BindSetter(&Rigidbody::LockPosAxisY, &component),
+                        "Z", BindGetter(&Rigidbody::IsPosAxisZLocked, &component), BindSetter(&Rigidbody::LockPosAxisZ, &component)
+                    );
+                    EditorGUI::DrawCheckBox3Control(
+                        "Rotation",
+                        "X", BindGetter(&Rigidbody::IsRotAxisXLocked, &component), BindSetter(&Rigidbody::LockRotAxisX, &component),
+                        "Y", BindGetter(&Rigidbody::IsRotAxisYLocked, &component), BindSetter(&Rigidbody::LockRotAxisY, &component),
+                        "Z", BindGetter(&Rigidbody::IsRotAxisZLocked, &component), BindSetter(&Rigidbody::LockRotAxisZ, &component)
+                    );
+                    ImGui::TreePop();
+                }
             }
             
             if (component.GetColliderCount() > 0)
@@ -53,21 +62,21 @@ namespace LevEngine::Editor
                 
                 if (component.GetColliderType() == Collider::Type::Sphere)
                 {
-                    EditorGUI::DrawFloatControl("Radius", BindGetter(&Rigidbody::GetSphereRadius, &component), BindSetter(&Rigidbody::SetSphereRadius, &component));
+                    EditorGUI::DrawFloatControl("Radius", BindGetter(&Rigidbody::GetSphereRadius, &component), BindSetter(&Rigidbody::SetSphereRadius, &component), 0.1f, FLT_EPSILON, FLT_MAX);
                 }
                 if (component.GetColliderType() == Collider::Type::Capsule)
                 {
-                    EditorGUI::DrawFloatControl("Radius", BindGetter(&Rigidbody::GetCapsuleRadius, &component), BindSetter(&Rigidbody::SetCapsuleRadius, &component));
-                    EditorGUI::DrawFloatControl("Half Height", BindGetter(&Rigidbody::GetCapsuleHalfHeight, &component), BindSetter(&Rigidbody::SetCapsuleHalfHeight, &component));
+                    EditorGUI::DrawFloatControl("Radius", BindGetter(&Rigidbody::GetCapsuleRadius, &component), BindSetter(&Rigidbody::SetCapsuleRadius, &component), 0.1f, FLT_EPSILON, FLT_MAX);
+                    EditorGUI::DrawFloatControl("Half Height", BindGetter(&Rigidbody::GetCapsuleHalfHeight, &component), BindSetter(&Rigidbody::SetCapsuleHalfHeight, &component), 0.1f, FLT_EPSILON, FLT_MAX);
                 }
                 if (component.GetColliderType() == Collider::Type::Box)
                 {
-                    EditorGUI::DrawVector3Control("Half Extends", BindGetter(&Rigidbody::GetBoxHalfExtents, &component), BindSetter(&Rigidbody::SetBoxHalfExtents, &component));
+                    EditorGUI::DrawVector3Control("Half Extends", BindGetter(&Rigidbody::GetBoxHalfExtents, &component), BindSetter(&Rigidbody::SetBoxHalfExtents, &component), 0.1f, FLT_EPSILON, FLT_MAX);
                 }
                 
-                EditorGUI::DrawFloatControl("Static Friction", BindGetter(&Rigidbody::GetStaticFriction, &component), BindSetter(&Rigidbody::SetStaticFriction, &component));
-                EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&Rigidbody::GetDynamicFriction, &component), BindSetter(&Rigidbody::SetDynamicFriction, &component));
-                EditorGUI::DrawFloatControl("Restitution", BindGetter(&Rigidbody::GetRestitution, &component), BindSetter(&Rigidbody::SetRestitution, &component));
+                EditorGUI::DrawFloatControl("Static Friction", BindGetter(&Rigidbody::GetStaticFriction, &component), BindSetter(&Rigidbody::SetStaticFriction, &component), 0.1f, 0.0f, FLT_MAX);
+                EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&Rigidbody::GetDynamicFriction, &component), BindSetter(&Rigidbody::SetDynamicFriction, &component), 0.1f, 0.0f, FLT_MAX);
+                EditorGUI::DrawFloatControl("Restitution", BindGetter(&Rigidbody::GetRestitution, &component), BindSetter(&Rigidbody::SetRestitution, &component), 0.1f, 0.0f, FLT_MAX);
             }
         }
     };

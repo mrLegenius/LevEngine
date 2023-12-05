@@ -4,6 +4,13 @@
 
 namespace LevEngine
 {
+    class PhysicsUpdate
+    {
+    public:
+        void UpdateTransforms(entt::registry& registry);
+        void UpdateConstantForces(entt::registry& registry);
+    };
+    
     class Physics
     {
     public:
@@ -45,5 +52,7 @@ namespace LevEngine
         // for physics update
         float m_Accumulator = 0.0f;
         float m_StepSize = 1.0f / 60.0f;
+
+        PhysicsUpdate m_PhysicsUpdate;
     };
 }

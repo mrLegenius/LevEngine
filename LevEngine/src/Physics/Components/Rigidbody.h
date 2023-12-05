@@ -3,7 +3,6 @@
 #include "Collider.h"
 #include "DataTypes/Vector.h"
 #include "Scene/Components/TypeParseTraits.h"
-#include "Collider.h"
 #include "ConstantForce.h"
 #include "Scene/Components/Transform/Transform.h"
 
@@ -20,8 +19,6 @@ namespace LevEngine
         };
         
         static void OnDestroy(entt::registry& registry, entt::entity entity);
-        
-        static void UpdateTransforms(entt::registry& registry);
         
         Vector3 GetTransformScale() const;
         void SetTransformScale(Vector3 transformScale);
@@ -102,9 +99,13 @@ namespace LevEngine
         
         enum class ForceMode
         {
+            // Add a continuous force to the rigidbody, using its mass
             Force,
+            // Add an instant force impulse to the rigidbody, using its mass
             Impulse,
+            // Add a continuous acceleration to the rigidbody, ignoring its mass
             Acceleration,
+            // Add an instant velocity change to the rigidbody, ignoring its mass
             VelocityChange
         };
 
@@ -112,7 +113,7 @@ namespace LevEngine
         void AddTorque(Vector3 torque, ForceMode = ForceMode::Force) const;
         
         friend class Physics;
-        friend class ConstantForce;
+        friend class PhysicsUpdate;
         
     private:
         [[nodiscard]] physx::PxRigidActor* GetActor() const;

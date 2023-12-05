@@ -21,16 +21,6 @@ namespace Sandbox
 			
             auto& player = playerEntity.AddComponent<Player>();
             player.Speed = 15.0f;
-
-            auto& playerRigidbody = playerEntity.GetComponent<Rigidbody>();
-            playerRigidbody.SetLinearDamping(1.0f);
-            playerRigidbody.SetMaxLinearVelocity(30.0f);
-            playerRigidbody.LockRotAxisX(true);
-            playerRigidbody.LockRotAxisY(true);
-            playerRigidbody.LockRotAxisZ(true);
-            playerRigidbody.SetStaticFriction(0.5f);
-            playerRigidbody.SetDynamicFriction(0.8f);
-            playerRigidbody.SetRestitution(0.0f);
         }
     };
 }

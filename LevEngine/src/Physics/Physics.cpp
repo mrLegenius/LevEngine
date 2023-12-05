@@ -125,9 +125,9 @@ namespace LevEngine
     void Physics::Process(entt::registry& registry, float deltaTime)
     {
         if (!StepPhysics(deltaTime)) return;
-        
-        Rigidbody::UpdateTransforms(registry);
-        ConstantForce::UpdateConstantForces(registry);
+
+        m_PhysicsUpdate.UpdateTransforms(registry);
+        m_PhysicsUpdate.UpdateConstantForces(registry);
         
         if (!m_IsDebugRenderEnabled) return;
         
@@ -166,4 +166,35 @@ namespace LevEngine
     {
         return m_Physics;
     }
+
+    void PhysicsUpdate::UpdateTransforms(entt::registry& registry)
+    {
+        const auto rigidbodyView = registry.view<Transform, Rigidbody>();
+        for (const auto entity : rigidbodyView)
+        {
+            auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
+        
+            const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
+            rigidbodyTransform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
+            rigidbodyTransform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
+        
+            rigidbody.SetTransformScale(rigidbodyTransform.GetWorldScale());
+        }
+    }
+
+    void PhysicsUpdate::UpdateConstantForces(entt::registry& registry)
+    {
+        const auto constantForceView = registry.view<Rigidbody, ConstantForce>();
+        for (const auto entity : constantForceView)
+        {
+            auto [constantForceRigidbody, constantForce] = constantForceView.get<Rigidbody, ConstantForce>(entity);
+
+            if (constantForceRigidbody.GetActor() != NULL)
+            {
+                constantForceRigidbody.AddForce(constantForce.GetForce(), Rigidbody::ForceMode::Force);
+                constantForceRigidbody.AddTorque(constantForce.GetTorque(), Rigidbody::ForceMode::Force);
+            }
+        }
+    }
+
 }

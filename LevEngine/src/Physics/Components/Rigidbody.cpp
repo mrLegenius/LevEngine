@@ -20,21 +20,6 @@ namespace LevEngine
         rigidbody.DetachRigidbody();
     }
 
-    void Rigidbody::UpdateTransforms(entt::registry& registry)
-    {
-        const auto rigidbodyView = registry.view<Transform, Rigidbody>();
-        for (const auto entity : rigidbodyView)
-        {
-            auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
-            
-            const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
-            rigidbodyTransform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
-            rigidbodyTransform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
-            
-            rigidbody.SetTransformScale(rigidbodyTransform.GetWorldScale());
-        }
-    }
-    
     
 
     physx::PxRigidActor* Rigidbody::GetActor() const
@@ -752,7 +737,7 @@ namespace LevEngine
 
     void Rigidbody::SetStaticFriction(const float staticFriction)
     {
-        if (staticFriction < 0.0f) return;
+        if (staticFriction < 0.0f || staticFriction > 1.0f) return;
         
         m_ColliderCollection[0]->PhysicalMaterial.StaticFriction = staticFriction;
         
@@ -772,7 +757,7 @@ namespace LevEngine
 
     void Rigidbody::SetDynamicFriction(const float dynamicFriction)
     {
-        if (dynamicFriction < 0.0f) return;
+        if (dynamicFriction < 0.0f || dynamicFriction > 1.0f) return;
         
         m_ColliderCollection[0]->PhysicalMaterial.DynamicFriction = dynamicFriction;
         

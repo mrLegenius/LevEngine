@@ -6,23 +6,6 @@
 
 namespace LevEngine
 {
-    void ConstantForce::UpdateConstantForces(entt::registry& registry)
-    {
-        const auto constantForceView = registry.view<Rigidbody, ConstantForce>();
-        for (const auto entity : constantForceView)
-        {
-            auto [constantForceRigidbody, constantForce] = constantForceView.get<Rigidbody, ConstantForce>(entity);
-
-            if (constantForceRigidbody.GetActor() != NULL)
-            {
-                constantForceRigidbody.AddForce(constantForce.GetForce(), Rigidbody::ForceMode::Force);
-                constantForceRigidbody.AddTorque(constantForce.GetTorque(), Rigidbody::ForceMode::Force);
-            }
-        }
-    }
-
-
-    
     Vector3 ConstantForce::GetForce() const
     {
         return m_Force;
