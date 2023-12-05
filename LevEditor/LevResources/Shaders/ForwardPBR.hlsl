@@ -38,8 +38,7 @@ float4 PSMain(PS_IN input) : SV_Target
 
 	clip (alpha - 0.1f);
 
-	//Gamma correction
-	float3 albedo = pow(color.rgb, 2.2) * material.tint;
+	float3 albedo = color.rgb * material.tint;
 
 	float metallic = metallicMap.Sample(metallicMapSampler, textureUV) * material.metallic;
 	float roughness = roughnessMap.Sample(roughnessMapSampler, textureUV) * material.roughness;
@@ -68,15 +67,15 @@ float3 CalcLighting(float3 fragPos, float3 normal, float depth, float3 albedo, f
 	float3 totalResult = CalcDirLight(dirLight, normal, viewDir, fragPosLightSpace, cascade, albedo, metallic, roughness);
 
 	for (int i = 0; i < lightsCount; i++)
-	{
+	{	
 		Light light = lights[i];
 		
 		float3 lit = 0.0f;
 		if (light.type == POINT_LIGHT)
 			totalResult += CalcPointLight(light, normal, fragPos, viewDir, albedo, metallic, roughness);
 		else if (light.type == SPOT_LIGHT)
-			totalResult += CalcSpotLight(light, normal, fragPos.xyzz, viewDir, albedo, metallic, roughness);
+			totalResult += CalcSpotLight(light, normal, fragPos, viewDir, albedo, metallic, roughness);
 	}
 
-	return totalResult;
+	return totalResult + ambient;
 }

@@ -27,6 +27,7 @@ namespace LevEngine
         Vector4 DirectionViewSpace{};
 
         alignas(16) Vector3 Position{};
+        alignas(16) Vector3 Direction{};
         alignas(16) Vector3 Color{};
 
         float Range = 1.0f;
@@ -57,7 +58,8 @@ namespace LevEngine
     private:
         void SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight);
         void AddPointLight(const Vector4& positionViewSpace, const Vector3& position, const PointLightComponent& light);
-        void AddSpotLight(const Vector4& positionViewSpace, const Vector4& directionViewSpace, const Vector3& position, const SpotLightComponent& light);
+        void AddSpotLight(const Vector4& positionViewSpace, const Vector4& directionViewSpace, const Vector3& position, const Vector3& direction, const
+                          SpotLightComponent& light);
 
         void UpdateLights();
         

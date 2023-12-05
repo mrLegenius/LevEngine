@@ -66,7 +66,7 @@ namespace LevEngine
                 Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0f), params.CameraViewMatrix);
             auto directionViewSpace = Vector4::Transform(
                 Vector4(direction.x, direction.y, direction.z, 0.0f), params.CameraViewMatrix);
-            AddSpotLight(positionViewSpace, directionViewSpace, worldPosition, light);
+            AddSpotLight(positionViewSpace, directionViewSpace, worldPosition, direction, light);
         }
     }
 
@@ -103,7 +103,8 @@ namespace LevEngine
     }
 
     void LightCollection::AddSpotLight(const Vector4& positionViewSpace, const Vector4& directionViewSpace,
-                                       const Vector3& position, const SpotLightComponent& light)
+                                       const Vector3& position, const Vector3& direction,
+                                       const SpotLightComponent& light)
     {
         LEV_PROFILE_FUNCTION();
 
@@ -118,6 +119,7 @@ namespace LevEngine
         lightGPUData.PositionViewSpace = positionViewSpace;
         lightGPUData.DirectionViewSpace = directionViewSpace;
         lightGPUData.Position = position;
+        lightGPUData.Direction = direction;
         lightGPUData.Color = static_cast<Vector3>(light.color);
         lightGPUData.Range = light.Range;
         lightGPUData.Angle = light.Angle;

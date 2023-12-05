@@ -222,7 +222,7 @@ float3 CalcSpotLightInViewSpace(
     lightDir = lightDir / distance;
 
     float attenuation = CalcAttenuation(light.range, light.smoothness, distance);
-    float spotIntensity = CalcSpotCone(light, lightDir);
+    float spotIntensity = CalcSpotConeInViewSpace(light, lightDir);
     float3 color = light.color * attenuation * spotIntensity * light.intensity;
     
     float3 Lo = CalcPBR(lightDir.xyz, normal, viewDir, color, albedo, metallic, roughness);

@@ -15,6 +15,7 @@ struct Light
     float4 directionViewSpace;
 
     float3 position;
+    float3 direction;
     float3 color;
 
     float range;
@@ -32,7 +33,7 @@ cbuffer LightningConstantBuffer : register(b2)
     int lightsCount;
 };
 
-float CalcSpotCone(Light light, float3 lightDir)
+float CalcSpotConeInViewSpace(Light light, float3 lightDir)
 {
     // If the cosine angle of the light's direction 
     // vector and the vector from the light source to the point being 
@@ -43,6 +44,21 @@ float CalcSpotCone(Light light, float3 lightDir)
     // is greater than maxCos, then the spotlight contribution will be 1.
     float maxCos = lerp(minCos, 1, 0.5);
     float cosAngle = dot(light.directionViewSpace.xyz, -lightDir);
+    // Blend between the maxixmum and minimum cosine angles.
+    return smoothstep(minCos, maxCos, cosAngle);
+}
+
+float CalcSpotCone(Light light, float3 lightDir)
+{
+    // If the cosine angle of the light's direction 
+    // vector and the vector from the light source to the point being 
+    // shaded is less than minCos, then the spotlight contribution will be 0.
+    float minCos = cos(radians(light.angle));
+    // If the cosine angle of the light's direction vector
+    // and the vector from the light source to the point being shaded
+    // is greater than maxCos, then the spotlight contribution will be 1.
+    float maxCos = lerp(minCos, 1, 0.5);
+    float cosAngle = dot(light.direction, -lightDir);
     // Blend between the maxixmum and minimum cosine angles.
     return smoothstep(minCos, maxCos, cosAngle);
 }

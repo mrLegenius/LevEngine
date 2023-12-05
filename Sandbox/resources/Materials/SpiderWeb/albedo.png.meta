@@ -1,9 +1,9 @@
 UUID: 16577848131177661364
 Address: ""
-IsLinear: false
-MinFilter: 0
-MagFilter: 0
-MipFilter: 0
+IsLinear: true
+MinFilter: 1
+MagFilter: 1
+MipFilter: 1
 WrapModeU: 0
 WrapModeV: 0
 WrapModeW: 0
@@ -12,5 +12,5 @@ CompareFunc: 0
 LODBias: 0
 MinLOD: 0
 MaxLOD: 0
-MaxAnisotropy: 1
-IsAnisotropicFilteringEnabled: false
+MaxAnisotropy: 3
+IsAnisotropicFilteringEnabled: true

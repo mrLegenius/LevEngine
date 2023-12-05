@@ -108,7 +108,7 @@ Entities:
       Scale: [50, 0.999999702, 10]
     Rigidbody:
       Visualization Flag: false
-      Rigidbody Type: 1
+      Rigidbody Type: 0
       Gravity Flag: true
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
@@ -138,7 +138,7 @@ Entities:
       Scale: [50, 0.999999702, 10]
     Rigidbody:
       Visualization Flag: false
-      Rigidbody Type: 1
+      Rigidbody Type: 0
       Gravity Flag: true
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
@@ -160,7 +160,7 @@ Entities:
       Scale: [50, 0.999977112, 9.99981594]
     Rigidbody:
       Visualization Flag: false
-      Rigidbody Type: 1
+      Rigidbody Type: 0
       Gravity Flag: true
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
@@ -186,7 +186,7 @@ Entities:
       Smoothness: 0.75
       Intensity: 10
   - Entity: 13631027794021233931
-    Tag: Skybox
+    Tag: Environment
     Transform:
       Position: [0, 0, 2.37524009]
       Rotation: [-0, 0, 0]
@@ -198,7 +198,7 @@ Entities:
     Parent: 11837398838170000115
     Transform:
       Position: [-1.20967243e-05, 5.0001483, 25.5]
-      Rotation: [1.57078934, -1.57519287e-06, 3.14159083]
+      Rotation: [1.57078934, -1.54055078e-06, 3.14159083]
       Scale: [50, 0.999938488, 9.99950695]
     Rigidbody:
       Visualization Flag: false
@@ -224,7 +224,7 @@ Entities:
       Scale: [50, 1, 50]
     Rigidbody:
       Visualization Flag: false
-      Rigidbody Type: 1
+      Rigidbody Type: 0
       Gravity Flag: true
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
@@ -236,6 +236,39 @@ Entities:
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 7582525064410579512
+      Cast Shadow: false
+  - Entity: 13129059575428668352
+    Tag: Web
+    Parent: 11837398838170000115
+    Transform:
+      Position: [23.9016342, 1.80962908, -20.0961456]
+      Rotation: [-0.22397691, -2.10650444, 1.832991]
+      Scale: [6.00000238, 6.00001669, 6.00001669]
+    MeshRenderer:
+      Mesh: 5160753388332290240
+      Material: 10648776512994663525
+      Cast Shadow: false
+  - Entity: 1102527589670769532
+    Tag: Web
+    Parent: 11837398838170000115
+    Transform:
+      Position: [23.4458256, 6.96982336, -23.5621567]
+      Rotation: [-0.146667942, -2.37159348, 1.7810123]
+      Scale: [6.00001001, 6.00003767, 6.00031185]
+    MeshRenderer:
+      Mesh: 5160753388332290240
+      Material: 10648776512994663525
+      Cast Shadow: false
+  - Entity: 12251101171661576211
+    Tag: Web
+    Parent: 11837398838170000115
+    Transform:
+      Position: [21.681242, 3.11237764, -23.283989]
+      Rotation: [0.384781569, -1.85873413, 1.95322466]
+      Scale: [10.0000114, 0.999998152, 10.0000114]
+    MeshRenderer:
+      Mesh: 5160753388332290240
+      Material: 10648776512994663525
       Cast Shadow: false
 Systems:
   - System: 12364856122512646631
