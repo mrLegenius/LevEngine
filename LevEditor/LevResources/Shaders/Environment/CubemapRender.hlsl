@@ -24,6 +24,7 @@ VS_OUT VSMain(VS_IN input)
 
     output.pos = float4(input.pos, 1.0f);
     output.uv = input.pos;
+    output.uv.z = -input.pos.z;
 
     return output;
 }
@@ -43,5 +44,28 @@ void GSMain(triangle VS_OUT p[3], in uint id : SV_GSInstanceID, inout TriangleSt
         output.slice = id;
         output.uv = p[i].uv;
         stream.Append(output);
+    }
+}
+
+//TODO: What is faster Instancing or triangle generation
+
+[maxvertexcount(18)]
+void GSMain2(triangle VS_OUT p[3], inout TriangleStream<PS_IN> stream)
+{
+    [unroll]
+    for (int i = 0; i < 6; i++)
+    {
+        PS_IN output;
+        output.slice = i;
+
+        [unroll]
+        for( int v = 0; v < 3; ++v )
+        {
+            output.pos = mul(p[v].pos, cubeMapViewProjections[i]);
+            output.uv = p[v].uv;
+            stream.Append(output);
+        }
+
+        stream.RestartStrip();
     }
 }
