@@ -21,7 +21,7 @@ PS_IN VSMain(VS_IN input)
 	PS_IN output;
 
 	float4 pos = float4(input.pos, 0.0f);
-	output.pos = mul(pos, viewProjection).xyww;
+	output.pos = mul(pos, viewProjection);
     output.uv = input.pos;
 
 	return output;
