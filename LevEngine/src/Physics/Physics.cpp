@@ -82,24 +82,13 @@ namespace LevEngine
         return true;
     }
     
-    void Physics::StepPhysics(const float deltaTime)
+    bool Physics::StepPhysics(const float deltaTime)
     {
-        if (IsAdvanced(deltaTime))
-        {
-            m_Scene->fetchResults(true);
-        }
-    }
-    
-    void Physics::UpdateTransforms(entt::registry& registry)
-    {
-        const auto view = registry.view<Transform, Rigidbody>();
-        for (const auto entity : view)
-        {
-            auto [transform, rigidbody] = view.get<Transform, Rigidbody>(entity);
-            const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
-            transform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
-            transform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
-        }
+        if (!IsAdvanced(deltaTime)) return false;
+
+        m_Scene->fetchResults(true);
+        
+        return true;
     }
     
     void Physics::DrawDebugLines() const
@@ -135,14 +124,14 @@ namespace LevEngine
     
     void Physics::Process(entt::registry& registry, float deltaTime)
     {
-        StepPhysics(deltaTime);
+        if (!StepPhysics(deltaTime)) return;
         
-        UpdateTransforms(registry);
-
-        if (m_IsDebugRenderEnabled)
-        {
-            DrawDebugLines();
-        }
+        Rigidbody::UpdateTransforms(registry);
+        ConstantForce::UpdateConstantForces(registry);
+        
+        if (!m_IsDebugRenderEnabled) return;
+        
+        DrawDebugLines();
     }
 
 

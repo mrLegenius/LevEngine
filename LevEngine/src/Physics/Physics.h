@@ -11,9 +11,10 @@ namespace LevEngine
         ~Physics();
 
         static Scope<Physics> Create();
-        void ClearAccumulator();
 
         void Process(entt::registry& registry, float deltaTime);
+
+        void ClearAccumulator();
 
         [[nodiscard]] physx::PxScene* GetScene() const;
         [[nodiscard]] physx::PxPhysics* GetPhysics() const;
@@ -23,10 +24,8 @@ namespace LevEngine
         void Reset();
         
         bool IsAdvanced(float deltaTime);
-        void StepPhysics(float deltaTime);
+        bool StepPhysics(float deltaTime);
         void DrawDebugLines() const;
-
-        static void UpdateTransforms(entt::registry& registry);
         
         physx::PxDefaultAllocator m_Allocator;
         physx::PxDefaultErrorCallback m_ErrorCallback;

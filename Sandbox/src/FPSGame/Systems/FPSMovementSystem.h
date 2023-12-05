@@ -10,60 +10,55 @@ namespace Sandbox
     {
         void Update(const float deltaTime, entt::registry& registry) override
         {
-            const auto playerView = registry.view<Transform, Player, Rigidbody, Force>();
+            const auto playerView = registry.view<Transform, Player, Rigidbody>();
             
             for (const auto entity : playerView)
             {
-                auto [transform, player, rigidbody, force] = playerView.get<Transform, Player, Rigidbody, Force>(entity);
+                auto [playerTransform, player, playerRigidbody] = playerView.get<Transform, Player, Rigidbody>(entity);
                 
-                if (force.GetForceType() == Force::Type::Impulse)
+                const auto& cameraTransform = playerTransform.GetChildren()[0].GetComponent<Transform>();
+                auto movement = Vector3::Zero;
+
+                if (Input::IsKeyDown(KeyCode::LeftShift))
                 {
-                    const auto cameraTransform = transform.GetChildren()[0].GetComponent<Transform>();
-                    auto movement = Vector3::Zero;
-                    if (Input::IsKeyDown(KeyCode::W))
-                    {
-                        movement += cameraTransform.GetForwardDirection();
-                        movement.y = 0.0f;
-                    }
-                    else if (Input::IsKeyDown(KeyCode::S))
-                    {
-                        movement -= cameraTransform.GetForwardDirection();
-                        movement.y = 0.0f;
-                    }
-                    if (Input::IsKeyDown(KeyCode::A))
-                    {
-                        movement -= cameraTransform.GetRightDirection();
-                        movement.y = 0.0f;
-                    }
-                    else if (Input::IsKeyDown(KeyCode::D))
-                    {
-                        movement += cameraTransform.GetRightDirection();
-                        movement.y = 0.0f;
-                    }
-                    if (Input::IsKeyDown(KeyCode::Space))
-                    {
-                        movement += Vector3::Up;
-                    }
-                    
-                    if (Input::IsKeyDown(KeyCode::LeftShift))
-                    {
-                        player.Speed = SPRINT_SPEED;
-                    }
-                    else
-                    {
-                        player.Speed = WALK_SPEED;
-                    }
-                    
-                    movement.Normalize();
-                    force.SetLinearForce(
-                        Vector3(
-                            deltaTime * player.Speed * movement.x,
-                            deltaTime * JUMP_FORCE * movement.y,
-                            deltaTime * player.Speed * movement.z
-                        )
-                    );
-                    force.CompleteForce(false);
+                    player.Speed = SPRINT_SPEED;
                 }
+                else
+                {
+                    player.Speed = WALK_SPEED;
+                }
+                
+                if (Input::IsKeyDown(KeyCode::W))
+                {
+                    movement += Vector3(cameraTransform.GetForwardDirection().x, 0.0f, cameraTransform.GetForwardDirection().z);
+                }
+                else if (Input::IsKeyDown(KeyCode::S))
+                {
+                    movement -= Vector3(cameraTransform.GetForwardDirection().x, 0.0f, cameraTransform.GetForwardDirection().z);
+                }
+                if (Input::IsKeyDown(KeyCode::A))
+                {
+                    movement -= Vector3(cameraTransform.GetRightDirection().x, 0.0f, cameraTransform.GetRightDirection().z);
+                }
+                else if (Input::IsKeyDown(KeyCode::D))
+                {
+                    movement += Vector3(cameraTransform.GetRightDirection().x, 0.0f, cameraTransform.GetRightDirection().z);
+                }
+                
+                if (Input::IsKeyDown(KeyCode::Space))
+                {
+                    movement += Vector3::Up;
+                }
+                
+                movement.Normalize();
+                playerRigidbody.AddForce(
+                    Vector3(
+                        deltaTime * player.Speed * movement.x,
+                        deltaTime * JUMP_FORCE * movement.y,
+                        deltaTime * player.Speed * movement.z
+                    ),
+                    Rigidbody::ForceMode::Impulse
+                ); 
             }
         }
     };

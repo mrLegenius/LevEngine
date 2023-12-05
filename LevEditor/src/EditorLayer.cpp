@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "EditorLayer.h"
 
 #include "ModalPopup.h"
@@ -27,7 +27,6 @@
 #include "Panels/ViewportPanel.h"
 #include "Physics/Physics.h"
 #include "Renderer/RendererContext.h"
-#include "Scene/Systems/Physics/ForceUpdateSystem.h"
 #include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor
@@ -169,9 +168,7 @@ namespace LevEngine::Editor
         scene->RegisterUpdateSystem<AudioListenerInitSystem>();
 
         App::Get().GetPhysics().ClearAccumulator();
-        scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
         scene->RegisterUpdateSystem<RigidbodyInitSystem>();
-        scene->RegisterUpdateSystem<ForceUpdateSystem>();
         
         auto& registry = scene->GetRegistry();
         registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();

@@ -4,6 +4,6 @@ namespace Sandbox
 {
     struct Enemy
     {
-        float speed;
+        float Speed;
     };
 }

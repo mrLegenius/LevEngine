@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Physics/Components/Rigidbody.h"
 #include "Scene/System.h"
 
 namespace LevEngine

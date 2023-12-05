@@ -157,7 +157,6 @@
 
 #include "Physics/Components/Rigidbody.h"
 #include "Scene/Systems/Physics/RigidbodyInitSystem.h"
-#include "Scene/Systems/Physics/RigidbodyUpdateSystem.h"
 
 // /////////////////////////////////////////////////////////
 // -- Assets -----------------------------------------------

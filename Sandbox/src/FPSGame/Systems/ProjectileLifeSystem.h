@@ -8,11 +8,11 @@ namespace Sandbox
     public:
         void Update(const float deltaTime, entt::registry& registry) override
         {
-            const auto view = registry.view<Transform, Projectile>();
+            const auto projectileView = registry.view<Transform, Projectile>();
 
-            for (const auto entity : view)
+            for (const auto entity : projectileView)
             {
-                auto [transform, projectile] = view.get<Transform, Projectile>(entity);
+                auto [projectileTransform, projectile] = projectileView.get<Transform, Projectile>(entity);
 
                 projectile.Timer += deltaTime;
                 if (projectile.Timer >= projectile.Lifetime)

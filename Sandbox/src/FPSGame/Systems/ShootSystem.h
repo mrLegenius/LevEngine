@@ -1,4 +1,5 @@
 #pragma once
+
 namespace Sandbox
 {
     /*
@@ -22,11 +23,11 @@ namespace Sandbox
     {
         void Update(float deltaTime, entt::registry& registry) override
         {
-            const auto view = registry.view<Transform, CameraComponent>();
+            const auto cameraView = registry.view<Transform, CameraComponent>();
 
-            for (const auto entity : view)
+            for (const auto entity : cameraView)
             {
-                auto [cameraTransform, camera] = view.get<Transform, CameraComponent>(entity);
+                auto [cameraTransform, camera] = cameraView.get<Transform, CameraComponent>(entity);
 
                 if (!camera.IsMain) continue;
 
@@ -35,13 +36,9 @@ namespace Sandbox
                     const auto projectilePrefab = ResourceManager::LoadAsset<PrefabAsset>("MissilePrefab");
                     auto projectile = projectilePrefab->Instantiate(SceneManager::GetActiveScene());
 
+                    // TODO: ADD CORRECT PROJECTILE SPAWN POSITION AND SHOOT DIRECTION
                     auto& projectileTransform = projectile.GetComponent<Transform>();
                     projectileTransform.SetWorldPosition(cameraTransform.GetWorldPosition() + cameraTransform.GetForwardDirection() * 2);
-                    
-                    auto& projectileParams = projectile.AddComponent<Projectile>();
-                    projectileParams.Speed = 25;
-                    projectileParams.Lifetime = 1;
-                    projectileParams.Timer = 0;
                     
                     auto& projectileRigidbody = projectile.GetComponent<Rigidbody>();
                     projectileRigidbody.EnableGravity(false);
@@ -52,10 +49,14 @@ namespace Sandbox
                     projectileRigidbody.LockRotAxisY(true);
                     projectileRigidbody.LockRotAxisZ(true);
 
-                    auto& force = projectile.AddComponent<Force>();
-                    force.SetForceType(Force::Type::Impulse);
-                    force.SetLinearForce(projectileParams.Speed * cameraTransform.GetForwardDirection());
-                    force.CompleteForce(false);
+                    projectileRigidbody.Initialize(projectileTransform);
+
+                    auto& projectileParams = projectile.AddComponent<Projectile>();
+                    projectileParams.Speed = 25;
+                    projectileParams.Lifetime = 2;
+                    projectileParams.Timer = 0;
+                    
+                    projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
 
                     Audio::PlayOneShot("event:/Shot", projectile);
                 }

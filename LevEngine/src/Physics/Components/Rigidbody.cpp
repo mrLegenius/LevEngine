@@ -19,6 +19,21 @@ namespace LevEngine
         auto& rigidbody = registry.get<Rigidbody>(entity);
         rigidbody.DetachRigidbody();
     }
+
+    void Rigidbody::UpdateTransforms(entt::registry& registry)
+    {
+        const auto rigidbodyView = registry.view<Transform, Rigidbody>();
+        for (const auto entity : rigidbodyView)
+        {
+            auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
+            
+            const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
+            rigidbodyTransform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
+            rigidbodyTransform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
+            
+            rigidbody.SetTransformScale(rigidbodyTransform.GetWorldScale());
+        }
+    }
     
     
 
@@ -447,6 +462,64 @@ namespace LevEngine
         if (m_Actor != NULL)
         {
             reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, flag);
+        }
+    }
+
+
+    
+    void Rigidbody::AddForce(const Vector3 force, const ForceMode mode) const
+    {
+        if (m_Type != Type::Dynamic) return;
+
+        if (m_Actor != NULL)
+        {
+            if (const auto rigidDynamic = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
+            {
+                if (mode == ForceMode::Force)
+                {
+                    rigidDynamic->addForce(PhysicsUtils::FromVector3ToPxVec3(force), physx::PxForceMode::eFORCE);
+                }
+                else if (mode == ForceMode::Impulse)
+                {
+                    rigidDynamic->addForce(PhysicsUtils::FromVector3ToPxVec3(force), physx::PxForceMode::eIMPULSE);
+                }
+                else if (mode == ForceMode::Acceleration)
+                {
+                    rigidDynamic->addForce(PhysicsUtils::FromVector3ToPxVec3(force), physx::PxForceMode::eACCELERATION);
+                }
+                else if (mode == ForceMode::VelocityChange)
+                {
+                    rigidDynamic->addForce(PhysicsUtils::FromVector3ToPxVec3(force), physx::PxForceMode::eVELOCITY_CHANGE);
+                }
+            }
+        }
+    }
+
+    void Rigidbody::AddTorque(const Vector3 torque, const ForceMode mode) const
+    {
+        if (m_Type != Type::Dynamic) return;
+
+        if (m_Actor != NULL)
+        {
+            if (const auto rigidDynamic = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
+            {
+                if (mode == ForceMode::Force)
+                {
+                    rigidDynamic->addTorque(PhysicsUtils::FromVector3ToPxVec3(torque), physx::PxForceMode::eFORCE);
+                }
+                else if (mode == ForceMode::Impulse)
+                {
+                    rigidDynamic->addTorque(PhysicsUtils::FromVector3ToPxVec3(torque), physx::PxForceMode::eIMPULSE);
+                }
+                else if (mode == ForceMode::Acceleration)
+                {
+                    rigidDynamic->addTorque(PhysicsUtils::FromVector3ToPxVec3(torque), physx::PxForceMode::eACCELERATION);
+                }
+                else if (mode == ForceMode::VelocityChange)
+                {
+                    rigidDynamic->addTorque(PhysicsUtils::FromVector3ToPxVec3(torque), physx::PxForceMode::eVELOCITY_CHANGE);
+                }
+            }
         }
     }
     

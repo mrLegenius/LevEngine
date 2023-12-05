@@ -4,7 +4,7 @@
 #include "DataTypes/Vector.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "Collider.h"
-#include "Force.h"
+#include "ConstantForce.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
@@ -20,7 +20,9 @@ namespace LevEngine
         };
         
         static void OnDestroy(entt::registry& registry, entt::entity entity);
-
+        
+        static void UpdateTransforms(entt::registry& registry);
+        
         Vector3 GetTransformScale() const;
         void SetTransformScale(Vector3 transformScale);
         
@@ -98,8 +100,19 @@ namespace LevEngine
         [[nodiscard]] float GetRestitution() const;
         void SetRestitution(float restitution);
         
+        enum class ForceMode
+        {
+            Force,
+            Impulse,
+            Acceleration,
+            VelocityChange
+        };
+
+        void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
+        void AddTorque(Vector3 torque, ForceMode = ForceMode::Force) const;
+        
         friend class Physics;
-        friend struct Force;
+        friend class ConstantForce;
         
     private:
         [[nodiscard]] physx::PxRigidActor* GetActor() const;
