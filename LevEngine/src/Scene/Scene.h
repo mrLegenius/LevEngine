@@ -36,9 +36,8 @@ namespace LevEngine
 
 		Entity DuplicateEntity(Entity entity);
 		Entity DuplicateEntity(Entity entity, Entity parent);
-
-		// TODO Not implemented function
-		void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
+		
+		static void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 
 		template<typename T>
 		void RegisterUpdateSystem();

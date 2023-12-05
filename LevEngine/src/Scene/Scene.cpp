@@ -10,6 +10,7 @@
 #include "Components/Components.h"
 #include "Components/Camera/Camera.h"
 #include "Kernel/Application.h"
+#include "Kernel/Window.h"
 #include "Scripting/ScriptingManager.h"
 #include "Physics/Physics.h"
 #include "Scripting/LuaComponentsBinder.h"
@@ -29,6 +30,8 @@ namespace LevEngine
 
         LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager.GetLuaState()), this);
 
+        m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
+        
         //TODO move this to new "BeginPlay" or "Init" function
         //ScriptingManager.RegisterSystems(this);
     }
@@ -373,6 +376,14 @@ namespace LevEngine
             DuplicateEntity(child, duplicatedEntity);
 
         return duplicatedEntity;
+    }
+
+    void Scene::OnCameraComponentAdded(entt::registry& registry, const entt::entity entity)
+    {
+        const auto& window = App::Get().GetWindow();
+        const auto width = window.GetWidth();
+        const auto height = window.GetHeight();
+        registry.get<CameraComponent>(entity).Camera.SetViewportSize(width, height);
     }
 }
 

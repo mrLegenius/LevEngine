@@ -1,9 +1,9 @@
 UUID: 13866022306593139133
 Address: ""
 IsLinear: false
-MinFilter: 0
-MagFilter: 0
-MipFilter: 0
+MinFilter: 1
+MagFilter: 1
+MipFilter: 1
 WrapModeU: 0
 WrapModeV: 0
 WrapModeW: 0
