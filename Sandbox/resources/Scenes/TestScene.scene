@@ -129,17 +129,6 @@ Entities:
       Scale: [0.999945402, 0.999966264, 0.999982893]
     Directional Light:
       Color: [1, 1, 1, 1]
-    Camera:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 5
-        OrthographicNear: 2
-        OrthographicFar: 2000
-      Main: false
-      FixedAspectRatio: false
   - Entity: 5052278192581293938
     Tag: Wall
     Parent: 11837398838170000115
