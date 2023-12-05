@@ -1404,6 +1404,9 @@
       <Name>FMODStudio</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="external\eastl\doc\EASTL.natvis" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>
