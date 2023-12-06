@@ -3,7 +3,7 @@
 
 namespace LevEngine::Editor
 {
-    StatisticsPanel::StatisticsPanel() { }
+    StatisticsPanel::StatisticsPanel() = default;
 
     String StatisticsPanel::GetName() { return "Statistics"; }
 
@@ -21,6 +21,7 @@ namespace LevEngine::Editor
         DrawAverageStat("Deferred Transparent", App::Renderer().GetDeferredTransparentStatistic());
         DrawAverageStat("Post Processing", App::Renderer().GetPostProcessingStatistic());
         DrawAverageStat("Particles", App::Renderer().GetParticlesStatistic());
+        DrawAverageStat("Debug", App::Renderer().GetDebugStatistic());
         ImGui::Unindent();
     }
 

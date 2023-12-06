@@ -249,6 +249,7 @@ namespace LevEngine
         m_DeferredTransparentQuery = Query::Create(Query::QueryType::Timer, 2);
         m_PostProcessingQuery = Query::Create(Query::QueryType::Timer, 2);
         m_ParticlesQuery = Query::Create(Query::QueryType::Timer, 2);
+        m_DebugQuery = Query::Create(Query::QueryType::Timer, 2);
 
         {
             LEV_PROFILE_SCOPE("Deferred technique creation");
@@ -285,13 +286,15 @@ namespace LevEngine
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredTransparentQuery));
             m_DeferredTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredTransparentQuery));
-            
+
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DebugQuery));
             m_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(m_DebugPipeline));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DebugQuery));
             
-            // m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ParticlesQuery));
-            // m_DeferredTechnique->AddPass(
-            //     CreateRef<ParticlePass>(mainRenderTarget, m_DepthTexture, m_NormalTexture));
-            // m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ParticlesQuery));
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ParticlesQuery));
+            m_DeferredTechnique->AddPass(
+                CreateRef<ParticlePass>(mainRenderTarget, m_DepthTexture, m_NormalTexture));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ParticlesQuery));
         }
 
         {
@@ -377,6 +380,11 @@ namespace LevEngine
         return m_ParticlesStat;
     }
 
+    Statistic Renderer::GetDebugStatistic() const
+    {
+        return m_DebugStat;
+    }
+
     void Renderer::RecalculateAllTransforms(entt::registry& registry)
     {
         LEV_PROFILE_FUNCTION();
@@ -433,8 +441,6 @@ namespace LevEngine
 
         ResetStatistics();
         
-
-        
         RecalculateAllTransforms(registry);
 
         mainCamera->RecalculateFrustum(*cameraTransform);
@@ -470,6 +476,7 @@ namespace LevEngine
         SampleQuery(m_EnvironmentQuery, m_EnvironmentStat);
         SampleQuery(m_PostProcessingQuery, m_PostProcessingStat);
         SampleQuery(m_ParticlesQuery, m_ParticlesStat);
+        SampleQuery(m_DebugQuery, m_DebugStat);
     }
 
     void Renderer::ResetStatistics()
@@ -483,6 +490,7 @@ namespace LevEngine
         m_EnvironmentStat.Reset();
         m_PostProcessingStat.Reset();
         m_ParticlesStat.Reset();
+        m_DebugStat.Reset();
     }
 
     void Renderer::SampleQuery(const Ref<Query>& query, Statistic& stat)
