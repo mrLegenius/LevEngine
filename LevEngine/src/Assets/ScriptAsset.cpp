@@ -8,32 +8,27 @@ namespace LevEngine
     const Path DefaultComponentPath = EngineResourcesRoot / "Scripts/Component.lua";
     
     ScriptAsset::ScriptAsset(const Path& path, const UUID uuid):
-        Asset(path, uuid)
+        Asset(path, uuid),
+        m_Type(Type::Undefined)
     {
-        try
-        {
-            YAML::Node meta = YAML::LoadFile(m_MetaPath.string());
-            DeserializeMeta(meta);
-        }
-        catch ([[maybe_unused]] std::exception& e)
-        {
-            m_Type = Type::Undefined;
-        }
     }
 
     ScriptAsset::ScriptAsset(const Path& path, const UUID uuid, Type type):
         Asset(path, uuid),
         m_Type(type)
     {
-        switch (type) {
-        case Type::System:
-            copy(DefaultSystemPath, path, std::filesystem::copy_options::overwrite_existing);
-            break;
-        case Type::Component:
-            copy(DefaultComponentPath, path, std::filesystem::copy_options::overwrite_existing);
-            break;
-        default:
-            std::ofstream fout(m_Path);
+        if (!exists(path))
+        {
+            switch (type) {
+            case Type::System:
+                copy(DefaultSystemPath, path, std::filesystem::copy_options::overwrite_existing);
+                break;
+            case Type::Component:
+                copy(DefaultComponentPath, path, std::filesystem::copy_options::overwrite_existing);
+                break;
+            default:
+                std::ofstream fout(m_Path);
+            }
         }
     }
 
