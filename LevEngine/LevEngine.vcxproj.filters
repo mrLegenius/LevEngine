@@ -2687,9 +2687,6 @@
     <ClInclude Include="src\Scripting\MetaUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scripting\ScriptingComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Scripting\ScriptingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2784,6 +2781,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Physics\Components\ConstantForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scripting\ScriptingSystemComponents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -3340,6 +3340,9 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\DebugRender\DebugLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Renderer\DebugRender\DebugSphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -3432,5 +3435,18 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="external\eastl\doc\EASTL.natvis" />
+    <Natvis Include="external\entt\config.natvis" />
+    <Natvis Include="external\entt\container.natvis" />
+    <Natvis Include="external\entt\core.natvis" />
+    <Natvis Include="external\entt\entity.natvis" />
+    <Natvis Include="external\entt\graph.natvis" />
+    <Natvis Include="external\entt\locator.natvis" />
+    <Natvis Include="external\entt\meta.natvis" />
+    <Natvis Include="external\entt\platform.natvis" />
+    <Natvis Include="external\entt\poly.natvis" />
+    <Natvis Include="external\entt\process.natvis" />
+    <Natvis Include="external\entt\resource.natvis" />
+    <Natvis Include="external\entt\signal.natvis" />
+    <Natvis Include="external\sol\sol2.natvis" />
   </ItemGroup>
 </Project>

@@ -1011,7 +1011,7 @@
     <ClInclude Include="src\Scene\Systems\Physics\RigidbodyInitSystem.h" />
     <ClInclude Include="src\Scripting\MathLuaBindings.h" />
     <ClInclude Include="src\Scripting\MetaUtilities.h" />
-    <ClInclude Include="src\Scripting\ScriptingComponent.h" />
+    <ClInclude Include="src\Scripting\ScriptingSystemComponents.h" />
     <ClInclude Include="src\Scripting\ScriptingManager.h" />
     <ClInclude Include="src\Scripting\ScriptingSystems.h" />
     <ClInclude Include="src\Serializers\RenderSettingsSerializer.h" />
@@ -1404,6 +1404,19 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="external\eastl\doc\EASTL.natvis" />
+    <Natvis Include="external\entt\config.natvis" />
+    <Natvis Include="external\entt\container.natvis" />
+    <Natvis Include="external\entt\core.natvis" />
+    <Natvis Include="external\entt\entity.natvis" />
+    <Natvis Include="external\entt\graph.natvis" />
+    <Natvis Include="external\entt\locator.natvis" />
+    <Natvis Include="external\entt\meta.natvis" />
+    <Natvis Include="external\entt\platform.natvis" />
+    <Natvis Include="external\entt\poly.natvis" />
+    <Natvis Include="external\entt\process.natvis" />
+    <Natvis Include="external\entt\resource.natvis" />
+    <Natvis Include="external\entt\signal.natvis" />
+    <Natvis Include="external\sol\sol2.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
