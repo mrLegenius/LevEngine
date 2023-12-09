@@ -17,18 +17,15 @@ namespace LevEngine
         Asset(path, uuid),
         m_Type(type)
     {
-        if (!exists(path))
-        {
-            switch (type) {
-            case Type::System:
-                copy(DefaultSystemPath, path, std::filesystem::copy_options::overwrite_existing);
-                break;
-            case Type::Component:
-                copy(DefaultComponentPath, path, std::filesystem::copy_options::overwrite_existing);
-                break;
-            default:
-                std::ofstream fout(m_Path);
-            }
+        switch (type) {
+        case Type::System:
+            copy(DefaultSystemPath, path, std::filesystem::copy_options::overwrite_existing);
+            break;
+        case Type::Component:
+            copy(DefaultComponentPath, path, std::filesystem::copy_options::overwrite_existing);
+            break;
+        default:
+            std::ofstream fout(m_Path);
         }
     }
 
