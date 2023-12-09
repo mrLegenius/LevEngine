@@ -8,17 +8,9 @@ namespace LevEngine
     const Path DefaultComponentPath = EngineResourcesRoot / "Scripts/Component.lua";
     
     ScriptAsset::ScriptAsset(const Path& path, const UUID uuid):
-        Asset(path, uuid)
+        Asset(path, uuid),
+        m_Type(Type::Undefined)
     {
-        try
-        {
-            YAML::Node meta = YAML::LoadFile(m_MetaPath.string());
-            DeserializeMeta(meta);
-        }
-        catch ([[maybe_unused]] std::exception& e)
-        {
-            m_Type = Type::Undefined;
-        }
     }
 
     ScriptAsset::ScriptAsset(const Path& path, const UUID uuid, Type type):

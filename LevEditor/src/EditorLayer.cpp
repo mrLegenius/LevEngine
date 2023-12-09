@@ -4,12 +4,6 @@
 #include "ModalPopup.h"
 #include "Project.h"
 #include "Selection.h"
-#include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
-#include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
-#include "Scene/Systems/Audio/AudioSourceInitSystem.h"
-#include "Scene/Systems/Audio/AudioListenerInitSystem.h"
-#include <Scene/Components/Audio/AudioSource.h>
-#include <Scene/Components/Audio/AudioListener.h>
 
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
 #include "Essentials/MenuBar.h"
@@ -25,9 +19,7 @@
 #include "Panels/StatusBar.h"
 #include "Panels/Toolbar.h"
 #include "Panels/ViewportPanel.h"
-#include "Physics/Physics.h"
 #include "Renderer/RendererContext.h"
-#include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor
 {
@@ -161,24 +153,11 @@ namespace LevEngine::Editor
     {
         if (!m_SceneEditor->SaveScene()) return;
 
-        auto& scene = SceneManager::GetActiveScene();
-        scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
-        scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
-        scene->RegisterUpdateSystem<AudioSourceInitSystem>();
-        scene->RegisterUpdateSystem<AudioListenerInitSystem>();
-
-        App::Get().GetPhysics().ClearAccumulator();
-        scene->RegisterUpdateSystem<RigidbodyInitSystem>();
-        
-        auto& registry = scene->GetRegistry();
-        registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
-        registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
-        registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
-
-        registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
+        auto& scene = SceneManager::GetActiveScene();        
         
         m_Game->Focus();
         m_SceneState = SceneState::Play;
+        scene->OnInit();
         Selection::Deselect();
     }
     void EditorLayer::OnSceneStop()
@@ -207,8 +186,7 @@ namespace LevEngine::Editor
 
         ResourceManager::Init(Project::GetRoot());
         AssetDatabase::ProcessAllAssets();
-        Application::Get().GetScriptingManager().LoadScripts();
-
+        
         const auto startScene = Project::GetStartScene();
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))
             SceneManager::LoadEmptyScene();

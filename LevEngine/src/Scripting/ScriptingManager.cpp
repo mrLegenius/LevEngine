@@ -45,6 +45,7 @@ namespace LevEngine::Scripting
 
             for (const auto& script : scripts)
             {
+                script->Deserialize();
                 auto scriptName = script->GetName();
                 try
                 {
@@ -121,7 +122,7 @@ namespace LevEngine::Scripting
             }
         }
 
-        //TODO Register Init System
+        scene->RegisterInitSystem<ScriptingInitSystem>();
         scene->RegisterUpdateSystem<ScriptingUpdateSystem>();
         scene->RegisterLateUpdateSystem<ScriptingLateUpdateSystem>();
     }

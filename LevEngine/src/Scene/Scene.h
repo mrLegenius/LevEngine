@@ -17,6 +17,7 @@ namespace LevEngine
 
 		void CleanupScene();
 
+		void OnInit();
 		void OnUpdate(float deltaTime);
 		void OnPhysics(float deltaTime);
 		void OnLateUpdate(float deltaTime);
@@ -39,6 +40,9 @@ namespace LevEngine
 		
 		static void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 
+		template<class T>
+		void RegisterInitSystem();
+		
 		template<typename T>
 		void RegisterUpdateSystem();
 
@@ -79,6 +83,7 @@ namespace LevEngine
 		Vector<Scope<System>> m_UpdateSystems;
 		Vector<Scope<System>> m_LateUpdateSystems;
 		Vector<Scope<System>> m_EventSystems;
+		Vector<Scope<System>> m_InitSystems;
 
 		bool m_IsUpdateDone = true;
 		bool m_IsLateUpdateDone = true;
