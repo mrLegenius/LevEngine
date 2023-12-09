@@ -5,6 +5,13 @@
 
 namespace LevEngine 
 {
+	template <class T>
+	void Scene::RegisterInitSystem()
+	{
+		static_assert(eastl::is_base_of_v<System, T>, "T must derive from System");
+		m_InitSystems.emplace_back(CreateScope<T>());
+	}
+
 	template<typename T>
 	void Scene::RegisterUpdateSystem()
 	{

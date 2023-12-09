@@ -4,7 +4,6 @@
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
 #include "Scripting/ScriptingManager.h"
-#include "Physics/Physics.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
@@ -31,7 +30,6 @@ namespace Sandbox
 
 		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
-		Application::Get().GetScriptingManager().LoadScripts();
 
 		//TODO: Remove hard coded project name
 		Project::Load("Sandbox.levproject");
@@ -50,29 +48,8 @@ namespace Sandbox
 		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
-		//scene->RegisterUpdateSystem<EnemySpawnSystem>();
-		//scene->RegisterUpdateSystem<EnemyMovementSystem>();
-		
-		scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
-		scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
 
-		scene->RegisterUpdateSystem<AudioSourceInitSystem>();
-		scene->RegisterUpdateSystem<AudioListenerInitSystem>();
-		
-		scene->RegisterOneFrame<CollisionBeginEvent>();
-		scene->RegisterOneFrame<CollisionEndEvent>();
-
-		App::Get().GetPhysics().ClearAccumulator();
-		scene->RegisterUpdateSystem<RigidbodyInitSystem>();
-
-		auto& registry = scene->GetRegistry();
-		registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
-		registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
-
-		registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
-		
-		registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
-
+		scene->OnInit();
 		Application::Get().GetWindow().DisableCursor();
 	}
 

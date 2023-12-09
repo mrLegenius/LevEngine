@@ -8,16 +8,25 @@
 #include "Entity.h"
 #include "Assets/ScriptAsset.h"
 #include "Components/Components.h"
+#include "Components/Audio/AudioListener.h"
+#include "Components/Audio/AudioSource.h"
 #include "Components/Camera/Camera.h"
 #include "Kernel/Application.h"
 #include "Kernel/Window.h"
 #include "Scripting/ScriptingManager.h"
 #include "Physics/Physics.h"
+#include "Physics/Components/Rigidbody.h"
+#include "Physics/Events/LegacyCollisionBeginEvent.h"
+#include "Physics/Events/LegacyCollisionEndEvent.h"
 #include "Scripting/LuaComponentsBinder.h"
+#include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
+#include "Systems/Animation/WaypointPositionUpdateSystem.h"
+#include "Systems/Audio/AudioListenerInitSystem.h"
+#include "Systems/Audio/AudioSourceInitSystem.h"
+#include "Systems/Physics/RigidbodyInitSystem.h"
 
 namespace LevEngine
 {
-
     constexpr bool k_IsMultiThreading = false;
     constexpr int k_SleepMicroSeconds = 10;
 
@@ -31,9 +40,6 @@ namespace LevEngine
         LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager.GetLuaState()), this);
 
         m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
-        
-        //TODO move this to new "BeginPlay" or "Init" function
-        //ScriptingManager.RegisterSystems(this);
     }
 
     void Scene::CleanupScene()
@@ -42,6 +48,36 @@ namespace LevEngine
 
         m_Registry.clear();
         Audio::ReleaseAll();
+    }
+
+    void Scene::OnInit()
+    {
+        auto scriptManager = Application::Get().GetScriptingManager();
+        scriptManager.LoadScripts();
+        scriptManager.RegisterSystems(this);
+
+        RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
+        RegisterUpdateSystem<WaypointPositionUpdateSystem>();
+
+        RegisterUpdateSystem<AudioSourceInitSystem>();
+        RegisterUpdateSystem<AudioListenerInitSystem>();
+		
+        RegisterOneFrame<CollisionBeginEvent>();
+        RegisterOneFrame<CollisionEndEvent>();
+
+        App::Get().GetPhysics().ClearAccumulator();
+        RegisterUpdateSystem<RigidbodyInitSystem>();
+
+        m_Registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
+        m_Registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
+        m_Registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
+
+        m_Registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
+
+        for (const auto& system : m_InitSystems)
+        {
+            system->Update(0, m_Registry);
+        }
     }
 
     Entity Scene::GetEntityByUUID(const UUID& uuid)
@@ -65,7 +101,7 @@ namespace LevEngine
 
     bool Scene::IsScriptSystemActive(const Ref<ScriptAsset>& scriptAsset) const
     {
-        return  m_ScriptSystems.find(scriptAsset) != m_ScriptSystems.end();
+        return m_ScriptSystems.find(scriptAsset) != m_ScriptSystems.end();
     }
 
     void Scene::SetScriptSystemActive(const Ref<ScriptAsset>& scriptAsset, bool isActive)
@@ -96,7 +132,7 @@ namespace LevEngine
             system->Update(deltaTime, m_Registry);
         }
 
-        vgjs::continuation([this]() {m_IsUpdateDone = true; });
+        vgjs::continuation([this]() { m_IsUpdateDone = true; });
     }
 
     void Scene::OnUpdate(const float deltaTime)
@@ -126,7 +162,7 @@ namespace LevEngine
     {
         LegacyPhysics::Process(m_Registry, deltaTime);
 
-        vgjs::continuation([this]() {m_IsPhysicsDone = true; });
+        vgjs::continuation([this]() { m_IsPhysicsDone = true; });
     }
 
     void Scene::OnPhysics(const float deltaTime)
@@ -153,7 +189,7 @@ namespace LevEngine
     {
         App::Renderer().Render(m_Registry);
 
-        vgjs::continuation([this]() {m_IsRenderDone = true; });
+        vgjs::continuation([this]() { m_IsRenderDone = true; });
     }
 
     void Scene::OnRender()
@@ -162,7 +198,7 @@ namespace LevEngine
         {
             m_IsRenderDone = false;
 
-            vgjs::schedule([this]() {RequestRenderUpdate(); });
+            vgjs::schedule([this]() { RequestRenderUpdate(); });
 
             while (!m_IsRenderDone)
             {
@@ -179,7 +215,7 @@ namespace LevEngine
     {
         App::Renderer().Render(m_Registry, mainCamera, cameraTransform);
 
-        vgjs::continuation([this]() {m_IsRenderDone = true; });
+        vgjs::continuation([this]() { m_IsRenderDone = true; });
     }
 
     void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
@@ -188,7 +224,7 @@ namespace LevEngine
         {
             m_IsRenderDone = false;
 
-            vgjs::schedule([this, mainCamera, cameraTransform]() {RequestRenderUpdate(mainCamera, cameraTransform); });
+            vgjs::schedule([this, mainCamera, cameraTransform]() { RequestRenderUpdate(mainCamera, cameraTransform); });
 
             while (!m_IsRenderDone)
             {
@@ -209,7 +245,7 @@ namespace LevEngine
             system->Update(deltaTime, m_Registry);
         }
 
-        vgjs::continuation([this]() {m_IsLateUpdateDone = true; });
+        vgjs::continuation([this]() { m_IsLateUpdateDone = true; });
     }
 
     void Scene::RequestEventsUpdate(const float deltaTime)
@@ -220,7 +256,7 @@ namespace LevEngine
             system->Update(deltaTime, m_Registry);
         }
 
-        vgjs::continuation([this]() {m_IsEventUpdateDone = true; });
+        vgjs::continuation([this]() { m_IsEventUpdateDone = true; });
     }
 
     void Scene::OnLateUpdate(const float deltaTime)
@@ -231,7 +267,7 @@ namespace LevEngine
         {
             m_IsLateUpdateDone = false;
 
-            vgjs::schedule([this, deltaTime]() {RequestLateUpdate(deltaTime); });
+            vgjs::schedule([this, deltaTime]() { RequestLateUpdate(deltaTime); });
 
             while (!m_IsLateUpdateDone)
             {
@@ -240,7 +276,7 @@ namespace LevEngine
 
             m_IsEventUpdateDone = false;
 
-            vgjs::schedule([this, deltaTime]() {RequestEventsUpdate(deltaTime); });
+            vgjs::schedule([this, deltaTime]() { RequestEventsUpdate(deltaTime); });
 
             while (!m_IsEventUpdateDone)
             {
@@ -301,7 +337,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        auto entity = Entity(entt::handle{ m_Registry, m_Registry.create() });
+        auto entity = Entity(entt::handle{m_Registry, m_Registry.create()});
         entity.AddComponent<IDComponent>(uuid);
         entity.AddComponent<Transform>(entity);
         entity.AddComponent<TagComponent>(name);
@@ -386,6 +422,3 @@ namespace LevEngine
         registry.get<CameraComponent>(entity).Camera.SetViewportSize(width, height);
     }
 }
-
-
-
