@@ -28,7 +28,7 @@ namespace LevEngine
 		m_DeltaTime = deltaTime;
 		if (m_CurrentAnimation)
 		{
-			m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * deltaTime;
+			m_CurrentTime += static_cast<float>(m_CurrentAnimation->GetTicksPerSecond()) * deltaTime;
 			m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
 
 			NodeData* node = m_CurrentAnimation->GetRootNode();

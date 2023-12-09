@@ -47,7 +47,7 @@ namespace LevEngine
     /*interpolates  b/w positions,rotations & scaling keys based on the curren time of
     the animation and prepares the local transformation matrix by combining all keys
     transformations*/
-    void Bone::Update(float animationTime)
+    void Bone::Update(double animationTime)
     {
         const Matrix translation = InterpolatePosition(animationTime);
         const Matrix rotation = InterpolateRotation(animationTime);
@@ -62,7 +62,7 @@ namespace LevEngine
 
     /* Gets the current index on mKeyPositions to interpolate to based on
     the current animation time*/
-    int Bone::GetPositionIndex(float animationTime)
+    size_t Bone::GetPositionIndex(double animationTime)
     {
         for (size_t index = 0; index < m_Positions.size() - 1; ++index)
         {
@@ -78,7 +78,7 @@ namespace LevEngine
 
     /* Gets the current index on mKeyRotations to interpolate to based on the
     current animation time*/
-    int Bone::GetRotationIndex(float animationTime)
+    size_t Bone::GetRotationIndex(double animationTime)
     {
         for (size_t index = 0; index < m_Rotations.size() - 1; ++index)
         {
@@ -94,7 +94,7 @@ namespace LevEngine
 
     /* Gets the current index on m_Scales to interpolate to based on the
     current animation time */
-    int Bone::GetScaleIndex(float animationTime)
+    size_t Bone::GetScaleIndex(double animationTime)
     {
         for (size_t index = 0; index < m_Scales.size() - 1; ++index)
         {
@@ -110,25 +110,25 @@ namespace LevEngine
 
 
     /* Gets normalized value for Lerp & Slerp*/
-    float Bone::GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const
+    double Bone::GetScaleFactor(double lastTimeStamp, double nextTimeStamp, double animationTime) const
     {
-        const float midWayLength = animationTime - lastTimeStamp;
-        const float framesDiff = nextTimeStamp - lastTimeStamp;
+        const double midWayLength = animationTime - lastTimeStamp;
+        const double framesDiff = nextTimeStamp - lastTimeStamp;
         return midWayLength / framesDiff;
     }
 
     /*figures out which position keys to interpolate b/w and performs the interpolation
     and returns the translation matrix*/
-    Matrix Bone::InterpolatePosition(float animationTime)
+    Matrix Bone::InterpolatePosition(double animationTime)
     {
         if (1 == m_Positions.size())
         {
             return Matrix::CreateTranslation(m_Positions[0].position);
         }
 
-        const int p0Index = GetPositionIndex(animationTime);
-        const int p1Index = p0Index + 1;
-        const float scaleFactor = GetScaleFactor(m_Positions[p0Index].timeStamp,
+        const size_t p0Index = GetPositionIndex(animationTime);
+        const size_t p1Index = p0Index + 1;
+        const double scaleFactor = GetScaleFactor(m_Positions[p0Index].timeStamp,
                                                  m_Positions[p1Index].timeStamp, animationTime);
         const Vector3 finalPosition = Vector3::Lerp(m_Positions[p0Index].position,
                                                     m_Positions[p1Index].position, scaleFactor);
@@ -138,7 +138,7 @@ namespace LevEngine
 
     /*figures out which rotations keys to interpolate b/w and performs the interpolation
     and returns the rotation matrix*/
-    Matrix Bone::InterpolateRotation(float animationTime)
+    Matrix Bone::InterpolateRotation(double animationTime)
     {
         if (1 == m_Rotations.size())
         {
@@ -147,9 +147,9 @@ namespace LevEngine
             return Matrix::CreateFromQuaternion(rotation);
         }
 
-        const int p0Index = GetRotationIndex(animationTime);
-        const int p1Index = p0Index + 1;
-        const float scaleFactor = GetScaleFactor(m_Rotations[p0Index].timeStamp,
+        const size_t p0Index = GetRotationIndex(animationTime);
+        const size_t p1Index = p0Index + 1;
+        const double scaleFactor = GetScaleFactor(m_Rotations[p0Index].timeStamp,
                                                  m_Rotations[p1Index].timeStamp, animationTime);
         Quaternion finalRotation = Quaternion::Slerp(m_Rotations[p0Index].orientation,
             m_Rotations[p1Index].orientation, scaleFactor);
@@ -159,16 +159,16 @@ namespace LevEngine
 
     /*figures out which scaling keys to interpolate b/w and performs the interpolation
     and returns the scale matrix*/
-    Matrix Bone::InterpolateScaling(float animationTime)
+    Matrix Bone::InterpolateScaling(double animationTime)
     {
         if (1 == m_Scales.size())
         {
             return Matrix::CreateScale(m_Scales[0].scale);
         }
 
-        const int p0Index = GetScaleIndex(animationTime);
-        const int p1Index = p0Index + 1;
-        const float scaleFactor = GetScaleFactor(m_Scales[p0Index].timeStamp,
+        const size_t p0Index = GetScaleIndex(animationTime);
+        const size_t p1Index = p0Index + 1;
+        const double scaleFactor = GetScaleFactor(m_Scales[p0Index].timeStamp,
                                                  m_Scales[p1Index].timeStamp, animationTime);
         const Vector3 finalScale = Vector3::Lerp(m_Scales[p0Index].scale, m_Scales[p1Index].scale,
                                                  scaleFactor);

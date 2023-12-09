@@ -34,7 +34,7 @@ namespace LevEngine
         /*interpolates  b/w positions,rotations & scaling keys based on the curren time of
         the animation and prepares the local transformation matrix by combining all keys
         tranformations*/
-        void Update(float animationTime);
+        void Update(double animationTime);
 
         [[nodiscard]] const Matrix& GetLocalTransform() const;
         [[nodiscard]] const String& GetBoneName() const;
@@ -43,32 +43,32 @@ namespace LevEngine
 
         /* Gets the current index on mKeyPositions to interpolate to based on
         the current animation time*/
-        [[nodiscard]] int GetPositionIndex(float animationTime);
+        [[nodiscard]] size_t GetPositionIndex(double animationTime);
 
         /* Gets the current index on mKeyRotations to interpolate to based on the
         current animation time*/
-        [[nodiscard]] int GetRotationIndex(float animationTime);
+        [[nodiscard]] size_t GetRotationIndex(double animationTime);
 
         /* Gets the current index on mKeyScalings to interpolate to based on the
         current animation time */
-        [[nodiscard]] int GetScaleIndex(float animationTime);
+        [[nodiscard]] size_t GetScaleIndex(double animationTime);
 
     private:
 
         /* Gets normalized value for Lerp & Slerp*/
-        [[nodiscard]] float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const;
+        [[nodiscard]] double GetScaleFactor(double lastTimeStamp, double nextTimeStamp, double animationTime) const;
 
         /*figures out which position keys to interpolate b/w and performs the interpolation
         and returns the translation matrix*/
-        Matrix InterpolatePosition(float animationTime);
+        Matrix InterpolatePosition(double animationTime);
 
         /*figures out which rotations keys to interpolate b/w and performs the interpolation
         and returns the rotation matrix*/
-        Matrix InterpolateRotation(float animationTime);
+        Matrix InterpolateRotation(double animationTime);
 
         /*figures out which scaling keys to interpolate b/w and performs the interpolation
         and returns the scale matrix*/
-        Matrix InterpolateScaling(float animationTime);
+        Matrix InterpolateScaling(double animationTime);
 
 
         Vector<KeyPosition> m_Positions;

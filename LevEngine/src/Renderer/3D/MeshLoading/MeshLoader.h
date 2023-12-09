@@ -67,7 +67,7 @@ public:
 		const Matrix currentNodeTransform = AssimpConverter::ToMatrix(node->mTransformation, true);
 		cumulativeTransform *= currentNodeTransform;
 
-		for (int i = 0; i < node->mNumMeshes; ++i)
+		for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 		{
 			const int meshIdx = node->mMeshes[i];
 			const aiMesh* mesh = scene->mMeshes[meshIdx];
@@ -113,7 +113,7 @@ public:
 			}
 		}
 
-		for (int i = 0; i < node->mNumChildren; ++i)
+		for (unsigned int i = 0; i < node->mNumChildren; ++i)
 		{
 			ParseMesh(node->mChildren[i], scene, resultMesh, cumulativeTransform);
 		}
@@ -169,7 +169,7 @@ public:
 
 	static void FindBoundingBoxBorders(Ref<Mesh> mesh, Vector3& minPos, Vector3& maxPos)
 	{
-		for (int vertexIdx = 0; vertexIdx < mesh->GetVerticesCount(); ++vertexIdx)
+		for (unsigned int vertexIdx = 0; vertexIdx < mesh->GetVerticesCount(); ++vertexIdx)
 		{
 			Vector3 position = mesh->GetVertex(vertexIdx);
 
