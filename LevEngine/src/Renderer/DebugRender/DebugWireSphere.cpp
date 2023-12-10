@@ -9,5 +9,5 @@ void LevEngine::DebugWireSphere::Draw()
 {
     static auto circle = Primitives::CreateWireSphere();
         
-    Renderer3D::DrawLineList(m_Model, circle, ShaderAssets::Debug());
+    Renderer3D::DrawLineList(m_Model, circle, ShaderAssets::DebugShape());
 }

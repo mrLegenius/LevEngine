@@ -8,5 +8,5 @@
 void LevEngine::DebugWireCube::Draw()
 {
     static auto mesh = Primitives::CreateWireCube();
-    Renderer3D::DrawLineList(m_Model, mesh, ShaderAssets::Debug());
+    Renderer3D::DrawLineList(m_Model, mesh, ShaderAssets::DebugShape());
 }

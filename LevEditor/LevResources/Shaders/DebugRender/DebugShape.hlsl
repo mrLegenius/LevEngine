@@ -1,4 +1,4 @@
-#include "ShaderCommon.hlsl"
+#include "../ShaderCommon.hlsl"
 
 struct DEBUG_VS_IN
 {
@@ -12,7 +12,7 @@ struct DEBUG_PS_IN
 
 cbuffer DebugColor : register(b7)
 {
-	float4 color;
+    float4 color;
 };
 
 DEBUG_PS_IN VSMain(DEBUG_VS_IN input)

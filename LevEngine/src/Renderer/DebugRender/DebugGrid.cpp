@@ -6,5 +6,5 @@
 
 void LevEngine::DebugGrid::Draw()
 {
-    Renderer3D::DrawLineList(m_Model, m_Mesh, ShaderAssets::Debug());
+    Renderer3D::DrawLineList(m_Model, m_Mesh, ShaderAssets::DebugShape());
 }

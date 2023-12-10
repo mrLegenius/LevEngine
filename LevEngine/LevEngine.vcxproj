@@ -936,7 +936,6 @@
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCube.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugGrid.h" />
-    <ClInclude Include="src\Renderer\DebugRender\DebugLine.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRender.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRenderPass.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugShape.h" />
@@ -1030,7 +1029,6 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugGrid.cpp" />
-    <ClCompile Include="src\Renderer\DebugRender\DebugLine.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugSphere.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireSphere.cpp" />

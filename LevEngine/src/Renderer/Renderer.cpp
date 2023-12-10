@@ -234,8 +234,6 @@ namespace LevEngine
             LEV_PROFILE_SCOPE("Debug pipeline creation");
 
             m_DebugPipeline = CreateRef<PipelineState>();
-            m_DebugPipeline->SetShader(ShaderType::Vertex, ShaderAssets::Debug());
-            m_DebugPipeline->SetShader(ShaderType::Pixel, ShaderAssets::Debug());
             m_DebugPipeline->SetRenderTarget(mainRenderTarget);
             m_DebugPipeline->GetRasterizerState().SetAntialiasedLineEnable(true);
             m_DebugPipeline->GetRasterizerState().SetCullMode(CullMode::None);

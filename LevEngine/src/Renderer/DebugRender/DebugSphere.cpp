@@ -8,5 +8,5 @@
 void LevEngine::DebugSphere::Draw()
 {
     static auto mesh = Primitives::CreateSphere(20);
-    Renderer3D::DrawMesh(m_Model, mesh, ShaderAssets::Debug());
+    Renderer3D::DrawMesh(m_Model, mesh, ShaderAssets::DebugShape());
 }
