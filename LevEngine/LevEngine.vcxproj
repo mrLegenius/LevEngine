@@ -937,7 +937,6 @@
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCube.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugGrid.h" />
-    <ClInclude Include="src\Renderer\DebugRender\DebugLine.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRender.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRenderPass.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugShape.h" />
@@ -1031,7 +1030,6 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugGrid.cpp" />
-    <ClCompile Include="src\Renderer\DebugRender\DebugLine.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugSphere.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireSphere.cpp" />
@@ -1403,6 +1401,9 @@
       <Project>{d6169991-3a39-41af-9b3a-e497de7ff55c}</Project>
       <Name>FMODStudio</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="external\eastl\doc\EASTL.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
