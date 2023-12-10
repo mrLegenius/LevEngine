@@ -1,6 +1,23 @@
 #pragma once
 #include <sol/sol.hpp>
 
+namespace sol {
+	template <typename T>
+	struct unique_usertype_traits<LevEngine::Ref<T>> {
+		typedef T type;
+		typedef LevEngine::Ref<T> actual_type;
+		static const bool value = true;
+
+		static bool is_null(const actual_type& ptr) {
+			return ptr == nullptr;
+		}
+
+		static type* get (const actual_type& ptr) {
+			return ptr.get();
+		}
+	};
+}
+
 namespace LevEngine
 {
 	class Entity;
@@ -13,8 +30,13 @@ namespace LevEngine::Scripting
 	{
 	public:
 		static void CreateInputLuaBind(sol::state& lua);
+		static void CreateSceneManagerBind(sol::state& lua);
+		static void CreateSceneBind(sol::state& lua);
+		static void CreatePrefabBind(sol::state& lua);
+		
 		static void CreateTransformLuaBind(sol::state& lua);
 		static void CreateCameraComponentLuaBind(sol::state& lua);
+		
 		static void CreateLuaEntityBind(sol::state& lua, Scene* scene);
 
 		template<class TComponent>

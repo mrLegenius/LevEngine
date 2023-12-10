@@ -1,7 +1,7 @@
 #include "levpch.h"
 #include "ScriptingManager.h"
 #include "ScriptingSystems.h"
-#include "ScriptingComponent.h"
+#include "ScriptingSystemComponents.h"
 
 #include "MetaUtilities.h"
 #include "MathLuaBindings.h"
@@ -26,7 +26,12 @@ namespace LevEngine::Scripting
         m_Lua->open_libraries(sol::lib::base, sol::lib::package);
 
         MathLuaBindings::CreateLuaBindings(*m_Lua);
+        
         LuaComponentsBinder::CreateInputLuaBind(*m_Lua);
+        LuaComponentsBinder::CreateSceneManagerBind(*m_Lua);
+
+        LuaComponentsBinder::CreateSceneBind(*m_Lua);
+        LuaComponentsBinder::CreatePrefabBind(*m_Lua);
         
         RegisterComponent(Transform);
         RegisterComponent(CameraComponent);
@@ -39,6 +44,9 @@ namespace LevEngine::Scripting
 
     bool ScriptingManager::LoadScripts()
     {
+        m_Systems.clear();
+        m_Components.clear();
+
         try
         {
             auto scripts = AssetDatabase::GetAllAssetsOfClass<ScriptAsset>();
@@ -83,7 +91,34 @@ namespace LevEngine::Scripting
             return false;
         }
 
+        RegisterScriptComponents();
+        
         return true;
+    }
+
+    void ScriptingManager::RegisterScriptComponents()
+    {
+        for (auto& [scriptAsset, luaTable]  : m_Components)
+        {
+            entt::hashed_string hashedName{scriptAsset->GetName().c_str()};
+            entt::meta<sol::table>()
+            .type(hashedName)
+            .func<&add_component_to_view<sol::table>>("add_component_to_view"_hs)
+            .func<&exclude_component_from_view<sol::table>>("exclude_component_from_view"_hs)
+            .func<&add_component<sol::table>>("add_component"_hs)
+            .func<&has_component<sol::table>>("has_component"_hs)
+            .func<&get_component<sol::table>>("get_component"_hs)
+            .func<&remove_component<sol::table>>("remove_component"_hs);
+
+            entt::meta_type metaType = entt::resolve(hashedName);
+            m_ComponentsMetaTypes.push_back(metaType);
+            entt::id_type typeId = metaType.id();
+            Log::Debug("{0} {1}", scriptAsset->GetName(), typeId);
+            
+            luaTable.set_function("type_id", [typeId]{ return typeId;});
+
+            entt::meta_type type0 = entt::resolve<sol::table>();
+        }
     }
 
     void ScriptingManager::RegisterSystems(Scene* scene)
@@ -131,12 +166,25 @@ namespace LevEngine::Scripting
     {
         using namespace entt::literals;
 
+        if (const sol::optional<sol::table> runtimeViewTable = (*m_Lua)["RuntimeView"];
+            runtimeViewTable != sol::nullopt)
+        {
+            m_Lua->set("RuntimeView", sol::nil);
+        }
 
+        if (const sol::optional<sol::table> runtimeViewTable = (*m_Lua)["Registry"];
+            runtimeViewTable != sol::nullopt)
+        {
+            m_Lua->set("Registry", sol::nil);
+        }
+        
+        m_Lua->collect_garbage();
+        
         m_Lua->new_usertype<entt::runtime_view>(
-            "runtime_view",
+            "RuntimeView",
             sol::no_constructor,
             "for_each",
-            [&](const entt::runtime_view& view, const sol::function& callback)
+            [&](entt::runtime_view& view, const sol::function& callback)
             {
                 if (!callback.valid())
                 {
@@ -166,12 +214,13 @@ namespace LevEngine::Scripting
                         view = excluded_view ? excluded_view.cast<entt::runtime_view>() : view;
                     }
                 }
-            }
+            },
+            "size_hint", &entt::runtime_view::size_hint
         );
 
 #pragma warning(push)
 #pragma warning(disable : 4996)
-
+        
         m_Lua->new_usertype<entt::registry>(
             "Registry",
             sol::no_constructor,

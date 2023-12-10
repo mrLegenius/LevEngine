@@ -29,8 +29,13 @@ namespace LevEngine
 			Ref<sol::state> GetLuaState();
 
 		private:
+			
+			void RegisterScriptComponents();
+
+		private:
 			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Systems;
 			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Components;
+			Vector<entt::meta_type> m_ComponentsMetaTypes;
 
 			Ref<sol::state> m_Lua;
 		};

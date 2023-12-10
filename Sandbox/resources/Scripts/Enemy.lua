@@ -1,0 +1,4 @@
+
+Enemy = {
+    speed = 0
+}
