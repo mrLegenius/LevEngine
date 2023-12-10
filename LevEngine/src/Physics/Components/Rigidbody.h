@@ -9,7 +9,7 @@
 namespace LevEngine
 {
     REGISTER_PARSE_TYPE(Rigidbody);
-    
+
     struct Rigidbody
     {
         enum class Type
@@ -17,12 +17,10 @@ namespace LevEngine
             Static,
             Dynamic
         };
-        
+
+        static void OnConstruct(entt::registry& registry, entt::entity entity);
         static void OnDestroy(entt::registry& registry, entt::entity entity);
-        
-        Vector3 GetTransformScale() const;
-        void SetTransformScale(Vector3 transformScale);
-        
+
         bool IsInitialized() const;
         void Initialize(const Transform& transform);
 
@@ -31,11 +29,9 @@ namespace LevEngine
 
         [[nodiscard]] Type GetRigidbodyType() const;
         void SetRigidbodyType(const Type& rigidbodyType);
-        void AttachRigidbody(const Type& rigidbodyType);
-        void DetachRigidbody();
 
-        [[nodiscard]] bool IsKinematicEnabled() const;
-        void EnableKinematic(bool flag);
+        //[[nodiscard]] bool IsKinematicEnabled() const;
+        //void EnableKinematic(bool flag);
         
         [[nodiscard]] bool IsGravityEnabled() const;
         void EnableGravity(bool flag);
@@ -72,8 +68,6 @@ namespace LevEngine
         
         [[nodiscard]] Collider::Type GetColliderType() const;
         void SetColliderType(const Collider::Type& colliderType);
-        void AttachCollider(const Collider::Type& colliderType);
-        void DetachCollider();
         [[nodiscard]] int GetColliderCount() const;
         
         [[nodiscard]] Vector3 GetColliderOffsetPosition() const;
@@ -81,6 +75,11 @@ namespace LevEngine
         [[nodiscard]] Vector3 GetColliderOffsetRotation() const;
         void SetColliderOffsetRotation(Vector3 rotation);
 
+        [[nodiscard]] bool IsTriggerEnabled() const;
+        void EnableTrigger(bool flag);
+        [[nodiscard]] bool IsContactEnabled() const;
+        void EnableContact(bool flag);
+        
         [[nodiscard]] float GetSphereRadius() const;
         void SetSphereRadius(float radius);
         [[nodiscard]] float GetCapsuleRadius() const;
@@ -112,15 +111,30 @@ namespace LevEngine
         void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
         void AddTorque(Vector3 torque, ForceMode = ForceMode::Force) const;
         
-        friend class Physics;
+        void OnCollisionEnter(const Action<Entity>& callback);
+        void OnCollisionExit(const Action<Entity>& callback);
+        void OnTriggerEnter(const Action<Entity>& callback);
+        void OnTriggerExit(const Action<Entity>& callback);
+        
         friend class PhysicsUpdate;
+        friend class RigidbodyInitSystem;
+        friend class ContactReportCallback;
         
     private:
         [[nodiscard]] physx::PxRigidActor* GetActor() const;
         [[nodiscard]] physx::PxShape* GetColliders() const;
         [[nodiscard]] physx::PxMaterial* GetPhysicalMaterials(const physx::PxShape* colliders) const;
 
+        [[nodiscard]] Vector3 GetTransformScale() const;
+        void SetTransformScale(Vector3 transformScale);
+        
         void SetRigidbodyPose(const Transform& transform);
+
+        void AttachRigidbody(const Type& rigidbodyType);
+        void DetachRigidbody();
+        
+        void AttachCollider(const Collider::Type& colliderType);
+        void DetachCollider();
         
         physx::PxRigidActor* m_Actor = nullptr;
 
@@ -131,7 +145,7 @@ namespace LevEngine
 
         Type m_Type = Type::Dynamic;
         
-        bool m_IsKinematicEnabled = false;
+        //bool m_IsKinematicEnabled = false;
         bool m_IsGravityEnabled = true;
         
         float m_Mass = 1.0f;
@@ -152,5 +166,15 @@ namespace LevEngine
 
         //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
+
+        bool m_IsTriggerEnabled = false;
+        Vector<Entity> m_TriggerEnterEntityBuffer;
+        Vector<Entity> m_TriggerExitEntityBuffer;
+        
+        bool m_IsContactEnabled = false;
+        Vector<Entity> m_CollisionEnterEntityBuffer;
+        Vector<Entity> m_CollisionExitEntityBuffer;
+        
+        Vector<Pair<Action<Entity>,Entity>> m_ActionBuffer;
     };
 }

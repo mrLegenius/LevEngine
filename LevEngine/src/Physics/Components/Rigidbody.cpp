@@ -3,7 +3,7 @@
 
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
-#include "Physics/PhysicsUtils.h"
+#include "Physics/Support/PhysicsUtils.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 constexpr auto MAX_COLLIDER_NUMBER = 1;
@@ -14,14 +14,26 @@ constexpr auto DEFAULT_COLLIDER_TYPE = Collider::Type::Box;
 
 namespace LevEngine
 {
-    void Rigidbody::OnDestroy(entt::registry& registry, entt::entity entity)
+    void Rigidbody::OnConstruct(entt::registry& registry, entt::entity entity)
     {
-        auto& rigidbody = registry.get<Rigidbody>(entity);
-        rigidbody.DetachRigidbody();
+        auto [rigidbodyTransform, rigidbody] = registry.get<Transform, Rigidbody>(entity);
+        rigidbody.Initialize(rigidbodyTransform);
+
+        const auto& gameObject = Entity(entt::handle(registry, entity));
+        App::Get().GetPhysics().m_ActorEntityMap.insert({rigidbody.GetActor(), gameObject});
     }
 
     
-
+    void Rigidbody::OnDestroy(entt::registry& registry, entt::entity entity)
+    {
+        auto& rigidbody = registry.get<Rigidbody>(entity);
+        App::Get().GetPhysics().m_ActorEntityMap.erase(rigidbody.GetActor());
+        
+        rigidbody.DetachRigidbody();
+    }
+    
+    
+    
     physx::PxRigidActor* Rigidbody::GetActor() const
     {
         return m_Actor;
@@ -96,7 +108,7 @@ namespace LevEngine
         AttachCollider(GetColliderType());
         SetColliderOffsetPosition(GetColliderOffsetPosition());
         SetColliderOffsetRotation(GetColliderOffsetRotation());
-
+        
         m_IsInitialized = true;
         
         SetTransformScale(transform.GetWorldScale());
@@ -146,7 +158,7 @@ namespace LevEngine
             m_Actor = App::Get().GetPhysics().GetPhysics()->createRigidDynamic(initialPose);
             App::Get().GetPhysics().GetScene()->addActor(*(reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)));
             EnableGravity(m_IsGravityEnabled);
-            EnableKinematic(m_IsKinematicEnabled);
+            //EnableKinematic(m_IsKinematicEnabled);
             SetMass(m_Mass);
             SetCenterOfMass(m_CenterOfMass);
             SetInertiaTensor(m_InertiaTensor);
@@ -195,7 +207,7 @@ namespace LevEngine
     }
 
 
-
+    /*
     bool Rigidbody::IsKinematicEnabled() const
     {
         return m_IsKinematicEnabled;
@@ -210,7 +222,7 @@ namespace LevEngine
             reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, flag);
         }
     }
-
+    */
     
 
     float Rigidbody::GetMass() const
@@ -568,7 +580,10 @@ namespace LevEngine
     
         m_Actor->attachShape(*collider);
         collider->release();
-        physicalMaterial->release();  
+        physicalMaterial->release();
+
+        EnableTrigger(m_IsTriggerEnabled);
+        EnableContact(m_IsContactEnabled);
     }
     
     void Rigidbody::DetachCollider()
@@ -644,7 +659,37 @@ namespace LevEngine
         }
     }
 
+    
 
+    bool Rigidbody::IsTriggerEnabled() const
+    {
+        return m_IsTriggerEnabled;
+    }
+
+    void Rigidbody::EnableTrigger(bool flag)
+    {
+        m_IsTriggerEnabled = flag;
+
+        if (m_Actor != NULL)
+        {
+            GetColliders()[0].setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+            GetColliders()[0].setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+            GetColliders()[0].setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !flag);
+            GetColliders()[0].setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, flag);
+        }
+    }
+
+    bool Rigidbody::IsContactEnabled() const
+    {
+        return m_IsContactEnabled;
+    }
+
+    void Rigidbody::EnableContact(bool flag)
+    {
+        m_IsContactEnabled = flag;
+    }
+    
+    
     
     float Rigidbody::GetSphereRadius() const
     {
@@ -790,6 +835,57 @@ namespace LevEngine
         }
     }
 
+
+    
+    void Rigidbody::OnCollisionEnter(const Action<Entity>& callback)
+    {
+        while (!m_CollisionEnterEntityBuffer.empty())
+        {
+            //Log::Debug("START m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
+            const auto& otherEntity = m_CollisionEnterEntityBuffer.back();
+            m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
+            m_CollisionEnterEntityBuffer.pop_back();
+            //Log::Debug("END m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
+        }
+    }
+
+    void Rigidbody::OnCollisionExit(const Action<Entity>& callback)
+    {
+        while (!m_CollisionExitEntityBuffer.empty())
+        {
+            //Log::Debug("START m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
+            const auto& otherEntity = m_CollisionExitEntityBuffer.back();
+            m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
+            m_CollisionExitEntityBuffer.pop_back();
+            //Log::Debug("END m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
+        }
+    }
+
+    void Rigidbody::OnTriggerEnter(const Action<Entity>& callback)
+    {
+        while (!m_TriggerEnterEntityBuffer.empty())
+        {
+            //Log::Debug("START m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
+            const auto& otherEntity = m_TriggerEnterEntityBuffer.back();
+            m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
+            m_TriggerEnterEntityBuffer.pop_back();
+            //Log::Debug("END m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
+        }
+    }
+
+    void Rigidbody::OnTriggerExit(const Action<Entity>& callback)
+    {
+        while (!m_TriggerExitEntityBuffer.empty())
+        {
+            //Log::Debug("START m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
+            const auto& otherEntity = m_TriggerExitEntityBuffer.back();
+            m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
+            m_TriggerExitEntityBuffer.pop_back();
+            //Log::Debug("END m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
+        }
+    }
+
+
     
 
     class RigidbodySerializer final : public ComponentSerializer<Rigidbody, RigidbodySerializer>
@@ -803,7 +899,7 @@ namespace LevEngine
             
             out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
             
-            out << YAML::Key << "Is Kinematic Enabled" << YAML::Value << component.IsKinematicEnabled();
+            //out << YAML::Key << "Is Kinematic Enabled" << YAML::Value << component.IsKinematicEnabled();
             
             out << YAML::Key << "Is Gravity Enabled" << YAML::Value << component.IsGravityEnabled();
             
@@ -842,6 +938,10 @@ namespace LevEngine
 
             out << YAML::Key << "Offset Position" << YAML::Value << component.GetColliderOffsetPosition();
             out << YAML::Key << "Offset Rotation" << YAML::Value << component.GetColliderOffsetRotation();
+
+            out << YAML::Key << "Is Trigger Enabled" << YAML::Value << component.IsTriggerEnabled();
+
+            out << YAML::Key << "Is Contact Enabled" << YAML::Value << component.IsContactEnabled();
             
             out << YAML::Key << "Static Friction" << YAML::Value << component.GetStaticFriction();
             out << YAML::Key << "Dynamic Friction" << YAML::Value << component.GetDynamicFriction();
@@ -860,10 +960,12 @@ namespace LevEngine
                 component.SetRigidbodyType(static_cast<Rigidbody::Type>(rigidbodyTypeNode.as<int>()));
             }
 
+            /*
             if (const auto kinematicEnableNode = node["Is Kinematic Enabled"])
             {
                 component.EnableKinematic(kinematicEnableNode.as<bool>());
             }
+            */
 
             if (const auto gravityEnableNode = node["Is Gravity Enabled"])
             {
@@ -978,6 +1080,16 @@ namespace LevEngine
             {
                 component.SetColliderOffsetRotation(collideOffsetRotationNode.as<Vector3>());
             }
+
+            if (const auto triggerEnableNode = node["Is Trigger Enabled"])
+            {
+                component.EnableTrigger(triggerEnableNode.as<bool>());
+            }
+            
+            if (const auto contactEnableNode = node["Is Contact Enabled"])
+            {
+                component.EnableContact(contactEnableNode.as<bool>());
+            } 
 
             if (const auto staticFrictionNode = node["Static Friction"])
             {

@@ -27,7 +27,6 @@ namespace Sandbox
 	
 	void FPSGame::OnAttach()
 	{
-
 		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
 

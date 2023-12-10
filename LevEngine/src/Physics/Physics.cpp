@@ -1,14 +1,19 @@
 ﻿#include "levpch.h"
 #include "Physics.h"
 
+#include <wrl/internal.h>
+
+#include "EASTL/list.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Renderer/DebugRender/DebugRender.h"
-#include "Physics/PhysicsUtils.h"
+#include "Physics/Support/PhysicsUtils.h"
 
 constexpr auto DEFAULT_PVD_HOST = "127.0.0.1";
 constexpr auto DEFAULT_PVD_PORT = 5425;
 constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
 constexpr auto DEFAULT_NUMBER_CPU_THREADS = 2;
+
+constexpr Vector3 DEFAULT_GRAVITY_SCALE = Vector3(0.0f, -9.81f, 0.0f);
 
 namespace LevEngine
 {
@@ -16,51 +21,16 @@ namespace LevEngine
     {
         return CreateScope<Physics>();
     }
-
-    void Physics::ClearAccumulator()
-    {
-        m_Accumulator = 0.0f;
-    }
     
 
     
     void Physics::Initialize()
     {
         m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
-
-        if (m_IsPVDEnabled)
-        {
-            m_Pvd = PxCreatePvd(*m_Foundation);
-            physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate(DEFAULT_PVD_HOST, DEFAULT_PVD_PORT, DEFAULT_PVD_CONNECT_TIMEOUT);
-            m_Pvd->connect(*transport,physx::PxPvdInstrumentationFlag::eALL);
-        }
-        
-        m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
-        
-        physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
-        sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(m_Gravity);
+        m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, physx::PxTolerancesScale());
         m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(DEFAULT_NUMBER_CPU_THREADS);
-        sceneDesc.cpuDispatcher	= m_Dispatcher;
-        sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
-        m_Scene = m_Physics->createScene(sceneDesc);
-
-        if (m_IsDebugRenderEnabled)
-        {
-            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
-            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
-            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
-            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eBODY_MASS_AXES, 1.0f);
-        }
         
-        if (m_IsPVDEnabled)
-        {
-            if (physx::PxPvdSceneClient* pvdClient = m_Scene->getScenePvdClient())
-            {
-                pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-                pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-                pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
-            }
-        }
+        ResetPhysicsScene();
     }
     
     Physics::Physics()
@@ -68,7 +38,48 @@ namespace LevEngine
         Initialize();
     }
 
+    void Physics::Reset()
+    {
+        PX_RELEASE(m_Scene)
+        PX_RELEASE(m_Dispatcher)
+        PX_RELEASE(m_Physics)
+        PX_RELEASE(m_Foundation)
+    }
+    
+    Physics::~Physics()
+    {
+        Reset();
+    }
 
+    
+
+    void Physics::ResetPhysicsScene()
+    {
+        PX_RELEASE(m_Scene)
+        
+        physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
+        sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(DEFAULT_GRAVITY_SCALE);
+        sceneDesc.cpuDispatcher	= m_Dispatcher;
+        sceneDesc.filterShader = ContactReportCallback::ContactReportFilterShader;
+        sceneDesc.simulationEventCallback = &m_ContactReportCallback;
+        m_Scene = m_Physics->createScene(sceneDesc);
+        
+        if (m_IsDebugRenderEnabled)
+        {
+            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
+            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
+            m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+        }
+    }
+
+    
+    
+    void Physics::ClearAccumulator()
+    {
+        m_Accumulator = 0.0f;
+    }
+
+    
     
     bool Physics::IsAdvanced(const float deltaTime)
     {
@@ -125,38 +136,17 @@ namespace LevEngine
     void Physics::Process(entt::registry& registry, float deltaTime)
     {
         if (!StepPhysics(deltaTime)) return;
-
         m_PhysicsUpdate.UpdateTransforms(registry);
         m_PhysicsUpdate.UpdateConstantForces(registry);
+        m_PhysicsUpdate.OneMoreStrangeSystem(registry);
+        m_PhysicsUpdate.HandleEvents(registry);
         
         if (!m_IsDebugRenderEnabled) return;
-        
         DrawDebugLines();
     }
 
+    
 
-    
-    void Physics::Reset()
-    {
-        PX_RELEASE(m_Scene)
-        PX_RELEASE(m_Dispatcher)
-        PX_RELEASE(m_Physics)
-        if (m_Pvd)
-        {
-            physx::PxPvdTransport* transport = m_Pvd->getTransport();
-            PX_RELEASE(m_Pvd)
-            PX_RELEASE(transport)
-        }
-        PX_RELEASE(m_Foundation)
-    }
-    
-    Physics::~Physics()
-    {
-        Reset();
-    }
-
-    
-    
     physx::PxScene* Physics::GetScene() const
     {
         return m_Scene;
@@ -167,13 +157,17 @@ namespace LevEngine
         return m_Physics;
     }
 
+    
+    
     void PhysicsUpdate::UpdateTransforms(entt::registry& registry)
     {
         const auto rigidbodyView = registry.view<Transform, Rigidbody>();
         for (const auto entity : rigidbodyView)
         {
             auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
-        
+
+            if (rigidbody.GetActor() == NULL) return;
+            
             const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
             rigidbodyTransform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
             rigidbodyTransform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
@@ -196,5 +190,92 @@ namespace LevEngine
             }
         }
     }
+    
+    void PhysicsUpdate::OneMoreStrangeSystem(entt::registry& registry)
+    {
+        const auto& rigidbodyView = registry.view<Transform, Rigidbody>();
 
+        for (const auto entity : rigidbodyView)
+        {
+            auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
+            
+            rigidbody.OnCollisionEnter(
+                [] (const Entity& otherEntity)
+                {
+                    Log::Debug("Object touches {0} object", otherEntity.GetName());
+                    
+                }
+            );
+            
+            rigidbody.OnCollisionExit(
+                [] (const Entity& otherEntity)
+                {
+                    Log::Debug("Object pushes off from {0} object", otherEntity.GetName());
+                    
+                }
+            );
+
+            rigidbody.OnTriggerEnter(
+            [] (const Entity& otherEntity)
+                {
+                    Log::Debug("Object {0} enters trigger", otherEntity.GetName());
+                    const auto& otherRigidbody = otherEntity.GetComponent<Rigidbody>();
+                    otherRigidbody.AddForce(Vector3::Up * 5.0f, Rigidbody::ForceMode::Impulse);
+                }
+            );
+            
+            rigidbody.OnTriggerExit(
+                [] (const Entity& otherEntity)
+                {
+                    Log::Debug("Object {0} leaves trigger", otherEntity.GetName());
+                    const auto& otherRigidbody = otherEntity.GetComponent<Rigidbody>();
+                    otherRigidbody.AddTorque(Vector3::Up * 5.0f, Rigidbody::ForceMode::Impulse);
+                }
+            ); 
+        }
+    }
+    
+    void PhysicsUpdate::HandleEvents(entt::registry& registry)
+    {
+        const auto& rigidbodyView = registry.view<Transform, Rigidbody>();
+
+        for (const auto entity : rigidbodyView)
+        {
+            auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
+
+            while(!rigidbody.m_ActionBuffer.empty())
+            {
+                //Log::Debug("START m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
+                const auto& otherEntity = rigidbody.m_ActionBuffer.back().second;
+                rigidbody.m_ActionBuffer.back().first(otherEntity);
+                rigidbody.m_ActionBuffer.pop_back();
+                //Log::Debug("END m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
+            }
+
+            if (!rigidbody.m_CollisionEnterEntityBuffer.empty())
+            {
+                //Log::Debug("START CLEAR m_CollisionEnterEntityBuffer SIZE: {0}", rigidbody.m_CollisionEnterEntityBuffer.size());
+                rigidbody.m_CollisionEnterEntityBuffer.clear();
+                //Log::Debug("END CLEAR m_CollisionEnterEntityBuffer SIZE: {0}", rigidbody.m_CollisionEnterEntityBuffer.size());
+            }
+            if (!rigidbody.m_CollisionExitEntityBuffer.empty())
+            {
+                //Log::Debug("START CLEAR m_CollisionExitEntityBuffer SIZE: {0}", rigidbody.m_CollisionExitEntityBuffer.size());
+                rigidbody.m_CollisionExitEntityBuffer.clear();
+                //Log::Debug("END CLEAR m_CollisionExitEntityBuffer SIZE: {0}", rigidbody.m_CollisionExitEntityBuffer.size());
+            }
+            if (!rigidbody.m_TriggerEnterEntityBuffer.empty())
+            {
+                //Log::Debug("START CLEAR m_TriggerEnterEntityBuffer SIZE: {0}", rigidbody.m_TriggerEnterEntityBuffer.size());
+                rigidbody.m_TriggerEnterEntityBuffer.clear();
+                //Log::Debug("END CLEAR m_TriggerEnterEntityBuffer SIZE: {0}", rigidbody.m_TriggerEnterEntityBuffer.size());
+            }
+            if (!rigidbody.m_TriggerExitEntityBuffer.empty())
+            {
+                //Log::Debug("START CLEAR m_TriggerExitEntityBuffer SIZE: {0}", rigidbody.m_TriggerExitEntityBuffer.size());
+                rigidbody.m_TriggerExitEntityBuffer.clear();
+                //Log::Debug("END CLEAR m_TriggerExitEntityBuffer SIZE: {0}", rigidbody.m_TriggerExitEntityBuffer.size());
+            }
+        }
+    }
 }

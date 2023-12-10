@@ -2,29 +2,46 @@
 
 #include "physx/include/PxPhysicsAPI.h"
 
+#include "Events/ContactReportCallback.h"
+#include "Scene/Entity.h"
+
 namespace LevEngine
 {
     class PhysicsUpdate
     {
     public:
+        friend class Physics;
+    private:
         void UpdateTransforms(entt::registry& registry);
         void UpdateConstantForces(entt::registry& registry);
+        void OneMoreStrangeSystem(entt::registry& registry);
+        void HandleEvents(entt::registry& registry);
     };
     
     class Physics
     {
     public:
-        Physics();
+        static Scope<Physics> Create();
+        
+        explicit Physics();
         ~Physics();
 
-        static Scope<Physics> Create();
-
-        void Process(entt::registry& registry, float deltaTime);
-
+        // some required set
+        Physics(const Physics&) = delete;
+        Physics& operator=(Physics const&) = delete;
+        Physics(Physics&&) = delete;
+        Physics& operator=(Physics&&) = delete;
+        
+        // used to fix accumulation transfer issue
         void ClearAccumulator();
 
-        [[nodiscard]] physx::PxScene* GetScene() const;
-        [[nodiscard]] physx::PxPhysics* GetPhysics() const;
+        void ResetPhysicsScene();
+
+        void Process(entt::registry& registry, float deltaTime);
+        
+        friend class ContactReportCallback;
+        friend class RigidbodyInitSystem;
+        friend struct Rigidbody;
         
     private:
         void Initialize();
@@ -34,25 +51,30 @@ namespace LevEngine
         bool StepPhysics(float deltaTime);
         void DrawDebugLines() const;
         
-        physx::PxDefaultAllocator m_Allocator;
-        physx::PxDefaultErrorCallback m_ErrorCallback;
-        physx::PxTolerancesScale m_ToleranceScale;
-        
-        physx::PxFoundation* m_Foundation = NULL;
-        physx::PxPvd* m_Pvd = NULL;
-        physx::PxDefaultCpuDispatcher* m_Dispatcher = NULL;
-        physx::PxPhysics* m_Physics = NULL;
-        physx::PxScene* m_Scene = NULL;
+        [[nodiscard]] physx::PxPhysics* GetPhysics() const;
+        [[nodiscard]] physx::PxScene* GetScene() const;
 
-        Vector3 m_Gravity = Vector3(0.0f, -9.81f, 0.0f);
+        // TODO: CHANGE UPDATE LOGIC
+        // used to update step-dependent physics systems
+        PhysicsUpdate m_PhysicsUpdate;
         
-        // for debug
-        bool m_IsPVDEnabled = false;
+        // used to receive collision detection
+        ContactReportCallback m_ContactReportCallback;
+
+        // used to optimize the filling of collision detection buffers
+        UnorderedMap<physx::PxActor*, Entity> m_ActorEntityMap;
+        
+        // for debug render
         bool m_IsDebugRenderEnabled = true;
         // for physics update
         float m_Accumulator = 0.0f;
         float m_StepSize = 1.0f / 60.0f;
-
-        PhysicsUpdate m_PhysicsUpdate;
+        // physx stuff
+        physx::PxDefaultAllocator m_Allocator;
+        physx::PxDefaultErrorCallback m_ErrorCallback;
+        physx::PxFoundation* m_Foundation = NULL;
+        physx::PxPhysics* m_Physics = NULL;
+        physx::PxDefaultCpuDispatcher* m_Dispatcher = NULL;
+        physx::PxScene* m_Scene = NULL;
     };
 }

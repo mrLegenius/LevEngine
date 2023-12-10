@@ -2,23 +2,6 @@
 
 namespace Sandbox
 {
-    /*
-    extern int score;
-    
-    inline void OnProjectileCollided(const Entity entity, const Entity other)
-    {
-        if (!other.HasComponent<Enemy>()) return;
-
-        const auto scene = SceneManager::GetActiveScene();
-        Audio::PlayOneShot("event:/ProjectileHit", entity);
-        scene->DestroyEntity(entity);
-
-        Audio::PlayOneShot("event:/EnemyDeath", other);
-        scene->DestroyEntity(other);
-        score++;
-    }
-    */
-    
     class ShootSystem final : public System
     {
         void Update(float deltaTime, entt::registry& registry) override
@@ -42,11 +25,10 @@ namespace Sandbox
 
                     auto& projectileParams = projectile.AddComponent<Projectile>();
                     projectileParams.Speed = 25;
-                    projectileParams.Lifetime = 2;
+                    projectileParams.Lifetime = 5;
                     projectileParams.Timer = 0;
 
                     auto& projectileRigidbody = projectile.GetComponent<Rigidbody>();
-                    projectileRigidbody.Initialize(projectileTransform);
                     projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
 
                     Audio::PlayOneShot("event:/Shot", projectile);
