@@ -166,86 +166,98 @@ namespace LevEngine::Scripting
     {
         using namespace entt::literals;
 
-        if (const sol::optional<sol::table> runtimeViewTable = (*m_Lua)["RuntimeView"];
-            runtimeViewTable != sol::nullopt)
+        auto forEach = [&](entt::runtime_view& view, const sol::function& callback)
         {
-            m_Lua->set("RuntimeView", sol::nil);
-        }
+            if (!callback.valid())
+            {
+                return;
+            }
 
-        if (const sol::optional<sol::table> runtimeViewTable = (*m_Lua)["Registry"];
-            runtimeViewTable != sol::nullopt)
+            for (auto entityType : view)
+            {
+                Entity entity{ {registry, entityType} };
+                callback(entity);
+            }
+        };
+
+        auto exclude = [&](entt::runtime_view& view, const sol::variadic_args& va)
         {
-            m_Lua->set("Registry", sol::nil);
-        }
-        
-        m_Lua->collect_garbage();
-        
-        m_Lua->new_usertype<entt::runtime_view>(
-            "RuntimeView",
-            sol::no_constructor,
-            "for_each",
-            [&](entt::runtime_view& view, const sol::function& callback)
+            for (const auto& type : va)
             {
-                if (!callback.valid())
+                if (!type.as<sol::table>().valid())
                 {
-                    return;
-                }
-
-                for (auto entityType : view)
-                {
-                    Entity entity{ {registry, entityType} };
-                    callback(entity);
-                }
-            },
-            "exclude",
-            [&](entt::runtime_view& view, const sol::variadic_args& va)
-            {
-                for (const auto& type : va)
-                {
-                    if (!type.as<sol::table>().valid())
-                    {
-                        const auto excluded_view = InvokeMetaFunction(
-                            GetIdType(type),
-                            "exclude_component_from_view"_hs,
-                            &registry,
-                            view
-                        );
-
-                        view = excluded_view ? excluded_view.cast<entt::runtime_view>() : view;
-                    }
-                }
-            },
-            "size_hint", &entt::runtime_view::size_hint
-        );
-
-#pragma warning(push)
-#pragma warning(disable : 4996)
-        
-        m_Lua->new_usertype<entt::registry>(
-            "Registry",
-            sol::no_constructor,
-            "get_entities", [&](const sol::variadic_args& va) {
-                entt::runtime_view view{};
-                for (const auto& type : va)
-                {
-                    if (!type.as<sol::table>().valid())
-                        continue;
-
-                    const auto entities = InvokeMetaFunction(
+                    const auto excluded_view = InvokeMetaFunction(
                         GetIdType(type),
-                        "add_component_to_view"_hs,
+                        "exclude_component_from_view"_hs,
                         &registry,
                         view
                     );
 
-                    view = entities ? entities.cast<entt::runtime_view>() : view;
+                    view = excluded_view ? excluded_view.cast<entt::runtime_view>() : view;
                 }
-
-                return view;
-            },
-            "clear", [&]() { registry.clear(); }
+            }
+        };
+        if (const sol::optional<sol::table> runtimeViewTable = (*m_Lua)["RuntimeView"];
+            runtimeViewTable != sol::nullopt)
+        {
+            auto table = runtimeViewTable.value();
+            table.set_function("for_each", forEach);
+            table.set_function("exclude", exclude);
+        }
+        else
+        {
+            m_Lua->new_usertype<entt::runtime_view>(
+            "RuntimeView",
+            sol::no_constructor,
+            "for_each",
+            forEach,
+            "exclude",
+            exclude,
+            "size_hint", &entt::runtime_view::size_hint
         );
+        }
+        
+#pragma warning(push)
+#pragma warning(disable : 4996)
+        
+        auto getEntity = [&](const sol::variadic_args& va) {
+            entt::runtime_view view{};
+            for (const auto& type : va)
+            {
+                if (!type.as<sol::table>().valid())
+                    continue;
 
+                const auto entities = InvokeMetaFunction(
+                    GetIdType(type),
+                    "add_component_to_view"_hs,
+                    &registry,
+                    view
+                );
+
+                view = entities ? entities.cast<entt::runtime_view>() : view;
+            }
+
+            return view;
+            };
+
+        auto clear = [&](){ registry.clear(); };
+        
+        if (const sol::optional<sol::table> registryTable = (*m_Lua)["Registry"];
+            registryTable != sol::nullopt)
+        {
+            auto table = registryTable.value();
+            table.set_function("get_entities", getEntity);
+            table.set_function("clear", clear);
+        }
+        else
+        {
+            m_Lua->new_usertype<entt::registry>(
+                "Registry",
+                sol::no_constructor,
+                "get_entities", getEntity,
+                "clear", clear
+            );
+        }
 #pragma warning(pop)
     }
 
