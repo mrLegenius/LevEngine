@@ -4,7 +4,8 @@
 #include "Renderer/PipelineState.h"
 #include "Renderer/RenderCommand.h"
 
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
+#include "Renderer/BlendState.h"
 #include "Renderer/DepthStencilState.h"
 #include "Renderer/RasterizerState.h"
 
@@ -24,6 +25,8 @@ namespace LevEngine
         m_Pipeline->GetDepthStencilState()->SetStencilMode(StencilMode{false });
         m_Pipeline->GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
     }
+
+    String VignettePass::PassName() { return "Vignette"; }
 
     bool VignettePass::Begin(entt::registry& registry, RenderParams& params)
     {

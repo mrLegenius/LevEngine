@@ -1,13 +1,22 @@
 #include "levpch.h"
 #include "ShadowMapPass.h"
+
+#include "CascadeShadowMap.h"
+#include "ConstantBuffer.h"
 #include "RenderCommand.h"
+#include "Renderer3D.h"
+#include "RenderParams.h"
+#include "Shader.h"
+#include "Assets/EngineAssets.h"
 #include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/Lights/Lights.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
-Vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const Matrix& proj) const
+Vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const Matrix& proj)
 {
     const auto viewProj = view * proj;
     const auto inv = viewProj.Invert();
@@ -30,7 +39,7 @@ Vector<Vector4> ShadowMapPass::GetFrustumWorldCorners(const Matrix& view, const 
     return corners;
 }
 
-Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners) const
+Matrix ShadowMapPass::GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners)
 {
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
@@ -69,6 +78,8 @@ ShadowMapPass::ShadowMapPass()
 	m_ShadowMapConstantBuffer = ConstantBuffer::Create(sizeof ShadowData, 3);
 }
 
+String ShadowMapPass::PassName() { return "Shadow Map"; }
+
 bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 {
 	const auto group = registry.group<>(entt::get<Transform, DirectionalLightComponent>);
@@ -82,7 +93,7 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
         lightDirection = transform.GetForwardDirection();
 	}
 
-	const auto cameraCascadeProjections = params.Camera.GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
+	const auto cameraCascadeProjections = params.Camera->GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
 
 	for (int cascadeIndex = 0; cascadeIndex < RenderSettings::CascadeCount; ++cascadeIndex)
 	{
@@ -98,15 +109,13 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 		const auto lightViewMatrix = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + lightDirection, Vector3::Up);
 
 		m_ShadowData.ViewProjection[cascadeIndex] = lightViewMatrix * GetCascadeProjection(lightViewMatrix, frustumCorners);
-		m_ShadowData.Distances[cascadeIndex] = params.Camera.GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
+		m_ShadowData.Distances[cascadeIndex] = params.Camera->GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
 
 		m_ShadowData.ShadowMapDimensions = RenderSettings::ShadowMapResolution;
 	}
 	m_CascadeShadowMap->SetRenderTarget();
 	ShaderAssets::CascadeShadowPass()->Bind();
-
-	params.Camera.SetViewportSize( static_cast<uint32_t>(RenderSettings::ShadowMapResolution),  static_cast<uint32_t>(RenderSettings::ShadowMapResolution));
-
+	
 	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);
 

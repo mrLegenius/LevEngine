@@ -4,11 +4,12 @@
 #include "Renderer/PipelineState.h"
 #include "Renderer/RenderCommand.h"
 
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
 #include "Renderer/DepthStencilState.h"
 #include "Renderer/RasterizerState.h"
 
 #include "Renderer/RenderSettings.h"
+#include "Renderer/Texture.h"
 
 namespace LevEngine
 {
@@ -26,6 +27,8 @@ namespace LevEngine
 
     void TonemappingPass::SetLuminanceMap(const Ref<Texture>& map) { m_LuminanceMap = map; }
     void TonemappingPass::SetBloomMap(const Ref<Texture>& map) { m_BloomMap = map; }
+
+    String TonemappingPass::PassName() { return "Tonemapping"; }
 
     bool TonemappingPass::Begin(entt::registry& registry, RenderParams& params)
     {

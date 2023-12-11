@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Math/Vector3.h"
-#include "Math/Vector4.h"
-
 namespace LevEngine
 {
 struct Color

@@ -1,20 +1,26 @@
 #include "levpch.h"
 #include "Application.h"
 
-#include <chrono>
-
 #include "Utils.h"
+#include "Window.h"
 #include "../Renderer/Renderer.h"
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
 #include "../Input/Input.h"
 #include "../Events/Event.h"
-#include "Assets/AssetDatabase.h"
 #include "Audio/Audio.h"
+#include "GUI/ImGuiLayer.h"
 #include "Math/Random.h"
+#include "Physics/Physics.h"
+#include "Renderer/RenderDebugEvent.h"
+#include "Renderer/RendererContext.h"
+#include "Renderer/RenderTarget.h"
+#include "Scene/Scene.h"
 #include "Time/Time.h"
 #include "Time/TimelineRunner.h"
+#include "Scripting/ScriptingManager.h"
+#include "Scene/SceneManager.h"
 
 namespace LevEngine
 {
@@ -31,8 +37,13 @@ Application::Application(const ApplicationSpecification& specification)
 	m_Window = Window::Create(WindowAttributes(specification.Name, specification.WindowWidth, specification.WindowHeight));
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
-	Renderer::Init();
+	m_Physics = Physics::Create();
+	m_Renderer = CreateScope<LevEngine::Renderer>(*m_Window);
+
+	m_ScriptingManager = CreateScope<Scripting::ScriptingManager>();
+	
 	Random::Init();
+	m_ScriptingManager->Init();
 	Audio::Init(Audio::MaxAudioChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE,
 		FMOD_INIT_VOL0_BECOMES_VIRTUAL | FMOD_INIT_3D_RIGHTHANDED);
 
@@ -46,8 +57,9 @@ Application::Application(const ApplicationSpecification& specification)
 
 Application::~Application()
 {
-	Renderer::Shutdown();
 	Audio::Shutdown();
+	m_ScriptingManager->Shutdown();
+	SceneManager::Shutdown();
 }
 
 void Application::Run()
@@ -70,17 +82,14 @@ void Application::Run()
 		totalTime += deltaTime;
 		frameCount++;
 
+		m_FrameStat.Sample(deltaTime * 1000);
+
 		if (totalTime > 1.0f)
 		{
-			const float fps = frameCount / totalTime;
-
 			totalTime -= 1.0f;
-
-			String text("FPS: ");
-			text.append(ToString(fps));
-			m_Window->SetWindowTitle(text);
-
 			frameCount = 0;
+
+			m_FrameStat.Reset();
 		}
 
 		if (deltaTime > 1.0f) // Maybe breakpoint is hit
@@ -102,6 +111,8 @@ void Application::Run()
 
 		Input::Reset();
 		m_Window->Update();
+
+		Time::s_FrameNumber++;
 	}
 
 	vgjs::terminate();
@@ -119,6 +130,7 @@ void Application::Render()
 	//TODO: Maybe move to another place
 	m_Window->GetContext()->GetRenderTarget()->Bind();
 
+	RenderDebugEvent::Start("GUI");
 	m_ImGuiLayer->Begin();
 	{
 		LEV_PROFILE_SCOPE("LayerStack OnGUIRender");
@@ -126,6 +138,7 @@ void Application::Render()
 			layer->OnGUIRender();
 	}
 	m_ImGuiLayer->End();
+	RenderDebugEvent::End();
 }
 
 void Application::Close()
@@ -168,6 +181,16 @@ void Application::OnEvent(Event& e)
 	}
 }
 
+Physics& Application::GetPhysics() const { return *m_Physics; }
+Renderer& Application::Renderer() { return *Get().m_Renderer; }
+
+Scripting::ScriptingManager& Application::GetScriptingManager()
+{
+	return *m_ScriptingManager;
+}
+
+Statistic Application::GetFrameStat() const { return m_FrameStat; }
+
 bool Application::OnWindowClosed(WindowClosedEvent& e)
 {
 	Close();
@@ -176,15 +199,23 @@ bool Application::OnWindowClosed(WindowClosedEvent& e)
 
 bool Application::OnWindowResized(WindowResizedEvent& e)
 {
-	if (e.GetWidth() == 0 || e.GetHeight() == 0)
+	const auto height = e.GetHeight();
+	const auto width = e.GetWidth();
+	
+	if (width == 0 || height == 0)
 	{
 		m_Minimized = true;
 
 		return false;
 	}
 
-	m_Window->GetContext()->ResizeBackBuffer(e.GetWidth(), e.GetHeight());
+	m_Window->GetContext()->ResizeBackBuffer(width, height);
 
+	if (width == 0 || height == 0) return false;
+		
+	SceneManager::GetActiveScene()->OnViewportResized(width, height);
+	m_Renderer->SetViewport(static_cast<float>(width), static_cast<float>(height));
+	
 	m_Minimized = false;
 
 	return false;

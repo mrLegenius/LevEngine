@@ -1,11 +1,9 @@
 #include "levpch.h"
 #include "Kernel/PlatformUtils.h"
 
-#include <windows.h>
-#include <commdlg.h>
-
-#include "DataTypes/Path.h"
 #include "Kernel/Application.h"
+#include "Kernel/Window.h"
+#include <shellapi.h>
 
 namespace LevEngine
 {
@@ -48,5 +46,10 @@ namespace LevEngine
 			result = result.string().append(".").append(extension.c_str());
 		}
 		return result.string().c_str();
+	}
+
+	void FileDialogs::OpenFileByExtension(const Path& path)
+	{
+		ShellExecute(nullptr, nullptr, path.c_str(), nullptr, nullptr, SW_SHOW);
 	}
 }

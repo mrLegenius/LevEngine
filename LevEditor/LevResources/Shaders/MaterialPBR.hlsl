@@ -1,4 +1,4 @@
-#include "Lightning.hlsl"
+#include "Lighting.hlsl"
 
 static const float pi = 3.14159265359;
 
@@ -36,10 +36,24 @@ SamplerState ambientOcclusionMapSampler : register(s4);
 Texture2D emissiveMap : register(t5);
 SamplerState emissiveMapSampler : register(s5);
 
+TextureCube irradianceMap : register(t10);
+SamplerState irradianceMapSampler : register(s10);
+
+TextureCube prefilterMap : register(t11);
+SamplerState prefilterMapSampler : register(s11);
+
+Texture2D brdfLUT : register(t12);
+SamplerState brdfLUTSampler : register(s12);
+
 float3 FresnelSchlick(float cosTheta, float3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
+
+float3 FresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
+{
+    return F0 + (max((float3)(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+} 
 
 float DistributionGGX(float3 N, float3 H, float roughness)
 {
@@ -105,6 +119,32 @@ float3 CalcPBR(
     return Lo;
 }
 
+float3 CalcAmbient(
+    float3 normal, float3 viewDir, 
+    float3 albedo, float metallic, float roughness, float ao)
+{
+    float3 F0 = float3(0.04, 0.04, 0.04);
+	F0 = lerp(F0, albedo, metallic);
+
+    float3 F = FresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, roughness);
+    float3 kS = F;
+    float3 kD = 1.0 - kS;
+    kD *= 1.0 - metallic;
+
+    float3 irradiance = irradianceMap.Sample(irradianceMapSampler, normal).rgb;
+    float3 diffuse = irradiance * albedo;
+
+    float3 R = reflect(-viewDir, normal);
+    const float MAX_REFLECTION_LOD = 7.0;
+    float3 prefilteredColor = prefilterMap.SampleLevel(prefilterMapSampler, R, roughness * MAX_REFLECTION_LOD).rgb; 
+    float2 brdf  = brdfLUT.Sample(brdfLUTSampler, float2(max(dot(normal, viewDir), 0.0), roughness)).rg;
+    float3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+
+    float3 ambient = (kD * diffuse + specular) * ao;
+
+    return ambient;
+}
+
 float3 CalcDirLight(
     DirLight light,
     float3 normal, float3 viewDir,
@@ -120,7 +160,7 @@ float3 CalcDirLight(
 }
 
 float3 CalcPointLight(
-    PointLight light,
+    Light light,
     float3 normal, float3 fragPos, float3 viewDir,
     float3 albedo, float metallic, float roughness)
 {
@@ -136,8 +176,26 @@ float3 CalcPointLight(
     return Lo;
 }
 
+float3 CalcSpotLight(
+    Light light,
+    float3 normal, float3 fragPos, float3 viewDir,
+    float3 albedo, float metallic, float roughness)
+{
+    float3 lightDir = light.position - fragPos.xyz;
+    float distance = length(lightDir);
+    lightDir = lightDir / distance;
+
+    float attenuation = CalcAttenuation(light.range, light.smoothness, distance);
+    float spotIntensity = CalcSpotCone(light, lightDir);
+    float3 color = light.color * attenuation * spotIntensity * light.intensity;
+    
+    float3 Lo = CalcPBR(lightDir, normal, viewDir, color, albedo, metallic, roughness);
+
+    return Lo;
+}
+
 float3 CalcPointLightInViewSpace(
-    PointLight light, 
+    Light light, 
     float3 normal, float3 fragPos, float3 viewDir,
     float3 albedo, float metallic, float roughness)
 {
@@ -149,6 +207,25 @@ float3 CalcPointLightInViewSpace(
     float3 color = light.color * attenuation * light.intensity;
 
     float3 Lo = CalcPBR(lightDir, normal, viewDir, color, albedo, metallic, roughness);
+
+    return Lo;
+}
+
+
+float3 CalcSpotLightInViewSpace(
+    Light light,
+    float3 normal, float3 fragPos, float3 viewDir,
+    float3 albedo, float metallic, float roughness)
+{
+    float3 lightDir = light.positionViewSpace - fragPos;
+    float distance = length(lightDir);
+    lightDir = lightDir / distance;
+
+    float attenuation = CalcAttenuation(light.range, light.smoothness, distance);
+    float spotIntensity = CalcSpotConeInViewSpace(light, lightDir);
+    float3 color = light.color * attenuation * spotIntensity * light.intensity;
+    
+    float3 Lo = CalcPBR(lightDir.xyz, normal, viewDir, color, albedo, metallic, roughness);
 
     return Lo;
 }

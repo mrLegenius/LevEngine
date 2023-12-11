@@ -1,14 +1,23 @@
 #include "levpch.h"
 #include "TransparentPass.h"
 
+#include "Material.h"
+#include "PipelineState.h"
 #include "Renderer3D.h"
+#include "RenderParams.h"
 #include "RenderSettings.h"
 #include "3D/Mesh.h"
+#include "Assets/MaterialAsset.h"
+#include "Assets/MeshAsset.h"
+#include "Camera/SceneCamera.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
     TransparentPass::TransparentPass(const Ref<PipelineState>& pipelineState) : m_PipelineState(pipelineState) {  }
+
+    String TransparentPass::PassName() { return "Transparent"; }
 
     bool TransparentPass::Begin(entt::registry& registry, RenderParams& params)
     {
@@ -37,7 +46,7 @@ namespace LevEngine
 
             if (RenderSettings::UseFrustumCulling)
             {
-                if (!mesh->IsOnFrustum(params.Camera.GetFrustum(), transform)) continue;
+                if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
             
             material.Bind(shader);

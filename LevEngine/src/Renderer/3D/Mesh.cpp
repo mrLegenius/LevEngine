@@ -1,6 +1,10 @@
 #include "levpch.h"
 #include "Mesh.h"
 
+#include "Renderer/IndexBuffer.h"
+#include "Renderer/Shader.h"
+#include "Renderer/VertexBuffer.h"
+
 namespace LevEngine
 {
 Ref<IndexBuffer> Mesh::CreateIndexBuffer() const

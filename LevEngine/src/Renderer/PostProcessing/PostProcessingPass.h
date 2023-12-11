@@ -1,5 +1,4 @@
 #pragma once
-#include "Math/Color.h"
 #include "Renderer/RenderPass.h"
 
 namespace LevEngine
@@ -23,6 +22,7 @@ namespace LevEngine
         void SetViewport(Viewport viewport) override;
         
     protected:
+        String PassName() override;
         bool Begin(entt::registry& registry, RenderParams& params) override;
         void Process(entt::registry& registry, RenderParams& params) override;
         void End(entt::registry& registry, RenderParams& params) override;

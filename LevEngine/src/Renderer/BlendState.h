@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "DataTypes/Vector.h"
 #include "Math/Math.h"
 
 namespace LevEngine

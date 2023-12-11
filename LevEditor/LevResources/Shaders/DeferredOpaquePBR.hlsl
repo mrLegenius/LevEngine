@@ -52,10 +52,10 @@ PS_OUT PSMain(PS_IN input)
 	float4 fragPosLightSpace = mul(float4(input.fragPos, 1.0f), lightViewProjection[cascade]);
 	float3 viewDir = normalize(cameraPosition - input.fragPos);
 
+	float3 ambient = CalcAmbient(normal, viewDir, albedo, metallic, roughness, ao);
 	float3 lit = CalcDirLight(dirLight, normal, viewDir, fragPosLightSpace, cascade, albedo, metallic, roughness);
 
-    float3 ambientColor = globalAmbient * ao * albedo;
-	float3 finalColor = ambientColor + lit + emissive;
+	float3 finalColor = ambient + lit + emissive;
 
 	result.LightAccumulation = float4(finalColor, 1.0f);
     result.Albedo = float4(albedo, 1.0f);

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../Renderer/RendererContext.h"
 #include "../Events/Event.h"
-#include "DataTypes/Delegates.h"
 
 namespace LevEngine
 {
-struct WindowAttributes
+	class RendererContext;
+
+	struct WindowAttributes
 {
 	String title;
 	uint32_t width;

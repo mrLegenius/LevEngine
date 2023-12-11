@@ -7,17 +7,18 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-    Box Collider:
-      Extents: [0.5, 1.5, 0.5]
-      Offset: [0, 2.29999995, 0]
     Rigidbody:
-      Body Type: 2
-      Gravity Scale: 1
-      Mass: 1
-      Elasticity: 0.5
-      Damping: 0.800000012
-      Angular Damping: 0.800000012
-      Enabled: true
+      Visualization Flag: false
+      Rigidbody Type: 1
+      Gravity Flag: true
+      Collider Type: 1
+      Capsule Radius: 1
+      Capsule Half Height: 0.699999988
+      Offset Position: [0, 2, 0]
+      Offset Rotation: [0, 0, 90]
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
   - Entity: 14004482002913778106
     Tag: Mesh
     Parent: 15521556991851276175

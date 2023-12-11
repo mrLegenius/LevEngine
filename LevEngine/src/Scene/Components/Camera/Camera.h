@@ -8,9 +8,9 @@ namespace LevEngine
 	
 	struct CameraComponent
 	{
-		SceneCamera camera;
-		bool isMain = true;
-		bool fixedAspectRatio = false;
+		SceneCamera Camera;
+		bool IsMain = true;
+		bool FixedAspectRatio = false;
 
 		CameraComponent();
 		CameraComponent(const CameraComponent&) = default;

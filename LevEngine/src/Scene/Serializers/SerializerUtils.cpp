@@ -1,6 +1,9 @@
 ﻿#include "levpch.h"
 #include "SerializerUtils.h"
+
+#include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
@@ -36,6 +39,20 @@ namespace LevEngine
 	{
 		out << s.c_str();
 		return out;
+	}
+
+	void SerializeAsset(YAML::Emitter& out, const String& nodeName, const Ref<Asset>& asset)
+	{
+		if (!asset) return;
+
+		try
+		{
+			out << YAML::Key << nodeName.c_str() << YAML::Value << asset->GetUUID();
+		}
+		catch (std::exception& e)
+		{
+			Log::CoreWarning("Failed to serialize asset {0}. {1}", nodeName, e.what());
+		}
 	}
 
 	YAML::Node LoadYAMLFile(const Path& filepath)
@@ -74,4 +91,104 @@ namespace LevEngine
 
 		out << YAML::EndMap;
 	}
+}
+
+YAML::Node YAML::convert<Vector2>::encode(const Vector2& rhs)
+{
+	Node node;
+	node.push_back(rhs.x);
+	node.push_back(rhs.y);
+	node.SetStyle(EmitterStyle::Flow);
+	return node;
+}
+
+bool YAML::convert<Vector2>::decode(const Node& node, Vector2& rhs)
+{
+	if (!node.IsSequence() || node.size() != 2)
+		return false;
+
+	rhs.x = node[0].as<float>();
+	rhs.y = node[1].as<float>();
+	return true;
+}
+
+YAML::Node YAML::convert<Vector3>::encode(const Vector3& rhs)
+{
+	Node node;
+	node.push_back(rhs.x);
+	node.push_back(rhs.y);
+	node.push_back(rhs.z);
+	node.SetStyle(EmitterStyle::Flow);
+	return node;
+}
+
+bool YAML::convert<Vector3>::decode(const Node& node, Vector3& rhs)
+{
+	if (!node.IsSequence() || node.size() != 3)
+		return false;
+
+	rhs.x = node[0].as<float>();
+	rhs.y = node[1].as<float>();
+	rhs.z = node[2].as<float>();
+	return true;
+}
+
+YAML::Node YAML::convert<Vector4>::encode(const Vector4& rhs)
+{
+	Node node;
+	node.push_back(rhs.x);
+	node.push_back(rhs.y);
+	node.push_back(rhs.z);
+	node.push_back(rhs.w);
+	node.SetStyle(EmitterStyle::Flow);
+	return node;
+}
+
+bool YAML::convert<Vector4>::decode(const Node& node, Vector4& rhs)
+{
+	if (!node.IsSequence() || node.size() != 4)
+		return false;
+
+	rhs.x = node[0].as<float>();
+	rhs.y = node[1].as<float>();
+	rhs.z = node[2].as<float>();
+	rhs.w = node[3].as<float>();
+	return true;
+}
+
+YAML::Node YAML::convert<LevEngine::Color>::encode(const LevEngine::Color& rhs)
+{
+	Node node;
+	node.push_back(rhs.r);
+	node.push_back(rhs.g);
+	node.push_back(rhs.b);
+	node.push_back(rhs.a);
+	node.SetStyle(EmitterStyle::Flow);
+	return node;
+}
+
+bool YAML::convert<LevEngine::Color>::decode(const Node& node, LevEngine::Color& rhs)
+{
+	if (!node.IsSequence() || node.size() != 4)
+		return false;
+
+	rhs.r = node[0].as<float>();
+	rhs.g = node[1].as<float>();
+	rhs.b = node[2].as<float>();
+	rhs.a = node[3].as<float>();
+	return true;
+}
+
+YAML::Node YAML::convert<eastl::basic_string<char>>::encode(const eastl::string& rhs)
+{
+	Node node;
+	const std::string str = rhs.c_str();
+	node.push_back(str);
+	return node;
+}
+
+bool YAML::convert<eastl::basic_string<char>>::decode(const Node& node, eastl::string& rhs)
+{
+	rhs = node.as<std::string>().c_str();
+	return true;
 }

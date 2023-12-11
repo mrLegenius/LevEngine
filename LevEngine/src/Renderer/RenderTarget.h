@@ -1,9 +1,10 @@
 ﻿#pragma once
-#include "Texture.h"
-#include "DataTypes/Vector.h"
+#include "ClearFlags.h"
 
 namespace LevEngine
 {
+    class Texture;
+
     enum class AttachmentPoint : uint8_t
     {
         Color0,         // Must be a uncompressed color format.

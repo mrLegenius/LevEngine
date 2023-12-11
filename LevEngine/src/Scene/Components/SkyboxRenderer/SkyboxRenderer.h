@@ -1,17 +1,19 @@
 #pragma once
-#include "Assets/SkyboxAsset.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
+	class TextureAsset;
+	class SkyboxAsset;
+	
 	REGISTER_PARSE_TYPE(SkyboxRendererComponent);
 	
 	struct SkyboxRendererComponent
 	{
-		Ref<SkyboxAsset> skybox;
+		Ref<TextureAsset> SkyboxTexture;
 
 		SkyboxRendererComponent();
-		SkyboxRendererComponent(const Ref<SkyboxAsset>& skybox) : skybox(skybox) { }
+		SkyboxRendererComponent(const Ref<TextureAsset>& skyboxTexture) : SkyboxTexture(skyboxTexture) { }
 		SkyboxRendererComponent(const SkyboxRendererComponent&) = default;
 	};
 }

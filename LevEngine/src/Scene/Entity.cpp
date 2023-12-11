@@ -1,11 +1,19 @@
 #include "levpch.h"
 #include "Entity.h"
+
+#include "Components/Components.h"
+
 namespace LevEngine
 {
-template <typename T>
-void Entity::AddScript()
-{
-    LEV_CORE_ASSERT(m_Handle.valid(), "Entity is not valid!");
-    LEV_CORE_ASSERT(!HasComponent<T>(), "Entity already has this component!");
-}
+    Entity::Entity(const entt::handle handle) : m_Handle(handle) { }
+
+    UUID Entity::GetUUID() const
+    {
+        return GetComponent<IDComponent>().ID;
+    }
+
+    String Entity::GetName() const
+    {
+        return GetComponent<TagComponent>().tag;
+    }
 }

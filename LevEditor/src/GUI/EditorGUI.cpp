@@ -7,6 +7,7 @@
 
 #include "TextureLibrary.h"
 #include "Assets/AssetDatabase.h"
+#include "Assets/TextureAsset.h"
 
 namespace LevEngine::Editor
 {
@@ -107,6 +108,14 @@ namespace LevEngine::Editor
 		return changed;
 	}
 
+	void EditorGUI::DrawVector3Control(const String& label, const Func<Vector3>& getter, const Action<Vector3>& setter, const float speed, const float min, const float max)
+	{
+		auto value = getter();
+		float* v = &(value.x);
+		if (ImGui::DragFloat3(label.c_str(), v, speed, min, max))
+			setter(value);
+	}
+	
 	bool EditorGUI::DrawVector2Control(const String& label, Vector2& values, const float resetValue, const float labelWidth)
 	{
 		// -- Init -------------------------------------------------------
@@ -172,6 +181,14 @@ namespace LevEngine::Editor
 		return changed;
 	}
 
+	void EditorGUI::DrawVector2Control(const String& label, const Func<Vector2>& getter, const Action<Vector2>& setter,float speed, float min, float max)
+	{
+		auto value = getter();
+		float* v = &(value.x);
+		if (ImGui::DragFloat2(label.c_str(), v, speed, min, max))
+			setter(value);
+	}
+
 	void EditorGUI::DrawFloatControl(const String& label, float& value, const float speed, const float min, const float max)
 	{
 		DrawFloatControl(label, [&value] {return value; }, [&value](const float& newValue) {value = newValue; }, speed, min, max);
@@ -234,6 +251,49 @@ namespace LevEngine::Editor
 		return false;
 	}
 
+	bool EditorGUI::DrawCheckBox3Control(
+		const char* mainLabel,
+		const char* firstLabel, const Func<bool>& firstGetter, const Action<bool>& firstSetter,
+		const char* secondLabel, const Func<bool>& secondGetter, const Action<bool>& secondSetter,
+		const char* thirdLabel, const Func<bool>& thirdGetter, const Action<bool>& thirdSetter,
+		const float labelWidth)
+	{
+		GUI::ScopedID id{mainLabel};
+
+		ImGui::Columns(2, nullptr, false);
+		ImGui::SetColumnWidth(0, labelWidth);
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text(mainLabel);
+		ImGui::NextColumn();
+
+		bool changed = false;
+		
+		auto firstValue = firstGetter();
+		if (changed |= DrawCheckBox(firstLabel, firstValue))
+		{
+			firstSetter(firstValue);
+		}
+
+		ImGui::SameLine();
+		auto secondValue = secondGetter();
+		if (changed |= DrawCheckBox(secondLabel, secondValue))
+		{
+			secondSetter(secondValue);
+		}
+
+		ImGui::SameLine();
+		auto thirdValue = thirdGetter();
+		if (changed |= DrawCheckBox(thirdLabel, thirdValue))
+		{
+			thirdSetter(thirdValue);
+		}
+
+		ImGui::Columns();
+
+		return changed;
+	}
+
+	
 	void EditorGUI::DrawColor3Control(const String& label, const Func<Color>& getter, const Action<Color>& setter)
 	{
 		auto value = getter();

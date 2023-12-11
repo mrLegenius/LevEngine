@@ -1,101 +1,156 @@
 ﻿#pragma once
-#include "Math/Math.h"
+#include "physx/include/PxPhysicsAPI.h"
+#include "Collider.h"
+#include "DataTypes/Vector.h"
+#include "Scene/Components/TypeParseTraits.h"
+#include "ConstantForce.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
-	static Vector3 gravity = Vector3(0, -9.8f, 0);
+    REGISTER_PARSE_TYPE(Rigidbody);
+    
+    struct Rigidbody
+    {
+        enum class Type
+        {
+            Static,
+            Dynamic
+        };
+        
+        static void OnDestroy(entt::registry& registry, entt::entity entity);
+        
+        Vector3 GetTransformScale() const;
+        void SetTransformScale(Vector3 transformScale);
+        
+        bool IsInitialized() const;
+        void Initialize(const Transform& transform);
 
-	enum class BodyType
-	{
-		Static,
-		Kinematic,
-		Dynamic,
-	};
+        [[nodiscard]] bool IsVisualizationEnabled() const;
+        void EnableVisualization(bool flag);
 
-	REGISTER_PARSE_TYPE(Rigidbody);
+        [[nodiscard]] Type GetRigidbodyType() const;
+        void SetRigidbodyType(const Type& rigidbodyType);
+        void AttachRigidbody(const Type& rigidbodyType);
+        void DetachRigidbody();
 
-	class Rigidbody
-	{
-	public:
-		Rigidbody();
-		Rigidbody(const Rigidbody&) = default;
+        [[nodiscard]] bool IsKinematicEnabled() const;
+        void EnableKinematic(bool flag);
+        
+        [[nodiscard]] bool IsGravityEnabled() const;
+        void EnableGravity(bool flag);
+        
+        [[nodiscard]] float GetMass() const;
+        void SetMass(float value);
+        [[nodiscard]] Vector3 GetCenterOfMass() const;
+        void SetCenterOfMass(Vector3 value);
+        [[nodiscard]] Vector3 GetInertiaTensor() const;
+        void SetInertiaTensor(Vector3 value);
 
-		BodyType bodyType = BodyType::Dynamic;
+        [[nodiscard]] float GetMaxLinearVelocity() const;
+        void SetMaxLinearVelocity(float value);
+        [[nodiscard]] float GetMaxAngularVelocity() const;
+        void SetMaxAngularVelocity(float value);
+        
+        [[nodiscard]] float GetLinearDamping() const;
+        void SetLinearDamping(float value);
+        [[nodiscard]] float GetAngularDamping() const;
+        void SetAngularDamping(float value);
+        
+        [[nodiscard]] bool IsPosAxisXLocked() const;
+        void LockPosAxisX(bool flag);
+        [[nodiscard]] bool IsPosAxisYLocked() const;
+        void LockPosAxisY(bool flag);
+        [[nodiscard]] bool IsPosAxisZLocked() const;
+        void LockPosAxisZ(bool flag);
+        [[nodiscard]] bool IsRotAxisXLocked() const;
+        void LockRotAxisX(bool flag);
+        [[nodiscard]] bool IsRotAxisYLocked() const;
+        void LockRotAxisY(bool flag);
+        [[nodiscard]] bool IsRotAxisZLocked() const;
+        void LockRotAxisZ(bool flag);
+        
+        [[nodiscard]] Collider::Type GetColliderType() const;
+        void SetColliderType(const Collider::Type& colliderType);
+        void AttachCollider(const Collider::Type& colliderType);
+        void DetachCollider();
+        [[nodiscard]] int GetColliderCount() const;
+        
+        [[nodiscard]] Vector3 GetColliderOffsetPosition() const;
+        void SetColliderOffsetPosition(Vector3 position);
+        [[nodiscard]] Vector3 GetColliderOffsetRotation() const;
+        void SetColliderOffsetRotation(Vector3 rotation);
 
-		float gravityScale = 1.0f;
-		float mass = 1;
-		float elasticity = 0.5f;
+        [[nodiscard]] float GetSphereRadius() const;
+        void SetSphereRadius(float radius);
+        [[nodiscard]] float GetCapsuleRadius() const;
+        void SetCapsuleRadius(float radius);
+        [[nodiscard]] float GetCapsuleHalfHeight() const;
+        void SetCapsuleHalfHeight(float halfHeight);
+        [[nodiscard]] Vector3 GetBoxHalfExtents() const;
+        void SetBoxHalfExtents(Vector3 halfExtents);
+        
+        [[nodiscard]] float GetStaticFriction() const;
+        void SetStaticFriction(float staticFriction);
+        [[nodiscard]] float GetDynamicFriction() const;
+        void SetDynamicFriction(float dynamicFriction);
+        [[nodiscard]] float GetRestitution() const;
+        void SetRestitution(float restitution);
+        
+        enum class ForceMode
+        {
+            // Add a continuous force to the rigidbody, using its mass
+            Force,
+            // Add an instant force impulse to the rigidbody, using its mass
+            Impulse,
+            // Add a continuous acceleration to the rigidbody, ignoring its mass
+            Acceleration,
+            // Add an instant velocity change to the rigidbody, ignoring its mass
+            VelocityChange
+        };
 
-		float damping = 0.8f;
-		float angularDamping = 0.8f;
+        void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
+        void AddTorque(Vector3 torque, ForceMode = ForceMode::Force) const;
+        
+        friend class Physics;
+        friend class PhysicsUpdate;
+        
+    private:
+        [[nodiscard]] physx::PxRigidActor* GetActor() const;
+        [[nodiscard]] physx::PxShape* GetColliders() const;
+        [[nodiscard]] physx::PxMaterial* GetPhysicalMaterials(const physx::PxShape* colliders) const;
 
-		Vector3 force;
-		Vector3 velocity;
+        void SetRigidbodyPose(const Transform& transform);
+        
+        physx::PxRigidActor* m_Actor = nullptr;
 
-		Vector3 torque;
-		Vector3 angularVelocity;
-		Vector3 inverseInertia;
-		Matrix inverseInteriaTensor;
-		bool enabled = true;
+        Vector3 m_TransformScale = Vector3::One;
+        
+        bool m_IsInitialized = false;
+        bool m_IsVisualizationEnabled = false;
 
-		void AddImpulse(const Vector3 value) { velocity += value * GetInverseMass(); }
-		void AddAngularImpulse(const Vector3 value) { angularVelocity += Vector3::Transform(value, inverseInteriaTensor); }
-		void AddForce(const Vector3 value) { force += value; }
-		void AddTorque(const Vector3& value) { torque += value; }
-		void AddForceAtPosition(const Vector3& addedForce, const Vector3& localPosition)
-		{
-			force += addedForce;
-			torque += localPosition.Cross(addedForce);
-		}
+        Type m_Type = Type::Dynamic;
+        
+        bool m_IsKinematicEnabled = false;
+        bool m_IsGravityEnabled = true;
+        
+        float m_Mass = 1.0f;
+        Vector3 m_CenterOfMass = Vector3::Zero;
+        Vector3 m_InertiaTensor = Vector3::One;
+        float m_LinearDamping = 0.0f;
+        float m_AngularDamping = 0.05f;
 
-		[[nodiscard]] Matrix GetInertiaTensor() const { return inverseInteriaTensor; }
-		[[nodiscard]] float GetInverseMass() const
-		{
-			if (bodyType == BodyType::Static) return 0.0f;
-			if (mass < 0.0001f) return 1.0f / 0.0001f;
-			return 1.0f / mass;
-		}
+        float m_MaxLinearVelocity = 100.0f;
+        float m_MaxAngularVelocity = 100.0f;
+        
+        bool m_IsPosAxisXLocked = false;
+        bool m_IsPosAxisYLocked = false;
+        bool m_IsPosAxisZLocked = false;
+        bool m_IsRotAxisXLocked = false;
+        bool m_IsRotAxisYLocked = false;
+        bool m_IsRotAxisZLocked = false;
 
-		void ClearForces()
-		{
-			force = Vector3::Zero;
-			torque = Vector3::Zero;
-		}
-
-		void InitCubeInertia(const Transform& transform)
-		{
-			const Vector3 dimensions = transform.GetLocalScale();
-			const Vector3 dimsSqr = dimensions * dimensions;
-			const auto inverseMass = GetInverseMass();
-			inverseInertia.x = (12.0f * inverseMass) / (dimsSqr.y + dimsSqr.z);
-			inverseInertia.y = (12.0f * inverseMass) / (dimsSqr.x + dimsSqr.z);
-			inverseInertia.z = (12.0f * inverseMass) / (dimsSqr.x + dimsSqr.y);
-		}
-
-		void InitSphereInertia(const Transform& transform)
-		{
-			auto scale = transform.GetLocalScale();
-			const auto maxElement = Math::Max(Math::Max(scale.x, scale.y), scale.z);
-			const float radius = maxElement;
-			const float i = 2.5f * GetInverseMass() / (radius * radius);
-
-			inverseInertia = Vector3(i, i, i);
-		}
-
-		void UpdateInertiaTensor(const Transform& transform)
-		{
-			Quaternion q = transform.GetLocalRotation();
-
-			const Matrix orientation = Matrix::CreateFromQuaternion(q);
-
-			q.Conjugate();
-			const Matrix invOrientation = Matrix::CreateFromQuaternion(q);
-
-			inverseInteriaTensor = invOrientation * Matrix::CreateScale(inverseInertia) * orientation;
-		}
-	};
-
-
+        //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
+        Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
+    };
 }
-

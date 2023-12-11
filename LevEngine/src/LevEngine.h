@@ -3,9 +3,25 @@
 // -- Core -------------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+// -- Data Types -------------------------------------------
+
+#include "DataTypes/Array.h"
+#include "DataTypes/Delegates.h"
+#include "DataTypes/Map.h"
+#include "DataTypes/Pair.h"
+#include "DataTypes/Path.h"
+#include "DataTypes/Pointers.h"
+#include "DataTypes/Queue.h"
+#include "DataTypes/String.h"
+#include "DataTypes/UnorderedMap.h"
+#include "DataTypes/Vector.h"
+#include "DataTypes/Utility.h"
+
+// -- Kernel -------------------------------------------
 #include "Kernel/Logger.h"
 #include "Kernel/Asserts.h"
 #include "Kernel/Application.h"
+#include "Kernel/Window.h"
 #include "Kernel/Layer.h"
 
 #include "Kernel/PlatformUtils.h"
@@ -21,20 +37,6 @@
 
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
-
-// -- Data Types -------------------------------------------
-
-#include "DataTypes/Array.h"
-#include "DataTypes/Delegates.h"
-#include "DataTypes/Map.h"
-#include "DataTypes/Pair.h"
-#include "DataTypes/Path.h"
-#include "DataTypes/Pointers.h"
-#include "DataTypes/Queue.h"
-#include "DataTypes/String.h"
-#include "DataTypes/UnorderedMap.h"
-#include "DataTypes/Vector.h"
-#include "DataTypes/Utility.h"
 
 // -- GUI --------------------------------------------------
 
@@ -81,6 +83,7 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #include "Renderer/Renderer.h"
+#include "Renderer/RendererContext.h"
 #include "Renderer/RenderCommand.h"
 
 #include "Renderer/BlendState.h"
@@ -105,6 +108,7 @@
 #include "Renderer/Texture.h"
 #include "Renderer/VertexBuffer.h"
 #include "Renderer/Viewport.h"
+#include "Renderer/LightCollection.h"
 
 #include "Renderer/Camera/SceneCamera.h"
 
@@ -132,7 +136,7 @@
 #include "Scene/Components/ComponentSerializer.h"
 
 // /////////////////////////////////////////////////////////
-// -- Systems -------------------------------------------
+// -- Systems ----------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
@@ -147,14 +151,17 @@
 // -- Physics ----------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-#include "Physics/Events/CollisionBeginEvent.h"
-#include "Physics/Events/CollisionEndEvent.h"
+#include "Physics\Events\LegacyCollisionBeginEvent.h"
+#include "Physics\Events\LegacyCollisionEndEvent.h"
 
-#include "Physics/Components/Collider.h"
-#include "Physics/Components/CollisionEvents.h"
+#include "Physics\Components\LegacyCollider.h"
+#include "Physics\Components\LegacyCollisionEvents.h"
+#include "Physics\Components\LegacyRigidbody.h"
+
+#include "Physics/LegacyPhysics.h"
+
 #include "Physics/Components/Rigidbody.h"
-
-#include "Physics/Physics.h"
+#include "Scene/Systems/Physics/RigidbodyInitSystem.h"
 
 // /////////////////////////////////////////////////////////
 // -- Assets -----------------------------------------------
@@ -162,7 +169,7 @@
 
 #include "Assets/AssetDatabase.h"
 #include "Assets/Asset.h"
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
 #include "Assets/MaterialAsset.h"
 #include "Assets/MeshAsset.h"
 #include "Assets/SkyboxAsset.h"

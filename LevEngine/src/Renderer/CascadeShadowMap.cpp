@@ -1,7 +1,10 @@
 #include "levpch.h"
 #include "CascadeShadowMap.h"
-
+#include "RasterizerState.h"
 #include "RenderSettings.h"
+#include "RenderTarget.h"
+#include "SamplerState.h"
+#include "Texture.h"
 
 namespace LevEngine
 {
@@ -25,7 +28,7 @@ CascadeShadowMap::CascadeShadowMap(const uint32_t width, const uint32_t height)
     m_RenderTarget = RenderTarget::Create();
     m_RenderTarget->AttachTexture(AttachmentPoint::Depth, m_Texture);
 
-    auto sampler = SamplerState::Create();
+    const auto sampler = SamplerState::Create();
     sampler->SetWrapMode(SamplerState::WrapMode::Border, SamplerState::WrapMode::Border, SamplerState::WrapMode::Border);
     sampler->SetBorderColor(Color{ 1, 1, 1, 1 });
     sampler->SetMinLOD(0);

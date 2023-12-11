@@ -1,10 +1,10 @@
 #pragma once
-#include "Assets/MaterialAsset.h"
-#include "Assets/MeshAsset.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
+	class MaterialAsset;
+	class MeshAsset;
 	REGISTER_PARSE_TYPE(MeshRendererComponent);
 	
 	struct MeshRendererComponent

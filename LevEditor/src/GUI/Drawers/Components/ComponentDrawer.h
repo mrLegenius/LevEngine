@@ -21,7 +21,7 @@ namespace LevEngine::Editor
 	public:
 		virtual ~ComponentDrawer() = default;
 
-		void Draw(Entity entity) override
+		void Draw(const Entity entity) override
 		{
 			if (!entity.HasComponent<TComponent>()) return;
 
@@ -36,8 +36,9 @@ namespace LevEngine::Editor
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
 			const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 			ImGui::Separator();
+			const String label = GetNameFromMenu();
 			const bool opened = ImGui::TreeNodeEx((void*)typeid(TComponent).hash_code(),
-				treeNodeFlags, GetLabel().c_str());
+				treeNodeFlags, label.c_str());
 
 			if (ImGui::BeginDragDropSource())
 			{
@@ -77,15 +78,11 @@ namespace LevEngine::Editor
 				entity.RemoveComponent<TComponent>();
 		}
 
-		void DrawAddComponent(Entity entity) override
+		void DrawAddComponent(const Entity entity) override
 		{
 			if (IsRemovable() && !entity.HasComponent<TComponent>())
 			{
-				if (ImGui::MenuItem(GetLabel().c_str()))
-				{
-					entity.AddComponent<TComponent>();
-					ImGui::CloseCurrentPopup();
-				}
+				DrawMenuItem(GetLabel(), entity);
 			}
 		}
 
@@ -96,6 +93,43 @@ namespace LevEngine::Editor
 		virtual void DrawContent(TComponent& component) = 0;
 
 	private:
+		[[nodiscard]] String GetNameFromMenu() const
+		{
+			constexpr char delimiter = '/';
+			
+			const auto path = GetLabel();
+			if (size_t pos; (pos = path.find_last_of(delimiter)) != std::string::npos)
+			{
+				return path.substr(pos+1, GetLabel().length());
+			}
+
+			return path;
+		}
+
+		static void DrawMenuItem(String path, const Entity entity)
+		{
+			constexpr char delimiter = '/';
+
+			if (size_t pos; (pos = path.find(delimiter)) != std::string::npos)
+			{
+				const String token = path.substr(0, pos);
+
+				if (ImGui::BeginMenu(token.c_str()))
+				{
+					path.erase(0, pos + 1);
+					DrawMenuItem(path, entity);
+					ImGui::EndMenu();
+				}
+				return;
+			}
+			
+			if (ImGui::MenuItem(path.c_str()))
+			{
+				auto _ = entity.AddComponent<TComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+		
 		static inline OrderedClassRegister<IComponentDrawer, TDrawer, Order> s_ClassRegister;
 	};
 }

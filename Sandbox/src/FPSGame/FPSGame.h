@@ -3,7 +3,7 @@
 
 namespace Sandbox
 {
-	class FPSGame final : public Layer
+	class FPSGame final : public LevEngine::Layer
 	{
 	public:
 		void OnAttach() override;
@@ -11,6 +11,6 @@ namespace Sandbox
 		void OnUpdate(float deltaTime) override;
 		void OnRender() override;
 		void OnGUIRender() override;
-		void OnEvent(Event& event) override;
+		void OnEvent(LevEngine::Event& event) override;
 	};
 }

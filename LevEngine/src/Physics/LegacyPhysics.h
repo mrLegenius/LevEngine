@@ -1,0 +1,58 @@
+#pragma once
+#include "Components\LegacyRigidbody.h"
+#include "Components\LegacyCollider.h"
+#include "Scene/Components/Transform/Transform.h"
+
+namespace LevEngine
+{
+struct CollisionInfo;
+class Entity;
+
+inline constexpr int NumCollisionFrames = 10;
+
+struct ContactPoint
+{
+	Vector3 localA; // where did the collision occur ...
+	Vector3 localB; // in the frame of each object !
+	Vector3 normal;
+	float penetration = 0;
+};
+
+struct CollisionInfo
+{
+    ContactPoint point;
+
+    void SetContactPoint(const Vector3& localA, const Vector3& localB, const Vector3& normal, float p)
+    {
+        point.localA = localA;
+        point.localB = localB;
+        point.normal = normal;
+        point.penetration = p;
+    }
+};
+
+class LegacyPhysics
+{
+public:
+    
+    static void HandleCollision(Transform& transformA, LegacyRigidbody& rigidbodyA, Transform& transformB, LegacyRigidbody& rigidbodyB, ContactPoint p);
+    static void Process(entt::registry& registry, float deltaTime);
+
+    static bool AABBTest(
+        const Vector3& posA, const Vector3& posB,
+        const Vector3& halfSizeA, const Vector3& halfSizeB);
+
+    static bool HasAABBIntersection(const LegacyBoxCollider& colliderA, const Transform& transformA, const LegacyBoxCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo);
+
+    static bool HasSphereIntersection(const LegacySphereCollider& colliderA, const Transform& transformA, const LegacySphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo);
+
+    static bool HasAABBSphereIntersection(const LegacyBoxCollider& colliderA, const Transform& transformA, const LegacySphereCollider& colliderB, const Transform& transformB, CollisionInfo& collisionInfo);
+
+    static void UpdateConstraints(const float deltaTime)
+    {
+        /*for (const auto gameObject : objects)
+            for (const auto& constraint : gameObject->GetConstraints())
+                constraint->Update(deltaTime);*/
+    }
+};
+}

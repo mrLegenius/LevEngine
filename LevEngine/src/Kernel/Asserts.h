@@ -3,7 +3,6 @@
 #ifdef LEV_DEBUG
 #define LEV_ENABLE_ASSERTS 1
 #endif
-#include "DataTypes/String.h"
 
 #if LEV_ENABLE_ASSERTS
 #define LEV_ASSERT(x, ...) { if(!(x)) { Log::Error("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }

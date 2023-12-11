@@ -1,8 +1,9 @@
 ﻿#pragma once
-#include "IndexBuffer.h"
 
 namespace LevEngine
 {
+	class IndexBuffer;
+
 	class RenderCommands
 	{
 	public:

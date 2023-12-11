@@ -23,7 +23,7 @@ struct SortedElement
 	float depth;
 };
 
-cbuffer CameraParams : register(b0) // матрицы вида и проекции
+cbuffer CameraParams : register(b0)
 {
 	row_major matrix View;
 	row_major matrix Projection;

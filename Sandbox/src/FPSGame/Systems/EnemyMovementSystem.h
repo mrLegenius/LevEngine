@@ -1,14 +1,16 @@
 #pragma once
 #include "FPSGame/Components/Enemy.h"
 #include "FPSGame/Components/Player.h"
+
 namespace Sandbox
 {
+    using namespace LevEngine;
     class EnemyMovementSystem final : public System
     {
     public:
         void Update(float deltaTime, entt::registry& registry) override
         {
-            const auto enemyView = registry.view<Transform, Rigidbody, Enemy>();
+            const auto enemyView = registry.view<Transform, LegacyRigidbody, Enemy>();
 
             const auto playerView = registry.view<Transform, Player>();
 
@@ -25,17 +27,17 @@ namespace Sandbox
 			
             for (const auto entity : enemyView)
             {
-                auto [transform, rigidbody, enemy] = enemyView.get<Transform, Rigidbody, Enemy>(entity);
+                auto [enemyTransform, enemyRigidbody, enemy] = enemyView.get<Transform, LegacyRigidbody, Enemy>(entity);
 				
-                auto enemyPosition = transform.GetWorldPosition();
+                auto enemyPosition = enemyTransform.GetWorldPosition();
 
                 auto dir = playerPosition - enemyPosition;
                 dir.y = 0;
                 dir.Normalize();
 
-                rigidbody.velocity = dir * enemy.speed;
+                enemyRigidbody.velocity = dir * enemy.Speed;
 				
-                transform.SetWorldRotation(Quaternion::LookRotation(dir, Vector3::Up));
+                enemyTransform.SetWorldRotation(Quaternion::LookRotation(dir, Vector3::Up));
             }
         }
     };

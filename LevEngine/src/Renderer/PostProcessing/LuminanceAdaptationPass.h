@@ -1,5 +1,4 @@
 #pragma once
-#include "DataTypes/Array.h"
 #include "Renderer/RenderPass.h"
 
 namespace LevEngine
@@ -17,7 +16,8 @@ namespace LevEngine
         
         void SetLuminanceMap(const Ref<Texture>& texture) { m_LuminanceMap = texture; }
         void SwapCurrentLuminanceMap() { m_CurrentMapInBuffer = !m_CurrentMapInBuffer; }
-        
+
+        String PassName() override;
         bool Begin(entt::registry& registry, RenderParams& params) override;
         void Process(entt::registry& registry, RenderParams& params) override;
         void End(entt::registry& registry, RenderParams& params) override;

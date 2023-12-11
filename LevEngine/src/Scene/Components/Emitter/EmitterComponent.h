@@ -1,10 +1,9 @@
 ﻿#pragma once
-#include "Assets/TextureAsset.h"
-#include "Renderer/Texture.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
+	class TextureAsset;
 	REGISTER_PARSE_TYPE(EmitterComponent);
 	
 	struct EmitterComponent
@@ -44,6 +43,6 @@ namespace LevEngine
 
 	private:
 		float Timer = 0.0f;
-		friend class ParticlePass;
+		friend class ParticleEmissionPass;
 	};
 }

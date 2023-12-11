@@ -2,318 +2,423 @@
 #include "Scene.h"
 
 #include "Audio/Audio.h"
-#include "Physics/Physics.h"
+#include "Physics/LegacyPhysics.h"
 #include "Renderer/Renderer.h"
 
 #include "Entity.h"
+#include "Assets/ScriptAsset.h"
 #include "Components/Components.h"
+#include "Components/Audio/AudioListener.h"
+#include "Components/Audio/AudioSource.h"
 #include "Components/Camera/Camera.h"
+#include "Kernel/Application.h"
+#include "Kernel/Window.h"
+#include "Scripting/ScriptingManager.h"
+#include "Physics/Physics.h"
+#include "Physics/Components/Rigidbody.h"
+#include "Physics/Events/LegacyCollisionBeginEvent.h"
+#include "Physics/Events/LegacyCollisionEndEvent.h"
+#include "Scripting/LuaComponentsBinder.h"
+#include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
+#include "Systems/Animation/WaypointPositionUpdateSystem.h"
+#include "Systems/Audio/AudioListenerInitSystem.h"
+#include "Systems/Audio/AudioSourceInitSystem.h"
+#include "Systems/Physics/RigidbodyInitSystem.h"
 
 namespace LevEngine
 {
-
     constexpr bool k_IsMultiThreading = false;
     constexpr int k_SleepMicroSeconds = 10;
 
-void Scene::CleanupScene()
-{
-    LEV_PROFILE_FUNCTION();
-
-    m_Registry.clear();
-    Audio::ReleaseAll();
-}
-
-entt::registry& Scene::GetRegistry()
-{
-    return m_Registry;
-}
-
-void Scene::RequestUpdates(const float deltaTime)
-{
-    for (const auto& system : m_UpdateSystems)
+    Scene::Scene()
     {
-        //TODO Add schedule inside systems' Updates if needed
-        system->Update(deltaTime, m_Registry);
+        using namespace Scripting;
+
+        auto ScriptingManager = Application::Get().GetScriptingManager();
+        ScriptingManager.CreateRegistryBind(m_Registry);
+
+        LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager.GetLuaState()), this);
+
+        m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
     }
 
-    vgjs::continuation([this]() {m_IsUpdateDone = true; });
-}
-
-void Scene::OnUpdate(const float deltaTime)
-{
-    LEV_PROFILE_FUNCTION();
-
-    if constexpr (k_IsMultiThreading)
+    void Scene::CleanupScene()
     {
-        m_IsUpdateDone = false;
-        vgjs::schedule([this, deltaTime]() { RequestUpdates(deltaTime); });
+        LEV_PROFILE_FUNCTION();
 
-        while (!m_IsUpdateDone)
+        m_Registry.clear();
+        Audio::ReleaseAll();
+    }
+
+    void Scene::OnInit()
+    {
+        auto scriptManager = Application::Get().GetScriptingManager();
+        scriptManager.LoadScripts();
+        scriptManager.RegisterSystems(this);
+
+        RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
+        RegisterUpdateSystem<WaypointPositionUpdateSystem>();
+
+        RegisterUpdateSystem<AudioSourceInitSystem>();
+        RegisterUpdateSystem<AudioListenerInitSystem>();
+		
+        RegisterOneFrame<CollisionBeginEvent>();
+        RegisterOneFrame<CollisionEndEvent>();
+
+        App::Get().GetPhysics().ClearAccumulator();
+        RegisterUpdateSystem<RigidbodyInitSystem>();
+
+        m_Registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
+        m_Registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
+        m_Registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
+
+        m_Registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
+
+        for (const auto& system : m_InitSystems)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            system->Update(0, m_Registry);
         }
     }
-    else 
+
+    Entity Scene::GetEntityByUUID(const UUID& uuid)
+    {
+        const auto view = m_Registry.view<IDComponent>();
+
+        for (const auto entity : view)
+        {
+            IDComponent idComponent = view.get<IDComponent>(entity);
+            if (idComponent.ID == uuid)
+                return ConvertEntity(entity);
+        }
+
+        return Entity();
+    }
+
+    entt::registry& Scene::GetRegistry()
+    {
+        return m_Registry;
+    }
+
+    bool Scene::IsScriptSystemActive(const Ref<ScriptAsset>& scriptAsset) const
+    {
+        return m_ScriptSystems.find(scriptAsset) != m_ScriptSystems.end();
+    }
+
+    void Scene::SetScriptSystemActive(const Ref<ScriptAsset>& scriptAsset, bool isActive)
+    {
+        if (isActive)
+        {
+            m_ScriptSystems.insert(scriptAsset);
+            return;
+        }
+
+        const auto it = m_ScriptSystems.find(scriptAsset);
+        if (it != m_ScriptSystems.end())
+        {
+            m_ScriptSystems.erase(it);
+        }
+    }
+
+    Set<Ref<ScriptAsset>> Scene::GetActiveScriptSystems() const
+    {
+        return m_ScriptSystems;
+    }
+
+    void Scene::RequestUpdates(const float deltaTime)
     {
         for (const auto& system : m_UpdateSystems)
         {
+            //TODO Add schedule inside systems' Updates if needed
             system->Update(deltaTime, m_Registry);
         }
+
+        vgjs::continuation([this]() { m_IsUpdateDone = true; });
     }
-}
 
-void Scene::RequestPhysicsUpdates(const float deltaTime)
-{
-    Physics::Process(m_Registry, deltaTime);
-    
-	vgjs::continuation([this]() {m_IsPhysicsDone = true; });
-}
-
-void Scene::OnPhysics(const float deltaTime)
-{
-    if constexpr (k_IsMultiThreading)
+    void Scene::OnUpdate(const float deltaTime)
     {
-        m_IsPhysicsDone = false;
+        LEV_PROFILE_FUNCTION();
 
-        vgjs::schedule([this, deltaTime]() { RequestPhysicsUpdates(deltaTime); });;
-
-        while (!m_IsPhysicsDone)
+        if constexpr (k_IsMultiThreading)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            m_IsUpdateDone = false;
+            vgjs::schedule([this, deltaTime]() { RequestUpdates(deltaTime); });
+
+            while (!m_IsUpdateDone)
+            {
+                std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            }
+        }
+        else
+        {
+            for (const auto& system : m_UpdateSystems)
+            {
+                system->Update(deltaTime, m_Registry);
+            }
         }
     }
-    else
+
+    void Scene::RequestPhysicsUpdates(const float deltaTime)
     {
-        Physics::Process(m_Registry, deltaTime);
+        LegacyPhysics::Process(m_Registry, deltaTime);
+
+        vgjs::continuation([this]() { m_IsPhysicsDone = true; });
     }
-}
 
-void Scene::RequestRenderUpdate()
-{
-    Renderer::Render(m_Registry);
-
-	vgjs::continuation([this]() {m_IsRenderDone = true; });
-}
-
-void Scene::OnRender()
-{
-    if constexpr (k_IsMultiThreading)
+    void Scene::OnPhysics(const float deltaTime)
     {
-        m_IsRenderDone = false;
-
-        vgjs::schedule([this]() {RequestRenderUpdate(); });
-
-        while (!m_IsRenderDone)
+        if constexpr (k_IsMultiThreading)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            m_IsPhysicsDone = false;
+
+            vgjs::schedule([this, deltaTime]() { RequestPhysicsUpdates(deltaTime); });;
+
+            while (!m_IsPhysicsDone)
+            {
+                std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            }
+        }
+        else
+        {
+            LegacyPhysics::Process(m_Registry, deltaTime);
+            App::Get().GetPhysics().Process(m_Registry, deltaTime);
         }
     }
-    else
+
+    void Scene::RequestRenderUpdate()
     {
-        Renderer::Render(m_Registry);
+        App::Renderer().Render(m_Registry);
+
+        vgjs::continuation([this]() { m_IsRenderDone = true; });
     }
-}
 
-void Scene::RequestRenderUpdate(SceneCamera* mainCamera, const Transform* cameraTransform)
-{
-    Renderer::Render(m_Registry, mainCamera, cameraTransform);
-
-	vgjs::continuation([this]() {m_IsRenderDone = true; });
-}
-
-void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
-{
-    if constexpr (k_IsMultiThreading)
+    void Scene::OnRender()
     {
-        m_IsRenderDone = false;
-
-        vgjs::schedule([this, mainCamera, cameraTransform]() {RequestRenderUpdate(mainCamera, cameraTransform); });
-
-        while (!m_IsRenderDone)
+        if constexpr (k_IsMultiThreading)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            m_IsRenderDone = false;
+
+            vgjs::schedule([this]() { RequestRenderUpdate(); });
+
+            while (!m_IsRenderDone)
+            {
+                std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            }
+        }
+        else
+        {
+            App::Renderer().Render(m_Registry);
         }
     }
-    else
-    {
-        Renderer::Render(m_Registry, mainCamera, cameraTransform);
-    }
-}
 
-void Scene::RequestLateUpdate(const float deltaTime)
-{
-    for (const auto& system : m_LateUpdateSystems)
+    void Scene::RequestRenderUpdate(SceneCamera* mainCamera, const Transform* cameraTransform)
     {
-        //TODO Add schedule inside systems' Updates if needed
-        system->Update(deltaTime, m_Registry);
+        App::Renderer().Render(m_Registry, mainCamera, cameraTransform);
+
+        vgjs::continuation([this]() { m_IsRenderDone = true; });
     }
 
-    vgjs::continuation([this]() {m_IsLateUpdateDone = true; });
-}
-
-void Scene::RequestEventsUpdate(const float deltaTime)
-{
-    for (const auto& system : m_EventSystems)
+    void Scene::OnRender(SceneCamera* mainCamera, const Transform* cameraTransform)
     {
-        //TODO Add schedule inside systems' Updates if needed
-        system->Update(deltaTime, m_Registry);
-    }
-
-    vgjs::continuation([this]() {m_IsEventUpdateDone = true; });
-}
-
-void Scene::OnLateUpdate(const float deltaTime)
-{
-    LEV_PROFILE_FUNCTION();
-
-    if constexpr (k_IsMultiThreading)
-    {
-        m_IsLateUpdateDone = false;
-
-        vgjs::schedule([this, deltaTime]() {RequestLateUpdate(deltaTime); });
-
-        while (!m_IsLateUpdateDone)
+        if constexpr (k_IsMultiThreading)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            m_IsRenderDone = false;
+
+            vgjs::schedule([this, mainCamera, cameraTransform]() { RequestRenderUpdate(mainCamera, cameraTransform); });
+
+            while (!m_IsRenderDone)
+            {
+                std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            }
         }
-
-        m_IsEventUpdateDone = false;
-
-        vgjs::schedule([this, deltaTime]() {RequestEventsUpdate(deltaTime); });
-
-        while (!m_IsEventUpdateDone)
+        else
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            App::Renderer().Render(m_Registry, mainCamera, cameraTransform);
         }
     }
-	else
-	{
+
+    void Scene::RequestLateUpdate(const float deltaTime)
+    {
         for (const auto& system : m_LateUpdateSystems)
         {
+            //TODO Add schedule inside systems' Updates if needed
             system->Update(deltaTime, m_Registry);
         }
 
-		for (const auto& system : m_EventSystems)
-        {
-            system->Update(deltaTime, m_Registry);
-        }
-	}
-}
-
-void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
-{
-    LEV_PROFILE_FUNCTION();
-
-    m_ViewportWidth = width;
-    m_ViewportHeight = height;
-
-    const auto view = m_Registry.view<CameraComponent>();
-    for (const auto entity : view)
-    {
-        auto& camera = view.get<CameraComponent>(entity);
-
-        if (camera.fixedAspectRatio) continue;
-
-        camera.camera.SetViewportSize(width, height);
+        vgjs::continuation([this]() { m_IsLateUpdateDone = true; });
     }
-}
 
-void Scene::ForEachEntity(const Action<Entity>& callback)
-{
-	for (const auto entityId : m_Registry.storage<entt::entity>())
-	{
-        if (!m_Registry.valid(entityId)) continue;
+    void Scene::RequestEventsUpdate(const float deltaTime)
+    {
+        for (const auto& system : m_EventSystems)
+        {
+            //TODO Add schedule inside systems' Updates if needed
+            system->Update(deltaTime, m_Registry);
+        }
 
-        const auto entity = ConvertEntity(entityId);
-        callback(entity);
-	}
-}
+        vgjs::continuation([this]() { m_IsEventUpdateDone = true; });
+    }
 
-Entity Scene::CreateEntity(const String& name)
-{
-    LEV_PROFILE_FUNCTION();
+    void Scene::OnLateUpdate(const float deltaTime)
+    {
+        LEV_PROFILE_FUNCTION();
 
-    return CreateEntity(UUID(), name);
-}
+        if constexpr (k_IsMultiThreading)
+        {
+            m_IsLateUpdateDone = false;
 
-Entity Scene::CreateEntity(UUID uuid, const String& name)
-{
-    LEV_PROFILE_FUNCTION();
+            vgjs::schedule([this, deltaTime]() { RequestLateUpdate(deltaTime); });
 
-    auto entity = Entity(entt::handle{ m_Registry, m_Registry.create() });
-    entity.AddComponent<IDComponent>(uuid);
-    entity.AddComponent<Transform>(entity);
-    entity.AddComponent<TagComponent>(name);
+            while (!m_IsLateUpdateDone)
+            {
+                std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            }
 
-    return entity;
-}
+            m_IsEventUpdateDone = false;
 
-Entity Scene::ConvertEntity(const entt::entity entity)
-{
-    return Entity(entt::handle(m_Registry, entity));
-}
+            vgjs::schedule([this, deltaTime]() { RequestEventsUpdate(deltaTime); });
 
-void Scene::DestroyEntity(const entt::entity entity)
-{
-    DestroyEntity(ConvertEntity(entity));
-}
-    
-void Scene::DestroyEntity(const Entity entity)
-{
-    LEV_PROFILE_FUNCTION();
+            while (!m_IsEventUpdateDone)
+            {
+                std::this_thread::sleep_for(std::chrono::microseconds(k_SleepMicroSeconds));
+            }
+        }
+        else
+        {
+            for (const auto& system : m_LateUpdateSystems)
+            {
+                system->Update(deltaTime, m_Registry);
+            }
 
-    Vector<Entity> entitiesToDestroy;
+            for (const auto& system : m_EventSystems)
+            {
+                system->Update(deltaTime, m_Registry);
+            }
+        }
+    }
 
-    auto& parentTransform = entity.GetComponent<Transform>();
-    parentTransform.SetParent(Entity{});
+    void Scene::OnViewportResized(const uint32_t width, const uint32_t height)
+    {
+        LEV_PROFILE_FUNCTION();
 
-    GetAllChildren(entity, entitiesToDestroy);
+        m_ViewportWidth = width;
+        m_ViewportHeight = height;
 
-    m_Registry.destroy(entitiesToDestroy.begin(), entitiesToDestroy.end());
-}
+        const auto view = m_Registry.view<CameraComponent>();
+        for (const auto entity : view)
+        {
+            auto& camera = view.get<CameraComponent>(entity);
 
-void Scene::GetAllChildren(Entity entity, Vector<Entity>& entities)
-{
-	const auto& parentTransform = entity.GetComponent<Transform>();
+            if (camera.FixedAspectRatio) continue;
 
-	for (const auto child : parentTransform.GetChildren())
-		GetAllChildren(child, entities);
+            camera.Camera.SetViewportSize(width, height);
+        }
+    }
 
-	entities.emplace(entities.begin(), entity);
-}
+    void Scene::ForEachEntity(const Action<Entity>& callback)
+    {
+        for (const auto entityId : m_Registry.storage<entt::entity>())
+        {
+            if (!m_Registry.valid(entityId)) continue;
 
-Entity Scene::DuplicateEntity(const Entity entity)
-{
-    return DuplicateEntity(entity, entity.GetComponent<Transform>().GetParent());
-}
-    
-Entity Scene::DuplicateEntity(const Entity entity, const Entity parent)
-{
-    LEV_PROFILE_FUNCTION();
-    
-    const entt::entity newEntity = m_Registry.create();
+            const auto entity = ConvertEntity(entityId);
+            callback(entity);
+        }
+    }
 
-    //Copy component by component
-    for(auto &&curr: m_Registry.storage())
-        if(auto &storage = curr.second; storage.contains(entity))
-            storage.push(newEntity, storage.value(entity));
+    Entity Scene::CreateEntity(const String& name)
+    {
+        LEV_PROFILE_FUNCTION();
 
-    //Assign new UUID
-    m_Registry.replace<IDComponent>(newEntity, UUID());
+        return CreateEntity(UUID(), name);
+    }
 
-    //Restore transform
-    auto duplicatedEntity = ConvertEntity(newEntity);
-    Transform& transform = m_Registry.replace<Transform>(newEntity, duplicatedEntity);
-    const Transform& oldTransform = entity.GetComponent<Transform>();
-    transform.SetWorldPosition(oldTransform.GetWorldPosition());
-    transform.SetWorldRotation(oldTransform.GetWorldRotation());
-    transform.SetWorldScale(oldTransform.GetWorldScale());
-    transform.SetParent(parent);
+    Entity Scene::CreateEntity(UUID uuid, const String& name)
+    {
+        LEV_PROFILE_FUNCTION();
 
-    //Copy all children
-    for (const auto child : oldTransform.GetChildren())
-        DuplicateEntity(child, duplicatedEntity);
+        auto entity = Entity(entt::handle{m_Registry, m_Registry.create()});
+        entity.AddComponent<IDComponent>(uuid);
+        entity.AddComponent<Transform>(entity);
+        entity.AddComponent<TagComponent>(name);
 
-    return duplicatedEntity;
-}
+        return entity;
+    }
+
+    Entity Scene::ConvertEntity(const entt::entity entity)
+    {
+        return Entity(entt::handle(m_Registry, entity));
+    }
+
+    void Scene::DestroyEntity(const entt::entity entity)
+    {
+        DestroyEntity(ConvertEntity(entity));
+    }
+
+    void Scene::DestroyEntity(const Entity entity)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        Vector<Entity> entitiesToDestroy;
+
+        auto& parentTransform = entity.GetComponent<Transform>();
+        parentTransform.SetParent(Entity{});
+
+        GetAllChildren(entity, entitiesToDestroy);
+
+        m_Registry.destroy(entitiesToDestroy.begin(), entitiesToDestroy.end());
+    }
+
+    void Scene::GetAllChildren(Entity entity, Vector<Entity>& entities)
+    {
+        const auto& parentTransform = entity.GetComponent<Transform>();
+
+        for (const auto child : parentTransform.GetChildren())
+            GetAllChildren(child, entities);
+
+        entities.emplace(entities.begin(), entity);
+    }
+
+    Entity Scene::DuplicateEntity(const Entity entity)
+    {
+        return DuplicateEntity(entity, entity.GetComponent<Transform>().GetParent());
+    }
+
+    Entity Scene::DuplicateEntity(const Entity entity, const Entity parent)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        const entt::entity newEntity = m_Registry.create();
+
+        //Copy component by component
+        for (auto&& curr : m_Registry.storage())
+            if (auto& storage = curr.second; storage.contains(entity))
+                storage.push(newEntity, storage.value(entity));
+
+        //Assign new UUID
+        m_Registry.replace<IDComponent>(newEntity, UUID());
+
+        //Restore transform
+        auto duplicatedEntity = ConvertEntity(newEntity);
+        Transform& transform = m_Registry.replace<Transform>(newEntity, duplicatedEntity);
+        const Transform& oldTransform = entity.GetComponent<Transform>();
+        transform.SetWorldPosition(oldTransform.GetWorldPosition());
+        transform.SetWorldRotation(oldTransform.GetWorldRotation());
+        transform.SetWorldScale(oldTransform.GetWorldScale());
+        transform.SetParent(parent);
+
+        //Copy all children
+        for (const auto child : oldTransform.GetChildren())
+            DuplicateEntity(child, duplicatedEntity);
+
+        return duplicatedEntity;
+    }
+
+    void Scene::OnCameraComponentAdded(entt::registry& registry, const entt::entity entity)
+    {
+        const auto& window = App::Get().GetWindow();
+        const auto width = window.GetWidth();
+        const auto height = window.GetHeight();
+        registry.get<CameraComponent>(entity).Camera.SetViewportSize(width, height);
+    }
 }

@@ -18,8 +18,12 @@
 #include <unordered_set>
 #include <set>
 
+#include <entt/entt.hpp>
+
 #include <imgui.h>
 #include <imgui_internal.h>
+
+#include <yaml-cpp/yaml.h>
 
 #include "LevEngine.h"
 

@@ -1,15 +1,13 @@
 #pragma once
 
-#include "Math/Color.h"
-#include "Math/Vector2.h"
-
 namespace LevEngine
 {
+    struct Color;
+
     class GUI
     {
     public:
         static Vector2 GetWindowPosition();
-
         static Vector2 GetWindowSize();
 
         static void DrawCircle(Vector2 pos, float radius, Color color, float thickness = 1);

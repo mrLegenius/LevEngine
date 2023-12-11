@@ -1,8 +1,16 @@
 ﻿#include "levpch.h"
 #include "TextureAsset.h"
 
+#include "Renderer/SamplerState.h"
+#include "Renderer/Texture.h"
+
 namespace LevEngine
 {
+	TextureAsset::TextureAsset(const Path& path, const UUID& uuid): Asset(path, uuid)
+	{
+		SamplerState = SamplerState::Create();
+	}
+
 	void TextureAsset::CreateTexture()
 	{
 		m_Texture = Texture::Create(m_Path.string().c_str(), IsLinear);

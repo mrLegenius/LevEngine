@@ -1,9 +1,13 @@
 #include "levpch.h"
 #include "LuminanceAdaptationPass.h"
 
-#include "Assets.h"
+#include "Assets/EngineAssets.h"
+#include "Renderer/DepthStencilState.h"
 #include "Renderer/PipelineState.h"
+#include "Renderer/RasterizerState.h"
 #include "Renderer/RenderCommand.h"
+#include "Renderer/RenderTarget.h"
+#include "Renderer/Texture.h"
 
 namespace LevEngine
 {
@@ -30,6 +34,8 @@ namespace LevEngine
         m_Pipeline->GetDepthStencilState()->SetStencilMode(StencilMode{false });
         m_Pipeline->GetRasterizerState().SetViewport({0, 0, 1, 1});
     }
+
+    String LuminanceAdaptationPass::PassName() { return "Luminance Adaptation"; }
 
     bool LuminanceAdaptationPass::Begin(entt::registry& registry, RenderParams& params)
     {

@@ -1,6 +1,8 @@
 #include "levpch.h"
 #include "MaterialPBR.h"
 
+#include "Shader.h"
+#include "Texture.h"
 #include "TextureLibrary.h"
 
 namespace LevEngine

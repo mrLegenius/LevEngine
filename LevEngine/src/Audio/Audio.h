@@ -3,16 +3,9 @@
 #include "fmod_studio.hpp"
 #include "fmod_errors.h"
 #include "Kernel/Logger.h"
-#include "DataTypes/UnorderedMap.h"
-#include "DataTypes/Vector.h"
 #include "Scene/Entity.h"
 #include <source_location>
-#include "Scene/Components/Transform/Transform.h"
 
-namespace LevEngine
-{
-    
-}
 
 namespace LevEngine
 {

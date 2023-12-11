@@ -5,7 +5,63 @@
 
 namespace LevEngine
 {
-	void Transform::SetParent(Entity value, const bool keepWorldTransform)
+	Transform::Transform() { ForceRecalculateModel(); }
+	Transform::Transform(const Entity entity): entity(entity) { ForceRecalculateModel(); }
+
+	Vector3 Transform::GetLocalPosition() const { return position; }
+	void Transform::SetLocalPosition(const Vector3 value) { position = value; }
+
+	Quaternion Transform::GetLocalRotation() const{ return rotation; }
+	void Transform::SetLocalRotation(const Quaternion value) { rotation = value; }
+
+	Vector3 Transform::GetLocalScale() const { return scale; }
+	void Transform::SetLocalScale(const Vector3 value) { scale = value; }
+
+	Vector3 Transform::GetWorldPosition() const
+	{
+		if (parent)
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			
+			Vector3 worldPos = position;
+			worldPos *= parentTransform.GetWorldScale();
+			worldPos = Vector3::Transform(worldPos, parentTransform.GetWorldRotation());
+			worldPos += parentTransform.GetWorldPosition();
+			return worldPos;
+		}
+		return position;
+	}
+
+	Vector3 Transform::GetWorldScale() const
+	{
+		if (parent)
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			return scale * parentTransform.GetWorldScale();
+		}
+
+		return scale;
+	}
+
+	Quaternion Transform::GetWorldRotation() const
+	{
+		if (parent)
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			return rotation * parentTransform.GetWorldRotation();
+		}
+
+		return rotation;
+	}
+
+	void Transform::RemoveChild(const Entity entity)
+	{
+		const auto it = std::find(children.begin(), children.end(), entity);
+		if (it != children.end())
+			children.erase(it);
+	}
+
+	void Transform::SetParent(const Entity value, const bool keepWorldTransform)
 	{
 		if (entity == value)
 		{
@@ -42,6 +98,109 @@ namespace LevEngine
 		SetWorldPosition(position);
 		SetWorldRotation(rotation);
 		SetWorldScale(scale);
+	}
+
+	void Transform::SetWorldPosition(const Vector3 value)
+	{
+		position = value;
+
+		if (parent)
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+				
+			position -= parentTransform.GetWorldPosition();
+			auto rot = parentTransform.GetWorldRotation();
+			rot.Conjugate();
+			position = Vector3::Transform(position, rot);
+
+			const auto parentScale =  parentTransform.GetWorldScale();
+			if (!Math::IsZero(parentScale.x))
+				position.x /= parentScale.x;
+
+			if (!Math::IsZero(parentScale.y))
+				position.y /= parentScale.y;
+
+			if (!Math::IsZero(parentScale.z))
+				position.z /= parentScale.z;
+		}
+	}
+
+	void Transform::SetWorldRotation(const Quaternion value)
+	{
+		rotation = value;
+
+		if (parent)
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			rotation /= parentTransform.GetWorldRotation();
+		}
+	}
+
+	void Transform::SetWorldScale(const Vector3 value)
+	{
+		if (parent)
+		{
+			const auto& parentTransform = parent.GetComponent<Transform>();
+			const auto parentScale = parentTransform.GetWorldScale();
+			scale.x = DirectX::XMScalarNearEqual(parentScale.x, 0, 0.0001f) ? 0 : value.x / parentScale.x;
+			scale.y = DirectX::XMScalarNearEqual(parentScale.y, 0, 0.0001f) ? 0 : value.y / parentScale.y;
+			scale.z = DirectX::XMScalarNearEqual(parentScale.z, 0, 0.0001f) ? 0 : value.z / parentScale.z;
+		}
+		else
+		{
+			scale = value;
+		}
+	}
+
+	void Transform::MoveForward(const float value) { Move(GetForwardDirection() * value); }
+	void Transform::MoveBackward(const float value) { Move(-GetForwardDirection() * value); }
+	void Transform::MoveRight(const float value) { Move(GetRightDirection() * value); }
+	void Transform::MoveLeft(const float value) { Move(-GetRightDirection() * value); }
+	void Transform::MoveUp(const float value) { Move(GetUpDirection() * value); }
+	void Transform::MoveDown(const float value) { Move(-GetUpDirection() * value); }
+
+	Vector3 Transform::GetUpDirection() const
+	{
+		Vector3 dir = XMVector3Rotate(Vector3::Up, GetWorldRotation());
+		dir.Normalize();
+		return dir;
+	}
+
+	Vector3 Transform::GetRightDirection() const
+	{
+		Vector3 dir = XMVector3Rotate(Vector3::Right, GetWorldRotation());
+		dir.Normalize();
+		return dir;
+	}
+
+	Vector3 Transform::GetForwardDirection() const
+	{
+		Vector3 dir = XMVector3Rotate(Vector3::Forward, GetWorldRotation());
+		dir.Normalize();
+		return dir;
+	}
+
+	void Transform::RecalculateModel()
+	{
+		const auto worldPosition = GetWorldPosition();
+		const auto worldRotation = GetWorldRotation();
+		const auto worldScale = GetWorldScale();
+
+		if (worldPosition == prevPosition && worldRotation == prevRotation && worldScale == prevScale && parent != prevParent) return;
+
+		prevPosition = worldPosition;
+		prevRotation = worldRotation;
+		prevScale = worldScale;
+		prevParent = parent;
+
+		ForceRecalculateModel();
+	}
+
+	void Transform::ForceRecalculateModel()
+	{
+		model = Matrix::CreateScale(GetWorldScale()) *
+			Matrix::CreateFromQuaternion(GetWorldRotation()) *
+			Matrix::CreateTranslation(GetWorldPosition());
 	}
 
 	class TransformSerializer final : public ComponentSerializer<Transform, TransformSerializer>

@@ -19,6 +19,7 @@ namespace LevEngine
 		static Timestep GetUnscaledDeltaTime();
 		static Timestep GetFixedDeltaTime();
 		static Timestep GetTimeSinceStartup();
+		static uint64_t GetFrameNumber();
 		
 	private:
 		static Timestep s_DeltaTime;
@@ -26,5 +27,6 @@ namespace LevEngine
 		static std::chrono::time_point<std::chrono::high_resolution_clock> s_StartupTime;
 		static Ref<Timeline> s_TimelineVariable;
 		static Ref<Timeline> s_TimelineFixed;
+		static uint64_t s_FrameNumber;
 	};
 }

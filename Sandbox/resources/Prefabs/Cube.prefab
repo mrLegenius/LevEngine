@@ -1,0 +1,13 @@
+Prefab: Cube
+RootEntity: 9505685208880416481
+Entities:
+  - Entity: 9505685208880416481
+    Tag: Cube
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 15608248225095435140
+      Cast Shadow: true

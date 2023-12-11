@@ -1,58 +1,61 @@
 #pragma once
 #include "EditorSaveData.h"
-#include "Events/ApplicationEvent.h"
-#include "Panels/AssetBrowserPanel.h"
-#include "Panels/ConsolePanel.h"
-#include "Panels/GamePanel.h"
-#include "Panels/HierarchyPanel.h"
-#include "Panels/PropertiesPanel.h"
-#include "Panels/SettingsPanel.h"
-#include "Panels/ViewportPanel.h"
+#include "ProjectEditor.h"
+#include "SceneEditor.h"
+#include "SceneState.h"
 
 namespace LevEngine::Editor
 {
-class EditorLayer final : public Layer
-{
-public:
-	void ShowProjectSelectionPopup();
-	bool OpenProject();
-	bool NewProject();
-	void LoadProject();
-	void OnAttach() override;
-	void OnUpdate(float deltaTime) override;
-	void OnRender() override;
-	void OnScenePlay();
-	void OnSceneStop();
-	void DrawToolbar();
-	void DrawStatusbar();
-	void SetCurrentSceneAsStartScene() const;
-	void DrawDockSpace();
-	void CreateNewScene();
-	void OpenScene();
-	bool OpenScene(const Path& path);
-	bool SaveScene();
-	bool SaveSceneAs();
-	void OnEvent(Event& event) override;
-	static void OnDuplicateEntity();
-	bool OnKeyPressed(KeyPressedEvent& event);
-	bool OnWindowResized(const WindowResizedEvent& e) const;
-	void OnGUIRender() override;
+    class StatusBar;
+    class Toolbar;
+    class MenuBar;
+    class ConsolePanel;
+    class SettingsPanel;
+    class GamePanel;
+    class AssetBrowserPanel;
+    class PropertiesPanel;
+    class HierarchyPanel;
+    class ViewportPanel;
+    class DockSpace;
+    class ScriptsPanel;
+    class StatisticsPanel;
+    
+    class EditorLayer final : public Layer
+    {
+    public:
+        void OnAttach() override;
+        void OnUpdate(float deltaTime) override;
+        void OnRender() override;
+        void OnScenePlay();
+        void OnSceneStop();
+        void OnEvent(Event& event) override;
+        bool OnKeyPressed(KeyPressedEvent& event) const;
+        void OnGUIRender() override;
 
-private:
-	Ref<ViewportPanel> m_Viewport;
-	Ref<HierarchyPanel> m_Hierarchy;
-	Ref<PropertiesPanel> m_Properties;
-	Ref<AssetBrowserPanel> m_AssetsBrowser;
-	Ref<GamePanel> m_Game;
-	Ref<SettingsPanel> m_Settings;
-	std::shared_ptr<ConsolePanel> m_Console;
+    private:
+        static void DoComponentRenderDebug();
+        void OnProjectLoaded();
+        void OnPlayButtonClicked();
 
-	EditorSaveData m_SaveData{"SaveData.editor"};
-	
-	enum class SceneState
-	{
-		Edit = 0, Play = 1
-	};
-	SceneState m_SceneState = SceneState::Edit;
-};
+        Scope<ProjectEditor> m_ProjectEditor;
+        Scope<SceneEditor> m_SceneEditor;
+
+        Ref<DockSpace> m_DockSpace;
+        Ref<ViewportPanel> m_Viewport;
+        Ref<HierarchyPanel> m_Hierarchy;
+        Ref<PropertiesPanel> m_Properties;
+        Ref<AssetBrowserPanel> m_AssetsBrowser;
+        Ref<GamePanel> m_Game;
+        Ref<SettingsPanel> m_Settings;
+        std::shared_ptr<ConsolePanel> m_Console;
+        Ref<MenuBar> m_MainMenuBar;
+        Ref<Toolbar> m_MainToolbar;
+        Ref<StatusBar> m_MainStatusBar;
+        Ref<StatisticsPanel> m_Statistics;
+        Ref<ScriptsPanel> m_ScriptsPanel;
+
+        EditorSaveData m_SaveData{"SaveData.editor"};
+        
+        SceneState m_SceneState = SceneState::Edit;
+    };
 }

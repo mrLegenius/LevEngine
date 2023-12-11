@@ -12,6 +12,8 @@
 #include <tchar.h>
 #include <wrl/client.h>
 
+#include "Kernel/Window.h"
+
 namespace LevEngine
 {
 	extern ID3D11DeviceContext* context;

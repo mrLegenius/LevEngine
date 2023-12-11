@@ -1,11 +1,14 @@
 ﻿#pragma once
-#include "Scene/Scene.h"
-#include <yaml-cpp/yaml.h>
 
-#include "DataTypes/Path.h"
-
+namespace YAML
+{
+	class Emitter;
+	class Node;
+}
 namespace LevEngine
 {
+	class Scene;
+
 	class SceneSerializer
 	{
 	public:
@@ -17,6 +20,15 @@ namespace LevEngine
 
 		bool Deserialize(const String& filepath) const;
 		bool DeserializeRuntime(const String& filepath);
+
+	private:
+		
+		void SerializeEntities(YAML::Emitter& out) const;
+		void SerializeScriptSystems(YAML::Emitter& out) const;
+		
+		void DeserializeEntities(const YAML::Node& data) const;
+		void DeserializeScriptSystems(const YAML::Node& data) const;
+		
 	private:
 		Ref<Scene> m_Scene;
 	};

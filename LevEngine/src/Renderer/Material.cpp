@@ -1,8 +1,15 @@
 #include "levpch.h"
 #include "Material.h"
 
+#include "ConstantBuffer.h"
+#include "Shader.h"
+
 namespace LevEngine
 {
+    Material::Material(const uint32_t gpuDataSize)
+        : m_ConstantBuffer(ConstantBuffer::Create(gpuDataSize))
+    { }
+
     void Material::Bind(const Ref<Shader>& shader)
     {
         if (m_IsDirty)

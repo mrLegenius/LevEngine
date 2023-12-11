@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SettingsPanel.h"
 
+#include "Project.h"
 #include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor

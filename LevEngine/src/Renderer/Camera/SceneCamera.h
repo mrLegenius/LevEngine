@@ -1,11 +1,10 @@
 ﻿#pragma once
-#include "DataTypes/Vector.h"
 #include "Math/Math.h"
 #include "Math/Frustum.h"
-#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
+struct Transform;
 class SceneCamera
 {
 public:

@@ -8,7 +8,7 @@ namespace LevEngine::Editor
     class MeshRendererDrawer final : public ComponentDrawer<MeshRendererComponent, MeshRendererDrawer>
     {
     protected:
-        String GetLabel() const override { return "Mesh Renderer"; }
+        String GetLabel() const override { return "Renderers/Mesh Renderer"; }
 
         void DrawContent(MeshRendererComponent& component) override
         {

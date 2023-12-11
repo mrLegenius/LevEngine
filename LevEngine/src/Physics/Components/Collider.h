@@ -1,25 +1,35 @@
-#pragma once
-#include "Math/Math.h"
-#include "Scene/Components/TypeParseTraits.h"
+﻿#pragma once
+#include "PhysicalMaterial.h"
 
-namespace LevEngine
+struct Collider
 {
-	REGISTER_PARSE_TYPE(BoxCollider);
-	REGISTER_PARSE_TYPE(SphereCollider);
-	
-	struct BoxCollider final 
-	{
-		Vector3 extents;
-		Vector3 offset;
+    enum class Type
+    {
+        Sphere,
+        Capsule,
+        Box
+    };
+    
+    Type m_Type = Type::Box;
+    
+    Vector3 OffsetPosition = Vector3::Zero;
+    Vector3 OffsetRotation = Vector3::Zero;
+    
+    PhysicalMaterial PhysicalMaterial {};
+};
 
-		BoxCollider();
-	};
+struct Sphere : Collider
+{
+    float Radius = 0.5f;
+};
 
-	struct SphereCollider final
-	{
-		float radius = 1;
-		Vector3 offset;
+struct Capsule : Collider
+{
+    float Radius = 0.5f;
+    float HalfHeight = 0.5f;
+};
 
-		SphereCollider();
-	};
-}
+struct Box : Collider
+{
+    Vector3 HalfExtents = Vector3(0.5f, 0.5f, 0.5f);
+};

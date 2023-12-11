@@ -1,12 +1,11 @@
 ﻿#include "levpch.h"
 #include "WindowsWindow.h"
 
-#include <windowsx.h>
-
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 #include "Input/KeyCodes.h"
+#include "Renderer/RendererContext.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -219,7 +218,7 @@ namespace LevEngine
 		RECT windowRect = { 0, 0, static_cast<LONG>(attributes.width), static_cast<LONG>(attributes.height) };
 		AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
-		constexpr auto dwStyle = WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_THICKFRAME;
+		constexpr auto dwStyle = WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_THICKFRAME | WS_MAXIMIZEBOX;
 
 		const auto posX = (GetSystemMetrics(SM_CXSCREEN) - attributes.width) / 2;
 		const auto posY = (GetSystemMetrics(SM_CYSCREEN) - attributes.height) / 2;

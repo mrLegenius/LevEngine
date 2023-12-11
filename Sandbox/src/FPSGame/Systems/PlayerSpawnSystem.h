@@ -1,4 +1,5 @@
 #pragma once
+
 namespace Sandbox
 {
     class PlayerSpawnSystem final : public System
@@ -7,19 +8,19 @@ namespace Sandbox
         void Update(float deltaTime, entt::registry& registry) override
         {
             const auto playerView = registry.view<Player>();
-
             if (!playerView.empty()) return;
 			
             auto& scene = SceneManager::GetActiveScene();
 
             const auto prefab = ResourceManager::LoadAsset<PrefabAsset>("PlayerPrefab");
-            const auto player = prefab->Instantiate(scene);
-
-            auto& playerTransform = player.GetComponent<Transform>();
-            playerTransform.SetWorldPosition(Vector3{0, 2, 0});
+            const auto playerEntity = prefab->Instantiate(scene);
+            
+            auto& playerTransform = playerEntity.GetComponent<Transform>();
+            const auto& startPosition = Vector3(0.0f, 1.0f, 15.0f);
+            playerTransform.SetWorldPosition(startPosition);
 			
-            auto& playerComponent = player.AddComponent<Player>();
-            playerComponent.speed = 10;
+            auto& player = playerEntity.AddComponent<Player>();
+            player.Speed = 15.0f;
         }
     };
 }

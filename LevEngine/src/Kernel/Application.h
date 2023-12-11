@@ -1,17 +1,30 @@
 #pragma once
 
 #include "LayerStack.h"
-#define NOMINMAX
-#include "Window.h"
-
-#include "../Events/ApplicationEvent.h"
-#include "../Events/KeyEvent.h"
-#include "../Events/MouseEvent.h"
-#include "GUI/ImGuiLayer.h"
+#include "Statistic.h"
 
 namespace LevEngine
 {
-struct ApplicationCommandLineArgs
+	class Event;
+	class Renderer;
+	class WindowResizedEvent;
+	class WindowClosedEvent;
+	class KeyReleasedEvent;
+	class KeyPressedEvent;
+	class MouseScrolledEvent;
+	class MouseButtonReleasedEvent;
+	class MouseButtonPressedEvent;
+	class MouseMovedEvent;
+	class Physics;
+	class ImGuiLayer;
+	class Window;
+
+	namespace Scripting
+	{
+		class ScriptingManager;
+	}
+
+	struct ApplicationCommandLineArgs
 {
 	int Count = 0;
 	char** Args = nullptr;
@@ -44,11 +57,17 @@ public:
 	void PushLayer(Layer* layer);
 	void PushOverlay(Layer* overlay);
 	void OnEvent(Event& e);
-	ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
-
-	static Application& Get() { return *s_Instance; }
+	[[nodiscard]] ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
+	
 	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
 	[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
+
+	static Application& Get() { return *s_Instance; }
+	[[nodiscard]] Physics& GetPhysics() const;
+	[[nodiscard]] static Renderer& Renderer();
+	[[nodiscard]] Scripting::ScriptingManager& GetScriptingManager();
+
+	[[nodiscard]] Statistic GetFrameStat() const;
 private:
 	bool OnWindowClosed(WindowClosedEvent& e);
 	bool OnWindowResized(WindowResizedEvent& e);
@@ -58,18 +77,26 @@ private:
 	bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 	bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
 	bool OnMouseScrolled(MouseScrolledEvent& e);
-
-
+	
 	Scope<Window> m_Window;
 	bool m_IsRunning = true;
 
+	Scope<Physics> m_Physics;
+	Scope<LevEngine::Renderer> m_Renderer;
+	
 	LayerStack m_LayerStack;
 
+	Statistic m_FrameStat;
+	
 	float m_LastFrameTime = 0.0f;
 	bool m_Minimized = false;
 	ImGuiLayer* m_ImGuiLayer;
 	ApplicationSpecification m_Specification;
 
 	static Application* s_Instance;
+
+	Scope<Scripting::ScriptingManager> m_ScriptingManager;
 };
+
+using App = Application;
 }

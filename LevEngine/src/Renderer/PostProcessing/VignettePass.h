@@ -11,6 +11,7 @@ namespace LevEngine
     public:
         explicit VignettePass(const Ref<RenderTarget>& mainRenderTarget);
 
+        String PassName() override;
         bool Begin(entt::registry& registry, RenderParams& params) override;
         void Process(entt::registry& registry, RenderParams& params) override;
         void End(entt::registry& registry, RenderParams& params) override;

@@ -1,8 +1,10 @@
 #pragma once
+
 namespace Sandbox
 {
+    /*
     extern int score;
-
+    
     inline void OnProjectileCollided(const Entity entity, const Entity other)
     {
         if (!other.HasComponent<Enemy>()) return;
@@ -15,47 +17,37 @@ namespace Sandbox
         scene->DestroyEntity(other);
         score++;
     }
+    */
     
     class ShootSystem final : public System
     {
         void Update(float deltaTime, entt::registry& registry) override
         {
-            const auto view = registry.view<Transform, CameraComponent>();
+            const auto cameraView = registry.view<Transform, CameraComponent>();
 
-            for (const auto entity : view)
+            for (const auto entity : cameraView)
             {
-                auto [cameraTransform, camera] = view.get<Transform, CameraComponent>(entity);
+                auto [cameraTransform, camera] = cameraView.get<Transform, CameraComponent>(entity);
 
-                if (!camera.isMain) continue;
+                if (!camera.IsMain) continue;
 
                 if (Input::IsMouseButtonPressed(MouseButton::Left))
                 {
-                    const auto projectilePrefab = ResourceManager::LoadAsset<PrefabAsset>("MissilePrefab");
+                    const auto projectilePrefab = ResourceManager::LoadAsset<PrefabAsset>("ProjectilePrefab");
                     auto projectile = projectilePrefab->Instantiate(SceneManager::GetActiveScene());
-					
-                    auto& transform = projectile.GetComponent<Transform>();
 
-                    auto childTransform = cameraTransform.GetChildren()[0].GetComponent<Transform>();
-                    Vector3 offset = 2.5f * childTransform.GetForwardDirection();
-                    offset += 0.1f * childTransform.GetUpDirection();
+                    // TODO: ADD CORRECT PROJECTILE SPAWN POSITION AND SHOOT DIRECTION
+                    auto& projectileTransform = projectile.GetComponent<Transform>();
+                    projectileTransform.SetWorldPosition(cameraTransform.GetWorldPosition() + cameraTransform.GetForwardDirection() * 2);
 
-                    Vector3 origin = childTransform.GetWorldPosition() + offset;
-					
-                    transform.SetWorldPosition(origin);
-                    transform.SetWorldRotation(childTransform.GetWorldRotation());
+                    auto& projectileParams = projectile.AddComponent<Projectile>();
+                    projectileParams.Speed = 25;
+                    projectileParams.Lifetime = 2;
+                    projectileParams.Timer = 0;
 
-                    auto& events = projectile.AddComponent<CollisionEvents>();
-                    events.onCollisionBegin.connect<&OnProjectileCollided>();
-					
-                    auto projectileMeshEntity = transform.GetChildren()[0];
-                    auto& meshTransform = projectileMeshEntity.GetComponent<Transform>();
-                    meshTransform.SetLocalRotation(Random::Rotation());
-
-                    auto& projectileComp = projectile.AddComponent<Projectile>();
-
-                    projectileComp.speed = 100;
-                    projectileComp.lifetime = 1;
-                    projectileComp.timer = 0;
+                    auto& projectileRigidbody = projectile.GetComponent<Rigidbody>();
+                    projectileRigidbody.Initialize(projectileTransform);
+                    projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
 
                     Audio::PlayOneShot("event:/Shot", projectile);
                 }

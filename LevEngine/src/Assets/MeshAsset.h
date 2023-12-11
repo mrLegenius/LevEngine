@@ -13,10 +13,8 @@ namespace LevEngine
 		
 		[[nodiscard]] const Ref<Mesh>& GetMesh() const { return m_Mesh; }
 
-		[[nodiscard]] Ref<Texture> GetIcon() const override
-		{
-			return Icons::Mesh();
-		}
+		[[nodiscard]] Ref<Texture> GetIcon() const override;
+
 	protected:
 		[[nodiscard]] bool WriteDataToFile() const override { return false; }
 		[[nodiscard]] bool ReadDataFromFile() const override { return false; }

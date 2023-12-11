@@ -12,6 +12,7 @@ namespace LevEngine
     std::chrono::time_point<time_clock> Time::s_StartupTime = std::chrono::time_point<time_clock>{ };
     Ref<Timeline> Time::s_TimelineVariable;
     Ref<Timeline> Time::s_TimelineFixed;
+    uint64_t Time::s_FrameNumber;
 
     Timestep Time::GetScaledDeltaTime()
     {
@@ -31,6 +32,11 @@ namespace LevEngine
     Timestep Time::GetTimeSinceStartup()
     {
 	    return Timestep(s_TimelineVariable->GetTimeSinceStartup());
+    }
+
+    uint64_t Time::GetFrameNumber()
+    {
+        return s_FrameNumber;
     }
 
     void Time::Init(float deltaTimeFixed)

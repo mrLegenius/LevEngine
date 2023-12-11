@@ -16,6 +16,7 @@ namespace LevEngine
                 out << YAML::Key << "BloomMagnitude" << YAML::Value << RenderSettings::BloomMagnitude;
                 out << YAML::Key << "BloomBlurSigma" << YAML::Value << RenderSettings::BloomBlurSigma;
 
+                out << YAML::Key << "IsEyeAdaptationEnabled" << YAML::Value << RenderSettings::IsEyeAdaptationEnabled;
                 out << YAML::Key << "AdaptationRate" << YAML::Value << RenderSettings::AdaptationRate;
                 out << YAML::Key << "KeyValue" << YAML::Value << RenderSettings::KeyValue;
                 out << YAML::Key << "MinExposure" << YAML::Value << RenderSettings::MinExposure;
@@ -43,6 +44,7 @@ namespace LevEngine
                 TryParse(pp["BloomMagnitude"], RenderSettings::BloomMagnitude);
                 TryParse(pp["BloomBlurSigma"], RenderSettings::BloomBlurSigma);
                 
+                TryParse(pp["IsEyeAdaptationEnabled"], RenderSettings::IsEyeAdaptationEnabled);
                 TryParse(pp["AdaptationRate"], RenderSettings::AdaptationRate);
                 TryParse(pp["KeyValue"], RenderSettings::KeyValue);
                 TryParse(pp["MinExposure"], RenderSettings::MinExposure);

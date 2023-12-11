@@ -1,5 +1,6 @@
 ﻿#include "levpch.h"
 #include "EmitterComponent.h"
+#include "Assets/TextureAsset.h"
 
 #include "../ComponentSerializer.h"
 
