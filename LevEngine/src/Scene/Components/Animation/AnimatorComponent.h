@@ -33,8 +33,8 @@ namespace LevEngine
         void UpdateAnimation(float deltaTime) const;
 
         [[nodiscard]] eastl::array<Matrix, AnimationConstants::MaxBoneCount> GetFinalBoneMatrices() const;
-        void DrawDebugPose(const Vector3& meshPosition);
-        void DrawDebugSkeleton(const Vector3& meshPosition);
+        void DrawDebugPose(const Transform& rootTransform) const;
+        void DrawDebugSkeleton(const Transform& rootTransform) const;
 
     private:        
         Ref<Animator> m_Animator;

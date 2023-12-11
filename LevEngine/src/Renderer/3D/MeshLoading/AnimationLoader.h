@@ -75,7 +75,7 @@ namespace LevEngine
 			LEV_CORE_ASSERT(src);
 
 			dest->name = src->mName.data;
-			dest->originalTransform = AssimpConverter::ToMatrix(src->mTransformation, true);
+			dest->originalTransform = AssimpConverter::ToMatrix(src->mTransformation, false);
 			dest->localTransform = dest->originalTransform;
 
 			for (unsigned int i = 0; i < src->mNumChildren; i++)

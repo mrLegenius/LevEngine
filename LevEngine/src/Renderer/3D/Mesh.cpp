@@ -77,7 +77,7 @@ void Mesh::Init()
 	if (m_BoneIds.size())
 	{
 		const auto buffer = VertexBuffer::Create(&m_BoneIds[0][0], static_cast<uint32_t>(m_BoneIds.size()), 
-			sizeof(Array<int, AnimationConstants::MaxBoneInfluence>));
+		sizeof(int) * AnimationConstants::MaxBoneInfluence);
 
 		AddVertexBuffer(BufferBinding("BONEIDS", 0), buffer);
 	}
@@ -85,7 +85,7 @@ void Mesh::Init()
 	if (m_Weights.size())
 	{
 		const auto buffer = VertexBuffer::Create(&m_Weights[0][0], static_cast<uint32_t>(m_Weights.size()),
-			sizeof(Array<float, AnimationConstants::MaxBoneInfluence>));
+			sizeof(float) * AnimationConstants::MaxBoneInfluence);
 
 		AddVertexBuffer(BufferBinding("BONEWEIGHTS", 0), buffer);
 	}
@@ -109,37 +109,49 @@ bool Mesh::IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) c
 	return m_BoundingVolume.IsOnFrustum(frustum, meshTransform);
 }
 
-void Mesh::SetVertexBoneDataToDefault(int vertexIdx)
+Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& Mesh::GetBoneWeights()
 {
-	for (int i = 0; i < AnimationConstants::MaxBoneInfluence; i++)
-	{
-		m_BoneIds[vertexIdx][i] = 0;
-		m_Weights[vertexIdx][i] = 0.0f;
-	}
-
-	if constexpr (AnimationConstants::MaxBoneInfluence > 0)
-	{
-		m_Weights[vertexIdx][0] = 1.0f;	
-	}
+	return m_Weights;
 }
 
-void Mesh::SetVertexBoneData(int vertexIdx, int boneID, float weight)
+void Mesh::AddBoneWeight(int vertexIdx, int boneID, float weight)
 {
-	for (int i = 0; i < AnimationConstants::MaxBoneInfluence; ++i)
-	{
-		if (m_Weights[vertexIdx][i] < Math::FloatEpsilon
-			|| (i == 0 && m_Weights[vertexIdx][i] + Math::FloatEpsilon > 1.0f))
-		{
-			m_BoneIds[vertexIdx][i] = boneID;
-			m_Weights[vertexIdx][i] = weight;
-			break;
-		}
-	}
+	const int weightsCount = m_BoneWeightCounters[vertexIdx];
+	LEV_ASSERT(weightsCount < AnimationConstants::MaxBoneInfluence);
+	
+	m_BoneIds[vertexIdx][weightsCount] = boneID;
+	m_Weights[vertexIdx][weightsCount] = weight;
+	m_BoneWeightCounters[vertexIdx]++;
 }
 
 void Mesh::ResizeBoneArrays(size_t size)
 {
 	m_BoneIds.resize(size, Array<int, AnimationConstants::MaxBoneInfluence>());
 	m_Weights.resize(size, Array<float, AnimationConstants::MaxBoneInfluence>());
+	m_BoneWeightCounters.resize(size, 0);
+}
+
+void Mesh::NormalizeBoneWeights()
+{
+	for (int vertexIdx = 0; vertexIdx < GetVerticesCount(); ++vertexIdx)
+	{
+		float totalWeight = 0.0f;
+		for (int weightIdx = 0; weightIdx < AnimationConstants::MaxBoneInfluence; ++weightIdx)
+		{
+			totalWeight += m_Weights[vertexIdx][weightIdx];
+		}
+
+		if (totalWeight > 0.0f)
+		{
+			for (int weightIdx = 0; weightIdx < AnimationConstants::MaxBoneInfluence; ++weightIdx)
+			{
+				m_Weights[vertexIdx][weightIdx] /= totalWeight;
+			}
+		}
+		else
+		{
+			m_Weights[vertexIdx][0] = 1.0f;
+		}
+	}
 }
 }

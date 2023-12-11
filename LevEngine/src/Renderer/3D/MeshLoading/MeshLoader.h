@@ -80,9 +80,7 @@ public:
 			for (size_t vertexIdx = 0; vertexIdx < nvertices; vertexIdx++)
 			{
 				const aiVector3D vertex = vertices[vertexIdx];
-
-				resultMesh->SetVertexBoneDataToDefault(static_cast<int>(vertexIdx));
-
+				
 				const auto point = Vector3::Transform(
 					Vector3(vertex.x, vertex.y, vertex.z), cumulativeTransform);
 
@@ -117,6 +115,8 @@ public:
 		{
 			ParseMesh(node->mChildren[i], scene, resultMesh, cumulativeTransform);
 		}
+
+		resultMesh->NormalizeBoneWeights();
 	}
 
 	/*
@@ -125,7 +125,7 @@ public:
 	 * Assimp stores meshes in hierarchy, but we flatten them to one mesh, so we require offsets.
 	 * </params>
 	 */
-	static void ExtractBoneWeightForVertices(Ref<Mesh>& resultMesh, const aiMesh* mesh, const uint32_t firstVertexId)
+	static void ExtractBoneWeightForVertices(const Ref<Mesh>& resultMesh, const aiMesh* mesh, const uint32_t firstVertexId)
 	{
 		for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
 		{
@@ -139,7 +139,7 @@ public:
 				int boneCount = resultMesh->GetBoneCount();
 
 				newBoneInfo.id = boneCount;
-				newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix, true);
+				newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix, false);
 				
 				boneInfoMap[boneName] = newBoneInfo;
 				boneID = boneCount;
@@ -162,7 +162,7 @@ public:
 				const unsigned int vertexId = weights[weightIndex].mVertexId + firstVertexId;
 				const float weight = weights[weightIndex].mWeight;
 				LEV_CORE_ASSERT(vertexId < resultMesh->GetVerticesCount())
-				resultMesh->SetVertexBoneData(vertexId, boneID, weight);
+				resultMesh->AddBoneWeight(vertexId, boneID, weight);
 			}
 		}
 	}

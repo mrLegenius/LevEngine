@@ -21,10 +21,10 @@ namespace LevEngine
         void SetAnimationClip(const Ref<AnimationAsset>& animationAsset);
         void PlayAnimation();
         [[nodiscard]] Array<Matrix, AnimationConstants::MaxBoneCount> GetFinalBoneMatrices() const;
-        void DrawDebugPose(const Vector3& meshPosition);
-        void DrawDebugPose(const NodeData* node, const Vector3& meshPosition, Vector3 prevPosition);
-        void DrawDebugSkeleton(const Vector3& meshPosition);
-        void DrawDebugSkeleton(const NodeData* node, const Vector3& meshPosition, Vector3 prevPosition);
+        void DrawDebugPose(const Transform& rootTransform);
+        void DrawDebugPose(const NodeData* node, const Transform& rootTransform, Vector3 prevPosition);
+        void DrawDebugSkeleton(const Transform& rootTransform);
+        void DrawDebugSkeleton(const NodeData* node, const Transform& rootTransform, Vector3 prevPosition);
 
     private:
         void UpdateLocalBoneTransforms(NodeData* node);

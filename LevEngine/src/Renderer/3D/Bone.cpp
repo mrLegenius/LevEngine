@@ -52,7 +52,7 @@ namespace LevEngine
         const Matrix translation = InterpolatePosition(animationTime);
         const Matrix rotation = InterpolateRotation(animationTime);
         const Matrix scale = InterpolateScaling(animationTime);
-        m_LocalTransform = scale * rotation * translation;
+        m_LocalTransform = (scale * rotation * translation);
     }
 
     const Matrix& Bone::GetLocalTransform() const { return m_LocalTransform; }

@@ -17,6 +17,12 @@ namespace LevEngine
             for (int animationIdx = 0; animationIdx < animations.size(); ++animationIdx)
             {
                 String animationName = animations[animationIdx]->GetName();
+
+                const size_t idx = animationName.find_last_of("|");
+                if (idx != String::npos)
+                {
+                    animationName = animationName.substr(idx + 1);
+                }
                 
                 String nameToWrite = (animationName.empty()
                     ? ToString(animationIdx)

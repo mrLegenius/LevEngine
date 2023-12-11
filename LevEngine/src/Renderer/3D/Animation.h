@@ -31,7 +31,6 @@ namespace LevEngine
         [[nodiscard]] NodeData* GetRootNode();
         [[nodiscard]] const UnorderedMap<String, BoneInfo>& GetBoneIDMap() const;
         [[nodiscard]] const String& GetName() const;
-        Matrix& GetRootInverseTransform();
 
     private:
         double m_Duration{};

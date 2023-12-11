@@ -45,10 +45,5 @@ namespace LevEngine
     {
         return m_Name;
     }
-
-    Matrix& Animation::GetRootInverseTransform()
-    {
-        return m_RootInverseTransform;
-    }
 }
 

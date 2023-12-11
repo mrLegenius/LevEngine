@@ -14,8 +14,8 @@ namespace LevEngine
         {
             auto [animatorComponent, transform] = view.get<AnimatorComponent, Transform>(entity);
             Vector3 position = transform.GetWorldPosition();
-            animatorComponent.DrawDebugPose(position);
-            animatorComponent.DrawDebugSkeleton(position);
+            animatorComponent.DrawDebugPose(transform);
+            //animatorComponent.DrawDebugSkeleton(transform);
         }
     }
 }

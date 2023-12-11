@@ -52,14 +52,14 @@ namespace LevEngine
         return m_Animator->GetFinalBoneMatrices();
     }
 
-    void AnimatorComponent::DrawDebugPose(const Vector3& meshPosition)
+    void AnimatorComponent::DrawDebugPose(const Transform& rootTransform) const
     {
-        m_Animator->DrawDebugPose(meshPosition);
+        m_Animator->DrawDebugPose(rootTransform);
     }
 
-    void AnimatorComponent::DrawDebugSkeleton(const Vector3& meshPosition)
+    void AnimatorComponent::DrawDebugSkeleton(const Transform& rootTransform) const
     {
-        m_Animator->DrawDebugSkeleton(meshPosition);
+        m_Animator->DrawDebugSkeleton(rootTransform);
     }
 
     void AnimatorComponent::Init()
@@ -96,7 +96,12 @@ namespace LevEngine
         
         void DeserializeData(YAML::Node& node, AnimatorComponent& component) override
         {
-            component.SetAnimationClip(DeserializeAsset<AnimationAsset>(node[c_AnimationClipNodeKey]));
+            const Ref<AnimationAsset> animationAsset = DeserializeAsset<AnimationAsset>(node[c_AnimationClipNodeKey]);
+
+            if (animationAsset != nullptr)
+            {
+                component.SetAnimationClip(animationAsset);   
+            }
 
             if (const auto playOnInitNode = node[c_PlayOnInitNodeKey])
             {
