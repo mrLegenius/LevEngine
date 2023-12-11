@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-
 namespace Sandbox
 {
 	class FPSGame final : public LevEngine::Layer

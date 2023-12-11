@@ -76,8 +76,6 @@ namespace LevEngine::Editor
 
                 EditorGUI::DrawCheckBox("Is Trigger", BindGetter(&Rigidbody::IsTriggerEnabled, &component), BindSetter(&Rigidbody::EnableTrigger, &component));
                 
-                EditorGUI::DrawCheckBox("Provides Contacts", BindGetter(&Rigidbody::IsContactEnabled, &component), BindSetter(&Rigidbody::EnableContact, &component));
-                
                 EditorGUI::DrawFloatControl("Static Friction", BindGetter(&Rigidbody::GetStaticFriction, &component), BindSetter(&Rigidbody::SetStaticFriction, &component), 0.1f, 0.0f, FLT_MAX);
                 EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&Rigidbody::GetDynamicFriction, &component), BindSetter(&Rigidbody::SetDynamicFriction, &component), 0.1f, 0.0f, FLT_MAX);
                 EditorGUI::DrawFloatControl("Restitution", BindGetter(&Rigidbody::GetRestitution, &component), BindSetter(&Rigidbody::SetRestitution, &component), 0.1f, 0.0f, FLT_MAX);

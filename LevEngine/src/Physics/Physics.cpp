@@ -138,7 +138,7 @@ namespace LevEngine
         if (!StepPhysics(deltaTime)) return;
         m_PhysicsUpdate.UpdateTransforms(registry);
         m_PhysicsUpdate.UpdateConstantForces(registry);
-        m_PhysicsUpdate.OneMoreStrangeSystem(registry);
+        //m_PhysicsUpdate.OneMoreStrangeSystem(registry);
         m_PhysicsUpdate.HandleEvents(registry);
         
         if (!m_IsDebugRenderEnabled) return;
@@ -190,7 +190,8 @@ namespace LevEngine
             }
         }
     }
-    
+
+    ///*
     void PhysicsUpdate::OneMoreStrangeSystem(entt::registry& registry)
     {
         const auto& rigidbodyView = registry.view<Transform, Rigidbody>();
@@ -203,7 +204,6 @@ namespace LevEngine
                 [] (const Entity& otherEntity)
                 {
                     Log::Debug("Object touches {0} object", otherEntity.GetName());
-                    
                 }
             );
             
@@ -211,7 +211,6 @@ namespace LevEngine
                 [] (const Entity& otherEntity)
                 {
                     Log::Debug("Object pushes off from {0} object", otherEntity.GetName());
-                    
                 }
             );
 
@@ -234,6 +233,7 @@ namespace LevEngine
             ); 
         }
     }
+    //*/
     
     void PhysicsUpdate::HandleEvents(entt::registry& registry)
     {
@@ -245,36 +245,11 @@ namespace LevEngine
 
             while(!rigidbody.m_ActionBuffer.empty())
             {
-                //Log::Debug("START m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
+                Log::Debug("START m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
                 const auto& otherEntity = rigidbody.m_ActionBuffer.back().second;
                 rigidbody.m_ActionBuffer.back().first(otherEntity);
                 rigidbody.m_ActionBuffer.pop_back();
-                //Log::Debug("END m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
-            }
-
-            if (!rigidbody.m_CollisionEnterEntityBuffer.empty())
-            {
-                //Log::Debug("START CLEAR m_CollisionEnterEntityBuffer SIZE: {0}", rigidbody.m_CollisionEnterEntityBuffer.size());
-                rigidbody.m_CollisionEnterEntityBuffer.clear();
-                //Log::Debug("END CLEAR m_CollisionEnterEntityBuffer SIZE: {0}", rigidbody.m_CollisionEnterEntityBuffer.size());
-            }
-            if (!rigidbody.m_CollisionExitEntityBuffer.empty())
-            {
-                //Log::Debug("START CLEAR m_CollisionExitEntityBuffer SIZE: {0}", rigidbody.m_CollisionExitEntityBuffer.size());
-                rigidbody.m_CollisionExitEntityBuffer.clear();
-                //Log::Debug("END CLEAR m_CollisionExitEntityBuffer SIZE: {0}", rigidbody.m_CollisionExitEntityBuffer.size());
-            }
-            if (!rigidbody.m_TriggerEnterEntityBuffer.empty())
-            {
-                //Log::Debug("START CLEAR m_TriggerEnterEntityBuffer SIZE: {0}", rigidbody.m_TriggerEnterEntityBuffer.size());
-                rigidbody.m_TriggerEnterEntityBuffer.clear();
-                //Log::Debug("END CLEAR m_TriggerEnterEntityBuffer SIZE: {0}", rigidbody.m_TriggerEnterEntityBuffer.size());
-            }
-            if (!rigidbody.m_TriggerExitEntityBuffer.empty())
-            {
-                //Log::Debug("START CLEAR m_TriggerExitEntityBuffer SIZE: {0}", rigidbody.m_TriggerExitEntityBuffer.size());
-                rigidbody.m_TriggerExitEntityBuffer.clear();
-                //Log::Debug("END CLEAR m_TriggerExitEntityBuffer SIZE: {0}", rigidbody.m_TriggerExitEntityBuffer.size());
+                Log::Debug("END m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
             }
         }
     }

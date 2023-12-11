@@ -23,6 +23,7 @@ namespace LevEngine
 
         bool IsInitialized() const;
         void Initialize(const Transform& transform);
+        void SetRigidbodyPose(const Transform& transform);
 
         [[nodiscard]] bool IsVisualizationEnabled() const;
         void EnableVisualization(bool flag);
@@ -77,8 +78,6 @@ namespace LevEngine
 
         [[nodiscard]] bool IsTriggerEnabled() const;
         void EnableTrigger(bool flag);
-        [[nodiscard]] bool IsContactEnabled() const;
-        void EnableContact(bool flag);
         
         [[nodiscard]] float GetSphereRadius() const;
         void SetSphereRadius(float radius);
@@ -127,8 +126,6 @@ namespace LevEngine
 
         [[nodiscard]] Vector3 GetTransformScale() const;
         void SetTransformScale(Vector3 transformScale);
-        
-        void SetRigidbodyPose(const Transform& transform);
 
         void AttachRigidbody(const Type& rigidbodyType);
         void DetachRigidbody();
@@ -168,11 +165,15 @@ namespace LevEngine
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
 
         bool m_IsTriggerEnabled = false;
-        Vector<Entity> m_TriggerEnterEntityBuffer;
-        Vector<Entity> m_TriggerExitEntityBuffer;
         
-        bool m_IsContactEnabled = false;
+        bool m_IsTriggerEnterEnabled = false;
+        Vector<Entity> m_TriggerEnterEntityBuffer;
+        bool m_IsTriggerExitEnabled = false;
+        Vector<Entity> m_TriggerExitEntityBuffer;
+
+        bool m_IsCollisionEnterEnabled = false;
         Vector<Entity> m_CollisionEnterEntityBuffer;
+        bool m_IsCollisionExitEnabled = false;
         Vector<Entity> m_CollisionExitEntityBuffer;
         
         Vector<Pair<Action<Entity>,Entity>> m_ActionBuffer;

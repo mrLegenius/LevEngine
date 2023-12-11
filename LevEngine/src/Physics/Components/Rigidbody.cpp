@@ -21,6 +21,9 @@ namespace LevEngine
 
         const auto& gameObject = Entity(entt::handle(registry, entity));
         App::Get().GetPhysics().m_ActorEntityMap.insert({rigidbody.GetActor(), gameObject});
+
+        //Log::Debug("RIGIDBODY CONSTRUCTED");
+        //Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
     }
 
     
@@ -30,6 +33,9 @@ namespace LevEngine
         App::Get().GetPhysics().m_ActorEntityMap.erase(rigidbody.GetActor());
         
         rigidbody.DetachRigidbody();
+        
+        //Log::Debug("RIGIDBODY DESTROYED");
+        //Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
     }
     
     
@@ -583,7 +589,6 @@ namespace LevEngine
         physicalMaterial->release();
 
         EnableTrigger(m_IsTriggerEnabled);
-        EnableContact(m_IsContactEnabled);
     }
     
     void Rigidbody::DetachCollider()
@@ -677,16 +682,6 @@ namespace LevEngine
             GetColliders()[0].setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !flag);
             GetColliders()[0].setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, flag);
         }
-    }
-
-    bool Rigidbody::IsContactEnabled() const
-    {
-        return m_IsContactEnabled;
-    }
-
-    void Rigidbody::EnableContact(bool flag)
-    {
-        m_IsContactEnabled = flag;
     }
     
     
@@ -839,52 +834,59 @@ namespace LevEngine
     
     void Rigidbody::OnCollisionEnter(const Action<Entity>& callback)
     {
+        m_IsCollisionEnterEnabled = true;
+        
         while (!m_CollisionEnterEntityBuffer.empty())
         {
-            //Log::Debug("START m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
+            Log::Debug("START m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
             const auto& otherEntity = m_CollisionEnterEntityBuffer.back();
             m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
             m_CollisionEnterEntityBuffer.pop_back();
-            //Log::Debug("END m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
+            Log::Debug("END m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
         }
     }
 
     void Rigidbody::OnCollisionExit(const Action<Entity>& callback)
     {
+        m_IsCollisionExitEnabled = true;
+        
         while (!m_CollisionExitEntityBuffer.empty())
         {
-            //Log::Debug("START m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
+            Log::Debug("START m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
             const auto& otherEntity = m_CollisionExitEntityBuffer.back();
             m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
             m_CollisionExitEntityBuffer.pop_back();
-            //Log::Debug("END m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
+            Log::Debug("END m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
         }
     }
 
     void Rigidbody::OnTriggerEnter(const Action<Entity>& callback)
     {
+        m_IsTriggerEnterEnabled = true;
+        
         while (!m_TriggerEnterEntityBuffer.empty())
         {
-            //Log::Debug("START m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
+            Log::Debug("START m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
             const auto& otherEntity = m_TriggerEnterEntityBuffer.back();
             m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
             m_TriggerEnterEntityBuffer.pop_back();
-            //Log::Debug("END m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
+            Log::Debug("END m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
         }
     }
 
     void Rigidbody::OnTriggerExit(const Action<Entity>& callback)
     {
+        m_IsTriggerExitEnabled = true;
+        
         while (!m_TriggerExitEntityBuffer.empty())
         {
-            //Log::Debug("START m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
+            Log::Debug("START m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
             const auto& otherEntity = m_TriggerExitEntityBuffer.back();
             m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
             m_TriggerExitEntityBuffer.pop_back();
-            //Log::Debug("END m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
+            Log::Debug("END m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
         }
     }
-
 
     
 
@@ -940,8 +942,6 @@ namespace LevEngine
             out << YAML::Key << "Offset Rotation" << YAML::Value << component.GetColliderOffsetRotation();
 
             out << YAML::Key << "Is Trigger Enabled" << YAML::Value << component.IsTriggerEnabled();
-
-            out << YAML::Key << "Is Contact Enabled" << YAML::Value << component.IsContactEnabled();
             
             out << YAML::Key << "Static Friction" << YAML::Value << component.GetStaticFriction();
             out << YAML::Key << "Dynamic Friction" << YAML::Value << component.GetDynamicFriction();
@@ -1085,11 +1085,6 @@ namespace LevEngine
             {
                 component.EnableTrigger(triggerEnableNode.as<bool>());
             }
-            
-            if (const auto contactEnableNode = node["Is Contact Enabled"])
-            {
-                component.EnableContact(contactEnableNode.as<bool>());
-            } 
 
             if (const auto staticFrictionNode = node["Static Friction"])
             {

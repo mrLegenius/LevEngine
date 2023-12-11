@@ -46,7 +46,7 @@ namespace Sandbox
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
-		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
+		//scene->RegisterUpdateSystem<ProjectileLifeSystem>();
 
 		scene->OnInit();
 		Application::Get().GetWindow().DisableCursor();

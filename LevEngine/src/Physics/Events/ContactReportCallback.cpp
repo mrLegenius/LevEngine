@@ -54,7 +54,7 @@ namespace LevEngine
             
             if (current.status & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
             {
-                if (triggerRigidbody.IsTriggerEnabled())
+                if (triggerRigidbody.IsTriggerEnabled() && triggerRigidbody.m_IsTriggerEnterEnabled)
                 {
                     triggerRigidbody.m_TriggerEnterEntityBuffer.push_back(otherEntity);
                 }
@@ -62,7 +62,7 @@ namespace LevEngine
             
             if (current.status & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
             {
-                if (triggerRigidbody.IsTriggerEnabled())
+                if (triggerRigidbody.IsTriggerEnabled() && triggerRigidbody.m_IsTriggerExitEnabled)
                 {
                     triggerRigidbody.m_TriggerExitEntityBuffer.push_back(otherEntity);
                 }
@@ -91,23 +91,23 @@ namespace LevEngine
             
             if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
             {
-                if (firstCollisionRigidbody.IsContactEnabled())
+                if (firstCollisionRigidbody.m_IsCollisionEnterEnabled)
                 {
                     firstCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(secondCollisionEntity);
                 }
-                if (secondCollisionRigidbody.IsContactEnabled())
+                if (secondCollisionRigidbody.m_IsCollisionEnterEnabled)
                 {
                     secondCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(firstCollisionEntity);
                 }
             }
-
+            
             if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
             {
-                if (firstCollisionRigidbody.IsContactEnabled())
+                if (firstCollisionRigidbody.m_IsCollisionExitEnabled)
                 {
                     firstCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(secondCollisionEntity);
                 }
-                if (secondCollisionRigidbody.IsContactEnabled())
+                if (secondCollisionRigidbody.m_IsCollisionExitEnabled)
                 {
                     secondCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(firstCollisionEntity);
                 }
