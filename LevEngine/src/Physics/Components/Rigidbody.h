@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "physx/include/PxPhysicsAPI.h"
 #include "Collider.h"
+#include "Collision.h"
 #include "DataTypes/Vector.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "ConstantForce.h"
@@ -17,8 +18,7 @@ namespace LevEngine
             Static,
             Dynamic
         };
-
-        static void OnConstruct(entt::registry& registry, entt::entity entity);
+        
         static void OnDestroy(entt::registry& registry, entt::entity entity);
 
         bool IsInitialized() const;
@@ -28,14 +28,15 @@ namespace LevEngine
         [[nodiscard]] bool IsVisualizationEnabled() const;
         void EnableVisualization(bool flag);
 
-        [[nodiscard]] Type GetRigidbodyType() const;
-        void SetRigidbodyType(const Type& rigidbodyType);
-
-        //[[nodiscard]] bool IsKinematicEnabled() const;
-        //void EnableKinematic(bool flag);
-        
+        // Rigidbody
         [[nodiscard]] bool IsGravityEnabled() const;
         void EnableGravity(bool flag);
+        
+        [[nodiscard]] bool IsKinematicEnabled() const;
+        void EnableKinematic(bool flag);
+        
+        [[nodiscard]] Type GetRigidbodyType() const;
+        void SetRigidbodyType(const Type& rigidbodyType);
         
         [[nodiscard]] float GetMass() const;
         void SetMass(float value);
@@ -66,6 +67,11 @@ namespace LevEngine
         void LockRotAxisY(bool flag);
         [[nodiscard]] bool IsRotAxisZLocked() const;
         void LockRotAxisZ(bool flag);
+
+
+        // Collider
+        [[nodiscard]] bool IsTriggerEnabled() const;
+        void EnableTrigger(bool flag);
         
         [[nodiscard]] Collider::Type GetColliderType() const;
         void SetColliderType(const Collider::Type& colliderType);
@@ -75,9 +81,6 @@ namespace LevEngine
         void SetColliderOffsetPosition(Vector3 position);
         [[nodiscard]] Vector3 GetColliderOffsetRotation() const;
         void SetColliderOffsetRotation(Vector3 rotation);
-
-        [[nodiscard]] bool IsTriggerEnabled() const;
-        void EnableTrigger(bool flag);
         
         [[nodiscard]] float GetSphereRadius() const;
         void SetSphereRadius(float radius);
@@ -94,7 +97,8 @@ namespace LevEngine
         void SetDynamicFriction(float dynamicFriction);
         [[nodiscard]] float GetRestitution() const;
         void SetRestitution(float restitution);
-        
+
+        // Force
         enum class ForceMode
         {
             // Add a continuous force to the rigidbody, using its mass
@@ -109,18 +113,20 @@ namespace LevEngine
 
         void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
         void AddTorque(Vector3 torque, ForceMode = ForceMode::Force) const;
-        
-        void OnCollisionEnter(const Action<Entity>& callback);
-        void OnCollisionExit(const Action<Entity>& callback);
-        void OnTriggerEnter(const Action<Entity>& callback);
-        void OnTriggerExit(const Action<Entity>& callback);
+
+        // Collision Events
+        void OnCollisionEnter(const Action<Collision>& callback);
+        void OnCollisionExit(const Action<Collision>& callback);
+        void OnTriggerEnter(const Action<Collision>& callback);
+        void OnTriggerExit(const Action<Collision>& callback);
         
         friend class PhysicsUpdate;
         friend class RigidbodyInitSystem;
         friend class ContactReportCallback;
+
+        [[nodiscard]] physx::PxRigidActor* GetActor() const;
         
     private:
-        [[nodiscard]] physx::PxRigidActor* GetActor() const;
         [[nodiscard]] physx::PxShape* GetColliders() const;
         [[nodiscard]] physx::PxMaterial* GetPhysicalMaterials(const physx::PxShape* colliders) const;
 
@@ -140,10 +146,11 @@ namespace LevEngine
         bool m_IsInitialized = false;
         bool m_IsVisualizationEnabled = false;
 
-        Type m_Type = Type::Dynamic;
-        
-        //bool m_IsKinematicEnabled = false;
+        // Collider
         bool m_IsGravityEnabled = true;
+        bool m_IsKinematicEnabled = false;
+        
+        Type m_Type = Type::Dynamic;
         
         float m_Mass = 1.0f;
         Vector3 m_CenterOfMass = Vector3::Zero;
@@ -161,21 +168,20 @@ namespace LevEngine
         bool m_IsRotAxisYLocked = false;
         bool m_IsRotAxisZLocked = false;
 
-        //TODO: CHANGE LOGIC FOR MULTIPLE COLLIDER ATTACHMENT
+        // Collider
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
 
-        bool m_IsTriggerEnabled = false;
-        
+        // Collision Events
         bool m_IsTriggerEnterEnabled = false;
-        Vector<Entity> m_TriggerEnterEntityBuffer;
+        Vector<Collision> m_TriggerEnterEntityBuffer;
         bool m_IsTriggerExitEnabled = false;
-        Vector<Entity> m_TriggerExitEntityBuffer;
+        Vector<Collision> m_TriggerExitEntityBuffer;
 
         bool m_IsCollisionEnterEnabled = false;
-        Vector<Entity> m_CollisionEnterEntityBuffer;
+        Vector<Collision> m_CollisionEnterEntityBuffer;
         bool m_IsCollisionExitEnabled = false;
-        Vector<Entity> m_CollisionExitEntityBuffer;
+        Vector<Collision> m_CollisionExitEntityBuffer;
         
-        Vector<Pair<Action<Entity>,Entity>> m_ActionBuffer;
+        Vector<Pair<Action<Collision>,Collision>> m_ActionBuffer;
     };
 }

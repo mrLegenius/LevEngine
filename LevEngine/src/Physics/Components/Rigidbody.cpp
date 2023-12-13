@@ -6,26 +6,15 @@
 #include "Physics/Support/PhysicsUtils.h"
 #include "Scene/Components/ComponentSerializer.h"
 
-constexpr auto MAX_COLLIDER_NUMBER = 1;
-constexpr auto MAX_MATERIAL_NUMBER = 1;
-
-constexpr auto DEFAULT_GRAVITY_FLAG = true;
-constexpr auto DEFAULT_COLLIDER_TYPE = Collider::Type::Box;
-
 namespace LevEngine
 {
-    void Rigidbody::OnConstruct(entt::registry& registry, entt::entity entity)
-    {
-        auto [rigidbodyTransform, rigidbody] = registry.get<Transform, Rigidbody>(entity);
-        rigidbody.Initialize(rigidbodyTransform);
+    constexpr auto MAX_COLLIDER_NUMBER = 1;
+    constexpr auto MAX_MATERIAL_NUMBER = 1;
 
-        const auto& gameObject = Entity(entt::handle(registry, entity));
-        App::Get().GetPhysics().m_ActorEntityMap.insert({rigidbody.GetActor(), gameObject});
+    constexpr auto DEFAULT_GRAVITY_FLAG = true;
+    constexpr auto DEFAULT_COLLIDER_TYPE = Collider::Type::Box;
 
-        //Log::Debug("RIGIDBODY CONSTRUCTED");
-        //Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
-    }
-
+    
     
     void Rigidbody::OnDestroy(entt::registry& registry, entt::entity entity)
     {
@@ -34,8 +23,8 @@ namespace LevEngine
         
         rigidbody.DetachRigidbody();
         
-        //Log::Debug("RIGIDBODY DESTROYED");
-        //Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
+        Log::Debug("RIGIDBODY DESTROYED");
+        Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
     }
     
     
@@ -137,7 +126,7 @@ namespace LevEngine
     {
         m_Type = rigidbodyType;
         
-        if (IsInitialized())
+        if (m_IsInitialized)
         {
             AttachRigidbody(rigidbodyType);
             SetColliderType(DEFAULT_COLLIDER_TYPE);
@@ -148,7 +137,7 @@ namespace LevEngine
     void Rigidbody::AttachRigidbody(const Type& rigidbodyType)
     {
         auto initialPose = physx::PxTransform(physx::PxIdentity);
-        if (m_Actor != NULL)
+        if (m_IsInitialized)
         {
             initialPose = m_Actor->getGlobalPose();
             DetachRigidbody();
@@ -164,7 +153,7 @@ namespace LevEngine
             m_Actor = App::Get().GetPhysics().GetPhysics()->createRigidDynamic(initialPose);
             App::Get().GetPhysics().GetScene()->addActor(*(reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)));
             EnableGravity(m_IsGravityEnabled);
-            //EnableKinematic(m_IsKinematicEnabled);
+            EnableKinematic(m_IsKinematicEnabled);
             SetMass(m_Mass);
             SetCenterOfMass(m_CenterOfMass);
             SetInertiaTensor(m_InertiaTensor);
@@ -182,6 +171,11 @@ namespace LevEngine
         default:
             break;
         }
+
+        if (m_IsInitialized)
+        {
+            App::Get().GetPhysics().m_ActorEntityMap.insert(m_Actor);
+        }
         
         EnableVisualization(m_IsVisualizationEnabled);
     }
@@ -192,8 +186,10 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
+            App::Get().GetPhysics().m_ActorEntityMap.erase(m_Actor);
+            
             m_Actor->getScene()->removeActor(*m_Actor);
-            PX_RELEASE(m_Actor); 
+            PX_RELEASE(m_Actor);
         }
     }
     
@@ -213,7 +209,7 @@ namespace LevEngine
     }
 
 
-    /*
+    
     bool Rigidbody::IsKinematicEnabled() const
     {
         return m_IsKinematicEnabled;
@@ -228,7 +224,7 @@ namespace LevEngine
             reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, flag);
         }
     }
-    */
+    
     
 
     float Rigidbody::GetMass() const
@@ -588,7 +584,7 @@ namespace LevEngine
         collider->release();
         physicalMaterial->release();
 
-        EnableTrigger(m_IsTriggerEnabled);
+        EnableTrigger(IsTriggerEnabled());
     }
     
     void Rigidbody::DetachCollider()
@@ -668,12 +664,12 @@ namespace LevEngine
 
     bool Rigidbody::IsTriggerEnabled() const
     {
-        return m_IsTriggerEnabled;
+        return m_ColliderCollection[0]->m_IsTriggerEnabled;
     }
 
     void Rigidbody::EnableTrigger(bool flag)
     {
-        m_IsTriggerEnabled = flag;
+        m_ColliderCollection[0]->m_IsTriggerEnabled = flag;
 
         if (m_Actor != NULL)
         {
@@ -772,14 +768,14 @@ namespace LevEngine
     
     float Rigidbody::GetStaticFriction() const
     {
-        return m_ColliderCollection[0]->PhysicalMaterial.StaticFriction;
+        return m_ColliderCollection[0]->m_PhysicalMaterial->StaticFriction;
     }
 
     void Rigidbody::SetStaticFriction(const float staticFriction)
     {
         if (staticFriction < 0.0f || staticFriction > 1.0f) return;
         
-        m_ColliderCollection[0]->PhysicalMaterial.StaticFriction = staticFriction;
+        m_ColliderCollection[0]->m_PhysicalMaterial->StaticFriction = staticFriction;
         
         if (m_Actor != NULL)
         {
@@ -792,14 +788,14 @@ namespace LevEngine
     
     float Rigidbody::GetDynamicFriction() const
     {
-        return m_ColliderCollection[0]->PhysicalMaterial.DynamicFriction;
+        return m_ColliderCollection[0]->m_PhysicalMaterial->DynamicFriction;
     }
 
     void Rigidbody::SetDynamicFriction(const float dynamicFriction)
     {
         if (dynamicFriction < 0.0f || dynamicFriction > 1.0f) return;
         
-        m_ColliderCollection[0]->PhysicalMaterial.DynamicFriction = dynamicFriction;
+        m_ColliderCollection[0]->m_PhysicalMaterial->DynamicFriction = dynamicFriction;
         
         if (m_Actor != NULL)
         {
@@ -812,14 +808,14 @@ namespace LevEngine
     
     float Rigidbody::GetRestitution() const
     {
-        return m_ColliderCollection[0]->PhysicalMaterial.Restitution;
+        return m_ColliderCollection[0]->m_PhysicalMaterial->Restitution;
     }
 
     void Rigidbody::SetRestitution(const float restitution)
     {
         if (restitution < 0.0f || restitution > 1.0f) return;
         
-        m_ColliderCollection[0]->PhysicalMaterial.Restitution = restitution;
+        m_ColliderCollection[0]->m_PhysicalMaterial->Restitution = restitution;
         
         if (m_Actor != NULL)
         {
@@ -832,57 +828,57 @@ namespace LevEngine
 
 
     
-    void Rigidbody::OnCollisionEnter(const Action<Entity>& callback)
+    void Rigidbody::OnCollisionEnter(const Action<Collision>& callback)
     {
         m_IsCollisionEnterEnabled = true;
         
         while (!m_CollisionEnterEntityBuffer.empty())
         {
             Log::Debug("START m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
-            const auto& otherEntity = m_CollisionEnterEntityBuffer.back();
-            m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
+            const auto& collision = m_CollisionEnterEntityBuffer.back();
+            m_ActionBuffer.push_back(MakePair<Action<Collision>,Collision>(callback, collision));
             m_CollisionEnterEntityBuffer.pop_back();
             Log::Debug("END m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
         }
     }
 
-    void Rigidbody::OnCollisionExit(const Action<Entity>& callback)
+    void Rigidbody::OnCollisionExit(const Action<Collision>& callback)
     {
         m_IsCollisionExitEnabled = true;
         
         while (!m_CollisionExitEntityBuffer.empty())
         {
             Log::Debug("START m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
-            const auto& otherEntity = m_CollisionExitEntityBuffer.back();
-            m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
+            const auto& collision = m_CollisionExitEntityBuffer.back();
+            m_ActionBuffer.push_back(MakePair<Action<Collision>,Collision>(callback, collision));
             m_CollisionExitEntityBuffer.pop_back();
             Log::Debug("END m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
         }
     }
 
-    void Rigidbody::OnTriggerEnter(const Action<Entity>& callback)
+    void Rigidbody::OnTriggerEnter(const Action<Collision>& callback)
     {
         m_IsTriggerEnterEnabled = true;
         
         while (!m_TriggerEnterEntityBuffer.empty())
         {
             Log::Debug("START m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
-            const auto& otherEntity = m_TriggerEnterEntityBuffer.back();
-            m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
+            const auto& collision = m_TriggerEnterEntityBuffer.back();
+            m_ActionBuffer.push_back(MakePair<Action<Collision>,Collision>(callback, collision));
             m_TriggerEnterEntityBuffer.pop_back();
             Log::Debug("END m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
         }
     }
 
-    void Rigidbody::OnTriggerExit(const Action<Entity>& callback)
+    void Rigidbody::OnTriggerExit(const Action<Collision>& callback)
     {
         m_IsTriggerExitEnabled = true;
         
         while (!m_TriggerExitEntityBuffer.empty())
         {
             Log::Debug("START m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
-            const auto& otherEntity = m_TriggerExitEntityBuffer.back();
-            m_ActionBuffer.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
+            const auto& collision = m_TriggerExitEntityBuffer.back();
+            m_ActionBuffer.push_back(MakePair<Action<Collision>,Collision>(callback, collision));
             m_TriggerExitEntityBuffer.pop_back();
             Log::Debug("END m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
         }

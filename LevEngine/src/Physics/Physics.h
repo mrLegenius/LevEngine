@@ -42,6 +42,9 @@ namespace LevEngine
         friend class ContactReportCallback;
         friend class RigidbodyInitSystem;
         friend struct Rigidbody;
+
+        // used to optimize the filling of collision detection buffers
+        UnorderedMap<physx::PxActor*, Entity> m_ActorEntityMap;
         
     private:
         void Initialize();
@@ -54,15 +57,12 @@ namespace LevEngine
         [[nodiscard]] physx::PxPhysics* GetPhysics() const;
         [[nodiscard]] physx::PxScene* GetScene() const;
 
-        // TODO: CHANGE UPDATE LOGIC
+        // TODO: CHANGE PHYSICS UPDATE LOGIC
         // used to update step-dependent physics systems
         PhysicsUpdate m_PhysicsUpdate;
         
-        // used to receive collision detection
+        // used to receive collision detection events
         ContactReportCallback m_ContactReportCallback;
-
-        // used to optimize the filling of collision detection buffers
-        UnorderedMap<physx::PxActor*, Entity> m_ActorEntityMap;
         
         // for debug render
         bool m_IsDebugRenderEnabled = true;

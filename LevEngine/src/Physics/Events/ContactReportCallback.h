@@ -19,5 +19,12 @@ namespace LevEngine
         void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 nbPairs) override;
         void onAdvance(const physx::PxRigidBody*const*, const physx::PxTransform*, physx::PxU32) override;
         void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override;
+
+        Vector<Vector3> m_ContactPositions {};
+        Vector<Vector3> m_ContactNormals {};
+        Vector<Vector3> m_ContactImpulses {};
+        Vector<float> m_ContactSeparations {};
+        Vector<int> m_ContactFirstColliderMaterialIndices {};
+        Vector<int> m_ContactSecondColliderMaterialIndices {};
     };
 }

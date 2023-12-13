@@ -18,9 +18,6 @@ namespace Sandbox
             auto& playerTransform = playerEntity.GetComponent<Transform>();
             const auto& startPosition = Vector3(0.0f, 1.0f, 15.0f);
             playerTransform.SetWorldPosition(startPosition);
-
-            auto& playerRigidbody = playerEntity.GetComponent<Rigidbody>();
-            playerRigidbody.SetRigidbodyPose(playerTransform);
 			
             auto& player = playerEntity.AddComponent<Player>();
             player.Speed = 15.0f;

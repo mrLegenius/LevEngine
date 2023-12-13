@@ -190,8 +190,7 @@ namespace LevEngine
             }
         }
     }
-
-    ///*
+    
     void PhysicsUpdate::OneMoreStrangeSystem(entt::registry& registry)
     {
         const auto& rigidbodyView = registry.view<Transform, Rigidbody>();
@@ -201,39 +200,38 @@ namespace LevEngine
             auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
             
             rigidbody.OnCollisionEnter(
-                [] (const Entity& otherEntity)
+                [] (const Collision& collision)
                 {
-                    Log::Debug("Object touches {0} object", otherEntity.GetName());
+                    Log::Debug("Object touches {0} object", collision.ContactEntity.GetName());
                 }
             );
             
             rigidbody.OnCollisionExit(
-                [] (const Entity& otherEntity)
+                [] (const Collision& collision)
                 {
-                    Log::Debug("Object pushes off from {0} object", otherEntity.GetName());
+                    Log::Debug("Object pushes off from {0} object", collision.ContactEntity.GetName());
                 }
             );
 
             rigidbody.OnTriggerEnter(
-            [] (const Entity& otherEntity)
+            [] (const Collision& collision)
                 {
-                    Log::Debug("Object {0} enters trigger", otherEntity.GetName());
-                    const auto& otherRigidbody = otherEntity.GetComponent<Rigidbody>();
+                    Log::Debug("Object {0} enters trigger", collision.ContactEntity.GetName());
+                    const auto& otherRigidbody = collision.ContactEntity.GetComponent<Rigidbody>();
                     otherRigidbody.AddForce(Vector3::Up * 5.0f, Rigidbody::ForceMode::Impulse);
                 }
             );
             
             rigidbody.OnTriggerExit(
-                [] (const Entity& otherEntity)
+                [] (const Collision& collision)
                 {
-                    Log::Debug("Object {0} leaves trigger", otherEntity.GetName());
-                    const auto& otherRigidbody = otherEntity.GetComponent<Rigidbody>();
+                    Log::Debug("Object {0} leaves trigger", collision.ContactEntity.GetName());
+                    const auto& otherRigidbody = collision.ContactEntity.GetComponent<Rigidbody>();
                     otherRigidbody.AddTorque(Vector3::Up * 5.0f, Rigidbody::ForceMode::Impulse);
                 }
             ); 
         }
     }
-    //*/
     
     void PhysicsUpdate::HandleEvents(entt::registry& registry)
     {
@@ -246,8 +244,8 @@ namespace LevEngine
             while(!rigidbody.m_ActionBuffer.empty())
             {
                 Log::Debug("START m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
-                const auto& otherEntity = rigidbody.m_ActionBuffer.back().second;
-                rigidbody.m_ActionBuffer.back().first(otherEntity);
+                const auto& collision = rigidbody.m_ActionBuffer.back().second;
+                rigidbody.m_ActionBuffer.back().first(collision);
                 rigidbody.m_ActionBuffer.pop_back();
                 Log::Debug("END m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
             }

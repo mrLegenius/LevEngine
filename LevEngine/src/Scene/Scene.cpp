@@ -20,6 +20,7 @@
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Systems/Audio/AudioListenerInitSystem.h"
 #include "Systems/Audio/AudioSourceInitSystem.h"
+#include "Systems/Physics/RigidbodyInitSystem.h"
 
 namespace LevEngine
 {
@@ -36,11 +37,6 @@ namespace LevEngine
         LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager.GetLuaState()), this);
 
         m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
-        
-        m_Registry.on_construct<Rigidbody>().connect<&Rigidbody::OnConstruct>();
-        m_Registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
-        App::Get().GetPhysics().ResetPhysicsScene();
-        App::Get().GetPhysics().ClearAccumulator();
     }
 
     void Scene::CleanupScene()
@@ -63,9 +59,15 @@ namespace LevEngine
         RegisterUpdateSystem<AudioSourceInitSystem>();
         RegisterUpdateSystem<AudioListenerInitSystem>();
 
+        RegisterUpdateSystem<RigidbodyInitSystem>();
+
         m_Registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
         m_Registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
         m_Registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
+        
+        m_Registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
+        App::Get().GetPhysics().ResetPhysicsScene();
+        App::Get().GetPhysics().ClearAccumulator();
 
         for (const auto& system : m_InitSystems)
         {

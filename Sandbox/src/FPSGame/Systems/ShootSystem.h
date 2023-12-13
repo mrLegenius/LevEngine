@@ -1,4 +1,5 @@
 #pragma once
+#include "Physics/Physics.h"
 
 namespace Sandbox
 {
@@ -29,26 +30,33 @@ namespace Sandbox
                     projectileParams.Timer = 0;
 
                     auto& projectileRigidbody = projectile.GetComponent<Rigidbody>();
-                    projectileRigidbody.SetRigidbodyPose(projectileTransform);
+                    projectileRigidbody.Initialize(projectileTransform);
+
+                    const auto& gameObject = Entity(entt::handle(registry, projectile));
+                    App::Get().GetPhysics().m_ActorEntityMap.insert({projectileRigidbody.GetActor(), gameObject});
+
+                    Log::Debug("RIGIDBODY CREATED");
+                    Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
+                    
                     projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
                     
                     Audio::PlayOneShot("event:/Shot", projectile);
                 }
             }
 
+            /*
             const auto projectileView = registry.view<Transform, Projectile, Rigidbody>();
-
-            for (const auto entity : projectileView)
+            for (auto entity : projectileView)
             {
                 auto [projectileTransform, projectile, projectileRigidbody] = projectileView.get<Transform, Projectile, Rigidbody>(entity);
                 
                 projectileRigidbody.OnCollisionEnter(
-                    [] (const Entity& otherEntity)
+                    [&] (const Entity& otherEntity)
                     {
                         Log::Debug("Object touches {0} object", otherEntity.GetName());
                     }
                 );
-            
+                
                 projectileRigidbody.OnCollisionExit(
                     [] (const Entity& otherEntity)
                     {
@@ -56,9 +64,10 @@ namespace Sandbox
                     }
                 );
             }
+            */
 
+            ///*
             const auto rigidbodyView = registry.view<Transform, Rigidbody>();
-
             for (const auto entity : rigidbodyView)
             {
                 auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
@@ -66,20 +75,32 @@ namespace Sandbox
                 if (rigidbody.IsTriggerEnabled())
                 {
                     rigidbody.OnTriggerEnter(
-                        [] (const Entity& otherEntity)
+                        [] (const Collision& collision)
+                        {
+                            Log::Debug("Object {0} enters trigger", collision.ContactEntity.GetName());
+                            
+                            if (collision.ContactEntity.HasComponent<Projectile>())
                             {
-                                Log::Debug("Object {0} enters trigger", otherEntity.GetName());
+                                const auto& projectileRigidbody = collision.ContactEntity.GetComponent<Rigidbody>();
+                                App::Get().GetPhysics().m_ActorEntityMap.erase(projectileRigidbody.GetActor());
+                                
+                                const auto scene = SceneManager::GetActiveScene();
+                                scene->DestroyEntity(collision.ContactEntity);
                             }
+                        }
                     );
-            
+
+                    /*
                     rigidbody.OnTriggerExit(
                         [] (const Entity& otherEntity)
                         {
                             Log::Debug("Object {0} leaves trigger", otherEntity.GetName());
                         }
                     );
+                    */
                 }
             }
+            //*/
         }
     };
 }

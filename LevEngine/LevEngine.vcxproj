@@ -96,6 +96,7 @@
     <ClInclude Include="src\Assets\ScriptAsset.h" />
     <ClInclude Include="src\DataTypes\Set.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
+    <ClInclude Include="src\Physics\Components\Collision.h" />
     <ClInclude Include="src\Physics\Events\ContactReportCallback.h" />
     <ClInclude Include="src\Physics\Support\PhysicsUtils.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
@@ -123,6 +124,7 @@
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
+    <ClInclude Include="src\Scene\Systems\Physics\RigidbodyInitSystem.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
@@ -1050,6 +1052,7 @@
     <ClCompile Include="src\Renderer\RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\RenderPass.cpp" />
     <ClCompile Include="src\Renderer\RenderSettings.cpp" />
+    <ClCompile Include="src\Scene\Systems\Physics\RigidbodyInitSystem.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
