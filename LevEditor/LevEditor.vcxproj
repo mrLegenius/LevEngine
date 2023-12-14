@@ -47,9 +47,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;LEV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;_DEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;LEV_DEBUG;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;$(SolutionDir)LevEngine\external\physx\include;$(SolutionDir)LevEngine\external\lua\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -70,9 +70,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;$(SolutionDir)LevEngine\external\physx\include;$(SolutionDir)LevEngine\external\lua\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -82,7 +82,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>LevEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -91,13 +91,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\AssetSelection.h" />
+    <ClInclude Include="src\ComponentDebugRenderers\ComponentDebugRenderer.h" />
     <ClInclude Include="src\EditorCamera.h" />
     <ClInclude Include="src\EditorSaveData.h" />
     <ClInclude Include="src\EntitySelection.h" />
     <ClInclude Include="src\EditorLayer.h" />
+    <ClInclude Include="src\Essentials\MenuBar.h" />
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
-    <ClCompile Include="src\GUI\Drawers\Assets\AnimationAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
@@ -107,13 +108,21 @@
     <ClInclude Include="src\ModalPopup.h" />
     <ClInclude Include="src\Panels\AssetBrowserPanel.h" />
     <ClInclude Include="src\Panels\ConsolePanel.h" />
+    <ClInclude Include="src\Panels\DockSpace.h" />
     <ClInclude Include="src\Panels\GamePanel.h" />
     <ClInclude Include="src\Panels\HierarchyPanel.h" />
     <ClInclude Include="src\Panels\Panel.h" />
     <ClInclude Include="src\Panels\PropertiesPanel.h" />
+    <ClInclude Include="src\Panels\ScriptsPanel.h" />
     <ClInclude Include="src\Panels\SettingsPanel.h" />
+    <ClInclude Include="src\Panels\StatisticsPanel.h" />
+    <ClInclude Include="src\Panels\StatusBar.h" />
+    <ClInclude Include="src\Panels\Toolbar.h" />
     <ClInclude Include="src\Panels\ViewportPanel.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\ProjectEditor.h" />
+    <ClInclude Include="src\SceneEditor.h" />
+    <ClInclude Include="src\SceneState.h" />
     <ClInclude Include="src\Selection.h" />
   </ItemGroup>
   <ItemGroup>
@@ -128,10 +137,12 @@
     <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
-    <ClCompile Include="src\GUI\Drawers\Components\ColliderDrawers.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\ConstantForceDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LegacyColliderDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\MeshRendererDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LegacyRigidbodyDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\RigidbodyDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\SkyboxComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp" />
@@ -140,8 +151,13 @@
     <ClCompile Include="src\GUI\EditorGUI.cpp" />
     <ClCompile Include="src\ModalPopup.cpp" />
     <ClCompile Include="src\Panels\ConsolePanel.cpp" />
+    <ClCompile Include="src\Panels\DockSpace.cpp" />
     <ClCompile Include="src\Panels\GamePanel.cpp" />
+    <ClCompile Include="src\Panels\ScriptsPanel.cpp" />
     <ClCompile Include="src\Panels\SettingsPanel.cpp" />
+    <ClCompile Include="src\Panels\StatisticsPanel.cpp" />
+    <ClCompile Include="src\Panels\StatusBar.cpp" />
+    <ClCompile Include="src\Panels\Toolbar.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -158,6 +174,8 @@
     <ClCompile Include="src\Panels\Panel.cpp" />
     <ClCompile Include="src\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Panels\ViewportPanel.cpp" />
+    <ClCompile Include="src\ProjectEditor.cpp" />
+    <ClCompile Include="src\SceneEditor.cpp" />
     <ClCompile Include="src\Selection.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +188,38 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="LevResources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ComponentDebugRenderers\ComponentDebugRenderer.h" />
+    <ClInclude Include="src\Essentials\MenuBar.h" />
+    <ClCompile Include="src\AssetSelection.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\ColliderComponentsDebugRenderer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\RigidbodyDebugRenderer.cpp" />
+    <ClCompile Include="src\Essentials\MenuBar.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\AnimationAssetDrawer.cpp" />
+    <ClInclude Include="src\Panels\DockSpace.h" />
+    <ClInclude Include="src\Panels\ScriptsPanel.h" />
+    <ClInclude Include="src\Panels\StatisticsPanel.h" />
+    <ClInclude Include="src\Panels\StatusBar.h" />
+    <ClInclude Include="src\Panels\Toolbar.h" />
+    <ClInclude Include="src\ProjectEditor.h" />
+    <ClInclude Include="src\SceneEditor.h" />
+    <ClInclude Include="src\SceneState.h" />
+    <ClCompile Include="src\GUI\Drawers\Components\AnimatorComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\ConstantForceDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LegacyColliderDrawers.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\LegacyRigidbodyDrawer.cpp" />
+    <ClCompile Include="src\Panels\DockSpace.cpp" />
+    <ClCompile Include="src\Panels\ScriptsPanel.cpp" />
+    <ClCompile Include="src\Panels\StatisticsPanel.cpp" />
+    <ClCompile Include="src\Panels\StatusBar.cpp" />
+    <ClCompile Include="src\Panels\Toolbar.cpp" />
+    <ClCompile Include="src\ProjectEditor.cpp" />
+    <ClCompile Include="src\SceneEditor.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\GUI\Drawers\Assets\ScriptAssetDrawer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
