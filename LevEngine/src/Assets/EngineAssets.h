@@ -27,7 +27,8 @@ namespace LevEngine
 
     struct ShaderAssets
     {
-        static Ref<Shader> Debug();
+        static Ref<Shader> DebugShape();
+        static Ref<Shader> DebugLine();
         
         static Ref<Shader> Lit();
         static Ref<Shader> Unlit();

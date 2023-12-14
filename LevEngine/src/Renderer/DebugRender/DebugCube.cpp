@@ -8,5 +8,5 @@
 void LevEngine::DebugCube::Draw()
 {
     static auto mesh = Primitives::CreateCube();
-    Renderer3D::DrawMesh(m_Model, mesh, ShaderAssets::Debug());
+    Renderer3D::DrawMesh(m_Model, mesh, ShaderAssets::DebugShape());
 }

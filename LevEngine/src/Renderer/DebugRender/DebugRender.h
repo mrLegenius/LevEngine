@@ -21,8 +21,24 @@ namespace LevEngine
         static void DrawCircle(Vector3 position, float radius, Quaternion rotation, Color color);
         static void DrawGrid(Vector3 position, Vector3 xAxis, Vector3 yAxis, uint32_t xCells, uint32_t yCells, float cellSize, Color color);
 
-        static Queue<Ref<DebugShape>>& GetRequestedShapes() { return m_Shapes; }
+        friend class DebugRenderPass;
+        
     private:
+        static Queue<Ref<DebugShape>>& GetRequestedShapes() { return m_Shapes; }
+        
+        static Vector<Vector3>& GetVertices() { return m_Vertices; }
+        static Vector<uint32_t>& GetIndices() { return m_Indices; }
+        static Vector<Color>& GetColors() { return m_Colors; }
+        static void Reset()
+        {
+            m_Vertices.clear();
+            m_Indices.clear();
+            m_Colors.clear();
+        }
+        
         inline static Queue<Ref<DebugShape>> m_Shapes;
+        inline static Vector<Vector3> m_Vertices;
+        inline static Vector<Color> m_Colors;
+        inline static Vector<uint32_t> m_Indices;
     };
 }

@@ -3,7 +3,6 @@
 
 #include "DebugCircle.h"
 #include "DebugCube.h"
-#include "DebugLine.h"
 #include "DebugSphere.h"
 #include "DebugWireCube.h"
 #include "DebugWireSphere.h"
@@ -84,15 +83,10 @@ namespace LevEngine
 
     void DebugRender::DrawWireCapsule(const Matrix& model, float halfHeight, float radius, Color color)
     {
-        const auto line0 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, radius, 0.0f), model), Vector3::Transform(Vector3(halfHeight, radius, 0.0f), model), color);
-        const auto line1 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, 0.0f, radius), model), Vector3::Transform(Vector3(halfHeight, 0.0f, radius), model), color);
-        const auto line2 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, -radius, 0.0f), model), Vector3::Transform(Vector3(halfHeight, -radius, 0.0f), model), color);
-        const auto line3 = CreateRef<DebugLine>(Vector3::Transform(Vector3(-halfHeight, 0.0f, -radius), model), Vector3::Transform(Vector3(halfHeight, 0.0f, -radius), model), color);
-        
-        m_Shapes.emplace(line0);
-        m_Shapes.emplace(line1);
-        m_Shapes.emplace(line2);
-        m_Shapes.emplace(line3);
+        DrawLine(Vector3::Transform(Vector3(-halfHeight, radius, 0.0f), model), Vector3::Transform(Vector3(halfHeight, radius, 0.0f), model), color);
+        DrawLine(Vector3::Transform(Vector3(-halfHeight, 0.0f, radius), model), Vector3::Transform(Vector3(halfHeight, 0.0f, radius), model), color);
+        DrawLine(Vector3::Transform(Vector3(-halfHeight, -radius, 0.0f), model), Vector3::Transform(Vector3(halfHeight, -radius, 0.0f), model), color);
+        DrawLine(Vector3::Transform(Vector3(-halfHeight, 0.0f, -radius), model), Vector3::Transform(Vector3(halfHeight, 0.0f, -radius), model), color);
         
         const auto sphere0 = CreateRef<DebugWireSphere>(Matrix::CreateScale(radius) * Matrix::CreateTranslation(Vector3(halfHeight, 0.0f, 0.0f)) * model, color);
         const auto sphere1 = CreateRef<DebugWireSphere>(Matrix::CreateScale(radius) * Matrix::CreateTranslation(Vector3(-halfHeight, 0.0f, 0.0f)) * model, color);
@@ -101,11 +95,17 @@ namespace LevEngine
         m_Shapes.emplace(sphere1);
     }
 
-    void DebugRender::DrawLine(Vector3 start, Vector3 end, const Color color)
+    void DebugRender::DrawLine(const Vector3 start, const Vector3 end, const Color color)
     {
-        const auto line = CreateRef<DebugLine>(start, end, color);
+        const auto baseIndex = m_Vertices.size();
+        m_Indices.push_back(baseIndex);
+        m_Indices.push_back(baseIndex + 1);
 
-        m_Shapes.emplace(line);
+        m_Vertices.push_back(start);
+        m_Vertices.push_back(end);
+
+        m_Colors.push_back(color);
+        m_Colors.push_back(color);
     }
 
     void DebugRender::DrawRay(const Vector3 origin, const Vector3 direction, const Color color)

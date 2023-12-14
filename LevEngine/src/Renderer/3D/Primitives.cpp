@@ -269,7 +269,7 @@ namespace LevEngine
     Ref<Mesh> Primitives::CreateCone(const float radius, const float height, const uint32_t sliceCount)
     {
         auto mesh = CreateRef<Mesh>();
-        
+
         mesh->AddVertex(Vector3(0, 0, 0));
 
         const auto thetaStep = Math::Pi2 / static_cast<float>(sliceCount);
@@ -312,7 +312,7 @@ namespace LevEngine
         mesh->AddIndex(1);
 
         mesh->Init();
-        
+
         return mesh;
     }
 
@@ -419,6 +419,117 @@ namespace LevEngine
             cos = newCos;
             sin = newSin;
         }
+
+        mesh->Init();
+
+        return mesh;
+    }
+
+    Ref<Mesh> Primitives::CreateWireSphere()
+    {
+        static Ref<Mesh> mesh;
+
+        if (mesh != nullptr) return mesh;
+        
+        mesh = CreateRef<Mesh>();
+
+        constexpr size_t ringSegments = 32;
+        constexpr float fAngleDelta = 2 * Math::Pi / static_cast<float>(ringSegments);
+
+        const auto cosDelta = Vector3(cosf(fAngleDelta));
+        const auto sinDelta = Vector3(sinf(fAngleDelta));
+
+        //<--- XZ Ring ---<<
+        auto majorAxis = Vector3::Right;
+        auto minorAxis = Vector3::Forward;
+        
+        Vector3 sin = Vector3::Zero;
+        Vector3 cos = Vector3::One;
+
+        auto indices = 0;
+
+        for (size_t i = 0; i <= ringSegments; i++)
+        {
+            Vector3 pos = majorAxis * cos + minorAxis * sin;
+            mesh->AddVertex(pos);
+
+            const auto newCos = cos * cosDelta - sin * sinDelta;
+            const auto newSin = cos * sinDelta + sin * cosDelta;
+
+            cos = newCos;
+            sin = newSin;
+        }
+        
+        for (size_t i = indices; i < indices + ringSegments - 1; i++)
+        {
+            mesh->AddIndex(i);
+            mesh->AddIndex(i + 1);
+        }
+
+        mesh->AddIndex(indices + ringSegments - 1);
+        mesh->AddIndex(indices);
+
+        //<--- XY Ring ---<<
+        
+        majorAxis = Vector3::Right;
+        minorAxis = Vector3::Up;
+
+        sin = Vector3::Zero;
+        cos = Vector3::One;
+
+        indices = mesh->GetVerticesCount();
+
+        for (size_t i = 0; i <= ringSegments; i++)
+        {
+            Vector3 pos = majorAxis * cos + minorAxis * sin;
+            mesh->AddVertex(pos);
+
+            const auto newCos = cos * cosDelta - sin * sinDelta;
+            const auto newSin = cos * sinDelta + sin * cosDelta;
+
+            cos = newCos;
+            sin = newSin;
+        }
+        
+        for (size_t i = indices; i < indices + ringSegments - 1; i++)
+        {
+            mesh->AddIndex(i);
+            mesh->AddIndex(i + 1);
+        }
+
+        mesh->AddIndex(indices + ringSegments - 1);
+        mesh->AddIndex(indices);
+
+        //<--- YZ Ring ---<<
+        
+        majorAxis = Vector3::Up;
+        minorAxis = Vector3::Forward;
+
+        sin = Vector3::Zero;
+        cos = Vector3::One;
+
+        indices = mesh->GetVerticesCount();
+        
+        for (size_t i = 0; i <= ringSegments; i++)
+        {
+            Vector3 pos = majorAxis * cos + minorAxis * sin;
+            mesh->AddVertex(pos);
+
+            const auto newCos = cos * cosDelta - sin * sinDelta;
+            const auto newSin = cos * sinDelta + sin * cosDelta;
+
+            cos = newCos;
+            sin = newSin;
+        }
+        
+        for (size_t i = indices; i < indices + ringSegments - 1; i++)
+        {
+            mesh->AddIndex(i);
+            mesh->AddIndex(i + 1);
+        }
+
+        mesh->AddIndex(indices + ringSegments - 1);
+        mesh->AddIndex(indices);
 
         mesh->Init();
 
