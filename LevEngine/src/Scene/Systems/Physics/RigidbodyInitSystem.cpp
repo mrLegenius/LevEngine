@@ -4,7 +4,6 @@
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
 #include "Physics/Components/Rigidbody.h"
-#include "Scene/Components/Audio/AudioSource.h"
 
 namespace LevEngine
 {

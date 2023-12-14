@@ -1019,6 +1019,7 @@
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
+    <ClCompile Include="src\Physics\Components\Collision.cpp" />
     <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />

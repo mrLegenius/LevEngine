@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Components/Collision.h"
 #include "physx/include/PxPhysicsAPI.h"
 
 #include "Events/ContactReportCallback.h"
@@ -15,7 +16,7 @@ namespace LevEngine
         void UpdateTransforms(entt::registry& registry);
         void UpdateConstantForces(entt::registry& registry);
         void OneMoreStrangeSystem(entt::registry& registry);
-        void HandleEvents(entt::registry& registry);
+        void HandleEvents();
     };
     
     class Physics
@@ -35,10 +36,12 @@ namespace LevEngine
         // used to fix accumulation transfer issue
         void ClearAccumulator();
 
+        // used to fix transfer scene information between game modes
         void ResetPhysicsScene();
 
         void Process(entt::registry& registry, float deltaTime);
-        
+
+        friend class PhysicsUpdate;
         friend class ContactReportCallback;
         friend class RigidbodyInitSystem;
         friend struct Rigidbody;
@@ -60,10 +63,12 @@ namespace LevEngine
         // TODO: CHANGE PHYSICS UPDATE LOGIC
         // used to update step-dependent physics systems
         PhysicsUpdate m_PhysicsUpdate;
-        
-        // used to receive collision detection events
+
+        // used to handle collision/trigger events
         ContactReportCallback m_ContactReportCallback;
-        
+        Vector<Pair<Action<Collision>,Collision>> m_CollisionEvents;
+        Vector<Pair<Action<Entity>,Entity>> m_TriggerEvents;
+
         // for debug render
         bool m_IsDebugRenderEnabled = true;
         // for physics update

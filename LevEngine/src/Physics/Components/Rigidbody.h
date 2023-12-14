@@ -114,11 +114,11 @@ namespace LevEngine
         void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
         void AddTorque(Vector3 torque, ForceMode = ForceMode::Force) const;
 
-        // Collision Events
+        // Collision/Trigger Events
         void OnCollisionEnter(const Action<Collision>& callback);
         void OnCollisionExit(const Action<Collision>& callback);
-        void OnTriggerEnter(const Action<Collision>& callback);
-        void OnTriggerExit(const Action<Collision>& callback);
+        void OnTriggerEnter(const Action<Entity>& callback);
+        void OnTriggerExit(const Action<Entity>& callback);
         
         friend class PhysicsUpdate;
         friend class RigidbodyInitSystem;
@@ -171,17 +171,14 @@ namespace LevEngine
         // Collider
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
 
-        // Collision Events
-        bool m_IsTriggerEnterEnabled = false;
-        Vector<Collision> m_TriggerEnterEntityBuffer;
-        bool m_IsTriggerExitEnabled = false;
-        Vector<Collision> m_TriggerExitEntityBuffer;
-
+        // Collision/Trigger Events
         bool m_IsCollisionEnterEnabled = false;
         Vector<Collision> m_CollisionEnterEntityBuffer;
         bool m_IsCollisionExitEnabled = false;
         Vector<Collision> m_CollisionExitEntityBuffer;
-        
-        Vector<Pair<Action<Collision>,Collision>> m_ActionBuffer;
+        bool m_IsTriggerEnterEnabled = false;
+        Vector<Entity> m_TriggerEnterEntityBuffer;
+        bool m_IsTriggerExitEnabled = false;
+        Vector<Entity> m_TriggerExitEntityBuffer;
     };
 }

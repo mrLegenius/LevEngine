@@ -4,6 +4,7 @@
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
 #include "Scripting/ScriptingManager.h"
+#include "Systems/CollisionHandleSystem.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
@@ -46,7 +47,9 @@ namespace Sandbox
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
-		//scene->RegisterUpdateSystem<ProjectileLifeSystem>();
+		scene->RegisterUpdateSystem<CollisionHandleSystem>();
+		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
+		scene->RegisterUpdateSystem<EnemySpawnSystem>();
 
 		scene->OnInit();
 		Application::Get().GetWindow().DisableCursor();

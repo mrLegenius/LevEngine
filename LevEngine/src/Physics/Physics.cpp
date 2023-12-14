@@ -4,6 +4,7 @@
 #include <wrl/internal.h>
 
 #include "EASTL/list.h"
+#include "Kernel/Application.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Renderer/DebugRender/DebugRender.h"
 #include "Physics/Support/PhysicsUtils.h"
@@ -139,7 +140,7 @@ namespace LevEngine
         m_PhysicsUpdate.UpdateTransforms(registry);
         m_PhysicsUpdate.UpdateConstantForces(registry);
         //m_PhysicsUpdate.OneMoreStrangeSystem(registry);
-        m_PhysicsUpdate.HandleEvents(registry);
+        m_PhysicsUpdate.HandleEvents();
         
         if (!m_IsDebugRenderEnabled) return;
         DrawDebugLines();
@@ -214,41 +215,57 @@ namespace LevEngine
             );
 
             rigidbody.OnTriggerEnter(
-            [] (const Collision& collision)
+            [] (const Entity& otherEntity)
                 {
-                    Log::Debug("Object {0} enters trigger", collision.ContactEntity.GetName());
-                    const auto& otherRigidbody = collision.ContactEntity.GetComponent<Rigidbody>();
+                    Log::Debug("Object {0} enters trigger", otherEntity.GetName());
+                    const auto& otherRigidbody = otherEntity.GetComponent<Rigidbody>();
                     otherRigidbody.AddForce(Vector3::Up * 5.0f, Rigidbody::ForceMode::Impulse);
                 }
             );
             
             rigidbody.OnTriggerExit(
-                [] (const Collision& collision)
+                [] (const Entity& otherEntity)
                 {
-                    Log::Debug("Object {0} leaves trigger", collision.ContactEntity.GetName());
-                    const auto& otherRigidbody = collision.ContactEntity.GetComponent<Rigidbody>();
+                    Log::Debug("Object {0} leaves trigger", otherEntity.GetName());
+                    const auto& otherRigidbody = otherEntity.GetComponent<Rigidbody>();
                     otherRigidbody.AddTorque(Vector3::Up * 5.0f, Rigidbody::ForceMode::Impulse);
                 }
-            ); 
-        }
+            );
+        } 
     }
     
-    void PhysicsUpdate::HandleEvents(entt::registry& registry)
+    void PhysicsUpdate::HandleEvents()
     {
-        const auto& rigidbodyView = registry.view<Transform, Rigidbody>();
-
-        for (const auto entity : rigidbodyView)
+        // Handle Collision Events
+        auto& collisionEvents = App::Get().GetPhysics().m_CollisionEvents;
+        while (!collisionEvents.empty())
         {
-            auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
-
-            while(!rigidbody.m_ActionBuffer.empty())
+            Log::Debug("START m_CollisionEvents SIZE: {0}", collisionEvents.size());
+            // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
+            if (collisionEvents.back().second.ContactEntity)
             {
-                Log::Debug("START m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
-                const auto& collision = rigidbody.m_ActionBuffer.back().second;
-                rigidbody.m_ActionBuffer.back().first(collision);
-                rigidbody.m_ActionBuffer.pop_back();
-                Log::Debug("END m_ActionBuffer SIZE: {0}", rigidbody.m_ActionBuffer.size());
+                const auto& collision = collisionEvents.back().second;
+                collisionEvents.back().first(collision);
+                Log::Debug("Collision Event was handled");
             }
+            collisionEvents.pop_back();
+            Log::Debug("END m_CollisionEvents SIZE: {0}", collisionEvents.size());
+        }
+
+        // Handle Trigger Events
+        auto& triggerEvents = App::Get().GetPhysics().m_TriggerEvents;
+        while (!triggerEvents.empty())
+        {
+            Log::Debug("START m_TriggerEvents SIZE: {0}", triggerEvents.size());
+            // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
+            if (triggerEvents.back().second)
+            {
+                const auto& otherEntity = triggerEvents.back().second;
+                triggerEvents.back().first(otherEntity);
+                Log::Debug("Trigger Event was handled");
+            }
+            triggerEvents.pop_back();
+            Log::Debug("END m_TriggerEvents SIZE: {0}", triggerEvents.size());
         }
     }
 }
