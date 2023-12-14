@@ -20,6 +20,7 @@
 #include "Panels/Toolbar.h"
 #include "Panels/ViewportPanel.h"
 #include "Renderer/RendererContext.h"
+#include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor
 {
@@ -186,6 +187,7 @@ namespace LevEngine::Editor
 
         ResourceManager::Init(Project::GetRoot());
         AssetDatabase::ProcessAllAssets();
+        Application::Get().GetScriptingManager().LoadScripts();
         
         const auto startScene = Project::GetStartScene();
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))

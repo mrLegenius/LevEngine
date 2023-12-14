@@ -58,6 +58,13 @@ namespace LevEngine::Editor
 		static bool DrawSelectableComponent(const String& componentTypeName, Entity& entity, bool wasSelected,
 			bool& isSelected, int selectableIdx = 0);
 
+		template<class T>
+		static bool DrawSelectableAssetList(const String& label, Set<Ref<T>>& assets, Ref<T>& selectedAsset);
+
+		template<class T>
+		static bool DrawSelectableAsset(const Ref<T>& asset, bool wasSelected,
+			bool& isSelected);
+
 		template<class T, int N>
 		static bool DrawComboBox(String label, Array<String, N> stringValues, T& value);
 
