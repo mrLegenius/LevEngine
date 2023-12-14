@@ -4,7 +4,6 @@
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
 #include "Physics/Components/Rigidbody.h"
-#include "Physics/Support/PhysicsUtils.h"
 
 namespace LevEngine
 {
@@ -62,7 +61,7 @@ namespace LevEngine
             {
                 const auto& otherEntity = entityMap.at(current.otherActor);
                 triggerRigidbody.m_TriggerEnterEntityBuffer.push_back(otherEntity);
-                Log::Debug("PAIR {0} ENTER ADDED TO {1}", i, triggerEntity.GetName());
+                //Log::Debug("PAIR {0} ENTER ADDED TO {1}", i, triggerEntity.GetName());
             }
         
             if (current.status & physx::PxPairFlag::eNOTIFY_TOUCH_LOST
@@ -70,7 +69,7 @@ namespace LevEngine
             {
                 const auto& otherEntity = entityMap.at(current.otherActor);
                 triggerRigidbody.m_TriggerExitEntityBuffer.push_back(otherEntity);
-                Log::Debug("PAIR {0} EXIT ADDED TO {1}", i, triggerEntity.GetName());
+                //Log::Debug("PAIR {0} EXIT ADDED TO {1}", i, triggerEntity.GetName());
             }
         }
     }
@@ -105,13 +104,13 @@ namespace LevEngine
                 {
                     const auto& collision = Collision { secondCollisionEntity };
                     firstCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(collision);
-                    Log::Debug("CONTACT FOUND");
+                    //Log::Debug("CONTACT FOUND");
                 }
                 if (secondCollisionRigidbody.m_IsCollisionEnterEnabled)
                 {
                     const auto& collision = Collision { firstCollisionEntity };
                     secondCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(collision);
-                    Log::Debug("CONTACT FOUND");
+                    //Log::Debug("CONTACT FOUND");
                 }
             }
             
@@ -121,14 +120,14 @@ namespace LevEngine
                 {
                     const auto& collision = Collision { secondCollisionEntity };
                     firstCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(collision);
-                    Log::Debug("CONTACT LOST");
+                    //Log::Debug("CONTACT LOST");
                 }
                 
                 if (secondCollisionRigidbody.m_IsCollisionExitEnabled)
                 {
                     const auto& collision = Collision { firstCollisionEntity };
                     secondCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(collision);
-                    Log::Debug("CONTACT LOST");
+                    //Log::Debug("CONTACT LOST");
                 }
             }
         }

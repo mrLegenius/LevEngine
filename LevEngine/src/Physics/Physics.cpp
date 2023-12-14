@@ -191,7 +191,8 @@ namespace LevEngine
             }
         }
     }
-    
+
+    /*
     void PhysicsUpdate::OneMoreStrangeSystem(entt::registry& registry)
     {
         const auto& rigidbodyView = registry.view<Transform, Rigidbody>();
@@ -233,6 +234,7 @@ namespace LevEngine
             );
         } 
     }
+    */
     
     void PhysicsUpdate::HandleEvents()
     {
@@ -240,32 +242,32 @@ namespace LevEngine
         auto& collisionEvents = App::Get().GetPhysics().m_CollisionEvents;
         while (!collisionEvents.empty())
         {
-            Log::Debug("START m_CollisionEvents SIZE: {0}", collisionEvents.size());
+            //Log::Debug("START m_CollisionEvents SIZE: {0}", collisionEvents.size());
             // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
             if (collisionEvents.back().second.ContactEntity)
             {
                 const auto& collision = collisionEvents.back().second;
                 collisionEvents.back().first(collision);
-                Log::Debug("Collision Event was handled");
+                //Log::Debug("Collision Event was handled");
             }
             collisionEvents.pop_back();
-            Log::Debug("END m_CollisionEvents SIZE: {0}", collisionEvents.size());
+            //Log::Debug("END m_CollisionEvents SIZE: {0}", collisionEvents.size());
         }
 
         // Handle Trigger Events
         auto& triggerEvents = App::Get().GetPhysics().m_TriggerEvents;
         while (!triggerEvents.empty())
         {
-            Log::Debug("START m_TriggerEvents SIZE: {0}", triggerEvents.size());
+            //Log::Debug("START m_TriggerEvents SIZE: {0}", triggerEvents.size());
             // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
             if (triggerEvents.back().second)
             {
                 const auto& otherEntity = triggerEvents.back().second;
                 triggerEvents.back().first(otherEntity);
-                Log::Debug("Trigger Event was handled");
+                //Log::Debug("Trigger Event was handled");
             }
             triggerEvents.pop_back();
-            Log::Debug("END m_TriggerEvents SIZE: {0}", triggerEvents.size());
+            //Log::Debug("END m_TriggerEvents SIZE: {0}", triggerEvents.size());
         }
     }
 }

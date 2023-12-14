@@ -15,7 +15,7 @@ namespace LevEngine
     private:
         void UpdateTransforms(entt::registry& registry);
         void UpdateConstantForces(entt::registry& registry);
-        void OneMoreStrangeSystem(entt::registry& registry);
+        //void OneMoreStrangeSystem(entt::registry& registry);
         void HandleEvents();
     };
     

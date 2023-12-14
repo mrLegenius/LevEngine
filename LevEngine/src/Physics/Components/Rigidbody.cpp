@@ -23,8 +23,8 @@ namespace LevEngine
         
         rigidbody.DetachRigidbody();
         
-        Log::Debug("RIGIDBODY DESTROYED");
-        Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
+        //Log::Debug("RIGIDBODY DESTROYED");
+        //Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
     }
     
     
@@ -834,16 +834,16 @@ namespace LevEngine
         
         while (!m_CollisionEnterEntityBuffer.empty())
         {
-            Log::Debug("START m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
+            //Log::Debug("START m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
             // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
             if (m_CollisionEnterEntityBuffer.back().ContactEntity)
             {
                 const auto& collisionInfo = m_CollisionEnterEntityBuffer.back();
                 App::Get().GetPhysics().m_CollisionEvents.push_back(MakePair<Action<Collision>,Collision>(callback, collisionInfo));
-                Log::Debug("Collision Enter event was added");
+                //Log::Debug("Collision Enter event was added");
             }
             m_CollisionEnterEntityBuffer.pop_back();
-            Log::Debug("END m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
+            //Log::Debug("END m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
         }
     }
     
@@ -853,16 +853,16 @@ namespace LevEngine
         
         while (!m_CollisionExitEntityBuffer.empty())
         {
-            Log::Debug("START m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
+            //Log::Debug("START m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
             // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
             if (m_CollisionExitEntityBuffer.back().ContactEntity)
             {
                 const auto& collisionInfo = m_CollisionExitEntityBuffer.back();
                 App::Get().GetPhysics().m_CollisionEvents.push_back(MakePair<Action<Collision>,Collision>(callback, collisionInfo));
-                Log::Debug("Collision Exit event was added");
+                //Log::Debug("Collision Exit event was added");
             }
             m_CollisionExitEntityBuffer.pop_back();
-            Log::Debug("END m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
+            //Log::Debug("END m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
         }
     }
 
@@ -872,16 +872,16 @@ namespace LevEngine
         
         while (!m_TriggerEnterEntityBuffer.empty())
         {
-            Log::Debug("START m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
+            //Log::Debug("START m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
             // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
             if (m_TriggerEnterEntityBuffer.back())
             {
                 const auto& otherEntity = m_TriggerEnterEntityBuffer.back();
                 App::Get().GetPhysics().m_TriggerEvents.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
-                Log::Debug("Trigger Enter event was added");
+                //Log::Debug("Trigger Enter event was added");
             }
             m_TriggerEnterEntityBuffer.pop_back();
-            Log::Debug("END m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
+            //Log::Debug("END m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
         }
     }
 
@@ -891,16 +891,16 @@ namespace LevEngine
         
         while (!m_TriggerExitEntityBuffer.empty())
         {
-            Log::Debug("START m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
+            //Log::Debug("START m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
             // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
             if (m_TriggerExitEntityBuffer.back())
             {
                 const auto& otherEntity = m_TriggerExitEntityBuffer.back();
                 App::Get().GetPhysics().m_TriggerEvents.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
-                Log::Debug("Trigger Exit event was added");
+                //Log::Debug("Trigger Exit event was added");
             }
             m_TriggerExitEntityBuffer.pop_back();
-            Log::Debug("END m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
+            //Log::Debug("END m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
         }
     }
 

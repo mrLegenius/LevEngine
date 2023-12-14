@@ -34,9 +34,10 @@ namespace Sandbox
                     projectileRigidbody.Initialize(projectileTransform);
                     const auto& gameObject = Entity(entt::handle(registry, projectile));
                     App::Get().GetPhysics().m_ActorEntityMap.insert({projectileRigidbody.GetActor(), gameObject});
-                    Log::Debug("RIGIDBODY CREATED");
-                    Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
+                    //Log::Debug("RIGIDBODY CREATED");
+                    //Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
                     projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
+                    projectileRigidbody.EnableTrigger(true);
                     
                     Audio::PlayOneShot("event:/Shot", projectile);
                 }
