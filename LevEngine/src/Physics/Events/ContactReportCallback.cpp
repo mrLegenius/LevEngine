@@ -4,6 +4,7 @@
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
 #include "Physics/Components/Rigidbody.h"
+#include "Physics/Support/PhysicsUtils.h"
 
 namespace LevEngine
 {
@@ -20,7 +21,8 @@ namespace LevEngine
         
         pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT
                   | physx::PxPairFlag::eNOTIFY_TOUCH_FOUND
-                  | physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
+                  | physx::PxPairFlag::eNOTIFY_TOUCH_LOST
+                  | physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
         
         return physx::PxFilterFlag::eDEFAULT;
     }
@@ -82,8 +84,14 @@ namespace LevEngine
     void ContactReportCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) 
     {
         const auto& entityMap = App::Get().GetPhysics().m_ActorEntityMap;
-
+        
         Vector<physx::PxContactPairPoint> contactPoints;
+        Vector<Vector3> contactPositions;
+        Vector<Vector3> contactNormals;
+        Vector<Vector3> contactImpulses;
+        Vector<float> contactSeparations;
+        Vector<int> contactFirstColliderMaterialIndices;
+        Vector<int> contactSecondColliderMaterialIndices;
         
         for (uint32_t i = 0; i < nbPairs; i++)
         {
@@ -91,6 +99,25 @@ namespace LevEngine
 
             if (current.flags & physx::PxContactPairFlag::eREMOVED_SHAPE_0) break;
             if (current.flags & physx::PxContactPairFlag::eREMOVED_SHAPE_1) break;
+            
+            // collision info struct holder
+            auto collisionInfo = Collision {};
+            // fill additional collision info
+            if (const int contactCount = pairs[i].contactCount)
+            {
+                contactPoints.resize(contactCount);
+                pairs[i].extractContacts(&contactPoints[0], contactCount);
+
+                for (int j = 0; j < contactCount; j++)
+                {
+                    collisionInfo.ContactPositions.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].position));
+                    collisionInfo.ContactNormals.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].normal));
+                    collisionInfo.ContactImpulses.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].impulse));
+                    collisionInfo.ContactSeparations.push_back(contactPoints[j].separation);
+                    collisionInfo.ContactFirstColliderMaterialIndices.push_back(contactPoints[j].internalFaceIndex0);
+                    collisionInfo.ContactSecondColliderMaterialIndices.push_back(contactPoints[j].internalFaceIndex1);
+                }
+            }
             
             const auto& firstCollisionEntity = entityMap.at(pairHeader.actors[0]);
             auto& firstCollisionRigidbody = firstCollisionEntity.GetComponent<Rigidbody>();
@@ -102,14 +129,14 @@ namespace LevEngine
             {
                 if (firstCollisionRigidbody.m_IsCollisionEnterEnabled)
                 {
-                    const auto& collision = Collision { secondCollisionEntity };
-                    firstCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(collision);
+                    collisionInfo.ContactEntity = secondCollisionEntity;
+                    firstCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(collisionInfo);
                     //Log::Debug("CONTACT FOUND");
                 }
                 if (secondCollisionRigidbody.m_IsCollisionEnterEnabled)
                 {
-                    const auto& collision = Collision { firstCollisionEntity };
-                    secondCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(collision);
+                    collisionInfo.ContactEntity = firstCollisionEntity;
+                    secondCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(collisionInfo);
                     //Log::Debug("CONTACT FOUND");
                 }
             }
@@ -118,15 +145,15 @@ namespace LevEngine
             {
                 if (firstCollisionRigidbody.m_IsCollisionExitEnabled)
                 {
-                    const auto& collision = Collision { secondCollisionEntity };
-                    firstCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(collision);
+                    collisionInfo.ContactEntity = secondCollisionEntity;
+                    firstCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(collisionInfo);
                     //Log::Debug("CONTACT LOST");
                 }
                 
                 if (secondCollisionRigidbody.m_IsCollisionExitEnabled)
                 {
-                    const auto& collision = Collision { firstCollisionEntity };
-                    secondCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(collision);
+                    collisionInfo.ContactEntity = firstCollisionEntity;
+                    secondCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(collisionInfo);
                     //Log::Debug("CONTACT LOST");
                 }
             }

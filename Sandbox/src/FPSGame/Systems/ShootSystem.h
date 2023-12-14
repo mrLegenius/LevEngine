@@ -37,7 +37,7 @@ namespace Sandbox
                     //Log::Debug("RIGIDBODY CREATED");
                     //Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
                     projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
-                    projectileRigidbody.EnableTrigger(true);
+                    //projectileRigidbody.EnableTrigger(true);
                     
                     Audio::PlayOneShot("event:/Shot", projectile);
                 }
