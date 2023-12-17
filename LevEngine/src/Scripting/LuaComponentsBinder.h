@@ -36,6 +36,7 @@ namespace LevEngine::Scripting
 		
 		static void CreateTransformLuaBind(sol::state& lua);
 		static void CreateCameraComponentLuaBind(sol::state& lua);
+		static void CreateScriptsContainerLuaBind(sol::state& lua);
 		
 		static void CreateLuaEntityBind(sol::state& lua, Scene* scene);
 

@@ -10,7 +10,7 @@ FPSCameraRotation = {
 		
 		local delta = mouse * rotationSpeed * deltaTime
 
-		print("Kek")
+		--print("Kek")
 
 		view:for_each(
 			function(entity)

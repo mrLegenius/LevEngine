@@ -20,6 +20,7 @@
 #include "Panels/Toolbar.h"
 #include "Panels/ViewportPanel.h"
 #include "Renderer/RendererContext.h"
+#include "Scripting/ScriptingManager.h"
 
 namespace LevEngine::Editor
 {

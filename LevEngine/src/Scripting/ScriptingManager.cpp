@@ -13,6 +13,7 @@
 
 #include "Scene/Components/Transform/Transform.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 
 #define RegisterComponent(x)    LuaComponentsBinder::Create##x##LuaBind(*m_Lua);\
                                 LuaComponentsBinder::RegisterMetaComponent<x>();\
@@ -32,7 +33,8 @@ namespace LevEngine::Scripting
 
         LuaComponentsBinder::CreateSceneBind(*m_Lua);
         LuaComponentsBinder::CreatePrefabBind(*m_Lua);
-        
+
+        RegisterComponent(ScriptsContainer);
         RegisterComponent(Transform);
         RegisterComponent(CameraComponent);
     }
@@ -90,35 +92,8 @@ namespace LevEngine::Scripting
             Log::CoreWarning("Failed to load lua scripts. Error: {}", e.what());
             return false;
         }
-
-        RegisterScriptComponents();
         
         return true;
-    }
-
-    void ScriptingManager::RegisterScriptComponents()
-    {
-        for (auto& [scriptAsset, luaTable]  : m_Components)
-        {
-            entt::hashed_string hashedName{scriptAsset->GetName().c_str()};
-            entt::meta<sol::table>()
-            .type(hashedName)
-            .func<&add_component_to_view<sol::table>>("add_component_to_view"_hs)
-            .func<&exclude_component_from_view<sol::table>>("exclude_component_from_view"_hs)
-            .func<&add_component<sol::table>>("add_component"_hs)
-            .func<&has_component<sol::table>>("has_component"_hs)
-            .func<&get_component<sol::table>>("get_component"_hs)
-            .func<&remove_component<sol::table>>("remove_component"_hs);
-
-            entt::meta_type metaType = entt::resolve(hashedName);
-            m_ComponentsMetaTypes.push_back(metaType);
-            entt::id_type typeId = metaType.id();
-            Log::Debug("{0} {1}", scriptAsset->GetName(), typeId);
-            
-            luaTable.set_function("type_id", [typeId]{ return typeId;});
-
-            entt::meta_type type0 = entt::resolve<sol::table>();
-        }
     }
 
     void ScriptingManager::RegisterSystems(Scene* scene)

@@ -9,6 +9,7 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine::Scripting
@@ -107,6 +108,22 @@ namespace LevEngine::Scripting
         );
     }
 
+    void LuaComponentsBinder::CreateScriptsContainerLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<ScriptsContainer>(
+            "ScriptsContainer",
+            "type_id", &entt::type_hash<ScriptsContainer>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return ScriptsContainer{};
+                }),
+            sol::meta_function::index, &ScriptsContainer::Get,
+            sol::meta_function::new_index, &ScriptsContainer::Set
+        );
+    }
+
     void LuaComponentsBinder::CreateLuaEntityBind(sol::state& lua, Scene* scene)
     {
         using namespace Scripting;
@@ -188,9 +205,9 @@ namespace LevEngine::Scripting
                 {
                     return entity.GetName().c_str();
                 },
-                "uuid", [](const Entity& entity)-> uint32_t
+                "uuid", [](const Entity& entity)
                 {
-                    return entity;
+                    return entity.GetUUID();
                 }
             );
         }
@@ -223,9 +240,9 @@ namespace LevEngine::Scripting
                 {
                     return ResourceManager::LoadAsset<PrefabAsset>(String(PrefabName.c_str()));
                 }),
-            "instantiate", [](PrefabAsset& prefabAsset, const Ref<Scene>& scene)
+            "instantiate", [](PrefabAsset& prefabAsset, const Ref<Scene>& scene) -> Entity
             {
-                prefabAsset.Instantiate(scene);
+                return prefabAsset.Instantiate(scene);
             }
         );
     }
