@@ -26,6 +26,7 @@ FPSCameraRotation = {
 				local rotation = transform:getWorldRotation():toEuler() * Math.radToDeg
 				rotation.x = rotation.x - delta.y
 				rotation.x = Math.clamp(rotation.x, -89.999, 89.999)
+				rotation.y = rotation.y - delta.x;
 
 				transform:setWorldRotation(Math.createQuaternionFromYawPitchRoll(rotation * Math.degToRad))
 			end
