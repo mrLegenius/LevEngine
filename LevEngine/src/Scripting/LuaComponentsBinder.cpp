@@ -201,6 +201,16 @@ namespace LevEngine::Scripting
                         "remove_component"_hs,
                         entity);
                 },
+                "get_or_add_component", [](Entity& entity, const sol::table& scriptComponent, sol::this_state state)
+                {
+                    const auto component = InvokeMetaFunction(
+                        GetIdType(scriptComponent),
+                        "get_or_add_component"_hs,
+                        entity,
+                        state);
+
+                    return component ? component.cast<sol::reference>() : sol::lua_nil_t{};
+                },
                 "name", [](const Entity& entity)
                 {
                     return entity.GetName().c_str();

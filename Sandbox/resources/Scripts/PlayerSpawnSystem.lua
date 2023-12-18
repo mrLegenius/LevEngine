@@ -10,7 +10,7 @@ PlayerSpawnSystem = {
 
 		view:for_each(
 			function(entity)
-				local scriptsContainer = entity.get_component(ScriptsContainer)
+				local scriptsContainer = entity:get_component(ScriptsContainer)
 
 				if scriptsContainer.Player ~= nil then
 					return
@@ -29,14 +29,8 @@ PlayerSpawnSystem = {
 		local startPosition = Vector3(0.0, 1.0, 15.0)
 		playerTransform:setWorldPosition(startPosition)
 
-		local scriptsContainer = nil
-		if not playerEntity:has_component(ScriptsContainer) then
-			scriptsContainer = playerEntity:add_component(ScriptsContainer())
-		else
-			scriptsContainer = playerEntity:get_component(ScriptsContainer)
-		end
-
+		local scriptsContainer = playerEntity:get_or_add_component(ScriptsContainer())
+		
 		scriptsContainer.Player = Player(15.0)
-
 	end
 }

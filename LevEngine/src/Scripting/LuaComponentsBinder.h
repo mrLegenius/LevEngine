@@ -55,6 +55,9 @@ namespace LevEngine::Scripting
 
 	template <class TComponent>
 	auto remove_component(Entity& entity);
+
+	template <class TComponent>
+	auto get_or_add_component(Entity& entity, sol::this_state state);
 }
 
 #include "LuaComponentsBinder.inl"
