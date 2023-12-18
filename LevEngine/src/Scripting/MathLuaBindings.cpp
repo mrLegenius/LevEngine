@@ -50,7 +50,11 @@ namespace LevEngine::Scripting
 			sol::meta_function::addition, vec3_addition_overload,
 			sol::meta_function::subtraction, vec3_substraction_overload,
 			sol::meta_function::multiplication, vec3_multiplication_overload,
-			sol::meta_function::division, vec3_division_overload
+			sol::meta_function::division, vec3_division_overload,
+			"normalize", [] (Vector3& vector) { vector.Normalize(); },
+			"Zero", sol::var(Vector3::Zero),
+			"Up", sol::var(Vector3::Up),
+			"Right", sol::var(Vector3::Right)
 		);
 	}
 
@@ -98,7 +102,8 @@ namespace LevEngine::Scripting
 			sol::meta_function::addition, vec2_addition_overload,
 			sol::meta_function::subtraction, vec2_substraction_overload,
 			sol::meta_function::multiplication, vec2_multiplication_overload,
-			sol::meta_function::division, vec2_division_overload
+			sol::meta_function::division, vec2_division_overload,
+			"normalize", [] (Vector2& vector) { vector.Normalize(); }
 		);
 	}
 
@@ -148,7 +153,8 @@ namespace LevEngine::Scripting
 			sol::meta_function::addition, vec4_addition_overload,
 			sol::meta_function::subtraction, vec4_substraction_overload,
 			sol::meta_function::multiplication, vec4_multiplication_overload,
-			sol::meta_function::division, vec4_division_overload
+			sol::meta_function::division, vec4_division_overload,
+			"normalize", [] (Vector2& vector) { vector.Normalize(); }
 		);
 	}
 

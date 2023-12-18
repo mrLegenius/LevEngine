@@ -7,6 +7,7 @@
 #include "MathLuaBindings.h"
 #include "LuaComponentsBinder.h"
 #include "Assets/ScriptAsset.h"
+#include "Physics/Components/Rigidbody.h"
 
 #include "Scene/Scene.h"
 #include "Scene/Serializers/SerializerUtils.h"
@@ -33,10 +34,11 @@ namespace LevEngine::Scripting
 
         LuaComponentsBinder::CreateSceneBind(*m_Lua);
         LuaComponentsBinder::CreatePrefabBind(*m_Lua);
-
+        
         RegisterComponent(ScriptsContainer);
         RegisterComponent(Transform);
         RegisterComponent(CameraComponent);
+        RegisterComponent(Rigidbody)
     }
 
     ScriptingManager::ScriptingManager()
@@ -49,6 +51,7 @@ namespace LevEngine::Scripting
         m_Systems.clear();
         m_Components.clear();
 
+        bool isSuccessful = true;
         try
         {
             auto scripts = AssetDatabase::GetAllAssetsOfClass<ScriptAsset>();
@@ -83,7 +86,7 @@ namespace LevEngine::Scripting
                 catch (const sol::error& err)
                 {
                     Log::CoreError("Error loading lua script {0}: {1}", scriptName, err.what());
-                    return false;
+                    isSuccessful = false;
                 }
             }
         }
@@ -93,7 +96,7 @@ namespace LevEngine::Scripting
             return false;
         }
         
-        return true;
+        return isSuccessful;
     }
 
     void ScriptingManager::RegisterSystems(Scene* scene)
