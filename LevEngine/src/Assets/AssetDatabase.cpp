@@ -54,6 +54,10 @@ namespace LevEngine
 		}
 
 		Ref<Asset> asset = CreateAsset(path, uuid);
+		if (CastRef<ScriptAsset>(asset))
+		{
+			asset->Deserialize();
+		}
 
 		if (needToGenerateMeta)
 			asset->SerializeMeta();

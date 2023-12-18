@@ -34,10 +34,10 @@ namespace LevEngine
     {
         using namespace Scripting;
 
-        auto ScriptingManager = Application::Get().GetScriptingManager();
-        ScriptingManager.CreateRegistryBind(m_Registry);
+        auto scriptingManager = Application::Get().GetScriptingManager();
+        scriptingManager.CreateRegistryBind(m_Registry);
 
-        LuaComponentsBinder::CreateLuaEntityBind(*(ScriptingManager.GetLuaState()), this);
+        LuaComponentsBinder::CreateLuaEntityBind(*(scriptingManager.GetLuaState()), this);
 
         m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
     }

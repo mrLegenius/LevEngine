@@ -55,6 +55,7 @@
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
       <AdditionalModuleDependencies>
       </AdditionalModuleDependencies>
+      <AdditionalOptions>/bigobj </AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -77,6 +78,7 @@
       <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;external\sol;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,6 +121,7 @@
     <ClInclude Include="src\Renderer\Particles\ParticlesUtils.h" />
     <ClInclude Include="src\Renderer\Query.h" />
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
+    <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
@@ -1011,7 +1014,7 @@
     <ClInclude Include="src\Scene\Systems\Physics\RigidbodyInitSystem.h" />
     <ClInclude Include="src\Scripting\MathLuaBindings.h" />
     <ClInclude Include="src\Scripting\MetaUtilities.h" />
-    <ClInclude Include="src\Scripting\ScriptingComponent.h" />
+    <ClInclude Include="src\Scripting\ScriptingSystemComponents.h" />
     <ClInclude Include="src\Scripting\ScriptingManager.h" />
     <ClInclude Include="src\Scripting\ScriptingSystems.h" />
     <ClInclude Include="src\Serializers\RenderSettingsSerializer.h" />
@@ -1053,6 +1056,7 @@
     <ClCompile Include="src\Renderer\RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\RenderPass.cpp" />
     <ClCompile Include="src\Renderer\RenderSettings.cpp" />
+    <ClCompile Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
@@ -1404,6 +1408,19 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="external\eastl\doc\EASTL.natvis" />
+    <Natvis Include="external\entt\config.natvis" />
+    <Natvis Include="external\entt\container.natvis" />
+    <Natvis Include="external\entt\core.natvis" />
+    <Natvis Include="external\entt\entity.natvis" />
+    <Natvis Include="external\entt\graph.natvis" />
+    <Natvis Include="external\entt\locator.natvis" />
+    <Natvis Include="external\entt\meta.natvis" />
+    <Natvis Include="external\entt\platform.natvis" />
+    <Natvis Include="external\entt\poly.natvis" />
+    <Natvis Include="external\entt\process.natvis" />
+    <Natvis Include="external\entt\resource.natvis" />
+    <Natvis Include="external\entt\signal.natvis" />
+    <Natvis Include="external\sol\sol2.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
