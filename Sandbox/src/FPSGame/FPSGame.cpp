@@ -45,7 +45,7 @@ namespace Sandbox
 
 		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
-		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
+		//scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
 		scene->RegisterUpdateSystem<CollisionHandleSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
