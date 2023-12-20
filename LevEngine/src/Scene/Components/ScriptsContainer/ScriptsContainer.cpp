@@ -36,6 +36,7 @@ namespace LevEngine
         // so long we we don't mess with it
         if (auto maybeStringKey = key.as<sol::optional<std::string>>()) {
             const String keyString{maybeStringKey.value().c_str()};
+
             m_ScriptComponents.emplace(eastl::make_pair(keyString, value.as<sol::table>()));
         }
     }

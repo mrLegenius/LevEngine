@@ -184,17 +184,19 @@ namespace LevEngine::Editor
 	}
 
 	template<class T>
-	bool EditorGUI::DrawSelectableAssetList(const String& label, Set<Ref<T>>& assets, Ref<T>& selectedAsset)
+	bool EditorGUI::DrawSelectableAssetList(const String& label, Set<Ref<T>>& assets, Weak<T>& selectedAsset)
 	{
 		static_assert(std::is_base_of_v<Asset, T>, "T must derive from Asset");
 		bool changed = false;
+
+		auto selectedAssetRef = selectedAsset.lock();
 	
 		if (ImGui::BeginListBox(label.c_str()))
 		{
 			for (const auto& asset : assets)
 			{
 				bool isSelected = false;
-				const bool wasSelected = selectedAsset == asset;
+				const bool wasSelected = selectedAssetRef == asset;
 				
 				if (EditorGUI::DrawSelectableAsset<T>(asset, wasSelected, isSelected))
 					changed = true;
@@ -229,9 +231,9 @@ namespace LevEngine::Editor
 
 		if (ImGui::Button("-"))
 		{
-			if (selectedAsset)
+			if (selectedAssetRef)
 			{
-				assets.erase(selectedAsset);			
+				assets.erase(selectedAssetRef);
 				changed = true;
 			}
 		}
