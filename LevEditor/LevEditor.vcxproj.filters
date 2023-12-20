@@ -269,5 +269,11 @@
     <ClCompile Include="src\GUI\Drawers\Assets\ScriptAssetDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\ConstantForceDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\ScriptsContainerDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

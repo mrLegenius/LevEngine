@@ -24,7 +24,8 @@ namespace LevEngine::Scripting
 	template <class... Args>
 	inline auto InvokeMetaFunction(entt::id_type typeId, entt::id_type functionId, Args &&...args)
 	{
-		return InvokeMetaFunction(entt::resolve(typeId), functionId, eastl::forward<Args>(args)...);
+		auto metaType = entt::resolve(typeId);
+		return InvokeMetaFunction(metaType, functionId, eastl::forward<Args>(args)...);
 	}
 
 	template <typename T>

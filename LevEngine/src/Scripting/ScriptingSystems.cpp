@@ -1,7 +1,7 @@
 #include "levpch.h"
 
 #include "ScriptingSystems.h"
-#include "ScriptingComponent.h"
+#include "ScriptingSystemComponents.h"
 
 
 namespace LevEngine::Scripting {
@@ -15,7 +15,7 @@ namespace LevEngine::Scripting {
 			if (!result.valid()) {
 				sol::error err = result;
 				std::string what = err.what();
-				Log::Error(what);
+				Log::Error("Error while running lua system init {0}", what);
 			}
 		}
 	}
@@ -29,7 +29,7 @@ namespace LevEngine::Scripting {
 			if (!result.valid()) {
 				sol::error err = result;
 				std::string what = err.what();
-				Log::Error(what);
+				Log::Error("Error while running lua system update {0}", what);
 			}
 		}
 	}
@@ -43,7 +43,7 @@ namespace LevEngine::Scripting {
 			if (!result.valid()) {
 				sol::error err = result;
 				std::string what = err.what();
-				Log::Error(what);
+				Log::Error("Error while running lua system late update {0}", what);
 			}
 		}
 	}
