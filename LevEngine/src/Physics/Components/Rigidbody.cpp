@@ -3,56 +3,42 @@
 
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
-#include "Physics/Support/PhysicsUtils.h"
+#include "Physics/PhysicsUtils.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
 {
-    constexpr auto MAX_COLLIDER_NUMBER = 1;
-    constexpr auto MAX_MATERIAL_NUMBER = 1;
-
-    constexpr auto DEFAULT_GRAVITY_FLAG = true;
-    constexpr auto DEFAULT_COLLIDER_TYPE = Collider::Type::Box;
-
-    
-    
     void Rigidbody::OnDestroy(entt::registry& registry, entt::entity entity)
     {
         auto& rigidbody = registry.get<Rigidbody>(entity);
-        App::Get().GetPhysics().m_ActorEntityMap.erase(rigidbody.GetActor());
-        
-        rigidbody.DetachRigidbody();
-        
-        //Log::Debug("RIGIDBODY DESTROYED");
-        //Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
+        if (rigidbody.GetActor() != NULL)
+        {
+            rigidbody.DetachRigidbody();
+        }
     }
-    
-    
     
     physx::PxRigidActor* Rigidbody::GetActor() const
     {
         return m_Actor;
     }
     
-    physx::PxShape* Rigidbody::GetColliders() const
+    physx::PxShape* Rigidbody::GetCollider() const
     {
-        physx::PxShape* colliders[MAX_COLLIDER_NUMBER];
+        physx::PxShape* collider[1];
         const auto nbColliders = m_Actor->getNbShapes();
-        m_Actor->getShapes(colliders, nbColliders);
+        m_Actor->getShapes(collider, nbColliders);
 
-        return *colliders;
+        return *collider;
     }
 
-    physx::PxMaterial* Rigidbody::GetPhysicalMaterials(const physx::PxShape* colliders) const
+    physx::PxMaterial* Rigidbody::GetPhysicalMaterial() const
     {
-        physx::PxMaterial* physicalMaterials[MAX_MATERIAL_NUMBER];
-        const auto nbMaterials = colliders[0].getNbMaterials();
-        colliders[0].getMaterials(physicalMaterials, nbMaterials);
+        physx::PxMaterial* physicalMaterial[1];
+        const auto nbMaterials = GetCollider()->getNbMaterials();
+        GetCollider()->getMaterials(physicalMaterial, nbMaterials);
 
-        return *physicalMaterials;
+        return *physicalMaterial;
     }
-
-
     
     Vector3 Rigidbody::GetTransformScale() const
     {
@@ -85,37 +71,70 @@ namespace LevEngine
             }
         }
     }
-
-    
     
     bool Rigidbody::IsInitialized() const
     {
         return m_IsInitialized;
     }
     
-    void Rigidbody::Initialize(const Transform& transform)
+    void Rigidbody::Initialize(const Entity entity)
     {
         if (m_IsInitialized) return;
         
-        AttachRigidbody(m_Type);
-        SetRigidbodyPose(transform);
-        
-        AttachCollider(GetColliderType());
-        SetColliderOffsetPosition(GetColliderOffsetPosition());
-        SetColliderOffsetRotation(GetColliderOffsetRotation());
+        AttachRigidbody(entity);
+        AttachCollider();
         
         m_IsInitialized = true;
-        
+
+        // PhysX Transform doesn't take into account the object scale
+        const auto& transform = entity.GetComponent<Transform>();
         SetTransformScale(transform.GetWorldScale());
     }
-
-    void Rigidbody::SetRigidbodyPose(const Transform& transform)
+    
+    bool Rigidbody::IsVisualizationEnabled() const
     {
-        const physx::PxTransform pxTransform = PhysicsUtils::FromTransformToPxTransform(transform);
-        m_Actor->setGlobalPose(pxTransform);
+        return m_IsVisualizationEnabled;
+    }
+    
+    void Rigidbody::EnableVisualization(const bool flag)
+    {
+        m_IsVisualizationEnabled = flag;
+        
+        if (m_Actor != NULL)
+        {
+            m_Actor->setActorFlag(physx::PxActorFlag::eVISUALIZATION, flag);
+        }
     }
 
+    bool Rigidbody::IsGravityEnabled() const
+    {
+        return m_IsGravityEnabled;
+    }
+    
+    void Rigidbody::EnableGravity(const bool flag)
+    {
+        m_IsGravityEnabled = flag;
+        
+        if (m_Actor != NULL)
+        {
+            m_Actor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !flag);
+        }
+    }
 
+    bool Rigidbody::IsKinematicEnabled() const
+    {
+        return m_IsKinematicEnabled;
+    }
+
+    void Rigidbody::EnableKinematic(const bool flag)
+    {
+        m_IsKinematicEnabled = flag;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, flag);
+        }
+    }
     
     Rigidbody::Type Rigidbody::GetRigidbodyType() const
     {
@@ -126,32 +145,30 @@ namespace LevEngine
     {
         m_Type = rigidbodyType;
         
-        if (m_IsInitialized)
+        if (m_Actor != NULL)
         {
-            AttachRigidbody(rigidbodyType);
-            SetColliderType(DEFAULT_COLLIDER_TYPE);
-            SetTransformScale(m_TransformScale);
+            // copy old Entity
+            const auto entity = App::Get().GetPhysics().m_ActorEntityMap.at(m_Actor);
+            
+            AttachRigidbody(entity);
+            SetColliderType(GetColliderType());
         }
     }
-
-    void Rigidbody::AttachRigidbody(const Type& rigidbodyType)
+    
+    void Rigidbody::AttachRigidbody(const Entity entity)
     {
-        auto initialPose = physx::PxTransform(physx::PxIdentity);
-        if (m_IsInitialized)
+        if (m_Actor != NULL)
         {
-            initialPose = m_Actor->getGlobalPose();
             DetachRigidbody();
         }
     
-        switch (rigidbodyType)
+        switch (m_Type)
         {
         case Type::Static:
-            m_Actor = App::Get().GetPhysics().GetPhysics()->createRigidStatic(initialPose);
-            App::Get().GetPhysics().GetScene()->addActor(*(reinterpret_cast<physx::PxRigidStatic*>(m_Actor)));
+            m_Actor = App::Get().GetPhysics().CreateStaticActor(entity);
             break;
         case Type::Dynamic:
-            m_Actor = App::Get().GetPhysics().GetPhysics()->createRigidDynamic(initialPose);
-            App::Get().GetPhysics().GetScene()->addActor(*(reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)));
+            m_Actor = App::Get().GetPhysics().CreateDynamicActor(entity);
             EnableGravity(m_IsGravityEnabled);
             EnableKinematic(m_IsKinematicEnabled);
             SetMass(m_Mass);
@@ -171,61 +188,18 @@ namespace LevEngine
         default:
             break;
         }
-
-        if (m_IsInitialized)
-        {
-            App::Get().GetPhysics().m_ActorEntityMap.insert(m_Actor);
-        }
         
         EnableVisualization(m_IsVisualizationEnabled);
     }
 
     void Rigidbody::DetachRigidbody()
     {
-        DetachCollider();
-
-        if (m_Actor != NULL)
+        if (GetColliderCount() > 0)
         {
-            App::Get().GetPhysics().m_ActorEntityMap.erase(m_Actor);
-            
-            m_Actor->getScene()->removeActor(*m_Actor);
-            PX_RELEASE(m_Actor);
+            DetachCollider();
         }
+        App::Get().GetPhysics().RemoveActor(m_Actor);
     }
-    
-    bool Rigidbody::IsGravityEnabled() const
-    {
-        return m_IsGravityEnabled;
-    }
-    
-    void Rigidbody::EnableGravity(const bool flag)
-    {
-        m_IsGravityEnabled = flag;
-        
-        if (m_Actor != NULL)
-        {
-            m_Actor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !flag);
-        }
-    }
-
-
-    
-    bool Rigidbody::IsKinematicEnabled() const
-    {
-        return m_IsKinematicEnabled;
-    }
-
-    void Rigidbody::EnableKinematic(const bool flag)
-    {
-        m_IsKinematicEnabled = flag;
-
-        if (m_Actor != NULL)
-        {
-            reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, flag);
-        }
-    }
-    
-    
 
     float Rigidbody::GetMass() const
     {
@@ -281,47 +255,7 @@ namespace LevEngine
             reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setMassSpaceInertiaTensor(PhysicsUtils::FromVector3ToPxVec3(value));
         }
     }
-    
-    float Rigidbody::GetLinearDamping() const
-    {
-        return m_LinearDamping;
-    }
 
-    void Rigidbody::SetLinearDamping(const float value)
-    {
-        if (value < 0.0f) return;
-        
-        if (m_Type != Type::Dynamic) return;
-        
-        m_LinearDamping = value;
-
-        if (m_Actor != NULL)
-        {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setLinearDamping(value);
-        }
-    }
-
-    float Rigidbody::GetAngularDamping() const
-    {
-        return m_AngularDamping;
-    }
-
-    void Rigidbody::SetAngularDamping(const float value)
-    {
-        if (value < 0.0f) return;
-        
-        if (m_Type != Type::Dynamic) return;
-        
-        m_AngularDamping = value;
-
-        if (m_Actor != NULL)
-        {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setAngularDamping(value);
-        }
-    }
-
-
-    
     float Rigidbody::GetMaxLinearVelocity() const
     {
         return m_MaxLinearVelocity;
@@ -360,7 +294,43 @@ namespace LevEngine
         }
     }
     
+    float Rigidbody::GetLinearDamping() const
+    {
+        return m_LinearDamping;
+    }
 
+    void Rigidbody::SetLinearDamping(const float value)
+    {
+        if (value < 0.0f) return;
+        
+        if (m_Type != Type::Dynamic) return;
+        
+        m_LinearDamping = value;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setLinearDamping(value);
+        }
+    }
+
+    float Rigidbody::GetAngularDamping() const
+    {
+        return m_AngularDamping;
+    }
+
+    void Rigidbody::SetAngularDamping(const float value)
+    {
+        if (value < 0.0f) return;
+        
+        if (m_Type != Type::Dynamic) return;
+        
+        m_AngularDamping = value;
+
+        if (m_Actor != NULL)
+        {
+            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setAngularDamping(value);
+        }
+    }
     
     bool Rigidbody::IsPosAxisXLocked() const
     {
@@ -464,8 +434,291 @@ namespace LevEngine
         }
     }
 
+    bool Rigidbody::IsTriggerEnabled() const
+    {
+        return m_ColliderCollection[0]->m_IsTriggerEnabled;
+    }
 
+    void Rigidbody::EnableTrigger(bool flag)
+    {
+        m_ColliderCollection[0]->m_IsTriggerEnabled = flag;
+
+        if (m_Actor != NULL)
+        {
+            GetCollider()[0].setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+            GetCollider()[0].setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+            GetCollider()[0].setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !flag);
+            GetCollider()[0].setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, flag);
+        }
+    }
     
+    Collider::Type Rigidbody::GetColliderType() const
+    {
+        return m_ColliderCollection[0].get()->m_Type;
+    }
+
+    void Rigidbody::SetColliderType(const Collider::Type& colliderType)
+    {
+        if (m_Actor != NULL && GetColliderCount() > 0)
+        {
+            DetachCollider();
+        }
+        
+        switch (colliderType)
+        {
+        case Collider::Type::Sphere:
+            m_ColliderCollection.push_back(CreateRef<Sphere>());
+            break;
+        case Collider::Type::Capsule:
+            m_ColliderCollection.push_back(CreateRef<Capsule>());
+            break;
+        case Collider::Type::Box:
+            m_ColliderCollection.push_back(CreateRef<Box>());
+            break;
+        default:
+            break;
+        }
+        m_ColliderCollection[0].get()->m_Type = colliderType;
+
+        if (m_Actor != NULL)
+        {
+            AttachCollider();
+            SetTransformScale(m_TransformScale);
+        }
+    }
+
+    void Rigidbody::AttachCollider()
+    {
+        const auto physicalMaterial =
+            App::Get().GetPhysics().CreateMaterial(
+                GetStaticFriction(),
+                GetDynamicFriction(),
+                GetRestitution()
+            );
+        
+        physx::PxShape* collider = nullptr;
+        switch (GetColliderType())
+        {
+        case Collider::Type::Sphere:
+            collider =
+                App::Get().GetPhysics().CreateSphere(
+                    GetSphereRadius(),
+                    physicalMaterial
+                );
+            break;
+        case Collider::Type::Capsule:
+            collider =
+                App::Get().GetPhysics().CreateCapsule(
+                    GetCapsuleRadius(),
+                    GetCapsuleHalfHeight(),
+                    physicalMaterial
+                );
+            break;
+        case Collider::Type::Box:
+            collider =
+                App::Get().GetPhysics().CreateBox(
+                    GetBoxHalfExtents(),
+                    physicalMaterial
+                );
+            break;
+        default:
+            break;
+        }
+    
+        m_Actor->attachShape(*collider);
+        
+        collider->release();
+        physicalMaterial->release();
+
+        EnableTrigger(IsTriggerEnabled());
+        SetColliderOffsetPosition(GetColliderOffsetPosition());
+        SetColliderOffsetRotation(GetColliderOffsetRotation());
+    }
+    
+    void Rigidbody::DetachCollider()
+    {
+        const auto colliders = GetCollider();
+        m_Actor->detachShape(colliders[0]);
+        
+        m_ColliderCollection.clear();
+    }
+
+    int Rigidbody::GetColliderCount() const
+    {
+        return static_cast<int>(m_ColliderCollection.size());
+    }
+    
+    Vector3 Rigidbody::GetColliderOffsetPosition() const
+    {
+        return m_ColliderCollection[0]->OffsetPosition;
+    }
+
+    void Rigidbody::SetColliderOffsetPosition(const Vector3 position)
+    {
+        m_ColliderCollection[0]->OffsetPosition = position;
+        
+        if (m_Actor != NULL)
+        {
+            const auto colliders = GetCollider();
+            const auto rotation = colliders[0].getLocalPose().q;
+            colliders[0].setLocalPose(physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(position), rotation));
+        }
+    }
+
+    Vector3 Rigidbody::GetColliderOffsetRotation() const
+    {
+        return m_ColliderCollection[0]->OffsetRotation;
+    }
+
+    void Rigidbody::SetColliderOffsetRotation(const Vector3 rotation)
+    {
+        m_ColliderCollection[0]->OffsetRotation = rotation;
+        
+        if (m_Actor != NULL)
+        {
+            const auto colliders = GetCollider();
+            const auto position = colliders[0].getLocalPose().p;
+            const auto quaternion = Quaternion::CreateFromYawPitchRoll(Math::ToRadians(rotation));
+            colliders[0].setLocalPose(physx::PxTransform(position, PhysicsUtils::FromQuaternionToPxQuat(quaternion)));
+        }
+    }
+    
+    float Rigidbody::GetSphereRadius() const
+    {
+        return static_cast<Sphere*>(m_ColliderCollection[0].get())->Radius;
+    }
+
+    void Rigidbody::SetSphereRadius(const float radius)
+    {
+        if (radius <= 0.0f) return;
+        
+        static_cast<Sphere*>(m_ColliderCollection[0].get())->Radius = radius;
+        
+        if (m_Actor != NULL)
+        {
+            const float maxTransformScale = Math::MaxElement(m_TransformScale);
+            
+            const auto colliders = GetCollider();
+            colliders[0].setGeometry(physx::PxSphereGeometry(radius * maxTransformScale));
+        }
+    }
+
+    float Rigidbody::GetCapsuleRadius() const
+    {
+        return static_cast<Capsule*>(m_ColliderCollection[0].get())->Radius;
+    }
+
+    void Rigidbody::SetCapsuleRadius(const float radius)
+    {
+        if (radius <= 0.0f) return;
+        
+        static_cast<Capsule*>(m_ColliderCollection[0].get())->Radius = radius;
+        
+        if (m_Actor != NULL)
+        {
+            const float maxTransformScale = Math::MaxElement(m_TransformScale);
+            
+            const auto colliders = GetCollider();
+            const physx::PxGeometryHolder geom(colliders[0].getGeometry());
+            const auto initialHeight = geom.capsule().halfHeight;
+            colliders[0].setGeometry(physx::PxCapsuleGeometry(radius * maxTransformScale, initialHeight));
+        }
+    }
+    
+    float Rigidbody::GetCapsuleHalfHeight() const
+    {
+        return static_cast<Capsule*>(m_ColliderCollection[0].get())->HalfHeight;
+    }
+
+    void Rigidbody::SetCapsuleHalfHeight(const float halfHeight)
+    {
+        if (halfHeight < 0.0f) return;
+        
+        static_cast<Capsule*>(m_ColliderCollection[0].get())->HalfHeight = halfHeight;
+        
+        if (m_Actor != NULL)
+        {
+            const float maxTransformScale = Math::MaxElement(m_TransformScale);
+            
+            const auto colliders = GetCollider();
+            const physx::PxGeometryHolder geom(colliders[0].getGeometry());
+            const auto initialRadius = geom.capsule().radius;
+            colliders[0].setGeometry(physx::PxCapsuleGeometry(initialRadius, halfHeight * maxTransformScale));
+        }
+    }
+
+    Vector3 Rigidbody::GetBoxHalfExtents() const
+    {
+        return static_cast<Box*>(m_ColliderCollection[0].get())->HalfExtents;
+    }
+
+    void Rigidbody::SetBoxHalfExtents(const Vector3 halfExtents)
+    {
+        if (halfExtents.x <= 0.0f || halfExtents.y <= 0.0f || halfExtents.z <= 0.0f) return;
+        
+        static_cast<Box*>(m_ColliderCollection[0].get())->HalfExtents = halfExtents;
+        
+        if (m_Actor != NULL)
+        {
+            const auto colliders = GetCollider();
+            colliders[0].setGeometry(physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents * m_TransformScale)));
+        }
+    }
+    
+    float Rigidbody::GetStaticFriction() const
+    {
+        return m_ColliderCollection[0]->m_PhysicalMaterial->StaticFriction;
+    }
+
+    void Rigidbody::SetStaticFriction(const float staticFriction)
+    {
+        if (staticFriction < 0.0f || staticFriction > 1.0f) return;
+        
+        m_ColliderCollection[0]->m_PhysicalMaterial->StaticFriction = staticFriction;
+        
+        if (m_Actor != NULL)
+        {
+            const auto physicalMaterials = GetPhysicalMaterial();
+            physicalMaterials[0].setStaticFriction(staticFriction);
+        }
+    }
+    
+    float Rigidbody::GetDynamicFriction() const
+    {
+        return m_ColliderCollection[0]->m_PhysicalMaterial->DynamicFriction;
+    }
+
+    void Rigidbody::SetDynamicFriction(const float dynamicFriction)
+    {
+        if (dynamicFriction < 0.0f || dynamicFriction > 1.0f) return;
+        
+        m_ColliderCollection[0]->m_PhysicalMaterial->DynamicFriction = dynamicFriction;
+        
+        if (m_Actor != NULL)
+        {
+            const auto physicalMaterials = GetPhysicalMaterial();
+            physicalMaterials[0].setDynamicFriction(dynamicFriction);
+        }
+    }
+    
+    float Rigidbody::GetRestitution() const
+    {
+        return m_ColliderCollection[0]->m_PhysicalMaterial->Restitution;
+    }
+
+    void Rigidbody::SetRestitution(const float restitution)
+    {
+        if (restitution < 0.0f || restitution > 1.0f) return;
+        
+        m_ColliderCollection[0]->m_PhysicalMaterial->Restitution = restitution;
+        
+        if (m_Actor != NULL)
+        {
+            const auto physicalMaterials = GetPhysicalMaterial();
+            physicalMaterials[0].setRestitution(restitution);
+        }
+    }
+
     void Rigidbody::AddForce(const Vector3 force, const ForceMode mode) const
     {
         if (m_Type != Type::Dynamic) return;
@@ -493,7 +746,7 @@ namespace LevEngine
             }
         }
     }
-
+    
     void Rigidbody::AddTorque(const Vector3 torque, const ForceMode mode) const
     {
         if (m_Type != Type::Dynamic) return;
@@ -521,391 +774,27 @@ namespace LevEngine
             }
         }
     }
-    
-    
-    
-    Collider::Type Rigidbody::GetColliderType() const
+
+    const Vector<Entity>& Rigidbody::GetTriggerEnterBuffer() const
     {
-        return m_ColliderCollection[0].get()->m_Type;
+        return m_TriggerEnterBuffer;
     }
 
-    void Rigidbody::SetColliderType(const Collider::Type& colliderType)
+    const Vector<Entity>& Rigidbody::GetTriggerExitBuffer() const
     {
-        if (GetColliderCount() >= MAX_COLLIDER_NUMBER)
-        {
-            DetachCollider();
-        }
-        
-        switch (colliderType)
-        {
-        case Collider::Type::Sphere:
-            m_ColliderCollection.push_back(CreateRef<Sphere>());
-            break;
-        case Collider::Type::Capsule:
-            m_ColliderCollection.push_back(CreateRef<Capsule>());
-            break;
-        case Collider::Type::Box:
-            m_ColliderCollection.push_back(CreateRef<Box>());
-            break;
-        default:
-            break;
-        }
-
-        m_ColliderCollection[0].get()->m_Type = colliderType;
-
-        if (m_IsInitialized)
-        {
-            AttachCollider(colliderType);
-            SetTransformScale(m_TransformScale);
-        }
+        return m_TriggerExitBuffer;
     }
 
-    void Rigidbody::AttachCollider(const Collider::Type& colliderType)
+    const Vector<Collision>& Rigidbody::GetCollisionEnterBuffer() const
     {
-        const auto physicalMaterial = App::Get().GetPhysics().GetPhysics()->createMaterial(GetStaticFriction(), GetDynamicFriction(), GetRestitution());
-        
-        physx::PxShape* collider = nullptr;
-        switch (colliderType)
-        {
-        case Collider::Type::Sphere:
-            collider = App::Get().GetPhysics().GetPhysics()->createShape(physx::PxSphereGeometry(GetSphereRadius()), *physicalMaterial, true);
-            break;
-        case Collider::Type::Capsule:
-            collider = App::Get().GetPhysics().GetPhysics()->createShape(physx::PxCapsuleGeometry(GetCapsuleRadius(), GetCapsuleHalfHeight()), *physicalMaterial, true);
-            break;
-        case Collider::Type::Box:
-            collider = App::Get().GetPhysics().GetPhysics()->createShape(physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(GetBoxHalfExtents())), *physicalMaterial, true);
-            break;
-        default:
-            break;
-        }
-    
-        m_Actor->attachShape(*collider);
-        collider->release();
-        physicalMaterial->release();
+        return m_CollisionEnterBuffer; 
+    }
 
-        EnableTrigger(IsTriggerEnabled());
+    const Vector<Collision>& Rigidbody::GetCollisionExitBuffer() const
+    {
+        return m_CollisionExitBuffer;
     }
     
-    void Rigidbody::DetachCollider()
-    {
-        if (GetColliderCount() <= 0) return;
-
-        if (m_Actor != NULL)
-        {
-            const auto colliders = GetColliders();
-            for (auto i = 0; i < GetColliderCount(); i++)
-            {
-                m_Actor->detachShape(colliders[i]);
-            }
-        }
-        
-        m_ColliderCollection.clear();
-    }
-
-    int Rigidbody::GetColliderCount() const
-    {
-        return static_cast<int>(m_ColliderCollection.size());
-    }
-
-    bool Rigidbody::IsVisualizationEnabled() const
-    {
-        return m_IsVisualizationEnabled;
-    }
-    
-    void Rigidbody::EnableVisualization(const bool flag)
-    {
-        m_IsVisualizationEnabled = flag;
-        
-        if (m_Actor != NULL)
-        {
-            m_Actor->setActorFlag(physx::PxActorFlag::eVISUALIZATION, flag);
-        }
-    }
-    
-    
-    
-    Vector3 Rigidbody::GetColliderOffsetPosition() const
-    {
-        return m_ColliderCollection[0]->OffsetPosition;
-    }
-
-    void Rigidbody::SetColliderOffsetPosition(const Vector3 position)
-    {
-        m_ColliderCollection[0]->OffsetPosition = position;
-        
-        if (m_Actor != NULL)
-        {
-            const auto colliders = GetColliders();
-            const auto rotation = colliders[0].getLocalPose().q;
-            colliders[0].setLocalPose(physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(position), rotation));
-        }
-    }
-
-    Vector3 Rigidbody::GetColliderOffsetRotation() const
-    {
-        return m_ColliderCollection[0]->OffsetRotation;
-    }
-
-    void Rigidbody::SetColliderOffsetRotation(const Vector3 rotation)
-    {
-        m_ColliderCollection[0]->OffsetRotation = rotation;
-        
-        if (m_Actor != NULL)
-        {
-            const auto colliders = GetColliders();
-            const auto position = colliders[0].getLocalPose().p;
-            const auto quaternion = Quaternion::CreateFromYawPitchRoll(Math::ToRadians(rotation));
-            colliders[0].setLocalPose(physx::PxTransform(position, PhysicsUtils::FromQuaternionToPxQuat(quaternion)));
-        }
-    }
-
-    
-
-    bool Rigidbody::IsTriggerEnabled() const
-    {
-        return m_ColliderCollection[0]->m_IsTriggerEnabled;
-    }
-
-    void Rigidbody::EnableTrigger(bool flag)
-    {
-        m_ColliderCollection[0]->m_IsTriggerEnabled = flag;
-
-        if (m_Actor != NULL)
-        {
-            GetColliders()[0].setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-            GetColliders()[0].setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-            GetColliders()[0].setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !flag);
-            GetColliders()[0].setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, flag);
-        }
-    }
-    
-    
-    
-    float Rigidbody::GetSphereRadius() const
-    {
-        return static_cast<Sphere*>(m_ColliderCollection[0].get())->Radius;
-    }
-
-    void Rigidbody::SetSphereRadius(const float radius)
-    {
-        if (radius <= 0.0f) return;
-        
-        static_cast<Sphere*>(m_ColliderCollection[0].get())->Radius = radius;
-        
-        if (m_Actor != NULL)
-        {
-            const float maxTransformScale = Math::MaxElement(m_TransformScale);
-            
-            const auto colliders = GetColliders();
-            colliders[0].setGeometry(physx::PxSphereGeometry(radius * maxTransformScale));
-        }
-    }
-
-    float Rigidbody::GetCapsuleRadius() const
-    {
-        return static_cast<Capsule*>(m_ColliderCollection[0].get())->Radius;
-    }
-
-    void Rigidbody::SetCapsuleRadius(const float radius)
-    {
-        if (radius <= 0.0f) return;
-        
-        static_cast<Capsule*>(m_ColliderCollection[0].get())->Radius = radius;
-        
-        if (m_Actor != NULL)
-        {
-            const float maxTransformScale = Math::MaxElement(m_TransformScale);
-            
-            const auto colliders = GetColliders();
-            const physx::PxGeometryHolder geom(colliders[0].getGeometry());
-            const auto initialHeight = geom.capsule().halfHeight;
-            colliders[0].setGeometry(physx::PxCapsuleGeometry(radius * maxTransformScale, initialHeight));
-        }
-    }
-    
-    float Rigidbody::GetCapsuleHalfHeight() const
-    {
-        return static_cast<Capsule*>(m_ColliderCollection[0].get())->HalfHeight;
-    }
-
-    void Rigidbody::SetCapsuleHalfHeight(const float halfHeight)
-    {
-        if (halfHeight < 0.0f) return;
-        
-        static_cast<Capsule*>(m_ColliderCollection[0].get())->HalfHeight = halfHeight;
-        
-        if (m_Actor != NULL)
-        {
-            const float maxTransformScale = Math::MaxElement(m_TransformScale);
-            
-            const auto colliders = GetColliders();
-            const physx::PxGeometryHolder geom(colliders[0].getGeometry());
-            const auto initialRadius = geom.capsule().radius;
-            colliders[0].setGeometry(physx::PxCapsuleGeometry(initialRadius, halfHeight * maxTransformScale));
-        }
-    }
-
-    Vector3 Rigidbody::GetBoxHalfExtents() const
-    {
-        return static_cast<Box*>(m_ColliderCollection[0].get())->HalfExtents;
-    }
-
-    void Rigidbody::SetBoxHalfExtents(const Vector3 halfExtents)
-    {
-        if (halfExtents.x <= 0.0f || halfExtents.y <= 0.0f || halfExtents.z <= 0.0f) return;
-        
-        static_cast<Box*>(m_ColliderCollection[0].get())->HalfExtents = halfExtents;
-        
-        if (m_Actor != NULL)
-        {
-            const auto colliders = GetColliders();
-            colliders[0].setGeometry(physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents * m_TransformScale)));
-        }
-    }
-    
-    
-    
-    float Rigidbody::GetStaticFriction() const
-    {
-        return m_ColliderCollection[0]->m_PhysicalMaterial->StaticFriction;
-    }
-
-    void Rigidbody::SetStaticFriction(const float staticFriction)
-    {
-        if (staticFriction < 0.0f || staticFriction > 1.0f) return;
-        
-        m_ColliderCollection[0]->m_PhysicalMaterial->StaticFriction = staticFriction;
-        
-        if (m_Actor != NULL)
-        {
-            const auto colliders = GetColliders();
-            const auto physicalMaterials = GetPhysicalMaterials(colliders);
-            
-            physicalMaterials[0].setStaticFriction(staticFriction);
-        }
-    }
-    
-    float Rigidbody::GetDynamicFriction() const
-    {
-        return m_ColliderCollection[0]->m_PhysicalMaterial->DynamicFriction;
-    }
-
-    void Rigidbody::SetDynamicFriction(const float dynamicFriction)
-    {
-        if (dynamicFriction < 0.0f || dynamicFriction > 1.0f) return;
-        
-        m_ColliderCollection[0]->m_PhysicalMaterial->DynamicFriction = dynamicFriction;
-        
-        if (m_Actor != NULL)
-        {
-            const auto colliders = GetColliders();
-            const auto physicalMaterials = GetPhysicalMaterials(colliders);
-            
-            physicalMaterials[0].setDynamicFriction(dynamicFriction);
-        }
-    }
-    
-    float Rigidbody::GetRestitution() const
-    {
-        return m_ColliderCollection[0]->m_PhysicalMaterial->Restitution;
-    }
-
-    void Rigidbody::SetRestitution(const float restitution)
-    {
-        if (restitution < 0.0f || restitution > 1.0f) return;
-        
-        m_ColliderCollection[0]->m_PhysicalMaterial->Restitution = restitution;
-        
-        if (m_Actor != NULL)
-        {
-            const auto colliders = GetColliders();
-            const auto physicalMaterials = GetPhysicalMaterials(colliders);
-            
-            physicalMaterials[0].setRestitution(restitution);
-        }
-    }
-
-
-    
-    void Rigidbody::OnCollisionEnter(const Action<Collision>& callback)
-    {
-        m_IsCollisionEnterEnabled = true;
-        
-        while (!m_CollisionEnterEntityBuffer.empty())
-        {
-            //Log::Debug("START m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
-            // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
-            if (m_CollisionEnterEntityBuffer.back().ContactEntity)
-            {
-                const auto& collisionInfo = m_CollisionEnterEntityBuffer.back();
-                App::Get().GetPhysics().m_CollisionEvents.push_back(MakePair<Action<Collision>,Collision>(callback, collisionInfo));
-                //Log::Debug("Collision Enter event was added");
-            }
-            m_CollisionEnterEntityBuffer.pop_back();
-            //Log::Debug("END m_CollisionEnterEntityBuffer SIZE: {0}", m_CollisionEnterEntityBuffer.size());
-        }
-    }
-    
-    void Rigidbody::OnCollisionExit(const Action<Collision>& callback)
-    {
-        m_IsCollisionExitEnabled = true;
-        
-        while (!m_CollisionExitEntityBuffer.empty())
-        {
-            //Log::Debug("START m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
-            // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
-            if (m_CollisionExitEntityBuffer.back().ContactEntity)
-            {
-                const auto& collisionInfo = m_CollisionExitEntityBuffer.back();
-                App::Get().GetPhysics().m_CollisionEvents.push_back(MakePair<Action<Collision>,Collision>(callback, collisionInfo));
-                //Log::Debug("Collision Exit event was added");
-            }
-            m_CollisionExitEntityBuffer.pop_back();
-            //Log::Debug("END m_CollisionExitEntityBuffer SIZE: {0}", m_CollisionExitEntityBuffer.size());
-        }
-    }
-
-    void Rigidbody::OnTriggerEnter(const Action<Entity>& callback)
-    {
-        m_IsTriggerEnterEnabled = true;
-        
-        while (!m_TriggerEnterEntityBuffer.empty())
-        {
-            //Log::Debug("START m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
-            // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
-            if (m_TriggerEnterEntityBuffer.back())
-            {
-                const auto& otherEntity = m_TriggerEnterEntityBuffer.back();
-                App::Get().GetPhysics().m_TriggerEvents.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
-                //Log::Debug("Trigger Enter event was added");
-            }
-            m_TriggerEnterEntityBuffer.pop_back();
-            //Log::Debug("END m_TriggerEnterEntityBuffer SIZE: {0}", m_TriggerEnterEntityBuffer.size());
-        }
-    }
-
-    void Rigidbody::OnTriggerExit(const Action<Entity>& callback)
-    {
-        m_IsTriggerExitEnabled = true;
-        
-        while (!m_TriggerExitEntityBuffer.empty())
-        {
-            //Log::Debug("START m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
-            // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
-            if (m_TriggerExitEntityBuffer.back())
-            {
-                const auto& otherEntity = m_TriggerExitEntityBuffer.back();
-                App::Get().GetPhysics().m_TriggerEvents.push_back(MakePair<Action<Entity>,Entity>(callback, otherEntity));
-                //Log::Debug("Trigger Exit event was added");
-            }
-            m_TriggerExitEntityBuffer.pop_back();
-            //Log::Debug("END m_TriggerExitEntityBuffer SIZE: {0}", m_TriggerExitEntityBuffer.size());
-        }
-    }
-
-    
-
     class RigidbodySerializer final : public ComponentSerializer<Rigidbody, RigidbodySerializer>
     {
     protected:
@@ -970,10 +859,10 @@ namespace LevEngine
             {
                 component.EnableVisualization(visualizationEnableNode.as<bool>());
             }
-            
-            if (const auto rigidbodyTypeNode = node["Rigidbody Type"])
+
+            if (const auto gravityEnableNode = node["Is Gravity Enabled"])
             {
-                component.SetRigidbodyType(static_cast<Rigidbody::Type>(rigidbodyTypeNode.as<int>()));
+                component.EnableGravity(gravityEnableNode.as<bool>());
             }
 
             /*
@@ -982,10 +871,10 @@ namespace LevEngine
                 component.EnableKinematic(kinematicEnableNode.as<bool>());
             }
             */
-
-            if (const auto gravityEnableNode = node["Is Gravity Enabled"])
+            
+            if (const auto rigidbodyTypeNode = node["Rigidbody Type"])
             {
-                component.EnableGravity(gravityEnableNode.as<bool>());
+                component.SetRigidbodyType(static_cast<Rigidbody::Type>(rigidbodyTypeNode.as<int>()));
             }
             
             if (const auto massNode = node["Mass"])
@@ -1003,16 +892,6 @@ namespace LevEngine
                 component.SetInertiaTensor(inertiaTensorNode.as<Vector3>());
             }
 
-            if (const auto linearDampingNode = node["Linear Damping"])
-            {
-                component.SetLinearDamping(linearDampingNode.as<float>());
-            }
-
-            if (const auto angularDampingNode = node["Angular Damping"])
-            {
-                component.SetAngularDamping(angularDampingNode.as<float>());
-            }
-
             if (const auto maxLinearVelocityNode = node["Max Linear Velocity"])
             {
                 component.SetMaxLinearVelocity(maxLinearVelocityNode.as<float>());
@@ -1021,6 +900,16 @@ namespace LevEngine
             if (const auto maxAngularVelocityNode = node["Max Angular Velocity"])
             {
                 component.SetMaxAngularVelocity(maxAngularVelocityNode.as<float>());
+            }
+
+            if (const auto linearDampingNode = node["Linear Damping"])
+            {
+                component.SetLinearDamping(linearDampingNode.as<float>());
+            }
+
+            if (const auto angularDampingNode = node["Angular Damping"])
+            {
+                component.SetAngularDamping(angularDampingNode.as<float>());
             }
             
             if (const auto posAxisXLockNode = node["Is Pos Axis X Locked"])
@@ -1051,6 +940,11 @@ namespace LevEngine
             if (const auto rotAxisZLockNode = node["Is Rot Axis Z Locked"])
             {
                 component.LockRotAxisZ(rotAxisZLockNode.as<bool>());
+            }
+
+            if (const auto triggerEnableNode = node["Is Trigger Enabled"])
+            {
+                component.EnableTrigger(triggerEnableNode.as<bool>());
             }
             
             if (const auto colliderTypeNode = node["Collider Type"])
@@ -1095,11 +989,6 @@ namespace LevEngine
             if (const auto collideOffsetRotationNode = node["Offset Rotation"])
             {
                 component.SetColliderOffsetRotation(collideOffsetRotationNode.as<Vector3>());
-            }
-
-            if (const auto triggerEnableNode = node["Is Trigger Enabled"])
-            {
-                component.EnableTrigger(triggerEnableNode.as<bool>());
             }
 
             if (const auto staticFrictionNode = node["Static Friction"])

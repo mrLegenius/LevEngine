@@ -1,13 +1,11 @@
 ﻿#include "levpch.h"
 #include "Physics.h"
 
-#include <wrl/internal.h>
-
+#include "PhysicsUtils.h"
 #include "EASTL/list.h"
 #include "Kernel/Application.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Renderer/DebugRender/DebugRender.h"
-#include "Physics/Support/PhysicsUtils.h"
 
 constexpr auto DEFAULT_PVD_HOST = "127.0.0.1";
 constexpr auto DEFAULT_PVD_PORT = 5425;
@@ -22,8 +20,6 @@ namespace LevEngine
     {
         return CreateScope<Physics>();
     }
-    
-
     
     void Physics::Initialize()
     {
@@ -52,8 +48,6 @@ namespace LevEngine
         Reset();
     }
 
-    
-
     void Physics::ResetPhysicsScene()
     {
         PX_RELEASE(m_Scene)
@@ -73,14 +67,81 @@ namespace LevEngine
         }
     }
 
+    physx::PxRigidActor* Physics::CreateStaticActor(const Entity entity) const
+    {
+        const auto& transform = entity.GetComponent<Transform>();
+        physx::PxRigidActor* actor = m_Physics->createRigidStatic(PhysicsUtils::FromTransformToPxTransform(transform));
+        m_Scene->addActor(*(reinterpret_cast<physx::PxRigidStatic*>(actor)));
+        
+        App::Get().GetPhysics().m_ActorEntityMap.insert({actor, entity});
+
+        return actor;
+    }
+
+    physx::PxRigidActor* Physics::CreateDynamicActor(const Entity entity) const
+    {
+        const auto& transform = entity.GetComponent<Transform>();
+        physx::PxRigidActor* actor = m_Physics->createRigidDynamic(PhysicsUtils::FromTransformToPxTransform(transform));
+        m_Scene->addActor(*(reinterpret_cast<physx::PxRigidDynamic*>(actor)));
+
+        App::Get().GetPhysics().m_ActorEntityMap.insert({actor, entity});
+
+        return actor;
+    }
+
+    void Physics::RemoveActor(physx::PxActor* actor) const
+    {
+        App::Get().GetPhysics().m_ActorEntityMap.erase(actor);
+        
+        m_Scene->removeActor(*actor);
+        PX_RELEASE(actor);
+    }
     
+    physx::PxMaterial* Physics::CreateMaterial(float staticFriction, float dynamicFriction, float restitution) const
+    {
+        return m_Physics->createMaterial(
+            staticFriction,
+            dynamicFriction,
+            restitution
+        );
+    }
+
+    physx::PxShape* Physics::CreateSphere(const float radius, const physx::PxMaterial* material) const
+    {
+        return m_Physics->createShape(
+            physx::PxSphereGeometry(radius),
+            *material,
+            true
+        );
+    }
+
+    physx::PxShape* Physics::CreateCapsule(const float radius, const float halfHeight, const physx::PxMaterial* material) const
+    {
+        return m_Physics->createShape(
+            physx::PxCapsuleGeometry(radius, halfHeight),
+            *material,
+            true
+        );
+    }
+
+    physx::PxShape* Physics::CreateBox(const Vector3 halfExtents, const physx::PxMaterial* material) const
+    {
+        return m_Physics->createShape(
+            physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents)),
+            *material,
+            true
+        );
+    }
+
+    Entity Physics::GetEntityByActor(physx::PxActor* actor) const
+    {
+        return m_ActorEntityMap.at(actor);
+    }
     
     void Physics::ClearAccumulator()
     {
         m_Accumulator = 0.0f;
     }
-
-    
     
     bool Physics::IsAdvanced(const float deltaTime)
     {
@@ -136,138 +197,13 @@ namespace LevEngine
     
     void Physics::Process(entt::registry& registry, float deltaTime)
     {
+        m_PhysicsUpdate.ClearBuffers(registry);
+        
         if (!StepPhysics(deltaTime)) return;
         m_PhysicsUpdate.UpdateTransforms(registry);
         m_PhysicsUpdate.UpdateConstantForces(registry);
-        //m_PhysicsUpdate.OneMoreStrangeSystem(registry);
-        m_PhysicsUpdate.HandleEvents();
         
         if (!m_IsDebugRenderEnabled) return;
         DrawDebugLines();
-    }
-
-    
-
-    physx::PxScene* Physics::GetScene() const
-    {
-        return m_Scene;
-    }
-
-    physx::PxPhysics* Physics::GetPhysics() const
-    {
-        return m_Physics;
-    }
-
-    
-    
-    void PhysicsUpdate::UpdateTransforms(entt::registry& registry)
-    {
-        const auto rigidbodyView = registry.view<Transform, Rigidbody>();
-        for (const auto entity : rigidbodyView)
-        {
-            auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
-
-            if (rigidbody.GetActor() == NULL) return;
-            
-            const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
-            rigidbodyTransform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
-            rigidbodyTransform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
-        
-            rigidbody.SetTransformScale(rigidbodyTransform.GetWorldScale());
-        }
-    }
-
-    void PhysicsUpdate::UpdateConstantForces(entt::registry& registry)
-    {
-        const auto constantForceView = registry.view<Rigidbody, ConstantForce>();
-        for (const auto entity : constantForceView)
-        {
-            auto [constantForceRigidbody, constantForce] = constantForceView.get<Rigidbody, ConstantForce>(entity);
-
-            if (constantForceRigidbody.GetActor() != NULL)
-            {
-                constantForceRigidbody.AddForce(constantForce.GetForce(), Rigidbody::ForceMode::Force);
-                constantForceRigidbody.AddTorque(constantForce.GetTorque(), Rigidbody::ForceMode::Force);
-            }
-        }
-    }
-
-    /*
-    void PhysicsUpdate::OneMoreStrangeSystem(entt::registry& registry)
-    {
-        const auto& rigidbodyView = registry.view<Transform, Rigidbody>();
-
-        for (const auto entity : rigidbodyView)
-        {
-            auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
-            
-            rigidbody.OnCollisionEnter(
-                [] (const Collision& collision)
-                {
-                    Log::Debug("Object touches {0} object", collision.ContactEntity.GetName());
-                }
-            );
-            
-            rigidbody.OnCollisionExit(
-                [] (const Collision& collision)
-                {
-                    Log::Debug("Object pushes off from {0} object", collision.ContactEntity.GetName());
-                }
-            );
-
-            rigidbody.OnTriggerEnter(
-            [] (const Entity& otherEntity)
-                {
-                    Log::Debug("Object {0} enters trigger", otherEntity.GetName());
-                    const auto& otherRigidbody = otherEntity.GetComponent<Rigidbody>();
-                    otherRigidbody.AddForce(Vector3::Up * 5.0f, Rigidbody::ForceMode::Impulse);
-                }
-            );
-            
-            rigidbody.OnTriggerExit(
-                [] (const Entity& otherEntity)
-                {
-                    Log::Debug("Object {0} leaves trigger", otherEntity.GetName());
-                    const auto& otherRigidbody = otherEntity.GetComponent<Rigidbody>();
-                    otherRigidbody.AddTorque(Vector3::Up * 5.0f, Rigidbody::ForceMode::Impulse);
-                }
-            );
-        } 
-    }
-    */
-    
-    void PhysicsUpdate::HandleEvents()
-    {
-        // Handle Collision Events
-        auto& collisionEvents = App::Get().GetPhysics().m_CollisionEvents;
-        while (!collisionEvents.empty())
-        {
-            //Log::Debug("START m_CollisionEvents SIZE: {0}", collisionEvents.size());
-            // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
-            if (collisionEvents.back().second.ContactEntity)
-            {
-                const auto& collision = collisionEvents.back().second;
-                collisionEvents.back().first(collision);
-                //Log::Debug("Collision Event was handled");
-            }
-            collisionEvents.pop_back();
-            //Log::Debug("END m_CollisionEvents SIZE: {0}", collisionEvents.size());
-        }
-
-        // Handle Trigger Events
-        auto& triggerEvents = App::Get().GetPhysics().m_TriggerEvents;
-        while (!triggerEvents.empty())
-        {
-            //Log::Debug("START m_TriggerEvents SIZE: {0}", triggerEvents.size());
-            // TODO: IMPLEMENT NORMAL ENTITY VALID CHECK
-            if (triggerEvents.back().second)
-            {
-                const auto& otherEntity = triggerEvents.back().second;
-                triggerEvents.back().first(otherEntity);
-                //Log::Debug("Trigger Event was handled");
-            }
-            triggerEvents.pop_back();
-            //Log::Debug("END m_TriggerEvents SIZE: {0}", triggerEvents.size());
-        }
     }
 }

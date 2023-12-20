@@ -4,7 +4,7 @@
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
 #include "Physics/Components/Rigidbody.h"
-#include "Physics/Support/PhysicsUtils.h"
+#include "Physics/PhysicsUtils.h"
 
 namespace LevEngine
 {
@@ -29,23 +29,21 @@ namespace LevEngine
     
     void ContactReportCallback::onConstraintBreak(physx::PxConstraintInfo*, physx::PxU32)
     {
-        Log::Debug("onConstraintBreak");
+        
     }
     
     void ContactReportCallback::onWake(physx::PxActor**, physx::PxU32)
     {
-        Log::Debug("onWake");
+        
     }
     
     void ContactReportCallback::onSleep(physx::PxActor**, physx::PxU32)
     {
-        Log::Debug("onSleep");
+        
     }
     
     void ContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 nbPairs)
     {
-        const auto& entityMap = App::Get().GetPhysics().m_ActorEntityMap;
-
         for (uint32_t i = 0; i < nbPairs; i++)
         {
             const physx::PxTriggerPair& current = pairs[i];
@@ -53,45 +51,33 @@ namespace LevEngine
             if (current.flags & physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER) break;
             if (current.flags & physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER) break;
             
-            const auto& triggerEntity = entityMap.at(current.triggerActor);
+            const auto triggerEntity = App::Get().GetPhysics().GetEntityByActor(current.triggerActor);
             auto& triggerRigidbody = triggerEntity.GetComponent<Rigidbody>();
 
             if (!triggerRigidbody.IsTriggerEnabled()) break;
             
-            if (current.status & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND
-                && triggerRigidbody.m_IsTriggerEnterEnabled)
+            if (current.status & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
             {
-                const auto& otherEntity = entityMap.at(current.otherActor);
-                triggerRigidbody.m_TriggerEnterEntityBuffer.push_back(otherEntity);
-                //Log::Debug("PAIR {0} ENTER ADDED TO {1}", i, triggerEntity.GetName());
+                const auto otherEntity = App::Get().GetPhysics().GetEntityByActor(current.otherActor);
+                triggerRigidbody.m_TriggerEnterBuffer.push_back(otherEntity);
             }
         
-            if (current.status & physx::PxPairFlag::eNOTIFY_TOUCH_LOST
-                && triggerRigidbody.m_IsTriggerExitEnabled)
+            if (current.status & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
             {
-                const auto& otherEntity = entityMap.at(current.otherActor);
-                triggerRigidbody.m_TriggerExitEntityBuffer.push_back(otherEntity);
-                //Log::Debug("PAIR {0} EXIT ADDED TO {1}", i, triggerEntity.GetName());
+                const auto otherEntity = App::Get().GetPhysics().GetEntityByActor(current.otherActor);
+                triggerRigidbody.m_TriggerExitBuffer.push_back(otherEntity);
             }
         }
     }
     
     void ContactReportCallback::onAdvance(const physx::PxRigidBody*const*, const physx::PxTransform*, const physx::PxU32)
     {
-        Log::Debug("onAdvance");
+        
     }
     
     void ContactReportCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) 
     {
-        const auto& entityMap = App::Get().GetPhysics().m_ActorEntityMap;
-        
         Vector<physx::PxContactPairPoint> contactPoints;
-        Vector<Vector3> contactPositions;
-        Vector<Vector3> contactNormals;
-        Vector<Vector3> contactImpulses;
-        Vector<float> contactSeparations;
-        Vector<int> contactFirstColliderMaterialIndices;
-        Vector<int> contactSecondColliderMaterialIndices;
         
         for (uint32_t i = 0; i < nbPairs; i++)
         {
@@ -119,43 +105,28 @@ namespace LevEngine
                 }
             }
             
-            const auto& firstCollisionEntity = entityMap.at(pairHeader.actors[0]);
-            auto& firstCollisionRigidbody = firstCollisionEntity.GetComponent<Rigidbody>();
+            const auto firstEntity = App::Get().GetPhysics().GetEntityByActor(pairHeader.actors[0]);
+            auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
             
-            const auto& secondCollisionEntity = entityMap.at(pairHeader.actors[1]);
-            auto& secondCollisionRigidbody = secondCollisionEntity.GetComponent<Rigidbody>();
+            const auto& secondEntity = App::Get().GetPhysics().GetEntityByActor(pairHeader.actors[1]);
+            auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
             
             if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
             {
-                if (firstCollisionRigidbody.m_IsCollisionEnterEnabled)
-                {
-                    collisionInfo.ContactEntity = secondCollisionEntity;
-                    firstCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(collisionInfo);
-                    //Log::Debug("CONTACT FOUND");
-                }
-                if (secondCollisionRigidbody.m_IsCollisionEnterEnabled)
-                {
-                    collisionInfo.ContactEntity = firstCollisionEntity;
-                    secondCollisionRigidbody.m_CollisionEnterEntityBuffer.push_back(collisionInfo);
-                    //Log::Debug("CONTACT FOUND");
-                }
+                collisionInfo.ContactEntity = secondEntity;
+                firstRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
+                
+                collisionInfo.ContactEntity = firstEntity;
+                secondRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
             }
             
             if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
             {
-                if (firstCollisionRigidbody.m_IsCollisionExitEnabled)
-                {
-                    collisionInfo.ContactEntity = secondCollisionEntity;
-                    firstCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(collisionInfo);
-                    //Log::Debug("CONTACT LOST");
-                }
+                collisionInfo.ContactEntity = secondEntity;
+                firstRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
                 
-                if (secondCollisionRigidbody.m_IsCollisionExitEnabled)
-                {
-                    collisionInfo.ContactEntity = firstCollisionEntity;
-                    secondCollisionRigidbody.m_CollisionExitEntityBuffer.push_back(collisionInfo);
-                    //Log::Debug("CONTACT LOST");
-                }
+                collisionInfo.ContactEntity = firstEntity;
+                secondRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
             }
         }
     }

@@ -20,7 +20,9 @@
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Systems/Audio/AudioListenerInitSystem.h"
 #include "Systems/Audio/AudioSourceInitSystem.h"
-#include "Systems/Physics/RigidbodyInitSystem.h"
+#include "Physics/RigidbodyInitSystem.h"
+#include "Physics/Components/Destroyable.h"
+#include "Systems/EntityDestroySystem.h"
 
 namespace LevEngine
 {
@@ -60,6 +62,8 @@ namespace LevEngine
         RegisterUpdateSystem<AudioListenerInitSystem>();
 
         RegisterUpdateSystem<RigidbodyInitSystem>();
+
+        RegisterLateUpdateSystem<EntityDestroySystem>();
 
         m_Registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
         m_Registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
@@ -352,6 +356,17 @@ namespace LevEngine
     void Scene::DestroyEntity(const Entity entity)
     {
         LEV_PROFILE_FUNCTION();
+        
+        if (!entity.HasComponent<Destroyable>())
+        {
+            entity.AddComponent<Destroyable>();
+        } 
+    }
+
+    // Only for editor use
+    void Scene::DestroyEntityImmediate(Entity entity)
+    {
+        LEV_PROFILE_FUNCTION();
 
         Vector<Entity> entitiesToDestroy;
 
@@ -362,6 +377,7 @@ namespace LevEngine
 
         m_Registry.destroy(entitiesToDestroy.begin(), entitiesToDestroy.end());
     }
+
 
     void Scene::GetAllChildren(Entity entity, Vector<Entity>& entities)
     {

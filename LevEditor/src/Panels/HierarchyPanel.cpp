@@ -25,7 +25,7 @@ namespace LevEngine::Editor
 		{
 			if (entitySelection->Get())
 			{
-				activeScene->DestroyEntity(entitySelection->Get());
+				activeScene->DestroyEntityImmediate(entitySelection->Get());
 				Selection::Deselect();
 			}
 		}
@@ -69,7 +69,7 @@ namespace LevEngine::Editor
 
 		for (const auto toDelete : m_EntitiesToDelete)
 		{
-			activeScene->DestroyEntity(toDelete);
+			activeScene->DestroyEntityImmediate(toDelete);
 			Selection::Deselect();
 		}
 		m_EntitiesToDelete.clear();

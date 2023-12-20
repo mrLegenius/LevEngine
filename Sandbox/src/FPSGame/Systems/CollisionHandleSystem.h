@@ -9,44 +9,21 @@ namespace Sandbox
     {
         void Update(float deltaTime, entt::registry& registry) override
         {
-            /*
             const auto projectileView = registry.view<Transform, Projectile, Rigidbody>();
-            for (auto& entity : projectileView)
+            
+            for (const auto entity : projectileView)
             {
                 auto [transform, projectile, rigidbody] = projectileView.get<Transform, Projectile, Rigidbody>(entity);
 
-                if (rigidbody.IsTriggerEnabled())
+                const auto scene = SceneManager::GetActiveScene();
+
+                const auto causer = Entity(entt::handle(registry, entity));
+                
+                for (const auto& collisionInfo : rigidbody.GetCollisionEnterBuffer())
                 {
-                    rigidbody.OnTriggerEnter(
-                        [&] (const Entity& otherEntity)
-                        {
-                            const auto& trigger = Entity(entt::handle(registry, entity));
-                            Log::Debug("{0} enters {1}", otherEntity.GetName(), trigger.GetName());
-
-                            const auto scene = SceneManager::GetActiveScene();
-                            if (otherEntity.HasComponent<Enemy>())
-                            {
-                                scene->DestroyEntity(otherEntity);
-                            }
-                            // TODO: NEED NORMAL GAME OBJECT GETTER
-                            //scene->DestroyEntity(trigger);
-                        }
-                    );
-                }
-            }
-            */
-
-            const auto projectileView = registry.view<Transform, Projectile, Rigidbody>();
-            for (auto& entity : projectileView)
-            {
-                auto [transform, projectile, rigidbody] = projectileView.get<Transform, Projectile, Rigidbody>(entity);
-
-                rigidbody.OnCollisionEnter(
-                    [] (const Collision& collisionInfo)
+                    if (collisionInfo.ContactEntity.HasComponent<Enemy>())
                     {
-                        Log::Debug("Projectile enters {0}", collisionInfo.ContactEntity.GetName());
-
-                        Log::Info("ADDITIONAL INFO");
+                        /*
                         for (int i = 0; i < collisionInfo.ContactPositions.size(); i++)
                         {
                             const auto& position = collisionInfo.ContactPositions[i];
@@ -77,14 +54,12 @@ namespace Sandbox
                             const auto& secondShapeMaterialIndex = collisionInfo.ContactSecondColliderMaterialIndices[i];
                             Log::Info("Second Shape Material Index: {0}", secondShapeMaterialIndex);
                         }
-
-                        const auto scene = SceneManager::GetActiveScene();
-                        if (collisionInfo.ContactEntity.HasComponent<Enemy>())
-                        {
-                            scene->DestroyEntity(collisionInfo.ContactEntity);
-                        }
+                        */
+                        
+                        scene->DestroyEntity(collisionInfo.ContactEntity);
+                        scene->DestroyEntity(causer);
                     }
-                );
+                }
             }
         }
     };

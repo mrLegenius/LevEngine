@@ -20,7 +20,7 @@ namespace Sandbox
                     const auto projectilePrefab = ResourceManager::LoadAsset<PrefabAsset>("ProjectilePrefab");
                     auto projectile = projectilePrefab->Instantiate(SceneManager::GetActiveScene());
 
-                    // TODO: ADD CORRECT PROJECTILE SPAWN POSITION AND SHOOT DIRECTION
+                    // TODO: ADD MUZZLE SOCKET
                     auto& projectileTransform = projectile.GetComponent<Transform>();
                     projectileTransform.SetWorldPosition(cameraTransform.GetWorldPosition() + cameraTransform.GetForwardDirection() * 2);
 
@@ -31,13 +31,9 @@ namespace Sandbox
 
                     // TODO: NEED TO FIX INITIALIZATION SYSTEM
                     auto& projectileRigidbody = projectile.GetComponent<Rigidbody>();
-                    projectileRigidbody.Initialize(projectileTransform);
                     const auto& gameObject = Entity(entt::handle(registry, projectile));
-                    App::Get().GetPhysics().m_ActorEntityMap.insert({projectileRigidbody.GetActor(), gameObject});
-                    //Log::Debug("RIGIDBODY CREATED");
-                    //Log::Debug("ACTOR MAP SIZE: {0}", App::Get().GetPhysics().m_ActorEntityMap.size());
+                    projectileRigidbody.Initialize(gameObject);
                     projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
-                    //projectileRigidbody.EnableTrigger(true);
                     
                     Audio::PlayOneShot("event:/Shot", projectile);
                 }

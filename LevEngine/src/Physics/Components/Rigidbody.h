@@ -21,13 +21,15 @@ namespace LevEngine
         
         static void OnDestroy(entt::registry& registry, entt::entity entity);
 
-        bool IsInitialized() const;
-        void Initialize(const Transform& transform);
-        void SetRigidbodyPose(const Transform& transform);
+        [[nodiscard]] bool IsInitialized() const;
+        void Initialize(Entity entity);
+
+        [[nodiscard]] Vector3 GetTransformScale() const;
+        void SetTransformScale(Vector3 transformScale);
 
         [[nodiscard]] bool IsVisualizationEnabled() const;
         void EnableVisualization(bool flag);
-
+        
         // Rigidbody
         [[nodiscard]] bool IsGravityEnabled() const;
         void EnableGravity(bool flag);
@@ -68,7 +70,6 @@ namespace LevEngine
         [[nodiscard]] bool IsRotAxisZLocked() const;
         void LockRotAxisZ(bool flag);
 
-
         // Collider
         [[nodiscard]] bool IsTriggerEnabled() const;
         void EnableTrigger(bool flag);
@@ -90,14 +91,15 @@ namespace LevEngine
         void SetCapsuleHalfHeight(float halfHeight);
         [[nodiscard]] Vector3 GetBoxHalfExtents() const;
         void SetBoxHalfExtents(Vector3 halfExtents);
-        
+
+        // Material
         [[nodiscard]] float GetStaticFriction() const;
         void SetStaticFriction(float staticFriction);
         [[nodiscard]] float GetDynamicFriction() const;
         void SetDynamicFriction(float dynamicFriction);
         [[nodiscard]] float GetRestitution() const;
         void SetRestitution(float restitution);
-
+        
         // Force
         enum class ForceMode
         {
@@ -114,39 +116,33 @@ namespace LevEngine
         void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
         void AddTorque(Vector3 torque, ForceMode = ForceMode::Force) const;
 
-        // Collision/Trigger Events
-        void OnCollisionEnter(const Action<Collision>& callback);
-        void OnCollisionExit(const Action<Collision>& callback);
-        void OnTriggerEnter(const Action<Entity>& callback);
-        void OnTriggerExit(const Action<Entity>& callback);
-        
-        friend class PhysicsUpdate;
-        friend class RigidbodyInitSystem;
-        friend class ContactReportCallback;
+        [[nodiscard]] const Vector<Entity>& GetTriggerEnterBuffer() const;
+        [[nodiscard]] const Vector<Entity>& GetTriggerExitBuffer() const;
+        [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
+        [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
 
-        [[nodiscard]] physx::PxRigidActor* GetActor() const;
+        friend class PhysicsUpdate;
+        friend class ContactReportCallback;
         
     private:
-        [[nodiscard]] physx::PxShape* GetColliders() const;
-        [[nodiscard]] physx::PxMaterial* GetPhysicalMaterials(const physx::PxShape* colliders) const;
+        [[nodiscard]] physx::PxRigidActor* GetActor() const;
+        [[nodiscard]] physx::PxShape* GetCollider() const;
+        [[nodiscard]] physx::PxMaterial* GetPhysicalMaterial() const;
 
-        [[nodiscard]] Vector3 GetTransformScale() const;
-        void SetTransformScale(Vector3 transformScale);
-
-        void AttachRigidbody(const Type& rigidbodyType);
+        void AttachRigidbody(Entity entity);
         void DetachRigidbody();
         
-        void AttachCollider(const Collider::Type& colliderType);
+        void AttachCollider();
         void DetachCollider();
+
+        bool m_IsInitialized = false;
+        bool m_IsVisualizationEnabled = false;
         
         physx::PxRigidActor* m_Actor = nullptr;
 
         Vector3 m_TransformScale = Vector3::One;
         
-        bool m_IsInitialized = false;
-        bool m_IsVisualizationEnabled = false;
-
-        // Collider
+        // Rigidbody
         bool m_IsGravityEnabled = true;
         bool m_IsKinematicEnabled = false;
         
@@ -167,18 +163,14 @@ namespace LevEngine
         bool m_IsRotAxisXLocked = false;
         bool m_IsRotAxisYLocked = false;
         bool m_IsRotAxisZLocked = false;
-
-        // Collider
+        
+        // Collider + Material
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
 
-        // Collision/Trigger Events
-        bool m_IsCollisionEnterEnabled = false;
-        Vector<Collision> m_CollisionEnterEntityBuffer;
-        bool m_IsCollisionExitEnabled = false;
-        Vector<Collision> m_CollisionExitEntityBuffer;
-        bool m_IsTriggerEnterEnabled = false;
-        Vector<Entity> m_TriggerEnterEntityBuffer;
-        bool m_IsTriggerExitEnabled = false;
-        Vector<Entity> m_TriggerExitEntityBuffer;
+        // Trigger/Collision Events
+        Vector<Entity> m_TriggerEnterBuffer;
+        Vector<Entity> m_TriggerExitBuffer;
+        Vector<Collision> m_CollisionEnterBuffer;
+        Vector<Collision> m_CollisionExitBuffer;
     };
 }

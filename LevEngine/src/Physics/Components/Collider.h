@@ -11,10 +11,10 @@ namespace LevEngine
             Capsule,
             Box
         };
-    
-        Type m_Type = Type::Box;
 
         bool m_IsTriggerEnabled = false;
+    
+        Type m_Type = Type::Box;
     
         Vector3 OffsetPosition = Vector3::Zero;
         Vector3 OffsetRotation = Vector3::Zero;

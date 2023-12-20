@@ -13,11 +13,11 @@ namespace LevEngine
         Vector<Vector3> ContactNormals {};
         // The impulse applied at the contact point, in world space. Divide by the simulation time step to get a force value.
         Vector<Vector3> ContactImpulses {};
-        // The separation of the shapes at the contact point.  A negative separation denotes a penetration.
+        // The separation of the shapes at the contact point. A negative separation denotes a penetration.
         Vector<float> ContactSeparations {};
-        // The surface index of first shape at the contact point.  This is used to identify the surface material.
+        // The surface index of first shape at the contact point. This is used to identify the surface material.
         Vector<int> ContactFirstColliderMaterialIndices {};
-        // The surface index of second shape at the contact point.  This is used to identify the surface material.
+        // The surface index of second shape at the contact point. This is used to identify the surface material.
         Vector<int> ContactSecondColliderMaterialIndices {};
     };
 }

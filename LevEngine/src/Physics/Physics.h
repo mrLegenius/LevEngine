@@ -1,24 +1,13 @@
 ﻿#pragma once
 
-#include "Components/Collision.h"
 #include "physx/include/PxPhysicsAPI.h"
-
+#include "Components/Rigidbody.h"
 #include "Events/ContactReportCallback.h"
 #include "Scene/Entity.h"
+#include "PhysicsUpdate.h"
 
 namespace LevEngine
 {
-    class PhysicsUpdate
-    {
-    public:
-        friend class Physics;
-    private:
-        void UpdateTransforms(entt::registry& registry);
-        void UpdateConstantForces(entt::registry& registry);
-        //void OneMoreStrangeSystem(entt::registry& registry);
-        void HandleEvents();
-    };
-    
     class Physics
     {
     public:
@@ -35,19 +24,15 @@ namespace LevEngine
         
         // used to fix accumulation transfer issue
         void ClearAccumulator();
-
+        
         // used to fix transfer scene information between game modes
         void ResetPhysicsScene();
-
+        
         void Process(entt::registry& registry, float deltaTime);
 
-        friend class PhysicsUpdate;
-        friend class ContactReportCallback;
-        friend class RigidbodyInitSystem;
-        friend struct Rigidbody;
+        [[nodiscard]] Entity GetEntityByActor(physx::PxActor* actor) const;
 
-        // used to optimize the filling of collision detection buffers
-        UnorderedMap<physx::PxActor*, Entity> m_ActorEntityMap;
+        friend struct Rigidbody;
         
     private:
         void Initialize();
@@ -56,9 +41,19 @@ namespace LevEngine
         bool IsAdvanced(float deltaTime);
         bool StepPhysics(float deltaTime);
         void DrawDebugLines() const;
+
+        [[nodiscard]] physx::PxRigidActor* CreateStaticActor(Entity entity) const;
+        [[nodiscard]] physx::PxRigidActor* CreateDynamicActor(Entity entity) const;
+        void RemoveActor(physx::PxActor* actor) const;
+
+        [[nodiscard]] physx::PxMaterial* CreateMaterial(float staticFriction, float dynamicFriction, float restitution) const;
         
-        [[nodiscard]] physx::PxPhysics* GetPhysics() const;
-        [[nodiscard]] physx::PxScene* GetScene() const;
+        [[nodiscard]] physx::PxShape* CreateSphere(float radius, const physx::PxMaterial* material) const;
+        [[nodiscard]] physx::PxShape* CreateCapsule(float radius, float halfHeight, const physx::PxMaterial* material) const;
+        [[nodiscard]] physx::PxShape* CreateBox(Vector3 halfExtents, const physx::PxMaterial* material) const;
+
+        // used to optimize the filling of collision detection buffers
+        UnorderedMap<physx::PxActor*, Entity> m_ActorEntityMap;
 
         // TODO: CHANGE PHYSICS UPDATE LOGIC
         // used to update step-dependent physics systems
@@ -66,8 +61,6 @@ namespace LevEngine
 
         // used to handle collision/trigger events
         ContactReportCallback m_ContactReportCallback;
-        Vector<Pair<Action<Collision>,Collision>> m_CollisionEvents;
-        Vector<Pair<Action<Entity>,Entity>> m_TriggerEvents;
 
         // for debug render
         bool m_IsDebugRenderEnabled = true;
