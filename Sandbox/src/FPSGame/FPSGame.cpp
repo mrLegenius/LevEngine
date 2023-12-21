@@ -4,6 +4,7 @@
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
 #include "Scripting/ScriptingManager.h"
+#include "Systems/CollisionHandleSystem.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
@@ -27,7 +28,6 @@ namespace Sandbox
 	
 	void FPSGame::OnAttach()
 	{
-
 		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
 
@@ -45,9 +45,11 @@ namespace Sandbox
 
 		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
-		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
+		//scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
+		scene->RegisterUpdateSystem<CollisionHandleSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
+		scene->RegisterUpdateSystem<EnemySpawnSystem>();
 
 		scene->OnInit();
 		Application::Get().GetWindow().DisableCursor();

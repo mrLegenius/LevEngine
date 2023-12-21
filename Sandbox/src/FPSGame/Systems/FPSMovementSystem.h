@@ -1,4 +1,5 @@
 #pragma once
+#include "FPSGame/Components/Player.h"
 
 constexpr auto WALK_SPEED = 15.0f;
 constexpr auto SPRINT_SPEED = 30.0f;

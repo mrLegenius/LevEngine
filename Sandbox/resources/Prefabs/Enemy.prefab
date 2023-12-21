@@ -8,14 +8,28 @@ Entities:
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Rigidbody:
-      Visualization Flag: false
+      Is Visualization Enabled: false
       Rigidbody Type: 1
-      Gravity Flag: true
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Max Linear Velocity: 100
+      Max Angular Velocity: 100
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: true
+      Is Rot Axis Y Locked: true
+      Is Rot Axis Z Locked: true
       Collider Type: 1
       Capsule Radius: 1
       Capsule Half Height: 0.699999988
       Offset Position: [0, 2, 0]
       Offset Rotation: [0, 0, 90]
+      Is Trigger Enabled: false
       Static Friction: 0.5
       Dynamic Friction: 0.5
       Restitution: 0.600000024

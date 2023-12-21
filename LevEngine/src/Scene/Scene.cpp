@@ -2,7 +2,6 @@
 #include "Scene.h"
 
 #include "Audio/Audio.h"
-#include "Physics/LegacyPhysics.h"
 #include "Renderer/Renderer.h"
 
 #include "Entity.h"
@@ -16,14 +15,14 @@
 #include "Scripting/ScriptingManager.h"
 #include "Physics/Physics.h"
 #include "Physics/Components/Rigidbody.h"
-#include "Physics/Events/LegacyCollisionBeginEvent.h"
-#include "Physics/Events/LegacyCollisionEndEvent.h"
 #include "Scripting/LuaComponentsBinder.h"
 #include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Systems/Audio/AudioListenerInitSystem.h"
 #include "Systems/Audio/AudioSourceInitSystem.h"
-#include "Systems/Physics/RigidbodyInitSystem.h"
+#include "Physics/RigidbodyInitSystem.h"
+#include "Physics/Components/Destroyable.h"
+#include "Systems/EntityDestroySystem.h"
 
 namespace LevEngine
 {
@@ -45,7 +44,7 @@ namespace LevEngine
     void Scene::CleanupScene()
     {
         LEV_PROFILE_FUNCTION();
-
+        
         m_Registry.clear();
         Audio::ReleaseAll();
     }
@@ -61,18 +60,18 @@ namespace LevEngine
 
         RegisterUpdateSystem<AudioSourceInitSystem>();
         RegisterUpdateSystem<AudioListenerInitSystem>();
-		
-        RegisterOneFrame<CollisionBeginEvent>();
-        RegisterOneFrame<CollisionEndEvent>();
 
-        App::Get().GetPhysics().ClearAccumulator();
         RegisterUpdateSystem<RigidbodyInitSystem>();
+
+        RegisterLateUpdateSystem<EntityDestroySystem>();
 
         m_Registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
         m_Registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
         m_Registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
-
+        
         m_Registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
+        App::Get().GetPhysics().ResetPhysicsScene();
+        App::Get().GetPhysics().ClearAccumulator();
 
         for (const auto& system : m_InitSystems)
         {
@@ -160,7 +159,7 @@ namespace LevEngine
 
     void Scene::RequestPhysicsUpdates(const float deltaTime)
     {
-        LegacyPhysics::Process(m_Registry, deltaTime);
+        App::Get().GetPhysics().Process(m_Registry, deltaTime);
 
         vgjs::continuation([this]() { m_IsPhysicsDone = true; });
     }
@@ -180,7 +179,6 @@ namespace LevEngine
         }
         else
         {
-            LegacyPhysics::Process(m_Registry, deltaTime);
             App::Get().GetPhysics().Process(m_Registry, deltaTime);
         }
     }
@@ -358,6 +356,17 @@ namespace LevEngine
     void Scene::DestroyEntity(const Entity entity)
     {
         LEV_PROFILE_FUNCTION();
+        
+        if (!entity.HasComponent<Destroyable>())
+        {
+            entity.AddComponent<Destroyable>();
+        } 
+    }
+
+    // for internal use only
+    void Scene::DestroyEntityImmediate(Entity entity)
+    {
+        LEV_PROFILE_FUNCTION();
 
         Vector<Entity> entitiesToDestroy;
 
@@ -368,6 +377,7 @@ namespace LevEngine
 
         m_Registry.destroy(entitiesToDestroy.begin(), entitiesToDestroy.end());
     }
+
 
     void Scene::GetAllChildren(Entity entity, Vector<Entity>& entities)
     {

@@ -33,6 +33,7 @@ namespace LevEngine
 
 		void DestroyEntity(entt::entity entity);
 		void DestroyEntity(Entity entity);
+		void DestroyEntityImmediate(Entity entity);
 		static void GetAllChildren(Entity entity, Vector<Entity>& entities);
 
 		Entity DuplicateEntity(Entity entity);

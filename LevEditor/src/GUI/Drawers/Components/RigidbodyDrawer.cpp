@@ -19,7 +19,7 @@ namespace LevEngine::Editor
             
             if (component.GetRigidbodyType() == Rigidbody::Type::Dynamic)
             {
-                EditorGUI::DrawCheckBox("Enable Kinematic", BindGetter(&Rigidbody::IsKinematicEnabled, &component), BindSetter(&Rigidbody::EnableKinematic, &component));
+                //EditorGUI::DrawCheckBox("Enable Kinematic", BindGetter(&Rigidbody::IsKinematicEnabled, &component), BindSetter(&Rigidbody::EnableKinematic, &component));
                 
                 EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&Rigidbody::IsGravityEnabled, &component), BindSetter(&Rigidbody::EnableGravity, &component));
                 
@@ -57,9 +57,6 @@ namespace LevEngine::Editor
                 EditorGUI::DrawComboBox<Collider::Type, 3>("Collider Type", colliderTypeStrings,
                     BindGetter(&Rigidbody::GetColliderType, &component), BindSetter(&Rigidbody::SetColliderType, &component));
                 
-                EditorGUI::DrawVector3Control("Offset Position", BindGetter(&Rigidbody::GetColliderOffsetPosition, &component), BindSetter(&Rigidbody::SetColliderOffsetPosition, &component));
-                EditorGUI::DrawVector3Control("Offset Rotation", BindGetter(&Rigidbody::GetColliderOffsetRotation, &component), BindSetter(&Rigidbody::SetColliderOffsetRotation, &component));
-                
                 if (component.GetColliderType() == Collider::Type::Sphere)
                 {
                     EditorGUI::DrawFloatControl("Radius", BindGetter(&Rigidbody::GetSphereRadius, &component), BindSetter(&Rigidbody::SetSphereRadius, &component), 0.1f, FLT_EPSILON, FLT_MAX);
@@ -73,6 +70,11 @@ namespace LevEngine::Editor
                 {
                     EditorGUI::DrawVector3Control("Half Extends", BindGetter(&Rigidbody::GetBoxHalfExtents, &component), BindSetter(&Rigidbody::SetBoxHalfExtents, &component), 0.1f, FLT_EPSILON, FLT_MAX);
                 }
+
+                EditorGUI::DrawVector3Control("Offset Position", BindGetter(&Rigidbody::GetColliderOffsetPosition, &component), BindSetter(&Rigidbody::SetColliderOffsetPosition, &component));
+                EditorGUI::DrawVector3Control("Offset Rotation", BindGetter(&Rigidbody::GetColliderOffsetRotation, &component), BindSetter(&Rigidbody::SetColliderOffsetRotation, &component));
+
+                EditorGUI::DrawCheckBox("Is Trigger", BindGetter(&Rigidbody::IsTriggerEnabled, &component), BindSetter(&Rigidbody::EnableTrigger, &component));
                 
                 EditorGUI::DrawFloatControl("Static Friction", BindGetter(&Rigidbody::GetStaticFriction, &component), BindSetter(&Rigidbody::SetStaticFriction, &component), 0.1f, 0.0f, FLT_MAX);
                 EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&Rigidbody::GetDynamicFriction, &component), BindSetter(&Rigidbody::SetDynamicFriction, &component), 0.1f, 0.0f, FLT_MAX);
