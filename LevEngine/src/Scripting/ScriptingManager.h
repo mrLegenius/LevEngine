@@ -28,6 +28,10 @@ namespace LevEngine
 
 			Ref<sol::state> GetLuaState();
 
+			Ref<ScriptAsset> GetComponentScriptAssetByName(const String& name) const;
+
+			void InitScriptsContainers(entt::registry& registry) const;
+
 		private:
 			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Systems;
 			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Components;

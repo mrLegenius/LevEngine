@@ -59,7 +59,7 @@ namespace LevEngine::Editor
 			bool& isSelected, int selectableIdx = 0);
 
 		template<class T>
-		static bool DrawSelectableAssetList(const String& label, Set<Ref<T>>& assets, Weak<T>& selectedAsset);
+		static bool DrawSelectableAssetSet(const String& label, Set<Ref<T>>& assets, Weak<T>& selectedAsset);
 
 		template<class T>
 		static bool DrawSelectableAsset(const Ref<T>& asset, bool wasSelected,

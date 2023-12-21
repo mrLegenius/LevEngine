@@ -60,7 +60,7 @@ namespace LevEngine::Scripting
                 try
                 {
                     auto result = m_Lua->safe_script_file(script->GetPath().string());
-                    Log::CoreInfo("Loading lua script: {0}", scriptName);
+                    Log::Trace("Loading lua script: {0}", scriptName);
                     
                     sol::optional<sol::table> luaScriptTable = (*m_Lua)[scriptName.c_str()];
                     if (luaScriptTable == sol::nullopt)
@@ -244,5 +244,49 @@ namespace LevEngine::Scripting
     Ref<sol::state> ScriptingManager::GetLuaState()
     {
         return m_Lua;
+    }
+
+    Ref<ScriptAsset> ScriptingManager::GetComponentScriptAssetByName(const String& name) const
+    {
+        for (const auto [scriptAsset, table]: m_Components) {
+            if (scriptAsset->GetName() == name) {
+                return scriptAsset;
+            }
+        }
+
+        return nullptr;
+    }
+    void ScriptingManager::InitScriptsContainers(entt::registry& registry) const
+    {
+        auto view = registry.view<ScriptsContainer>();
+
+        for (const auto entity : view) 
+        {
+            auto& scriptContainer = view.get<ScriptsContainer>(entity);
+
+            for (const auto& scriptAsset : scriptContainer.m_ScriptsAssets) 
+            {
+                sol::optional<sol::protected_function> componentConstructor = m_Components.at(scriptAsset)["new"];
+                if (componentConstructor != sol::nullopt)
+                {
+                    auto result = componentConstructor.value()();
+                    if (!result.valid()) 
+                    {
+                        sol::error err = result;
+                        std::string what = err.what();
+                        Log::Error("Error while constructing lua component {0}: {1}", scriptAsset->GetName(), what);
+                        continue;
+                    }
+
+                    sol::table luaComponentInstance = result;
+                    scriptContainer.m_ScriptComponents.emplace(
+                        eastl::make_pair(scriptAsset->GetName(), luaComponentInstance));
+                }
+                else
+                {
+                    Log::CoreError("Error while constructing lua component {0}: no new(...) function", scriptAsset->GetName());
+                }
+            }
+        }
     }
 }

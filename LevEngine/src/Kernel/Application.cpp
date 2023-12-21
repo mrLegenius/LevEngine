@@ -184,9 +184,9 @@ void Application::OnEvent(Event& e)
 Physics& Application::GetPhysics() const { return *m_Physics; }
 Renderer& Application::Renderer() { return *Get().m_Renderer; }
 
-Scripting::ScriptingManager& Application::GetScriptingManager()
+Scripting::ScriptingManager* Application::GetScriptingManager()
 {
-	return *m_ScriptingManager;
+	return m_ScriptingManager.get();
 }
 
 Statistic Application::GetFrameStat() const { return m_FrameStat; }

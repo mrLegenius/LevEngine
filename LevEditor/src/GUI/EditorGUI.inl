@@ -184,7 +184,7 @@ namespace LevEngine::Editor
 	}
 
 	template<class T>
-	bool EditorGUI::DrawSelectableAssetList(const String& label, Set<Ref<T>>& assets, Weak<T>& selectedAsset)
+	bool EditorGUI::DrawSelectableAssetSet(const String& label, Set<Ref<T>>& assets, Weak<T>& selectedAsset)
 	{
 		static_assert(std::is_base_of_v<Asset, T>, "T must derive from Asset");
 		bool changed = false;
