@@ -2,8 +2,6 @@
 #include "Physics.h"
 
 #include "PhysicsUtils.h"
-#include "EASTL/list.h"
-#include "Kernel/Application.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Renderer/DebugRender/DebugRender.h"
 
@@ -67,31 +65,31 @@ namespace LevEngine
         }
     }
 
-    physx::PxRigidActor* Physics::CreateStaticActor(const Entity entity) const
+    physx::PxRigidActor* Physics::CreateStaticActor(const Entity entity)
     {
         const auto& transform = entity.GetComponent<Transform>();
         physx::PxRigidActor* actor = m_Physics->createRigidStatic(PhysicsUtils::FromTransformToPxTransform(transform));
         m_Scene->addActor(*(reinterpret_cast<physx::PxRigidStatic*>(actor)));
-        
-        App::Get().GetPhysics().m_ActorEntityMap.insert({actor, entity});
+
+        m_ActorEntityMap.insert({actor, entity});
 
         return actor;
     }
 
-    physx::PxRigidActor* Physics::CreateDynamicActor(const Entity entity) const
+    physx::PxRigidActor* Physics::CreateDynamicActor(const Entity entity)
     {
         const auto& transform = entity.GetComponent<Transform>();
         physx::PxRigidActor* actor = m_Physics->createRigidDynamic(PhysicsUtils::FromTransformToPxTransform(transform));
         m_Scene->addActor(*(reinterpret_cast<physx::PxRigidDynamic*>(actor)));
 
-        App::Get().GetPhysics().m_ActorEntityMap.insert({actor, entity});
+        m_ActorEntityMap.insert({actor, entity});
 
         return actor;
     }
 
-    void Physics::RemoveActor(physx::PxActor* actor) const
+    void Physics::RemoveActor(physx::PxActor* actor)
     {
-        App::Get().GetPhysics().m_ActorEntityMap.erase(actor);
+        m_ActorEntityMap.erase(actor);
         
         m_Scene->removeActor(*actor);
         PX_RELEASE(actor);

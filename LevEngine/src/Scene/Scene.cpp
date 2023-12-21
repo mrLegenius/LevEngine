@@ -363,7 +363,7 @@ namespace LevEngine
         } 
     }
 
-    // Only for editor use
+    // for internal use only
     void Scene::DestroyEntityImmediate(Entity entity)
     {
         LEV_PROFILE_FUNCTION();

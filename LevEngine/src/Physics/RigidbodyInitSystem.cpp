@@ -16,7 +16,7 @@ namespace LevEngine
 
             if (!rigidbody.IsInitialized())
             {
-                const auto& gameObject = Entity(entt::handle(registry, entity));
+                const auto gameObject = Entity(entt::handle(registry, entity));
                 rigidbody.Initialize(gameObject);
             }
         }

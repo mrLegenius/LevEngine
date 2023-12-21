@@ -100,8 +100,6 @@ namespace LevEngine
                     collisionInfo.ContactNormals.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].normal));
                     collisionInfo.ContactImpulses.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].impulse));
                     collisionInfo.ContactSeparations.push_back(contactPoints[j].separation);
-                    collisionInfo.ContactFirstColliderMaterialIndices.push_back(contactPoints[j].internalFaceIndex0);
-                    collisionInfo.ContactSecondColliderMaterialIndices.push_back(contactPoints[j].internalFaceIndex1);
                 }
             }
             

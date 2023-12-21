@@ -42,9 +42,9 @@ namespace LevEngine
         bool StepPhysics(float deltaTime);
         void DrawDebugLines() const;
 
-        [[nodiscard]] physx::PxRigidActor* CreateStaticActor(Entity entity) const;
-        [[nodiscard]] physx::PxRigidActor* CreateDynamicActor(Entity entity) const;
-        void RemoveActor(physx::PxActor* actor) const;
+        [[nodiscard]] physx::PxRigidActor* CreateStaticActor(Entity entity);
+        [[nodiscard]] physx::PxRigidActor* CreateDynamicActor(Entity entity);
+        void RemoveActor(physx::PxActor* actor);
 
         [[nodiscard]] physx::PxMaterial* CreateMaterial(float staticFriction, float dynamicFriction, float restitution) const;
         

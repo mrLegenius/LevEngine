@@ -1,92 +1,13 @@
 Scene: PhysicsTestScene
 Entities:
-  - Entity: 3085809970336794991
-    Tag: Falling Box
+  - Entity: 293547088511675378
+    Tag: Directional Light
     Transform:
-      Position: [0, 8, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Rigidbody:
-      Is Visualization Enabled: true
-      Rigidbody Type: 1
-      Is Gravity Enabled: true
-      Mass: 1
-      Center Of Mass: [0, 0, 0]
-      Inertia Tensor: [1, 1, 1]
-      Linear Damping: 0.100000001
-      Angular Damping: 0.100000001
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
-      Is Pos Axis X Locked: false
-      Is Pos Axis Y Locked: false
-      Is Pos Axis Z Locked: false
-      Is Rot Axis X Locked: false
-      Is Rot Axis Y Locked: false
-      Is Rot Axis Z Locked: false
-      Collider Type: 2
-      Box Half Extends: [0.5, 0.5, 0.5]
-      Offset Position: [0, 0, 0]
-      Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0
-      Dynamic Friction: 0
-      Restitution: 1
-    MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 15608248225095435140
-      Cast Shadow: true
-  - Entity: 2500217727459906061
-    Tag: Trigger
-    Transform:
-      Position: [0, 4, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [3, 1, 3]
-    Rigidbody:
-      Is Visualization Enabled: true
-      Rigidbody Type: 0
-      Is Gravity Enabled: false
-      Mass: 1
-      Center Of Mass: [0, 0, 0]
-      Inertia Tensor: [1, 1, 1]
-      Linear Damping: 0
-      Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
-      Is Pos Axis X Locked: false
-      Is Pos Axis Y Locked: false
-      Is Pos Axis Z Locked: false
-      Is Rot Axis X Locked: false
-      Is Rot Axis Y Locked: false
-      Is Rot Axis Z Locked: false
-      Collider Type: 2
-      Box Half Extends: [0.5, 0.5, 0.5]
-      Offset Position: [0, 0, 0]
-      Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: true
-      Static Friction: 0
-      Dynamic Friction: 0
-      Restitution: 0
-    MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 15608248225095435140
-      Cast Shadow: true
-  - Entity: 18005086127464243940
-    Tag: Camera
-    Transform:
-      Position: [0, 7, 7]
-      Rotation: [-0.610865176, -5.42132797e-16, -1.3170526e-08]
-      Scale: [1, 1, 1]
-    Camera:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Main: true
-      FixedAspectRatio: false
+      Position: [0, 0, 0]
+      Rotation: [-1.55452466, 0, 0]
+      Scale: [1, 0.999998629, 0.999998629]
+    Directional Light:
+      Color: [1, 1, 1, 1]
   - Entity: 2286883072584602035
     Tag: Ground
     Transform:
@@ -122,13 +43,92 @@ Entities:
       Mesh: 6362171717149004471
       Material: 7582525064410579512
       Cast Shadow: true
-  - Entity: 293547088511675378
-    Tag: Directional Light
+  - Entity: 18005086127464243940
+    Tag: Camera
     Transform:
-      Position: [0, 0, 0]
-      Rotation: [-1.55452466, 0, 0]
-      Scale: [1, 0.999998629, 0.999998629]
-    Directional Light:
-      Color: [1, 1, 1, 1]
+      Position: [0, 7, 7]
+      Rotation: [-0.610865176, -5.42132797e-16, -1.3170526e-08]
+      Scale: [1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+  - Entity: 2500217727459906061
+    Tag: Trigger
+    Transform:
+      Position: [0, 4, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [3, 1, 3]
+    Rigidbody:
+      Is Visualization Enabled: true
+      Rigidbody Type: 0
+      Is Gravity Enabled: false
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Max Linear Velocity: 100
+      Max Angular Velocity: 100
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Is Trigger Enabled: false
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 15608248225095435140
+      Cast Shadow: true
+  - Entity: 3085809970336794991
+    Tag: Falling Box
+    Transform:
+      Position: [0, 8, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Rigidbody:
+      Is Visualization Enabled: true
+      Rigidbody Type: 1
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0.100000001
+      Angular Damping: 0.100000001
+      Max Linear Velocity: 100
+      Max Angular Velocity: 100
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Is Trigger Enabled: false
+      Static Friction: 0.5
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 15608248225095435140
+      Cast Shadow: true
 Systems:
   []

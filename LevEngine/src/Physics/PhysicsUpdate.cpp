@@ -15,23 +15,11 @@ namespace LevEngine
             auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
 
             if (rigidbody.GetActor() == NULL) return;
-
-            if (!rigidbody.m_TriggerEnterBuffer.empty())
-            {
-                rigidbody.m_TriggerEnterBuffer.clear();
-            }
-            if (!rigidbody.m_TriggerExitBuffer.empty())
-            {
-                rigidbody.m_TriggerExitBuffer.clear();
-            }
-            if (!rigidbody.m_CollisionEnterBuffer.empty())
-            {
-                rigidbody.m_CollisionEnterBuffer.clear();
-            }
-            if (!rigidbody.m_CollisionExitBuffer.empty())
-            {
-                rigidbody.m_CollisionExitBuffer.clear();
-            }
+            
+            rigidbody.m_TriggerEnterBuffer.clear();
+            rigidbody.m_TriggerExitBuffer.clear();
+            rigidbody.m_CollisionEnterBuffer.clear();
+            rigidbody.m_CollisionExitBuffer.clear();
         }
     }
     
