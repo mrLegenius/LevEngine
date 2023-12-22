@@ -28,7 +28,10 @@ namespace LevEngine
 		static bool IsAssetScript(const Path& path);
 
 		static bool IsAssetAudioBank(const Path& path);
+		
+		static bool IsAssetAnimationClip(const Path& path);
 
+		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path);
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid);
 
 		template<class T, class ...Args>

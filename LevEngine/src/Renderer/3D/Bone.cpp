@@ -1,5 +1,7 @@
 #include "levpch.h"
 #include "Bone.h"
+
+#include "Math/Math.h"
 #include "Renderer/3D/MeshLoading/AssimpConverter.h"
 
 namespace LevEngine
@@ -13,35 +15,70 @@ namespace LevEngine
         for (unsigned int positionIndex = 0; positionIndex < channel->mNumPositionKeys; ++positionIndex)
         {
             aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
-            double timeStamp = channel->mPositionKeys[positionIndex].mTime;
-            KeyPosition data;
-            data.position = AssimpConverter::ToVector3(aiPosition);
-            data.timeStamp = timeStamp;
-            m_Positions.push_back(data);
+            const double timeStamp = channel->mPositionKeys[positionIndex].mTime;
+            const Vector3 position = AssimpConverter::ToVector3(aiPosition);
+
+            if (positionIndex == 0
+                || (position - m_Positions.back().position).LengthSquared() > Math::FloatEpsilon)
+            {
+                KeyPosition data;
+                data.position = position;
+                data.timeStamp = timeStamp;
+                m_Positions.push_back(data);   
+            }
         }
 
+        if (m_Positions.size() == 1)
+        {
+            m_ConstantTranslation = Matrix::CreateTranslation(m_Positions[0].position);
+        }
+
+        
         for (unsigned int rotationIndex = 0; rotationIndex < channel->mNumRotationKeys; ++rotationIndex)
         {
             aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
-            double timeStamp = channel->mRotationKeys[rotationIndex].mTime;
-            KeyRotation data;
-            data.orientation = AssimpConverter::ToQuaternion(aiOrientation);
-            data.timeStamp = timeStamp;
-            m_Rotations.push_back(data);
+            const double timeStamp = channel->mRotationKeys[rotationIndex].mTime;
+            const Quaternion quaternion = AssimpConverter::ToQuaternion(aiOrientation);
+
+            if (rotationIndex == 0
+                || Quaternion::Angle(quaternion, m_Rotations.back().orientation) > Math::FloatEpsilon)
+            {
+                KeyRotation data;
+                data.orientation = quaternion;
+                data.timeStamp = timeStamp;
+                m_Rotations.push_back(data);
+            }
         }
+        
+        if (m_Rotations.size() == 1)
+        {
+            Quaternion rotation = m_Rotations[0].orientation;
+            rotation.Normalize();
+            m_ConstantRotation = Matrix::CreateFromQuaternion(rotation);
+        }
+        
 
         for (unsigned int scaleIndex = 0; scaleIndex < channel->mNumScalingKeys; ++scaleIndex)
         {
-            aiVector3D scale = channel->mScalingKeys[scaleIndex].mValue;
-            double timeStamp = channel->mScalingKeys[scaleIndex].mTime;
-            KeyScale data;
-            data.scale = AssimpConverter::ToVector3(scale);
-            data.timeStamp = timeStamp;
-            m_Scales.push_back(data);
-        }
+            aiVector3D aiScale = channel->mScalingKeys[scaleIndex].mValue;
+            const double timeStamp = channel->mScalingKeys[scaleIndex].mTime;
 
-        // Set bone to starting pose
-        Update(0.0f);
+            const Vector3 scale = AssimpConverter::ToVector3(aiScale);
+            
+            if (scaleIndex == 0
+                || (scale - m_Scales.back().scale).LengthSquared() > Math::FloatEpsilon)
+            {
+                KeyScale data;
+                data.scale = scale;
+                data.timeStamp = timeStamp;
+                m_Scales.push_back(data); 
+            }
+
+            if (m_Scales.size() == 1)
+            {
+                m_ConstantScale = Matrix::CreateScale(m_Scales[0].scale);
+            }
+        }
     }
 
     /*interpolates  b/w positions,rotations & scaling keys based on the curren time of
@@ -49,9 +86,9 @@ namespace LevEngine
     transformations*/
     void Bone::Update(double animationTime)
     {
-        const Matrix translation = InterpolatePosition(animationTime);
-        const Matrix rotation = InterpolateRotation(animationTime);
-        const Matrix scale = InterpolateScaling(animationTime);
+        const Matrix& translation = m_Positions.size() == 1 ? m_ConstantTranslation : InterpolatePosition(animationTime);
+        const Matrix& rotation = m_Rotations.size() == 1 ? m_ConstantRotation : InterpolateRotation(animationTime);
+        const Matrix& scale = m_Scales.size() == 1 ? m_ConstantScale : InterpolateScaling(animationTime);
         m_LocalTransform = (scale * rotation * translation);
     }
 
@@ -72,8 +109,8 @@ namespace LevEngine
             }
         }
         
-        LEV_CORE_ASSERT(0)
-        return -1;
+        LEV_CORE_ASSERT(m_Positions.size() > 1);
+        return m_Positions.size() - 2;
     }
 
     /* Gets the current index on mKeyRotations to interpolate to based on the
@@ -88,8 +125,8 @@ namespace LevEngine
             }
         }
         
-        LEV_CORE_ASSERT(0)
-        return -1;
+        LEV_CORE_ASSERT(m_Rotations.size() > 1);
+        return m_Rotations.size() - 2;
     }
 
     /* Gets the current index on m_Scales to interpolate to based on the
@@ -104,8 +141,8 @@ namespace LevEngine
             }
         }
         
-        LEV_CORE_ASSERT(0)
-        return -1;
+        LEV_CORE_ASSERT(m_Scales.size() > 1);
+        return m_Scales.size() - 2;
     }
 
 
@@ -121,11 +158,6 @@ namespace LevEngine
     and returns the translation matrix*/
     Matrix Bone::InterpolatePosition(double animationTime)
     {
-        if (1 == m_Positions.size())
-        {
-            return Matrix::CreateTranslation(m_Positions[0].position);
-        }
-
         const size_t p0Index = GetPositionIndex(animationTime);
         const size_t p1Index = p0Index + 1;
         const double scaleFactor = GetScaleFactor(m_Positions[p0Index].timeStamp,
@@ -140,13 +172,6 @@ namespace LevEngine
     and returns the rotation matrix*/
     Matrix Bone::InterpolateRotation(double animationTime)
     {
-        if (1 == m_Rotations.size())
-        {
-            Quaternion rotation = m_Rotations[0].orientation;
-            rotation.Normalize();
-            return Matrix::CreateFromQuaternion(rotation);
-        }
-
         const size_t p0Index = GetRotationIndex(animationTime);
         const size_t p1Index = p0Index + 1;
         const double scaleFactor = GetScaleFactor(m_Rotations[p0Index].timeStamp,
@@ -161,11 +186,6 @@ namespace LevEngine
     and returns the scale matrix*/
     Matrix Bone::InterpolateScaling(double animationTime)
     {
-        if (1 == m_Scales.size())
-        {
-            return Matrix::CreateScale(m_Scales[0].scale);
-        }
-
         const size_t p0Index = GetScaleIndex(animationTime);
         const size_t p1Index = p0Index + 1;
         const double scaleFactor = GetScaleFactor(m_Scales[p0Index].timeStamp,

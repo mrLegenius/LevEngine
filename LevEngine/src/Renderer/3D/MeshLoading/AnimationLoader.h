@@ -17,7 +17,7 @@ namespace LevEngine
 		static Vector<Ref<Animation>> LoadAllAnimations(const Path& path, Ref<Mesh>& mesh)
 		{
 			Assimp::Importer importer;
-			const aiScene* scene = importer.ReadFile(path.string(), aiProcess_Triangulate);
+			const aiScene* scene = importer.ReadFile(path.string(), aiProcess_FindInvalidData);
 
 			LEV_CORE_ASSERT(scene && scene->mRootNode);
 
@@ -34,17 +34,7 @@ namespace LevEngine
 		static Ref<Animation> LoadAnimation(const Path& path, const Ref<Mesh>& mesh, int animationIdx)
 		{
 			Assimp::Importer importer;
-			const aiScene* scene = importer.ReadFile(path.string(),
-				aiProcess_CalcTangentSpace
-				| aiProcess_Triangulate
-				| aiProcess_RemoveRedundantMaterials
-				| aiProcess_JoinIdenticalVertices
-				| aiProcess_GenSmoothNormals
-				//| aiProcess_SortByPType // Do not split mesh to sub meshes with different primitives types
-				//| aiProcess_FlipWindingOrder
-				//| aiProcess_ImproveCacheLocality // It may help with rendering large models
-				| aiProcess_FixInfacingNormals //May help to fix inwards normals
-			);
+			const aiScene* scene = importer.ReadFile(path.string(), aiProcess_FindInvalidData);
 
 			LEV_CORE_ASSERT(scene && scene->mRootNode);
 
@@ -52,7 +42,7 @@ namespace LevEngine
 		}
 
 	private:
-		static Ref<Animation> ReadAnimation(const aiScene* scene, const Ref<Mesh>& mesh, int animationIdx)
+		static Ref<Animation> ReadAnimation(const aiScene* scene, const Ref<Mesh>& resultMesh, int animationIdx)
 		{
 			const aiAnimation* animation = scene->mAnimations[animationIdx];
 
@@ -63,9 +53,7 @@ namespace LevEngine
 			resultAnimation->m_Name = animation->mName.C_Str();
 			NodeData* rootNode = resultAnimation->m_RootNode;
 			ReadHeirarchyData(resultAnimation, rootNode, scene->mRootNode);
-			ReadMissingBones(resultAnimation, animation, mesh);
-
-			resultAnimation->m_RootInverseTransform = rootNode->localTransform.Invert();
+			ReadKeyframes(resultAnimation, animation, resultMesh);
 
 			return resultAnimation;
 		}
@@ -75,8 +63,8 @@ namespace LevEngine
 			LEV_CORE_ASSERT(src);
 
 			dest->name = src->mName.data;
-			dest->originalTransform = AssimpConverter::ToMatrix(src->mTransformation, false);
-			dest->localTransform = dest->originalTransform;
+			dest->boneBindPoseTransform = AssimpConverter::ToMatrix(src->mTransformation, false);
+			dest->boneCurrentTransform = dest->boneBindPoseTransform;
 
 			for (unsigned int i = 0; i < src->mNumChildren; i++)
 			{
@@ -87,17 +75,17 @@ namespace LevEngine
 			}
 		}
 
-		static void ReadMissingBones(const Ref<Animation>& resultAnimation, const aiAnimation* animation, const Ref<Mesh>& mesh)
+		static void ReadKeyframes(const Ref<Animation>& resultAnimation,
+			const aiAnimation* aiAnimation, const Ref<Mesh>& resultMesh)
 		{
-			const unsigned int size = animation->mNumChannels;
+			const unsigned int numChannels = aiAnimation->mNumChannels;
 
-			UnorderedMap<String, BoneInfo>& boneInfoMap = mesh->GetBoneInfoMap();//getting m_BoneInfoMap from Model class
-			int& boneCount = mesh->GetBoneCount(); //getting the m_BoneCounter from Model class
+			UnorderedMap<String, BoneInfo>& boneInfoMap = resultMesh->GetBoneInfoMap();
+			int& boneCount = resultMesh->GetBoneCount();
 
-			//reading channels(bones engaged in an animation and their keyframes)
-			for (unsigned int i = 0; i < size; i++)
+			for (unsigned int channelIdx = 0; channelIdx < numChannels; channelIdx++)
 			{
-				const auto channel = animation->mChannels[i];
+				const auto channel = aiAnimation->mChannels[channelIdx];
 				const String& boneName = channel->mNodeName.data;
 
 				if (boneInfoMap.count(boneName) == 0)

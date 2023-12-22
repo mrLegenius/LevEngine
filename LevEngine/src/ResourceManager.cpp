@@ -53,7 +53,7 @@ void ResourceManager::Build(const Path& projectPath)
                 directories.push(path);
             else if (path.extension() != ".meta")
             {
-                const auto& asset = AssetDatabase::GetAsset<Asset>(path, false);
+                const auto& asset = AssetDatabase::GetAsset<Asset>(path);
                 if (asset && !asset->GetAddress().empty())
                 {
                     auto relativePath = relative(asset->GetPath(), AssetDatabase::GetAssetsPath());

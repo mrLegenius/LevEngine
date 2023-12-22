@@ -143,7 +143,6 @@
 #include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Scene/Systems/Animation/AnimatorInitSystem.h"
 #include "Scene/Systems/Animation/AnimatorUpdateSystem.h"
-#include "Scene/Systems/Animation/AnimatorDebugSystem.h"
 #include "Scene/Systems/Audio/AudioSourceInitSystem.h"
 #include "Scene/Systems/Audio/AudioListenerInitSystem.h"
 

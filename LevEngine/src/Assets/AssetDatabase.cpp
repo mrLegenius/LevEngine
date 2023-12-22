@@ -1,6 +1,8 @@
 ﻿#include "levpch.h"
 
 #include "AssetDatabase.h"
+
+#include "AnimationAsset.h"
 #include "AudioBankAsset.h"
 #include "DefaultAsset.h"
 #include "MaterialPBRAsset.h"
@@ -181,6 +183,36 @@ namespace LevEngine
 		return extension == ".bank";
 	}
 
+	bool AssetDatabase::IsAssetAnimationClip(const Path& path)
+	{
+		const auto extension = path.extension().string();
+		return extension == ".anim";
+	}
+
+	Ref<Asset> AssetDatabase::CreateAsset(const Path& path)
+	{
+		if (exists(path))
+		{
+			Log::CoreError("Asset already exists in {}", path);
+			return nullptr;
+		}
+			
+		const auto uuid = UUID();
+
+		Ref<Asset> asset = CreateAsset(path, uuid);
+		asset->Serialize();
+
+		String metaPath = path.string().c_str();
+		metaPath += ".meta";
+
+		CreateMeta(metaPath.c_str(), uuid);
+
+		m_Assets.emplace(uuid, asset);
+		m_AssetsByPath.emplace(path, asset);
+
+		return asset;
+	}
+
 	Ref<Asset> AssetDatabase::CreateAsset(const Path& path, UUID uuid)
 	{
 		if (IsAssetTexture(path))
@@ -203,6 +235,9 @@ namespace LevEngine
 
 		if (IsAssetAudioBank(path))
 			return CreateRef<AudioBankAsset>(path, uuid);
+
+		if (IsAssetAnimationClip(path))
+			return CreateRef<AnimationAsset>(path, uuid);
 
 		if (IsAssetScript(path))
 			return CreateRef<ScriptAsset>(path, uuid);

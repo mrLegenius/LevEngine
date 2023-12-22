@@ -128,7 +128,7 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 	const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
     for (const auto entity : staticMeshGroup)
     {
-        auto& [transform, mesh] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
+        auto [transform, mesh] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
 
 		if (!mesh.mesh) continue;
 		if (!mesh.material) continue;
@@ -141,16 +141,15 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 	const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
 	for (const auto entity : animatedMeshGroup)
 	{
-		Transform& transform = animatedMeshGroup.get<Transform>(entity);
-		const MeshRendererComponent& meshRenderer = animatedMeshGroup.get<MeshRendererComponent>(entity);
-		const AnimatorComponent& animator = animatedMeshGroup.get<AnimatorComponent>(entity);
+		auto [transform, meshRenderer, animator] = animatedMeshGroup.get<Transform, MeshRendererComponent,
+			AnimatorComponent>(entity);
 
 		if (!meshRenderer.mesh) continue;
 		if (!meshRenderer.material) continue;
     	
 		if (meshRenderer.castShadow)
 		{
-			Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(),  meshRenderer.mesh->GetMesh(),
+			Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(),  meshRenderer,
 				ShaderAssets::CascadeShadowPass());	
 		}
 	}

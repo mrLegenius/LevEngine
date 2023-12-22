@@ -3,11 +3,17 @@
 
 #include "AnimationAsset.h"
 #include "AssetDatabase.h"
+#include "EngineAssets.h"
 #include "Renderer/3D/MeshLoading/AnimationLoader.h"
 #include "Renderer/3D/MeshLoading/MeshLoader.h"
 
 namespace LevEngine
 {
+    Ref<Texture> MeshAsset::GetIcon() const
+    {
+        return Icons::Mesh();
+    }
+
     void MeshAsset::DeserializeData(YAML::Node& node)
     {
         try
@@ -34,7 +40,9 @@ namespace LevEngine
                 if (!AssetDatabase::AssetExists(animationAssetPath))
                 {
                     const Ref<AnimationAsset> animationAsset =
-                        AssetDatabase::CreateAsset<AnimationAsset>(animationAssetPath);
+                        eastl::static_shared_pointer_cast<AnimationAsset>(
+                            AssetDatabase::CreateAsset(animationAssetPath));
+                    
                     animationAsset->SetAnimation(animations[animationIdx]);
                     animationAsset->SetAnimationIdx(animationIdx);
                     animationAsset->SetOwnerMesh(shared_from_this());

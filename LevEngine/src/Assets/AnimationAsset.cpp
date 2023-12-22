@@ -1,5 +1,7 @@
 #include "levpch.h"
 #include "AnimationAsset.h"
+
+#include "MeshAsset.h"
 #include "Renderer/3D/MeshLoading/AnimationLoader.h"
 #include "Scene/Serializers/SerializerUtils.h"
 

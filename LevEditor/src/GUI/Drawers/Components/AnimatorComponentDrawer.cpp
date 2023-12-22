@@ -2,6 +2,7 @@
 
 #include "ComponentDrawer.h"
 #include "Scene/Components/Animation/AnimatorComponent.h"
+#include "Assets/AnimationAsset.h"
 
 namespace LevEngine::Editor
 {

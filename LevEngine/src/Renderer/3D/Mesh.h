@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AnimationConstants.h"
 #include "Math/BoundingVolume.h"
 #include "Renderer/BufferBinding.h"
 #include "BoneInfo.h"

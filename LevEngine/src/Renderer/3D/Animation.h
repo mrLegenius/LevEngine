@@ -10,9 +10,9 @@ namespace LevEngine
 {
     struct NodeData
     {
-        Matrix originalTransform;
-        Matrix localTransform;
-        Matrix globalTransform;
+        Matrix boneBindPoseTransform;
+        Matrix boneCurrentTransform;
+        Matrix boneModelToLocalTransform;
         String name;
         Vector<NodeData*> children;
         NodeData* parent;
@@ -39,6 +39,5 @@ namespace LevEngine
         NodeData* m_RootNode = new NodeData();
         UnorderedMap<String, BoneInfo> m_BoneInfoMap{};
         String m_Name;
-        Matrix m_RootInverseTransform;
     };
 }

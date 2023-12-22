@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "DataTypes/Vector.h"
 #include "EASTL/array.h"
 #include "Math/Matrix.h"
 #include "Renderer/3D/AnimationConstants.h"

@@ -1373,7 +1373,6 @@
     <ClInclude Include="src\Renderer\3D\MeshLoading\MeshLoader.h" />
     <ClInclude Include="src\Renderer\3D\Bone.h" />
     <ClInclude Include="src\Scene\Components\Animation\AnimatorComponent.h" />
-    <ClInclude Include="src\Scene\Systems\Animation\AnimatorDebugSystem.h" />
     <ClInclude Include="src\Scene\Systems\Animation\AnimatorInitSystem.h" />
     <ClInclude Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.h" />
     <ClInclude Include="external\physx\include\characterkinematic\PxBoxController.h" />
@@ -1800,17 +1799,8 @@
     <ClCompile Include="src\Renderer\3D\Animation.cpp" />
     <ClCompile Include="src\Renderer\3D\Bone.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\AnimatorComponent.cpp" />
-    <ClCompile Include="src\Scene\Systems\Animation\AnimatorDebugSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\AnimatorInitSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.cpp" />
-    <ClCompile Include="src\Physics\Components\LegacyCollider.cpp" />
-    <ClCompile Include="src\Physics\Components\LegacyRigidbody.cpp" />
-    <ClCompile Include="src\Physics\LegacyPhysics.cpp" />
-    <ClCompile Include="src\Scene\Systems\Physics\RigidbodyInitSystem.cpp" />
-    <ClCompile Include="src\Scripting\MathLuaBindings.cpp" />
-    <ClCompile Include="src\Scripting\MetaUtilities.cpp" />
-    <ClCompile Include="src\Scripting\ScriptingManager.cpp" />
-    <ClCompile Include="src\Scripting\ScriptingSystems.cpp" />
     <None Include="src\Scene\Entity.inl" />
     <None Include="src\Scene\Scene.inl" />
     <None Include="src\Scripting\LuaComponentsBinder.inl" />

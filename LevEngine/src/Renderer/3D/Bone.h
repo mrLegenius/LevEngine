@@ -79,5 +79,9 @@ namespace LevEngine
         String m_Name;
         int m_ID;
 
+        // Used when respective keyframes amount == 1 to accelerate updates
+        Matrix m_ConstantTranslation;
+        Matrix m_ConstantRotation;
+        Matrix m_ConstantScale;
     };
 }

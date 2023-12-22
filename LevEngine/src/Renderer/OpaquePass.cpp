@@ -34,8 +34,7 @@ namespace LevEngine
         const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
         for (const auto entity : staticMeshGroup)
         {
-            Transform& transform = staticMeshGroup.get<Transform>(entity);
-            const MeshRendererComponent& meshRenderer = staticMeshGroup.get<MeshRendererComponent>(entity);
+            auto [transform, meshRenderer] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
 
             if (!meshRenderer.material) continue;
             auto& material = meshRenderer.material->GetMaterial();
@@ -60,9 +59,8 @@ namespace LevEngine
         const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
         for (const auto entity : animatedMeshGroup)
         {
-            Transform& transform = animatedMeshGroup.get<Transform>(entity);
-            const MeshRendererComponent& meshRenderer = animatedMeshGroup.get<MeshRendererComponent>(entity);
-            const AnimatorComponent& animator = animatedMeshGroup.get<AnimatorComponent>(entity);
+            auto [transform, meshRenderer, animator] = animatedMeshGroup.get<Transform, MeshRendererComponent,
+                AnimatorComponent>(entity);
 
             if (!meshRenderer.material) continue;
             auto& material = meshRenderer.material->GetMaterial();
@@ -75,7 +73,7 @@ namespace LevEngine
 
             if (RenderSettings::UseFrustumCulling)
             {
-                if (!mesh->IsOnFrustum(params.Camera.GetFrustum(), transform)) continue;
+                if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
             
             material.Bind(shader);

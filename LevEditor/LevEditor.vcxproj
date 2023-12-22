@@ -99,6 +99,7 @@
     <ClInclude Include="src\Essentials\MenuBar.h" />
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
+    <ClCompile Include="src\ComponentDebugRenderers\AnimatorComponentDebugRenderer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\DefaultAssetDrawer.cpp" />
     <ClInclude Include="src\GUI\Drawers\Components\ComponentDrawer.h" />
@@ -206,17 +207,6 @@
     <ClInclude Include="src\ProjectEditor.h" />
     <ClInclude Include="src\SceneEditor.h" />
     <ClInclude Include="src\SceneState.h" />
-    <ClCompile Include="src\GUI\Drawers\Components\AnimatorComponentDrawer.cpp" />
-    <ClCompile Include="src\GUI\Drawers\Components\ConstantForceDrawer.cpp" />
-    <ClCompile Include="src\GUI\Drawers\Components\LegacyColliderDrawers.cpp" />
-    <ClCompile Include="src\GUI\Drawers\Components\LegacyRigidbodyDrawer.cpp" />
-    <ClCompile Include="src\Panels\DockSpace.cpp" />
-    <ClCompile Include="src\Panels\ScriptsPanel.cpp" />
-    <ClCompile Include="src\Panels\StatisticsPanel.cpp" />
-    <ClCompile Include="src\Panels\StatusBar.cpp" />
-    <ClCompile Include="src\Panels\Toolbar.cpp" />
-    <ClCompile Include="src\ProjectEditor.cpp" />
-    <ClCompile Include="src\SceneEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\GUI\Drawers\Assets\ScriptAssetDrawer.cpp" />

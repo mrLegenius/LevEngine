@@ -32,9 +32,10 @@ namespace LevEngine
 			m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
 
 			NodeData* node = m_CurrentAnimation->GetRootNode();
-			UpdateLocalBoneTransforms(node);
+
+			UpdateBoneModelToLocalTransforms(node);
 			
-			CalculateBoneTransform(node);
+			CalculateFinalBoneTransforms(node);
 		}
 	}
 
@@ -55,6 +56,17 @@ namespace LevEngine
 		m_IsPlaying = true;
 	}
 
+	void Animator::PauseAnimation()
+	{
+		m_IsPlaying = false;
+	}
+
+	void Animator::StopAnimation()
+	{
+		m_CurrentTime = 0.0f;
+		m_IsPlaying = false;
+	}
+
 	Array<Matrix, AnimationConstants::MaxBoneCount> Animator::GetFinalBoneMatrices() const
 	{
 		return m_FinalBoneMatrices;
@@ -64,20 +76,19 @@ namespace LevEngine
 	{
 		if (m_CurrentAnimation == nullptr) return;
 
-		UpdateLocalBoneTransforms(m_CurrentAnimation->GetRootNode());
+		const NodeData* node = m_CurrentAnimation->GetRootNode();
 		
-		DrawDebugPose(m_CurrentAnimation->GetRootNode(), rootTransform, rootTransform.GetWorldPosition());
+		DrawDebugPose(node, rootTransform, rootTransform.GetWorldPosition());
 	}
 
 	void Animator::DrawDebugPose(const NodeData* node, const Transform& rootTransform, Vector3 prevPosition)
 	{
 		const String& nodeName = node->name;
 
-		Matrix globalTransformation = node->localTransform;
+		Matrix globalTransformation = node->boneCurrentTransform;
 		const NodeData* parent = node->parent;
-		while (parent != nullptr) {
-			globalTransformation = globalTransformation * parent->localTransform;
-			parent = parent->parent;
+		if (parent != nullptr) {
+			globalTransformation = globalTransformation * parent->boneModelToLocalTransform;
 		}
 		
 		auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
@@ -86,12 +97,11 @@ namespace LevEngine
 		
 		if (boneInfoIt != boneInfoMap.end())
 		{
-			Matrix rootMatrix = rootTransform.GetModel();
-			const Matrix finalBoneTransform = (globalTransformation);
-			nextBonePos = Vector3::Transform(Vector3::Zero, finalBoneTransform * rootMatrix);
+			const Matrix rootMatrix = rootTransform.GetModel();
+			nextBonePos = Vector3::Transform(Vector3::Zero, globalTransformation * rootMatrix);
 			const Color color = Color(0.0f, 0.0f, 1.0f);
 			DebugRender::DrawLine(prevPosition, nextBonePos, color);
-			DebugRender::DrawCube(nextBonePos, Vector3::One * 0.1f, color);
+			DebugRender::DrawCube(nextBonePos, Vector3::One * 0.05f, color);
 		}
 		else
 		{
@@ -115,10 +125,10 @@ namespace LevEngine
 	{
 		const String& nodeName = node->name;
 		
-		Matrix globalTransformation = node->originalTransform;
+		Matrix globalTransformation = node->boneBindPoseTransform;
 		const NodeData* parent = node->parent;
 		while (parent != nullptr) {
-			globalTransformation = parent->originalTransform * globalTransformation;
+			globalTransformation = parent->boneBindPoseTransform * globalTransformation;
 			parent = parent->parent;
 		}
 
@@ -134,7 +144,7 @@ namespace LevEngine
 			const Matrix finalBoneTransform = (globalTransformation).Transpose();
 			nextBonePos = Vector3::Transform(Vector3::Zero, finalBoneTransform * rootMatrix);
 			DebugRender::DrawLine(prevPosition, nextBonePos, color);
-			DebugRender::DrawCube(nextBonePos, Vector3::One * 0.1f, color);
+			DebugRender::DrawCube(nextBonePos, Vector3::One * 0.05f, color);
 		}
 		else
 		{
@@ -147,31 +157,30 @@ namespace LevEngine
 		}
 	}
 
-	void Animator::UpdateLocalBoneTransforms(NodeData* node)
+	void Animator::UpdateBoneModelToLocalTransforms(NodeData* node)
 	{
 		const String& nodeName = node->name;
 
 		if (Bone* Bone = m_CurrentAnimation->FindBone(nodeName))
 		{
 			Bone->Update(m_CurrentTime);
-			node->localTransform = Bone->GetLocalTransform();
+			node->boneCurrentTransform = Bone->GetLocalTransform();
 		}
 
 		for (size_t i = 0; i < node->children.size(); i++)
 		{
-			UpdateLocalBoneTransforms(node->children[i]);
+			UpdateBoneModelToLocalTransforms(node->children[i]);
 		}
 	}
 
-	void Animator::CalculateBoneTransform(NodeData* node)
+	void Animator::CalculateFinalBoneTransforms(NodeData* node)
 	{
 		const String& nodeName = node->name;
 		
-		node->globalTransform = node->localTransform;
+		node->boneModelToLocalTransform = node->boneCurrentTransform;
 		const NodeData* parent = node->parent;
-		while (parent != nullptr) {
-			node->globalTransform = node->globalTransform * parent->localTransform;
-			parent = parent->parent;
+		if (parent != nullptr) {
+			node->boneModelToLocalTransform = node->boneModelToLocalTransform * parent->boneModelToLocalTransform;
 		}
 
 		auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
@@ -181,13 +190,13 @@ namespace LevEngine
 			const int index = boneInfoIt->second.id;
 			const Matrix& offset = boneInfoIt->second.offset;
 
-			const Matrix finalBoneTransform = (offset.Transpose() * node->globalTransform);
+			const Matrix finalBoneTransform = (offset.Transpose() * node->boneModelToLocalTransform);
 			m_FinalBoneMatrices[index] = finalBoneTransform;
 		}
 
 		for (size_t i = 0; i < node->children.size(); i++)
 		{
-			CalculateBoneTransform(node->children[i]);
+			CalculateFinalBoneTransforms(node->children[i]);
 		}
 	}
 }
