@@ -261,7 +261,7 @@ namespace LevEngine::Scripting
                 LEV_ASSERT(index < children.size() && index > -1)
                 return children[index];
             },
-            "getFrowardDirection", &Transform::GetForwardDirection,
+            "getForwardDirection", &Transform::GetForwardDirection,
             "getRightDirection", &Transform::GetRightDirection
         );
     }

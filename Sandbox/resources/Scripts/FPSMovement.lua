@@ -10,6 +10,7 @@ FPSMovement = {
 			function (entity)
 				local scriptsContainer = entity:get_component(ScriptsContainer)
 
+
 				if scriptsContainer.Player == nil then
 					return
 				end	
@@ -22,31 +23,41 @@ FPSMovement = {
 
 				local movement = Vector3.Zero
 
+				
+
 				if Input.isKeyDown(KeyCode.LeftShift) then
                     player.speed = sprintSpeed
                 else
                     player.speed = walkSpeed
 				end
+
+				--print(player.speed)
                 
                 if Input.isKeyDown(KeyCode.W) then
-                    movement = movement + Vector3(cameraTransform.getForwardDirection().x, 0.0, cameraTransform.getForwardDirection().z)
+                    movement = movement + Vector3(cameraTransform:getForwardDirection().x, 0.0, cameraTransform:getForwardDirection().z)
+					--print("W")
                 elseif Input.isKeyDown(KeyCode.S) then
-                    movement = movement - Vector3(cameraTransform.getForwardDirection().x, 0.0, cameraTransform.getForwardDirection().z)
+                    movement = movement - Vector3(cameraTransform:getForwardDirection().x, 0.0, cameraTransform:getForwardDirection().z)
+					--print("S")
 				end
 
-                if Input.IsKeyDown(KeyCode.A) then
-                    movement = movement - Vector3(cameraTransform.getRightDirection().x, 0.0, cameraTransform.getRightDirection().z)
+				
+                if Input.isKeyDown(KeyCode.A) then
+                    movement = movement - Vector3(cameraTransform:getRightDirection().x, 0.0, cameraTransform:getRightDirection().z)
+					--print("A")
                 elseif Input.isKeyDown(KeyCode.D) then
-                    movement = movement + Vector3(cameraTransform.getRightDirection().x, 0.0, cameraTransform.getRightDirection().z)
+                    movement = movement + Vector3(cameraTransform:getRightDirection().x, 0.0, cameraTransform:getRightDirection().z)
+					--print("D")
 				end
                 
                 if Input.isKeyDown(KeyCode.Space) then
                     movement = movement + Vector3.Up
+					--print("Space")
 				end
 
 				movement:normalize()
 
-				print(movement.x, movement.y, movement.z)
+				print(movement)
 
 				playerRigidbody:addForce(
                     Vector3(
