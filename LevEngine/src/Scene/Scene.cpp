@@ -33,7 +33,7 @@ namespace LevEngine
     {
         using namespace Scripting;
 
-        auto scriptingManager = Application::Get().GetScriptingManager();
+        auto& scriptingManager = Application::Get().GetScriptingManager();
         scriptingManager.CreateRegistryBind(m_Registry);
 
         LuaComponentsBinder::CreateLuaEntityBind(*(scriptingManager.GetLuaState()), this);
@@ -51,9 +51,10 @@ namespace LevEngine
 
     void Scene::OnInit()
     {
-        auto scriptManager = Application::Get().GetScriptingManager();
+        auto& scriptManager = Application::Get().GetScriptingManager();
         scriptManager.LoadScripts();
         scriptManager.RegisterSystems(this);
+        scriptManager.InitScriptsContainers(m_Registry);
 
         RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
         RegisterUpdateSystem<WaypointPositionUpdateSystem>();

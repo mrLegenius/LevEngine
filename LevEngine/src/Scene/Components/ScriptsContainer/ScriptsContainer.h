@@ -13,6 +13,7 @@ namespace LevEngine
     struct ScriptsContainer
     {
         UnorderedMap<String, sol::table> m_ScriptComponents;
+        Set<Ref<ScriptAsset>> m_ScriptsAssets;
         
         sol::object Get(sol::stack_object key, sol::this_state L);
 

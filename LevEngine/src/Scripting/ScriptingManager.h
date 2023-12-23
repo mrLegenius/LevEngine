@@ -14,6 +14,12 @@ namespace LevEngine
 		{
 		public:
 			ScriptingManager();
+			
+			ScriptingManager(const ScriptingManager& other) = delete;
+			ScriptingManager(ScriptingManager&& other) noexcept = delete;
+			ScriptingManager& operator=(const ScriptingManager& other) = delete;
+			ScriptingManager& operator=(ScriptingManager&& other) noexcept = delete;
+			
 			void Init();
 			bool LoadScripts();
 
@@ -27,6 +33,10 @@ namespace LevEngine
 			void Shutdown();
 
 			Ref<sol::state> GetLuaState();
+
+			Ref<ScriptAsset> GetComponentScriptAssetByName(const String& name) const;
+
+			void InitScriptsContainers(entt::registry& registry) const;
 
 		private:
 			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Systems;
