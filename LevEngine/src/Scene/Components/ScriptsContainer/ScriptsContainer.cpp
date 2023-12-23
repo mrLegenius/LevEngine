@@ -42,9 +42,9 @@ namespace LevEngine
         {
             const String keyString{maybeStringKey.value().c_str()};
 
-            const auto scriptimgManager = Application::Get().GetScriptingManager();
+            const auto& scriptingManager = Application::Get().GetScriptingManager();
 
-            if (auto scriptAsset = scriptimgManager->GetComponentScriptAssetByName(keyString))
+            if (auto scriptAsset = scriptingManager.GetComponentScriptAssetByName(keyString))
             {
 
                 if (m_ScriptsAssets.find(scriptAsset) == m_ScriptsAssets.end()) 

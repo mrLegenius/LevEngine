@@ -33,10 +33,10 @@ namespace LevEngine
     {
         using namespace Scripting;
 
-        auto scriptingManager = Application::Get().GetScriptingManager();
-        scriptingManager->CreateRegistryBind(m_Registry);
+        auto& scriptingManager = Application::Get().GetScriptingManager();
+        scriptingManager.CreateRegistryBind(m_Registry);
 
-        LuaComponentsBinder::CreateLuaEntityBind(*(scriptingManager->GetLuaState()), this);
+        LuaComponentsBinder::CreateLuaEntityBind(*(scriptingManager.GetLuaState()), this);
 
         m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
     }
@@ -51,10 +51,10 @@ namespace LevEngine
 
     void Scene::OnInit()
     {
-        auto scriptManager = Application::Get().GetScriptingManager();
-        scriptManager->LoadScripts();
-        scriptManager->RegisterSystems(this);
-        scriptManager->InitScriptsContainers(m_Registry);
+        auto& scriptManager = Application::Get().GetScriptingManager();
+        scriptManager.LoadScripts();
+        scriptManager.RegisterSystems(this);
+        scriptManager.InitScriptsContainers(m_Registry);
 
         RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
         RegisterUpdateSystem<WaypointPositionUpdateSystem>();

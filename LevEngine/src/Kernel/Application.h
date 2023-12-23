@@ -65,7 +65,7 @@ public:
 	static Application& Get() { return *s_Instance; }
 	[[nodiscard]] Physics& GetPhysics() const;
 	[[nodiscard]] static Renderer& Renderer();
-	[[nodiscard]] Scripting::ScriptingManager* GetScriptingManager();
+	[[nodiscard]] Scripting::ScriptingManager& GetScriptingManager();
 
 	[[nodiscard]] Statistic GetFrameStat() const;
 private:

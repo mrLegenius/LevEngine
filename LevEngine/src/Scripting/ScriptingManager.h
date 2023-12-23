@@ -14,6 +14,12 @@ namespace LevEngine
 		{
 		public:
 			ScriptingManager();
+			
+			ScriptingManager(const ScriptingManager& other) = delete;
+			ScriptingManager(ScriptingManager&& other) noexcept = delete;
+			ScriptingManager& operator=(const ScriptingManager& other) = delete;
+			ScriptingManager& operator=(ScriptingManager&& other) noexcept = delete;
+			
 			void Init();
 			bool LoadScripts();
 

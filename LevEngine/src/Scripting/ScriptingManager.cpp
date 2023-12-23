@@ -239,6 +239,7 @@ namespace LevEngine::Scripting
     void ScriptingManager::Shutdown()
     {
         m_Systems.clear();
+        m_Components.clear();
     }
 
     Ref<sol::state> ScriptingManager::GetLuaState()
