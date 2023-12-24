@@ -37,8 +37,29 @@ namespace LevEngine::Scripting
             "isKeyReleased", [](int key)
             {
                 return Input::IsKeyReleased(static_cast<KeyCode>(key));
+            },
+            "isMouseButtonPressed", [](int key)
+            {
+                return Input::IsMouseButtonPressed(static_cast<MouseButton>(key));
+            },
+            "isMouseButtonReleased", [](int key)
+            {
+                return Input::IsMouseButtonReleased(static_cast<MouseButton>(key));
+            },
+            "isMouseButtonDown", [](int key)
+            {
+                return Input::IsMouseButtonDown(static_cast<MouseButton>(key));
+            },
+            "isMouseButtonUp", [](int key)
+            {
+                return Input::IsMouseButtonUp(static_cast<MouseButton>(key));
             }
         );
+        
+        lua.new_enum("MouseButton",
+            "Left", MouseButton::Left,
+            "Right", MouseButton::Right,
+            "Middle", MouseButton::Middle);
 
         lua.new_enum<false>("KeyCode",
             "None", KeyCode::None,
@@ -318,7 +339,11 @@ namespace LevEngine::Scripting
                 [](const Rigidbody& rigidbody, Vector3 vector, int forceMode)
                 {
                     rigidbody.AddForce(vector, static_cast<Rigidbody::ForceMode>(forceMode));
-                })
+                }),
+            "initialize", [](Rigidbody& rigidbody, const Entity entity)
+            {
+                rigidbody.Initialize(entity);
+            }
         );
         
         lua.new_enum("ForceMode",

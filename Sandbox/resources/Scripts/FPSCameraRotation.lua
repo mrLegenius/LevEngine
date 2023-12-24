@@ -14,7 +14,6 @@ FPSCameraRotation = {
 
 		view:for_each(
 			function(entity)
-				local transform = entity:get_component(Transform)
 				local camera = entity:get_component(CameraComponent)
 
 				if not camera.isMain then
@@ -22,6 +21,8 @@ FPSCameraRotation = {
 				end
 
 				--print("Found entity", entity:name())
+				
+				local transform = entity:get_component(Transform)
 
 				local rotation = transform:getWorldRotation():toEuler() * Math.radToDeg
 				rotation.x = rotation.x - delta.y
