@@ -12,7 +12,6 @@ ProjectileLifeSystem = {
 					return
 				end
 
-				local projectileTransform = entity:get_component(Transform)
 				local projectile = scriptsContainer.Projectile
 
 				projectile.timer = projectile.timer + deltaTime

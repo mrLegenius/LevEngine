@@ -16,6 +16,9 @@ namespace sol {
 			return ptr.get();
 		}
 	};
+
+	template <class T>
+	struct is_container<Vector<T>> : std::true_type { };
 }
 
 namespace LevEngine
@@ -45,6 +48,8 @@ namespace LevEngine::Scripting
 		template<class TComponent>
 		static void RegisterMetaComponent();
 	};
+
+	
 
 	template <class TComponent>
 	auto add_component(Entity& entity, const sol::table& component, sol::this_state state);

@@ -343,7 +343,8 @@ namespace LevEngine::Scripting
             "initialize", [](Rigidbody& rigidbody, const Entity entity)
             {
                 rigidbody.Initialize(entity);
-            }
+            },
+            "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer
         );
         
         lua.new_enum("ForceMode",
@@ -352,6 +353,13 @@ namespace LevEngine::Scripting
             "Acceleration", Rigidbody::ForceMode::Acceleration,
             "VelocityChange", Rigidbody::ForceMode::VelocityChange
             );
+
+        lua.new_usertype<Collision>("Collision",
+            "contactEntity", &Collision::ContactEntity,
+            "contactPositions", &Collision::ContactPositions,
+            "contactNormals", &Collision::ContactPositions,
+            "contactImpulses", &Collision::ContactImpulses,
+            "contactSeparations", &Collision::ContactSeparations);
     }
 
     void LuaComponentsBinder::CreateLuaEntityBind(sol::state& lua, Scene* scene)
