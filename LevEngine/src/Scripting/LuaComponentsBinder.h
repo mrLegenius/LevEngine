@@ -33,6 +33,7 @@ namespace LevEngine::Scripting
 		static void CreateSceneManagerBind(sol::state& lua);
 		static void CreateSceneBind(sol::state& lua);
 		static void CreatePrefabBind(sol::state& lua);
+		static void CreateAudioBind(sol::state& lua);
 		
 		static void CreateTransformLuaBind(sol::state& lua);
 		static void CreateCameraComponentLuaBind(sol::state& lua);

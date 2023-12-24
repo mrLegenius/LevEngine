@@ -43,13 +43,13 @@ namespace Sandbox
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
-		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
-		scene->RegisterUpdateSystem<FPSMovementSystem>();
+		//scene->RegisterUpdateSystem<PlayerSpawnSystem>();
+		//scene->RegisterUpdateSystem<FPSMovementSystem>();
 		//scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
 		scene->RegisterUpdateSystem<CollisionHandleSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
-		scene->RegisterUpdateSystem<EnemySpawnSystem>();
+		//scene->RegisterUpdateSystem<EnemySpawnSystem>();
 
 		scene->OnInit();
 		Application::Get().GetWindow().DisableCursor();

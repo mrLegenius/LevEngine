@@ -592,7 +592,7 @@ namespace LevEngine
         {
             if (!CheckErrors(m_System->getEvent(eventPath.c_str(), &desc)))
             {
-                return 0;
+                return nullptr;
             }
 
             m_EventDescriptions.insert({ eventPath, desc });

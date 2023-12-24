@@ -57,7 +57,7 @@ FPSMovement = {
 
 				movement:normalize()
 
-				print(movement)
+				--print(movement)
 
 				playerRigidbody:addForce(
                     Vector3(

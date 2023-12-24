@@ -4,6 +4,7 @@
 #include "MetaUtilities.h"
 #include "ResourceManager.h"
 #include "Assets/PrefabAsset.h"
+#include "Audio/Audio.h"
 #include "Input/Input.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Scene/Entity.h"
@@ -459,5 +460,16 @@ namespace LevEngine::Scripting
                 return prefabAsset.Instantiate(scene);
             }
         );
+    }
+
+    void LuaComponentsBinder::CreateAudioBind(sol::state& lua)
+    {
+        lua.new_usertype<Audio>(
+            "Audio",
+            sol::no_constructor,
+            "playOneShot",
+            [](const std::string& eventName, const Entity entity)
+            { return Audio::PlayOneShot(String{eventName.c_str()}, entity); }
+            );
     }
 }
