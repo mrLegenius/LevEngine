@@ -466,7 +466,11 @@ namespace LevEngine::Scripting
     {
         lua.new_usertype<Scene>(
             "Scene",
-            sol::no_constructor
+            sol::no_constructor,
+            "destroyEntity", [](const Ref<Scene>& scene, Entity entity)
+            {
+                scene->DestroyEntity(entity);
+            }
         );
     }
 
