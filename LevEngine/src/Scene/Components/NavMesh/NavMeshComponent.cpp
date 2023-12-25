@@ -82,6 +82,8 @@ namespace LevEngine
 
 		Vector<Vector3> verticesOfAllMeshes;
 		Vector<uint32_t> indicesOfAllMeshes;
+
+		uint32_t indexOffset = 0;
 		
 		for (auto& entity : view)
 		{
@@ -103,11 +105,13 @@ namespace LevEngine
 				meshVertex = Vector3::Transform(meshVertex, transform.GetModel());
 				verticesOfAllMeshes.push_back(meshVertex);
 			}
-
+			
 			for (auto meshIndex : meshIndices)
 			{
-				indicesOfAllMeshes.push_back(meshIndex);
+				indicesOfAllMeshes.push_back(meshIndex + indexOffset);
 			}
+
+			indexOffset += mesh->GetVerticesCount();
 		}
 		
 		float* vertices = &verticesOfAllMeshes.data()->x;
