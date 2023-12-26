@@ -30,9 +30,13 @@
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Transform/Transform.h"
 #include "Kernel/Time/Time.h"
+#include "Platform/D3D11/D3D11RendererContext.h"
 
 namespace LevEngine
 {
+    extern ID3D11DeviceContext* context;
+    extern ID3D11DeviceContext* deferredContext;
+    
     Renderer::Renderer(const Window& window)
         : m_MainRenderTarget(window.GetContext()->GetRenderTarget())
     {
@@ -427,10 +431,64 @@ namespace LevEngine
         return {mainCamera, cameraPosition, cameraViewMatrix, perspectiveViewProjectionMatrix};
     }
 
+    ID3D11CommandList* commandList = nullptr;
+    std::mutex commandMutex;
+    
     void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform)
     {
         LEV_PROFILE_FUNCTION();
 
+        {
+            
+            if (deferredContext)
+            {
+                try
+                {
+                    vgjs::schedule(vgjs::Function{[]
+                    {
+                            deferredContext->ClearState();
+                        commandMutex.lock();
+                            const auto res = deferredContext->FinishCommandList(false, &commandList);
+                        commandMutex.unlock();
+                            LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to finish command list");
+                    }, vgjs::thread_index_t{0}});
+                }
+                catch (std::exception& e)
+                {
+                    Log::CoreCritical("Some error with deferred context. Error: {}", e.what());   
+                }
+
+                vgjs::continuation([=] { Log::CoreInfo("Serialization is finished"); });
+            }
+
+            commandMutex.lock();
+            if (commandList)
+            {
+                context->ExecuteCommandList(commandList, true);
+            }
+            
+            commandMutex.unlock();
+
+            if (deferredContext)
+            {
+                try
+                {
+                    vgjs::schedule(vgjs::Function{[]
+                    {
+                        if (commandList)
+                            commandList->Release();
+                        
+                    }, vgjs::thread_index_t{0}});
+                }
+                catch (std::exception& e)
+                {
+                    Log::CoreCritical("Some error with deferred context. Error: {}", e.what());   
+                }
+
+                vgjs::continuation([=] { Log::CoreInfo("Serialization is finished"); });
+            }
+        }
+        
         if (!mainCamera)
         {
             Clear();
@@ -464,7 +522,7 @@ namespace LevEngine
             LEV_NOT_IMPLEMENTED
             break;
         }
-
+        
         m_FrameQuery->End(Time::GetFrameNumber());
         
         SampleQuery(m_FrameQuery, m_FrameStat);

@@ -853,7 +853,7 @@ namespace LevEngine
             out << YAML::Key << "Restitution" << YAML::Value << component.GetRestitution();
         }
 
-        void DeserializeData(YAML::Node& node, Rigidbody& component) override
+        void DeserializeData(const YAML::Node& node, Rigidbody& component) override
         {
             if (const auto visualizationEnableNode = node["Is Visualization Enabled"])
             {

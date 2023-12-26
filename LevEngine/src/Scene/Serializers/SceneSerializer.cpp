@@ -7,6 +7,7 @@
 #include "Scene/Scene.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/Transform/Transform.h"
+#include "Scene/Components/Transform/TransformSerializer.h"
 
 namespace LevEngine
 {
@@ -65,8 +66,9 @@ namespace LevEngine
 		if (auto entities = data["Entities"])
 		{
 			std::unordered_map<UUID, Entity> entitiesMap;
-			std::unordered_map<UUID, Pair<Entity, YAML::Node>> entitiesToDeserialize;
 			std::unordered_map<UUID, UUID> relationships;
+			std::vector<Pair<Entity, YAML::Node>> entitiesToDeserialize;
+
 
 			for (auto entity : entities)
 			{
@@ -82,17 +84,11 @@ namespace LevEngine
 				Log::Trace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
 
 				Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
-
-				entitiesToDeserialize.try_emplace(uuid, Pair<Entity, YAML::Node>(deserializedEntity, entity));
+				
+				TransformSerializer::DeserializeData(entity, deserializedEntity.GetComponent<Transform>());
+				
+				entitiesToDeserialize.emplace_back(Pair<Entity, YAML::Node>(deserializedEntity, entity));
 				entitiesMap.try_emplace(uuid, deserializedEntity);
-			}
-
-			for (auto& [uuid, pair] : entitiesToDeserialize)
-			{
-				auto deserializedEntity = pair.first;
-				auto entityNode = pair.second;
-				for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
-					serializer->Deserialize(entityNode, deserializedEntity);
 			}
 
 			for (auto& [uuid, entity] : entitiesMap)
@@ -102,6 +98,24 @@ namespace LevEngine
 				auto& transform = entity.GetComponent<Transform>();
 				transform.SetParent(entitiesMap[relationships[uuid]], false);
 			}
+			
+			for (auto& [deserializedEntity, entityNode] : entitiesToDeserialize)
+			{
+				vgjs::schedule(vgjs::Function{[deserializedEntity, entityNode]
+				{
+					try
+					{
+						for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
+							serializer->Deserialize(entityNode, deserializedEntity);
+					}
+					catch (std::exception& e)
+					{
+						Log::CoreError("Failed to deserialize entity components. Error: '{}'", e.what());
+					}
+				}, vgjs::thread_index_t{0}});
+			}
+
+			vgjs::continuation([=] { Log::CoreInfo("Serialization is finished"); });
 		}
 	}
 

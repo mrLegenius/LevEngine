@@ -5,6 +5,7 @@
 #include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/Transform/Transform.h"
+#include "Scene/Components/Transform/TransformSerializer.h"
 
 namespace LevEngine
 {
@@ -45,6 +46,8 @@ namespace LevEngine
             Log::CoreTrace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
 
             const Entity deserializedEntity = scene->CreateEntity(uuid, name);
+
+            TransformSerializer::DeserializeData(entity, deserializedEntity.GetComponent<Transform>());
 
             for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
                 serializer->Deserialize(entity, deserializedEntity);

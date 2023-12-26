@@ -17,6 +17,7 @@
 namespace LevEngine
 {
 ID3D11DeviceContext* context;
+ID3D11DeviceContext* deferredContext;
 Microsoft::WRL::ComPtr<ID3D11Device> device;
 IDXGISwapChain* swapChain;
 
@@ -57,7 +58,7 @@ void D3D11RendererContext::Init(const uint32_t width, const uint32_t height, con
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_SINGLETHREADED,
+		D3D11_CREATE_DEVICE_DEBUG,
 		featureLevel,
 		1,
 		D3D11_SDK_VERSION,
@@ -68,7 +69,15 @@ void D3D11RendererContext::Init(const uint32_t width, const uint32_t height, con
 		&context);
 
 	LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create device and swap chain")
-
+	
+	{
+		vgjs::schedule(vgjs::Function{[]
+		{
+			const auto result = device->CreateDeferredContext(0, &deferredContext);
+			LEV_CORE_ASSERT(SUCCEEDED(result), "Failed to create deferred context")
+		}, vgjs::thread_index_t{0}});
+	}
+	
 	res = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_BackBuffer));
 	LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to get buffer from swap chain")
 

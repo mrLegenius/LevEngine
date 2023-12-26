@@ -86,7 +86,7 @@ namespace LevEngine
             out << YAML::EndMap;
         }
 
-        void DeserializeData(YAML::Node& node, ScriptsContainer& component) override
+        void DeserializeData(const YAML::Node& node, ScriptsContainer& component) override
         {
             if (auto scriptsContainer = node["ScriptsContainer"])
             {

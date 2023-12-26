@@ -49,6 +49,7 @@ namespace LevEngine
         UUID m_UUID;
         String m_Address;
         bool m_Deserialized = false;
+        bool m_IsDeserializing{};
 
     private:
         void SerializeData();

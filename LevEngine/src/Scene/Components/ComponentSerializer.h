@@ -13,12 +13,13 @@ namespace LevEngine
 	public:
 		virtual ~IComponentSerializer() = default;
 		virtual void Serialize(YAML::Emitter& out, Entity entity) = 0;
-		virtual void Deserialize(YAML::Node& node, Entity entity) = 0;
+		virtual void Deserialize(const YAML::Node& node, Entity entity) = 0;
 	};
 
 	template<class TComponent, class TSerializer>
 	class ComponentSerializer : public IComponentSerializer
 	{
+		inline static std::mutex m_DeserializeMutex;
 	public:
 		void Serialize(YAML::Emitter& out, Entity entity) override
 		{
@@ -34,20 +35,25 @@ namespace LevEngine
 			out << YAML::EndMap;
 		}
 
-		void Deserialize(YAML::Node& node, Entity entity) override
+		void Deserialize(const YAML::Node& node, Entity entity) override
 		{
-			auto componentProps = node[GetKey()];
+			const auto key = GetKey();
+			const auto& componentProps = node[key];
 			if (!componentProps) return;
 
 			if (!entity.HasComponent<TComponent>())
 			{
 				TComponent component = TComponent();
 				DeserializeData(componentProps, component);
+				m_DeserializeMutex.lock();
 				entity.AddComponent<TComponent>(component);
+				m_DeserializeMutex.unlock();
 			}
 			else
 			{
+				m_DeserializeMutex.lock();
 				auto& component = entity.GetComponent<TComponent>();
+				m_DeserializeMutex.unlock();
 				DeserializeData(componentProps, component);
 			}			
 		}
@@ -55,7 +61,7 @@ namespace LevEngine
 	protected:
 		virtual const char* GetKey() = 0;
 		virtual void SerializeData(YAML::Emitter& out, const TComponent& component) = 0;
-		virtual void DeserializeData(YAML::Node& node, TComponent& component) = 0;
+		virtual void DeserializeData(const YAML::Node& node, TComponent& component) = 0;
 
 	private:
 		static inline ClassRegister<IComponentSerializer, TSerializer> s_ClassRegister;
