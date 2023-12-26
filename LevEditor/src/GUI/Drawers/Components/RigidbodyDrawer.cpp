@@ -1,5 +1,4 @@
 ﻿#include "pch.h"
-
 #include "ComponentDrawer.h"
 
 namespace LevEngine::Editor
@@ -11,7 +10,7 @@ namespace LevEngine::Editor
         
         void DrawContent(Rigidbody& component) override
         {
-            EditorGUI::DrawCheckBox("Draw Collider", BindGetter(&Rigidbody::IsVisualizationEnabled, &component), BindSetter(&Rigidbody::EnableVisualization, &component));
+            EditorGUI::DrawCheckBox("Debug Draw", BindGetter(&Rigidbody::IsVisualizationEnabled, &component), BindSetter(&Rigidbody::EnableVisualization, &component));
 
             const Array<String, 2> rigidbodyTypeStrings{"Static","Dynamic"};
             EditorGUI::DrawComboBox<Rigidbody::Type, 2>("Rigidbody Type", rigidbodyTypeStrings,
@@ -19,7 +18,7 @@ namespace LevEngine::Editor
             
             if (component.GetRigidbodyType() == Rigidbody::Type::Dynamic)
             {
-                //EditorGUI::DrawCheckBox("Enable Kinematic", BindGetter(&Rigidbody::IsKinematicEnabled, &component), BindSetter(&Rigidbody::EnableKinematic, &component));
+                EditorGUI::DrawCheckBox("Enable Kinematic", BindGetter(&Rigidbody::IsKinematicEnabled, &component), BindSetter(&Rigidbody::EnableKinematic, &component));
                 
                 EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&Rigidbody::IsGravityEnabled, &component), BindSetter(&Rigidbody::EnableGravity, &component));
                 

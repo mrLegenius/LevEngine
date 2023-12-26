@@ -5,6 +5,7 @@
 #include "Events/ContactReportCallback.h"
 #include "Scene/Entity.h"
 #include "PhysicsUpdate.h"
+#include "Components\CharacterController.h"
 
 namespace LevEngine
 {
@@ -33,6 +34,7 @@ namespace LevEngine
         [[nodiscard]] Entity GetEntityByActor(physx::PxActor* actor) const;
 
         friend struct Rigidbody;
+        friend struct CharacterController;
         
     private:
         void Initialize();
@@ -51,7 +53,11 @@ namespace LevEngine
         [[nodiscard]] physx::PxShape* CreateSphere(float radius, const physx::PxMaterial* material) const;
         [[nodiscard]] physx::PxShape* CreateCapsule(float radius, float halfHeight, const physx::PxMaterial* material) const;
         [[nodiscard]] physx::PxShape* CreateBox(Vector3 halfExtents, const physx::PxMaterial* material) const;
-
+        
+        [[nodiscard]] physx::PxController* CreateBoxController(Entity entity, float halfHeight, float halfSideExtent, float halfForwardExtent, physx::PxMaterial* material);
+        [[nodiscard]] physx::PxController* CreateCapsuleController(Entity entity, float radius, float height, CapsuleController::ClimbingMode climbingMode, physx::PxMaterial* material);
+        void RemoveController(physx::PxController* controller);
+        
         // used to optimize the filling of collision detection buffers
         UnorderedMap<physx::PxActor*, Entity> m_ActorEntityMap;
 
@@ -74,5 +80,6 @@ namespace LevEngine
         physx::PxPhysics* m_Physics = NULL;
         physx::PxDefaultCpuDispatcher* m_Dispatcher = NULL;
         physx::PxScene* m_Scene = NULL;
+        physx::PxControllerManager* m_ControllerManager = NULL; // single manager per scene
     };
 }

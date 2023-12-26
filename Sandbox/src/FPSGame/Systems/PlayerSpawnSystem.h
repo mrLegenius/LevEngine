@@ -21,6 +21,9 @@ namespace Sandbox
 			
             auto& player = playerEntity.AddComponent<Player>();
             player.Speed = 15.0f;
+
+            //auto& playerRigidbody = playerEntity.GetComponent<Rigidbody>();
+            //playerRigidbody.EnableKinematic(true);
         }
     };
 }

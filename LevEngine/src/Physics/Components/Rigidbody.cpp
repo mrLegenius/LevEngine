@@ -10,7 +10,7 @@ namespace LevEngine
 {
     void Rigidbody::OnDestroy(entt::registry& registry, entt::entity entity)
     {
-        auto& rigidbody = registry.get<Rigidbody>(entity);
+        auto [transform, rigidbody] = registry.get<Transform, Rigidbody>(entity);
         if (rigidbody.GetActor() != NULL)
         {
             rigidbody.DetachRigidbody();
@@ -133,6 +133,12 @@ namespace LevEngine
         if (m_Actor != NULL)
         {
             reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, flag);
+
+            // if kinematic is turn off it's important to reset mass
+            if (!flag)
+            {
+                SetMass(m_Mass);
+            }
         }
     }
     
@@ -161,7 +167,9 @@ namespace LevEngine
         {
             DetachRigidbody();
         }
-    
+
+        const auto& transform = entity.GetComponent<Transform>();
+        
         switch (m_Type)
         {
         case Type::Static:
@@ -171,6 +179,8 @@ namespace LevEngine
             m_Actor = App::Get().GetPhysics().CreateDynamicActor(entity);
             EnableGravity(m_IsGravityEnabled);
             EnableKinematic(m_IsKinematicEnabled);
+            SetKinematicTargetPosition(transform.GetWorldPosition());
+            SetKinematicTargetRotation(transform.GetWorldRotation());
             SetMass(m_Mass);
             SetCenterOfMass(m_CenterOfMass);
             SetInertiaTensor(m_InertiaTensor);
@@ -216,7 +226,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setMass(value);
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setMass(value);
         }
     }
 
@@ -233,7 +243,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setCMassLocalPose(physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(value)));
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setCMassLocalPose(physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(value)));
         }
     }
 
@@ -252,7 +262,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setMassSpaceInertiaTensor(PhysicsUtils::FromVector3ToPxVec3(value));
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setMassSpaceInertiaTensor(PhysicsUtils::FromVector3ToPxVec3(value));
         }
     }
 
@@ -271,7 +281,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setMaxLinearVelocity(value);
+            static_cast<physx::PxRigidBody*>(m_Actor)->setMaxLinearVelocity(value);
         }
     }
 
@@ -290,7 +300,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setMaxAngularVelocity(value);
+            static_cast<physx::PxRigidBody*>(m_Actor)->setMaxAngularVelocity(value);
         }
     }
     
@@ -309,7 +319,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setLinearDamping(value);
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setLinearDamping(value);
         }
     }
 
@@ -328,7 +338,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setAngularDamping(value);
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setAngularDamping(value);
         }
     }
     
@@ -345,7 +355,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, flag);
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, flag);
         }
     }
 
@@ -362,7 +372,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, flag);
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, flag);
         }
     }
 
@@ -379,7 +389,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, flag);
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, flag);
         }
     }
 
@@ -396,7 +406,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, flag);
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, flag);
         }
     }
 
@@ -413,7 +423,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, flag);
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, flag);
         }
     }
 
@@ -430,7 +440,7 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            reinterpret_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, flag);
+            static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, flag);
         }
     }
 
@@ -445,16 +455,16 @@ namespace LevEngine
 
         if (m_Actor != NULL)
         {
-            GetCollider()[0].setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-            GetCollider()[0].setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-            GetCollider()[0].setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !flag);
-            GetCollider()[0].setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, flag);
+            GetCollider()->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+            GetCollider()->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+            GetCollider()->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !flag);
+            GetCollider()->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, flag);
         }
     }
     
     Collider::Type Rigidbody::GetColliderType() const
     {
-        return m_ColliderCollection[0].get()->m_Type;
+        return m_ColliderCollection[0]->m_Type;
     }
 
     void Rigidbody::SetColliderType(const Collider::Type& colliderType)
@@ -478,7 +488,7 @@ namespace LevEngine
         default:
             break;
         }
-        m_ColliderCollection[0].get()->m_Type = colliderType;
+        m_ColliderCollection[0]->m_Type = colliderType;
 
         if (m_Actor != NULL)
         {
@@ -559,9 +569,9 @@ namespace LevEngine
         
         if (m_Actor != NULL)
         {
-            const auto colliders = GetCollider();
-            const auto rotation = colliders[0].getLocalPose().q;
-            colliders[0].setLocalPose(physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(position), rotation));
+            const auto collider = GetCollider();
+            const auto rotation = collider->getLocalPose().q;
+            collider->setLocalPose(physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(position), rotation));
         }
     }
 
@@ -576,10 +586,10 @@ namespace LevEngine
         
         if (m_Actor != NULL)
         {
-            const auto colliders = GetCollider();
-            const auto position = colliders[0].getLocalPose().p;
+            const auto collider = GetCollider();
+            const auto position = collider->getLocalPose().p;
             const auto quaternion = Quaternion::CreateFromYawPitchRoll(Math::ToRadians(rotation));
-            colliders[0].setLocalPose(physx::PxTransform(position, PhysicsUtils::FromQuaternionToPxQuat(quaternion)));
+            collider->setLocalPose(physx::PxTransform(position, PhysicsUtils::FromQuaternionToPxQuat(quaternion)));
         }
     }
     
@@ -598,8 +608,8 @@ namespace LevEngine
         {
             const float maxTransformScale = Math::MaxElement(m_TransformScale);
             
-            const auto colliders = GetCollider();
-            colliders[0].setGeometry(physx::PxSphereGeometry(radius * maxTransformScale));
+            const auto collider = GetCollider();
+            collider->setGeometry(physx::PxSphereGeometry(radius * maxTransformScale));
         }
     }
 
@@ -618,10 +628,10 @@ namespace LevEngine
         {
             const float maxTransformScale = Math::MaxElement(m_TransformScale);
             
-            const auto colliders = GetCollider();
-            const physx::PxGeometryHolder geom(colliders[0].getGeometry());
+            const auto collider = GetCollider();
+            const physx::PxGeometryHolder geom(collider->getGeometry());
             const auto initialHeight = geom.capsule().halfHeight;
-            colliders[0].setGeometry(physx::PxCapsuleGeometry(radius * maxTransformScale, initialHeight));
+            collider->setGeometry(physx::PxCapsuleGeometry(radius * maxTransformScale, initialHeight));
         }
     }
     
@@ -640,10 +650,10 @@ namespace LevEngine
         {
             const float maxTransformScale = Math::MaxElement(m_TransformScale);
             
-            const auto colliders = GetCollider();
-            const physx::PxGeometryHolder geom(colliders[0].getGeometry());
+            const auto collider = GetCollider();
+            const physx::PxGeometryHolder geom(collider->getGeometry());
             const auto initialRadius = geom.capsule().radius;
-            colliders[0].setGeometry(physx::PxCapsuleGeometry(initialRadius, halfHeight * maxTransformScale));
+            collider->setGeometry(physx::PxCapsuleGeometry(initialRadius, halfHeight * maxTransformScale));
         }
     }
 
@@ -660,8 +670,8 @@ namespace LevEngine
         
         if (m_Actor != NULL)
         {
-            const auto colliders = GetCollider();
-            colliders[0].setGeometry(physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents * m_TransformScale)));
+            const auto collider = GetCollider();
+            collider->setGeometry(physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents * m_TransformScale)));
         }
     }
     
@@ -678,8 +688,8 @@ namespace LevEngine
         
         if (m_Actor != NULL)
         {
-            const auto physicalMaterials = GetPhysicalMaterial();
-            physicalMaterials[0].setStaticFriction(staticFriction);
+            const auto physicalMaterial = GetPhysicalMaterial();
+            physicalMaterial->setStaticFriction(staticFriction);
         }
     }
     
@@ -696,8 +706,8 @@ namespace LevEngine
         
         if (m_Actor != NULL)
         {
-            const auto physicalMaterials = GetPhysicalMaterial();
-            physicalMaterials[0].setDynamicFriction(dynamicFriction);
+            const auto physicalMaterial = GetPhysicalMaterial();
+            physicalMaterial->setDynamicFriction(dynamicFriction);
         }
     }
     
@@ -714,14 +724,16 @@ namespace LevEngine
         
         if (m_Actor != NULL)
         {
-            const auto physicalMaterials = GetPhysicalMaterial();
-            physicalMaterials[0].setRestitution(restitution);
+            const auto physicalMaterial = GetPhysicalMaterial();
+            physicalMaterial->setRestitution(restitution);
         }
     }
 
     void Rigidbody::AddForce(const Vector3 force, const ForceMode mode) const
     {
         if (m_Type != Type::Dynamic) return;
+
+        if (m_IsKinematicEnabled) return;
 
         if (m_Actor != NULL)
         {
@@ -750,6 +762,8 @@ namespace LevEngine
     void Rigidbody::AddTorque(const Vector3 torque, const ForceMode mode) const
     {
         if (m_Type != Type::Dynamic) return;
+
+        if (m_IsKinematicEnabled) return;
 
         if (m_Actor != NULL)
         {
@@ -794,6 +808,44 @@ namespace LevEngine
     {
         return m_CollisionExitBuffer;
     }
+
+    Vector3 Rigidbody::GetKinematicTargetPosition() const
+    {
+        return m_KinematicTargetPosition;
+    }
+
+    void Rigidbody::SetKinematicTargetPosition(const Vector3 position)
+    {
+        m_KinematicTargetPosition = position;
+    }
+
+    Quaternion Rigidbody::GetKinematicTargetRotation() const
+    {
+        return m_KinematicTargetRotation;
+    }
+
+    void Rigidbody::SetKinematicTargetRotation(const Quaternion rotation)
+    {
+        m_KinematicTargetRotation = rotation;
+    }
+
+    void Rigidbody::ApplyKinematicTarget() const
+    {
+        if (m_Type != Type::Dynamic) return;
+
+        if (!m_IsKinematicEnabled) return;
+
+        if (m_Actor != NULL)
+        {
+            if (const auto rigidDynamic = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
+            {
+                physx::PxTransform target;
+                target.p = PhysicsUtils::FromVector3ToPxVec3(m_KinematicTargetPosition);
+                target.q = PhysicsUtils::FromQuaternionToPxQuat(m_KinematicTargetRotation);
+                rigidDynamic->setKinematicTarget(target);
+            }
+        }
+    }
     
     class RigidbodySerializer final : public ComponentSerializer<Rigidbody, RigidbodySerializer>
     {
@@ -805,27 +857,23 @@ namespace LevEngine
             out << YAML::Key << "Is Visualization Enabled" << YAML::Value << component.IsVisualizationEnabled();
             
             out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
-            
-            //out << YAML::Key << "Is Kinematic Enabled" << YAML::Value << component.IsKinematicEnabled();
-            
+            out << YAML::Key << "Is Kinematic Enabled" << YAML::Value << component.IsKinematicEnabled();
             out << YAML::Key << "Is Gravity Enabled" << YAML::Value << component.IsGravityEnabled();
-            
             out << YAML::Key << "Mass" << YAML::Value << component.GetMass();
             out << YAML::Key << "Center Of Mass" << YAML::Value << component.GetCenterOfMass();
             out << YAML::Key << "Inertia Tensor" << YAML::Value << component.GetInertiaTensor();
             out << YAML::Key << "Linear Damping" << YAML::Value << component.GetLinearDamping();
             out << YAML::Key << "Angular Damping" << YAML::Value << component.GetAngularDamping();
-
             out << YAML::Key << "Max Linear Velocity" << YAML::Value << component.GetMaxLinearVelocity();
             out << YAML::Key << "Max Angular Velocity" << YAML::Value << component.GetMaxAngularVelocity();
-            
             out << YAML::Key << "Is Pos Axis X Locked" << YAML::Value << component.IsPosAxisXLocked();
             out << YAML::Key << "Is Pos Axis Y Locked" << YAML::Value << component.IsPosAxisYLocked();
             out << YAML::Key << "Is Pos Axis Z Locked" << YAML::Value << component.IsPosAxisZLocked();
             out << YAML::Key << "Is Rot Axis X Locked" << YAML::Value << component.IsRotAxisXLocked();
             out << YAML::Key << "Is Rot Axis Y Locked" << YAML::Value << component.IsRotAxisYLocked();
             out << YAML::Key << "Is Rot Axis Z Locked" << YAML::Value << component.IsRotAxisZLocked();
-            
+
+            out << YAML::Key << "Is Trigger Enabled" << YAML::Value << component.IsTriggerEnabled();
             out << YAML::Key << "Collider Type" << YAML::Value << static_cast<int>(component.GetColliderType());
             switch (component.GetColliderType())
             {
@@ -842,11 +890,8 @@ namespace LevEngine
             default:
                 break;
             }
-
             out << YAML::Key << "Offset Position" << YAML::Value << component.GetColliderOffsetPosition();
             out << YAML::Key << "Offset Rotation" << YAML::Value << component.GetColliderOffsetRotation();
-
-            out << YAML::Key << "Is Trigger Enabled" << YAML::Value << component.IsTriggerEnabled();
             
             out << YAML::Key << "Static Friction" << YAML::Value << component.GetStaticFriction();
             out << YAML::Key << "Dynamic Friction" << YAML::Value << component.GetDynamicFriction();
@@ -864,89 +909,71 @@ namespace LevEngine
             {
                 component.EnableGravity(gravityEnableNode.as<bool>());
             }
-
-            /*
             if (const auto kinematicEnableNode = node["Is Kinematic Enabled"])
             {
                 component.EnableKinematic(kinematicEnableNode.as<bool>());
             }
-            */
-            
             if (const auto rigidbodyTypeNode = node["Rigidbody Type"])
             {
                 component.SetRigidbodyType(static_cast<Rigidbody::Type>(rigidbodyTypeNode.as<int>()));
             }
-            
             if (const auto massNode = node["Mass"])
             {
                 component.SetMass(massNode.as<float>());
             }
-            
             if (const auto centerOfMassNode = node["Center Of Mass"])
             {
                 component.SetCenterOfMass(centerOfMassNode.as<Vector3>());
             }
-
             if (const auto inertiaTensorNode = node["Inertia Tensor"])
             {
                 component.SetInertiaTensor(inertiaTensorNode.as<Vector3>());
             }
-
             if (const auto maxLinearVelocityNode = node["Max Linear Velocity"])
             {
                 component.SetMaxLinearVelocity(maxLinearVelocityNode.as<float>());
             }
-
             if (const auto maxAngularVelocityNode = node["Max Angular Velocity"])
             {
                 component.SetMaxAngularVelocity(maxAngularVelocityNode.as<float>());
             }
-
             if (const auto linearDampingNode = node["Linear Damping"])
             {
                 component.SetLinearDamping(linearDampingNode.as<float>());
             }
-
             if (const auto angularDampingNode = node["Angular Damping"])
             {
                 component.SetAngularDamping(angularDampingNode.as<float>());
             }
-            
             if (const auto posAxisXLockNode = node["Is Pos Axis X Locked"])
             {
                 component.LockPosAxisX(posAxisXLockNode.as<bool>());
             }
-
             if (const auto posAxisYLockNode = node["Is Pos Axis Y Locked"])
             {
                 component.LockPosAxisY(posAxisYLockNode.as<bool>());
             }
-
             if (const auto posAxisZLockNode = node["Is Pos Axis Z Locked"])
             {
                 component.LockPosAxisZ(posAxisZLockNode.as<bool>());
             }
-
             if (const auto rotAxisXLockNode = node["Is Rot Axis X Locked"])
             {
                 component.LockRotAxisX(rotAxisXLockNode.as<bool>());
             }
-
             if (const auto rotAxisYLockNode = node["Is Rot Axis Y Locked"])
             {
                 component.LockRotAxisY(rotAxisYLockNode.as<bool>());
             }
-
             if (const auto rotAxisZLockNode = node["Is Rot Axis Z Locked"])
             {
                 component.LockRotAxisZ(rotAxisZLockNode.as<bool>());
             }
-
+            
             if (const auto triggerEnableNode = node["Is Trigger Enabled"])
             {
                 component.EnableTrigger(triggerEnableNode.as<bool>());
             }
-            
             if (const auto colliderTypeNode = node["Collider Type"])
             {
                 switch (const auto colliderType = static_cast<Collider::Type>(colliderTypeNode.as<int>()))
@@ -980,12 +1007,10 @@ namespace LevEngine
                     break;
                 }
             }
-
             if (const auto colliderOffsetPositionNode = node["Offset Position"])
             {
                 component.SetColliderOffsetPosition(colliderOffsetPositionNode.as<Vector3>());
             }
-
             if (const auto collideOffsetRotationNode = node["Offset Rotation"])
             {
                 component.SetColliderOffsetRotation(collideOffsetRotationNode.as<Vector3>());
@@ -995,12 +1020,10 @@ namespace LevEngine
             {
                 component.SetStaticFriction(staticFrictionNode.as<float>());
             }
-
             if (const auto dynamicFrictionNode = node["Dynamic Friction"])
             {
                 component.SetDynamicFriction(dynamicFrictionNode.as<float>());
             }
-
             if (const auto restitutionNode = node["Restitution"])
             {
                 component.SetRestitution(restitutionNode.as<float>());

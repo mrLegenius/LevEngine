@@ -116,10 +116,18 @@ namespace LevEngine
         void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
         void AddTorque(Vector3 torque, ForceMode = ForceMode::Force) const;
 
+        // Trigger/Collision Events
         [[nodiscard]] const Vector<Entity>& GetTriggerEnterBuffer() const;
         [[nodiscard]] const Vector<Entity>& GetTriggerExitBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
+
+        // Kinematic
+        [[nodiscard]] Vector3 GetKinematicTargetPosition() const;
+        void SetKinematicTargetPosition(Vector3 position);
+        [[nodiscard]] Quaternion GetKinematicTargetRotation() const;
+        void SetKinematicTargetRotation(Quaternion rotation);
+        void ApplyKinematicTarget() const;
 
         friend class PhysicsUpdate;
         friend class ContactReportCallback;
@@ -136,6 +144,7 @@ namespace LevEngine
         void DetachCollider();
 
         bool m_IsInitialized = false;
+        
         bool m_IsVisualizationEnabled = false;
         
         physx::PxRigidActor* m_Actor = nullptr;
@@ -172,5 +181,9 @@ namespace LevEngine
         Vector<Entity> m_TriggerExitBuffer;
         Vector<Collision> m_CollisionEnterBuffer;
         Vector<Collision> m_CollisionExitBuffer;
+
+        // Kinematic
+        Vector3 m_KinematicTargetPosition = Vector3::Zero;
+        Quaternion m_KinematicTargetRotation = Quaternion::Identity;
     };
 }

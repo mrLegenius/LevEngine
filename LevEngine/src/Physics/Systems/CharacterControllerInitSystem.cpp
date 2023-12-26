@@ -1,6 +1,7 @@
 ﻿#include "levpch.h"
 #include "CharacterControllerInitSystem.h"
-#include "Components/CharacterController.h"
+
+#include "Physics/Components/CharacterController.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine

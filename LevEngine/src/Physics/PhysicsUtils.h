@@ -11,6 +11,10 @@ namespace LevEngine
         {
             return {vector.x, vector.y, vector.z};
         }
+        static physx::PxExtendedVec3 FromVector3ToPxExtendedVec3(const Vector3& vector)
+        {
+            return {vector.x, vector.y, vector.z};
+        }
         static Vector3 FromPxVec3ToVector3(const physx::PxVec3& vector)
         {
             return {vector.x, vector.y, vector.z};

@@ -1,7 +1,5 @@
 ﻿#include "levpch.h"
 #include "ConstantForce.h"
-
-#include "Rigidbody.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
@@ -25,8 +23,6 @@ namespace LevEngine
     {
         m_Torque = value;
     }
-
-
     
     class ForceSerializer final : public ComponentSerializer<ConstantForce, ForceSerializer>
     {

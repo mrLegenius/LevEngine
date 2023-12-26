@@ -18,6 +18,7 @@ namespace Sandbox
                 auto [playerTransform, player, playerRigidbody] = playerView.get<Transform, Player, Rigidbody>(entity);
                 
                 const auto& cameraTransform = playerTransform.GetChildren()[0].GetComponent<Transform>();
+                
                 auto movement = Vector3::Zero;
 
                 if (Input::IsKeyDown(KeyCode::LeftShift))
@@ -32,26 +33,32 @@ namespace Sandbox
                 if (Input::IsKeyDown(KeyCode::W))
                 {
                     movement += Vector3(cameraTransform.GetForwardDirection().x, 0.0f, cameraTransform.GetForwardDirection().z);
+                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Forward * deltaTime * player.Speed);
                 }
                 else if (Input::IsKeyDown(KeyCode::S))
                 {
                     movement -= Vector3(cameraTransform.GetForwardDirection().x, 0.0f, cameraTransform.GetForwardDirection().z);
+                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Backward * deltaTime * player.Speed);
                 }
                 if (Input::IsKeyDown(KeyCode::A))
                 {
                     movement -= Vector3(cameraTransform.GetRightDirection().x, 0.0f, cameraTransform.GetRightDirection().z);
+                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Left * deltaTime * player.Speed);
                 }
                 else if (Input::IsKeyDown(KeyCode::D))
                 {
                     movement += Vector3(cameraTransform.GetRightDirection().x, 0.0f, cameraTransform.GetRightDirection().z);
+                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Right * deltaTime * player.Speed);
                 }
                 
                 if (Input::IsKeyDown(KeyCode::Space))
                 {
                     movement += Vector3::Up;
+                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Up * deltaTime * 10);
                 }
                 
                 movement.Normalize();
+                
                 playerRigidbody.AddForce(
                     Vector3(
                         deltaTime * player.Speed * movement.x,
@@ -59,7 +66,7 @@ namespace Sandbox
                         deltaTime * player.Speed * movement.z
                     ),
                     Rigidbody::ForceMode::Impulse
-                ); 
+                );
             }
         }
     };
