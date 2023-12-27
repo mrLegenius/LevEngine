@@ -8,15 +8,21 @@ PlayerSpawnSystem = {
 
 		-- Check if player already exists
 
+		local alreadyExists = false
+
 		view:for_each(
 			function(entity)
 				local scriptsContainer = entity:get_component(ScriptsContainer)
 
 				if scriptsContainer.Player ~= nil then
-					return
+					alreadyExists = true
 				end
 			end
 		)
+
+		if alreadyExists then
+			return
+		end
 
 		-- Spawn Prefab and add Player Component to ScriptsContainer
 				
