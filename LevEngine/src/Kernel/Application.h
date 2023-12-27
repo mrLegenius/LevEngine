@@ -3,100 +3,105 @@
 #include "LayerStack.h"
 #include "Statistic.h"
 
+#include "VGJS.h"
+
 namespace LevEngine
 {
-	class Event;
-	class Renderer;
-	class WindowResizedEvent;
-	class WindowClosedEvent;
-	class KeyReleasedEvent;
-	class KeyPressedEvent;
-	class MouseScrolledEvent;
-	class MouseButtonReleasedEvent;
-	class MouseButtonPressedEvent;
-	class MouseMovedEvent;
-	class Physics;
-	class ImGuiLayer;
-	class Window;
+    class Event;
+    class Renderer;
+    class WindowResizedEvent;
+    class WindowClosedEvent;
+    class KeyReleasedEvent;
+    class KeyPressedEvent;
+    class MouseScrolledEvent;
+    class MouseButtonReleasedEvent;
+    class MouseButtonPressedEvent;
+    class MouseMovedEvent;
+    class Physics;
+    class ImGuiLayer;
+    class Window;
 
-	namespace Scripting
-	{
-		class ScriptingManager;
-	}
+    namespace Scripting
+    {
+        class ScriptingManager;
+    }
 
-	struct ApplicationCommandLineArgs
-{
-	int Count = 0;
-	char** Args = nullptr;
+    struct ApplicationCommandLineArgs
+    {
+        int Count = 0;
+        char** Args = nullptr;
 
-	const char* operator[](const int index) const
-	{
-		LEV_CORE_ASSERT(index < Count);
-		return Args[index];
-	}
-};
+        const char* operator[](const int index) const
+        {
+            LEV_CORE_ASSERT(index < Count);
+            return Args[index];
+        }
+    };
 
-struct ApplicationSpecification
-{
-	String Name = "LevApp";
-	uint32_t WindowWidth = 1600;
-	uint32_t WindowHeight = 900;
-	ApplicationCommandLineArgs CommandLineArgs;
-};
-	
-class Application
-{
-public:
-	explicit Application(const ApplicationSpecification& specification);
-	~Application();
+    struct ApplicationSpecification
+    {
+        String Name = "LevApp";
+        uint32_t WindowWidth = 1600;
+        uint32_t WindowHeight = 900;
+        ApplicationCommandLineArgs CommandLineArgs;
+    };
 
-	void Run();
-	void Render();
-	void Close();
+    class Application
+    {
+    public:
+        explicit Application(const ApplicationSpecification& specification);
+        ~Application();
 
-	void PushLayer(Layer* layer);
-	void PushOverlay(Layer* overlay);
-	void OnEvent(Event& e);
-	[[nodiscard]] ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
-	
-	[[nodiscard]] Window& GetWindow() const { return *m_Window; }
-	[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
+        void Run();
+        void GameLoop();
+        void Render();
+        void Close();
 
-	static Application& Get() { return *s_Instance; }
-	[[nodiscard]] Physics& GetPhysics() const;
-	[[nodiscard]] static Renderer& Renderer();
-	[[nodiscard]] Scripting::ScriptingManager& GetScriptingManager();
+        void PushLayer(Layer* layer);
+        void PushOverlay(Layer* overlay);
+        void OnEvent(Event& e);
+        [[nodiscard]] ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
 
-	[[nodiscard]] Statistic GetFrameStat() const;
-private:
-	bool OnWindowClosed(WindowClosedEvent& e);
-	bool OnWindowResized(WindowResizedEvent& e);
-	bool OnKeyPressed(KeyPressedEvent& e);
-	bool OnKeyReleased(KeyReleasedEvent& e);
-	bool OnMouseMoved(MouseMovedEvent& e);
-	bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
-	bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
-	bool OnMouseScrolled(MouseScrolledEvent& e);
-	
-	Scope<Window> m_Window;
-	bool m_IsRunning = true;
+        [[nodiscard]] Window& GetWindow() const { return *m_Window; }
+        [[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 
-	Scope<Physics> m_Physics;
-	Scope<LevEngine::Renderer> m_Renderer;
-	
-	LayerStack m_LayerStack;
+        static Application& Get() { return *s_Instance; }
+        [[nodiscard]] Physics& GetPhysics() const;
+        [[nodiscard]] static Renderer& Renderer();
+        [[nodiscard]] Scripting::ScriptingManager& GetScriptingManager();
 
-	Statistic m_FrameStat;
-	
-	float m_LastFrameTime = 0.0f;
-	bool m_Minimized = false;
-	ImGuiLayer* m_ImGuiLayer;
-	ApplicationSpecification m_Specification;
+        [[nodiscard]] Statistic GetFrameStat() const;
+    private:
+        bool OnWindowClosed(WindowClosedEvent& e);
+        bool OnWindowResized(WindowResizedEvent& e);
+        bool OnKeyPressed(KeyPressedEvent& e);
+        bool OnKeyReleased(KeyReleasedEvent& e);
+        bool OnMouseMoved(MouseMovedEvent& e);
+        bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+        bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
+        bool OnMouseScrolled(MouseScrolledEvent& e);
 
-	static Application* s_Instance;
+        Scope<Window> m_Window;
+        bool m_IsRunning = true;
 
-	Scope<Scripting::ScriptingManager> m_ScriptingManager;
-};
+        Scope<Physics> m_Physics;
+        Scope<LevEngine::Renderer> m_Renderer;
 
-using App = Application;
+        LayerStack m_LayerStack;
+
+        Statistic m_FrameStat;
+
+        float m_LastFrameTime = 0.0f;
+        bool m_Minimized = false;
+        ImGuiLayer* m_ImGuiLayer;
+        ApplicationSpecification m_Specification;
+
+        static Application* s_Instance;
+
+        vgjs::JobSystem* m_JobSystem;
+
+        Scope<Scripting::ScriptingManager> m_ScriptingManager;
+    };
+
+    using App = Application;
 }

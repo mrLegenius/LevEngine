@@ -71,11 +71,8 @@ void D3D11RendererContext::Init(const uint32_t width, const uint32_t height, con
 	LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create device and swap chain")
 	
 	{
-		vgjs::schedule(vgjs::Function{[]
-		{
-			const auto result = device->CreateDeferredContext(0, &deferredContext);
-			LEV_CORE_ASSERT(SUCCEEDED(result), "Failed to create deferred context")
-		}, vgjs::thread_index_t{0}});
+		const auto result = device->CreateDeferredContext(0, &deferredContext);
+		LEV_CORE_ASSERT(SUCCEEDED(result), "Failed to create deferred context")
 	}
 	
 	res = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_BackBuffer));

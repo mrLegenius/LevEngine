@@ -13,6 +13,7 @@
 #include "GUI/ImGuiLayer.h"
 #include "Math/Random.h"
 #include "Physics/Physics.h"
+#include "Platform/D3D11/D3D11DeferredContexts.h"
 #include "Renderer/RenderDebugEvent.h"
 #include "Renderer/RendererContext.h"
 #include "Renderer/RenderTarget.h"
@@ -26,32 +27,34 @@ namespace LevEngine
 {
 Application* Application::s_Instance = nullptr;
 
+
 Application::Application(const ApplicationSpecification& specification)
-	: m_Specification(specification)
+	: m_Specification(specification),
+	m_JobSystem(new vgjs::JobSystem(vgjs::thread_count_t(0), vgjs::thread_index_t(1)))
 {
 	LEV_PROFILE_FUNCTION();
 
 	LEV_CORE_ASSERT(!s_Instance, "Only one application is allowed");
 	s_Instance = this;
-
+	
 	m_Window = Window::Create(WindowAttributes(specification.Name, specification.WindowWidth, specification.WindowHeight));
 	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
-	m_Physics = Physics::Create();
 	m_Renderer = CreateScope<LevEngine::Renderer>(*m_Window);
 
+	D3D11DeferredContexts::Init(m_JobSystem->get_thread_count().value);
+	
+	m_ImGuiLayer = new ImGuiLayer;
+	PushOverlay(m_ImGuiLayer);
+	
+	m_Physics = Physics::Create();
 	m_ScriptingManager = CreateScope<Scripting::ScriptingManager>();
 	
 	Random::Init();
 	m_ScriptingManager->Init();
 	Audio::Init(Audio::MaxAudioChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE,
 		FMOD_INIT_VOL0_BECOMES_VIRTUAL | FMOD_INIT_3D_RIGHTHANDED);
-
-	m_ImGuiLayer = new ImGuiLayer;
-	PushOverlay(m_ImGuiLayer);
-
-	vgjs::JobSystem jobSystem;
-
+	
 	Time::s_StartupTime = std::chrono::high_resolution_clock::now();
 }
 
@@ -60,9 +63,19 @@ Application::~Application()
 	Audio::Shutdown();
 	m_ScriptingManager->Shutdown();
 	SceneManager::Shutdown();
+	delete m_JobSystem;
 }
 
 void Application::Run()
+{
+	vgjs::schedule(vgjs::Function{[=]{ GameLoop(); }, vgjs::thread_index_t{0 } } );
+	vgjs::continuation( vgjs::Function{ std::bind(vgjs::terminate), vgjs::thread_index_t{0 } } );
+	
+	m_JobSystem->thread_task();
+	vgjs::wait_for_termination();
+}
+
+void Application::GameLoop()
 {
 	std::chrono::time_point<std::chrono::steady_clock> PrevTime = std::chrono::steady_clock::now();
 	float totalTime = 0;
@@ -103,19 +116,17 @@ void Application::Run()
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate(deltaTime);
 		}
-		
-		if (!m_Minimized)
-			Render();
-		
+
 		Audio::Update();
 
-		Input::Reset();
-		m_Window->Update();
+		if (!m_Minimized)
+			Render();
 
+		m_Window->Update();
+		
+		Input::Reset();
 		Time::s_FrameNumber++;
 	}
-
-	vgjs::terminate();
 }
 
 void Application::Render()
@@ -144,6 +155,7 @@ void Application::Render()
 void Application::Close()
 {
 	m_IsRunning = false;
+	vgjs::terminate();
 }
 
 void Application::PushLayer(Layer* layer)

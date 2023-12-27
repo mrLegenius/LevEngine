@@ -232,7 +232,14 @@ namespace LevEngine
         }
         else
         {
-            App::Renderer().Render(m_Registry, mainCamera, cameraTransform);
+            try
+            {
+                App::Renderer().Render(m_Registry, mainCamera, cameraTransform);
+            }
+            catch (std::exception& e)
+            {
+                Log::CoreCritical("OnRender. Error: {}", e.what());   
+            }
         }
     }
 

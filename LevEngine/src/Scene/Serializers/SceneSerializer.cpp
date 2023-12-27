@@ -101,7 +101,7 @@ namespace LevEngine
 			
 			for (auto& [deserializedEntity, entityNode] : entitiesToDeserialize)
 			{
-				vgjs::schedule(vgjs::Function{[deserializedEntity, entityNode]
+				vgjs::schedule([=]
 				{
 					try
 					{
@@ -112,7 +112,7 @@ namespace LevEngine
 					{
 						Log::CoreError("Failed to deserialize entity components. Error: '{}'", e.what());
 					}
-				}, vgjs::thread_index_t{0}});
+				});
 			}
 
 			vgjs::continuation([=] { Log::CoreInfo("Serialization is finished"); });
