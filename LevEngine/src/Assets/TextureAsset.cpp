@@ -59,7 +59,7 @@ namespace LevEngine
 		out << YAML::Key << "IsAnisotropicFilteringEnabled" << YAML::Value << isAnisotropicFilteringEnabled;
 	}
 
-	void TextureAsset::DeserializeMeta(YAML::Node& out)
+	void TextureAsset::DeserializeMeta(const YAML::Node& out)
 	{
 		if (const auto linear = out["IsLinear"])
 			IsLinear = linear.as<bool>();

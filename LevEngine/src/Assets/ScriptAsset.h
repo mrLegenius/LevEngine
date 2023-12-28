@@ -23,10 +23,10 @@ namespace LevEngine
         [[nodiscard]] bool ReadDataFromFile() const override;
 
         void SerializeData(YAML::Emitter& out) override;
-        void DeserializeData(YAML::Node& node) override;
+        void DeserializeData(const YAML::Node& node) override;
 
         void SerializeMeta(YAML::Emitter& out) override;
-        void DeserializeMeta(YAML::Node& node) override;
+        void DeserializeMeta(const YAML::Node& node) override;
 
         Type m_Type;
     };

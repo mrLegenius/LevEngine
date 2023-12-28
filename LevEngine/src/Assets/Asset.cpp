@@ -91,14 +91,14 @@ namespace LevEngine
 	{
 		if (!ReadDataFromFile())
 		{
-			YAML::Node data{};
+			const YAML::Node data{};
 			DeserializeData(data);
 			return true;
 		}
 		
 		try
 		{
-			YAML::Node data = LoadYAMLFile(m_Path);
+			const YAML::Node data = LoadYAMLFile(m_Path);
 			DeserializeData(data);
 		}
 		catch (YAML::BadConversion&)

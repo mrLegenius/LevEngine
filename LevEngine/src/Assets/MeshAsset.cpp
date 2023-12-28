@@ -8,7 +8,7 @@ namespace LevEngine
 {
     Ref<Texture> MeshAsset::GetIcon() const { return Icons::Mesh(); }
 
-    void MeshAsset::DeserializeData(YAML::Node& node)
+    void MeshAsset::DeserializeData(const YAML::Node& node)
     {
         try
         {

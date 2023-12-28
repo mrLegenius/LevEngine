@@ -30,10 +30,10 @@ namespace LevEngine
 		[[nodiscard]] bool ReadDataFromFile() const override { return false; }
 
 		void SerializeMeta(YAML::Emitter& out) override;
-		void DeserializeMeta(YAML::Node& out) override;
+		void DeserializeMeta(const YAML::Node& out) override;
 
 		void SerializeData(YAML::Emitter& out) override { }
-		void DeserializeData(YAML::Node& node) override { CreateTexture(); }
+		void DeserializeData(const YAML::Node& node) override { CreateTexture(); }
 		
 	private:
 		Ref<Texture> m_Texture;
