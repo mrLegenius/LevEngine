@@ -437,7 +437,7 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION();
 
         //Multithreading hack for directx 11 and deferred contexts
-        if constexpr (RenderSettings::RendererAPI == RendererAPI::D3D11)
+        if (RenderSettings::RendererAPI == RendererAPI::D3D11)
         {
             D3D11DeferredContexts::UpdateCommandLists();
             D3D11DeferredContexts::ExecuteCommands();
