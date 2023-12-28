@@ -2082,8 +2082,9 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
 
     if (m_GenerateMipMaps)
     {
-        D3D11DeferredContexts::GetContext()->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
-        D3D11DeferredContexts::GetContext()->GenerateMips(m_ShaderResourceView);
+        auto context = D3D11DeferredContexts::GetContext();
+        context->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
+        context->GenerateMips(m_ShaderResourceView);
     }
 
     m_IsDirty = false;

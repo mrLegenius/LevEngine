@@ -431,16 +431,15 @@ namespace LevEngine
         const auto perspectiveViewProjectionMatrix = cameraViewMatrix * mainCamera->GetPerspectiveProjection();
         return {mainCamera, cameraPosition, cameraViewMatrix, perspectiveViewProjectionMatrix};
     }
-
-    ID3D11CommandList* commandList = nullptr;
-    std::mutex commandMutex;
     
     void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform)
     {
         LEV_PROFILE_FUNCTION();
 
+        //Multithreading hack for directx 11 and deferred contexts
+        if constexpr (RenderSettings::RendererAPI == RendererAPI::D3D11)
         {
-            D3D11DeferredContexts::UpdateCommandLists();            
+            D3D11DeferredContexts::UpdateCommandLists();
             D3D11DeferredContexts::ExecuteCommands();
         }
         

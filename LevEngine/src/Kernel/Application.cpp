@@ -69,7 +69,6 @@ Application::~Application()
 void Application::Run()
 {
 	vgjs::schedule(vgjs::Function{[=]{ GameLoop(); }, vgjs::thread_index_t{0 } } );
-	vgjs::continuation( vgjs::Function{ std::bind(vgjs::terminate), vgjs::thread_index_t{0 } } );
 	
 	m_JobSystem->thread_task();
 	vgjs::wait_for_termination();

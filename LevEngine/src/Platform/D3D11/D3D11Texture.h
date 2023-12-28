@@ -79,7 +79,7 @@ protected:
 	ID3D11RenderTargetView* m_RenderTargetView = nullptr;
 	// Use this texture as the depth/stencil buffer of a render target.
 	ID3D11DepthStencilView* m_DepthStencilView = nullptr;
-	// Use this texture as a Unordered Acccess View (RWTexture)
+	// Use this texture as a Unordered Access View (RWTexture)
 	ID3D11UnorderedAccessView* m_UnorderedAccessView = nullptr;
 
 	uint16_t m_Width = 0;
