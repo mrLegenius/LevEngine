@@ -9,6 +9,7 @@ namespace LevEngine
     extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
     static std::mutex mutex;
+    static bool isInitializing = true; 
 
     enum class State
     {
@@ -20,23 +21,35 @@ namespace LevEngine
 
     State State;
 
-    void D3D11DeferredContexts::Init(int jobThreadsCount)
+    void D3D11DeferredContexts::Init(const int jobThreadsCount)
     {
-        for (int i = 1; i < jobThreadsCount; i++)
+        isInitializing = true;
+        vgjs::schedule([=]
         {
-            vgjs::schedule(vgjs::Function{
-                [=]
-                {
-                    ID3D11DeviceContext* deferredContext;
-                    std::lock_guard lock(mutex);
-                    const auto result = device->CreateDeferredContext(0, &deferredContext);
-                    LEV_CORE_ASSERT(SUCCEEDED(result), "Failed to create deferred context")
-                    m_DeferredContexts.push_back(deferredContext);
-                    m_CommandLists.push_back(nullptr);
-                },
-                vgjs::thread_index_t{i}
+            for (int i = 1; i < jobThreadsCount; i++)
+            {
+                vgjs::schedule(vgjs::Function{
+                    [=]
+                    {
+                        ID3D11DeviceContext* deferredContext;
+                        std::lock_guard lock(mutex);
+                        const auto result = device->CreateDeferredContext(0, &deferredContext);
+                        LEV_CORE_ASSERT(SUCCEEDED(result), "Failed to create deferred context")
+                        m_DeferredContexts.push_back(deferredContext);
+                        m_CommandLists.push_back(nullptr);
+                    },
+                    vgjs::thread_index_t{i}
+                });
+            }
+
+            vgjs::continuation([=]
+            {
+                isInitializing = false;
             });
-        }
+        });
+
+        while (isInitializing)
+            std::this_thread::sleep_for(microseconds(10));
     }
 
     void D3D11DeferredContexts::UpdateCommandLists()

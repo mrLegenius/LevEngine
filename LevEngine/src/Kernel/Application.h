@@ -72,6 +72,9 @@ namespace LevEngine
 
         [[nodiscard]] Statistic GetFrameStat() const;
     private:
+
+        void AttachAllLayers();
+        
         bool OnWindowClosed(WindowClosedEvent& e);
         bool OnWindowResized(WindowResizedEvent& e);
         bool OnKeyPressed(KeyPressedEvent& e);

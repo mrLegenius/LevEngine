@@ -3,7 +3,9 @@
 
 #include "../Entity.h"
 #include "Assets/ScriptAsset.h"
+#include "JobSystem/ParallelJob.h"
 #include "Kernel/ClassCollection.h"
+#include "Platform/D3D11/D3D11DeferredContexts.h"
 #include "Scene/Scene.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/Transform/Transform.h"
@@ -67,8 +69,7 @@ namespace LevEngine
 		{
 			std::unordered_map<UUID, Entity> entitiesMap;
 			std::unordered_map<UUID, UUID> relationships;
-			std::vector<Pair<Entity, YAML::Node>> entitiesToDeserialize;
-
+			Vector<Pair<Entity, const YAML::Node>> entitiesToDeserialize;
 
 			for (auto entity : entities)
 			{
@@ -87,7 +88,7 @@ namespace LevEngine
 				
 				TransformSerializer::DeserializeData(entity, deserializedEntity.GetComponent<Transform>());
 				
-				entitiesToDeserialize.emplace_back(Pair<Entity, YAML::Node>(deserializedEntity, entity));
+				entitiesToDeserialize.emplace_back(Pair<Entity, const YAML::Node>(deserializedEntity, entity));
 				entitiesMap.try_emplace(uuid, deserializedEntity);
 			}
 
@@ -98,24 +99,20 @@ namespace LevEngine
 				auto& transform = entity.GetComponent<Transform>();
 				transform.SetParent(entitiesMap[relationships[uuid]], false);
 			}
-			
-			for (auto& [deserializedEntity, entityNode] : entitiesToDeserialize)
-			{
-				vgjs::schedule([=]
-				{
-					try
-					{
-						for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
-							serializer->Deserialize(entityNode, deserializedEntity);
-					}
-					catch (std::exception& e)
-					{
-						Log::CoreError("Failed to deserialize entity components. Error: '{}'", e.what());
-					}
-				});
-			}
 
-			vgjs::continuation([=] { Log::CoreInfo("Serialization is finished"); });
+			 ParallelJob serializeJob([=](const int i)
+			 {
+			 	auto [deserializedEntity, entityNode] = entitiesToDeserialize[i];
+			 	for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
+			 		serializer->Deserialize(entityNode, deserializedEntity);
+			 });
+			
+			serializeJob.Run(entitiesToDeserialize.size());
+			serializeJob.Wait();
+			
+			//Apply all created texture, etc. 
+			D3D11DeferredContexts::UpdateCommandLists();
+			D3D11DeferredContexts::ExecuteCommands();
 		}
 	}
 
