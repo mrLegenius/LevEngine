@@ -24,7 +24,6 @@ namespace LevEngine
             vgjs::continuation([=]
             {
                 m_IsRunning = false;
-                Log::Debug("Job is finished");
             });
         });
     }

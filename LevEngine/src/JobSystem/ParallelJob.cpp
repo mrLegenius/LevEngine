@@ -27,7 +27,6 @@ namespace LevEngine
             vgjs::continuation([=]
             {
                 m_IsRunning = false;
-                Log::Debug("Parallel job is finished");
             });
         });
     }
