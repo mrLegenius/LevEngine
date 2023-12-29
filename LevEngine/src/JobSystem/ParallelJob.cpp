@@ -11,7 +11,7 @@ namespace LevEngine
         {
             for (int i = 0; i < count; i++)
             {
-                vgjs::schedule(vgjs::Function{[=]
+                vgjs::schedule([=]
                 {
                     try
                     {
@@ -21,9 +21,9 @@ namespace LevEngine
                     {
                         Log::CoreError("Error in parallel job: '{}'", e.what());
                     }
-                }, vgjs::thread_index_t{-1}});
+                });
             }
-				
+
             vgjs::continuation([=]
             {
                 m_IsRunning = false;

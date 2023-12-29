@@ -110,7 +110,7 @@ namespace LevEngine
 			serializeJob.Run(entitiesToDeserialize.size());
 			serializeJob.Wait();
 			
-			//Apply all created texture, etc. 
+			//Apply all created textures
 			D3D11DeferredContexts::UpdateCommandLists();
 			D3D11DeferredContexts::ExecuteCommands();
 		}

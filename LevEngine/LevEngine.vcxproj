@@ -97,6 +97,7 @@
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
     <ClInclude Include="src\DataTypes\Set.h" />
+    <ClInclude Include="src\JobSystem\Job.h" />
     <ClInclude Include="src\JobSystem\ParallelJob.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
     <ClInclude Include="src\Physics\Components\Collision.h" />
@@ -1023,6 +1024,7 @@
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\JobSystem\Job.cpp" />
     <ClCompile Include="src\JobSystem\ParallelJob.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
     <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />

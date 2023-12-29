@@ -3,8 +3,6 @@
 
 namespace LevEngine
 {
-    class Scene;
-
     class Entity
     {
     public:
