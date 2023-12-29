@@ -19,7 +19,6 @@ namespace LevEngine
 	template<class TComponent, class TSerializer>
 	class ComponentSerializer : public IComponentSerializer
 	{
-		inline static std::mutex m_DeserializeMutex;
 	public:
 		void Serialize(YAML::Emitter& out, Entity entity) override
 		{
@@ -45,15 +44,11 @@ namespace LevEngine
 			{
 				TComponent component = TComponent();
 				DeserializeData(componentProps, component);
-				m_DeserializeMutex.lock();
 				entity.AddComponent<TComponent>(component);
-				m_DeserializeMutex.unlock();
 			}
 			else
 			{
-				m_DeserializeMutex.lock();
 				auto& component = entity.GetComponent<TComponent>();
-				m_DeserializeMutex.unlock();
 				DeserializeData(componentProps, component);
 			}			
 		}

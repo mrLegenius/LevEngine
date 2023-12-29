@@ -35,9 +35,6 @@
 
 namespace LevEngine
 {
-    extern ID3D11DeviceContext* context;
-    extern ID3D11DeviceContext* deferredContext;
-    
     Renderer::Renderer(const Window& window)
         : m_MainRenderTarget(window.GetContext()->GetRenderTarget())
     {
