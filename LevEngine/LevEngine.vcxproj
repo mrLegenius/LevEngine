@@ -47,7 +47,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>external;external/recastnavigation/include;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -55,6 +55,7 @@
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
       <AdditionalModuleDependencies>
       </AdditionalModuleDependencies>
+      <AdditionalOptions>/bigobj </AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -71,12 +72,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;external\sol;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -112,7 +114,14 @@
     <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
+    <ClInclude Include="src\DataTypes\Set.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
+    <ClInclude Include="src\Physics\Components\Collision.h" />
+    <ClInclude Include="src\Physics\Components\Destroyable.h" />
+    <ClInclude Include="src\Physics\Events\ContactReportCallback.h" />
+    <ClInclude Include="src\Physics\PhysicsUpdate.h" />
+    <ClInclude Include="src\Physics\PhysicsUtils.h" />
+    <ClInclude Include="src\Physics\RigidbodyInitSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
@@ -136,13 +145,15 @@
     <ClInclude Include="src\Renderer\Particles\ParticlesUtils.h" />
     <ClInclude Include="src\Renderer\Query.h" />
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
+    <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
+    <ClInclude Include="src\Physics\Components\ConstantForce.h" />
+    <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
     <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
     <ClInclude Include="src\Physics\Physics.h" />
-    <ClInclude Include="src\Physics\PhysicsUtils.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
     <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h" />
     <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h" />
@@ -939,15 +950,6 @@
     <ClInclude Include="src\DataTypes\String.h" />
     <ClInclude Include="src\MeshLoader.h" />
     <ClInclude Include="src\levpch.h" />
-    <ClInclude Include="src\Physics\Components\LegacyCollider.h" />
-    <ClInclude Include="src\Physics\Components\LegacyCollisionEvents.h" />
-    <ClInclude Include="src\Physics\Components\LegacyRigidbody.h" />
-    <ClInclude Include="src\Physics\Events\LegacyCollisionBeginEvent.h" />
-    <ClInclude Include="src\Physics\Events\LegacyCollisionEndEvent.h" />
-    <ClInclude Include="src\Physics\LegacyPhysics.h" />
-    <ClInclude Include="src\Physics\Systems\LegacyForcesClearSystem.h" />
-    <ClInclude Include="src\Physics\Systems\LegacyPositionUpdateSystem.h" />
-    <ClInclude Include="src\Physics\Systems\LegacyVelocityUpdateSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11BlendState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DepthStencilState.h" />
@@ -973,7 +975,6 @@
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCube.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugGrid.h" />
-    <ClInclude Include="src\Renderer\DebugRender\DebugLine.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRender.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRenderPass.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugShape.h" />
@@ -1045,11 +1046,9 @@
     <ClInclude Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.h" />
     <ClInclude Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.h" />
     <ClInclude Include="src\Scene\Systems\EventSystem.h" />
-    <ClInclude Include="src\Scene\Systems\Physics\RigidbodyInitSystem.h" />
-    <ClInclude Include="src\Scene\Systems\Physics\RigidbodyUpdateSystem.h" />
     <ClInclude Include="src\Scripting\MathLuaBindings.h" />
     <ClInclude Include="src\Scripting\MetaUtilities.h" />
-    <ClInclude Include="src\Scripting\ScriptingComponent.h" />
+    <ClInclude Include="src\Scripting\ScriptingSystemComponents.h" />
     <ClInclude Include="src\Scripting\ScriptingManager.h" />
     <ClInclude Include="src\Scripting\ScriptingSystems.h" />
     <ClInclude Include="src\Serializers\RenderSettingsSerializer.h" />
@@ -1060,14 +1059,17 @@
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
+    <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />
+    <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
+    <ClCompile Include="src\Physics\RigidbodyInitSystem.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\BeginQueryPass.cpp" />
+    <ClCompile Include="src\Physics\Components\ConstantForce.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugGrid.cpp" />
-    <ClCompile Include="src\Renderer\DebugRender\DebugLine.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugSphere.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireSphere.cpp" />
@@ -1091,6 +1093,8 @@
     <ClCompile Include="src\Renderer\RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\RenderPass.cpp" />
     <ClCompile Include="src\Renderer\RenderSettings.cpp" />
+    <ClCompile Include="src\Scene\Systems\EntityDestroySystem.cpp" />
+    <ClCompile Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
@@ -1339,9 +1343,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Physics\Components\LegacyCollider.cpp" />
-    <ClCompile Include="src\Physics\Components\LegacyRigidbody.cpp" />
-    <ClCompile Include="src\Physics\LegacyPhysics.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11BlendState.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11ConstantBuffer.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DepthStencilState.cpp" />
@@ -1417,8 +1418,6 @@
     <ClCompile Include="src\Scene\Serializers\SerializerUtils.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\WaypointDisplacementByTimeSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\WaypointPositionUpdateSystem.cpp" />
-    <ClCompile Include="src\Scene\Systems\Physics\RigidbodyInitSystem.cpp" />
-    <ClCompile Include="src\Scene\Systems\Physics\RigidbodyUpdateSystem.cpp" />
     <ClCompile Include="src\Scripting\MathLuaBindings.cpp" />
     <ClCompile Include="src\Scripting\MetaUtilities.cpp" />
     <ClCompile Include="src\Scripting\ScriptingManager.cpp" />
@@ -1442,6 +1441,22 @@
       <Project>{d6169991-3a39-41af-9b3a-e497de7ff55c}</Project>
       <Name>FMODStudio</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="external\eastl\doc\EASTL.natvis" />
+    <Natvis Include="external\entt\config.natvis" />
+    <Natvis Include="external\entt\container.natvis" />
+    <Natvis Include="external\entt\core.natvis" />
+    <Natvis Include="external\entt\entity.natvis" />
+    <Natvis Include="external\entt\graph.natvis" />
+    <Natvis Include="external\entt\locator.natvis" />
+    <Natvis Include="external\entt\meta.natvis" />
+    <Natvis Include="external\entt\platform.natvis" />
+    <Natvis Include="external\entt\poly.natvis" />
+    <Natvis Include="external\entt\process.natvis" />
+    <Natvis Include="external\entt\resource.natvis" />
+    <Natvis Include="external\entt\signal.natvis" />
+    <Natvis Include="external\sol\sol2.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

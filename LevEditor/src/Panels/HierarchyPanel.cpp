@@ -25,7 +25,7 @@ namespace LevEngine::Editor
 		{
 			if (entitySelection->Get())
 			{
-				activeScene->DestroyEntity(entitySelection->Get());
+				activeScene->DestroyEntityImmediate(entitySelection->Get());
 				Selection::Deselect();
 			}
 		}
@@ -69,7 +69,7 @@ namespace LevEngine::Editor
 
 		for (const auto toDelete : m_EntitiesToDelete)
 		{
-			activeScene->DestroyEntity(toDelete);
+			activeScene->DestroyEntityImmediate(toDelete);
 			Selection::Deselect();
 		}
 		m_EntitiesToDelete.clear();
@@ -89,7 +89,7 @@ namespace LevEngine::Editor
 
 	void HierarchyPanel::CreatePrefab(const Entity entity, const Path& path)
 	{
-		if (const auto& asset = AssetDatabase::CreateAsset<PrefabAsset>(path))
+		if (const auto& asset = AssetDatabase::CreateNewAsset<PrefabAsset>(path))
 			asset->SaveEntity(entity);
 
 		Log::CoreInfo("Prefab '{0}' is created at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());

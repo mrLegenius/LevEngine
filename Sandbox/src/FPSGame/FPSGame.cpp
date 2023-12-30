@@ -3,13 +3,14 @@
 
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
+#include "Scripting/ScriptingManager.h"
+#include "Systems/CollisionHandleSystem.h"
 #include "Systems/EnemyMovementSystem.h"
 #include "Systems/EnemySpawnSystem.h"
 #include "Systems/FPSCameraRotationSystem.h"
 #include "Systems/FPSMovementSystem.h"
 #include "Systems/PlayerSpawnSystem.h"
 #include "Systems/ProjectileLifeSystem.h"
-#include "Systems/ProjectileMovementSystem.h"
 #include "Systems/ShootSystem.h"
 
 /*
@@ -27,7 +28,6 @@ namespace Sandbox
 	
 	void FPSGame::OnAttach()
 	{
-
 		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
 
@@ -43,35 +43,15 @@ namespace Sandbox
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
+		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
 		scene->RegisterUpdateSystem<FPSMovementSystem>();
 		//scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
 		scene->RegisterUpdateSystem<ShootSystem>();
-		scene->RegisterUpdateSystem<ProjectileMovementSystem>();
+		scene->RegisterUpdateSystem<CollisionHandleSystem>();
 		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
 		scene->RegisterUpdateSystem<EnemySpawnSystem>();
-		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
-		scene->RegisterUpdateSystem<EnemyMovementSystem>();
-		
-		scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
-		scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
 
-		scene->RegisterUpdateSystem<AudioSourceInitSystem>();
-		scene->RegisterUpdateSystem<AudioListenerInitSystem>();
-		
-		scene->RegisterOneFrame<CollisionBeginEvent>();
-		scene->RegisterOneFrame<CollisionEndEvent>();
-
-		scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
-		scene->RegisterUpdateSystem<RigidbodyInitSystem>();
-
-		auto& registry = scene->GetRegistry();
-		registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
-		registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
-
-		registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
-		
-		registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
-
+		scene->OnInit();
 		Application::Get().GetWindow().DisableCursor();
 	}
 

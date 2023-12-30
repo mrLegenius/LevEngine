@@ -38,6 +38,7 @@ namespace LevEngine
         [[nodiscard]] Statistic GetEnvironmentStatistic() const;
         [[nodiscard]] Statistic GetPostProcessingStatistic() const;
         [[nodiscard]] Statistic GetParticlesStatistic() const;
+        [[nodiscard]] Statistic GetDebugStatistic() const;
 
     private:
         void ResetStatistics();
@@ -87,5 +88,8 @@ namespace LevEngine
         
         Ref<Query> m_PostProcessingQuery;
         Statistic m_PostProcessingStat;
+
+        Ref<Query> m_DebugQuery;
+        Statistic m_DebugStat;
     };
 }

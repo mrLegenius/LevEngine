@@ -7,11 +7,7 @@
 
 void LevEngine::DebugWireSphere::Draw()
 {
-    static auto ring1 = Primitives::CreateRing(Vector3::Right, Vector3::Forward);
-    static auto ring2 = Primitives::CreateRing(Vector3::Right, Vector3::Up);
-    static auto ring3 = Primitives::CreateRing(Vector3::Up, Vector3::Forward);
+    static auto circle = Primitives::CreateWireSphere();
         
-    Renderer3D::DrawLineStrip(m_Model, ring1, ShaderAssets::Debug());
-    Renderer3D::DrawLineStrip(m_Model, ring2, ShaderAssets::Debug());
-    Renderer3D::DrawLineStrip(m_Model, ring3, ShaderAssets::Debug());
+    Renderer3D::DrawLineList(m_Model, circle, ShaderAssets::DebugShape());
 }

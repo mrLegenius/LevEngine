@@ -8,6 +8,7 @@
 #include "MeshAsset.h"
 #include "PrefabAsset.h"
 #include "Project.h"
+#include "ScriptAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
 #include "Scene/Serializers/SerializerUtils.h"
@@ -53,6 +54,10 @@ namespace LevEngine
 		}
 
 		Ref<Asset> asset = CreateAsset(path, uuid);
+		if (CastRef<ScriptAsset>(asset))
+		{
+			asset->Deserialize();
+		}
 
 		if (needToGenerateMeta)
 			asset->SerializeMeta();
@@ -202,6 +207,9 @@ namespace LevEngine
 
 		if (IsAssetAudioBank(path))
 			return CreateRef<AudioBankAsset>(path, uuid);
+
+		if (IsAssetScript(path))
+			return CreateRef<ScriptAsset>(path, uuid);
 
 		return CreateRef<DefaultAsset>(path, uuid);
 	}

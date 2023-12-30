@@ -1,20 +1,25 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "EditorLayer.h"
 
 #include "ModalPopup.h"
 #include "Project.h"
 #include "Selection.h"
-#include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
-#include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
-#include "Scene/Systems/Audio/AudioSourceInitSystem.h"
-#include "Scene/Systems/Audio/AudioListenerInitSystem.h"
-#include <Scene/Components/Audio/AudioSource.h>
-#include <Scene/Components/Audio/AudioListener.h>
 
-#include "ProjectEditor.h"
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
+#include "Essentials/MenuBar.h"
+#include "Panels/AssetBrowserPanel.h"
+#include "Panels/ConsolePanel.h"
+#include "Panels/DockSpace.h"
+#include "Panels/GamePanel.h"
+#include "Panels/HierarchyPanel.h"
+#include "Panels/PropertiesPanel.h"
+#include "Panels/ScriptsPanel.h"
+#include "Panels/SettingsPanel.h"
 #include "Panels/StatisticsPanel.h"
-#include "Scripting/ScriptingManager.h"
+#include "Panels/StatusBar.h"
+#include "Panels/Toolbar.h"
+#include "Panels/ViewportPanel.h"
+#include "Renderer/RendererContext.h"
 
 namespace LevEngine::Editor
 {
@@ -122,6 +127,7 @@ namespace LevEngine::Editor
         m_Console->Render();
         m_Settings->Render();
         m_Statistics->Render();
+        m_ScriptsPanel->Render();
         m_MainToolbar->Render();
         m_MainStatusBar->Render();
     }
@@ -147,25 +153,11 @@ namespace LevEngine::Editor
     {
         if (!m_SceneEditor->SaveScene()) return;
 
-        auto& scene = SceneManager::GetActiveScene();
-        scene->RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
-        scene->RegisterUpdateSystem<WaypointPositionUpdateSystem>();
-        scene->RegisterUpdateSystem<AudioSourceInitSystem>();
-        scene->RegisterUpdateSystem<AudioListenerInitSystem>();
-        
-        scene->RegisterUpdateSystem<RigidbodyUpdateSystem>();
-
-        scene->RegisterUpdateSystem<RigidbodyInitSystem>();
-        
-        auto& registry = scene->GetRegistry();
-        registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
-        registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
-        registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
-
-        registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
+        auto& scene = SceneManager::GetActiveScene();        
         
         m_Game->Focus();
         m_SceneState = SceneState::Play;
+        scene->OnInit();
         Selection::Deselect();
     }
     void EditorLayer::OnSceneStop()
@@ -194,9 +186,7 @@ namespace LevEngine::Editor
 
         ResourceManager::Init(Project::GetRoot());
         AssetDatabase::ProcessAllAssets();
-        //TODO
-        //Application::Get().GetScriptingManager().LoadScripts(Project::GetRoot());
-
+        
         const auto startScene = Project::GetStartScene();
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))
             SceneManager::LoadEmptyScene();
@@ -212,6 +202,7 @@ namespace LevEngine::Editor
         m_MainToolbar = CreateRef<Toolbar>(m_MainMenuBar, [this]{ return m_SceneState; }, std::bind(&EditorLayer::OnPlayButtonClicked, this));
         m_DockSpace = CreateRef<DockSpace>(m_MainToolbar, m_MainMenuBar);
         m_Statistics = CreateRef<StatisticsPanel>();
+        m_ScriptsPanel = CreateRef<ScriptsPanel>();
 
         m_SceneEditor->AddMainMenuItems(m_MainMenuBar);
         m_ProjectEditor->AddMainMenuItems(m_MainMenuBar);

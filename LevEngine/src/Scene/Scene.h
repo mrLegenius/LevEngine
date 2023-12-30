@@ -1,8 +1,10 @@
 #pragma once
 #include "System.h"
+#include "DataTypes/Set.h"
 
 namespace LevEngine
 {
+	class ScriptAsset;
 	class SceneCamera;
 	class Audio;
 	class Entity;
@@ -15,6 +17,7 @@ namespace LevEngine
 
 		void CleanupScene();
 
+		void OnInit();
 		void OnUpdate(float deltaTime);
 		void OnPhysics(float deltaTime);
 		void OnLateUpdate(float deltaTime);
@@ -30,14 +33,17 @@ namespace LevEngine
 
 		void DestroyEntity(entt::entity entity);
 		void DestroyEntity(Entity entity);
+		void DestroyEntityImmediate(Entity entity);
 		static void GetAllChildren(Entity entity, Vector<Entity>& entities);
 
 		Entity DuplicateEntity(Entity entity);
 		Entity DuplicateEntity(Entity entity, Entity parent);
+		
+		static void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
 
-		// TODO Not implemented function
-		void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
-
+		template<class T>
+		void RegisterInitSystem();
+		
 		template<typename T>
 		void RegisterUpdateSystem();
 
@@ -53,6 +59,10 @@ namespace LevEngine
 		Entity GetEntityByUUID(const UUID& uuid);
 
 		entt::registry& GetRegistry();
+
+		bool IsScriptSystemActive(const Ref<ScriptAsset>& scriptAsset) const;
+		void SetScriptSystemActive(const Ref<ScriptAsset>& scriptAsset, bool isActive);
+		Set<Ref<ScriptAsset>> GetActiveScriptSystems() const;
 
 	private:
 		void RequestUpdates(float deltaTime);
@@ -74,6 +84,7 @@ namespace LevEngine
 		Vector<Scope<System>> m_UpdateSystems;
 		Vector<Scope<System>> m_LateUpdateSystems;
 		Vector<Scope<System>> m_EventSystems;
+		Vector<Scope<System>> m_InitSystems;
 
 		bool m_IsUpdateDone = true;
 		bool m_IsLateUpdateDone = true;
@@ -81,6 +92,8 @@ namespace LevEngine
 		bool m_IsPhysicsDone = true;
 		bool m_IsRenderDone = true;
 		bool m_IsAudioUpdateDone = true;
+
+		Set<Ref<ScriptAsset>> m_ScriptSystems;
 	};
 }
 

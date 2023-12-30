@@ -1,0 +1,50 @@
+Prefab: Missile
+RootEntity: 9177273757486242227
+Entities:
+  - Entity: 9177273757486242227
+    Tag: Missile
+    Transform:
+      Position: [0, 2.0588665, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Rigidbody:
+      Is Visualization Enabled: false
+      Rigidbody Type: 1
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: false
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Max Linear Velocity: 100
+      Max Angular Velocity: 100
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Collider Type: 0
+      Sphere Radius: 0.200000003
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Static Friction: 0
+      Dynamic Friction: 0
+      Restitution: 0
+    Audio Source:
+      AudioBank: 12311189374319023591
+      AudioEventName: FireballFlight
+      PlayOnInit: true
+      IsOneShot: false
+  - Entity: 14586057746468430878
+    Tag: Rock
+    Parent: 9177273757486242227
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    MeshRenderer:
+      Mesh: 4915651832749162070
+      Material: 6368603494050966349
+      Cast Shadow: true

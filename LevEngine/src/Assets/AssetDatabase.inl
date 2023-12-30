@@ -3,8 +3,8 @@
 
 namespace LevEngine
 {
-    template <class T>
-    Ref<T> AssetDatabase::CreateAsset(const Path& path)
+    template <class T, class ...Args>
+    Ref<T> AssetDatabase::CreateNewAsset(const Path& path, Args ...args)
     {
         static_assert(std::is_base_of_v<Asset, T>, "T must derive from Asset");
 
@@ -16,18 +16,13 @@ namespace LevEngine
 			
         const auto uuid = UUID();
 
-        auto asset = CreateAsset(path, uuid);
+        auto asset = CreateRef<T>(path, uuid, eastl::forward<Args>(args)...);
         asset->Serialize();
-
-        String metaPath = path.string().c_str();
-        metaPath += ".meta";
-
-        CreateMeta(metaPath.c_str(), uuid);
 
         m_Assets.emplace(uuid, asset);
         m_AssetsByPath.emplace(path, asset);
 
-        return CastRef<T>(asset);
+        return asset;
     }
 
     template <class T>
@@ -44,6 +39,23 @@ namespace LevEngine
         static_assert(eastl::is_base_of_v<Asset, T>, "T must be an asset");
 
         return GetAsset<T>(GetAsset(path));
+    }
+
+    template <class T>
+    Vector<Ref<T>> AssetDatabase::GetAllAssetsOfClass()
+    {
+        static_assert(std::is_base_of_v<Asset, T>, "T must be an asset");
+
+        Vector<Ref<T>> foundAssets;
+        for (const auto& asset : m_Assets)
+        {
+            if (auto assetT = CastRef<T>(asset.second))
+            {
+                foundAssets.push_back(assetT);
+            }
+        }
+
+        return foundAssets;
     }
 
     template <class T>

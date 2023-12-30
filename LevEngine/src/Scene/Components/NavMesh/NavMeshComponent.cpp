@@ -4,8 +4,9 @@
 #include "NavMeshableComponent.h"
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMeshQuery.h"
+#include "PxRigidBody.h"
 #include "Assets/MeshAsset.h"
-#include "Physics/Components/LegacyCollider.h"
+#include "Physics/Components/Rigidbody.h"
 #include "Renderer/3D/Mesh.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -62,27 +63,34 @@ namespace LevEngine
         m_Config.detailSampleMaxError = CellHeight * DetailSampleMaxError;
 		
         auto& registry = SceneManager::GetActiveScene()->GetRegistry();
-
-		const auto& selfView = registry.view<Transform, NavMeshComponent, LegacyBoxCollider>();
+  
+		const auto& selfView = registry.view<Transform, NavMeshComponent, Rigidbody>();
 		const auto& thisEntity = selfView.begin();
-		const auto& boxCollider = selfView.get<LegacyBoxCollider>(*thisEntity);
+		const auto& rigidBody = selfView.get<Rigidbody>(*thisEntity);
 		const auto& thisTransform = selfView.get<Transform>(*thisEntity);
+  
+		if(rigidBody.GetColliderType() != Collider::Type::Box)
+		{
+			return;
+		}
 
-		Vector3 boxColliderMinPoint = {boxCollider.offset.x - boxCollider.extents.x,
-		boxCollider.offset.y - boxCollider.extents.y,
-		boxCollider.offset.z - boxCollider.extents.z};
-		Vector3 boxColliderMaxPoint = {boxCollider.offset.x + boxCollider.extents.x,
-			boxCollider.offset.y + boxCollider.extents.y,
-			boxCollider.offset.z + boxCollider.extents.z};
+		const auto& positionOffset = rigidBody.GetColliderOffsetPosition();
+		const auto& boxHalfExtents = rigidBody.GetBoxHalfExtents();
+		Vector3 boxColliderMinPoint = {positionOffset.x - boxHalfExtents.x,
+		positionOffset.y - boxHalfExtents.y,
+		positionOffset.z - boxHalfExtents.z};
+		Vector3 boxColliderMaxPoint = {positionOffset.x + boxHalfExtents.x,
+			positionOffset.y + boxHalfExtents.y,
+			positionOffset.z + boxHalfExtents.z};
 		
 		const Vector3& transformedMinPoint = Vector3::Transform(boxColliderMinPoint, thisTransform.GetModel());
 		const Vector3& transformedMaxPoint = Vector3::Transform(boxColliderMaxPoint, thisTransform.GetModel());
 		
         const auto view = registry.view<Transform, NavMeshableComponent, MeshRendererComponent>();
-
+  
 		Vector<Vector3> verticesOfAllMeshes;
 		Vector<uint32_t> indicesOfAllMeshes;
-
+  
 		uint32_t indexOffset = 0;
 		
 		for (auto& entity : view)
@@ -99,7 +107,7 @@ namespace LevEngine
 		
 			Vector<Vector3> meshVertices = mesh->GetVertices();
 			Vector<uint32_t> meshIndices = mesh->GetIndices();
-
+  
 			for (auto& meshVertex : meshVertices)
 			{
 				meshVertex = Vector3::Transform(meshVertex, transform.GetModel());
@@ -110,7 +118,7 @@ namespace LevEngine
 			{
 				indicesOfAllMeshes.push_back(meshIndex + indexOffset);
 			}
-
+  
 			indexOffset += mesh->GetVerticesCount();
 		}
 		
@@ -127,7 +135,7 @@ namespace LevEngine
         rcVcopy(m_Config.bmin, bmin);
         rcVcopy(m_Config.bmax, bmax);
         rcCalcGridSize(m_Config.bmin, m_Config.bmax, m_Config.cs, &m_Config.width, &m_Config.height);
-
+  
         //
         // Step 2. Rasterize input polygon soup.
         //
@@ -145,7 +153,7 @@ namespace LevEngine
             Log::Trace("Build navigation: Could not create solid heightfield.");
             return;
         }
-
+  
         // Allocate array that can hold triangle area types.
         // If you have multiple meshes you need to process, allocate
         // and array which can hold the max number of triangles you need to process.
@@ -155,7 +163,7 @@ namespace LevEngine
             Log::Trace("Build navigation: Out of memory 'm_TriAreas'", trianglesCount);
             return;
         }
-
+  
         // Find triangles which are walkable based on their slope and rasterize them.
         // If your input data is multiple meshes, you can transform them here, calculate
         // the are type for each of the meshes and rasterize them.
@@ -166,17 +174,17 @@ namespace LevEngine
             Log::Trace("Build navigation: Could not rasterize triangles.");
             return;
         }
-
+  
         if (!KeepIntermediateResults)
         {
             delete [] m_TriangleAreas;
             m_TriangleAreas = nullptr;
         }
-
+  
         //
         // Step 3. Filter walkable surfaces.
         //
-
+  
         // Once all geometry is rasterized, we do initial pass of filtering to
         // remove unwanted overhangs caused by the conservative rasterization
         // as well as filter spans where the character cannot possibly stand.
@@ -186,11 +194,11 @@ namespace LevEngine
             rcFilterLedgeSpans(m_Context, m_Config.walkableHeight, m_Config.walkableClimb, *m_Solid);
         if (FilterWalkableLowHeightSpans)
             rcFilterWalkableLowHeightSpans(m_Context, m_Config.walkableHeight, *m_Solid);
-
+  
         //
 		// Step 4. Partition walkable surface to simple regions.
 		//
-
+  
 		// Compact the heightfield so that it is faster to handle from now on.
 		// This will result more cache coherent data as well as the neighbours
 		// between walkable cells will be calculated.
@@ -205,7 +213,7 @@ namespace LevEngine
 			Log::Trace("Build navigation: Could not build compact data.");
 			return;
 		}
-
+  
 		if (!KeepIntermediateResults)
 		{
 			rcFreeHeightField(m_Solid);
@@ -218,7 +226,7 @@ namespace LevEngine
 			Log::Trace("Build navigation: Could not erode.");
 			return;
 		}
-
+  
 		// (Optional) Mark areas.
 		// const ConvexVolume* vols = m_geom->getConvexVolumes();
 		// for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
@@ -249,7 +257,7 @@ namespace LevEngine
 		//   - can be slow and create a bit ugly tessellation (still better than monotone)
 		//     if you have large open areas with small obstacles (not a problem if you use tiles)
 		//   * good choice to use for tiled navmesh with medium and small sized tiles
-
+  
         switch (PartitionType)
         {
 			case SAMPLE_PARTITION_WATERSHED:
@@ -291,12 +299,12 @@ namespace LevEngine
 				break;
 			}
         }
-
+  
     	
     	//
     	// Step 5. Trace and simplify region contours.
     	//
-	
+	 
     	// Create contours.
     	m_ContourSet = rcAllocContourSet();
     	if (!m_ContourSet)
@@ -309,11 +317,11 @@ namespace LevEngine
     		Log::Trace("Build navigation: Could not create contours.");
     		return;
     	}
-
+  
     	//
     	// Step 6. Build polygons mesh from contours.
     	//
-
+  
     	// Build polygon navmesh from the contours.
     	m_PolyMesh = rcAllocPolyMesh();
     	if (!m_PolyMesh)
@@ -326,25 +334,25 @@ namespace LevEngine
     		Log::Trace("Build navigation: Could not triangulate contours.");
     		return;
     	}
-
+  
     	//
 		// Step 7. Create detail mesh which allows to access approximate height on each polygon.
 		//
-
+  
 		m_PolyMeshDetail = rcAllocPolyMeshDetail();
 		if (!m_PolyMeshDetail)
 		{
 			Log::Trace("Build navigation: Out of memory 'PolyMeshDetail'.");
 			return;
 		}
-
+  
 		if (!rcBuildPolyMeshDetail(m_Context, *m_PolyMesh, *m_CompactHeightfield, m_Config.detailSampleDist,
 			m_Config.detailSampleMaxError, *m_PolyMeshDetail))
 		{
 			Log::Trace("Build navigation: Could not build detail mesh.");
 			return;
 		}
-
+  
 		if (!KeepIntermediateResults)
 		{
 			rcFreeCompactHeightfield(m_CompactHeightfield);
@@ -352,21 +360,21 @@ namespace LevEngine
 			rcFreeContourSet(m_ContourSet);
 			m_ContourSet = nullptr;
 		}
-
+  
 		// At this point the navigation mesh data is ready, you can access it from m_PolyMesh.
 		// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
-
+  
 		//
 		// (Optional) Step 8. Create Detour data from Recast poly mesh.
 		//
-
+  
 		// The GUI may allow more max points per polygon than Detour can handle.
 		// Only build the detour navmesh if we do not exceed the limit.
 		if (m_Config.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
 		{
 			unsigned char* navData = 0;
 			int navDataSize = 0;
-
+  
 			// Update poly flags from areas.
 			for (int i = 0; i < m_PolyMesh->npolys; ++i)
 			{
@@ -388,8 +396,8 @@ namespace LevEngine
 					m_PolyMesh->flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
 				}
 			}
-
-
+  
+  
 			dtNavMeshCreateParams params;
 			memset(&params, 0, sizeof(params));
 			params.verts = m_PolyMesh->verts;
@@ -445,9 +453,9 @@ namespace LevEngine
 				return;
 			}
 		}
-
+  
 		Log::Trace("Navmesh builded successfully.");
-
+  
 		// // Show performance stats.
 		// duLogBuildTimes(*m_Context, m_Context->getAccumulatedTime(RC_TIMER_TOTAL));
 		// m_ctx->log(RC_LOG_PROGRESS, ">> Polymesh: %d vertices  %d polygons", m_PolyMesh->nverts, m_PolyMesh->npolys);
@@ -457,7 +465,7 @@ namespace LevEngine
 		// if (m_tool)
 		// 	m_tool->init(this);
 		// initToolStates(this);
-
+  
 		IsBuilded = true;
     }
 

@@ -23,7 +23,7 @@ namespace LevEngine::Editor
 		static void DrawDoubleControl(const String& label, const Func<double>& getter, const Action<double>& setter,
 			double speed, double min = 0, double max = 0);
 
-		static bool DrawIntControl(const String& label, int& value, int speed, int min, int max);
+		//static bool DrawIntControl(const String& label, int& value, int speed, int min, int max);
 		static void DrawIntControl(const String& label, const Func<int>& getter, const Action<int>& setter,
 			int speed = 1, int min = 0, int max = 0);
 
@@ -40,6 +40,14 @@ namespace LevEngine::Editor
 		static bool DrawCheckBox(const char* label, const Func<bool>& getter, const Action<bool>& setter);
 		static bool DrawCheckBox(const char* label, bool& value);
 
+		static bool DrawCheckBox3Control(
+			const char* mainLabel,
+			const char* firstLabel, const Func<bool>& firstGetter, const Action<bool>& firstSetter,
+			const char* secondLabel, const Func<bool>& secondGetter, const Action<bool>& secondSetter,
+			const char* thirdLabel, const Func<bool>& thirdGetter, const Action<bool>& thirdSetter,
+			float labelWidth = 80.0f
+		);
+
 		template<class T>
 		static bool DrawAsset(const String& label, Ref<T>& assetPtr);
 
@@ -49,6 +57,13 @@ namespace LevEngine::Editor
 		template<class T>
 		static bool DrawSelectableComponent(const String& componentTypeName, Entity& entity, bool wasSelected,
 			bool& isSelected, int selectableIdx = 0);
+
+		template<class T>
+		static bool DrawSelectableAssetSet(const String& label, Set<Ref<T>>& assets, Weak<T>& selectedAsset);
+
+		template<class T>
+		static bool DrawSelectableAsset(const Ref<T>& asset, bool wasSelected,
+			bool& isSelected);
 
 		template<class T, int N>
 		static bool DrawComboBox(String label, Array<String, N> stringValues, T& value);

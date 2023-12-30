@@ -48,12 +48,38 @@ namespace LevEngine::Editor
         const ImVec2 windowSize = GetLargestSizeForViewport();
         const ImVec2 windowPos = GetCenteredPositionForViewport(windowSize);
 		ImGui::SetCursorPos(windowPos);
+
+        const auto windowAspectRatio = windowSize.x / windowSize.y;
+        const auto textureAspectRatio = static_cast<float>(m_Texture->GetWidth()) / static_cast<float>(m_Texture->GetHeight());
+
+        auto diff = windowAspectRatio / textureAspectRatio;
+
+		ImVec2 uv0;
+		ImVec2 uv1;
+
+		if (diff > 1.0f)
+		{
+			diff = 1.0f / diff;
+			auto leftDiff = 0.5f - diff / 2.0f;
+			auto rightDiff = 0.5f + diff / 2.0f;
+
+			uv0 = {0, leftDiff};
+			uv1 = {1, rightDiff};
+		}
+		else
+		{
+			auto leftDiff = 0.5f - diff / 2.0f;
+			auto rightDiff = 0.5f + diff / 2.0f;
+
+			uv0 = {leftDiff, 0};
+			uv1 = {rightDiff, 1};
+		}
 		
         ImGui::Image(
             m_Texture->GetId(),
             windowSize,
-            {0, 0},
-            {1, 1}
+            uv0,
+            uv1
         );
 	}
 }

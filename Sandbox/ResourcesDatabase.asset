@@ -1,9 +1,11 @@
 Assets:
-  - UUID: 16567101528530377540
+  - UUID: 10320704494744571786
+    Address: CubePrefab
+  - UUID: 2000324344903669183
     Address: EnemyPrefab
-  - UUID: 16052350681343718982
-    Address: MissilePrefab
-  - UUID: 1112794481219402171
+  - UUID: 7682885704451273487
     Address: PlayerPrefab
+  - UUID: 7150442702964521681
+    Address: ProjectilePrefab
   - UUID: 17298535215741968510
     Address: SwordPrefab
