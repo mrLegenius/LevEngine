@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "MathLuaBindings.h"
 #include "Math/Math.h"
+#include "Math/Random.h"
 
 
 namespace LevEngine::Scripting 
@@ -50,7 +51,17 @@ namespace LevEngine::Scripting
 			sol::meta_function::addition, vec3_addition_overload,
 			sol::meta_function::subtraction, vec3_substraction_overload,
 			sol::meta_function::multiplication, vec3_multiplication_overload,
-			sol::meta_function::division, vec3_division_overload
+			sol::meta_function::division, vec3_division_overload,
+			"normalize", [] (Vector3& vector) { vector.Normalize(); },
+			sol::meta_function::to_string, [] (const Vector3& vector)
+			{
+				return "Vector3 [" + std::to_string(vector.x) + ", "
+				+ std::to_string(vector.y) + ", "
+				+ std::to_string(vector.z) + "]";
+			},
+			"Zero", sol::var(Vector3::Zero),
+			"Up", sol::var(Vector3::Up),
+			"Right", sol::var(Vector3::Right)
 		);
 	}
 
@@ -98,7 +109,13 @@ namespace LevEngine::Scripting
 			sol::meta_function::addition, vec2_addition_overload,
 			sol::meta_function::subtraction, vec2_substraction_overload,
 			sol::meta_function::multiplication, vec2_multiplication_overload,
-			sol::meta_function::division, vec2_division_overload
+			sol::meta_function::division, vec2_division_overload,
+			sol::meta_function::to_string, [] (const Vector2& vector)
+			{
+				return "Vector2 [" + std::to_string(vector.x) + ", "
+				+ std::to_string(vector.y) + "]";
+			},
+			"normalize", [] (Vector2& vector) { vector.Normalize(); }
 		);
 	}
 
@@ -148,7 +165,15 @@ namespace LevEngine::Scripting
 			sol::meta_function::addition, vec4_addition_overload,
 			sol::meta_function::subtraction, vec4_substraction_overload,
 			sol::meta_function::multiplication, vec4_multiplication_overload,
-			sol::meta_function::division, vec4_division_overload
+			sol::meta_function::division, vec4_division_overload,
+			sol::meta_function::to_string, [] (const Vector4& vector)
+			{
+				return "Vector4 [" + std::to_string(vector.x) + ", "
+				+ std::to_string(vector.y) + ", "
+				+ std::to_string(vector.z) + ", "
+				+ std::to_string(vector.w) + "]";
+			},
+			"normalize", [] (Vector2& vector) { vector.Normalize(); }
 		);
 	}
 
@@ -196,6 +221,13 @@ namespace LevEngine::Scripting
 			sol::meta_function::subtraction, vec4_substraction_overload,
 			sol::meta_function::multiplication, vec4_multiplication_overload,
 			sol::meta_function::division, vec4_division_overload,
+			sol::meta_function::to_string, [] (const Quaternion& quaternion)
+			{
+				const auto vector = quaternion.ToEuler();
+				return "Euler Angles [" + std::to_string(vector.x) + ", "
+				+ std::to_string(vector.y) + ", "
+				+ std::to_string(vector.z) + "]";
+			},
 			"toEuler", [](Quaternion& quaternion) { return quaternion.ToEuler(); }
 		);
 	}
@@ -230,6 +262,29 @@ namespace LevEngine::Scripting
 		math["degToRad"] = Math::DegToRad;
 	}
 
+	void CreateRandomBind(sol::state& lua)
+	{
+		lua.new_usertype<Random>(
+			"Random",
+			sol::no_constructor,
+			"vector3", sol::overload(
+				[](){ return Random::Vec3(); },
+				[](float min, float max) { return Random::Vec3(min, max);},
+				[](const Vector3& a, const Vector3& b) { return Random::Vec3(a, b);}),
+			"vector4", sol::overload(
+				[](){ return Random::Vec4(); },
+				[](float min, float max) { return Random::Vec4(min, max);},
+				[](const Vector4& a, const Vector4& b) { return Random::Vec4(a, b);}),
+			"color", sol::overload(
+				[](float min, float max, float alpha) { return Random::Color(min, max, alpha);},
+				[](const Color& a, const Color& b) { return Random::Color(a, b);}),
+			"smoothColor", sol::overload(
+				[](float min, float max, float alpha) { return Random::SmoothColor(min, max, alpha);},
+				[](const Color& a, const Color& b) { return Random::SmoothColor(a, b);}),
+			"rotation", &Random::Rotation
+		);
+	}
+
 	void MathLuaBindings::CreateLuaBindings(sol::state& lua)
 	{
 		CreateVector2Bind(lua);
@@ -237,6 +292,8 @@ namespace LevEngine::Scripting
 		CreateVector4Bind(lua);
 		
 		CreateQuaternionBind(lua);
+
+		CreateRandomBind(lua);
 
 		MathFreeFunctions(lua);
 	}

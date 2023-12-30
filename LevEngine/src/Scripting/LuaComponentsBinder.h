@@ -16,6 +16,9 @@ namespace sol {
 			return ptr.get();
 		}
 	};
+
+	template <class T>
+	struct is_container<Vector<T>> : std::true_type { };
 }
 
 namespace LevEngine
@@ -33,16 +36,20 @@ namespace LevEngine::Scripting
 		static void CreateSceneManagerBind(sol::state& lua);
 		static void CreateSceneBind(sol::state& lua);
 		static void CreatePrefabBind(sol::state& lua);
+		static void CreateAudioBind(sol::state& lua);
 		
 		static void CreateTransformLuaBind(sol::state& lua);
 		static void CreateCameraComponentLuaBind(sol::state& lua);
 		static void CreateScriptsContainerLuaBind(sol::state& lua);
+		static void CreateRigidbodyLuaBind(sol::state& lua);
 		
 		static void CreateLuaEntityBind(sol::state& lua, Scene* scene);
 
 		template<class TComponent>
 		static void RegisterMetaComponent();
 	};
+
+	
 
 	template <class TComponent>
 	auto add_component(Entity& entity, const sol::table& component, sol::this_state state);
