@@ -509,4 +509,29 @@ namespace LevEngine::Scripting
             { return Audio::PlayOneShot(String{eventName.c_str()}, entity); }
             );
     }
+
+    void LuaComponentsBinder::CreatePrintBind(sol::state& lua)
+    {
+        lua.set_function("print", [&lua](sol::variadic_args va)
+        {
+            std::string out;
+            for (auto v : va)
+            {
+                if (auto optionalString = v.as<sol::optional<std::string>>())
+                {
+                    out.append(optionalString.value() + " ");
+                }
+                else
+                {
+                    auto result = lua["tostring"](v);
+                    if (result.valid())
+                    {
+                        std::string string = result;
+                        out.append(string + " ");
+                    }
+                }
+            }
+            Log::CoreInfo(out);
+        });
+    }
 }
