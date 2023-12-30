@@ -52,7 +52,7 @@ FPSMovement = {
                 
                 if Input.isKeyDown(KeyCode.Space) then
                     movement = movement + Vector3.Up
-					--print("Space")
+					--print("Space", movement)
 				end
 
 				movement:normalize()

@@ -26,7 +26,7 @@ CollisionHandleSystem = {
 				for k,v in ipairs(collisions) do
 					if v.contactEntity:has_component(ScriptsContainer) then
 						
-						print(v.contactEntity:name())
+						--print(v.contactEntity:name())
 						scriptsContainer = v.contactEntity:get_component(ScriptsContainer)
 						
 						if scriptsContainer.Enemy ~= nill then
