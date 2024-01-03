@@ -519,7 +519,8 @@ namespace LevEngine::Scripting
             {
                 if (auto optionalString = v.as<sol::optional<std::string>>())
                 {
-                    out.append(optionalString.value() + " ");
+                    out.append(optionalString.value());
+                    out.append(" ");
                 }
                 else
                 {
@@ -527,7 +528,8 @@ namespace LevEngine::Scripting
                     if (result.valid())
                     {
                         std::string string = result;
-                        out.append(string + " ");
+                        out.append(string);
+                        out.append(" ");
                     }
                 }
             }
