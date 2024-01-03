@@ -139,7 +139,7 @@ namespace LevEngine::Editor
                         if (ImGui::BeginMenu("Script"))
                         {
                             DrawCreateMenu<ScriptAsset>("Script System", "System.lua", ScriptAsset::Type::System);
-                            DrawCreateMenu<ScriptAsset>("Script Component (TODO)", "Component.lua", ScriptAsset::Type::Component);
+                            DrawCreateMenu<ScriptAsset>("Script Component", "Component.lua", ScriptAsset::Type::Component);
                             
                             ImGui::EndMenu();
                         }
