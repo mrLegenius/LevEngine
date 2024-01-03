@@ -33,6 +33,8 @@ namespace LevEngine
 
         [[nodiscard]] Entity GetEntityByActor(physx::PxActor* actor) const;
 
+        [[nodiscard]] Vector3 GetGravity() const;
+
         friend struct Rigidbody;
         friend struct CharacterController;
         
@@ -54,8 +56,7 @@ namespace LevEngine
         [[nodiscard]] physx::PxShape* CreateCapsule(float radius, float halfHeight, const physx::PxMaterial* material) const;
         [[nodiscard]] physx::PxShape* CreateBox(Vector3 halfExtents, const physx::PxMaterial* material) const;
         
-        [[nodiscard]] physx::PxController* CreateBoxController(Entity entity, float halfHeight, float halfSideExtent, float halfForwardExtent, physx::PxMaterial* material);
-        [[nodiscard]] physx::PxController* CreateCapsuleController(Entity entity, float radius, float height, CapsuleController::ClimbingMode climbingMode, physx::PxMaterial* material);
+        [[nodiscard]] physx::PxController* CreateCapsuleController(Entity entity, float radius, float height, Controller::ClimbingMode climbingMode, physx::PxMaterial* material);
         void RemoveController(physx::PxController* controller);
         
         // used to optimize the filling of collision detection buffers

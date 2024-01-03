@@ -12,22 +12,21 @@ namespace Sandbox
             const auto cameraView = registry.view<Transform, CameraComponent>();
 
             const Vector2 mouse = Input::GetMouseDelta();
-			
+            const auto delta = deltaTime * ROTATION_SPEED * mouse;
+            
             for (const auto entity : cameraView)
             {
-                auto [cameraTransform, camera] = cameraView.get<Transform, CameraComponent>(entity);
+                auto [transform, camera] = cameraView.get<Transform, CameraComponent>(entity);
 
                 if (!camera.IsMain) continue;
-				
-                const auto delta = deltaTime * ROTATION_SPEED * mouse;
 
-                auto rotation = cameraTransform.GetWorldRotation().ToEuler() * Math::RadToDeg;
+                auto rotation = transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
 
                 rotation.x -= delta.y;
                 rotation.y -= delta.x;
-                rotation.x = Math::Clamp(rotation.x, -89.99f, 89.999f);
+                rotation.x = Math::Clamp(rotation.x, -89.9f, 89.9f);
                 
-                cameraTransform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
+                transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(rotation * Math::DegToRad));
             }
         }
     };

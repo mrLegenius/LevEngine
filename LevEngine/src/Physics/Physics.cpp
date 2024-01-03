@@ -147,47 +147,26 @@ namespace LevEngine
         return box;
     }
 
-    physx::PxController* Physics::CreateBoxController(
-        const Entity entity,
-        const float halfHeight,
-        const float halfSideExtent,
-        const float halfForwardExtent,
-        physx::PxMaterial* material)
-    {
-        physx::PxBoxControllerDesc desc;
-        desc.halfHeight = halfHeight;
-        desc.halfSideExtent = halfSideExtent;
-        desc.halfForwardExtent = halfForwardExtent;
-        desc.material = material;
-        physx::PxController* controller = m_ControllerManager->createController(desc);
-
-        const auto transform = entity.GetComponent<Transform>();
-        const auto actor = controller->getActor();
-        actor->setGlobalPose(PhysicsUtils::FromTransformToPxTransform(transform));
-        m_ActorEntityMap.insert({actor, entity});
-        
-        return controller;
-    }
-
     physx::PxController* Physics::CreateCapsuleController(
         const Entity entity,
         const float radius,
         const float height,
-        const CapsuleController::ClimbingMode climbingMode,
+        const Controller::ClimbingMode climbingMode,
         physx::PxMaterial* material)
     {
+        auto transform = entity.GetComponent<Transform>();
         physx::PxCapsuleControllerDesc desc;
+        desc.position = PhysicsUtils::FromVector3ToPxExtendedVec3(transform.GetWorldPosition());
         desc.radius = radius;
         desc.height = height;
         desc.climbingMode = static_cast<physx::PxCapsuleClimbingMode::Enum>(static_cast<int>(climbingMode));
         desc.material = material;
+        desc.upDirection = PhysicsUtils::FromVector3ToPxVec3(Vector3::Right);
         physx::PxController* controller = m_ControllerManager->createController(desc);
         
-        auto transform = entity.GetComponent<Transform>();
         const auto actor = controller->getActor();
-        actor->setGlobalPose(PhysicsUtils::FromTransformToPxTransform(transform));
         m_ActorEntityMap.insert({actor, entity});
-
+        
         // turn the capsule into an upright position
         physx::PxShape* collider[1];
         const auto nbColliders = actor->getNbShapes();
@@ -214,6 +193,11 @@ namespace LevEngine
     Entity Physics::GetEntityByActor(physx::PxActor* actor) const
     {
         return m_ActorEntityMap.at(actor);
+    }
+
+    Vector3 Physics::GetGravity() const
+    {
+        return PhysicsUtils::FromPxVec3ToVector3(m_Scene->getGravity());
     }
     
     void Physics::ClearAccumulator()

@@ -1,72 +1,74 @@
 #pragma once
-#include "FPSGame/Components/Player.h"
+#include <complex>
 
-constexpr auto WALK_SPEED = 15.0f;
-constexpr auto SPRINT_SPEED = 30.0f;
-constexpr auto JUMP_FORCE = 50.0f;
+#include "FPSGame/Components/Player.h"
+#include "Physics/Physics.h"
+#include "Physics/Components/CharacterController.h"
 
 namespace Sandbox
 {
+    constexpr float MAX_WALK_SPEED = 1.0f;
+    constexpr float MAX_SPRINT_SPEED = 2.0f;
+    
     class FPSMovementSystem final : public System
     {
         void Update(const float deltaTime, entt::registry& registry) override
         {
-            const auto playerView = registry.view<Transform, Player, Rigidbody>();
+            const auto playerView = registry.view<Transform, Player, CharacterController>();
             
             for (const auto entity : playerView)
             {
-                auto [playerTransform, player, playerRigidbody] = playerView.get<Transform, Player, Rigidbody>(entity);
+                auto [transform, player, controller] = playerView.get<Transform, Player, CharacterController>(entity);
                 
-                const auto& cameraTransform = playerTransform.GetChildren()[0].GetComponent<Transform>();
+                const auto& cameraTransform = transform.GetChildren()[0].GetComponent<Transform>();
                 
-                auto movement = Vector3::Zero;
-
                 if (Input::IsKeyDown(KeyCode::LeftShift))
                 {
-                    player.Speed = SPRINT_SPEED;
+                    player.Speed = MAX_SPRINT_SPEED;
                 }
                 else
                 {
-                    player.Speed = WALK_SPEED;
+                    player.Speed = MAX_WALK_SPEED;
                 }
+
+                auto displacement = Vector3::Zero;
+                const auto gravity = App::Get().GetPhysics().GetGravity();
                 
                 if (Input::IsKeyDown(KeyCode::W))
                 {
-                    movement += Vector3(cameraTransform.GetForwardDirection().x, 0.0f, cameraTransform.GetForwardDirection().z);
-                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Forward * deltaTime * player.Speed);
+                    displacement += cameraTransform.GetForwardDirection();
                 }
                 else if (Input::IsKeyDown(KeyCode::S))
                 {
-                    movement -= Vector3(cameraTransform.GetForwardDirection().x, 0.0f, cameraTransform.GetForwardDirection().z);
-                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Backward * deltaTime * player.Speed);
+                    displacement -= cameraTransform.GetForwardDirection();
                 }
                 if (Input::IsKeyDown(KeyCode::A))
                 {
-                    movement -= Vector3(cameraTransform.GetRightDirection().x, 0.0f, cameraTransform.GetRightDirection().z);
-                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Left * deltaTime * player.Speed);
+                    displacement -= cameraTransform.GetRightDirection();
                 }
                 else if (Input::IsKeyDown(KeyCode::D))
                 {
-                    movement += Vector3(cameraTransform.GetRightDirection().x, 0.0f, cameraTransform.GetRightDirection().z);
-                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Right * deltaTime * player.Speed);
+                    displacement += cameraTransform.GetRightDirection();
                 }
                 
-                if (Input::IsKeyDown(KeyCode::Space))
+                displacement.Normalize();
+
+                displacement *= player.Speed * 0.25f;
+
+                // apply gravity
+                if (displacement.y <= 0.0f)
                 {
-                    movement += Vector3::Up;
-                    //playerRigidbody.SetKinematicTargetPosition(playerTransform.GetWorldPosition() + Vector3::Up * deltaTime * 10);
+                    displacement.y = gravity.y * deltaTime;
                 }
-                
-                movement.Normalize();
-                
-                playerRigidbody.AddForce(
-                    Vector3(
-                        deltaTime * player.Speed * movement.x,
-                        deltaTime * JUMP_FORCE * movement.y,
-                        deltaTime * player.Speed * movement.z
-                    ),
-                    Rigidbody::ForceMode::Impulse
-                );
+                else
+                {
+                    displacement.y += gravity.y * 10.0f * deltaTime;
+                }
+
+                if (displacement != Vector3::Zero)
+                {
+                    controller.Move(displacement, deltaTime);
+                }
             }
         }
     };

@@ -76,21 +76,9 @@ namespace LevEngine
 
         if (m_IsInitialized)
         {
-            switch (GetControllerType())
-            {
-            case Controller::Type::BoxController:
-                SetBoxControllerHalfHeight(GetBoxControllerHalfHeight());
-                SetBoxControllerHalfSideExtent(GetBoxControllerHalfSideExtent());
-                SetBoxControllerHalfForwardExtent(GetBoxControllerHalfForwardExtent());
-                break;
-            case Controller::Type::CapsuleController:
-                SetCapsuleControllerRadius(GetCapsuleControllerRadius());
-                SetCapsuleControllerHalfHeight(GetCapsuleControllerHalfHeight());
-                SetCapsuleControllerClimbingMode(GetCapsuleControllerClimbingMode());
-                break;
-            default:
-                break;
-            }
+            SetCapsuleControllerRadius(GetCapsuleControllerRadius());
+            SetCapsuleControllerHalfHeight(GetCapsuleControllerHalfHeight());
+            SetCapsuleControllerClimbingMode(GetCapsuleControllerClimbingMode());
         }
     }
 
@@ -106,36 +94,6 @@ namespace LevEngine
         if (m_Controller != NULL)
         {
             GetActor()->setActorFlag(physx::PxActorFlag::eVISUALIZATION, flag);
-        }
-    }
-
-    Controller::Type CharacterController::GetControllerType() const
-    {
-        return m_CharacterController->m_Type;
-    }
-
-    void CharacterController::SetControllerType(const Controller::Type& type)
-    {
-        switch (type)
-        {
-        case Controller::Type::BoxController:
-            m_CharacterController = CreateRef<BoxController>();
-            break;
-        case Controller::Type::CapsuleController:
-            m_CharacterController = CreateRef<CapsuleController>();
-            break;
-        default:
-            break;
-        }
-        m_CharacterController->m_Type = type;
-        
-        if (m_Controller != NULL)
-        {
-            // copy old Entity
-            const auto entity = App::Get().GetPhysics().m_ActorEntityMap.at(GetActor());
-            
-            AttachController(entity);
-            SetTransformScale(m_TransformScale);
         }
     }
 
@@ -246,117 +204,16 @@ namespace LevEngine
         }
     }
 
-    float CharacterController::GetBoxControllerHalfHeight() const
-    {
-        return static_cast<BoxController*>(m_CharacterController.get())->HalfHeight;
-    }
-
-    void CharacterController::SetBoxControllerHalfHeight(const float halfHeight) const
-    {
-        if (halfHeight <= 0.0f) return;
-
-        if (halfHeight * 2.0f < GetStepOffset()) return;
-        
-        static_cast<BoxController*>(m_CharacterController.get())->HalfHeight = halfHeight;
-
-        if (m_Controller != NULL)
-        {
-            const float maxTransformScale = Math::MaxElement(m_TransformScale);
-
-            const auto collider = GetCollider();
-            const physx::PxGeometryHolder geom(collider->getGeometry());
-            const auto initialHalfSideExtent = geom.box().halfExtents.x;
-            const auto initialHalfForwardExtent = geom.box().halfExtents.z;
-            collider->setGeometry(
-                physx::PxBoxGeometry(
-                    PhysicsUtils::FromVector3ToPxVec3(
-                        Vector3(
-                            initialHalfSideExtent,
-                            halfHeight * maxTransformScale,
-                            initialHalfForwardExtent
-                        )
-                    )
-                )
-            );
-        }
-    }
-    
-    float CharacterController::GetBoxControllerHalfSideExtent() const
-    {
-        return static_cast<BoxController*>(m_CharacterController.get())->HalfSideExtent;
-    }
-
-    void CharacterController::SetBoxControllerHalfSideExtent(const float halfSideExtent) const
-    {
-        if (halfSideExtent <= 0.0f) return;
-        
-        static_cast<BoxController*>(m_CharacterController.get())->HalfSideExtent = halfSideExtent;
-
-        if (m_Controller != NULL)
-        {
-            const float maxTransformScale = Math::MaxElement(m_TransformScale);
-
-            const auto collider = GetCollider();
-            const physx::PxGeometryHolder geom(collider->getGeometry());
-            const auto initialHalfHeight = geom.box().halfExtents.y;
-            const auto initialHalfForwardExtent = geom.box().halfExtents.z;
-            collider->setGeometry(
-                physx::PxBoxGeometry(
-                    PhysicsUtils::FromVector3ToPxVec3(
-                        Vector3(
-                            halfSideExtent * maxTransformScale,
-                            initialHalfHeight,
-                            initialHalfForwardExtent
-                        )
-                    )
-                )
-            );
-        }
-    }
-
-    float CharacterController::GetBoxControllerHalfForwardExtent() const
-    {
-        return static_cast<BoxController*>(m_CharacterController.get())->HalfForwardExtent;
-    }
-
-    void CharacterController::SetBoxControllerHalfForwardExtent(const float halfForwardExtent) const
-    {
-        if (halfForwardExtent <= 0.0f) return;
-        
-        static_cast<BoxController*>(m_CharacterController.get())->HalfForwardExtent = halfForwardExtent;
-
-        if (m_Controller != NULL)
-        {
-            const float maxTransformScale = Math::MaxElement(m_TransformScale);
-
-            const auto collider = GetCollider();
-            const physx::PxGeometryHolder geom(collider->getGeometry());
-            const auto initialHalfSideExtent = geom.box().halfExtents.x;
-            const auto initialHalfHeight = geom.box().halfExtents.y;
-            collider->setGeometry(
-                physx::PxBoxGeometry(
-                    PhysicsUtils::FromVector3ToPxVec3(
-                        Vector3(
-                            initialHalfSideExtent,
-                            initialHalfHeight,
-                            halfForwardExtent * maxTransformScale
-                        )
-                    )
-                )
-            );
-        }
-    }
-
     float CharacterController::GetCapsuleControllerRadius() const
     {
-        return static_cast<CapsuleController*>(m_CharacterController.get())->Radius;
+        return m_CharacterController->Radius;
     }
 
     void CharacterController::SetCapsuleControllerRadius(const float radius) const
     {
         if (radius <= 0.0f) return;
         
-        static_cast<CapsuleController*>(m_CharacterController.get())->Radius = radius;
+        m_CharacterController->Radius = radius;
 
         if (m_Controller != NULL)
         {
@@ -371,14 +228,14 @@ namespace LevEngine
 
     float CharacterController::GetCapsuleControllerHalfHeight() const
     {
-        return static_cast<CapsuleController*>(m_CharacterController.get())->HalfHeight;
+        return m_CharacterController->HalfHeight;
     }
 
     void CharacterController::SetCapsuleControllerHalfHeight(const float halfHeight) const
     {
         if (halfHeight <= 0.0f) return;
         
-        static_cast<CapsuleController*>(m_CharacterController.get())->HalfHeight = halfHeight;
+        m_CharacterController->HalfHeight = halfHeight;
 
         if (m_Controller != NULL)
         {
@@ -391,23 +248,23 @@ namespace LevEngine
         }
     }
 
-    CapsuleController::ClimbingMode CharacterController::GetCapsuleControllerClimbingMode() const
+    Controller::ClimbingMode CharacterController::GetCapsuleControllerClimbingMode() const
     {
-        return static_cast<CapsuleController*>(m_CharacterController.get())->m_ClimbingMode;
+        return m_CharacterController->m_ClimbingMode;
     }
 
-    void CharacterController::SetCapsuleControllerClimbingMode(const CapsuleController::ClimbingMode& climbingMode) const
+    void CharacterController::SetCapsuleControllerClimbingMode(const Controller::ClimbingMode& climbingMode) const
     {
-        static_cast<CapsuleController*>(m_CharacterController.get())->m_ClimbingMode = climbingMode;
+        m_CharacterController->m_ClimbingMode = climbingMode;
 
         if (m_Controller != NULL)
         {
             switch (climbingMode)
             {
-            case CapsuleController::ClimbingMode::Easy:
+            case Controller::ClimbingMode::Easy:
                 static_cast<physx::PxCapsuleController*>(m_Controller)->setClimbingMode(physx::PxCapsuleClimbingMode::eEASY);
                 break;
-            case CapsuleController::ClimbingMode::Constrained:
+            case Controller::ClimbingMode::Constrained:
                 static_cast<physx::PxCapsuleController*>(m_Controller)->setClimbingMode(physx::PxCapsuleClimbingMode::eCONSTRAINED);
                 break;
             default:
@@ -470,29 +327,17 @@ namespace LevEngine
         }
     }
 
-    void CharacterController::MoveForward()
+    void CharacterController::Move(const Vector3 displacement, const float elapsedTime) const
     {
         if (m_Controller != NULL)
         {
             m_Controller->move(
-                
+                PhysicsUtils::FromVector3ToPxVec3(displacement),
+                GetMinimumMovementDistance(),
+                elapsedTime,
+                physx::PxControllerFilters()
             );
         }
-    }
-
-    void CharacterController::MoveBackward()
-    {
-        
-    }
-
-    void CharacterController::MoveRight()
-    {
-        
-    }
-
-    void CharacterController::MoveLeft()
-    {
-        
     }
 
     void CharacterController::AttachController(const Entity entity)
@@ -509,31 +354,14 @@ namespace LevEngine
                 GetRestitution()
             );
 
-        switch (GetControllerType())
-        {
-        case Controller::Type::BoxController:
-            m_Controller =
-                App::Get().GetPhysics().CreateBoxController(
-                    entity,
-                    GetBoxControllerHalfHeight(),
-                    GetBoxControllerHalfSideExtent(),
-                    GetBoxControllerHalfForwardExtent(),
-                    physicalMaterial
-                );
-            break;
-        case Controller::Type::CapsuleController:
-            m_Controller =
-                App::Get().GetPhysics().CreateCapsuleController(
-                    entity,
-                    GetCapsuleControllerRadius(),
-                    GetCapsuleControllerHalfHeight(),
-                    GetCapsuleControllerClimbingMode(),
-                    physicalMaterial
-                );
-            break;
-        default:
-            break;
-        }
+        m_Controller =
+            App::Get().GetPhysics().CreateCapsuleController(
+                entity,
+                GetCapsuleControllerRadius(),
+                GetCapsuleControllerHalfHeight(),
+                GetCapsuleControllerClimbingMode(),
+                physicalMaterial
+            );
 
         physicalMaterial->release();
 
@@ -562,22 +390,9 @@ namespace LevEngine
         {
             out << YAML::Key << "Is Visualization Enabled" << YAML::Value << component.IsVisualizationEnabled();
             
-            out << YAML::Key << "Controller Type" << YAML::Value << static_cast<int>(component.GetControllerType());
-            switch (component.GetControllerType())
-            {
-            case Controller::Type::BoxController:
-                out << YAML::Key << "Box Controller Half Height" << YAML::Value << component.GetBoxControllerHalfHeight();
-                out << YAML::Key << "Box Controller Half Side Extent" << YAML::Value << component.GetBoxControllerHalfSideExtent();
-                out << YAML::Key << "Box Controller Half Forward Extent" << YAML::Value << component.GetBoxControllerHalfForwardExtent();
-                break;
-            case Controller::Type::CapsuleController:
-                out << YAML::Key << "Capsule Controller Radius" << YAML::Value << component.GetCapsuleControllerRadius();
-                out << YAML::Key << "Capsule Controller Half Height" << YAML::Value << component.GetCapsuleControllerHalfHeight();
-                out << YAML::Key << "Capsule Controller Climbing Mode" << YAML::Value << static_cast<int>(component.GetCapsuleControllerClimbingMode());
-                break;
-            default:
-                break;
-            }
+            out << YAML::Key << "Capsule Controller Radius" << YAML::Value << component.GetCapsuleControllerRadius();
+            out << YAML::Key << "Capsule Controller Half Height" << YAML::Value << component.GetCapsuleControllerHalfHeight();
+            out << YAML::Key << "Capsule Controller Climbing Mode" << YAML::Value << static_cast<int>(component.GetCapsuleControllerClimbingMode());
 
             out << YAML::Key << "Controller Center" << YAML::Value << component.GetControllerCenter();
             
@@ -598,45 +413,19 @@ namespace LevEngine
             {
                 component.EnableVisualization(visualizationEnableNode.as<bool>());
             }
-            
-            if (const auto controllerTypeNode = node["Controller Type"])
+
+            if (const auto capsuleControllerRadiusNode = node["Capsule Controller Radius"])
             {
-                switch (const auto controllerType = static_cast<Controller::Type>(controllerTypeNode.as<int>()))
-                {
-                case Controller::Type::BoxController:
-                    component.SetControllerType(controllerType);
-                    if (const auto boxControllerHalfHeightNode = node["Box Controller Half Height"])
-                    {
-                        component.SetBoxControllerHalfHeight(boxControllerHalfHeightNode.as<float>());
-                    }
-                    if (const auto boxControllerHalfSideExtent = node["Box Controller Half Side Extent"])
-                    {
-                        component.SetBoxControllerHalfSideExtent(boxControllerHalfSideExtent.as<float>());
-                    }
-                    if (const auto boxControllerHalfForwardExtent = node["Box Controller Half Forward Extent"])
-                    {
-                        component.SetBoxControllerHalfForwardExtent(boxControllerHalfForwardExtent.as<float>());
-                    }
-                    break;
-                case Controller::Type::CapsuleController:
-                    component.SetControllerType(controllerType);
-                    if (const auto capsuleControllerRadiusNode = node["Capsule Controller Radius"])
-                    {
-                        component.SetCapsuleControllerRadius(capsuleControllerRadiusNode.as<float>());
-                    }
-                    if (const auto capsuleControllerHeightNode = node["Capsule Controller Half Height"])
-                    {
-                        component.SetCapsuleControllerHalfHeight(capsuleControllerHeightNode.as<float>());
-                    }
-                    if (const auto capsuleControllerClimbingModeNode = node["Capsule Controller Climbing Mode"])
-                    {
-                        const auto climbingMode = static_cast<CapsuleController::ClimbingMode>(capsuleControllerClimbingModeNode.as<int>());
-                        component.SetCapsuleControllerClimbingMode(climbingMode);
-                    }
-                    break;
-                default:
-                    break;
-                }
+                component.SetCapsuleControllerRadius(capsuleControllerRadiusNode.as<float>());
+            }
+            if (const auto capsuleControllerHeightNode = node["Capsule Controller Half Height"])
+            {
+                component.SetCapsuleControllerHalfHeight(capsuleControllerHeightNode.as<float>());
+            }
+            if (const auto capsuleControllerClimbingModeNode = node["Capsule Controller Climbing Mode"])
+            {
+                const auto climbingMode = static_cast<Controller::ClimbingMode>(capsuleControllerClimbingModeNode.as<int>());
+                component.SetCapsuleControllerClimbingMode(climbingMode);
             }
 
             if (const auto controllerCenterNode = node["Controller Center"])

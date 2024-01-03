@@ -99,6 +99,7 @@
     <ClInclude Include="src\DataTypes\Set.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
     <ClInclude Include="src\Physics\Components\CharacterController.h" />
+    <ClInclude Include="src\Physics\Components\ColliderComponent.h" />
     <ClInclude Include="src\Physics\Components\Collision.h" />
     <ClInclude Include="src\Physics\Components\Controller.h" />
     <ClInclude Include="src\Physics\Components\Destroyable.h" />
@@ -1025,6 +1026,7 @@
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
     <ClCompile Include="src\Physics\Components\CharacterController.cpp" />
+    <ClCompile Include="src\Physics\Components\ColliderComponent.cpp" />
     <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
     <ClCompile Include="src\Physics\Systems\CharacterControllerInitSystem.cpp">

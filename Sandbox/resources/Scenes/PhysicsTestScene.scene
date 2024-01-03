@@ -61,57 +61,37 @@ Entities:
       Mesh: 6362171717149004471
       Material: 7582525064410579512
       Cast Shadow: true
-  - Entity: 16534605177672028581
-    Tag: PlayerController
+  - Entity: 12806779897785017528
+    Tag: Object
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-    Character Controller:
-      Is Visualization Enabled: true
-      Controller Type: 1
-      Controller Center: [0, 3, 0]
-      Capsule Controller Radius: 1
-      Capsule Controller Half Height: 2
-      Capsule Controller Climbing Mode: 1
-      Slope Limit: 0.707000017
-      Step Offset: 0.5
-      Contact Offset: 0.100000001
-      Minimum Movement Distance: 0.00100000005
-      Non Walkable Mode: 0
+    Rigidbody:
+      Is Visualization Enabled: false
+      Rigidbody Type: 1
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Max Linear Velocity: 100
+      Max Angular Velocity: 100
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
       Static Friction: 0.5
-      Dynamic Friction: 0.800000012
-      Restitution: 0
-  - Entity: 3609519582529224002
-    Tag: Camera
-    Parent: 16534605177672028581
-    Transform:
-      Position: [0, 4, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Camera:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 5
-        OrthographicNear: 9.99999975e-05
-        OrthographicFar: 487.200012
-      Main: true
-      FixedAspectRatio: false
-    AudioListener:
-      {}
-  - Entity: 8193487410668680548
-    Tag: Weapon
-    Parent: 3609519582529224002
-    Transform:
-      Position: [0.800000012, -0.800000012, -2.5999999]
-      Rotation: [0.043633204, 0.0628308952, -4.89410157e-09]
-      Scale: [0.5, 0.5, 0.5]
-    MeshRenderer:
-      Mesh: 5721017995879216389
-      Material: 9981030367959526075
-      Cast Shadow: true
+      Dynamic Friction: 0.5
+      Restitution: 0.600000024
 Systems:
   []

@@ -46,7 +46,6 @@ namespace LevEngine
             if (controller.GetController() == NULL) break;
             
             const physx::PxTransform actorPose = controller.GetActor()->getGlobalPose();
-            transform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
             transform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
             controller.SetTransformScale(transform.GetWorldScale());
         }

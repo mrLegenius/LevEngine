@@ -22,8 +22,6 @@ namespace LevEngine
         void EnableVisualization(bool flag);
 
         // Character Controller
-        [[nodiscard]] Controller::Type GetControllerType() const;
-        void SetControllerType(const Controller::Type& type);
         [[nodiscard]] float GetSlopeLimit() const;
         void SetSlopeLimit(float slopeLimit) const;
         [[nodiscard]] float GetStepOffset() const;
@@ -38,19 +36,12 @@ namespace LevEngine
         [[nodiscard]] Vector3 GetControllerCenter() const;
         void SetControllerCenter(Vector3 center) const;
         
-        [[nodiscard]] float GetBoxControllerHalfHeight() const;
-        void SetBoxControllerHalfHeight(float halfHeight) const;
-        [[nodiscard]] float GetBoxControllerHalfSideExtent() const;
-        void SetBoxControllerHalfSideExtent(float halfSideExtent) const;
-        [[nodiscard]] float GetBoxControllerHalfForwardExtent() const;
-        void SetBoxControllerHalfForwardExtent(float halfForwardExtent) const;
-        
         [[nodiscard]] float GetCapsuleControllerRadius() const;
         void SetCapsuleControllerRadius(float radius) const;
         [[nodiscard]] float GetCapsuleControllerHalfHeight() const;
         void SetCapsuleControllerHalfHeight(float halfHeight) const;
-        [[nodiscard]] CapsuleController::ClimbingMode GetCapsuleControllerClimbingMode() const;
-        void SetCapsuleControllerClimbingMode(const CapsuleController::ClimbingMode& climbingMode) const;
+        [[nodiscard]] Controller::ClimbingMode GetCapsuleControllerClimbingMode() const;
+        void SetCapsuleControllerClimbingMode(const Controller::ClimbingMode& climbingMode) const;
         
         [[nodiscard]] float GetStaticFriction() const;
         void SetStaticFriction(float staticFriction) const;
@@ -59,10 +50,8 @@ namespace LevEngine
         [[nodiscard]] float GetRestitution() const;
         void SetRestitution(float restitution) const;
 
-        void MoveForward();
-        void MoveBackward();
-        void MoveRight();
-        void MoveLeft();
+        void Move(Vector3 displacement, float elapsedTime) const;
+        void Rotate();
 
         friend class PhysicsUpdate;
 
@@ -83,6 +72,6 @@ namespace LevEngine
 
         Vector3 m_TransformScale = Vector3::One;
 
-        Ref<Controller> m_CharacterController { CreateRef<CapsuleController>() };
+        Ref<Controller> m_CharacterController { CreateRef<Controller>() };
     };
 }
