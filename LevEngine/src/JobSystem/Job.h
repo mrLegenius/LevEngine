@@ -3,16 +3,17 @@
 namespace LevEngine
 {
     template<typename F>
-    concept functor = eastl::is_convertible_v<eastl::decay_t<F>, Action<>>;
+    concept jobFunctor = eastl::is_convertible_v<eastl::decay_t<F>, Action<>>;
 	
     class Job
     {
     public:
         template<typename F>
-        requires functor<F>
+        requires jobFunctor<F>
         explicit Job(F&& function) : m_Function(function) { }
 
-        void Run();
+        void Schedule();
+        void Run() const;
         void Wait() const;
 
     private:

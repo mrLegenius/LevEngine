@@ -3,7 +3,7 @@
 
 namespace LevEngine
 {
-    void ParallelJob::Run(const int count)
+    void ParallelJob::Schedule(const int count)
     {
         const auto function = m_Function;
         m_IsRunning = true;
@@ -19,7 +19,7 @@ namespace LevEngine
                     }
                     catch (std::exception& e)
                     {
-                        Log::CoreError("Error in parallel job: '{}'", e.what());
+                        Log::CoreError("Error in parallel job (index {0}): '{1}'", i, e.what());
                     }
                 });
             }
@@ -29,6 +29,14 @@ namespace LevEngine
                 m_IsRunning = false;
             });
         });
+    }
+
+    void ParallelJob::Run(int count) const
+    {
+        for (int i = 0; i < count; i++)
+        {
+            m_Function(i);
+        }
     }
 
     void ParallelJob::Wait() const

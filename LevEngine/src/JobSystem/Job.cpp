@@ -3,29 +3,31 @@
 
 namespace LevEngine
 {
-    void Job::Run()
+    void Job::Schedule()
     {
         const auto function = m_Function;
         m_IsRunning = true;
         vgjs::schedule([=]
-        {
-            vgjs::schedule([=]
             {
+                vgjs::continuation([=]
+                {
+                    m_IsRunning = false;
+                });
+
                 try
                 {
                     function();
                 }
                 catch (std::exception& e)
                 {
-                    Log::CoreError("Error in parallel job: '{}'", e.what());
+                    Log::CoreError("Error in job: '{}'", e.what());
                 }
             });
+    }
 
-            vgjs::continuation([=]
-            {
-                m_IsRunning = false;
-            });
-        });
+    void Job::Run() const
+    {
+        m_Function();
     }
 
     void Job::Wait() const
