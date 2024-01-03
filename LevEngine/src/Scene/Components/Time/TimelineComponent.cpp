@@ -108,7 +108,7 @@ namespace LevEngine
         return timeline->IsLooping();
     }
 
-    void TimelineComponent::SetIsLooping(bool isLooping) const
+    void TimelineComponent::SetIsLooping(bool isLooping)
     {
         timeline->SetIsLooping(isLooping);
     }

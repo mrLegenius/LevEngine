@@ -24,7 +24,7 @@ namespace LevEngine
         void Pause() const;
         void Stop() const;
         [[nodiscard]] bool GetIsLooping() const;
-        void SetIsLooping(bool isLooping) const;
+        void SetIsLooping(bool isLooping);
         [[nodiscard]] double GetDuration() const;
         void SetDuration(double duration);
         [[nodiscard]] double GetTimeScale() const;
