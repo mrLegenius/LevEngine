@@ -3,6 +3,7 @@
 
 #include "Renderer/SamplerState.h"
 #include "Renderer/Texture.h"
+#include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
 {
@@ -13,14 +14,15 @@ namespace LevEngine
 
 	void TextureAsset::CreateTexture()
 	{
-		m_Texture = Texture::Create(m_Path.string().c_str(), IsLinear);
+		m_Texture = Texture::Create(m_Path.string().c_str(), IsLinear, GenerateMipMaps);
 		m_Texture->AttachSampler(SamplerState);
 	}
 
 	void TextureAsset::SerializeMeta(YAML::Emitter& out)
 	{
 		out << YAML::Key << "IsLinear" << YAML::Value << IsLinear;
-		
+		out << YAML::Key << "GenerateMipMaps" << YAML::Value << GenerateMipMaps;
+
 		SamplerState::MinFilter minFilter;
 		SamplerState::MagFilter magFilter;
 		SamplerState::MipFilter mipFilter;
@@ -61,9 +63,9 @@ namespace LevEngine
 
 	void TextureAsset::DeserializeMeta(const YAML::Node& out)
 	{
-		if (const auto linear = out["IsLinear"])
-			IsLinear = linear.as<bool>();
-		
+		TryParse(out["IsLinear"], IsLinear);
+		TryParse(out["GenerateMipMaps"], GenerateMipMaps);
+
 		const auto minFilter = static_cast<SamplerState::MinFilter>(out["MinFilter"].as<int>());
 		const auto magFilter = static_cast<SamplerState::MagFilter>(out["MagFilter"].as<int>());
 		const auto mipFilter = static_cast<SamplerState::MipFilter>(out["MipFilter"].as<int>());

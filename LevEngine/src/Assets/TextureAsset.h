@@ -10,7 +10,8 @@ namespace LevEngine
 	public:
 		Ref<SamplerState> SamplerState;
 		bool IsLinear = false;
-		
+		bool GenerateMipMaps = false;
+
 		TextureAsset(const Path& path, const UUID& uuid);
 
 		[[nodiscard]] const Ref<Texture>& GetTexture() const { return m_Texture; }

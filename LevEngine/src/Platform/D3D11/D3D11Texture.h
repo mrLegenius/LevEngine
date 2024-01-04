@@ -34,7 +34,7 @@ public:
 		const bool generateMipMaps);
 	
 	
-	explicit D3D11Texture(const String& path, bool isLinear);
+	explicit D3D11Texture(const String& path, bool isLinear, bool generateMipMaps = true);
 	explicit D3D11Texture(const String paths[6], bool isLinear);
 	
 	[[nodiscard]] uint16_t GetWidth() const override { return m_Width; }

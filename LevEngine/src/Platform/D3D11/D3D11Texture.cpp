@@ -1956,7 +1956,7 @@ Ref<Texture> D3D11Texture::CreateTextureCube(const uint16_t width, const uint16_
     return texture;
 }
 
-D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
+D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMaps) : Texture(path)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -2023,7 +2023,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
 
     m_ShaderResourceViewFormatSupport = m_RenderTargetViewFormatSupport = m_TextureResourceFormatSupport;
 
-    m_GenerateMipMaps = !m_Dynamic && (m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN) != 0;
+    m_GenerateMipMaps = generateMipMaps && !m_Dynamic && (m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN) != 0;
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 
