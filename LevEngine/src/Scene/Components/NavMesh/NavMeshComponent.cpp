@@ -260,7 +260,7 @@ namespace LevEngine
   
         switch (PartitionType)
         {
-			case SAMPLE_PARTITION_WATERSHED:
+			case SamplePartitionWatershed:
 			{
 				// Prepare for region partitioning, by calculating distance field along the walkable surface.
 				if (!rcBuildDistanceField(m_Context, *m_CompactHeightfield))
@@ -277,7 +277,7 @@ namespace LevEngine
 				}
 				break;
 			}
-			case SAMPLE_PARTITION_MONOTONE:
+			case SamplePartitionMonotone:
         	{
 				// Partition the walkable surface into simple regions without holes.
 				// Monotone partitioning does not need distancefield.
@@ -288,7 +288,7 @@ namespace LevEngine
 				}
 				break;
         	}
-			case SAMPLE_PARTITION_LAYERS:
+			case SamplePartitionLayers:
 			{
 				// Partition the walkable surface into simple regions without holes.
 				if (!rcBuildLayerRegions(m_Context, *m_CompactHeightfield, 0, m_Config.minRegionArea))
@@ -379,21 +379,21 @@ namespace LevEngine
 			for (int i = 0; i < m_PolyMesh->npolys; ++i)
 			{
 				if (m_PolyMesh->areas[i] == RC_WALKABLE_AREA)
-					m_PolyMesh->areas[i] = SAMPLE_POLYAREA_GROUND;
+					m_PolyMesh->areas[i] = SamplePolyAreaGround;
 					
-				if (m_PolyMesh->areas[i] == SAMPLE_POLYAREA_GROUND ||
-					m_PolyMesh->areas[i] == SAMPLE_POLYAREA_GRASS ||
-					m_PolyMesh->areas[i] == SAMPLE_POLYAREA_ROAD)
+				if (m_PolyMesh->areas[i] == SamplePolyAreaGround ||
+					m_PolyMesh->areas[i] == SamplePolyAreaGrass ||
+					m_PolyMesh->areas[i] == SamplePolyAreaRoad)
 				{
-					m_PolyMesh->flags[i] = SAMPLE_POLYFLAGS_WALK;
+					m_PolyMesh->flags[i] = SamplePolyFlagsWalk;
 				}
-				else if (m_PolyMesh->areas[i] == SAMPLE_POLYAREA_WATER)
+				else if (m_PolyMesh->areas[i] == SamplePolyAreaWater)
 				{
-					m_PolyMesh->flags[i] = SAMPLE_POLYFLAGS_SWIM;
+					m_PolyMesh->flags[i] = SamplePolyFlagsSwim;
 				}
-				else if (m_PolyMesh->areas[i] == SAMPLE_POLYAREA_DOOR)
+				else if (m_PolyMesh->areas[i] == SamplePolyFlagsDoor)
 				{
-					m_PolyMesh->flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
+					m_PolyMesh->flags[i] = SamplePolyFlagsWalk | SamplePolyFlagsDoor;
 				}
 			}
   
@@ -512,7 +512,7 @@ namespace LevEngine
             component.VertsPerPoly = node["Verts per poly"].as<float>();
             component.DetailSampleDist = node["Detail sample dist"].as<float>();
             component.DetailSampleMaxError = node["Detail sample max error"].as<float>();
-            component.PartitionType = node["Partition type"].as<int>();
+            component.PartitionType = static_cast<SamplePartitionType>(node["Partition type"].as<int>());
         }
     };
 }

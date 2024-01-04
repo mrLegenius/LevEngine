@@ -49,21 +49,21 @@ namespace LevEngine::Editor
             
             ImGui::Spacing();
             ImGui::Text("Partitioning");
-            const auto samplePartitionType = static_cast<SamplePartitionType>(component.PartitionType);
-            samplePartitionTypeWatershed = samplePartitionType == SAMPLE_PARTITION_WATERSHED ? true : false;
-            samplePartitionTypeMonotone = samplePartitionType == SAMPLE_PARTITION_MONOTONE ? true : false;
-            samplePartitionTypeLayers = samplePartitionType == SAMPLE_PARTITION_LAYERS ? true : false;
+            const auto samplePartitionType = component.PartitionType;
+            samplePartitionTypeWatershed = samplePartitionType == SamplePartitionWatershed;
+            samplePartitionTypeMonotone = samplePartitionType == SamplePartitionMonotone;
+            samplePartitionTypeLayers = samplePartitionType == SamplePartitionLayers;
             if (ImGui::Checkbox("Watershed", &samplePartitionTypeWatershed))
             {
-                component.PartitionType = SAMPLE_PARTITION_WATERSHED;
+                component.PartitionType = SamplePartitionWatershed;
             }
             if (ImGui::Checkbox("Monotone", &samplePartitionTypeMonotone))
             {
-                component.PartitionType = SAMPLE_PARTITION_MONOTONE;
+                component.PartitionType = SamplePartitionMonotone;
             }
             if (ImGui::Checkbox("Layers", &samplePartitionTypeLayers))
             {
-                component.PartitionType = SAMPLE_PARTITION_LAYERS;
+                component.PartitionType = SamplePartitionLayers;
             }
             ImGui::Spacing();
 

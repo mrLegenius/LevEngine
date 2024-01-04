@@ -9,9 +9,9 @@ namespace LevEngine
 {
     enum SamplePartitionType : int
     {
-        SAMPLE_PARTITION_WATERSHED = 0,
-        SAMPLE_PARTITION_MONOTONE = 1,
-        SAMPLE_PARTITION_LAYERS = 2
+        SamplePartitionWatershed = 0,
+        SamplePartitionMonotone = 1,
+        SamplePartitionLayers = 2
     };
     
     REGISTER_PARSE_TYPE(NavMeshComponent);
@@ -39,7 +39,7 @@ namespace LevEngine
         float VertsPerPoly = 6.0f;
         float DetailSampleDist = 8.0f;
         float DetailSampleMaxError = 1.0f;
-        int PartitionType = 0;
+        SamplePartitionType PartitionType = SamplePartitionWatershed;
         bool KeepIntermediateResults;
         bool FilterLowHangingObstacles;
         bool FilterLedgeSpans;
