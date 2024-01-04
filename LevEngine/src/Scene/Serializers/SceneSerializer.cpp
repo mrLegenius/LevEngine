@@ -13,154 +13,156 @@
 
 namespace LevEngine
 {
-	SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
-		: m_Scene(scene)
-	{
-	}
+    SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
+        : m_Scene(scene)
+    {
+    }
 
-	void SceneSerializer::SerializeEntities(YAML::Emitter& out) const
-	{
-		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+    void SceneSerializer::SerializeEntities(YAML::Emitter& out) const
+    {
+        out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
-		m_Scene->ForEachEntity(
-			[&](auto entity)
-			{
-				SerializeEntity(out, entity);
-			});
+        m_Scene->ForEachEntity(
+            [&](auto entity)
+            {
+                SerializeEntity(out, entity);
+            });
 
-		out << YAML::EndSeq;
-	}
+        out << YAML::EndSeq;
+    }
 
-	void SceneSerializer::SerializeScriptSystems(YAML::Emitter& out) const
-	{
-		out << YAML::Key << "Systems" << YAML::Value << YAML::BeginSeq;
+    void SceneSerializer::SerializeScriptSystems(YAML::Emitter& out) const
+    {
+        out << YAML::Key << "Systems" << YAML::Value << YAML::BeginSeq;
 
-		auto scriptAssets = m_Scene->GetActiveScriptSystems();
+        auto scriptAssets = m_Scene->GetActiveScriptSystems();
 
-		for (const auto & scriptAsset : scriptAssets)
-		{
-			out << YAML::BeginMap;
-			out << YAML::Key << "System" << YAML::Value << scriptAsset->GetUUID();
-			out << YAML::EndMap;
-		}
-		
-		out << YAML::EndSeq;
-	}
+        for (const auto& scriptAsset : scriptAssets)
+        {
+            out << YAML::BeginMap;
+            out << YAML::Key << "System" << YAML::Value << scriptAsset->GetUUID();
+            out << YAML::EndMap;
+        }
 
-	void SceneSerializer::Serialize(const Path& filepath) const
-	{
-		YAML::Emitter out;
-		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << filepath.stem().string();
-		
-		SerializeEntities(out);
-		
-		SerializeScriptSystems(out);
-		
-		out << YAML::EndMap;
+        out << YAML::EndSeq;
+    }
 
-		std::ofstream fout(filepath.c_str());
-		fout << out.c_str();
-	}
+    void SceneSerializer::Serialize(const Path& filepath) const
+    {
+        YAML::Emitter out;
+        out << YAML::BeginMap;
+        out << YAML::Key << "Scene" << YAML::Value << filepath.stem().string();
 
-	void SceneSerializer::DeserializeEntities(const YAML::Node& data) const
-	{
-		if (auto entities = data["Entities"])
-		{
-			std::unordered_map<UUID, Entity> entitiesMap;
-			std::unordered_map<UUID, UUID> relationships;
-			Vector<Pair<Entity, const YAML::Node>> entitiesToDeserialize;
+        SerializeEntities(out);
 
-			for (auto entity : entities)
-			{
-				auto uuid = entity["Entity"].as<uint64_t>();
-				auto name = entity["Tag"].as<String>();
+        SerializeScriptSystems(out);
 
-				if (auto parent = entity["Parent"])
-				{
-					auto parentUuid = UUID(parent.as<uint64_t>());
-					relationships.emplace(uuid, parentUuid);
-				}
+        out << YAML::EndMap;
 
-				Log::Trace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
+        std::ofstream fout(filepath.c_str());
+        fout << out.c_str();
+    }
 
-				Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
-				
-				TransformSerializer::DeserializeData(entity, deserializedEntity.GetComponent<Transform>());
-				
-				entitiesToDeserialize.emplace_back(Pair<Entity, const YAML::Node>(deserializedEntity, entity));
-				entitiesMap.try_emplace(uuid, deserializedEntity);
-			}
+    void SceneSerializer::DeserializeEntities(const YAML::Node& data) const
+    {
+        LEV_PROFILE_FUNCTION();
 
-			for (auto& [uuid, entity] : entitiesMap)
-			{
-				if (!entity) continue;
+        if (auto entities = data["Entities"])
+        {
+            std::unordered_map<UUID, Entity> entitiesMap;
+            std::unordered_map<UUID, UUID> relationships;
+            Vector<Pair<Entity, const YAML::Node>> entitiesToDeserialize;
 
-				auto& transform = entity.GetComponent<Transform>();
-				transform.SetParent(entitiesMap[relationships[uuid]], false);
-			}
+            for (auto entity : entities)
+            {
+                auto uuid = entity["Entity"].as<uint64_t>();
+                auto name = entity["Tag"].as<String>();
 
-			 ParallelJob serializeJob([=](const int i)
-			 {
-			 	auto [deserializedEntity, entityNode] = entitiesToDeserialize[i];
-			 	for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
-			 		serializer->Deserialize(entityNode, deserializedEntity);
-			 });
-			
-			serializeJob.Schedule(entitiesToDeserialize.size());
-			serializeJob.Wait();
+                if (auto parent = entity["Parent"])
+                {
+                    auto parentUuid = UUID(parent.as<uint64_t>());
+                    relationships.emplace(uuid, parentUuid);
+                }
 
-			//Apply all created textures
-			D3D11DeferredContexts::UpdateCommandLists();
-			D3D11DeferredContexts::ExecuteCommands();
-		}
-	}
+                Log::Trace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
 
-	void SceneSerializer::DeserializeScriptSystems(const YAML::Node& data) const
-	{
-		if (auto systems = data["Systems"])
-		{
-			for (const auto& system : systems)
-			{
-				auto uuid = system["System"].as<uint64_t>();
+                Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
 
-				if (auto script = AssetDatabase::GetAsset<ScriptAsset>(uuid))
-				{
-					m_Scene->SetScriptSystemActive(script, true);
-				}
-			}
-		}
-	}
+                TransformSerializer::DeserializeData(entity, deserializedEntity.GetComponent<Transform>());
 
-	bool SceneSerializer::Deserialize(const String& filepath) const
-	{
-		YAML::Node data;
-		if (!LoadYAMLFileSafe(filepath.c_str(), data))
-		{
-			Log::CoreError("Failed to load scene data");
-			return false;
-		}
+                entitiesToDeserialize.emplace_back(Pair<Entity, const YAML::Node>(deserializedEntity, entity));
+                entitiesMap.try_emplace(uuid, deserializedEntity);
+            }
 
-		if (!data["Scene"])
-			return false;
+            for (auto& [uuid, entity] : entitiesMap)
+            {
+                if (!entity) continue;
 
-		auto sceneName = data["Scene"].as<String>();
-		Log::CoreTrace("Deserializing scene '{0}'", sceneName);
+                auto& transform = entity.GetComponent<Transform>();
+                transform.SetParent(entitiesMap[relationships[uuid]], false);
+            }
 
-		DeserializeEntities(data);
+            ParallelJob serializeJob([=](const int i)
+            {
+                auto [deserializedEntity, entityNode] = entitiesToDeserialize[i];
+                for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
+                    serializer->Deserialize(entityNode, deserializedEntity);
+            });
 
-		DeserializeScriptSystems(data);
-		
-		return true;
-	}
+            serializeJob.Schedule(entitiesToDeserialize.size());
+            serializeJob.Wait();
 
-	void SceneSerializer::SerializeRuntime(const String& filepath)
-	{
-		LEV_NOT_IMPLEMENTED
-	}
+            //Apply all created textures
+            D3D11DeferredContexts::UpdateCommandLists();
+            D3D11DeferredContexts::ExecuteCommands();
+        }
+    }
 
-	bool SceneSerializer::DeserializeRuntime(const String& filepath)
-	{
-		LEV_NOT_IMPLEMENTED
-	}
+    void SceneSerializer::DeserializeScriptSystems(const YAML::Node& data) const
+    {
+        if (auto systems = data["Systems"])
+        {
+            for (const auto& system : systems)
+            {
+                auto uuid = system["System"].as<uint64_t>();
+
+                if (auto script = AssetDatabase::GetAsset<ScriptAsset>(uuid))
+                {
+                    m_Scene->SetScriptSystemActive(script, true);
+                }
+            }
+        }
+    }
+
+    bool SceneSerializer::Deserialize(const String& filepath) const
+    {
+        YAML::Node data;
+        if (!LoadYAMLFileSafe(filepath.c_str(), data))
+        {
+            Log::CoreError("Failed to load scene data");
+            return false;
+        }
+
+        if (!data["Scene"])
+            return false;
+
+        auto sceneName = data["Scene"].as<String>();
+        Log::CoreTrace("Deserializing scene '{0}'", sceneName);
+
+        DeserializeEntities(data);
+
+        DeserializeScriptSystems(data);
+
+        return true;
+    }
+
+    void SceneSerializer::SerializeRuntime(const String& filepath)
+    {
+        LEV_NOT_IMPLEMENTED
+    }
+
+    bool SceneSerializer::DeserializeRuntime(const String& filepath)
+    {
+        LEV_NOT_IMPLEMENTED
+    }
 }
