@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "PrefabAsset.h"
 
+#include "JobSystem/ParallelJob.h"
 #include "Scene/Scene.h"
 #include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"
@@ -31,6 +32,7 @@ namespace LevEngine
 
         std::unordered_map<UUID, Entity> entitiesMap;
         std::unordered_map<UUID, UUID> relationships;
+        Vector<Pair<Entity, const YAML::Node>> entitiesToDeserialize;
         
         for (auto entity : entities)
         {
@@ -49,9 +51,7 @@ namespace LevEngine
 
             TransformSerializer::DeserializeData(entity, deserializedEntity.GetComponent<Transform>());
 
-            for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
-                serializer->Deserialize(entity, deserializedEntity);
-
+            entitiesToDeserialize.emplace_back(Pair<Entity, const YAML::Node>(deserializedEntity, entity));
             entitiesMap.try_emplace(uuid, deserializedEntity);
         }
         
@@ -62,6 +62,16 @@ namespace LevEngine
             auto& transform = entity.GetComponent<Transform>();
             transform.SetParent(entitiesMap[relationships[uuid]], false);
         }
+
+        ParallelJob serializeJob([=](const int i)
+        {
+            auto [deserializedEntity, entityNode] = entitiesToDeserialize[i];
+            for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
+                serializer->Deserialize(entityNode, deserializedEntity);
+        });
+
+        serializeJob.Schedule(entitiesToDeserialize.size());
+        serializeJob.Wait();
 
         return entitiesMap[rootEntity];
     }
