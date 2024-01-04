@@ -33,6 +33,6 @@ namespace LevEngine
     void Job::Wait() const
     {
         while (m_IsRunning)
-            std::this_thread::sleep_for(microseconds(10));
+            std::this_thread::sleep_for(microseconds(1));
     }
 }
