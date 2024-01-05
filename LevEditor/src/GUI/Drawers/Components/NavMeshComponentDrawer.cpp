@@ -49,22 +49,8 @@ namespace LevEngine::Editor
             
             ImGui::Spacing();
             ImGui::Text("Partitioning");
-            const auto samplePartitionType = component.PartitionType;
-            samplePartitionTypeWatershed = samplePartitionType == SamplePartitionWatershed;
-            samplePartitionTypeMonotone = samplePartitionType == SamplePartitionMonotone;
-            samplePartitionTypeLayers = samplePartitionType == SamplePartitionLayers;
-            if (ImGui::Checkbox("Watershed", &samplePartitionTypeWatershed))
-            {
-                component.PartitionType = SamplePartitionWatershed;
-            }
-            if (ImGui::Checkbox("Monotone", &samplePartitionTypeMonotone))
-            {
-                component.PartitionType = SamplePartitionMonotone;
-            }
-            if (ImGui::Checkbox("Layers", &samplePartitionTypeLayers))
-            {
-                component.PartitionType = SamplePartitionLayers;
-            }
+            const Array<String, 3> samplePartitionTypes {"Watershed", "Monotone", "Layers"};
+            EditorGUI::DrawComboBox("SamplePartitionType", samplePartitionTypes, component.PartitionType);
             ImGui::Spacing();
 
             ImGui::Separator();
@@ -99,9 +85,5 @@ namespace LevEngine::Editor
             ImGui::Checkbox("Keep Intermediate Results", &component.KeepIntermediateResults);
             ImGui::Spacing();
         }
-
-        bool samplePartitionTypeWatershed = false;
-        bool samplePartitionTypeMonotone = false;
-        bool samplePartitionTypeLayers = false;
     };	
 }
