@@ -31,7 +31,7 @@ namespace LevEngine
         out << YAML::Key << "Offset" << YAML::Value << m_Material.GetTextureOffset();
     }
 
-    void MaterialPBRAsset::DeserializeData(YAML::Node& node)
+    void MaterialPBRAsset::DeserializeData(const YAML::Node& node)
     {
         m_Material = {};
 

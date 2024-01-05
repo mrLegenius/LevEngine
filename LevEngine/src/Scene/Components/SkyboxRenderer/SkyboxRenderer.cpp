@@ -17,7 +17,7 @@ namespace LevEngine
 		{
 			SerializeAsset(out, "Skybox", component.SkyboxTexture);
 		}
-		void DeserializeData(YAML::Node& node, SkyboxRendererComponent& component) override
+		void DeserializeData(const YAML::Node& node, SkyboxRendererComponent& component) override
 		{
 			component.SkyboxTexture = DeserializeAsset<TextureAsset>(node["Skybox"]);
 		}

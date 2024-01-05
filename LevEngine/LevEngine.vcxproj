@@ -97,6 +97,8 @@
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
     <ClInclude Include="src\DataTypes\Set.h" />
+    <ClInclude Include="src\JobSystem\Job.h" />
+    <ClInclude Include="src\JobSystem\ParallelJob.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
     <ClInclude Include="src\Physics\Components\Collision.h" />
     <ClInclude Include="src\Physics\Components\Destroyable.h" />
@@ -104,6 +106,7 @@
     <ClInclude Include="src\Physics\PhysicsUpdate.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
     <ClInclude Include="src\Physics\RigidbodyInitSystem.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11DeferredContexts.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
@@ -128,6 +131,7 @@
     <ClInclude Include="src\Renderer\Query.h" />
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
     <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h" />
+    <ClInclude Include="src\Scene\Components\Transform\TransformSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
     <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
@@ -1020,10 +1024,13 @@
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\JobSystem\Job.cpp" />
+    <ClCompile Include="src\JobSystem\ParallelJob.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
     <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
     <ClCompile Include="src\Physics\RigidbodyInitSystem.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11DeferredContexts.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
@@ -1055,6 +1062,7 @@
     <ClCompile Include="src\Renderer\RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\RenderPass.cpp" />
     <ClCompile Include="src\Renderer\RenderSettings.cpp" />
+    <ClCompile Include="src\Scene\Components\Transform\TransformSerializer.cpp" />
     <ClCompile Include="src\Scene\Systems\EntityDestroySystem.cpp" />
     <ClCompile Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />

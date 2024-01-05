@@ -19,7 +19,7 @@ namespace LevEngine
 			out << YAML::Key << "Color" << YAML::Value << component.color;
 		}
 
-		void DeserializeData(YAML::Node& node, DirectionalLightComponent& component) override
+		void DeserializeData(const YAML::Node& node, DirectionalLightComponent& component) override
 		{
 			component.color = node["Color"].as<Color>();
 		}
@@ -38,7 +38,7 @@ namespace LevEngine
 			out << YAML::Key << "Intensity" << YAML::Value << component.Intensity;
 		}
 
-		void DeserializeData(YAML::Node& node, PointLightComponent& component) override
+		void DeserializeData(const YAML::Node& node, PointLightComponent& component) override
 		{
 			component.color = node["Color"].as<Color>();
 			component.Range = node["Range"].as<float>();
@@ -61,7 +61,7 @@ namespace LevEngine
 			out << YAML::Key << "Intensity" << YAML::Value << component.Intensity;
 		}
 
-		void DeserializeData(YAML::Node& node, SpotLightComponent& component) override
+		void DeserializeData(const YAML::Node& node, SpotLightComponent& component) override
 		{
 			component.color = node["Color"].as<Color>();
 			component.Range = node["Range"].as<float>();
