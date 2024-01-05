@@ -149,13 +149,13 @@ namespace LevEngine
         m_Solid = rcAllocHeightfield();
         if (!m_Solid)
         {
-            Log::Trace("Build navigation: Could not allocate heightfield.");
+            Log::CoreError("Build navigation: Could not allocate heightfield.");
             return;
         }
         if (!rcCreateHeightfield(m_Context, *m_Solid, m_Config.width, m_Config.height, m_Config.bmin,
             m_Config.bmax, m_Config.cs, m_Config.ch))
         {
-            Log::Trace("Build navigation: Could not create solid heightfield.");
+            Log::CoreError("Build navigation: Could not create solid heightfield.");
             return;
         }
   
@@ -165,7 +165,7 @@ namespace LevEngine
         m_TriangleAreas = new unsigned char[trianglesCount];
         if (!m_TriangleAreas)
         {
-            Log::Trace("Build navigation: Out of memory 'm_TriAreas'", trianglesCount);
+            Log::CoreError("Build navigation: Out of memory 'm_TriAreas'", trianglesCount);
             return;
         }
   
@@ -176,7 +176,7 @@ namespace LevEngine
         rcMarkWalkableTriangles(m_Context, m_Config.walkableSlopeAngle, vertices, verticesCount, triangles, trianglesCount, m_TriangleAreas);
         if (!rcRasterizeTriangles(m_Context, vertices, verticesCount, triangles, m_TriangleAreas, trianglesCount, *m_Solid, m_Config.walkableClimb))
         {
-            Log::Trace("Build navigation: Could not rasterize triangles.");
+            Log::CoreError("Build navigation: Could not rasterize triangles.");
             return;
         }
   
@@ -210,12 +210,12 @@ namespace LevEngine
 		m_CompactHeightfield = rcAllocCompactHeightfield();
 		if (!m_CompactHeightfield)
 		{
-			Log::Trace("Build navigation: Out of memory 'CompactHeightField'.");
+			Log::CoreError("Build navigation: Out of memory 'CompactHeightField'.");
 			return;
 		}
 		if (!rcBuildCompactHeightfield(m_Context, m_Config.walkableHeight, m_Config.walkableClimb, *m_Solid, *m_CompactHeightfield))
 		{
-			Log::Trace("Build navigation: Could not build compact data.");
+			Log::CoreError("Build navigation: Could not build compact data.");
 			return;
 		}
   
@@ -228,7 +228,7 @@ namespace LevEngine
 		// Erode the walkable area by agent radius.
 		if (!rcErodeWalkableArea(m_Context, m_Config.walkableRadius, *m_CompactHeightfield))
 		{
-			Log::Trace("Build navigation: Could not erode.");
+			Log::CoreError("Build navigation: Could not erode.");
 			return;
 		}
   
@@ -270,14 +270,14 @@ namespace LevEngine
 				// Prepare for region partitioning, by calculating distance field along the walkable surface.
 				if (!rcBuildDistanceField(m_Context, *m_CompactHeightfield))
 				{
-					Log::Trace("Build navigation: Could not build distance field.");
+					Log::CoreError("Build navigation: Could not build distance field.");
 					return;
 				}
 		
 				// Partition the walkable surface into simple regions without holes.
 				if (!rcBuildRegions(m_Context, *m_CompactHeightfield, 0, m_Config.minRegionArea, m_Config.mergeRegionArea))
 				{
-					Log::Trace("Build navigation: Could not build watershed regions.");
+					Log::CoreError("Build navigation: Could not build watershed regions.");
 					return;
 				}
 				break;
@@ -288,7 +288,7 @@ namespace LevEngine
 				// Monotone partitioning does not need distancefield.
 				if (!rcBuildRegionsMonotone(m_Context, *m_CompactHeightfield, 0, m_Config.minRegionArea, m_Config.mergeRegionArea))
 				{
-					Log::Trace("Build navigation: Could not build monotone regions.");
+					Log::CoreError("Build navigation: Could not build monotone regions.");
 					return;
 				}
 				break;
@@ -298,7 +298,7 @@ namespace LevEngine
 				// Partition the walkable surface into simple regions without holes.
 				if (!rcBuildLayerRegions(m_Context, *m_CompactHeightfield, 0, m_Config.minRegionArea))
 				{
-					Log::Trace("Build navigation: Could not build layer regions.");
+					Log::CoreError("Build navigation: Could not build layer regions.");
 					return;
 				}
 				break;
@@ -314,12 +314,12 @@ namespace LevEngine
     	m_ContourSet = rcAllocContourSet();
     	if (!m_ContourSet)
     	{
-    		Log::Trace("Build navigation: Out of memory 'ContourSet'.");
+    		Log::CoreError("Build navigation: Out of memory 'ContourSet'.");
     		return;
     	}
     	if (!rcBuildContours(m_Context, *m_CompactHeightfield, m_Config.maxSimplificationError, m_Config.maxEdgeLen, *m_ContourSet))
     	{
-    		Log::Trace("Build navigation: Could not create contours.");
+    		Log::CoreError("Build navigation: Could not create contours.");
     		return;
     	}
   
@@ -331,12 +331,12 @@ namespace LevEngine
     	m_PolyMesh = rcAllocPolyMesh();
     	if (!m_PolyMesh)
     	{
-    		Log::Trace("Build navigation: Out of memory 'PolyMesh'.");
+    		Log::CoreError("Build navigation: Out of memory 'PolyMesh'.");
     		return;
     	}
     	if (!rcBuildPolyMesh(m_Context, *m_ContourSet, m_Config.maxVertsPerPoly, *m_PolyMesh))
     	{
-    		Log::Trace("Build navigation: Could not triangulate contours.");
+    		Log::CoreError("Build navigation: Could not triangulate contours.");
     		return;
     	}
   
@@ -347,14 +347,14 @@ namespace LevEngine
 		m_PolyMeshDetail = rcAllocPolyMeshDetail();
 		if (!m_PolyMeshDetail)
 		{
-			Log::Trace("Build navigation: Out of memory 'PolyMeshDetail'.");
+			Log::CoreError("Build navigation: Out of memory 'PolyMeshDetail'.");
 			return;
 		}
   
 		if (!rcBuildPolyMeshDetail(m_Context, *m_PolyMesh, *m_CompactHeightfield, m_Config.detailSampleDist,
 			m_Config.detailSampleMaxError, *m_PolyMeshDetail))
 		{
-			Log::Trace("Build navigation: Could not build detail mesh.");
+			Log::CoreError("Build navigation: Could not build detail mesh.");
 			return;
 		}
   
@@ -429,7 +429,7 @@ namespace LevEngine
 			
 			if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
 			{
-				Log::Trace("Could not build Detour navmesh.");
+				Log::CoreError("Could not build Detour navmesh.");
 				return;
 			}
 			
@@ -437,7 +437,7 @@ namespace LevEngine
 			if (!m_NavMesh)
 			{
 				dtFree(navData);
-				Log::Trace("Could not create Detour navmesh");
+				Log::CoreError("Could not create Detour navmesh");
 				return;
 			}
 			
@@ -447,14 +447,14 @@ namespace LevEngine
 			if (dtStatusFailed(status))
 			{
 				dtFree(navData);
-				Log::Trace("Could not init Detour navmesh");
+				Log::CoreError("Could not init Detour navmesh");
 				return;
 			}
 			
 			status = m_NavQuery->init(m_NavMesh, 2048);
 			if (dtStatusFailed(status))
 			{
-				Log::Trace("Could not init Detour navmesh query");
+				Log::CoreError("Could not init Detour navmesh query");
 				return;
 			}
 		}
