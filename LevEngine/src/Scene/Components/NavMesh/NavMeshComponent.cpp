@@ -4,7 +4,6 @@
 #include "NavMeshableComponent.h"
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMeshQuery.h"
-#include "PxRigidBody.h"
 #include "Assets/MeshAsset.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Renderer/3D/Mesh.h"
