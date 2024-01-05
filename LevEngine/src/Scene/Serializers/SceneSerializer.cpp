@@ -67,6 +67,8 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
+        Log::CoreTrace("Deserializing scene entities");
+
         if (auto entities = data["Entities"])
         {
             std::unordered_map<UUID, Entity> entitiesMap;
@@ -83,8 +85,6 @@ namespace LevEngine
                     auto parentUuid = UUID(parent.as<uint64_t>());
                     relationships.emplace(uuid, parentUuid);
                 }
-
-                Log::Trace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
 
                 Entity deserializedEntity = m_Scene->CreateEntity(uuid, name);
 

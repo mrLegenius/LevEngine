@@ -45,8 +45,6 @@ namespace LevEngine
                 relationships.emplace(uuid, parentUuid);
             }
 
-            Log::CoreTrace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
-
             const Entity deserializedEntity = scene->CreateEntity(uuid, name);
 
             TransformSerializer::DeserializeData(entity, deserializedEntity.GetComponent<Transform>());
@@ -72,6 +70,12 @@ namespace LevEngine
 
         serializeJob.Schedule(entitiesToDeserialize.size());
         serializeJob.Wait();
+
+        for (auto& [uuid, entity] : entitiesMap)
+        {
+            if (!entity) continue;
+            entity.AddOrReplaceComponent<IDComponent>(UUID{});
+        }
 
         return entitiesMap[rootEntity];
     }
