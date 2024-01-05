@@ -145,6 +145,7 @@
     <ClInclude Include="src\Renderer\Particles\ParticlesUtils.h" />
     <ClInclude Include="src\Renderer\Query.h" />
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.h" />
     <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
@@ -1093,6 +1094,7 @@
     <ClCompile Include="src\Renderer\RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\RenderPass.cpp" />
     <ClCompile Include="src\Renderer\RenderSettings.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.cpp" />
     <ClCompile Include="src\Scene\Systems\EntityDestroySystem.cpp" />
     <ClCompile Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />

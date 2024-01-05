@@ -8,7 +8,7 @@ namespace LevEngine::Editor
     class NavMeshableComponentDrawer final : public ComponentDrawer<NavMeshableComponent, NavMeshableComponentDrawer>
     {
     protected:
-        [[nodiscard]] String GetLabel() const override { return "NavMeshable"; }
+        [[nodiscard]] String GetLabel() const override { return "Nav mesh/Nav mesh participant"; }
     
         void DrawContent(NavMeshableComponent& component) override
         {

@@ -4,6 +4,7 @@
 #include "NavMeshableComponent.h"
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMeshQuery.h"
+#include "NavMeshBoundingBox.h"
 #include "Assets/MeshAsset.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Renderer/3D/Mesh.h"
@@ -63,27 +64,13 @@ namespace LevEngine
 		
         auto& registry = SceneManager::GetActiveScene()->GetRegistry();
   
-		const auto& selfView = registry.view<Transform, NavMeshComponent, Rigidbody>();
+		const auto& selfView = registry.view<Transform, NavMeshComponent, NavMeshBoundingBox>();
 		const auto& thisEntity = selfView.begin();
-		const auto& rigidBody = selfView.get<Rigidbody>(*thisEntity);
 		const auto& thisTransform = selfView.get<Transform>(*thisEntity);
-  
-		if(rigidBody.GetColliderType() != Collider::Type::Box)
-		{
-			return;
-		}
-
-		const auto& positionOffset = rigidBody.GetColliderOffsetPosition();
-		const auto& boxHalfExtents = rigidBody.GetBoxHalfExtents();
-		Vector3 boxColliderMinPoint = {positionOffset.x - boxHalfExtents.x,
-		positionOffset.y - boxHalfExtents.y,
-		positionOffset.z - boxHalfExtents.z};
-		Vector3 boxColliderMaxPoint = {positionOffset.x + boxHalfExtents.x,
-			positionOffset.y + boxHalfExtents.y,
-			positionOffset.z + boxHalfExtents.z};
+		const auto& navMeshBoundingBox = selfView.get<NavMeshBoundingBox>(*thisEntity);
 		
-		const Vector3& transformedMinPoint = Vector3::Transform(boxColliderMinPoint, thisTransform.GetModel());
-		const Vector3& transformedMaxPoint = Vector3::Transform(boxColliderMaxPoint, thisTransform.GetModel());
+		const Vector3& transformedMinPoint = Vector3::Transform(navMeshBoundingBox.GetMinPoint(), thisTransform.GetModel());
+		const Vector3& transformedMaxPoint = Vector3::Transform(navMeshBoundingBox.GetMaxPoint(), thisTransform.GetModel());
 		
         const auto view = registry.view<Transform, NavMeshableComponent, MeshRendererComponent>();
   
