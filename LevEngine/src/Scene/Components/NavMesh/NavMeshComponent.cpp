@@ -104,6 +104,11 @@ namespace LevEngine
 			const auto& transform = view.get<Transform>(entity);
 			const auto& meshRendererComponent = view.get<MeshRendererComponent>(entity);
 			const auto& mesh = meshRendererComponent.mesh->GetMesh();
+
+			if(!mesh)
+			{
+				continue;
+			}
 		
 			Vector<Vector3> meshVertices = mesh->GetVertices();
 			Vector<uint32_t> meshIndices = mesh->GetIndices();
