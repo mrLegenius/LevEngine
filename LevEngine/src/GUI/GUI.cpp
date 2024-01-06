@@ -15,7 +15,7 @@ namespace LevEngine
         return {size.x, size.y};
     }
 
-    void GUI::DrawCircle(const Vector2 pos, const float radius, const Color color, const float thickness)
+    void GUI::DrawCircle(const Vector2& pos, const float radius, const Color& color, const float thickness)
     {
         const auto position = GetWindowPosition() + pos;
         const auto drawPos = ImVec2{position.x, position.y};
@@ -25,7 +25,7 @@ namespace LevEngine
         ImGui::GetForegroundDrawList()->AddCircle(drawPos, radius, col, 0, thickness);
     }
 
-    void GUI::DrawString(const Vector2 pos, const String& text, const float size, const Color color)
+    void GUI::DrawString(const Vector2& pos, const String& text, const float size, const Color& color)
     {
         const auto position = GetWindowPosition() + pos;
         const auto drawPos = ImVec2{position.x, position.y};

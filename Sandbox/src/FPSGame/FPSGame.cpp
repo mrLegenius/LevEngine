@@ -75,14 +75,15 @@ namespace Sandbox
 
 	void FPSGame::OnGUIRender()
 	{
-		const auto time = Time::GetTimeSinceStartup().GetSeconds();
+		
+		/*const auto time = Time::GetTimeSinceStartup().GetSeconds();
 		const String timeStr = String("Time: ") + ToString(time) + String(" sec");
 		GUI::DrawString(Vector2(0, 0), timeStr, 16.0f, Color::White);
 		
 		const String scoreStr = String("Score: ") + ToString(score);
 		GUI::DrawString(Vector2(10, 32), scoreStr, 64.0f, Color::White);
 		
-		GUI::DrawCircle(GUI::GetWindowSize() / 2, 10, Color::White);
+		GUI::DrawCircle(GUI::GetWindowSize() / 2, 10, Color::White);*/
 	}
 
 	void FPSGame::OnEvent(Event& event)

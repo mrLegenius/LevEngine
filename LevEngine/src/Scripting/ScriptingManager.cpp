@@ -33,6 +33,8 @@ namespace LevEngine::Scripting
         LuaComponentsBinder::CreateSceneManagerBind(*m_Lua);
         LuaComponentsBinder::CreateAudioBind(*m_Lua);
         LuaComponentsBinder::CreatePrintBind(*m_Lua);
+        LuaComponentsBinder::CreateGUIBind(*m_Lua);
+        LuaComponentsBinder::CreateTimeBind(*m_Lua);
 
         LuaComponentsBinder::CreateSceneBind(*m_Lua);
         LuaComponentsBinder::CreatePrefabBind(*m_Lua);

@@ -10,9 +10,9 @@ namespace LevEngine
         static Vector2 GetWindowPosition();
         static Vector2 GetWindowSize();
 
-        static void DrawCircle(Vector2 pos, float radius, Color color, float thickness = 1);
+        static void DrawCircle(const Vector2& pos, float radius, const Color& color, float thickness = 1);
 
         //TODO: Pass font here
-        static void DrawString(Vector2 pos, const String& text, float size, Color color);
+        static void DrawString(const Vector2& pos, const String& text, float size, const Color& color);
     };
 }
