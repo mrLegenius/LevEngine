@@ -59,10 +59,7 @@ namespace LevEngine::Editor
         if (!Project::GetProject()) return;
         
         if (Input::IsKeyDown(KeyCode::Escape))
-        {
-            Application::Get().GetWindow().EnableCursor();
-            m_Hierarchy->Focus();
-        }
+            m_Game->Unfocus();
 
         const auto& activeScene = SceneManager::GetActiveScene();
         
@@ -112,18 +109,18 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
         
-        ImGui::ShowDemoWindow(nullptr);
+        //ImGui::ShowDemoWindow(nullptr);
         
         ModalPopup::Render();
 
         if (!Project::GetProject()) return;
         
         m_DockSpace->Render();
+        m_Game->Render();
         m_Viewport->Render();
         m_Hierarchy->Render();
         m_Properties->Render();
         m_AssetsBrowser->Render();
-        m_Game->Render();
         m_Console->Render();
         m_Settings->Render();
         m_Statistics->Render();
@@ -154,9 +151,9 @@ namespace LevEngine::Editor
         if (!m_SceneEditor->SaveScene()) return;
 
         auto& scene = SceneManager::GetActiveScene();        
-        
-        m_Game->Focus();
+
         m_SceneState = SceneState::Play;
+        m_Game->Focus();
         scene->OnInit();
         Selection::Deselect();
     }
@@ -190,9 +187,10 @@ namespace LevEngine::Editor
         const auto startScene = Project::GetStartScene();
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))
             SceneManager::LoadEmptyScene();
-        
-        m_Viewport = CreateRef<ViewportPanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
-        m_Game = CreateRef<GamePanel>(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+
+        auto mainTexture = Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0);
+        m_Viewport = CreateRef<ViewportPanel>(mainTexture);
+        m_Game = CreateRef<GamePanel>(mainTexture, [this]{ return m_SceneState; });
         m_Hierarchy = CreateRef<HierarchyPanel>();
         m_Properties = CreateRef<PropertiesPanel>();
         m_AssetsBrowser = CreateRef<AssetBrowserPanel>();

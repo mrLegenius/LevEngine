@@ -3,6 +3,7 @@
 
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
+#include "Events/ApplicationEvent.h"
 #include "Scripting/ScriptingManager.h"
 #include "Systems/CollisionHandleSystem.h"
 #include "Systems/EnemyMovementSystem.h"
@@ -84,5 +85,16 @@ namespace Sandbox
 		GUI::DrawCircle(GUI::GetWindowSize() / 2, 10, Color::White);
 	}
 
-	void FPSGame::OnEvent(Event& event) { }
+	void FPSGame::OnEvent(Event& event)
+	{
+		EventDispatcher dispatcher(event);
+
+		dispatcher.Dispatch<WindowFocusEvent>(BIND_EVENT_FN(FPSGame::OnWindowFocus));
+	}
+
+	bool FPSGame::OnWindowFocus(WindowFocusEvent& e)
+	{
+		App::Get().GetWindow().DisableCursor();
+		return false;
+	}
 }
