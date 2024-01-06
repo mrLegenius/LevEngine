@@ -224,6 +224,10 @@
     <ClCompile Include="src\Panels\SettingsPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshableComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshComponentDrawer.cpp">
     <ClCompile Include="src\ComponentDebugRenderers\ColliderComponentsDebugRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -255,6 +259,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\Drawers\Components\LegacyRigidbodyDrawer.cpp">
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshableComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshComponentDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\AssetSelection.cpp">
