@@ -52,7 +52,7 @@ namespace LevEngine::Editor
 		OnLostFocus();
 	}
 
-	const ImGuiPayload* Panel::BeginDragDropTargetWindow(const char* payloadType)
+	void* Panel::BeginDragDropTargetWindow(const char* payloadType)
 	{
 		using namespace ImGui;
 		const ImRect innerRect = GetCurrentWindow()->InnerRect;
@@ -69,8 +69,8 @@ namespace LevEngine::Editor
 			}
 			if (payload->IsDelivery())
 			{
-				EndDragDropTarget();
-				return payload;
+				const auto data = payload->Data;
+				return data;
 			}
 		}
 
