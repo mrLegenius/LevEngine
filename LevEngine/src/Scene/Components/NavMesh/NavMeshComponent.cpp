@@ -497,7 +497,7 @@ namespace LevEngine
             out << YAML::Key << "Partition type" << YAML::Value << component.PartitionType;
         }
         
-        void DeserializeData(YAML::Node& node, NavMeshComponent& component) override
+        void DeserializeData(const YAML::Node& node, NavMeshComponent& component) override
         {
             component.CellSize = node["Cell size"].as<float>();
             component.CellHeight = node["Cell Height"].as<float>();

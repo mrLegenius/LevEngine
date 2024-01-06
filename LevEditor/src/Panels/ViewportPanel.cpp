@@ -5,6 +5,7 @@
 
 #include "imguizmo/ImGuizmo.h"
 #include "EntitySelection.h"
+#include "Assets/SceneAsset.h"
 #include "GUI/EditorGUI.h"
 
 namespace LevEngine::Editor
@@ -48,8 +49,12 @@ namespace LevEngine::Editor
         {
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EditorGUI::AssetPayload))
             {
-                const wchar_t* path = (const wchar_t*)payload->Data;
-                SceneManager::LoadScene(path);
+                const Path assetPath = static_cast<const wchar_t*>(payload->Data);
+
+                if (const auto& scene = AssetDatabase::GetAsset<SceneAsset>(assetPath))
+                {
+                    scene->Load();
+                }
             }
             ImGui::EndDragDropTarget();
         }
