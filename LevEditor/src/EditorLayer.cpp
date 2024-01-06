@@ -128,7 +128,6 @@ namespace LevEngine::Editor
         m_MainToolbar->Render();
         m_MainStatusBar->Render();
 
-        SceneManager::GetActiveScene()->OnGUIRender();
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& event) const
