@@ -36,10 +36,10 @@ namespace LevEngine
         [[nodiscard]] virtual bool ReadDataFromFile() const { return true; }
 
         virtual void SerializeData(YAML::Emitter& out) = 0;
-        virtual void DeserializeData(YAML::Node& node) = 0;
+        virtual void DeserializeData(const YAML::Node& node) = 0;
 
         virtual void SerializeMeta(YAML::Emitter& out) { }
-        virtual void DeserializeMeta(YAML::Node& node) { }
+        virtual void DeserializeMeta(const YAML::Node& node) { }
 
         String m_Name;
         String m_FullName;
@@ -51,6 +51,9 @@ namespace LevEngine
         bool m_Deserialized = false;
 
     private:
+                
+        std::mutex m_DeserializationMutex;
+        
         void SerializeData();
         bool DeserializeData();
         bool DeserializeMeta();

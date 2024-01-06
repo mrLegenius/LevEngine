@@ -287,7 +287,7 @@ uint32_t D3D11StructuredBuffer::GetCounterValue() const
     context->Map(m_CountBuffer, 0, D3D11_MAP_READ, 0, &subresource);
 
     const UINT* data = reinterpret_cast<UINT*>(subresource.pData);
-    const uint32_t counterValue = data[0];
+    const uint32_t counterValue = data ? data[0] : 0;
 
     context->Unmap(m_CountBuffer, 0);
 

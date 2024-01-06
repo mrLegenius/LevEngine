@@ -8,6 +8,8 @@ PlayerSpawnSystem = {
 
 		-- Check if player already exists
 
+		print("Really long message, which should be wraped as it gets longer and longer and longer and longer and longer and longer and longer and longer and longer and longer and longer")
+
 		local alreadyExists = false
 
 		view:for_each(

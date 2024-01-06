@@ -8,10 +8,12 @@ namespace LevEngine
 {
 	Ref<Texture> Texture::Create(const String& path)
 	{
-		return Create(path, true);
+		return Create(path, true, true);
 	}
 
-	Ref<Texture> Texture::Create(const String& path, bool isLinear)
+	Ref<Texture> Texture::Create(const String& path,
+		bool isLinear,
+		bool generateMipMaps)
 	{
 		switch (RenderSettings::RendererAPI)
 		{
@@ -20,7 +22,7 @@ namespace LevEngine
 		case RendererAPI::OpenGL:
 			LEV_NOT_IMPLEMENTED
 		case RendererAPI::D3D11:
-			return CreateRef<D3D11Texture>(path, isLinear);
+			return CreateRef<D3D11Texture>(path, isLinear, generateMipMaps);
 		default:
 			LEV_THROW("Unknown Renderer API")
 			break;

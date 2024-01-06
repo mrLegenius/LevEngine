@@ -31,7 +31,7 @@ namespace LevEngine
 			out << YAML::Key << "Main" << YAML::Value << component.IsMain;
 			out << YAML::Key << "FixedAspectRatio" << YAML::Value << component.FixedAspectRatio;
 		}
-		void DeserializeData(YAML::Node& node, CameraComponent& component) override
+		void DeserializeData(const YAML::Node& node, CameraComponent& component) override
 		{
 			auto& camera = component.Camera;
 			auto cameraProps = node["Camera"];

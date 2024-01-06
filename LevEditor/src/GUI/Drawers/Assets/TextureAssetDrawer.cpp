@@ -17,6 +17,11 @@ namespace LevEngine::Editor
         	{
         		assetRef->CreateTexture();
         	}
+
+        	if (EditorGUI::DrawCheckBox("Generate Mip Maps", assetRef->GenerateMipMaps))
+        	{
+        		assetRef->CreateTexture();
+        	}
         	
 	        {
 		        const Array<String, 2> stringValues{"Nearest", "Linear" };

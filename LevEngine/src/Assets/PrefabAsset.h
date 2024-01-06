@@ -19,7 +19,7 @@ protected:
     [[nodiscard]] bool WriteDataToFile() const override { return m_EntityToSave; }
     
     void SerializeData(YAML::Emitter& out) override;
-    void DeserializeData(YAML::Node& node) override
+    void DeserializeData(const YAML::Node& node) override
     {
         if (!node["Entities"])
             throw std::exception("File does not contain any Entity");

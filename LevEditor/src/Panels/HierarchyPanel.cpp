@@ -12,7 +12,7 @@ namespace LevEngine::Editor
 {
 	bool HierarchyPanel::OnKeyPressed(KeyPressedEvent& e)
 	{
-		LEV_PROFILE_FUNCTION()
+		LEV_PROFILE_FUNCTION();
 		
 		const auto& activeScene = SceneManager::GetActiveScene();
 		if (!activeScene) return false;
@@ -35,7 +35,7 @@ namespace LevEngine::Editor
 
 	void HierarchyPanel::DrawContent()
 	{
-		LEV_PROFILE_FUNCTION()
+		LEV_PROFILE_FUNCTION();
 		
 		const auto& activeScene = SceneManager::GetActiveScene();
 
@@ -78,7 +78,7 @@ namespace LevEngine::Editor
 			Selection::Deselect();
 
 		//Right click on a blank space
-		if (ImGui::BeginPopupContextWindow(nullptr, 1, false))
+		if (ImGui::BeginPopupContextWindow(nullptr, 1))
 		{
 			if (ImGui::MenuItem("Create New Entity"))
 				activeScene->CreateEntity("New Entity");
@@ -108,7 +108,7 @@ namespace LevEngine::Editor
 
 	void HierarchyPanel::DrawEntityNode(Entity entity)
 	{
-		LEV_PROFILE_FUNCTION()
+		LEV_PROFILE_FUNCTION();
 
 		const auto& activeScene = SceneManager::GetActiveScene();
 		
