@@ -8,20 +8,19 @@ namespace LevEngine
     struct NavMeshBoundingBox
     {
         NavMeshBoundingBox();
-        NavMeshBoundingBox(const NavMeshBoundingBox&) = default;
 
         Vector3 GetMinPoint() const;
         Vector3 GetMaxPoint() const;
         
-        Vector3 GetPositionOffset() const {return m_positionOffset; }
-        Vector3 GetBoxHalfExtents() const {return m_boxHalfExtents; }
+        Vector3 GetPositionOffset() const;
+        Vector3 GetBoxHalfExtents() const;
 
         void SetPositionOffset(Vector3 positionOffset);
         void SetBoxHalfExtents(Vector3 boxHalfExtents);
         
     private:
         
-        Vector3 m_positionOffset;
-        Vector3 m_boxHalfExtents;
+        Vector3 m_positionOffset = Vector3::Zero;
+        Vector3 m_boxHalfExtents = Vector3::One;
     };
 }

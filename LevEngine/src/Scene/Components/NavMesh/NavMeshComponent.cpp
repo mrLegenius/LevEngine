@@ -454,7 +454,7 @@ namespace LevEngine
 			}
 		}
   
-		Log::Trace("Navmesh builded successfully.");
+		Log::CoreInfo("Navmesh builded successfully.");
   
 		// // Show performance stats.
 		// duLogBuildTimes(*m_Context, m_Context->getAccumulatedTime(RC_TIMER_TOTAL));

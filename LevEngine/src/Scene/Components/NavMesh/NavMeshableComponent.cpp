@@ -17,7 +17,7 @@ namespace LevEngine
             out << YAML::Key << "Use in nav mesh" << YAML::Value << component.UseInNavMesh;
             out << YAML::Key << "Field" << YAML::Value << component.m_Field;
         }
-
+        
         void DeserializeData(const YAML::Node& node, NavMeshableComponent& component) override
         {
             component.UseInNavMesh = node["Use in nav mesh"].as<bool>();
