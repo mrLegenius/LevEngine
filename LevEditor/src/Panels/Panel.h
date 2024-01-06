@@ -25,7 +25,7 @@ namespace LevEngine::Editor
 		virtual void OnFocus() const { }
 		virtual void OnLostFocus() const { }
 
-		static const ImGuiPayload* BeginDragDropTargetWindow(const char* payloadType);
+		static void* BeginDragDropTargetWindow(const char* payloadType);
 
 		ImGuiWindow* m_Window{};
 

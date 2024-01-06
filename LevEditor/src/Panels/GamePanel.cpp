@@ -87,7 +87,7 @@ namespace LevEngine::Editor
         const auto windowCenterX = ImGui::GetWindowPos().x + ImGui::GetWindowSize().x / 2.0f;
         const auto windowCenterY = ImGui::GetWindowPos().y + ImGui::GetWindowSize().y / 2.0f;
 
-		if (m_Focused)
+		if (m_StateGetter() == SceneState::Play && m_Focused && !ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		{
 			App::Get().GetWindow().SetCursorPosition(
 				static_cast<uint32_t>(windowCenterX), static_cast<uint32_t>(windowCenterY));

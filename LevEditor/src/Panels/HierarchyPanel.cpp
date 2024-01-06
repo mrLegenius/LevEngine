@@ -41,18 +41,22 @@ namespace LevEngine::Editor
 
 		if (!activeScene) return;
 
-		if (const ImGuiPayload* payload = BeginDragDropTargetWindow(EditorGUI::AssetPayload))
+		if (const void* payload = BeginDragDropTargetWindow(EditorGUI::AssetPayload))
 		{
-			const Path assetPath = static_cast<const wchar_t*>(payload->Data);
+			const Path assetPath = static_cast<const wchar_t*>(payload);
 
 			if (const auto& prefab = AssetDatabase::GetAsset<PrefabAsset>(assetPath))
 				prefab->Instantiate(activeScene);
+
+			ImGui::EndDragDropTarget();
 		}
 		
-		if (const ImGuiPayload* payload = BeginDragDropTargetWindow(EditorGUI::EntityPayload))
+		if (void* payload = BeginDragDropTargetWindow(EditorGUI::EntityPayload))
 		{
-			if (const auto draggedEntity = *static_cast<Entity*>(payload->Data))
+			if (const auto draggedEntity = *static_cast<Entity*>(payload))
 				draggedEntity.GetComponent<Transform>().SetParent(Entity{});
+
+			ImGui::EndDragDropTarget();
 		}
 		
 		activeScene->ForEachEntity(

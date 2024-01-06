@@ -8,6 +8,7 @@
 #include "MeshAsset.h"
 #include "PrefabAsset.h"
 #include "Project.h"
+#include "SceneAsset.h"
 #include "ScriptAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
@@ -166,6 +167,13 @@ namespace LevEngine
 		return extension == ".prefab";
 	}
 
+	bool AssetDatabase::IsAssetScene(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return extension == ".scene";
+	}
+
 	bool AssetDatabase::IsAssetScript(const Path& path)
 	{
 		const auto extension = path.extension().string();
@@ -204,6 +212,9 @@ namespace LevEngine
 
 		if (IsAssetPrefab(path))
 			return CreateRef<PrefabAsset>(path, uuid);
+
+		if (IsAssetScene(path))
+			return CreateRef<SceneAsset>(path, uuid);
 
 		if (IsAssetAudioBank(path))
 			return CreateRef<AudioBankAsset>(path, uuid);
