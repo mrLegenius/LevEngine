@@ -137,11 +137,19 @@ namespace LevEngine::Scripting
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingLateUpdateComponent>();
                 scriptingComponent.lateUpdate = lateUpdate.value();
             }
+
+            if (sol::optional<sol::protected_function> lateUpdate = luaSystemTable["GUIRender"]; 
+                lateUpdate != sol::nullopt)
+            {
+                auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingGUIRenderComponent>();
+                scriptingComponent.GUIRender = lateUpdate.value();
+            }
         }
 
         scene->RegisterInitSystem<ScriptingInitSystem>();
         scene->RegisterUpdateSystem<ScriptingUpdateSystem>();
         scene->RegisterLateUpdateSystem<ScriptingLateUpdateSystem>();
+        scene->RegisterGUIRenderSystem<ScriptingGUIRenderSystem>();
     }
 
     void ScriptingManager::CreateRegistryBind(entt::registry& registry) const
