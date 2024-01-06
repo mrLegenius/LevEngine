@@ -31,8 +31,6 @@ namespace LevEngine
 	void NavMeshComponent::Init(Entity entity)
 	{
 		m_self = entity;
-		//crutch so bounding box could normally serialize
-		NavMeshBoundingBox();
 	}
 
 	void NavMeshComponent::Cleanup()
@@ -456,7 +454,7 @@ namespace LevEngine
 			}
 		}
   
-		Log::Trace("Navmesh builded successfully.");
+		Log::CoreInfo("Navmesh builded successfully.");
   
 		// // Show performance stats.
 		// duLogBuildTimes(*m_Context, m_Context->getAccumulatedTime(RC_TIMER_TOTAL));
