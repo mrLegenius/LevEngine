@@ -20,6 +20,18 @@ namespace LevEngine
 	{
 		m_NavQuery = dtAllocNavMeshQuery();
 	}
+	
+	void NavMeshComponent::OnConstruct(entt::registry& registry, entt::entity entity)
+	{
+		NavMeshComponent& component = registry.get<NavMeshComponent>(entity);
+		const auto entityWrapped = Entity(entt::handle{ registry, entity });
+		component.Init(entityWrapped);
+	}
+
+	void NavMeshComponent::Init(Entity entity)
+	{
+		m_self = entity;
+	}
 
 	void NavMeshComponent::Cleanup()
 	{
@@ -62,16 +74,13 @@ namespace LevEngine
         m_Config.detailSampleDist = DetailSampleDist < 0.9f ? 0 : CellSize * DetailSampleDist;
         m_Config.detailSampleMaxError = CellHeight * DetailSampleMaxError;
 		
-        auto& registry = SceneManager::GetActiveScene()->GetRegistry();
-  
-		const auto& selfView = registry.view<Transform, NavMeshComponent, NavMeshBoundingBox>();
-		const auto& thisEntity = selfView.begin();
-		const auto& thisTransform = selfView.get<Transform>(*thisEntity);
-		const auto& navMeshBoundingBox = selfView.get<NavMeshBoundingBox>(*thisEntity);
+		const auto& thisTransform = m_self.GetComponent<Transform>();
+		const auto& navMeshBoundingBox = m_self.GetComponent<NavMeshBoundingBox>();
 		
 		const Vector3& transformedMinPoint = Vector3::Transform(navMeshBoundingBox.GetMinPoint(), thisTransform.GetModel());
 		const Vector3& transformedMaxPoint = Vector3::Transform(navMeshBoundingBox.GetMaxPoint(), thisTransform.GetModel());
 		
+		auto& registry = SceneManager::GetActiveScene()->GetRegistry();
         const auto view = registry.view<Transform, NavMeshableComponent, MeshRendererComponent>();
   
 		Vector<Vector3> verticesOfAllMeshes;

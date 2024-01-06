@@ -10,6 +10,7 @@
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Camera/Camera.h"
+#include "Components/NavMesh/NavMeshComponent.h"
 #include "Kernel/Application.h"
 #include "Kernel/Window.h"
 #include "Scripting/ScriptingManager.h"
@@ -39,6 +40,7 @@ namespace LevEngine
         LuaComponentsBinder::CreateLuaEntityBind(*(scriptingManager.GetLuaState()), this);
 
         m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
+        m_Registry.on_construct<NavMeshComponent>().connect<&NavMeshComponent::OnConstruct>();
     }
 
     void Scene::CleanupScene()

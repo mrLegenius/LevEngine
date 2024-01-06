@@ -1,5 +1,6 @@
 #pragma once
 #include "Recast.h"
+#include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 class dtNavMeshQuery;
@@ -20,6 +21,9 @@ namespace LevEngine
     {
         NavMeshComponent();
         NavMeshComponent(const NavMeshComponent&) = default;
+
+        void Init(Entity entity);
+        static void OnConstruct(entt::registry& registry, entt::entity entity);
         
         void Build();
 
@@ -47,6 +51,8 @@ namespace LevEngine
         
     private:
 
+        Entity m_self;
+        
         void Cleanup();
         
         dtNavMesh* m_NavMesh = nullptr;
