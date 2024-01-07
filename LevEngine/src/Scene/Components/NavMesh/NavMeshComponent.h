@@ -22,12 +22,14 @@ namespace LevEngine
         NavMeshComponent();
         NavMeshComponent(const NavMeshComponent&) = default;
 
-        void Init(Entity entity);
+        void ConstructComponent(Entity entity);
         static void OnConstruct(entt::registry& registry, entt::entity entity);
         
         void Build();
 
         bool IsBuilded = false;
+        
+        bool buildOnStart = false;
         const rcPolyMesh& GetPolyMesh() const;
         
         float CellSize = 0.3f;
@@ -44,10 +46,10 @@ namespace LevEngine
         float DetailSampleDist = 8.0f;
         float DetailSampleMaxError = 1.0f;
         SamplePartitionType PartitionType = SamplePartitionWatershed;
-        bool KeepIntermediateResults;
-        bool FilterLowHangingObstacles;
-        bool FilterLedgeSpans;
-        bool FilterWalkableLowHeightSpans;
+        bool KeepIntermediateResults = false;
+        bool FilterLowHangingObstacles = false;
+        bool FilterLedgeSpans = false;
+        bool FilterWalkableLowHeightSpans = false;
         
     private:
 
@@ -57,7 +59,6 @@ namespace LevEngine
         
         dtNavMesh* m_NavMesh = nullptr;
         dtNavMeshQuery* m_NavQuery = nullptr;
-        rcConfig m_Config;
         
         rcHeightfield* m_Solid = nullptr;
         rcCompactHeightfield* m_CompactHeightfield = nullptr;
