@@ -15,8 +15,8 @@ namespace LevEngine
 
     void AudioSourceComponent::OnConstruct(entt::registry& registry, entt::entity entity)
     {
-        AudioSourceComponent& component = registry.get<AudioSourceComponent>(entity);
         auto entityWrapped = Entity(entt::handle{ registry, entity });
+        AudioSourceComponent& component = entityWrapped.GetComponent<AudioSourceComponent>();
         component.Init(entityWrapped);
     }
 

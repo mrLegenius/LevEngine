@@ -25,14 +25,18 @@ namespace LevEngine
 	{
 		NavMeshComponent& component = registry.get<NavMeshComponent>(entity);
 		const auto entityWrapped = Entity(entt::handle{ registry, entity });
-		component.Init(entityWrapped);
+		component.ConstructComponent(entityWrapped);
 	}
 
-	void NavMeshComponent::Init(Entity entity)
+	void NavMeshComponent::ConstructComponent(Entity entity)
 	{
 		m_self = entity;
+		if(buildOnStart)
+		{
+			Build();
+		}
 	}
-
+	
 	void NavMeshComponent::Cleanup()
 	{
 		delete [] m_TriangleAreas;
@@ -59,8 +63,8 @@ namespace LevEngine
         //
         // Step 1. Initialize build config.
         //
-        memset(&m_Config, 0, sizeof(m_Config));
-        m_Config.cs = CellSize;
+		rcConfig m_Config = {};
+		m_Config.cs = CellSize;
         m_Config.ch = CellHeight;
         m_Config.walkableSlopeAngle = AgentMaxSlope;
         m_Config.walkableHeight = static_cast<int>(ceilf(AgentHeight / m_Config.ch));
@@ -75,6 +79,11 @@ namespace LevEngine
         m_Config.detailSampleMaxError = CellHeight * DetailSampleMaxError;
 		
 		const auto& thisTransform = m_self.GetComponent<Transform>();
+		if(!m_self.HasComponent<NavMeshBoundingBox>())
+		{
+			Log::CoreError("Build navigation: NavMeshBoundingBoxComponent on entity with NavMeshComponent is required");
+			return;
+		}
 		const auto& navMeshBoundingBox = m_self.GetComponent<NavMeshBoundingBox>();
 		
 		const Vector3& transformedMinPoint = Vector3::Transform(navMeshBoundingBox.GetMinPoint(), thisTransform.GetModel());
@@ -481,6 +490,7 @@ namespace LevEngine
         
         void SerializeData(YAML::Emitter& out, const NavMeshComponent& component) override
         {
+        	out << YAML::Key << "Build on start" << YAML::Value << component.buildOnStart;
             out << YAML::Key << "Cell size" << YAML::Value << component.CellSize;
             out << YAML::Key << "Cell Height" << YAML::Value << component.CellHeight;
             out << YAML::Key << "Agent Height" << YAML::Value << component.AgentHeight;
@@ -495,10 +505,15 @@ namespace LevEngine
             out << YAML::Key << "Detail sample dist" << YAML::Value << component.DetailSampleDist;
             out << YAML::Key << "Detail sample max error" << YAML::Value << component.DetailSampleMaxError;
             out << YAML::Key << "Partition type" << YAML::Value << component.PartitionType;
+        	out << YAML::Key << "Filter low hanging obstacles" << YAML::Value << component.FilterLowHangingObstacles;
+        	out << YAML::Key << "Filter ledge spans" << YAML::Value << component.FilterLedgeSpans;
+        	out << YAML::Key << "Filter walkable low height spans" << YAML::Value << component.FilterWalkableLowHeightSpans;
+        	out << YAML::Key << "Keep intermediate results" << YAML::Value << component.KeepIntermediateResults;
         }
         
         void DeserializeData(const YAML::Node& node, NavMeshComponent& component) override
         {
+        	component.buildOnStart = node["Build on start"].as<bool>();
             component.CellSize = node["Cell size"].as<float>();
             component.CellHeight = node["Cell Height"].as<float>();
             component.AgentHeight = node["Agent Height"].as<float>();
@@ -513,6 +528,10 @@ namespace LevEngine
             component.DetailSampleDist = node["Detail sample dist"].as<float>();
             component.DetailSampleMaxError = node["Detail sample max error"].as<float>();
             component.PartitionType = static_cast<SamplePartitionType>(node["Partition type"].as<int>());
+        	component.FilterLowHangingObstacles = node["Filter low hanging obstacles"].as<bool>();
+        	component.FilterLedgeSpans = node["Filter ledge spans"].as<bool>();
+        	component.FilterWalkableLowHeightSpans = node["Filter walkable low height spans"].as<bool>();
+        	component.KeepIntermediateResults = node["Keep intermediate results"].as<bool>();
         }
     };
 }

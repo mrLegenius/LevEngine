@@ -17,6 +17,7 @@ namespace LevEngine::Editor
             {
                 component.Build();
             }
+            ImGui::Checkbox("Build on start", &component.buildOnStart);
             ImGui::Spacing();
             
             ImGui::Separator();
