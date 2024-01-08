@@ -41,7 +41,7 @@ namespace LevEngine
 		out << s.c_str();
 		return out;
 	}
-
+	
 	void SerializeAsset(YAML::Emitter& out, const String& nodeName, const Ref<Asset>& asset)
 	{
 		if (!asset) return;
