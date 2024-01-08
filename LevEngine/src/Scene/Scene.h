@@ -39,8 +39,12 @@ namespace LevEngine
 
 		Entity DuplicateEntity(Entity entity);
 		Entity DuplicateEntity(Entity entity, Entity parent);
-		
-		static void OnCameraComponentAdded(entt::registry& registry, entt::entity entity);
+
+		template<typename T>
+		void RegisterComponentOnConstruct();
+
+		template<typename T>
+		void RegisterComponentOnDestroy();
 
 		template<class T>
 		void RegisterInitSystem();
@@ -75,6 +79,12 @@ namespace LevEngine
 		void RequestRenderUpdate(SceneCamera* mainCamera, const Transform* cameraTransform);
 		void RequestLateUpdate(float deltaTime);
 		void RequestEventsUpdate(float deltaTime);
+
+		template<typename TComponent>
+		void OnComponentConstruct(entt::registry& registry, entt::entity entity);
+
+		template<typename TComponent>
+		void OnComponentDestroy(entt::registry& registry, entt::entity entity);
 
 		Entity ConvertEntity(entt::entity entity);
 
