@@ -29,6 +29,9 @@ namespace LevEngine
     {
         const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
         const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
+
+        Material* previousMaterial{nullptr};
+
         for (const auto entity : view)
         {
             Transform transform = view.get<Transform>(entity);
@@ -47,11 +50,17 @@ namespace LevEngine
             {
                 if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
-            
-            material.Bind(shader);
+
+            if (previousMaterial != &material)
+                material.Bind(shader);
+
             Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
-            material.Unbind(shader);
+
+            previousMaterial = &material;
         }
+
+        if (previousMaterial)
+            previousMaterial->Unbind(shader);
     }
 
     void OpaquePass::End(entt::registry& registry, RenderParams& params)
