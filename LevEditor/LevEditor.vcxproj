@@ -142,6 +142,8 @@
     <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AIAgentComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AIAgentCrowdComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />

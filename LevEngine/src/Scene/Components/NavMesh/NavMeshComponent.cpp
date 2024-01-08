@@ -18,7 +18,7 @@ namespace LevEngine
 {
 	NavMeshComponent::NavMeshComponent()
 	{
-		m_NavQuery = dtAllocNavMeshQuery();
+		m_NavMeshQuery = dtAllocNavMeshQuery();
 	}
 	
 	void NavMeshComponent::OnConstruct(entt::registry& registry, entt::entity entity)
@@ -455,7 +455,7 @@ namespace LevEngine
 				return;
 			}
 			
-			status = m_NavQuery->init(m_NavMesh, 2048);
+			status = m_NavMeshQuery->init(m_NavMesh, 2048);
 			if (dtStatusFailed(status))
 			{
 				Log::CoreError("Could not init Detour navmesh query");
@@ -478,7 +478,17 @@ namespace LevEngine
 		IsBuilded = true;
     }
 
-	const rcPolyMesh& NavMeshComponent::GetPolyMesh() const
+	dtNavMesh* NavMeshComponent::GetNavMesh() const
+    {
+		return m_NavMesh;
+    }
+
+	dtNavMeshQuery* NavMeshComponent::GetNavMeshQuery() const
+	{
+		return m_NavMeshQuery;
+	}
+
+    const rcPolyMesh& NavMeshComponent::GetPolyMesh() const
 	{
 		return *m_PolyMesh;
 	}

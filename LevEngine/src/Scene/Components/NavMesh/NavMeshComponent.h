@@ -26,6 +26,8 @@ namespace LevEngine
         static void OnConstruct(entt::registry& registry, entt::entity entity);
         
         void Build();
+        dtNavMesh* GetNavMesh() const;
+        dtNavMeshQuery* GetNavMeshQuery() const;
 
         bool IsBuilded = false;
         
@@ -58,7 +60,7 @@ namespace LevEngine
         void Cleanup();
         
         dtNavMesh* m_NavMesh = nullptr;
-        dtNavMeshQuery* m_NavQuery = nullptr;
+        dtNavMeshQuery* m_NavMeshQuery = nullptr;
         
         rcHeightfield* m_Solid = nullptr;
         rcCompactHeightfield* m_CompactHeightfield = nullptr;
