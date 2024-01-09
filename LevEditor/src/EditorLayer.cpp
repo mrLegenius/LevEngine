@@ -127,6 +127,7 @@ namespace LevEngine::Editor
         m_ScriptsPanel->Render();
         m_MainToolbar->Render();
         m_MainStatusBar->Render();
+
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& event) const

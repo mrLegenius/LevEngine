@@ -30,6 +30,14 @@ namespace LevEngine
 	{
 		m_EventSystems.emplace_back(CreateScope<EventSystem<T>>());
 	}
+
+	template <typename T>
+	void Scene::RegisterGUIRenderSystem()
+	{
+		static_assert(eastl::is_base_of_v<System, T>, "T must derive from System");
+		m_GUIRenderSystems.emplace_back(CreateScope<T>());
+	}
+
 	template<typename T>
 	Entity Scene::GetEntityByComponent(T* value)
 	{

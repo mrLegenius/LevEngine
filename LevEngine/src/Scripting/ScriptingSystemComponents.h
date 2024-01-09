@@ -18,4 +18,9 @@ namespace LevEngine::Scripting
 	{
 		sol::protected_function lateUpdate{ sol::lua_nil };
 	};
+
+	struct ScriptingGUIRenderComponent
+	{
+		sol::protected_function GUIRender{ sol::lua_nil };
+	};
 }
