@@ -84,7 +84,7 @@ namespace LevEngine
 
     void AIAgentCrowdComponent::Update(const float deltaTime)
     {
-        if(!navMesh)
+        if(!m_isInitialized)
         {
             return;
         }
