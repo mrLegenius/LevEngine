@@ -42,8 +42,6 @@ namespace LevEngine
             AddAgent(agentEntity);
         }
         m_isInitialized = true;
-
-        SetMoveTarget(0, Vector3(-12.652f, 0.000f, 13.043f));
     }
 
     void AIAgentCrowdComponent::RegisterDefaultObstacleAvoidanceProfiles()
@@ -88,6 +86,28 @@ namespace LevEngine
         {
             return;
         }
+
+        for(int i = 0; i < agentsEntities.size(); ++i)
+        {
+            const auto agent = m_crowd->getEditableAgent(i);
+            if(!agent || !agent->active)
+            {
+                continue;
+            }
+            auto& agentTransform = agentsEntities[i].GetComponent<Transform>();
+            const Vector3& position = agentTransform.GetWorldPosition();
+            agent->npos[0] = position.x;
+            agent->npos[1] = position.y;
+            agent->npos[2] = position.z;
+
+            if(target)
+            {
+                const auto& targetTransform = target.GetComponent<Transform>();
+                const auto& targetPosition = targetTransform.GetWorldPosition();
+                SetMoveTarget(i, targetPosition);   
+            }
+        }
+        
         m_crowd->update(deltaTime, m_crowdAgentDebugInfo);
     }
 
@@ -171,6 +191,10 @@ namespace LevEngine
             {
                 out << YAML::Key << "Navigation mesh" << YAML::Value << component.navMesh.GetUUID();
             }
+            if(component.target)
+            {
+                out << YAML::Key << "Target" << YAML::Value << component.target.GetUUID();
+            }
         }
         
         void DeserializeData(const YAML::Node& node, AIAgentCrowdComponent& component) override
@@ -197,6 +221,12 @@ namespace LevEngine
             {
                 component.navMesh = !navMeshNode.IsNull()
                     ? SceneManager::GetActiveScene()->GetEntityByUUID(UUID(navMeshNode.as<uint64_t>()))
+                    : Entity();
+            }
+            if(auto targetNode = node["Target"])
+            {
+                component.target = !targetNode.IsNull()
+                    ? SceneManager::GetActiveScene()->GetEntityByUUID(UUID(targetNode.as<uint64_t>()))
                     : Entity();
             }
         }

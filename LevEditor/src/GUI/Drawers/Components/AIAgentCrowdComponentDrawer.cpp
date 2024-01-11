@@ -18,24 +18,20 @@ namespace LevEngine::Editor
             EditorGUI::DrawSelectableComponentList<AIAgentComponent>("Agents", component.agentsEntities, m_agentCurrentIdx);
             EditorGUI::DrawSelectableComponent<NavMeshComponent>("Nav mesh", component.navMesh, m_navMeshWasSelected,
                 m_navMeshIsSelected, m_navMeshSelectableIdx);
-            
-            // float velBias;
-            // float weightDesVel;
-            // float weightCurVel;
-            // float weightSide;
-            // float weightToi;
-            // float horizTime;
-            // unsigned char gridSize;	///< grid
-            // unsigned char adaptiveDivs;	///< adaptive
-            // unsigned char adaptiveRings;	///< adaptive
-            // unsigned char adaptiveDepth;	///< adaptive
+            EditorGUI::DrawSelectableComponent<Transform>("Target", component.target, m_targetWasSelected,
+    m_targetIsSelected, m_targetSelectableIdx);
         }
         
     private:
         
         int m_agentCurrentIdx = -1;
+        
         bool m_navMeshWasSelected = false;
         bool m_navMeshIsSelected = false;
         int m_navMeshSelectableIdx = 0;
+
+        bool m_targetWasSelected = false;
+        bool m_targetIsSelected = false;
+        int m_targetSelectableIdx = 0;
     };
 }
