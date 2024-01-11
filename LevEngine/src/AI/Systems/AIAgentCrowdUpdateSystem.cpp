@@ -13,6 +13,11 @@ namespace LevEngine
         {
             auto& agentCrowdComponent = view.get<AIAgentCrowdComponent>(entity);
 
+            if(agentCrowdComponent.IsInitializationFailed())
+            {
+                continue;
+            }
+            
             if(!agentCrowdComponent.IsInitialized())
             {
                 agentCrowdComponent.Init();    

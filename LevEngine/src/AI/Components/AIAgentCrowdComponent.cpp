@@ -23,12 +23,14 @@ namespace LevEngine
         if(!navMesh)
         {
             Log::CoreError("AI: Cannot initialize crowd without NavMesh");
+            m_isInitializationFailed = true;
             return;
         }
         const auto& navMeshComponent = navMesh.GetComponent<NavMeshComponent>();
         if(!navMeshComponent.IsBuilded)
         {
             Log::CoreError("AI: Cannot initialize crowd when NavMesh isn't builded");
+            m_isInitializationFailed = true;
             return;
         }
         m_navMesh = navMeshComponent.GetNavMesh();
@@ -119,6 +121,11 @@ namespace LevEngine
     {
         return m_isInitialized;
     }
+    
+    bool AIAgentCrowdComponent::IsInitializationFailed() const
+    {
+        return m_isInitializationFailed;
+    }
 
     void AIAgentCrowdComponent::AddAgent(const Entity& agentEntity)
     {
@@ -197,10 +204,12 @@ namespace LevEngine
                 
                 componentIdx++;
             }
-            auto navMeshNode = node["Navigation mesh"];
-            component.navMesh = !navMeshNode.IsNull()
+            if(auto navMeshNode = node["Navigation mesh"])
+            {
+                component.navMesh = !navMeshNode.IsNull()
                     ? SceneManager::GetActiveScene()->GetEntityByUUID(UUID(navMeshNode.as<uint64_t>()))
                     : Entity();
+            }
         }
     };
 }
