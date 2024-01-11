@@ -35,7 +35,7 @@ namespace LevEngine
 
         Vector<Entity> agentsEntities;
         Entity navMesh;
-        int OnConstruct;
+        Entity target;
 
     private:
 
