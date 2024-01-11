@@ -5,7 +5,9 @@
 #include "ResourceManager.h"
 #include "Assets/PrefabAsset.h"
 #include "Audio/Audio.h"
+#include "GUI/GUI.h"
 #include "Input/Input.h"
+#include "Kernel/Time/Time.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Scene/Entity.h"
 #include "Scene/Scene.h"
@@ -535,5 +537,67 @@ namespace LevEngine::Scripting
             }
             Log::CoreInfo(out);
         });
+    }
+
+    void LuaComponentsBinder::CreateGUIBind(sol::state& lua)
+    {
+        lua.new_usertype<GUI>(
+            "GUI",
+            "drawCircle", sol::overload(
+                &GUI::DrawCircle,
+                [](const Vector2& pos, float radius, const Color& color)
+                    {
+                        GUI::DrawCircle(pos, radius, color);
+                    }
+                ),
+            "getWindowSize", &GUI::GetWindowSize,
+            "drawString", [](const Vector2& pos, const std::string& text, const float size, const Color& color)
+                {
+                    GUI::DrawString(pos, String{text.c_str()}, size, color);
+                }
+            );
+    }
+
+    void LuaComponentsBinder::CreateTimeBind(sol::state& lua)
+    {
+        auto timestep_multiplication_overload = sol::overload(
+            [](const Timestep& v1, const Timestep& v2) {
+                return v1 * v2;
+            },
+            [](const Timestep& v1, float value) {
+                return v1 * value;
+            },
+            [](float value, const Timestep& v1) {
+                return v1 * value;
+            }
+        );
+
+        auto timestep_addition_overload = sol::overload(
+            [](const Timestep& v1, const Timestep& v2) {
+                return v1 + v2;
+            }
+        );
+
+        lua.new_usertype<Timestep>(
+            "Timestep",
+            sol::call_constructor,
+            sol::constructors<Timestep(double)>(),
+            "getMilliseconds", &Timestep::GetMilliseconds,
+            "getSeconds", &Timestep::GetSeconds,
+            sol::meta_function::addition, timestep_addition_overload,
+            sol::meta_function::multiplication, timestep_multiplication_overload,
+            sol::meta_function::to_string, [] (const Timestep& timestep)
+            {
+                return "Timestep " + std::to_string(timestep.GetMilliseconds());
+            }
+        );
+        
+        lua.new_usertype<Time>(
+            "Time",
+            "getTimeSinceStartup", &Time::GetTimeSinceStartup,
+            "getFrameNumber", &Time::GetFrameNumber,
+            "getScaledDeltaTime", &Time::GetScaledDeltaTime,
+            "GetUnscaledDeltaTime", &Time::GetUnscaledDeltaTime
+            );
     }
 }

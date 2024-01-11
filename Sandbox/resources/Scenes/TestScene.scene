@@ -69,9 +69,6 @@ Entities:
       Mesh: 6362171717149004471
       Material: 7582525064410579512
       Cast Shadow: false
-    NavMeshable:
-      Use in nav mesh: true
-      Field: 0
   - Entity: 2539448613340456345
     Tag: Wall
     Parent: 11837398838170000115
@@ -257,16 +254,13 @@ Entities:
   - Entity: 3187912942755661022
     Tag: Rock
     Transform:
-      Position: [-1.35330176, 3.00541186, 2.10396028]
-      Rotation: [1.28208971, 0.84644407, 1.88415208e-06]
-      Scale: [0.49999997, 0.499996334, 0.499996126]
+      Position: [6.00920486, 7.35727882, 26.0943642]
+      Rotation: [1.28208852, 0, 0]
+      Scale: [0.5, 0.499997914, 0.499997914]
     MeshRenderer:
       Mesh: 4915651832749162070
       Material: 6368603494050966349
       Cast Shadow: true
-    NavMeshable:
-      Use in nav mesh: true
-      Field: 0
   - Entity: 11837398838170000115
     Tag: Environment
     Transform:
@@ -346,92 +340,12 @@ Entities:
       Angle: 19.7999992
       Smoothness: 0.75
       Intensity: 15.1000004
-  - Entity: 17389416316078522733
-    Tag: AI
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 4972818807877016397
-    Tag: Navigation mesh
-    Parent: 17389416316078522733
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    NavMeshBoundingBox:
-      Position offset: [0, 0, 0]
-      Box half extents: [15, 100, 15]
-    NavMesh:
-      Build on start: true
-      Cell size: 0.300000012
-      Cell Height: 0.200000003
-      Agent Height: 2
-      Agent radius: 0.600000024
-      Agent max climb: 0.899999976
-      Agent max slope: 45
-      Region min size: 8
-      Region merge size: 8
-      Edge max len: 12
-      Edge max error: 1.29999995
-      Verts per poly: 6
-      Detail sample dist: 8
-      Detail sample max error: 1
-      Partition type: 0
-      Filter low hanging obstacles: false
-      Filter ledge spans: false
-      Filter walkable low height spans: false
-      Keep intermediate results: false
-  - Entity: 16713303000224487588
-    Tag: AI Agents crowd
-    Parent: 17389416316078522733
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    AIAgentCrowd:
-      Agents count: 1
-      Agents:
-        - Agent: 2784914615309263473
-      Navigation mesh: 4972818807877016397
-  - Entity: 2784914615309263473
-    Tag: Agent1
-    Parent: 17389416316078522733
-    Transform:
-      Position: [9.99116325, 0.623252273, -7.48428059]
-      Rotation: [-0, 0, 0]
-      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
-    AIAgentComponent:
-      Is active: true
-      Agent radius: 0.600000024
-      Agent height: 2
-      Max acceleration: 6.48000002
-      Max speed: 5.98000002
-      Collision query range: 7.20000029
-      Path optimization range: 18
-      Separation weight: 2
-      Update flags: 27
-      Obstacle avoidance type: 3
-      Query filter type: 0
-    MeshRenderer:
-      Mesh: 14487929412751068277
-      Material: 2751245691352325769
-      Cast Shadow: true
-  - Entity: 18080868633739497532
-    Tag: Target
-    Parent: 17389416316078522733
-    Transform:
-      Position: [-12.6522808, 1.38295364, 13.0429764]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    MeshRenderer:
-      Mesh: 1600610067072245332
-      Material: 11254321036137541248
-      Cast Shadow: true
 Systems:
-  - System: 7522258865418468204
-  - System: 15747099389357838684
-  - System: 4286742986091037320
-  - System: 10507411060376272809
   - System: 4340022513561837824
+  - System: 10507411060376272809
+  - System: 9822250894310505128
+  - System: 7522258865418468204
   - System: 12364856122512646631
+  - System: 15747099389357838684
+  - System: 14623761520668869565
+  - System: 4286742986091037320

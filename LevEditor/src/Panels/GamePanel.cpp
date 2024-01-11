@@ -35,6 +35,8 @@ namespace LevEngine::Editor
 	
 	void GamePanel::DrawContent()
 	{
+		SceneManager::GetActiveScene()->OnGUIRender();
+
         const auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
         const auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
         const auto viewportOffset = ImGui::GetWindowPos();

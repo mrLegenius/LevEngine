@@ -242,6 +242,14 @@ namespace LevEngine
         }
     }
 
+    void Scene::OnGUIRender()
+    {
+        for (const auto& system : m_GUIRenderSystems)
+        {
+            system->Update(0, m_Registry);
+        }
+    }
+
     void Scene::RequestLateUpdate(const float deltaTime)
     {
         for (const auto& system : m_LateUpdateSystems)
