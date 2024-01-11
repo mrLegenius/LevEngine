@@ -89,14 +89,6 @@ namespace LevEngine
             return;
         }
         m_crowd->update(deltaTime, m_crowdAgentDebugInfo);
-        const auto agent = m_crowd->getAgent(0);
-        if(agent)
-        {
-            const Vector3 currentPosition = {agent->npos[0], agent->npos[1], agent->npos[2]};
-            Log::CoreDebug(std::to_string(currentPosition.x));
-            Log::CoreDebug(std::to_string(currentPosition.y));
-            Log::CoreDebug(std::to_string(currentPosition.z));
-        }
     }
 
     void AIAgentCrowdComponent::UpdateAgentsPosition()
@@ -111,9 +103,6 @@ namespace LevEngine
             auto& agentTransform = agentsEntities[i].GetComponent<Transform>();
             const Vector3 currentPosition = {agent->npos[0], agent->npos[1], agent->npos[2]};
             agentTransform.SetWorldPosition(currentPosition);
-            Log::CoreWarning(std::to_string(currentPosition.x));
-            Log::CoreWarning(std::to_string(currentPosition.y));
-            Log::CoreWarning(std::to_string(currentPosition.z));
         }
     }
 
