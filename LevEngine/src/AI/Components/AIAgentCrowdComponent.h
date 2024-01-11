@@ -28,6 +28,7 @@ namespace LevEngine
        
         void Update(const float deltaTime);
         bool IsInitialized() const;
+        bool IsInitializationFailed() const;
 
         void UpdateAgentsPosition();
         void SetMoveTarget(int agentIndex, Vector3 targetPos);
@@ -39,6 +40,7 @@ namespace LevEngine
     private:
 
         bool m_isInitialized = false;
+        bool m_isInitializationFailed = false;
         
         void AddAgent(const Entity& agentEntity);
         void RegisterDefaultObstacleAvoidanceProfiles();
