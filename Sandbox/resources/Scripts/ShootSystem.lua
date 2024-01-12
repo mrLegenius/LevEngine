@@ -22,7 +22,7 @@ ShootSystem = {
                     local projectileTransform = projectile:get_component(Transform)
                     projectileTransform:setWorldPosition(cameraTransform:getWorldPosition() + cameraTransform:getForwardDirection() * 2)
 					
-					local scriptsContainer = projectile:get_or_add_component(ScriptsContainer())
+					local scriptsContainer = projectile:get_or_add_component(ScriptsContainer)
 
 					scriptsContainer.Projectile = Projectile()
 					scriptsContainer.Projectile.speed = 25
