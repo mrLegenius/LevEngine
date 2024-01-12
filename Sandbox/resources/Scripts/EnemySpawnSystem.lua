@@ -15,7 +15,7 @@ EnemySpawnSystem = {
 			local prefab = Prefab("EnemyPrefab")
 			local enemyEntity = prefab:instantiate(scene)
 
-			local scriptsContainer = enemyEntity:get_or_add_component(ScriptsContainer())
+			local scriptsContainer = enemyEntity:get_or_add_component(ScriptsContainer)
 			scriptsContainer.Enemy = Enemy(5)
 			
 			local enemyTransform = enemyEntity:get_component(Transform)
