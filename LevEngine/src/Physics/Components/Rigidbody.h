@@ -150,7 +150,7 @@ namespace LevEngine
         bool m_IsInitialized = false;
         Vector3 m_TransformScale = Vector3::One;
         
-        bool m_IsVisualizationEnabled = true;
+        bool m_IsVisualizationEnabled = false;
 
         Type m_Type = Type::Dynamic;
 

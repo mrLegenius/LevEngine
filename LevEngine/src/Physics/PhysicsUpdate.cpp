@@ -88,12 +88,6 @@ namespace LevEngine
 
             if (rigidbody.IsKinematicEnabled())
             {
-                rigidbody.SetKinematicTargetRotation(
-                    transform.GetWorldRotation() * Quaternion::CreateFromAxisAngle(Vector3::Up, Math::ToRadians(0.1f))
-                ); 
-                rigidbody.SetKinematicTargetPosition(
-                    transform.GetWorldPosition() + transform.GetForwardDirection() * 0.025f
-                );
                 rigidbody.ApplyKinematicTarget();
             }
             else

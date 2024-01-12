@@ -47,8 +47,7 @@ namespace LevEngine
         void SetClimbingMode(const Controller::ClimbingMode& climbingMode) const;
 
         void Move(Vector3 displacement, float elapsedTime) const;
-
-        // now only for DYNAMIC - CONTROLLER actions
+        
         [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
 
@@ -80,7 +79,7 @@ namespace LevEngine
         bool m_IsInitialized = false;
         Vector3 m_TransformScale = Vector3::One;
         
-        bool m_IsVisualizationEnabled = true;
+        bool m_IsVisualizationEnabled = false;
         
         Ref<Controller> m_CharacterController { CreateRef<Controller>() };
 

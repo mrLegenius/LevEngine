@@ -1,210 +1,38 @@
 Scene: TestScene
 Entities:
-  - Entity: 1129722863372066295
-    Tag: Wall
-    Parent: 11837398838170000115
+  - Entity: 13129059575428668352
+    Tag: Web
+    Parent: 13631027794021233931
     Transform:
-      Position: [2.59346628, 5.0001483, 6.60987377]
-      Rotation: [1.49372458, 3.08588099, 0.328962803]
-      Scale: [20.1999073, 0.999932289, 9.99941254]
-    Rigidbody:
-      Is Visualization Enabled: false
-      Rigidbody Type: 0
-      Is Gravity Enabled: true
-      Mass: 1
-      Center Of Mass: [0, 0, 0]
-      Inertia Tensor: [1, 1, 1]
-      Linear Damping: 0
-      Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
-      Is Pos Axis X Locked: false
-      Is Pos Axis Y Locked: false
-      Is Pos Axis Z Locked: false
-      Is Rot Axis X Locked: false
-      Is Rot Axis Y Locked: false
-      Is Rot Axis Z Locked: false
-      Collider Type: 2
-      Box Half Extends: [0.5, 0.5, 0.5]
-      Offset Position: [0, 0, 0]
-      Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
-      Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Position: [23.9016342, 1.80962908, -22.471386]
+      Rotation: [-0.223976925, -2.10650444, 1.83299112]
+      Scale: [6.00000238, 6.00001669, 6.00001669]
     MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 16895830209131566910
-      Cast Shadow: true
-    NavMeshable:
-      Use in nav mesh: true
-      Field: 0
-  - Entity: 11692314651795152938
-    Tag: Wall
-    Parent: 11837398838170000115
+      Mesh: 5160753388332290240
+      Material: 10648776512994663525
+      Cast Shadow: false
+  - Entity: 1102527589670769532
+    Tag: Web
+    Parent: 13631027794021233931
     Transform:
-      Position: [-1.20967243e-05, 5.0001483, 25.5]
-      Rotation: [1.57078934, -9.65900881e-07, 3.14159083]
-      Scale: [50, 0.999938488, 9.99950695]
-    Rigidbody:
-      Is Visualization Enabled: false
-      Rigidbody Type: 0
-      Is Gravity Enabled: true
-      Mass: 1
-      Center Of Mass: [0, 0, 0]
-      Inertia Tensor: [1, 1, 1]
-      Linear Damping: 0
-      Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
-      Is Pos Axis X Locked: false
-      Is Pos Axis Y Locked: false
-      Is Pos Axis Z Locked: false
-      Is Rot Axis X Locked: false
-      Is Rot Axis Y Locked: false
-      Is Rot Axis Z Locked: false
-      Collider Type: 2
-      Box Half Extends: [0.5, 0.5, 0.5]
-      Offset Position: [0, 0, 0]
-      Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
-      Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Position: [23.4458256, 6.96982336, -25.937397]
+      Rotation: [-0.146667957, -2.37159348, 1.7810123]
+      Scale: [6.00001001, 6.00003767, 6.00031185]
     MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 16895830209131566910
-      Cast Shadow: true
-  - Entity: 11298174213093368141
-    Tag: Mesh
-    Parent: 17040960879080862887
+      Mesh: 5160753388332290240
+      Material: 10648776512994663525
+      Cast Shadow: false
+  - Entity: 12251101171661576211
+    Tag: Web
+    Parent: 13631027794021233931
     Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [0.00999999978, 0.0199999996, 0.00999999978]
+      Position: [21.681242, 3.11237764, -25.6592293]
+      Rotation: [0.384781659, -1.85873425, 1.95322454]
+      Scale: [10.0000114, 0.999998152, 10.0000114]
     MeshRenderer:
-      Mesh: 14487929412751068277
-      Material: 2751245691352325769
-      Cast Shadow: true
-  - Entity: 17040960879080862887
-    Tag: EnemyAgent2
-    Parent: 18428579978661870119
-    Transform:
-      Position: [7.09035587, 0.560176015, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    AIAgentComponent:
-      Is active: true
-      Agent radius: 0.600000024
-      Agent height: 2
-      Max acceleration: 8
-      Max speed: 3.5
-      Collision query range: 7.20000029
-      Path optimization range: 18
-      Separation weight: 2
-      Update flags: 27
-      Obstacle avoidance type: 3
-      Query filter type: 0
-  - Entity: 8945236297208174435
-    Tag: Target
-    Parent: 18428579978661870119
-    Transform:
-      Position: [-14.7522402, 0, -14.2870216]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 16384132121344415742
-    Tag: EnemyAgent1
-    Parent: 18428579978661870119
-    Transform:
-      Position: [-11.6777477, 0.971209347, 8.98141098]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    AIAgentComponent:
-      Is active: true
-      Agent radius: 0.600000024
-      Agent height: 2
-      Max acceleration: 8
-      Max speed: 3.5
-      Collision query range: 7.20000029
-      Path optimization range: 18
-      Separation weight: 2
-      Update flags: 27
-      Obstacle avoidance type: 3
-      Query filter type: 0
-  - Entity: 4237902975869426551
-    Tag: Mesh
-    Parent: 16384132121344415742
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [0.00999999978, 0.0199999996, 0.00999999978]
-    MeshRenderer:
-      Mesh: 14487929412751068277
-      Material: 2751245691352325769
-      Cast Shadow: true
-  - Entity: 10583609594743103269
-    Tag: AgentsCrowd
-    Parent: 18428579978661870119
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    AIAgentCrowd:
-      Agents count: 2
-      Agents:
-        - Agent: 16384132121344415742
-        - Agent: 17040960879080862887
-      Navigation mesh: 4549845782544865039
-      Target: 8945236297208174435
-  - Entity: 4549845782544865039
-    Tag: Navigation mesh
-    Parent: 18428579978661870119
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    NavMeshBoundingBox:
-      Position offset: [0, 0, 0]
-      Box half extents: [20, 20, 20]
-    NavMesh:
-      Build on start: false
-      Cell size: 0.300000012
-      Cell Height: 0.200000003
-      Agent Height: 2
-      Agent radius: 0.600000024
-      Agent max climb: 0.899999976
-      Agent max slope: 45
-      Region min size: 8
-      Region merge size: 8
-      Edge max len: 12
-      Edge max error: 1.29999995
-      Verts per poly: 6
-      Detail sample dist: 8
-      Detail sample max error: 1
-      Partition type: 0
-      Filter low hanging obstacles: false
-      Filter ledge spans: false
-      Filter walkable low height spans: false
-      Keep intermediate results: false
-  - Entity: 18428579978661870119
-    Tag: AI
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 18248931055692955122
-    Tag: SpotLight
-    Parent: 6442536384003582315
-    Transform:
-      Position: [14.3904839, 14.9357433, -8.88151073]
-      Rotation: [-0.720606327, -0.549428582, -2.87914896]
-      Scale: [0.999968171, 0.999939978, 0.999969959]
-    Spot Light:
-      Color: [0, 1, 0.923728704, 1]
-      Range: 26.3999996
-      Angle: 19.7999992
-      Smoothness: 0.75
-      Intensity: 15.1000004
+      Mesh: 5160753388332290240
+      Material: 10648776512994663525
+      Cast Shadow: false
   - Entity: 15067421120708529696
     Tag: BlueLight
     Parent: 6442536384003582315
@@ -265,12 +93,19 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 11837398838170000115
-    Tag: Environment
+  - Entity: 18248931055692955122
+    Tag: SpotLight
+    Parent: 6442536384003582315
     Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
+      Position: [14.3904839, 14.9357433, -8.88151073]
+      Rotation: [-0.720606327, -0.549428582, -2.87914896]
+      Scale: [0.999968171, 0.999939978, 0.999969959]
+    Spot Light:
+      Color: [0, 1, 0.923728704, 1]
+      Range: 26.3999996
+      Angle: 19.7999992
+      Smoothness: 0.75
+      Intensity: 15.1000004
   - Entity: 3187912942755661022
     Tag: Rock
     Transform:
@@ -293,36 +128,36 @@ Entities:
       Cast Shadow: true
   - Entity: 3572382593622191945
     Tag: Wall
-    Parent: 11837398838170000115
+    Parent: 13631027794021233931
     Transform:
-      Position: [-25.5, 5, 5.15551474e-05]
+      Position: [-25.5, 5, -2.37518859]
       Rotation: [1.57079613, 0, 1.5707953]
       Scale: [50, 0.999999702, 10]
     Rigidbody:
-      Is Visualization Enabled: false
       Rigidbody Type: 0
+      Is Kinematic Enabled: false
       Is Gravity Enabled: true
       Mass: 1
       Center Of Mass: [0, 0, 0]
       Inertia Tensor: [1, 1, 1]
       Linear Damping: 0
       Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
       Is Pos Axis X Locked: false
       Is Pos Axis Y Locked: false
       Is Pos Axis Z Locked: false
       Is Rot Axis X Locked: false
       Is Rot Axis Y Locked: false
       Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
       Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
       Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 16895830209131566910
@@ -337,72 +172,72 @@ Entities:
       Color: [1, 1, 1, 1]
   - Entity: 5052278192581293938
     Tag: Wall
-    Parent: 11837398838170000115
+    Parent: 13631027794021233931
     Transform:
-      Position: [25.5, 5, 3.73348342e-07]
+      Position: [25.5, 5, -2.37523961]
       Rotation: [1.57079613, 0, 1.5707953]
       Scale: [50, 0.999999702, 10]
     Rigidbody:
-      Is Visualization Enabled: false
       Rigidbody Type: 0
+      Is Kinematic Enabled: false
       Is Gravity Enabled: true
       Mass: 1
       Center Of Mass: [0, 0, 0]
       Inertia Tensor: [1, 1, 1]
       Linear Damping: 0
       Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
       Is Pos Axis X Locked: false
       Is Pos Axis Y Locked: false
       Is Pos Axis Z Locked: false
       Is Rot Axis X Locked: false
       Is Rot Axis Y Locked: false
       Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
       Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
       Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 16895830209131566910
       Cast Shadow: true
   - Entity: 4309460406928129217
     Tag: Wall
-    Parent: 11837398838170000115
+    Parent: 13631027794021233931
     Transform:
-      Position: [0, 4.9998107, -25.4999962]
+      Position: [0, 4.9998107, -27.8752365]
       Rotation: [1.57079613, 0, -3.14159203]
       Scale: [50, 0.999977112, 9.99981594]
     Rigidbody:
-      Is Visualization Enabled: false
       Rigidbody Type: 0
+      Is Kinematic Enabled: false
       Is Gravity Enabled: true
       Mass: 1
       Center Of Mass: [0, 0, 0]
       Inertia Tensor: [1, 1, 1]
       Linear Damping: 0
       Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
       Is Pos Axis X Locked: false
       Is Pos Axis Y Locked: false
       Is Pos Axis Z Locked: false
       Is Rot Axis X Locked: false
       Is Rot Axis Y Locked: false
       Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
       Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
       Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 16895830209131566910
@@ -427,77 +262,74 @@ Entities:
       Scale: [1, 1, 1]
     Skybox Renderer:
       Skybox: 17530323575141006770
-  - Entity: 2539448613340456345
+  - Entity: 11692314651795152938
     Tag: Wall
-    Parent: 11837398838170000115
+    Parent: 13631027794021233931
     Transform:
-      Position: [-1.20967243e-05, 5.0001483, -8.52171803]
-      Rotation: [1.57078934, -8.51786012e-07, 3.14159083]
-      Scale: [20.1999702, 0.999934316, 9.99944019]
+      Position: [-1.20967243e-05, 5.0001483, 23.1247597]
+      Rotation: [1.57078934, -9.65900881e-07, 3.14159083]
+      Scale: [50, 0.999938488, 9.99950695]
     Rigidbody:
-      Is Visualization Enabled: false
       Rigidbody Type: 0
+      Is Kinematic Enabled: false
       Is Gravity Enabled: true
       Mass: 1
       Center Of Mass: [0, 0, 0]
       Inertia Tensor: [1, 1, 1]
       Linear Damping: 0
       Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
       Is Pos Axis X Locked: false
       Is Pos Axis Y Locked: false
       Is Pos Axis Z Locked: false
       Is Rot Axis X Locked: false
       Is Rot Axis Y Locked: false
       Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
       Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
       Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 16895830209131566910
       Cast Shadow: true
-    NavMeshable:
-      Use in nav mesh: true
-      Field: 0
   - Entity: 8940989960097836712
     Tag: Floor
-    Parent: 11837398838170000115
+    Parent: 13631027794021233931
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 0, -2.37524009]
       Rotation: [-0, 0, 0]
       Scale: [50, 1, 50]
     Rigidbody:
-      Is Visualization Enabled: false
       Rigidbody Type: 0
+      Is Kinematic Enabled: false
       Is Gravity Enabled: true
       Mass: 1
       Center Of Mass: [0, 0, 0]
       Inertia Tensor: [1, 1, 1]
       Linear Damping: 0
       Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
       Is Pos Axis X Locked: false
       Is Pos Axis Y Locked: false
       Is Pos Axis Z Locked: false
       Is Rot Axis X Locked: false
       Is Rot Axis Y Locked: false
       Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
       Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
       Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 7582525064410579512
@@ -505,43 +337,5 @@ Entities:
     NavMeshable:
       Use in nav mesh: true
       Field: 0
-  - Entity: 13129059575428668352
-    Tag: Web
-    Parent: 11837398838170000115
-    Transform:
-      Position: [23.9016342, 1.80962908, -20.0961456]
-      Rotation: [-0.223976925, -2.10650444, 1.83299112]
-      Scale: [6.00000238, 6.00001669, 6.00001669]
-    MeshRenderer:
-      Mesh: 5160753388332290240
-      Material: 10648776512994663525
-      Cast Shadow: false
-  - Entity: 1102527589670769532
-    Tag: Web
-    Parent: 11837398838170000115
-    Transform:
-      Position: [23.4458256, 6.96982336, -23.5621567]
-      Rotation: [-0.146667957, -2.37159348, 1.7810123]
-      Scale: [6.00001001, 6.00003767, 6.00031185]
-    MeshRenderer:
-      Mesh: 5160753388332290240
-      Material: 10648776512994663525
-      Cast Shadow: false
-  - Entity: 12251101171661576211
-    Tag: Web
-    Parent: 11837398838170000115
-    Transform:
-      Position: [21.681242, 3.11237764, -23.283989]
-      Rotation: [0.384781659, -1.85873425, 1.95322454]
-      Scale: [10.0000114, 0.999998152, 10.0000114]
-    MeshRenderer:
-      Mesh: 5160753388332290240
-      Material: 10648776512994663525
-      Cast Shadow: false
 Systems:
-  - System: 10507411060376272809
-  - System: 4340022513561837824
-  - System: 7522258865418468204
-  - System: 12364856122512646631
-  - System: 15747099389357838684
-  - System: 14623761520668869565
+  []

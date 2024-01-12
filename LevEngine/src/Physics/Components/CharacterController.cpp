@@ -1,9 +1,10 @@
 ﻿#include "levpch.h"
-#include "Scene/Components/ComponentSerializer.h"
+#include "CharacterController.h"
+
 #include "Kernel/Application.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Physics.h"
-#include "CharacterController.h"
+#include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
 {
@@ -441,7 +442,7 @@ namespace LevEngine
             out << YAML::Key << "Bounce Combine Mode" << YAML::Value << static_cast<int>(component.GetBounceCombineMode());
         }
 
-        void DeserializeData(YAML::Node& node, CharacterController& component) override
+        void DeserializeData(const YAML::Node& node, CharacterController& component) override
         {
             if (const auto capsuleControllerRadiusNode = node["Capsule Controller Radius"])
             {

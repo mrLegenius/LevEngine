@@ -63,7 +63,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;lua54.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -104,12 +104,16 @@
     <ClInclude Include="src\JobSystem\Job.h" />
     <ClInclude Include="src\JobSystem\ParallelJob.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
+    <ClInclude Include="src\Physics\Components\CharacterController.h" />
     <ClInclude Include="src\Physics\Components\Collision.h" />
+    <ClInclude Include="src\Physics\Components\Controller.h" />
     <ClInclude Include="src\Physics\Components\Destroyable.h" />
+    <ClInclude Include="src\Physics\Components\PhysicMaterial.h" />
     <ClInclude Include="src\Physics\Events\ContactReportCallback.h" />
     <ClInclude Include="src\Physics\PhysicsUpdate.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
-    <ClInclude Include="src\Physics\RigidbodyInitSystem.h" />
+    <ClInclude Include="src\Physics\Systems\CharacterControllerInitSystem.h" />
+    <ClInclude Include="src\Physics\Systems\RigidbodyInitSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DeferredContexts.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
@@ -142,7 +146,6 @@
     <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
-    <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
     <ClInclude Include="src\Physics\Physics.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
@@ -1038,9 +1041,11 @@
     <ClCompile Include="src\JobSystem\Job.cpp" />
     <ClCompile Include="src\JobSystem\ParallelJob.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
+    <ClCompile Include="src\Physics\Components\CharacterController.cpp" />
     <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
-    <ClCompile Include="src\Physics\RigidbodyInitSystem.cpp" />
+    <ClCompile Include="src\Physics\Systems\CharacterControllerInitSystem.cpp" />
+    <ClCompile Include="src\Physics\Systems\RigidbodyInitSystem.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DeferredContexts.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />
