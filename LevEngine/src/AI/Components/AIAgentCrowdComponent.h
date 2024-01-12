@@ -52,5 +52,7 @@ namespace LevEngine
         dtPolyRef m_targetRef;
 
         dtCrowdAgentDebugInfo* m_crowdAgentDebugInfo;
+
+        int MAX_AGENTS_COUNT = 25;
     };
 }

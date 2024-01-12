@@ -35,7 +35,7 @@ namespace LevEngine
         }
         m_navMesh = navMeshComponent.GetNavMesh();
         m_navMeshQuery = navMeshComponent.GetNavMeshQuery();
-        m_crowd->init(25, navMeshComponent.AgentRadius, navMeshComponent.GetNavMesh());
+        m_crowd->init(MAX_AGENTS_COUNT, navMeshComponent.AgentRadius, navMeshComponent.GetNavMesh());
         RegisterDefaultObstacleAvoidanceProfiles();
         for (auto agentEntity : agentsEntities)
         {
