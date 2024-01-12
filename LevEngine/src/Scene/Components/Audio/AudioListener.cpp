@@ -49,7 +49,7 @@ namespace LevEngine
 		{
 			
 		}
-		void DeserializeData(YAML::Node& node, AudioListenerComponent& component) override
+		void DeserializeData(const YAML::Node& node, AudioListenerComponent& component) override
 		{
 			component.ResetInit();
 		}

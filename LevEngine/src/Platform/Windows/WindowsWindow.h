@@ -15,13 +15,14 @@ namespace LevEngine
 		void Init(const WindowAttributes& attributes) override;
 		void HandleInput() override;
 		void SetWindowTitle(String& title) override;
-
+		void SetCursorPosition(uint32_t x, uint32_t y) override;
 	protected:
 		void ConfineCursor() const override;
 		void FreeCursor() const override;
 		void ShowCursor() const override;
 		void HideCursor() const override;
 		void Close() override;
+
 	private:
 		HWND m_Window = nullptr;
 	};

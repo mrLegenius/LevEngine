@@ -12,6 +12,7 @@ namespace LevEngine
 		Timestep operator*(const Timestep& rhs) const;
 		Timestep operator*(double rhs) const;
 		Timestep& operator+=(const Timestep& rhs);
+		Timestep operator+(const Timestep& rhs) const;
 
 	private:
 		double m_Time;
@@ -31,5 +32,10 @@ namespace LevEngine
 	{
 		m_Time += rhs.m_Time;
 		return *this;
+	}
+
+	inline Timestep Timestep::operator+(const Timestep& rhs) const
+	{
+		return Timestep(rhs.m_Time + m_Time);
 	}
 }

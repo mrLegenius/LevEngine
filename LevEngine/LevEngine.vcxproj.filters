@@ -2651,6 +2651,36 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Physics\Components\LegacyCollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Components\LegacyCollisionEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Components\LegacyRigidbody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Events\LegacyCollisionBeginEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Events\LegacyCollisionEndEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\LegacyPhysics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Systems\LegacyForcesClearSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Systems\LegacyPositionUpdateSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Systems\LegacyVelocityUpdateSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Systems\Physics\RigidbodyInitSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\Scripting\MathLuaBindings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2756,34 +2786,65 @@
     <ClInclude Include="src\Scripting\ScriptingSystemComponents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\Components\CharacterController.h">
+    <ClInclude Include="src\Scripting\ScriptsContainer.h">
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\Components\Collision.h">
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\Components\Controller.h">
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\Components\Destroyable.h">
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\Events\ContactReportCallback.h">
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\PhysicsUpdate.h">
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\Systems\CharacterControllerInitSystem.h">
+    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\Systems\RigidbodyInitSystem.h">
+    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h">
+    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h">
+    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Recast\Recast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -3003,6 +3064,66 @@
     </ClCompile>
     <ClCompile Include="src\Renderer\Renderer3D.cpp">
       <Filter>Source Files</Filter>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Recast\Recast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     </ClCompile>
     <ClCompile Include="src\Renderer\RenderTarget.cpp">
       <Filter>Source Files</Filter>
@@ -3277,6 +3398,24 @@
     <ClCompile Include="src\Renderer\PostProcessing\VignettePass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics\Components\LegacyCollider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics\Components\LegacyRigidbody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics\LegacyPhysics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Systems\Physics\RigidbodyInitSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Scripting\MathLuaBindings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -3397,25 +3536,7 @@
     <ClCompile Include="src\Renderer\RenderSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Physics\Components\CharacterController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Physics\PhysicsUpdate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Physics\Systems\CharacterControllerInitSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Physics\Systems\RigidbodyInitSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Scene\Systems\EntityDestroySystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.cpp">
+    <ClCompile Include="src\Scripting\ScriptsContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -3454,5 +3575,11 @@
     <Natvis Include="external\entt\resource.natvis" />
     <Natvis Include="external\entt\signal.natvis" />
     <Natvis Include="external\sol\sol2.natvis" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

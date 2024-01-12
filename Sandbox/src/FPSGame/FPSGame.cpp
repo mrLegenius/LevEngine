@@ -3,6 +3,7 @@
 
 #include "Project.h"
 #include "Assets/PrefabAsset.h"
+#include "Events/ApplicationEvent.h"
 #include "Scripting/ScriptingManager.h"
 #include "Systems/CollisionHandleSystem.h"
 #include "Systems/EnemyMovementSystem.h"
@@ -43,14 +44,13 @@ namespace Sandbox
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
 
-		scene->RegisterUpdateSystem<PlayerSpawnSystem>();
-		scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
-		scene->RegisterUpdateSystem<FPSMovementSystem>();
-		scene->RegisterUpdateSystem<ShootSystem>();
-		scene->RegisterUpdateSystem<CollisionHandleSystem>();
-		scene->RegisterUpdateSystem<ProjectileLifeSystem>();
+		//scene->RegisterUpdateSystem<PlayerSpawnSystem>();
+		//scene->RegisterUpdateSystem<FPSMovementSystem>();
+		//scene->RegisterUpdateSystem<FPSCameraRotationSystem>();
+		//scene->RegisterUpdateSystem<ShootSystem>();
+		//scene->RegisterUpdateSystem<CollisionHandleSystem>();
+		//scene->RegisterUpdateSystem<ProjectileLifeSystem>();
 		//scene->RegisterUpdateSystem<EnemySpawnSystem>();
-		//scene->RegisterUpdateSystem<EnemyMovementSystem>();
 
 		scene->OnInit();
 		Application::Get().GetWindow().DisableCursor();
@@ -75,15 +75,19 @@ namespace Sandbox
 
 	void FPSGame::OnGUIRender()
 	{
-		const auto time = Time::GetTimeSinceStartup().GetSeconds();
-		const String timeStr = String("Time: ") + ToString(time) + String(" sec");
-		GUI::DrawString(Vector2(0, 0), timeStr, 16.0f, Color::White);
-		
-		const String scoreStr = String("Score: ") + ToString(score);
-		GUI::DrawString(Vector2(10, 32), scoreStr, 64.0f, Color::White);
-		
-		GUI::DrawCircle(GUI::GetWindowSize() / 2, 10, Color::White);
+		SceneManager::GetActiveScene()->OnGUIRender();
 	}
 
-	void FPSGame::OnEvent(Event& event) { }
+	void FPSGame::OnEvent(Event& event)
+	{
+		EventDispatcher dispatcher(event);
+
+		dispatcher.Dispatch<WindowFocusEvent>(BIND_EVENT_FN(FPSGame::OnWindowFocus));
+	}
+
+	bool FPSGame::OnWindowFocus(WindowFocusEvent& e)
+	{
+		App::Get().GetWindow().DisableCursor();
+		return false;
+	}
 }

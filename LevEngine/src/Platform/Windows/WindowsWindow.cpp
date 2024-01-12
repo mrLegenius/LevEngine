@@ -29,7 +29,7 @@ namespace LevEngine
 			return virtualKey;
 		}
 	}
-	
+
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) noexcept
 	{
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam))
@@ -63,6 +63,24 @@ namespace LevEngine
 			data->eventCallback(event);
 			return 0;
 		}
+		case WM_SETFOCUS:
+		{
+			if (data == nullptr)
+				return DefWindowProc(hwnd, umessage, wparam, lparam);
+
+			WindowFocusEvent event;
+			data->eventCallback(event);
+			return 0;
+		}
+		case WM_KILLFOCUS:
+		{
+			if (data == nullptr)
+				return DefWindowProc(hwnd, umessage, wparam, lparam);
+
+			WindowLostFocusEvent event;
+			data->eventCallback(event);
+			return 0;
+		}
 		case WM_CHAR:
 		{
 			const auto charCode = static_cast<KeyCode>(wparam);
@@ -74,7 +92,7 @@ namespace LevEngine
 		{
 			const auto keyCode = static_cast<KeyCode>(MapLeftRightKeys(wparam, lparam));
 			KeyPressedEvent event(keyCode, 0);
-			data->eventCallback(event);	
+			data->eventCallback(event);
 			return 0;
 		}
 		case WM_LBUTTONDOWN:
@@ -284,13 +302,18 @@ namespace LevEngine
 		SetWindowText(m_Window, wide_title);
 	}
 
+	void WindowsWindow::SetCursorPosition(const uint32_t x, const uint32_t y)
+	{
+		SetCursorPos(x, y);
+	}
+
 	void WindowsWindow::ConfineCursor() const
 	{
 		LEV_PROFILE_FUNCTION();
 
 		RECT rect;
 		GetClientRect(m_Window, &rect);
-		MapWindowRect(m_Window, nullptr, reinterpret_cast<POINT*>(&rect));
+		MapWindowRect(m_Window, nullptr, &rect);
 		ClipCursor(&rect);
 	}
 

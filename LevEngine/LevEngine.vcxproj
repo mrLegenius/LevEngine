@@ -50,7 +50,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external;external/recastnavigation/include;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
       <AdditionalModuleDependencies>
@@ -63,7 +63,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;lua54.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -87,26 +87,45 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;lua54.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib;Detour.lib;DetourCrowd.lib;DetourTileCache.lib;Recast.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h" />
+    <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
+    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
+    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
+    <ClInclude Include="src\Assets\SceneAsset.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
     <ClInclude Include="src\DataTypes\Set.h" />
+    <ClInclude Include="src\JobSystem\Job.h" />
+    <ClInclude Include="src\JobSystem\ParallelJob.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
-    <ClInclude Include="src\Physics\Components\CharacterController.h" />
     <ClInclude Include="src\Physics\Components\Collision.h" />
-    <ClInclude Include="src\Physics\Components\Controller.h" />
     <ClInclude Include="src\Physics\Components\Destroyable.h" />
     <ClInclude Include="src\Physics\Events\ContactReportCallback.h" />
     <ClInclude Include="src\Physics\PhysicsUpdate.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
-    <ClInclude Include="src\Physics\Systems\CharacterControllerInitSystem.h" />
-    <ClInclude Include="src\Physics\Systems\RigidbodyInitSystem.h" />
+    <ClInclude Include="src\Physics\RigidbodyInitSystem.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11DeferredContexts.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
@@ -130,16 +149,38 @@
     <ClInclude Include="src\Renderer\Particles\ParticlesUtils.h" />
     <ClInclude Include="src\Renderer\Query.h" />
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.h" />
     <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h" />
+    <ClInclude Include="src\Scene\Components\Transform\TransformSerializer.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
     <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
-    <ClInclude Include="src\Physics\Components\PhysicMaterial.h" />
+    <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
     <ClInclude Include="src\Physics\Physics.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h" />
+    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h" />
+    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h" />
+    <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
+    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
+    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h" />
+    <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
@@ -1022,165 +1063,15 @@
   <ItemGroup>
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
+    <ClCompile Include="src\Assets\SceneAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\JobSystem\Job.cpp" />
+    <ClCompile Include="src\JobSystem\ParallelJob.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
-    <ClCompile Include="src\Physics\Components\CharacterController.cpp" />
     <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
-    <ClCompile Include="src\Physics\Systems\CharacterControllerInitSystem.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>C:\Users\KYKLOWOOD\Desktop\LevEngine\x64\Debug\LevEngine.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\LevEngine.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\LevEngine.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;_UNICODE;UNICODE;;_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;C:\Users\KYKLOWOOD\Desktop\LevEngine\\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;C:\Users\KYKLOWOOD\Desktop\LevEngine\\FMODStudio\studio\inc;C:\Users\KYKLOWOOD\Desktop\LevEngine\\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;</AdditionalIncludeDirectories>
-      <AdditionalModuleDependencies>
-      </AdditionalModuleDependencies>
-      <AdditionalOptions>/bigobj </AdditionalOptions>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
-    <ClCompile Include="src\Physics\Systems\RigidbodyInitSystem.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>C:\Users\KYKLOWOOD\Desktop\LevEngine\x64\Debug\LevEngine.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\LevEngine.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\LevEngine.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;LEV_DEBUG;YAML_CPP_STATIC_DEFINE;_UNICODE;UNICODE;;_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;C:\Users\KYKLOWOOD\Desktop\LevEngine\\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;C:\Users\KYKLOWOOD\Desktop\LevEngine\\FMODStudio\studio\inc;C:\Users\KYKLOWOOD\Desktop\LevEngine\\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;</AdditionalIncludeDirectories>
-      <AdditionalModuleDependencies>
-      </AdditionalModuleDependencies>
-      <AdditionalOptions>/bigobj </AdditionalOptions>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
+    <ClCompile Include="src\Physics\RigidbodyInitSystem.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11DeferredContexts.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
@@ -1212,11 +1103,15 @@
     <ClCompile Include="src\Renderer\RenderDebugEvent.cpp" />
     <ClCompile Include="src\Renderer\RenderPass.cpp" />
     <ClCompile Include="src\Renderer\RenderSettings.cpp" />
+    <ClCompile Include="src\Scene\Components\Transform\TransformSerializer.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.cpp" />
     <ClCompile Include="src\Scene\Systems\EntityDestroySystem.cpp" />
     <ClCompile Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
     <ClCompile Include="src\Physics\Physics.cpp" />
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp" />
+    <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />

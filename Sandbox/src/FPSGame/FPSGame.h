@@ -11,5 +11,8 @@ namespace Sandbox
 		void OnRender() override;
 		void OnGUIRender() override;
 		void OnEvent(LevEngine::Event& event) override;
+
+	private:
+		static bool OnWindowFocus(LevEngine::WindowFocusEvent& event);
 	};
 }

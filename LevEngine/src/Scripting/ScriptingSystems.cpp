@@ -47,4 +47,18 @@ namespace LevEngine::Scripting {
 			}
 		}
 	}
+
+	void ScriptingGUIRenderSystem::Update(float deltaTime, entt::registry& registry)
+	{
+		auto scriptsView = registry.view<ScriptingGUIRenderComponent>();
+		for (const auto entity : scriptsView) {
+			auto scriptComponent = scriptsView.get<ScriptingGUIRenderComponent>(entity);
+			auto result = scriptComponent.GUIRender();
+			if (!result.valid()) {
+				sol::error err = result;
+				std::string what = err.what();
+				Log::Error("Error while running lua system GUI render {0}", what);
+			}
+		}
+	}
 }

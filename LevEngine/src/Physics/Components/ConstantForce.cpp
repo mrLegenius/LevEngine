@@ -35,7 +35,7 @@ namespace LevEngine
             out << YAML::Key << "Torque" << YAML::Value << component.GetTorque();
         }
 
-        void DeserializeData(YAML::Node& node, ConstantForce& component) override
+        void DeserializeData(const YAML::Node& node, ConstantForce& component) override
         {
             if (const auto linearForceNode = node["Force"])
             {

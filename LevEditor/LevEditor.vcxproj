@@ -43,6 +43,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)LevEngine\external/recastnavigation/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -102,6 +105,8 @@
     <ClCompile Include="src\AssetSelection.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\CharacterControllerDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\NavMeshBoundingBoxDebugRenderer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\NavMeshDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\RigidbodyDebugRenderer.cpp" />
     <ClCompile Include="src\Essentials\MenuBar.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AudioBankAssetDrawer.cpp" />
@@ -146,7 +151,11 @@
     <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\MeshRendererDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshableComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshBoundingBoxDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\RigidbodyDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\ScriptsContainerDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\SkyboxComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\TimelineComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\TransformDrawer.cpp" />
@@ -194,6 +203,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\GUI\Drawers\Assets\ScriptAssetDrawer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="src\GUI\Drawers\Components\ScriptsContainerDrawer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

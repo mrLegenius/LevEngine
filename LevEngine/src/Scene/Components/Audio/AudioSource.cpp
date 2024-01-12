@@ -15,8 +15,8 @@ namespace LevEngine
 
     void AudioSourceComponent::OnConstruct(entt::registry& registry, entt::entity entity)
     {
-        AudioSourceComponent& component = registry.get<AudioSourceComponent>(entity);
         auto entityWrapped = Entity(entt::handle{ registry, entity });
+        AudioSourceComponent& component = entityWrapped.GetComponent<AudioSourceComponent>();
         component.Init(entityWrapped);
     }
 
@@ -51,7 +51,7 @@ namespace LevEngine
             out << YAML::Key << "PlayOnInit" << YAML::Value << component.Player->GetPlayOnInit();
             out << YAML::Key << "IsOneShot" << YAML::Value << component.Player->GetIsOneShot();
         }
-        void DeserializeData(YAML::Node& node, AudioSourceComponent& component) override
+        void DeserializeData(const YAML::Node& node, AudioSourceComponent& component) override
         {
             if (const auto audioBankNode = node["AudioBank"])
             {

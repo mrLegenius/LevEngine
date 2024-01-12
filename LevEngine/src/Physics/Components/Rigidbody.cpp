@@ -932,7 +932,7 @@ namespace LevEngine
             out << YAML::Key << "Bounce Combine Mode" << YAML::Value << static_cast<int>(component.GetBounceCombineMode());
         }
 
-        void DeserializeData(YAML::Node& node, Rigidbody& component) override
+        void DeserializeData(const YAML::Node& node, Rigidbody& component) override
         {
             if (const auto gravityEnableNode = node["Is Gravity Enabled"])
             {

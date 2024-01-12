@@ -14,15 +14,18 @@ namespace LevEngine::Editor
 		[[nodiscard]] bool IsHovered() const { return m_Hovered; }
 		[[nodiscard]] bool IsActive() const { return m_Active; }
 
-		void Focus() const { ImGui::FocusWindow(m_Window); }
+		void Focus();
+		void Unfocus();
 
 		virtual bool OnKeyPressed(KeyPressedEvent& e) { return false; }
 
 	protected:
 		virtual String GetName() = 0;
 		virtual void DrawContent() = 0;
+		virtual void OnFocus() const { }
+		virtual void OnLostFocus() const { }
 
-		static const ImGuiPayload* BeginDragDropTargetWindow(const char* payloadType);
+		static void* BeginDragDropTargetWindow(const char* payloadType);
 
 		ImGuiWindow* m_Window{};
 

@@ -37,16 +37,14 @@ namespace LevEngine
             out << YAML::EndSeq;
         }
         
-        void DeserializeData(YAML::Node& node, WaypointMovementComponent& component) override
+        void DeserializeData(const YAML::Node& node, WaypointMovementComponent& component) override
         {
             const int componentCount = node["WaypointsCount"].as<int>();
             component.entities = Vector<Entity>(componentCount);
 
             auto waypointsNodes = node["Waypoints"];
             if (!waypointsNodes)
-            {
                 return;
-            }
 
             int componentIdx = 0;
             for (auto waypoint : waypointsNodes)

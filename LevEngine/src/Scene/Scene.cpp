@@ -10,7 +10,7 @@
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Camera/Camera.h"
-#include "Components/Transform/Transform.h"
+#include "Components/NavMesh/NavMeshComponent.h"
 #include "Kernel/Application.h"
 #include "Kernel/Window.h"
 #include "Scripting/ScriptingManager.h"
@@ -21,9 +21,8 @@
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Systems/Audio/AudioListenerInitSystem.h"
 #include "Systems/Audio/AudioSourceInitSystem.h"
-#include "Physics/Systems/RigidbodyInitSystem.h"
+#include "Physics/RigidbodyInitSystem.h"
 #include "Physics/Components/Destroyable.h"
-#include "Physics/Systems/CharacterControllerInitSystem.h"
 #include "Systems/EntityDestroySystem.h"
 
 namespace LevEngine
@@ -35,12 +34,13 @@ namespace LevEngine
     {
         using namespace Scripting;
 
-        auto scriptingManager = Application::Get().GetScriptingManager();
+        auto& scriptingManager = Application::Get().GetScriptingManager();
         scriptingManager.CreateRegistryBind(m_Registry);
 
         LuaComponentsBinder::CreateLuaEntityBind(*(scriptingManager.GetLuaState()), this);
 
         m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
+        m_Registry.on_construct<NavMeshComponent>().connect<&NavMeshComponent::OnConstruct>();
     }
 
     void Scene::CleanupScene()
@@ -53,9 +53,10 @@ namespace LevEngine
 
     void Scene::OnInit()
     {
-        auto scriptManager = Application::Get().GetScriptingManager();
+        auto& scriptManager = Application::Get().GetScriptingManager();
         scriptManager.LoadScripts();
         scriptManager.RegisterSystems(this);
+        scriptManager.InitScriptsContainers(m_Registry);
 
         RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
         RegisterUpdateSystem<WaypointPositionUpdateSystem>();
@@ -64,7 +65,6 @@ namespace LevEngine
         RegisterUpdateSystem<AudioListenerInitSystem>();
 
         RegisterUpdateSystem<RigidbodyInitSystem>();
-        RegisterUpdateSystem<CharacterControllerInitSystem>();
 
         RegisterLateUpdateSystem<EntityDestroySystem>();
 
@@ -73,7 +73,6 @@ namespace LevEngine
         m_Registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
         
         m_Registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
-        m_Registry.on_destroy<CharacterController>().connect<&CharacterController::OnDestroy>();
         App::Get().GetPhysics().ResetPhysicsScene();
         App::Get().GetPhysics().ClearAccumulator();
 
@@ -236,6 +235,14 @@ namespace LevEngine
         else
         {
             App::Renderer().Render(m_Registry, mainCamera, cameraTransform);
+        }
+    }
+
+    void Scene::OnGUIRender()
+    {
+        for (const auto& system : m_GUIRenderSystems)
+        {
+            system->Update(0, m_Registry);
         }
     }
 
