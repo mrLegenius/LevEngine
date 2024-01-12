@@ -86,6 +86,8 @@ Entities:
       Position: [-4.61883545, 11.7034178, -2.41830444]
       Rotation: [-0.695321262, 2.53542233, 1.39101541]
       Scale: [0.999945402, 0.999966264, 0.999982893]
+    Directional Light:
+      Color: [1, 1, 1, 1]
     Camera:
       Camera:
         ProjectionType: 1
@@ -97,8 +99,6 @@ Entities:
         OrthographicFar: 2000
       Main: false
       FixedAspectRatio: false
-    Directional Light:
-      Color: [1, 1, 1, 1]
   - Entity: 5052278192581293938
     Tag: Wall
     Parent: 11837398838170000115
