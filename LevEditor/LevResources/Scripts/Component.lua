@@ -8,7 +8,7 @@ setmetatable(Component, {
 })
 
 function Component.new(variable)
-    local self = setmetatable({}, variable)
+    local self = setmetatable({}, Component)
     self.componentVar = variable or 0.0
     return self
 end
