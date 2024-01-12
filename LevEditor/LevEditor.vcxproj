@@ -203,7 +203,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AssetSelection.cpp" />
-    <ClCompile Include="src\ComponentDebugRenderers\ColliderComponentsDebugRenderer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AnimationAssetDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
