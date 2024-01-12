@@ -3,6 +3,7 @@
 #include "Animation.h"
 #include "AnimationConstants.h"
 #include "Renderer/DebugRender/DebugRender.h"
+#include <chrono>
 
 namespace LevEngine
 {
@@ -23,6 +24,8 @@ namespace LevEngine
 
 	void Animator::UpdateAnimation(float deltaTime)
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		if (!m_IsPlaying) return;
 		
 		m_DeltaTime = deltaTime;
@@ -31,11 +34,20 @@ namespace LevEngine
 			m_CurrentTime += static_cast<float>(m_CurrentAnimation->GetTicksPerSecond()) * deltaTime;
 			m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
 
-			NodeData* node = m_CurrentAnimation->GetRootNode();
+			SkeletonNodeData* node = m_CurrentAnimation->GetRootNode();
 
+			int nodeCount = 0;
+			int boneCount = 0;
 			UpdateBoneModelToLocalTransforms(node);
-			
-			CalculateFinalBoneTransforms(node);
+
+			auto t1 = high_resolution_clock::now();
+			Matrix parentModelToLocalTransform = Matrix::Identity;
+			CalculateFinalBoneTransforms(node, nodeCount, boneCount, parentModelToLocalTransform);
+			auto t2 = high_resolution_clock::now();
+			duration<double, std::milli> ms_double = t2 - t1;
+
+			Log::CoreWarning("CalculateFinalBoneTransforms time: {0} ms", ms_double.count());
+			Log::CoreError("Node count: {0}, bone count: {1}", nodeCount, boneCount);
 		}
 	}
 
@@ -76,19 +88,24 @@ namespace LevEngine
 	{
 		if (m_CurrentAnimation == nullptr) return;
 
-		const NodeData* node = m_CurrentAnimation->GetRootNode();
-		
-		DrawDebugPose(node, rootTransform, rootTransform.GetWorldPosition());
+		const SkeletonNodeData* node = m_CurrentAnimation->GetRootNode();
+
+		Matrix parentModelToLocalTransform = Matrix::Identity;
+		DrawDebugPose(node, rootTransform, rootTransform.GetWorldPosition(), parentModelToLocalTransform);
 	}
 
-	void Animator::DrawDebugPose(const NodeData* node, const Transform& rootTransform, Vector3 prevPosition)
+	void Animator::DrawDebugPose(const SkeletonNodeData* node, const Transform& rootTransform, Vector3 prevPosition,
+		Matrix& parentModelToLocalTransform)
 	{
 		const String& nodeName = node->name;
 
-		Matrix globalTransformation = node->boneCurrentTransform;
-		const NodeData* parent = node->parent;
-		if (parent != nullptr) {
-			globalTransformation = globalTransformation * parent->boneModelToLocalTransform;
+		if (const Bone* bone = m_CurrentAnimation->FindBone(nodeName))
+		{
+			parentModelToLocalTransform = bone->GetLocalTransform() * parentModelToLocalTransform;
+		}
+		else
+		{
+			parentModelToLocalTransform = node->boneBindPoseTransform * parentModelToLocalTransform;
 		}
 		
 		auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
@@ -98,7 +115,7 @@ namespace LevEngine
 		if (boneInfoIt != boneInfoMap.end())
 		{
 			const Matrix rootMatrix = rootTransform.GetModel();
-			nextBonePos = Vector3::Transform(Vector3::Zero, globalTransformation * rootMatrix);
+			nextBonePos = Vector3::Transform(Vector3::Zero, parentModelToLocalTransform * rootMatrix);
 			const Color color = Color(0.0f, 0.0f, 1.0f);
 			DebugRender::DrawLine(prevPosition, nextBonePos, color);
 			DebugRender::DrawCube(nextBonePos, Vector3::One * 0.05f, color);
@@ -110,7 +127,7 @@ namespace LevEngine
 
 		for (size_t i = 0; i < node->children.size(); i++)
 		{
-			DrawDebugPose(node->children[i], rootTransform, nextBonePos);
+			DrawDebugPose(node->children[i], rootTransform, nextBonePos, parentModelToLocalTransform);
 		}
 	}
 
@@ -121,12 +138,12 @@ namespace LevEngine
 		DrawDebugSkeleton(m_CurrentAnimation->GetRootNode(), rootTransform, rootTransform.GetWorldPosition());
 	}
 
-	void Animator::DrawDebugSkeleton(const NodeData* node, const Transform& rootTransform, Vector3 prevPosition)
+	void Animator::DrawDebugSkeleton(const SkeletonNodeData* node, const Transform& rootTransform, Vector3 prevPosition)
 	{
 		const String& nodeName = node->name;
 		
 		Matrix globalTransformation = node->boneBindPoseTransform;
-		const NodeData* parent = node->parent;
+		const SkeletonNodeData* parent = node->parent;
 		while (parent != nullptr) {
 			globalTransformation = parent->boneBindPoseTransform * globalTransformation;
 			parent = parent->parent;
@@ -157,14 +174,15 @@ namespace LevEngine
 		}
 	}
 
-	void Animator::UpdateBoneModelToLocalTransforms(NodeData* node)
+	void Animator::UpdateBoneModelToLocalTransforms(SkeletonNodeData* node)
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		const String& nodeName = node->name;
 
 		if (Bone* Bone = m_CurrentAnimation->FindBone(nodeName))
 		{
 			Bone->Update(m_CurrentTime);
-			node->boneCurrentTransform = Bone->GetLocalTransform();
 		}
 
 		for (size_t i = 0; i < node->children.size(); i++)
@@ -173,30 +191,37 @@ namespace LevEngine
 		}
 	}
 
-	void Animator::CalculateFinalBoneTransforms(NodeData* node)
+	void Animator::CalculateFinalBoneTransforms(SkeletonNodeData* node, Matrix& parentModelToLocalTransform)
 	{
+		LEV_PROFILE_FUNCTION();
+
 		const String& nodeName = node->name;
-		
-		node->boneModelToLocalTransform = node->boneCurrentTransform;
-		const NodeData* parent = node->parent;
-		if (parent != nullptr) {
-			node->boneModelToLocalTransform = node->boneModelToLocalTransform * parent->boneModelToLocalTransform;
+
+		if (const Bone* bone = m_CurrentAnimation->FindBone(nodeName))
+		{
+			parentModelToLocalTransform = bone->GetLocalTransform() * parentModelToLocalTransform;
+		}
+		else
+		{
+			parentModelToLocalTransform = node->boneBindPoseTransform * parentModelToLocalTransform;
 		}
 
 		auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
 		const auto boneInfoIt = boneInfoMap.find(nodeName);
 		if (boneInfoIt != boneInfoMap.end())
 		{
+			LEV_PROFILE_SCOPE("Calculate final bone transform");
+			
 			const int index = boneInfoIt->second.id;
 			const Matrix& offset = boneInfoIt->second.offset;
 
-			const Matrix finalBoneTransform = (offset.Transpose() * node->boneModelToLocalTransform);
+			const Matrix finalBoneTransform = (offset * parentModelToLocalTransform);
 			m_FinalBoneMatrices[index] = finalBoneTransform;
 		}
 
 		for (size_t i = 0; i < node->children.size(); i++)
 		{
-			CalculateFinalBoneTransforms(node->children[i]);
+			CalculateFinalBoneTransforms(node->children[i], parentModelToLocalTransform);
 		}
 	}
 }

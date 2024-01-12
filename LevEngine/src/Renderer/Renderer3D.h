@@ -12,7 +12,13 @@ namespace LevEngine
     class SceneCamera;
     class Mesh;
 
-    struct MeshModelBufferData
+    struct StaticMeshModelBufferData
+    {
+        Matrix Model;
+        Matrix TransposedInvertedModel;
+    };
+
+    struct AnimatedMeshModelBufferData
     {
         Matrix Model;
         Matrix TransposedInvertedModel;

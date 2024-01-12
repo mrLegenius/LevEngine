@@ -92,6 +92,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Assets\SkeletonAsset.h" />
+    <ClInclude Include="src\Renderer\3D\Skeleton.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
@@ -980,6 +982,8 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Assets\SkeletonAsset.cpp" />
+    <ClCompile Include="src\Renderer\3D\Skeleton.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />

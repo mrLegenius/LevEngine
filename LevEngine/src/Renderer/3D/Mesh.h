@@ -58,12 +58,7 @@ namespace LevEngine
 
         [[nodiscard]] bool IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) const;
 
-		[[nodiscard]] UnorderedMap<String, BoneInfo>& GetBoneInfoMap() { return m_BoneInfoMap; }
-		
 		[[nodiscard]] Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& GetBoneWeights();
-
-		[[nodiscard]] int& GetBoneCount() { return m_BoneCounter; }
-		void SetBoneCount(int value) { m_BoneCounter = value; }
 
 		void AddBoneWeight(int vertexIdx, int boneID, float weight);
 		void ResizeBoneArrays(size_t size);
@@ -86,8 +81,6 @@ namespace LevEngine
 		Vector<Array<int, AnimationConstants::MaxBoneInfluence>> m_BoneIds;
 		Vector<Array<float, AnimationConstants::MaxBoneInfluence>> m_Weights;
 		Vector<int> m_BoneWeightCounters;
-		UnorderedMap<String, BoneInfo> m_BoneInfoMap;
-		int m_BoneCounter = 0;
 
 		AABBBoundingVolume m_BoundingVolume{};
 };

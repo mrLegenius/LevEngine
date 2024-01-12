@@ -31,7 +31,7 @@ namespace LevEngine
         return m_Duration;
     }
 
-    NodeData* Animation::GetRootNode()
+    SkeletonNodeData* Animation::GetRootNode()
     {
         return m_RootNode;
     }

@@ -13,13 +13,14 @@
 #include "Renderer/3D/Mesh.h"
 #include "Renderer/3D/MeshLoading/AssimpConverter.h"
 #include "Kernel/Asserts.h"
+#include "Renderer/3D/Skeleton.h"
 
 namespace LevEngine
 {
 class MeshLoader
 {
 public:
-	static Ref<Mesh> LoadMesh(const Path& path)
+	static Ref<Mesh> LoadMesh(const Path& path, Ref<Skeleton>& resultSkeleton)
 	{
 		Assimp::Importer importer;
 
@@ -36,7 +37,7 @@ public:
 		);
 
 		Ref<Mesh> resultMesh = CreateRef<Mesh>();
-		
+
 		if (nullptr == scene)
 		{
 			Log::CoreWarning("Failed to load mesh in {0}. Returning empty mesh", path.string());
@@ -45,13 +46,13 @@ public:
 
 		auto& rootNode = scene->mRootNode;
 
-		// if (rootNode->mNumMeshes == 0)
-		// {
-		// 	Log::CoreWarning("There is no mesh in file {0}. Returning empty mesh", path.string());
-		// 	return resultMesh;
-		// }
+		if (rootNode->mNumMeshes == 0)
+		{
+			Log::CoreWarning("There is no mesh in file {0}. Returning empty mesh", path.string());
+			return resultMesh;
+		}
 
-		ParseMesh(rootNode, scene, resultMesh, Matrix::Identity);
+		ParseMesh(rootNode, scene, resultMesh, resultSkeleton, Matrix::Identity);
 
 		Vector3 aabbMin, aabbMax;
 		FindBoundingBoxBorders(resultMesh, aabbMin, aabbMax);
@@ -62,11 +63,12 @@ public:
 		return resultMesh;
 	}
 
-	static void ParseMesh(const aiNode* node, const aiScene* scene, Ref<Mesh>& resultMesh, Matrix cumulativeTransform)
+	static void ParseMesh(const aiNode* node, const aiScene* scene, Ref<Mesh>& resultMesh,
+		Ref<Skeleton>& resultSkeleton, Matrix cumulativeTransform)
 	{
 		const Matrix currentNodeTransform = AssimpConverter::ToMatrix(node->mTransformation, true);
 		cumulativeTransform *= currentNodeTransform;
-
+		
 		for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 		{
 			const int meshIdx = node->mMeshes[i];
@@ -99,7 +101,7 @@ public:
 				resultMesh->AddBiTangent(biTangent);
 			}
 
-			ExtractBoneWeightForVertices(resultMesh, mesh, firstVertexId);
+			ExtractBoneWeightsAndSkeletonBones(resultMesh, resultSkeleton, mesh, firstVertexId);
 
 			const size_t nFaces = mesh->mNumFaces;
 			const aiFace* meshFaces = mesh->mFaces;
@@ -113,7 +115,7 @@ public:
 
 		for (unsigned int i = 0; i < node->mNumChildren; ++i)
 		{
-			ParseMesh(node->mChildren[i], scene, resultMesh, cumulativeTransform);
+			ParseMesh(node->mChildren[i], scene, resultMesh, resultSkeleton, cumulativeTransform);
 		}
 
 		resultMesh->NormalizeBoneWeights();
@@ -125,27 +127,30 @@ public:
 	 * Assimp stores meshes in hierarchy, but we flatten them to one mesh, so we require offsets.
 	 * </params>
 	 */
-	static void ExtractBoneWeightForVertices(const Ref<Mesh>& resultMesh, const aiMesh* mesh, const uint32_t firstVertexId)
+	static void ExtractBoneWeightsAndSkeletonBones(const Ref<Mesh>& resultMesh, Ref<Skeleton>& resultSkeleton,
+		const aiMesh* mesh, const uint32_t firstVertexId)
 	{
+		if (mesh->mNumBones > 0 && resultSkeleton == nullptr)
+		{
+			resultSkeleton = CreateRef<Skeleton>();
+		}
+		
 		for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
 		{
-			int boneID = -1;
+			int boneID;
 			String boneName = mesh->mBones[boneIndex]->mName.C_Str();
-			UnorderedMap<String, BoneInfo>& boneInfoMap = resultMesh->GetBoneInfoMap();
+			UnorderedMap<String, BoneInfo>& boneInfoMap = resultSkeleton->GetBoneInfoMap();
 
 			if (!boneInfoMap.count(boneName))
 			{
 				BoneInfo newBoneInfo;
-				int boneCount = resultMesh->GetBoneCount();
+				const int boneCount = boneInfoMap.size();
 
 				newBoneInfo.id = boneCount;
-				newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix, false);
+				newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix, true);
 				
 				boneInfoMap[boneName] = newBoneInfo;
 				boneID = boneCount;
-				boneCount++;
-
-				resultMesh->SetBoneCount(boneCount);
 			}
 			else
 			{

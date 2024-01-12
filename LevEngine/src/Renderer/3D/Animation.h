@@ -8,14 +8,14 @@
 
 namespace LevEngine
 {
-    struct NodeData
+    class Skeleton;
+
+    struct SkeletonNodeData
     {
         Matrix boneBindPoseTransform;
-        Matrix boneCurrentTransform;
-        Matrix boneModelToLocalTransform;
         String name;
-        Vector<NodeData*> children;
-        NodeData* parent;
+        Vector<SkeletonNodeData*> children;
+        SkeletonNodeData* parent;
     };
 
     class Animation
@@ -28,7 +28,7 @@ namespace LevEngine
 
         [[nodiscard]] double GetTicksPerSecond() const;
         [[nodiscard]] double GetDuration() const;
-        [[nodiscard]] NodeData* GetRootNode();
+        [[nodiscard]] SkeletonNodeData* GetRootNode();
         [[nodiscard]] const UnorderedMap<String, BoneInfo>& GetBoneIDMap() const;
         [[nodiscard]] const String& GetName() const;
 
@@ -36,8 +36,7 @@ namespace LevEngine
         double m_Duration{};
         double m_TicksPerSecond{};
         Vector<Bone> m_Bones{};
-        NodeData* m_RootNode = new NodeData();
-        UnorderedMap<String, BoneInfo> m_BoneInfoMap{};
         String m_Name;
+        Ref<Skeleton> m_Skeleton;
     };
 }

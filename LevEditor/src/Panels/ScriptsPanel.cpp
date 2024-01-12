@@ -14,7 +14,7 @@ namespace LevEngine::Editor
 
     void ScriptsPanel::DrawContent()
     {
-        LEV_PROFILE_FUNCTION()
+        LEV_PROFILE_FUNCTION();
 		
         const auto& activeScene = SceneManager::GetActiveScene();
 
