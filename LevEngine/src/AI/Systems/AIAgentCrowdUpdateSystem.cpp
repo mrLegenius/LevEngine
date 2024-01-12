@@ -22,13 +22,6 @@ namespace LevEngine
             {
                 agentCrowdComponent.Init();    
             }
-
-            // m_deltaTimeCounter += deltaTime;
-            // if(m_deltaTimeCounter > m_updatePeriod)
-            // {
-            //
-            //     m_deltaTimeCounter = 0;
-            // }
             
             agentCrowdComponent.Update(deltaTime);
             agentCrowdComponent.UpdateAgentsPosition();
