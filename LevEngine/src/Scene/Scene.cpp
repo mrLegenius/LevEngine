@@ -5,6 +5,8 @@
 #include "Renderer/Renderer.h"
 
 #include "Entity.h"
+#include "AI/Components/AIAgentCrowdComponent.h"
+#include "AI/Systems/AIAgentCrowdUpdateSystem.h"
 #include "Assets/ScriptAsset.h"
 #include "Components/Components.h"
 #include "Components/Audio/AudioListener.h"
@@ -65,6 +67,8 @@ namespace LevEngine
         RegisterUpdateSystem<AudioListenerInitSystem>();
 
         RegisterUpdateSystem<RigidbodyInitSystem>();
+
+        RegisterUpdateSystem<AIAgentCrowdUpdateSystem>();
 
         RegisterLateUpdateSystem<EntityDestroySystem>();
 

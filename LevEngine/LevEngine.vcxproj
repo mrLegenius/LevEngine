@@ -94,24 +94,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h" />
-    <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
-    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
-    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
+    <ClInclude Include="src\AI\Components\AIAgentComponent.h" />
+    <ClInclude Include="src\AI\Components\AIAgentCrowdComponent.h" />
+    <ClInclude Include="src\AI\Systems\AIAgentCrowdUpdateSystem.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\SceneAsset.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
@@ -161,24 +146,6 @@
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
     <ClInclude Include="src\Physics\Physics.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h" />
-    <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
-    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
-    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h" />
     <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
@@ -1061,6 +1028,9 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AI\Components\AIAgentComponent.cpp" />
+    <ClCompile Include="src\AI\Components\AIAgentCrowdComponent.cpp" />
+    <ClCompile Include="src\AI\Systems\AIAgentCrowdUpdateSystem.cpp" />
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\SceneAsset.cpp" />
@@ -1469,6 +1439,9 @@
     <Natvis Include="external\entt\resource.natvis" />
     <Natvis Include="external\entt\signal.natvis" />
     <Natvis Include="external\sol\sol2.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\AI\NewDirectory1\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
