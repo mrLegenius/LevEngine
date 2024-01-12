@@ -21,7 +21,7 @@ namespace Sandbox
 				
                 auto& enemyTransform = enemyEntity.GetComponent<Transform>();
                 auto randomPosition = Random::Vec3(-20.0f, 20.0f);
-                randomPosition.y = 2.0f;
+                randomPosition.y = 5.0f;
                 enemyTransform.SetWorldPosition(randomPosition);
 
                 auto& enemy = enemyEntity.AddComponent<Enemy>();

@@ -10,7 +10,7 @@ Entities:
     Character Controller:
       Is Visualization Enabled: true
       Capsule Controller Radius: 1
-      Capsule Controller Half Height: 0.699999988
+      Capsule Controller Half Height: 1
       Capsule Controller Climbing Mode: 1
       Controller Center: [0, 2, 0]
       Slope Limit: 0.707000017

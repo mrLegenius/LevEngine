@@ -1,20 +1,21 @@
 ﻿#include "levpch.h"
+#include "Kernel/Application.h"
+#include "Renderer/DebugRender/DebugRender.h"
 #include "Physics.h"
-
 #include "PhysicsUtils.h"
 #include "Components/Controller.h"
-#include "Physics/Components/Rigidbody.h"
-#include "Renderer/DebugRender/DebugRender.h"
-
-constexpr auto DEFAULT_PVD_HOST = "127.0.0.1";
-constexpr auto DEFAULT_PVD_PORT = 5425;
-constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
-constexpr auto DEFAULT_NUMBER_CPU_THREADS = 2;
-
-constexpr Vector3 DEFAULT_GRAVITY_SCALE = Vector3(0.0f, -9.81f, 0.0f);
 
 namespace LevEngine
 {
+    constexpr auto DEFAULT_PVD_HOST = "127.0.0.1";
+    constexpr auto DEFAULT_PVD_PORT = 5425;
+    constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
+    constexpr auto DEFAULT_NUMBER_CPU_THREADS = 2;
+
+    constexpr auto DEFAULT_STATIC_FRICTION = 0.5f;
+    constexpr auto DEFAULT_DYNAMIC_FRICTION = 0.5f;
+    constexpr auto DEFAULT_RESTITUTION = 0.6f;
+    
     Scope<Physics> Physics::Create()
     {
         return CreateScope<Physics>();
@@ -54,12 +55,13 @@ namespace LevEngine
         PX_RELEASE(m_Scene)
         
         physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
-        sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(DEFAULT_GRAVITY_SCALE);
+        sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(m_GravityScale);
         sceneDesc.cpuDispatcher	= m_Dispatcher;
         sceneDesc.filterShader = ContactReportCallback::ContactReportFilterShader;
         sceneDesc.simulationEventCallback = &m_ContactReportCallback;
         m_Scene = m_Physics->createScene(sceneDesc);
         m_ControllerManager = PxCreateControllerManager(*m_Scene);
+        m_ControllerManager->setDebugRenderingFlags(physx::PxControllerDebugRenderFlag::eALL);
         
         if (m_IsDebugRenderEnabled)
         {
@@ -67,11 +69,13 @@ namespace LevEngine
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
         }
+
+        m_ActorEntityMap.clear();
     }
 
     physx::PxRigidActor* Physics::CreateStaticActor(const Entity entity)
     {
-        const auto transform = entity.GetComponent<Transform>();
+        const auto& transform = entity.GetComponent<Transform>();
         physx::PxRigidActor* actor = m_Physics->createRigidStatic(PhysicsUtils::FromTransformToPxTransform(transform));
         m_Scene->addActor(*actor);
 
@@ -82,7 +86,7 @@ namespace LevEngine
 
     physx::PxRigidActor* Physics::CreateDynamicActor(const Entity entity)
     {
-        const auto transform = entity.GetComponent<Transform>();
+        const auto& transform = entity.GetComponent<Transform>();
         physx::PxRigidActor* actor = m_Physics->createRigidDynamic(PhysicsUtils::FromTransformToPxTransform(transform));
         m_Scene->addActor(*actor);
 
@@ -99,7 +103,11 @@ namespace LevEngine
         PX_RELEASE(actor)
     }
     
-    physx::PxMaterial* Physics::CreateMaterial(float staticFriction, float dynamicFriction, float restitution) const
+    physx::PxMaterial* Physics::CreatePhysicMaterial(
+        float staticFriction = DEFAULT_STATIC_FRICTION,
+        float dynamicFriction = DEFAULT_DYNAMIC_FRICTION,
+        float restitution = DEFAULT_RESTITUTION
+    ) const
     {
         const auto material =
             m_Physics->createMaterial(
@@ -111,73 +119,83 @@ namespace LevEngine
         return material;
     }
 
-    physx::PxShape* Physics::CreateSphere(const float radius, const physx::PxMaterial* material) const
+    physx::PxShape* Physics::CreateSphere(const float radius) const
     {
+        const auto material =
+            App::Get().GetPhysics().CreatePhysicMaterial();
+        
         const auto sphere =
             m_Physics->createShape(
                 physx::PxSphereGeometry(radius),
                 *material,
                 true
             );
+
+        material->release();
         
         return sphere;
     }
 
-    physx::PxShape* Physics::CreateCapsule(const float radius, const float halfHeight, const physx::PxMaterial* material) const
+    physx::PxShape* Physics::CreateCapsule(const float radius, const float halfHeight) const
     {
+        const auto material =
+            App::Get().GetPhysics().CreatePhysicMaterial();
+        
         const auto capsule =
             m_Physics->createShape(
                 physx::PxCapsuleGeometry(radius, halfHeight),
                 *material,
                 true
             );
+
+        material->release();
         
         return capsule;
     }
 
-    physx::PxShape* Physics::CreateBox(const Vector3 halfExtents, const physx::PxMaterial* material) const
+    physx::PxShape* Physics::CreateBox(const Vector3 halfExtents) const
     {
+        const auto material =
+            App::Get().GetPhysics().CreatePhysicMaterial();
+        
         const auto box =
             m_Physics->createShape(
                 physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents)),
                 *material,
                 true
             );
+
+        material->release();
         
         return box;
     }
 
     physx::PxController* Physics::CreateCapsuleController(
-        const Entity entity,
+        Entity entity,
         const float radius,
         const float height,
-        const Controller::ClimbingMode climbingMode,
-        physx::PxMaterial* material)
+        const Controller::ClimbingMode climbingMode = Controller::ClimbingMode::Constrained
+    )
     {
-        auto transform = entity.GetComponent<Transform>();
+        const auto material = App::Get().GetPhysics().CreatePhysicMaterial();
+
+        const auto controllerPosition =
+            entity.GetComponent<Transform>().GetWorldPosition() +
+                entity.GetComponent<CharacterController>().GetCenterOffset();
+        
         physx::PxCapsuleControllerDesc desc;
-        desc.position = PhysicsUtils::FromVector3ToPxExtendedVec3(transform.GetWorldPosition());
-        desc.radius = radius;
         desc.height = height;
+        desc.radius = radius;
         desc.climbingMode = static_cast<physx::PxCapsuleClimbingMode::Enum>(static_cast<int>(climbingMode));
         desc.material = material;
-        desc.upDirection = PhysicsUtils::FromVector3ToPxVec3(Vector3::Right);
+        desc.position = PhysicsUtils::FromVector3ToPxExtendedVec3(controllerPosition);
+        desc.scaleCoeff = 1.0f;
         physx::PxController* controller = m_ControllerManager->createController(desc);
+
+        material->release();
         
         const auto actor = controller->getActor();
         m_ActorEntityMap.insert({actor, entity});
-        
-        // turn the capsule into an upright position
-        physx::PxShape* collider[1];
-        const auto nbColliders = actor->getNbShapes();
-        actor->getShapes(collider, nbColliders);
-        collider[0]->setLocalPose(
-            physx::PxTransform(
-                PhysicsUtils::FromQuaternionToPxQuat(
-                    Quaternion::CreateFromAxisAngle(Vector3::Forward, Math::ToRadians(90.0f))
-                )
-            )
-        );
         
         return controller;
     }
@@ -197,7 +215,7 @@ namespace LevEngine
 
     Vector3 Physics::GetGravity() const
     {
-        return PhysicsUtils::FromPxVec3ToVector3(m_Scene->getGravity());
+        return m_GravityScale;
     }
     
     void Physics::ClearAccumulator()

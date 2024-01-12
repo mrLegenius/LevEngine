@@ -8,25 +8,25 @@ Entities:
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Character Controller:
-      Is Visualization Enabled: true
-      Controller Type: 1
       Capsule Controller Radius: 1
       Capsule Controller Half Height: 2
       Capsule Controller Climbing Mode: 1
-      Controller Center: [0, 3, 0]
-      Slope Limit: 0.707000017
-      Step Offset: 0.5
-      Contact Offset: 0.100000001
+      Controller Center: [0, 2, 0]
+      Slope Limit: 45
+      Step Offset: 1
+      Contact Offset: 0.00100000005
       Minimum Movement Distance: 0.00100000005
       Non Walkable Mode: 0
-      Static Friction: 0.5
-      Dynamic Friction: 0.800000012
-      Restitution: 0
-  - Entity: 3609519582529224002
-    Tag: Camera
+      Dynamic Friction: 1
+      Static Friction: 1
+      Bounciness: 0
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
+  - Entity: 11146412176837588455
+    Tag: Head
     Parent: 16534605177672028581
     Transform:
-      Position: [0, 4, 0]
+      Position: [0, 4.5, -0.5]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Camera:
@@ -35,19 +35,23 @@ Entities:
         PerspectiveFOV: 45
         PerspectiveNear: 0.100000001
         PerspectiveFar: 1000
-        OrthographicSize: 5
-        OrthographicNear: 9.99999975e-05
-        OrthographicFar: 487.200012
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
       Main: true
       FixedAspectRatio: false
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 15608248225095435140
+      Cast Shadow: true
     AudioListener:
       {}
   - Entity: 8193487410668680548
     Tag: Weapon
-    Parent: 3609519582529224002
+    Parent: 11146412176837588455
     Transform:
-      Position: [0.800000012, -0.800000012, -2.5999999]
-      Rotation: [0.043633204, 0.0628308877, -4.89410157e-09]
+      Position: [0, -1, -1.5]
+      Rotation: [-0, 0, 0]
       Scale: [0.5, 0.5, 0.5]
     MeshRenderer:
       Mesh: 5721017995879216389

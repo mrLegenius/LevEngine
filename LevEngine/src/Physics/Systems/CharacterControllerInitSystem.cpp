@@ -1,8 +1,7 @@
 ﻿#include "levpch.h"
-#include "CharacterControllerInitSystem.h"
-
-#include "Physics/Components/CharacterController.h"
 #include "Scene/Components/Transform/Transform.h"
+#include "CharacterControllerInitSystem.h"
+#include "Physics/Components/CharacterController.h"
 
 namespace LevEngine
 {
@@ -13,7 +12,6 @@ namespace LevEngine
         for (const auto entity : view)
         {
             auto [transform, characterController] = view.get<Transform, CharacterController>(entity);
-
             if (!characterController.IsInitialized())
             {
                 const auto gameObject = Entity(entt::handle(registry, entity));

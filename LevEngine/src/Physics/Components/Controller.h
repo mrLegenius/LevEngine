@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "PhysicalMaterial.h"
+#include "PhysicMaterial.h"
 
 namespace LevEngine
 {
@@ -11,24 +11,23 @@ namespace LevEngine
             Constrained
         };
 
-        float Radius = 0.5f;
-        float HalfHeight = 0.5f;
-        ClimbingMode m_ClimbingMode = ClimbingMode::Constrained;
-        
         enum class NonWalkableMode
         {
             PreventClimbing,
             PreventClimbingAndForceSliding
         };
-
-        Vector3 Center = Vector3::Zero;
         
-        float SlopeLimit = 0.707f;
+        float SlopeLimit = 45.0f;
         float StepOffset = 0.5f;
-        float ContactOffset = 0.1f;
-        float MinimumMovementDistance = 0.001f;
+        float SkinWidth = 0.1f;
+        float MinMoveDistance = 0.001f;
         NonWalkableMode m_NonWalkableMode = NonWalkableMode::PreventClimbing;
+        
+        Vector3 CenterOffset = Vector3::Zero;
+        float Radius = 0.5f;
+        float Height = 0.5f;
+        ClimbingMode m_ClimbingMode = ClimbingMode::Constrained;
 
-        Ref<PhysicalMaterial> m_PhysicalMaterial { CreateRef<PhysicalMaterial>() };
+        Ref<PhysicMaterial> m_PhysicalMaterial { CreateRef<PhysicMaterial>() };
     };
 }

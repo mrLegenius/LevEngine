@@ -1,74 +1,64 @@
 #pragma once
-#include <complex>
-
-#include "FPSGame/Components/Player.h"
-#include "Physics/Physics.h"
-#include "Physics/Components/CharacterController.h"
 
 namespace Sandbox
 {
-    constexpr float MAX_WALK_SPEED = 1.0f;
-    constexpr float MAX_SPRINT_SPEED = 2.0f;
+    constexpr float WALK_SPEED = 1.0f;
+    constexpr float SPRINT_SPEED = 2.0f;
+    constexpr float MOVEMENT_MULTIPLIER = 0.25f;
+    constexpr float GRAVITY_MULTIPLIER = 0.01f;
     
     class FPSMovementSystem final : public System
     {
         void Update(const float deltaTime, entt::registry& registry) override
         {
+            constexpr auto sensitivity = 45.0f;
+            const Vector2 input = Input::GetMouseDelta();
+            const auto delta = input * sensitivity * deltaTime;
+
             const auto playerView = registry.view<Transform, Player, CharacterController>();
-            
-            for (const auto entity : playerView)
+            for (const auto playerEntity : playerView)
             {
-                auto [transform, player, controller] = playerView.get<Transform, Player, CharacterController>(entity);
-                
-                const auto& cameraTransform = transform.GetChildren()[0].GetComponent<Transform>();
+                auto [playerTransform, player, playerController] = playerView.get<Transform, Player, CharacterController>(playerEntity);
+
+                auto playerRotation = playerTransform.GetWorldRotation().ToEuler() * Math::RadToDeg;
+                playerRotation.y -= delta.x;
+                playerTransform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(playerRotation * Math::DegToRad));
                 
                 if (Input::IsKeyDown(KeyCode::LeftShift))
                 {
-                    player.Speed = MAX_SPRINT_SPEED;
+                    player.Speed = SPRINT_SPEED;
                 }
                 else
                 {
-                    player.Speed = MAX_WALK_SPEED;
+                    player.Speed = WALK_SPEED;
                 }
+                player.Speed *= MOVEMENT_MULTIPLIER;
 
-                auto displacement = Vector3::Zero;
-                const auto gravity = App::Get().GetPhysics().GetGravity();
-                
+                auto movementDirection = Vector3::Zero;
                 if (Input::IsKeyDown(KeyCode::W))
                 {
-                    displacement += cameraTransform.GetForwardDirection();
+                    movementDirection += playerTransform.GetForwardDirection();
                 }
-                else if (Input::IsKeyDown(KeyCode::S))
+                if (Input::IsKeyDown(KeyCode::S))
                 {
-                    displacement -= cameraTransform.GetForwardDirection();
+                    movementDirection -= playerTransform.GetForwardDirection();
                 }
                 if (Input::IsKeyDown(KeyCode::A))
                 {
-                    displacement -= cameraTransform.GetRightDirection();
+                    movementDirection -= playerTransform.GetRightDirection();
                 }
-                else if (Input::IsKeyDown(KeyCode::D))
+                if (Input::IsKeyDown(KeyCode::D))
                 {
-                    displacement += cameraTransform.GetRightDirection();
+                    movementDirection += playerTransform.GetRightDirection();
                 }
+                movementDirection.Normalize();
                 
-                displacement.Normalize();
-
-                displacement *= player.Speed * 0.25f;
-
-                // apply gravity
-                if (displacement.y <= 0.0f)
-                {
-                    displacement.y = gravity.y * deltaTime;
-                }
-                else
-                {
-                    displacement.y += gravity.y * 10.0f * deltaTime;
-                }
-
-                if (displacement != Vector3::Zero)
-                {
-                    controller.Move(displacement, deltaTime);
-                }
+                auto displacement = movementDirection * player.Speed;
+                
+                const auto gravity = App::Get().GetPhysics().GetGravity().y;
+                displacement.y += gravity * GRAVITY_MULTIPLIER;
+                
+                playerController.Move(displacement, deltaTime);
             }
         }
     };

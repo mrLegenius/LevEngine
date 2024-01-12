@@ -1,5 +1,4 @@
 #pragma once
-#include "Physics/Physics.h"
 
 namespace Sandbox
 {
@@ -11,16 +10,13 @@ namespace Sandbox
 
             for (const auto entity : cameraView)
             {
-                auto [cameraTransform, camera] = cameraView.get<Transform, CameraComponent>(entity);
-
-                if (!camera.IsMain) continue;
+                const auto [cameraTransform, camera] = cameraView.get<Transform, CameraComponent>(entity);
 
                 if (Input::IsMouseButtonPressed(MouseButton::Left))
                 {
                     const auto projectilePrefab = ResourceManager::LoadAsset<PrefabAsset>("ProjectilePrefab");
                     auto projectile = projectilePrefab->Instantiate(SceneManager::GetActiveScene());
-
-                    // TODO: ADD MUZZLE SOCKET
+                    
                     auto& projectileTransform = projectile.GetComponent<Transform>();
                     projectileTransform.SetWorldPosition(cameraTransform.GetWorldPosition() + cameraTransform.GetForwardDirection() * 2);
 
@@ -28,10 +24,10 @@ namespace Sandbox
                     projectileParams.Speed = 25;
                     projectileParams.Lifetime = 2;
                     projectileParams.Timer = 0;
-
-                    // TODO: NEED TO FIX INITIALIZATION SYSTEM
+                    
+                    const auto gameObject = Entity(entt::handle(registry, projectile));
                     auto& projectileRigidbody = projectile.GetComponent<Rigidbody>();
-                    const auto& gameObject = Entity(entt::handle(registry, projectile));
+                    // TODO: NEED TO FIX INITIALIZATION SYSTEM
                     projectileRigidbody.Initialize(gameObject);
                     projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
                     

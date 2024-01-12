@@ -8,22 +8,18 @@ namespace Sandbox
     {
         void Update(float deltaTime, entt::registry& registry) override
         {
-            const auto enemyView = registry.view<Transform, Enemy, CharacterController>();
-            
-            const auto playerView = registry.view<Transform, Player>();
-            
             Vector3 playerPosition;
-            bool foundPlayer = false;
-            
-            for (const auto player : playerView)
+            bool isPlayerFounded = false;
+
+            for (const auto playerView = registry.view<Transform, Player>(); const auto player : playerView)
             {
                 playerPosition = playerView.get<Transform>(player).GetWorldPosition();
-                foundPlayer = true;
+                isPlayerFounded = true;
             }
             
-            if (!foundPlayer) return;
-            
-            for (const auto entity : enemyView)
+            if (!isPlayerFounded) return;
+
+            for (const auto enemyView = registry.view<Transform, Enemy, CharacterController>(); const auto entity : enemyView)
             {
                 auto [transform, enemy, controller] = enemyView.get<Transform, Enemy, CharacterController>(entity);
 
@@ -47,7 +43,7 @@ namespace Sandbox
                 else
                 {
                     displacement.y += gravity.y * 10.0f * deltaTime;
-                }
+                } 
                 
                 controller.Move(displacement, deltaTime);
             }

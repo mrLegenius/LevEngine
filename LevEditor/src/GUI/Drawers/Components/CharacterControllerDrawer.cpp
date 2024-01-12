@@ -11,26 +11,28 @@ namespace LevEngine::Editor
         
         void DrawContent(CharacterController& component) override
         {
-            EditorGUI::DrawCheckBox("Debug Draw", BindGetter(&CharacterController::IsVisualizationEnabled, &component), BindSetter(&CharacterController::EnableVisualization, &component));
-
-            EditorGUI::DrawVector3Control("Center", BindGetter(&CharacterController::GetControllerCenter, &component), BindSetter(&CharacterController::SetControllerCenter, &component));
-            EditorGUI::DrawFloatControl("Radius", BindGetter(&CharacterController::GetCapsuleControllerRadius, &component), BindSetter(&CharacterController::SetCapsuleControllerRadius, &component), 0.1f, FLT_EPSILON, FLT_MAX);
-            EditorGUI::DrawFloatControl("Half Height", BindGetter(&CharacterController::GetCapsuleControllerHalfHeight, &component), BindSetter(&CharacterController::SetCapsuleControllerHalfHeight, &component), 0.1f, FLT_EPSILON, FLT_MAX);
-            const Array<String, 2> climbingModeStrings{"Easy","Constrained"};
-            EditorGUI::DrawComboBox<Controller::ClimbingMode, 2>("Climbing Mode", climbingModeStrings,
-                BindGetter(&CharacterController::GetCapsuleControllerClimbingMode, &component), BindSetter(&CharacterController::SetCapsuleControllerClimbingMode, &component));
-
-            EditorGUI::DrawFloatControl("Slope Limit", BindGetter(&CharacterController::GetSlopeLimit, &component), BindSetter(&CharacterController::SetSlopeLimit, &component));
-            EditorGUI::DrawFloatControl("Step Offset", BindGetter(&CharacterController::GetStepOffset, &component), BindSetter(&CharacterController::SetStepOffset, &component));
-            EditorGUI::DrawFloatControl("Contact Offset", BindGetter(&CharacterController::GetContactOffset, &component), BindSetter(&CharacterController::SetContactOffset, &component));
-            EditorGUI::DrawFloatControl("Minimum Movement Distance", BindGetter(&CharacterController::GetMinimumMovementDistance, &component), BindSetter(&CharacterController::SetMinimumMovementDistance, &component));
-            const Array<String, 2> nonWalkableModeStrings{"Prevent Climbing","Prevent Climbing And Force Sliding"};
-            EditorGUI::DrawComboBox<Controller::NonWalkableMode, 2>("Non Walkable Mode", nonWalkableModeStrings,
-                BindGetter(&CharacterController::GetNonWalkableMode, &component), BindSetter(&CharacterController::SetNonWalkableMode, &component));
+            EditorGUI::DrawFloatControl("Slope Limit", BindGetter(&CharacterController::GetSlopeLimit, &component), BindSetter(&CharacterController::SetSlopeLimit, &component), 1.0f, 0.0f, 45.0f);
+            EditorGUI::DrawFloatControl("Step Offset", BindGetter(&CharacterController::GetStepOffset, &component), BindSetter(&CharacterController::SetStepOffset, &component), 0.1f, 0.0f, FLT_MAX);
+            EditorGUI::DrawFloatControl("Skin Width", BindGetter(&CharacterController::GetSkinWidth, &component), BindSetter(&CharacterController::SetSkinWidth, &component), 0.1f, FLT_EPSILON, FLT_MAX);
+            EditorGUI::DrawFloatControl("Min Move Distance", BindGetter(&CharacterController::GetMinMoveDistance, &component), BindSetter(&CharacterController::SetMinMoveDistance, &component), 0.1f, 0.0f, FLT_MAX);
             
-            EditorGUI::DrawFloatControl("Static Friction", BindGetter(&CharacterController::GetStaticFriction, &component), BindSetter(&CharacterController::SetStaticFriction, &component), 0.1f, 0.0f, FLT_MAX);
-            EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&CharacterController::GetDynamicFriction, &component), BindSetter(&CharacterController::SetDynamicFriction, &component), 0.1f, 0.0f, FLT_MAX);
-            EditorGUI::DrawFloatControl("Restitution", BindGetter(&CharacterController::GetRestitution, &component), BindSetter(&CharacterController::SetRestitution, &component), 0.1f, 0.0f, FLT_MAX);
+            EditorGUI::DrawVector3Control("Center", BindGetter(&CharacterController::GetCenterOffset, &component), BindSetter(&CharacterController::SetCenterOffset, &component));
+            EditorGUI::DrawFloatControl("Radius", BindGetter(&CharacterController::GetRadius, &component), BindSetter(&CharacterController::SetRadius, &component), 0.1f, FLT_EPSILON, FLT_MAX);
+            EditorGUI::DrawFloatControl("Height", BindGetter(&CharacterController::GetHeight, &component), BindSetter(&CharacterController::SetHeight, &component), 0.1f, 0.0f, FLT_MAX);
+
+            if (ImGui::TreeNode("Physic Material"))
+            {
+                EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&CharacterController::GetDynamicFriction, &component), BindSetter(&CharacterController::SetDynamicFriction, &component), 0.1f, 0.0f, FLT_MAX);
+                EditorGUI::DrawFloatControl("Static Friction", BindGetter(&CharacterController::GetStaticFriction, &component), BindSetter(&CharacterController::SetStaticFriction, &component), 0.1f, 0.0f, FLT_MAX);
+                EditorGUI::DrawFloatControl("Bounciness", BindGetter(&CharacterController::GetBounciness, &component), BindSetter(&CharacterController::SetBounciness, &component), 0.1f, 0.0f, 1.0f);
+                const Array<String, 4> frictionCombineModeStrings {"Average","Minimum", "Multiply", "Maximum"};
+                EditorGUI::DrawComboBox<PhysicMaterial::CombineMode, 4>("Friction Combine", frictionCombineModeStrings,
+                    BindGetter(&CharacterController::GetFrictionCombineMode, &component), BindSetter(&CharacterController::SetFrictionCombineMode, &component));
+                const Array<String, 4> bounceCombineModeStrings {"Average","Minimum", "Multiply", "Maximum"};
+                EditorGUI::DrawComboBox<PhysicMaterial::CombineMode, 4>("Bounce Combine", frictionCombineModeStrings,
+                    BindGetter(&CharacterController::GetBounceCombineMode, &component), BindSetter(&CharacterController::SetBounceCombineMode, &component));
+               ImGui::TreePop(); 
+            }
         }
     };
 }

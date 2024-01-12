@@ -18,21 +18,21 @@ namespace LevEngine::Editor
                 * Matrix::CreateTranslation(transform.GetWorldPosition());
 
             Matrix controllerTranslationModel =
-                Matrix::CreateTranslation(component.GetControllerCenter());
+                Matrix::CreateTranslation(component.GetCenterOffset());
             
             Vector3 transformScale = transform.GetWorldScale();
-            const float maxScale = Math::MaxElement(transformScale);
+            const float maxTransformScale = Math::MaxElement(transformScale);
 
             colliderModel =
-                Matrix::CreateScale(maxScale);
+                Matrix::CreateScale(maxTransformScale);
             // turn the debug capsule into an upright position
             colliderModel *= Matrix::CreateFromAxisAngle(Vector3::Forward, Math::ToRadians(90.0f));
             colliderModel *= controllerTranslationModel;
             colliderModel *= transformModel;
             DebugRender::DrawWireCapsule(
                 colliderModel,
-                component.GetCapsuleControllerHalfHeight(),
-                component.GetCapsuleControllerRadius(),
+                component.GetHeight() / 2.0f,
+                component.GetRadius(),
                 Color::Pink
             );
         } 

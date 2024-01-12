@@ -10,6 +10,7 @@
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Camera/Camera.h"
+#include "Components/Transform/Transform.h"
 #include "Kernel/Application.h"
 #include "Kernel/Window.h"
 #include "Scripting/ScriptingManager.h"

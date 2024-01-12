@@ -1,9 +1,9 @@
 ﻿#include "levpch.h"
-#include "PhysicsUpdate.h"
-
-#include "Physics.h"
 #include "PhysicsUtils.h"
+#include "Physics.h"
+#include "PhysicsUpdate.h"
 #include "Components/Rigidbody.h"
+#include "Components/ConstantForce.h"
 
 namespace LevEngine
 {
@@ -12,14 +12,25 @@ namespace LevEngine
         const auto rigidbodyView = registry.view<Transform, Rigidbody>();
         for (const auto entity : rigidbodyView)
         {
-            auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
+            auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
 
-            if (rigidbody.GetActor() == NULL) break;
+            if (rigidbody.GetActor() == NULL) continue;
             
             rigidbody.m_TriggerEnterBuffer.clear();
             rigidbody.m_TriggerExitBuffer.clear();
             rigidbody.m_CollisionEnterBuffer.clear();
             rigidbody.m_CollisionExitBuffer.clear();
+        }
+
+        const auto controllerView = registry.view<Transform, CharacterController>();
+        for (const auto entity : controllerView)
+        {
+            auto [transform, controller] = controllerView.get<Transform, CharacterController>(entity);
+
+            if (controller.GetController() == NULL) continue;
+            
+            controller.m_CollisionEnterBuffer.clear();
+            controller.m_CollisionExitBuffer.clear();
         }
     }
     
@@ -30,7 +41,7 @@ namespace LevEngine
         {
             auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
 
-            if (rigidbody.GetActor() == NULL) break;
+            if (rigidbody.GetActor() == NULL) continue;
             
             const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
             transform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
@@ -43,10 +54,11 @@ namespace LevEngine
         {
             auto [transform, controller] = controllerView.get<Transform, CharacterController>(entity);
 
-            if (controller.GetController() == NULL) break;
+            if (controller.GetController() == NULL) continue;
             
-            const physx::PxTransform actorPose = controller.GetActor()->getGlobalPose();
-            transform.SetWorldPosition(PhysicsUtils::FromPxVec3ToVector3(actorPose.p));
+            const auto transformPosition =
+                PhysicsUtils::FromPxExtendedVec3ToVector3(controller.GetController()->getPosition()) - controller.GetCenterOffset();
+            transform.SetWorldPosition(transformPosition);
             controller.SetTransformScale(transform.GetWorldScale());
         }
     }
@@ -56,12 +68,12 @@ namespace LevEngine
         const auto rigidbodyView = registry.view<Rigidbody, ConstantForce>();
         for (const auto entity : rigidbodyView)
         {
-            auto [rigidbody, constantForce] = rigidbodyView.get<Rigidbody, ConstantForce>(entity);
+            auto [rigidbody, force] = rigidbodyView.get<Rigidbody, ConstantForce>(entity);
 
-            if (rigidbody.GetActor() == NULL) break;
+            if (rigidbody.GetActor() == NULL) continue;
             
-            rigidbody.AddForce(constantForce.GetForce(), Rigidbody::ForceMode::Force);
-            rigidbody.AddTorque(constantForce.GetTorque(), Rigidbody::ForceMode::Force);
+            rigidbody.AddForce(force.GetForce(), Rigidbody::ForceMode::Force);
+            rigidbody.AddTorque(force.GetTorque(), Rigidbody::ForceMode::Force);
         }
     }
 
@@ -70,17 +82,25 @@ namespace LevEngine
         const auto rigidbodyView = registry.view<Transform, Rigidbody>();
         for (const auto entity : rigidbodyView)
         {
-            auto [rigidbodyTransform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
+            auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
 
-            if (rigidbody.GetActor() == NULL) break;
+            if (rigidbody.GetActor() == NULL) continue;
 
-            if (!rigidbody.IsKinematicEnabled())
+            if (rigidbody.IsKinematicEnabled())
             {
-                rigidbody.SetKinematicTargetRotation(rigidbodyTransform.GetWorldRotation());
-                rigidbody.SetKinematicTargetPosition(rigidbodyTransform.GetWorldPosition());
+                rigidbody.SetKinematicTargetRotation(
+                    transform.GetWorldRotation() * Quaternion::CreateFromAxisAngle(Vector3::Up, Math::ToRadians(0.1f))
+                ); 
+                rigidbody.SetKinematicTargetPosition(
+                    transform.GetWorldPosition() + transform.GetForwardDirection() * 0.025f
+                );
+                rigidbody.ApplyKinematicTarget();
             }
-            
-            rigidbody.ApplyKinematicTarget();
+            else
+            {
+                rigidbody.SetKinematicTargetPosition(transform.GetWorldPosition());
+                rigidbody.SetKinematicTargetRotation(transform.GetWorldRotation());
+            }
         }
     }
 }

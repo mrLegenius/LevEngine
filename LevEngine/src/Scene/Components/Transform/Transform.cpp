@@ -100,7 +100,8 @@ namespace LevEngine
 		SetWorldScale(scale);
 	}
 
-	void Transform::SetWorldPosition(const Vector3 value)
+	void Transform::
+	SetWorldPosition(const Vector3 value)
 	{
 		position = value;
 
