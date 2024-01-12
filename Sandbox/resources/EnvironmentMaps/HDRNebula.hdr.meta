@@ -1,6 +1,7 @@
 UUID: 17530323575141006770
 Address: ""
 IsLinear: false
+GenerateMipMaps: false
 MinFilter: 1
 MagFilter: 1
 MipFilter: 1

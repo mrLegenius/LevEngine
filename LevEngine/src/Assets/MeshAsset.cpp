@@ -14,7 +14,7 @@ namespace LevEngine
         return Icons::Mesh();
     }
 
-    void MeshAsset::DeserializeData(YAML::Node& node)
+    void MeshAsset::DeserializeData(const YAML::Node& node)
     {
         try
         {

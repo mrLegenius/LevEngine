@@ -1,4 +1,5 @@
 #pragma once
+#include "FPSGame/Components/Enemy.h"
 
 namespace Sandbox
 {

@@ -22,7 +22,7 @@ namespace LevEngine
 		out << YAML::Key << "Tiling" << YAML::Value << m_Material.GetTextureTiling();
 		out << YAML::Key << "Offset" << YAML::Value << m_Material.GetTextureOffset();
 	}
-	void MaterialSimpleAsset::DeserializeData(YAML::Node& node)
+	void MaterialSimpleAsset::DeserializeData(const YAML::Node& node)
 	{
 		m_Material = {};
 

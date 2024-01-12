@@ -78,6 +78,9 @@ namespace LevEngine
 
 	bool Asset::Deserialize()
 	{
+		std::lock_guard lock(m_DeserializationMutex);
+		if (m_Deserialized) return true;
+		
 		m_Deserialized = DeserializeMeta();
 		m_Deserialized = DeserializeData();
 
@@ -88,14 +91,14 @@ namespace LevEngine
 	{
 		if (!ReadDataFromFile())
 		{
-			YAML::Node data{};
+			const YAML::Node data{};
 			DeserializeData(data);
 			return true;
 		}
 		
 		try
 		{
-			YAML::Node data = LoadYAMLFile(m_Path);
+			const YAML::Node data = LoadYAMLFile(m_Path);
 			DeserializeData(data);
 		}
 		catch (YAML::BadConversion&)

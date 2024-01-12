@@ -131,7 +131,7 @@ namespace LevEngine
             out << YAML::Key << "PlayOnInit" << YAML::Value << component.playOnInit;
         }
         
-        void DeserializeData(YAML::Node& node, TimelineComponent& component) override
+        void DeserializeData(const YAML::Node& node, TimelineComponent& component) override
         {
             component.SetIsLooping(node["IsLooping"].as<bool>());
             component.SetDuration(node["Duration"].as<double>());

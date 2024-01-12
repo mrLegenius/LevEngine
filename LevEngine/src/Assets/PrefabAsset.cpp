@@ -1,10 +1,12 @@
 #include "levpch.h"
 #include "PrefabAsset.h"
 
+#include "JobSystem/ParallelJob.h"
 #include "Scene/Scene.h"
 #include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/Transform/Transform.h"
+#include "Scene/Components/Transform/TransformSerializer.h"
 
 namespace LevEngine
 {
@@ -30,6 +32,7 @@ namespace LevEngine
 
         std::unordered_map<UUID, Entity> entitiesMap;
         std::unordered_map<UUID, UUID> relationships;
+        Vector<Pair<Entity, const YAML::Node>> entitiesToDeserialize;
         
         for (auto entity : entities)
         {
@@ -42,13 +45,11 @@ namespace LevEngine
                 relationships.emplace(uuid, parentUuid);
             }
 
-            Log::CoreTrace("Deserializing entity with ID = {0}, name = {1}", uuid, name);
-
             const Entity deserializedEntity = scene->CreateEntity(uuid, name);
 
-            for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
-                serializer->Deserialize(entity, deserializedEntity);
+            TransformSerializer::DeserializeData(entity, deserializedEntity.GetComponent<Transform>());
 
+            entitiesToDeserialize.emplace_back(Pair<Entity, const YAML::Node>(deserializedEntity, entity));
             entitiesMap.try_emplace(uuid, deserializedEntity);
         }
         
@@ -58,6 +59,22 @@ namespace LevEngine
 
             auto& transform = entity.GetComponent<Transform>();
             transform.SetParent(entitiesMap[relationships[uuid]], false);
+        }
+
+        ParallelJob serializeJob([=](const int i)
+        {
+            auto [deserializedEntity, entityNode] = entitiesToDeserialize[i];
+            for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
+                serializer->Deserialize(entityNode, deserializedEntity);
+        });
+
+        serializeJob.Schedule(entitiesToDeserialize.size());
+        serializeJob.Wait();
+
+        for (auto& [uuid, entity] : entitiesMap)
+        {
+            if (!entity) continue;
+            entity.AddOrReplaceComponent<IDComponent>(UUID{});
         }
 
         return entitiesMap[rootEntity];

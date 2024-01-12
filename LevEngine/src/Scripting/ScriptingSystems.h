@@ -29,5 +29,13 @@ namespace LevEngine::Scripting
 		virtual void Update(float deltaTime, entt::registry& registry) override;
 
 	};
+
+	class ScriptingGUIRenderSystem : public System
+	{
+	public:
+		// Inherited via System
+		virtual void Update(float deltaTime, entt::registry& registry) override;
+
+	};
 }
 

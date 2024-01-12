@@ -21,7 +21,7 @@ struct Color
         , a(((hex >> 0) & 0xff) / 255.0f)
 	{ }
 
-	explicit Color(const Vector3 v)
+	explicit Color(const Vector3& v)
     {
 	    r = v.x;
     	g = v.y;
@@ -29,7 +29,7 @@ struct Color
     	a = 1;
     }
 
-	explicit Color(const Vector4 v)
+	explicit Color(const Vector4& v)
     {
     	r = v.x;
     	g = v.y;
@@ -39,8 +39,8 @@ struct Color
 
     float* Raw() { return &r; }
 
-	explicit operator Vector3() const { return Vector3(r, g, b); }
-	explicit operator Vector4() const { return Vector4(r, g, b, a); }
+	explicit operator Vector3() const { return {r, g, b}; }
+	explicit operator Vector4() const { return {r, g, b, a}; }
 
 	static const Color Clear;
     static const Color White;

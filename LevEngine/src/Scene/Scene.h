@@ -23,6 +23,7 @@ namespace LevEngine
 		void OnLateUpdate(float deltaTime);
 		void OnRender();
 		void OnRender(SceneCamera* mainCamera, const Transform* cameraTransform);
+		void OnGUIRender();
 
 		void OnViewportResized(uint32_t width, uint32_t height);
 
@@ -33,6 +34,7 @@ namespace LevEngine
 
 		void DestroyEntity(entt::entity entity);
 		void DestroyEntity(Entity entity);
+		void DestroyEntityImmediate(Entity entity);
 		static void GetAllChildren(Entity entity, Vector<Entity>& entities);
 
 		Entity DuplicateEntity(Entity entity);
@@ -51,6 +53,9 @@ namespace LevEngine
 
 		template<typename T>
 		void RegisterOneFrame();
+
+		template<typename T>
+		void RegisterGUIRenderSystem();
 
 		template<typename T>
 		Entity GetEntityByComponent(T* value);
@@ -84,6 +89,7 @@ namespace LevEngine
 		Vector<Scope<System>> m_LateUpdateSystems;
 		Vector<Scope<System>> m_EventSystems;
 		Vector<Scope<System>> m_InitSystems;
+		Vector<Scope<System>> m_GUIRenderSystems;
 
 		bool m_IsUpdateDone = true;
 		bool m_IsLateUpdateDone = true;

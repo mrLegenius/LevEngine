@@ -4,6 +4,7 @@
 #include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/Transform/Transform.h"
+#include "Scene/Components/Transform/TransformSerializer.h"
 
 namespace LevEngine
 {
@@ -86,6 +87,8 @@ namespace LevEngine
 		if (const auto parent = entity.GetComponent<Transform>().GetParent())
 			out << YAML::Key << "Parent" << YAML::Value << parent.GetUUID();
 
+		TransformSerializer::SerializeData(out, entity.GetComponent<Transform>());
+		
 		for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
 			serializer->Serialize(out, entity);
 

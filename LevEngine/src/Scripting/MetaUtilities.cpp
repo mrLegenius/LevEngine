@@ -6,7 +6,6 @@ entt::id_type LevEngine::Scripting::GetIdType(const sol::table& component)
 {
 	if (!component.valid())
 	{
-		
 		LEV_CORE_ASSERT(false, "Component has not been exposed to lua!");
 		return -1;
 	}
