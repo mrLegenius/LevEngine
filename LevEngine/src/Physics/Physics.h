@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "physx/include/PxPhysicsAPI.h"
+#include "Scene/Entity.h"
 #include "PhysicsUpdate.h"
 #include "Components/CharacterController.h"
 #include "Events/ContactReportCallback.h"

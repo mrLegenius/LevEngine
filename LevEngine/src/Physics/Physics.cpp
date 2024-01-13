@@ -1,5 +1,4 @@
 ﻿#include "levpch.h"
-#include "Kernel/Application.h"
 #include "Renderer/DebugRender/DebugRender.h"
 #include "Physics.h"
 #include "PhysicsUtils.h"
