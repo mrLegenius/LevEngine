@@ -69,7 +69,9 @@ namespace LevEngine::Editor
             GUI::ScopedID id(filenameString);
             const Ref<Texture> icon = directoryEntry.is_directory()
                                           ? Icons::Directory()
-                                          : asset->GetIcon();
+                                          : asset
+                                            ? asset->GetIcon()
+                                            : Icons::File();
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton(icon->GetId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
