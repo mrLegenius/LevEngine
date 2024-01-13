@@ -16,7 +16,7 @@ namespace Sandbox
 
                 const auto scene = SceneManager::GetActiveScene();
                 
-                const auto prefab = ResourceManager::LoadAsset<PrefabAsset>("EnemyControllerPrefab");
+                const auto prefab = ResourceManager::LoadAsset<PrefabAsset>("EnemyPrefab");
                 const auto enemyEntity = prefab->Instantiate(scene);
 				
                 auto& enemyTransform = enemyEntity.GetComponent<Transform>();

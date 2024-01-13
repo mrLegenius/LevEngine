@@ -67,10 +67,7 @@ namespace LevEngine
 
     void Rigidbody::SetTransformScale(const Vector3 transformScale)
     {
-        if (m_TransformScale != transformScale)
-        {
-            m_TransformScale = transformScale;
-        }
+        m_TransformScale = transformScale;
 
         if (m_IsInitialized)
         {

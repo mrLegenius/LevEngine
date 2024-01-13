@@ -1,96 +1,5 @@
 Scene: PhysicsTestScene
 Entities:
-  - Entity: 7958090793830495727
-    Tag: Controller
-    Transform:
-      Position: [0, 5, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Character Controller:
-      Capsule Controller Radius: 0.5
-      Capsule Controller Half Height: 1
-      Capsule Controller Climbing Mode: 1
-      Controller Center: [0, 1, 0]
-      Slope Limit: 0.707000017
-      Step Offset: 0.5
-      Contact Offset: 0.100000001
-      Minimum Movement Distance: 0.00100000005
-      Non Walkable Mode: 0
-      Dynamic Friction: 0.5
-      Static Friction: 0.5
-      Bounciness: 0.600000024
-      Friction Combine Mode: 0
-      Bounce Combine Mode: 0
-  - Entity: 16133745821764390948
-    Tag: Falling Box
-    Transform:
-      Position: [0, 7, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Rigidbody:
-      Rigidbody Type: 1
-      Is Kinematic Enabled: false
-      Is Gravity Enabled: false
-      Mass: 1
-      Center Of Mass: [0, 0, 0]
-      Inertia Tensor: [1, 1, 1]
-      Linear Damping: 0
-      Angular Damping: 0.0500000007
-      Is Pos Axis X Locked: false
-      Is Pos Axis Y Locked: false
-      Is Pos Axis Z Locked: false
-      Is Rot Axis X Locked: false
-      Is Rot Axis Y Locked: false
-      Is Rot Axis Z Locked: false
-      Is Trigger Enabled: false
-      Collider Type: 2
-      Box Half Extends: [0.5, 0.5, 0.5]
-      Offset Position: [0, 0, 0]
-      Offset Rotation: [0, 0, 0]
-      Dynamic Friction: 0.5
-      Static Friction: 0.5
-      Bounciness: 0.600000024
-      Friction Combine Mode: 0
-      Bounce Combine Mode: 0
-    MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 15608248225095435140
-      Cast Shadow: true
-  - Entity: 12806779897785017528
-    Tag: Platform
-    Transform:
-      Position: [0, 5, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [5, 1, 0.100000001]
-    Rigidbody:
-      Rigidbody Type: 1
-      Is Kinematic Enabled: true
-      Is Gravity Enabled: false
-      Mass: 1
-      Center Of Mass: [0, 0, 0]
-      Inertia Tensor: [1, 1, 1]
-      Linear Damping: 0
-      Angular Damping: 0.0500000007
-      Is Pos Axis X Locked: false
-      Is Pos Axis Y Locked: false
-      Is Pos Axis Z Locked: false
-      Is Rot Axis X Locked: false
-      Is Rot Axis Y Locked: false
-      Is Rot Axis Z Locked: false
-      Is Trigger Enabled: false
-      Collider Type: 2
-      Box Half Extends: [0.5, 0.5, 0.5]
-      Offset Position: [0, 0, 0]
-      Offset Rotation: [0, 0, 0]
-      Dynamic Friction: 0.5
-      Static Friction: 0.5
-      Bounciness: 0.600000024
-      Friction Combine Mode: 0
-      Bounce Combine Mode: 0
-    MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 15608248225095435140
-      Cast Shadow: true
   - Entity: 2286883072584602035
     Tag: Ground
     Transform:
@@ -151,5 +60,64 @@ Entities:
       Scale: [1, 0.999998629, 0.999998629]
     Directional Light:
       Color: [1, 1, 1, 1]
+  - Entity: 1724677694366532257
+    Tag: Falling Box
+    Transform:
+      Position: [0, 5, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Rigidbody:
+      Rigidbody Type: 1
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Dynamic Friction: 0.5
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 15608248225095435140
+      Cast Shadow: true
+  - Entity: 18287333443530293276
+    Tag: Controller
+    Transform:
+      Position: [0, 2, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Character Controller:
+      Capsule Controller Radius: 0.5
+      Capsule Controller Half Height: 0.5
+      Capsule Controller Climbing Mode: 1
+      Controller Center: [0, 0, 0]
+      Slope Limit: 45
+      Step Offset: 0.5
+      Contact Offset: 0.100000001
+      Minimum Movement Distance: 0.00100000005
+      Non Walkable Mode: 0
+      Dynamic Friction: 0.5
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
+    Force:
+      Force: [0, 1, 0]
+      Torque: [0, 0, 0]
 Systems:
   []

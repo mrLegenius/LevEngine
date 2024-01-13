@@ -12,11 +12,11 @@ namespace Sandbox
 			
             auto& scene = SceneManager::GetActiveScene();
 
-            const auto playerPrefab = ResourceManager::LoadAsset<PrefabAsset>("PlayerControllerPrefab");
+            const auto playerPrefab = ResourceManager::LoadAsset<PrefabAsset>("PlayerPrefab");
             const auto playerEntity = playerPrefab->Instantiate(scene);
             
             auto& playerTransform = playerEntity.GetComponent<Transform>();
-            const auto& startPosition = Vector3(0.0f, 1.0f, 0.0f);
+            const auto& startPosition = Vector3(0.0f, 5.0f, 0.0f);
             playerTransform.SetWorldPosition(startPosition);
 			
             auto& player = playerEntity.AddComponent<Player>();

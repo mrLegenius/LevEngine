@@ -121,8 +121,7 @@ namespace LevEngine
 
     physx::PxShape* Physics::CreateSphere(const float radius) const
     {
-        const auto material =
-            App::Get().GetPhysics().CreatePhysicMaterial();
+        const auto material = CreatePhysicMaterial();
         
         const auto sphere =
             m_Physics->createShape(
@@ -138,8 +137,7 @@ namespace LevEngine
 
     physx::PxShape* Physics::CreateCapsule(const float radius, const float halfHeight) const
     {
-        const auto material =
-            App::Get().GetPhysics().CreatePhysicMaterial();
+        const auto material = CreatePhysicMaterial();
         
         const auto capsule =
             m_Physics->createShape(
@@ -155,8 +153,7 @@ namespace LevEngine
 
     physx::PxShape* Physics::CreateBox(const Vector3 halfExtents) const
     {
-        const auto material =
-            App::Get().GetPhysics().CreatePhysicMaterial();
+        const auto material = CreatePhysicMaterial();
         
         const auto box =
             m_Physics->createShape(
@@ -177,7 +174,7 @@ namespace LevEngine
         const Controller::ClimbingMode climbingMode = Controller::ClimbingMode::Constrained
     )
     {
-        const auto material = App::Get().GetPhysics().CreatePhysicMaterial();
+        const auto material = CreatePhysicMaterial();
 
         const auto controllerPosition =
             entity.GetComponent<Transform>().GetWorldPosition() +

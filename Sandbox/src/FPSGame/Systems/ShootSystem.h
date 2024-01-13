@@ -25,10 +25,9 @@ namespace Sandbox
                     projectileParams.Lifetime = 2;
                     projectileParams.Timer = 0;
                     
-                    const auto gameObject = Entity(entt::handle(registry, projectile));
                     auto& projectileRigidbody = projectile.GetComponent<Rigidbody>();
                     // TODO: NEED TO FIX INITIALIZATION SYSTEM
-                    projectileRigidbody.Initialize(gameObject);
+                    projectileRigidbody.Initialize(projectile);
                     projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
                     
                     Audio::PlayOneShot("event:/Shot", projectile);

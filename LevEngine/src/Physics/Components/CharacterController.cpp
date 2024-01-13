@@ -47,8 +47,9 @@ namespace LevEngine
     physx::PxShape* CharacterController::GetCollider() const
     {
         physx::PxShape* collider[1];
-        const auto nbColliders = GetActor()->getNbShapes();
-        GetActor()->getShapes(collider, nbColliders);
+        const auto actor = GetActor();
+        const auto nbColliders = actor->getNbShapes();
+        actor->getShapes(collider, nbColliders);
 
         return *collider;
     }
@@ -56,8 +57,9 @@ namespace LevEngine
     physx::PxMaterial* CharacterController::GetPhysicalMaterial() const
     {
         physx::PxMaterial* physicalMaterial[1];
-        const auto nbMaterials = GetCollider()->getNbMaterials();
-        GetCollider()->getMaterials(physicalMaterial, nbMaterials);
+        const auto collider = GetCollider();
+        const auto nbMaterials = collider->getNbMaterials();
+        collider->getMaterials(physicalMaterial, nbMaterials);
 
         return *physicalMaterial;
     }
@@ -69,10 +71,7 @@ namespace LevEngine
 
     void CharacterController::SetTransformScale(const Vector3 scale)
     {
-        if (m_TransformScale != scale)
-        {
-            m_TransformScale = scale;
-        }
+        m_TransformScale = scale;
         
         if (m_IsInitialized)
         {
@@ -148,7 +147,7 @@ namespace LevEngine
         if (m_Controller != NULL)
         {
             auto cosine = 0.0f;
-            if (slopeLimit != 45.0f)
+            if (Math::IsEqual(slopeLimit, 45.0f))
             {
                 cosine = std::cosf(slopeLimit * Math::DegToRad);
             }

@@ -23,16 +23,16 @@ namespace LevEngine::Editor
                 {
                     EditorGUI::DrawFloatControl("Mass", BindGetter(&Rigidbody::GetMass, &component), BindSetter(&Rigidbody::SetMass, &component));
 
-                    EditorGUI::DrawFloatControl("Drag", BindGetter(&Rigidbody::GetLinearDamping, &component), BindSetter(&Rigidbody::SetLinearDamping, &component));
-                    EditorGUI::DrawFloatControl("Angular Drag", BindGetter(&Rigidbody::GetAngularDamping, &component), BindSetter(&Rigidbody::SetAngularDamping, &component));
+                    EditorGUI::DrawFloatControl("Linear Damping", BindGetter(&Rigidbody::GetLinearDamping, &component), BindSetter(&Rigidbody::SetLinearDamping, &component));
+                    EditorGUI::DrawFloatControl("Angular Damping", BindGetter(&Rigidbody::GetAngularDamping, &component), BindSetter(&Rigidbody::SetAngularDamping, &component));
 
                     EditorGUI::DrawVector3Control("Center Of Mass", BindGetter(&Rigidbody::GetCenterOfMass, &component), BindSetter(&Rigidbody::SetCenterOfMass, &component));
                     EditorGUI::DrawVector3Control("Diagonal Inertia", BindGetter(&Rigidbody::GetInertiaTensor, &component), BindSetter(&Rigidbody::SetInertiaTensor, &component));
 
-                    EditorGUI::DrawCheckBox("Use Gravity", BindGetter(&Rigidbody::IsGravityEnabled, &component), BindSetter(&Rigidbody::EnableGravity, &component));
+                    EditorGUI::DrawCheckBox("Enable Gravity", BindGetter(&Rigidbody::IsGravityEnabled, &component), BindSetter(&Rigidbody::EnableGravity, &component));
                 }
 
-                EditorGUI::DrawCheckBox("Is Kinematic", BindGetter(&Rigidbody::IsKinematicEnabled, &component), BindSetter(&Rigidbody::EnableKinematic, &component));
+                EditorGUI::DrawCheckBox("Enable Kinematic", BindGetter(&Rigidbody::IsKinematicEnabled, &component), BindSetter(&Rigidbody::EnableKinematic, &component));
 
                 if (!component.IsKinematicEnabled())
                 {
@@ -59,7 +59,7 @@ namespace LevEngine::Editor
             EditorGUI::DrawComboBox<Collider::Type, 3>("Collider Type", colliderTypeStrings,
                 BindGetter(&Rigidbody::GetColliderType, &component), BindSetter(&Rigidbody::SetColliderType, &component));
 
-            EditorGUI::DrawCheckBox("Is Trigger", BindGetter(&Rigidbody::IsTriggerEnabled, &component), BindSetter(&Rigidbody::EnableTrigger, &component));
+            EditorGUI::DrawCheckBox("Enable Trigger", BindGetter(&Rigidbody::IsTriggerEnabled, &component), BindSetter(&Rigidbody::EnableTrigger, &component));
             
             EditorGUI::DrawVector3Control("Offset Position", BindGetter(&Rigidbody::GetColliderOffsetPosition, &component), BindSetter(&Rigidbody::SetColliderOffsetPosition, &component));
             EditorGUI::DrawVector3Control("Offset Rotation", BindGetter(&Rigidbody::GetColliderOffsetRotation, &component), BindSetter(&Rigidbody::SetColliderOffsetRotation, &component));
@@ -82,7 +82,7 @@ namespace LevEngine::Editor
             {
                 EditorGUI::DrawFloatControl("Static Friction", BindGetter(&Rigidbody::GetStaticFriction, &component), BindSetter(&Rigidbody::SetStaticFriction, &component), 0.1f, 0.0f, FLT_MAX);
                 EditorGUI::DrawFloatControl("Dynamic Friction", BindGetter(&Rigidbody::GetDynamicFriction, &component), BindSetter(&Rigidbody::SetDynamicFriction, &component), 0.1f, 0.0f, FLT_MAX);
-                EditorGUI::DrawFloatControl("Restitution", BindGetter(&Rigidbody::GetBounciness, &component), BindSetter(&Rigidbody::SetBounciness, &component), 0.1f, 0.0f, FLT_MAX);
+                EditorGUI::DrawFloatControl("Bounciness", BindGetter(&Rigidbody::GetBounciness, &component), BindSetter(&Rigidbody::SetBounciness, &component), 0.1f, 0.0f, FLT_MAX);
                 const Array<String, 4> frictionCombineModeStrings {"Average","Minimum", "Multiply", "Maximum"};
                 EditorGUI::DrawComboBox<PhysicMaterial::CombineMode, 4>("Friction Combine", frictionCombineModeStrings,
                     BindGetter(&Rigidbody::GetFrictionCombineMode, &component), BindSetter(&Rigidbody::SetFrictionCombineMode, &component));
