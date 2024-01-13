@@ -130,7 +130,7 @@ namespace LevEngine::Editor
 
     }
 
-    bool EditorLayer::OnKeyPressed(KeyPressedEvent& event) const
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
     {
         if (event.GetRepeatCount() > 0)
             return false;
@@ -143,6 +143,24 @@ namespace LevEngine::Editor
 
         if (m_Viewport->OnKeyPressed(event))
             return true;
+
+        const bool control = Input::IsKeyDown(KeyCode::LeftControl) ||
+            Input::IsKeyDown(KeyCode::RightControl);
+
+        switch (event.GetKeyCode())
+        {
+            case KeyCode::P:
+            {
+                if (!control) break;
+
+                if (m_SceneState == SceneState::Play)
+                    OnSceneStop();
+                else
+                    OnScenePlay();
+
+                return true;
+            }
+        }
         
         return false;
     }
@@ -161,6 +179,7 @@ namespace LevEngine::Editor
     void EditorLayer::OnSceneStop()
     {
         m_SceneState = SceneState::Edit;
+        m_Game->Unfocus();
         Selection::Deselect();
         
         m_SceneEditor->OpenScene(SceneManager::GetActiveScenePath());
