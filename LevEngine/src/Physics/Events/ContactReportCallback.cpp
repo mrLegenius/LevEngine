@@ -96,7 +96,6 @@ namespace LevEngine
                     auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
                     collisionInfo.ContactEntity = secondEntity;
                     firstRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
-                    Log::Debug("RIG: " + firstEntity.GetName() + " touched " + secondEntity.GetName());
                 }
                 
                 if (secondEntity.HasComponent<Rigidbody>())
@@ -104,7 +103,6 @@ namespace LevEngine
                     auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
                     collisionInfo.ContactEntity = firstEntity;
                     secondRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
-                    Log::Debug("RIG: " + secondEntity.GetName() + " touched " + firstEntity.GetName());
                 }
                 
                 if (firstEntity.HasComponent<CharacterController>())
@@ -112,7 +110,6 @@ namespace LevEngine
                     auto& firstController = firstEntity.GetComponent<CharacterController>();
                     collisionInfo.ContactEntity = secondEntity;
                     firstController.m_CollisionEnterBuffer.push_back(collisionInfo);
-                    Log::Debug("CON: " + firstEntity.GetName() + " touched " + secondEntity.GetName());
                 }
                 
                 if (secondEntity.HasComponent<CharacterController>())
@@ -120,7 +117,6 @@ namespace LevEngine
                     auto& secondController = secondEntity.GetComponent<CharacterController>();
                     collisionInfo.ContactEntity = firstEntity;
                     secondController.m_CollisionEnterBuffer.push_back(collisionInfo);
-                    Log::Debug("CON: " + secondEntity.GetName() + " touched " + firstEntity.GetName());
                 }
             }
             

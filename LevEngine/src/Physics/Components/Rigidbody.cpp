@@ -13,7 +13,7 @@ namespace LevEngine
     void Rigidbody::OnDestroy(entt::registry& registry, entt::entity entity)
     {
         auto [transform, rigidbody] = registry.get<Transform, Rigidbody>(entity);
-        if (rigidbody.GetActor() != NULL)
+        if (rigidbody.GetActor() != nullptr)
         {
             rigidbody.DetachRigidbody();
         }
@@ -98,7 +98,7 @@ namespace LevEngine
     {
         m_IsVisualizationEnabled = flag;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             m_Actor->setActorFlag(physx::PxActorFlag::eVISUALIZATION, flag);
         }
@@ -113,7 +113,7 @@ namespace LevEngine
     {
         m_Type = type;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const auto entity = App::Get().GetPhysics().m_ActorEntityMap.at(m_Actor);
             AttachRigidbody(entity);
@@ -123,7 +123,7 @@ namespace LevEngine
     
     void Rigidbody::AttachRigidbody(const Entity entity)
     {
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             DetachRigidbody();
         }
@@ -201,7 +201,7 @@ namespace LevEngine
         
         m_LinearDamping = linearDamping;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setLinearDamping(linearDamping);
         }
@@ -220,7 +220,7 @@ namespace LevEngine
         
         m_AngularDamping = angularDamping;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setAngularDamping(angularDamping);
         }
@@ -237,7 +237,7 @@ namespace LevEngine
 
         m_CenterOfMass = centerOfMass;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setCMassLocalPose(
                 physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(centerOfMass))
@@ -258,7 +258,7 @@ namespace LevEngine
 
         m_InertiaTensor = inertiaTensor;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setMassSpaceInertiaTensor(
                 PhysicsUtils::FromVector3ToPxVec3(inertiaTensor)
@@ -275,7 +275,7 @@ namespace LevEngine
     {
         m_IsGravityEnabled = flag;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             m_Actor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !flag);
         }
@@ -290,7 +290,7 @@ namespace LevEngine
     {
         m_IsKinematicEnabled = flag;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             reinterpret_cast<physx::PxRigidBody*>(m_Actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, flag);
             
@@ -327,7 +327,7 @@ namespace LevEngine
 
         if (!m_IsKinematicEnabled) return;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             if (const auto rigidDynamic = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
             {
@@ -374,7 +374,7 @@ namespace LevEngine
         
         m_IsPosAxisXLocked = flag;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(
                 physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, flag
@@ -393,7 +393,7 @@ namespace LevEngine
         
         m_IsPosAxisYLocked = flag;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(
                 physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, flag
@@ -412,7 +412,7 @@ namespace LevEngine
         
         m_IsPosAxisZLocked = flag;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(
                 physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, flag
@@ -431,7 +431,7 @@ namespace LevEngine
         
         m_IsRotAxisXLocked = flag;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(
                 physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, flag
@@ -450,7 +450,7 @@ namespace LevEngine
         
         m_IsRotAxisYLocked = flag;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(
                 physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, flag
@@ -469,7 +469,7 @@ namespace LevEngine
         
         m_IsRotAxisZLocked = flag;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             static_cast<physx::PxRigidDynamic*>(m_Actor)->setRigidDynamicLockFlag(
                 physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, flag
@@ -484,7 +484,7 @@ namespace LevEngine
 
     void Rigidbody::SetColliderType(const Collider::Type& type)
     {
-        if (m_Actor != NULL && GetColliderCount() > 0)
+        if (m_Actor != nullptr && GetColliderCount() > 0)
         {
             DetachCollider();
         }
@@ -505,7 +505,7 @@ namespace LevEngine
         }
         m_ColliderCollection[0]->m_Type = type;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             AttachCollider();
             SetTransformScale(m_TransformScale);
@@ -576,7 +576,7 @@ namespace LevEngine
     {
         m_ColliderCollection[0]->m_IsTriggerEnabled = flag;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             GetCollider()->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
             GetCollider()->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
@@ -594,7 +594,7 @@ namespace LevEngine
     {
         m_ColliderCollection[0]->OffsetPosition = position;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const auto collider = GetCollider();
             const auto rotation = collider->getLocalPose().q;
@@ -611,7 +611,7 @@ namespace LevEngine
     {
         m_ColliderCollection[0]->OffsetRotation = rotation;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const auto collider = GetCollider();
             const auto position = collider->getLocalPose().p;
@@ -631,7 +631,7 @@ namespace LevEngine
         
         static_cast<Sphere*>(m_ColliderCollection[0].get())->Radius = radius;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const float maxTransformScale = Math::MaxElement(m_TransformScale);
             
@@ -653,7 +653,7 @@ namespace LevEngine
         
         static_cast<Capsule*>(m_ColliderCollection[0].get())->Radius = radius;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const float maxTransformScale = Math::MaxElement(m_TransformScale);
             
@@ -677,7 +677,7 @@ namespace LevEngine
         
         static_cast<Capsule*>(m_ColliderCollection[0].get())->HalfHeight = halfHeight;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const float maxTransformScale = Math::MaxElement(m_TransformScale);
             
@@ -701,7 +701,7 @@ namespace LevEngine
         
         static_cast<Box*>(m_ColliderCollection[0].get())->HalfExtents = halfExtents;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const auto collider = GetCollider();
             collider->setGeometry(physx::PxBoxGeometry(
@@ -721,7 +721,7 @@ namespace LevEngine
         
         m_ColliderCollection[0]->m_PhysicMaterial->DynamicFriction = dynamicFriction;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const auto physicalMaterial = GetPhysicalMaterial();
             physicalMaterial->setDynamicFriction(dynamicFriction);
@@ -739,7 +739,7 @@ namespace LevEngine
         
         m_ColliderCollection[0]->m_PhysicMaterial->StaticFriction = staticFriction;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const auto physicalMaterial = GetPhysicalMaterial();
             physicalMaterial->setStaticFriction(staticFriction);
@@ -757,7 +757,7 @@ namespace LevEngine
         
         m_ColliderCollection[0]->m_PhysicMaterial->Bounciness = bounciness;
         
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const auto physicalMaterial = GetPhysicalMaterial();
             physicalMaterial->setRestitution(bounciness);
@@ -773,7 +773,7 @@ namespace LevEngine
     {
         m_ColliderCollection[0]->m_PhysicMaterial->m_FrictionCombine = frictionCombineMode;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const auto physicalMaterials = GetPhysicalMaterial();
             physicalMaterials[0].setFrictionCombineMode(
@@ -791,7 +791,7 @@ namespace LevEngine
     {
         m_ColliderCollection[0]->m_PhysicMaterial->m_BounceCombine = bounceCombineMode;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             const auto physicalMaterials = GetPhysicalMaterial();
             physicalMaterials[0].setRestitutionCombineMode(
@@ -806,7 +806,7 @@ namespace LevEngine
 
         if (m_IsKinematicEnabled) return;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             if (const auto rigidDynamic = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
             {
@@ -836,7 +836,7 @@ namespace LevEngine
 
         if (m_IsKinematicEnabled) return;
 
-        if (m_Actor != NULL)
+        if (m_Actor != nullptr)
         {
             if (const auto rigidDynamic = reinterpret_cast<physx::PxRigidDynamic*>(m_Actor))
             {

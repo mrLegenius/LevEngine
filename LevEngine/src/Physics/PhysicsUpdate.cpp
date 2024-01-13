@@ -14,7 +14,7 @@ namespace LevEngine
         {
             auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
 
-            if (rigidbody.GetActor() == NULL) continue;
+            if (rigidbody.GetActor() == nullptr) continue;
             
             rigidbody.m_TriggerEnterBuffer.clear();
             rigidbody.m_TriggerExitBuffer.clear();
@@ -27,7 +27,7 @@ namespace LevEngine
         {
             auto [transform, controller] = controllerView.get<Transform, CharacterController>(entity);
 
-            if (controller.GetController() == NULL) continue;
+            if (controller.GetController() == nullptr) continue;
             
             controller.m_CollisionEnterBuffer.clear();
             controller.m_CollisionExitBuffer.clear();
@@ -41,7 +41,7 @@ namespace LevEngine
         {
             auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
 
-            if (rigidbody.GetActor() == NULL) continue;
+            if (rigidbody.GetActor() == nullptr) continue;
             
             const physx::PxTransform actorPose = rigidbody.GetActor()->getGlobalPose();
             transform.SetWorldRotation(PhysicsUtils::FromPxQuatToQuaternion(actorPose.q));
@@ -54,7 +54,7 @@ namespace LevEngine
         {
             auto [transform, controller] = controllerView.get<Transform, CharacterController>(entity);
 
-            if (controller.GetController() == NULL) continue;
+            if (controller.GetController() == nullptr) continue;
             
             const auto transformPosition =
                 PhysicsUtils::FromPxExtendedVec3ToVector3(controller.GetController()->getPosition()) - controller.GetCenterOffset();
@@ -70,7 +70,7 @@ namespace LevEngine
         {
             auto [rigidbody, force] = rigidbodyView.get<Rigidbody, ConstantForce>(entity);
 
-            if (rigidbody.GetActor() == NULL) continue;
+            if (rigidbody.GetActor() == nullptr) continue;
             
             rigidbody.AddForce(force.GetForce(), Rigidbody::ForceMode::Force);
             rigidbody.AddTorque(force.GetTorque(), Rigidbody::ForceMode::Force);
@@ -84,7 +84,7 @@ namespace LevEngine
         {
             auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
 
-            if (rigidbody.GetActor() == NULL) continue;
+            if (rigidbody.GetActor() == nullptr) continue;
 
             if (rigidbody.IsKinematicEnabled())
             {

@@ -74,7 +74,7 @@ namespace LevEngine
         void AttachController(Entity entity);
         void DetachController() const;
 
-        physx::PxController* m_Controller = NULL;
+        physx::PxController* m_Controller = nullptr;
         
         bool m_IsInitialized = false;
         Vector3 m_TransformScale = Vector3::One;

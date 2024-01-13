@@ -71,10 +71,10 @@ namespace LevEngine
         float m_StepSize = 1.0f / 60.0f;
         physx::PxDefaultAllocator m_Allocator;
         physx::PxDefaultErrorCallback m_ErrorCallback;
-        physx::PxFoundation* m_Foundation = NULL;
-        physx::PxPhysics* m_Physics = NULL;
-        physx::PxDefaultCpuDispatcher* m_Dispatcher = NULL;
-        physx::PxScene* m_Scene = NULL;
-        physx::PxControllerManager* m_ControllerManager = NULL;
+        physx::PxFoundation* m_Foundation = nullptr;
+        physx::PxPhysics* m_Physics = nullptr;
+        physx::PxDefaultCpuDispatcher* m_Dispatcher = nullptr;
+        physx::PxScene* m_Scene = nullptr;
+        physx::PxControllerManager* m_ControllerManager = nullptr;
     };
 }

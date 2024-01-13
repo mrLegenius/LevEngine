@@ -11,7 +11,7 @@ namespace LevEngine
     void CharacterController::OnDestroy(entt::registry& registry, entt::entity entity)
     {
         auto [transform, controller] = registry.get<Transform, CharacterController>(entity);
-        if (controller.GetController() != NULL)
+        if (controller.GetController() != nullptr)
         {
             controller.DetachController();
         }
@@ -89,7 +89,7 @@ namespace LevEngine
     {
         m_IsVisualizationEnabled = flag;
         
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             GetActor()->setActorFlag(physx::PxActorFlag::eVISUALIZATION, flag);
         }
@@ -97,7 +97,7 @@ namespace LevEngine
 
     void CharacterController::AttachController(const Entity entity)
     {
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             DetachController();
         }
@@ -144,7 +144,7 @@ namespace LevEngine
 
         m_CharacterController->SlopeLimit = slopeLimit;
 
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             auto cosine = 0.0f;
             if (Math::IsEqual(slopeLimit, 45.0f))
@@ -166,7 +166,7 @@ namespace LevEngine
         
         m_CharacterController->StepOffset = stepOffset;
 
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             m_Controller->setStepOffset(stepOffset);
         }
@@ -183,7 +183,7 @@ namespace LevEngine
         
         m_CharacterController->SkinWidth = contactOffset;
 
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             m_Controller->setContactOffset(contactOffset);
         }
@@ -208,7 +208,7 @@ namespace LevEngine
 
     void CharacterController::SetCenterOffset(const Vector3 center) const
     {
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             const auto transformPosition =
                 PhysicsUtils::FromPxExtendedVec3ToVector3(m_Controller->getPosition()) - GetCenterOffset();
@@ -229,7 +229,7 @@ namespace LevEngine
 
         m_CharacterController->Radius = radius;
 
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             static_cast<physx::PxCapsuleController*>(m_Controller)->setRadius(radius);
         }
@@ -246,7 +246,7 @@ namespace LevEngine
 
         m_CharacterController->Height = height;
 
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             static_cast<physx::PxCapsuleController*>(m_Controller)->setHeight(height);
         }
@@ -263,7 +263,7 @@ namespace LevEngine
         
         m_CharacterController->m_PhysicalMaterial->DynamicFriction = dynamicFriction;
         
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             const auto physicalMaterials = GetPhysicalMaterial();
             physicalMaterials[0].setDynamicFriction(dynamicFriction);
@@ -281,7 +281,7 @@ namespace LevEngine
         
         m_CharacterController->m_PhysicalMaterial->StaticFriction = staticFriction;
         
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             const auto physicalMaterials = GetPhysicalMaterial();
             physicalMaterials[0].setStaticFriction(staticFriction);
@@ -299,7 +299,7 @@ namespace LevEngine
         
         m_CharacterController->m_PhysicalMaterial->Bounciness = bounciness;
         
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             const auto physicalMaterials = GetPhysicalMaterial();
             physicalMaterials[0].setRestitution(bounciness);
@@ -315,7 +315,7 @@ namespace LevEngine
     {
         m_CharacterController->m_PhysicalMaterial->m_FrictionCombine = frictionCombineMode;
 
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             const auto physicalMaterials = GetPhysicalMaterial();
             physicalMaterials[0].setFrictionCombineMode(
@@ -333,7 +333,7 @@ namespace LevEngine
     {
         m_CharacterController->m_PhysicalMaterial->m_BounceCombine = bounceCombineMode;
 
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             const auto physicalMaterials = GetPhysicalMaterial();
             physicalMaterials[0].setRestitutionCombineMode(
@@ -351,7 +351,7 @@ namespace LevEngine
     {
         m_CharacterController->m_NonWalkableMode = nonWalkableMode;
 
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             switch (nonWalkableMode)
             {
@@ -376,7 +376,7 @@ namespace LevEngine
     {
         m_CharacterController->m_ClimbingMode = climbingMode;
 
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             switch (climbingMode)
             {
@@ -394,7 +394,7 @@ namespace LevEngine
 
     void CharacterController::Move(const Vector3 displacement, const float elapsedTime) const
     {
-        if (m_Controller != NULL)
+        if (m_Controller != nullptr)
         {
             m_Controller->move(
                 PhysicsUtils::FromVector3ToPxVec3(displacement),
