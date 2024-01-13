@@ -44,7 +44,7 @@ namespace LevEngine::Scripting
 		lua.new_usertype<Vector3>(
 			"Vector3",
 			sol::call_constructor,
-			sol::constructors<Vector3(float), Vector3(float, float, float)>(),
+			sol::constructors<Vector3(), Vector3(float), Vector3(float, float, float)>(),
 			"x", &Vector3::x,
 			"y", &Vector3::y,
 			"z", &Vector3::z,
@@ -103,7 +103,7 @@ namespace LevEngine::Scripting
 		lua.new_usertype<Vector2>(
 			"Vector2",
 			sol::call_constructor,
-			sol::constructors<Vector2(float), Vector2(float, float)>(),
+			sol::constructors<Vector2(), Vector2(float), Vector2(float, float)>(),
 			"x", &Vector2::x,
 			"y", &Vector2::y,
 			sol::meta_function::addition, vec2_addition_overload,
@@ -157,7 +157,7 @@ namespace LevEngine::Scripting
 		lua.new_usertype<Vector4>(
 			"Vector4",
 			sol::call_constructor,
-			sol::constructors<Vector4(float), Vector4(float, float, float, float)>(),
+			sol::constructors<Vector4(), Vector4(float), Vector4(float, float, float, float)>(),
 			"x", &Vector4::x,
 			"y", &Vector4::y,
 			"z", &Vector4::z,
@@ -275,7 +275,14 @@ namespace LevEngine::Scripting
 				+ std::to_string(vector.y) + ", "
 				+ std::to_string(vector.z) + "]";
 			},
-			"toEuler", [](Quaternion& quaternion) { return quaternion.ToEuler(); }
+			"toEuler", [](const Quaternion& quaternion)
+			{
+				return quaternion.ToEuler();
+			},
+			"lookRotation", [](const Vector3& forward, const Vector3& up)
+			{
+				return Quaternion::LookRotation(forward, up);
+			}
 		);
 	}
 

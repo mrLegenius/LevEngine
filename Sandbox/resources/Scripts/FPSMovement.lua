@@ -1,10 +1,11 @@
-local walkSpeed = 15
-local sprintSpeed = 30
-local jumpForce = 50
+local walkSpeed = 1
+local sprintSpeed = 2
+local movementMultiplier = 0.25
+local gravityMultiplier = 0.01
 
 FPSMovement = {
 	update = function(deltaTime)
-		local playerView = Registry.get_entities(Transform, Rigidbody, ScriptsContainer)
+		local playerView = Registry.get_entities(Transform, CharacterController, ScriptsContainer)
             
 		playerView:for_each(
 			function (entity)
@@ -17,7 +18,7 @@ FPSMovement = {
 
 				local player = scriptsContainer.Player
 				local playerTransform = entity:get_component(Transform)
-				local playerRigidbody = entity:get_component(Rigidbody)
+				local playerController = entity:get_component(CharacterController)
 
 				local cameraTransform = playerTransform:getChild(0):get_component(Transform)
 
@@ -30,6 +31,7 @@ FPSMovement = {
                 else
                     player.speed = walkSpeed
 				end
+				player.speed = player.speed * movementMultiplier
 
 				--print(player.speed)
                 
@@ -50,23 +52,24 @@ FPSMovement = {
 					--print("D")
 				end
                 
-                if Input.isKeyDown(KeyCode.Space) then
+				
+                --[[if Input.isKeyDown(KeyCode.Space) then
                     movement = movement + Vector3.Up
 					--print("Space", movement)
-				end
+				end]]
 
 				movement:normalize()
 
 				--print(movement)
 
-				playerRigidbody:addForce(
-                    Vector3(
-                        deltaTime * player.speed * movement.x,
-                        deltaTime * jumpForce * movement.y,
-                        deltaTime * player.speed * movement.z
-                    ),
-                    ForceMode.Impulse
-				)
+				local displacement = movement * player.speed;
+                
+
+                local gravity = Physics.getGravity().y;
+				
+                displacement.y = displacement.y + gravity * gravityMultiplier;
+                
+                playerController:move(displacement, deltaTime);
 			end
 		)
 	end
