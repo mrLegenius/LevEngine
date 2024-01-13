@@ -1,13 +1,5 @@
 Scene: PhysicsTestScene
 Entities:
-  - Entity: 293547088511675378
-    Tag: Directional Light
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [-1.55452466, 0, 0]
-      Scale: [1, 0.999998629, 0.999998629]
-    Directional Light:
-      Color: [1, 1, 1, 1]
   - Entity: 2286883072584602035
     Tag: Ground
     Transform:
@@ -15,30 +7,30 @@ Entities:
       Rotation: [-0, 0, 0]
       Scale: [100, 1, 100]
     Rigidbody:
-      Is Visualization Enabled: false
       Rigidbody Type: 0
+      Is Kinematic Enabled: false
       Is Gravity Enabled: true
       Mass: 1
       Center Of Mass: [0, 0, 0]
       Inertia Tensor: [1, 1, 1]
       Linear Damping: 0
       Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
       Is Pos Axis X Locked: false
       Is Pos Axis Y Locked: false
       Is Pos Axis Z Locked: false
       Is Rot Axis X Locked: false
       Is Rot Axis Y Locked: false
       Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
       Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
       Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 7582525064410579512
@@ -46,8 +38,8 @@ Entities:
   - Entity: 18005086127464243940
     Tag: Camera
     Transform:
-      Position: [0, 7, 7]
-      Rotation: [-0.610865176, -5.42132797e-16, -1.3170526e-08]
+      Position: [0, 8, 7]
+      Rotation: [-0.52359879, -2.30755534e-15, -1.31705216e-08]
       Scale: [1, 1, 1]
     Camera:
       Camera:
@@ -60,75 +52,72 @@ Entities:
         OrthographicFar: 1
       Main: true
       FixedAspectRatio: false
-  - Entity: 2500217727459906061
-    Tag: Trigger
+  - Entity: 293547088511675378
+    Tag: Directional Light
     Transform:
-      Position: [0, 4, 0]
+      Position: [0, 0, 0]
+      Rotation: [-1.55452466, 0, 0]
+      Scale: [1, 0.999998629, 0.999998629]
+    Directional Light:
+      Color: [1, 1, 1, 1]
+  - Entity: 1724677694366532257
+    Tag: Falling Box
+    Transform:
+      Position: [0, 5, 0]
       Rotation: [-0, 0, 0]
-      Scale: [3, 1, 3]
+      Scale: [1, 1, 1]
     Rigidbody:
-      Is Visualization Enabled: true
-      Rigidbody Type: 0
-      Is Gravity Enabled: false
+      Rigidbody Type: 1
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
       Mass: 1
       Center Of Mass: [0, 0, 0]
       Inertia Tensor: [1, 1, 1]
       Linear Damping: 0
       Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
       Is Pos Axis X Locked: false
       Is Pos Axis Y Locked: false
       Is Pos Axis Z Locked: false
       Is Rot Axis X Locked: false
       Is Rot Axis Y Locked: false
       Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
       Collider Type: 2
       Box Half Extends: [0.5, 0.5, 0.5]
       Offset Position: [0, 0, 0]
       Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
       Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 15608248225095435140
       Cast Shadow: true
-  - Entity: 3085809970336794991
-    Tag: Falling Box
+  - Entity: 18287333443530293276
+    Tag: Controller
     Transform:
-      Position: [0, 8, 0]
+      Position: [0, 2, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-    Rigidbody:
-      Is Visualization Enabled: true
-      Rigidbody Type: 1
-      Is Gravity Enabled: true
-      Mass: 1
-      Center Of Mass: [0, 0, 0]
-      Inertia Tensor: [1, 1, 1]
-      Linear Damping: 0.100000001
-      Angular Damping: 0.100000001
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
-      Is Pos Axis X Locked: false
-      Is Pos Axis Y Locked: false
-      Is Pos Axis Z Locked: false
-      Is Rot Axis X Locked: false
-      Is Rot Axis Y Locked: false
-      Is Rot Axis Z Locked: false
-      Collider Type: 2
-      Box Half Extends: [0.5, 0.5, 0.5]
-      Offset Position: [0, 0, 0]
-      Offset Rotation: [0, 0, 0]
-      Is Trigger Enabled: false
-      Static Friction: 0.5
+    Character Controller:
+      Capsule Controller Radius: 0.5
+      Capsule Controller Half Height: 0.5
+      Capsule Controller Climbing Mode: 1
+      Controller Center: [0, 0, 0]
+      Slope Limit: 45
+      Step Offset: 0.5
+      Contact Offset: 0.100000001
+      Minimum Movement Distance: 0.00100000005
+      Non Walkable Mode: 0
       Dynamic Friction: 0.5
-      Restitution: 0.600000024
-    MeshRenderer:
-      Mesh: 6362171717149004471
-      Material: 15608248225095435140
-      Cast Shadow: true
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
+    Force:
+      Force: [0, 1, 0]
+      Torque: [0, 0, 0]
 Systems:
   []

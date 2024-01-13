@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
-
 #include "ComponentDrawer.h"
+#include "Physics/Components/ConstantForce.h"
 
 namespace LevEngine::Editor
 {

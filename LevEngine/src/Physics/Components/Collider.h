@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "PhysicalMaterial.h"
+#include "PhysicMaterial.h"
 
 namespace LevEngine
 {
@@ -12,14 +12,15 @@ namespace LevEngine
             Box
         };
 
-        bool m_IsTriggerEnabled = false;
-    
         Type m_Type = Type::Box;
+        
+        bool m_IsTriggerEnabled = false;
+        bool m_IsContactsEnabled = false;
     
         Vector3 OffsetPosition = Vector3::Zero;
         Vector3 OffsetRotation = Vector3::Zero;
 
-        Ref<PhysicalMaterial> m_PhysicalMaterial { CreateRef<PhysicalMaterial>() };
+        Ref<PhysicMaterial> m_PhysicMaterial { CreateRef<PhysicMaterial>() };
     };
 
     struct Sphere : Collider
