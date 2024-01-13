@@ -7,6 +7,7 @@
 #include "MathLuaBindings.h"
 #include "LuaComponentsBinder.h"
 #include "Assets/ScriptAsset.h"
+#include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
 
 #include "Scene/Scene.h"
@@ -35,6 +36,7 @@ namespace LevEngine::Scripting
         LuaComponentsBinder::CreatePrintBind(*m_Lua);
         LuaComponentsBinder::CreateGUIBind(*m_Lua);
         LuaComponentsBinder::CreateTimeBind(*m_Lua);
+        LuaComponentsBinder::CreatePhysicsBind(*m_Lua);
 
         LuaComponentsBinder::CreateSceneBind(*m_Lua);
         LuaComponentsBinder::CreatePrefabBind(*m_Lua);
@@ -43,6 +45,7 @@ namespace LevEngine::Scripting
         RegisterComponent(Transform);
         RegisterComponent(CameraComponent);
         RegisterComponent(Rigidbody)
+        RegisterComponent(CharacterController);
     }
 
     ScriptingManager::ScriptingManager()
