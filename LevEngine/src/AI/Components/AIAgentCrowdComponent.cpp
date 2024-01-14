@@ -4,6 +4,7 @@
 #include <DetourCrowd.h>
 
 #include "AIAgentComponent.h"
+#include "Physics/Components/CharacterController.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/ComponentSerializer.h"
@@ -80,7 +81,7 @@ namespace LevEngine
         m_crowd->setObstacleAvoidanceParams(static_cast<int>(ObstacleAvoidanceQuality::Ultra), &params);
     }
 
-    void AIAgentCrowdComponent::Update(const float deltaTime)
+    void AIAgentCrowdComponent::Update(float deltaTime)
     {
         if(!m_isInitialized)
         {
@@ -111,7 +112,7 @@ namespace LevEngine
         m_crowd->update(deltaTime, m_crowdAgentDebugInfo);
     }
 
-    void AIAgentCrowdComponent::UpdateAgentsPosition()
+    void AIAgentCrowdComponent::UpdateAgentsPosition(float deltaTime)
     {
         for(int i = 0; i < agentsEntities.size(); ++i)
         {
@@ -120,9 +121,13 @@ namespace LevEngine
             {
                 continue;
             }
-            auto& agentTransform = agentsEntities[i].GetComponent<Transform>();
+            if(!agentsEntities[i].HasComponent<CharacterController>())
+            {
+                continue;
+            }
+            auto& characterController = agentsEntities[i].GetComponent<CharacterController>();
             const Vector3 currentPosition = {agent->npos[0], agent->npos[1], agent->npos[2]};
-            agentTransform.SetWorldPosition(currentPosition);
+            characterController.MoveTo(currentPosition, deltaTime);
         }
     }
 

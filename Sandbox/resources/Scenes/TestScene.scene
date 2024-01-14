@@ -337,13 +337,114 @@ Entities:
     NavMeshable:
       Use in nav mesh: true
       Field: 0
+  - Entity: 1870541087041406652
+    Tag: Navigation mesh
+    Parent: 10100203230745788342
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    NavMeshBoundingBox:
+      Position offset: [0, 0, 0]
+      Box half extents: [15, 1, 20]
+    NavMesh:
+      Build on start: false
+      Cell size: 0.300000012
+      Cell Height: 0.200000003
+      Agent Height: 2
+      Agent radius: 0.600000024
+      Agent max climb: 0.899999976
+      Agent max slope: 45
+      Region min size: 8
+      Region merge size: 8
+      Edge max len: 12
+      Edge max error: 1.29999995
+      Verts per poly: 6
+      Detail sample dist: 8
+      Detail sample max error: 1
+      Partition type: 0
+      Filter low hanging obstacles: false
+      Filter ledge spans: false
+      Filter walkable low height spans: false
+      Keep intermediate results: false
+  - Entity: 10100203230745788342
+    Tag: AI
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 6290987065937343660
+    Tag: AI Crowd
+    Parent: 10100203230745788342
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    AIAgentCrowd:
+      Agents count: 1
+      Agents:
+        - Agent: 12868815795027252088
+      Navigation mesh: 1870541087041406652
+      Target: 12607322678477050049
+  - Entity: 15647465668089824345
+    Tag: Mesh
+    Parent: 12868815795027252088
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [0.00999999978, 0.0199999996, 0.00999999978]
+    MeshRenderer:
+      Mesh: 14487929412751068277
+      Material: 2751245691352325769
+      Cast Shadow: true
+  - Entity: 12607322678477050049
+    Tag: Target
+    Parent: 10100203230745788342
+    Transform:
+      Position: [0, 0, -13.7288237]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 12868815795027252088
+    Tag: EnemyController
+    Parent: 10100203230745788342
+    Transform:
+      Position: [0, 0.0319452286, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Character Controller:
+      Capsule Controller Radius: 1
+      Capsule Controller Half Height: 1
+      Capsule Controller Climbing Mode: 1
+      Controller Center: [0, 2, 0]
+      Slope Limit: 0.707000017
+      Step Offset: 0.5
+      Contact Offset: 0.100000001
+      Minimum Movement Distance: 0.00100000005
+      Non Walkable Mode: 0
+      Dynamic Friction: 0.800000012
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
+    AIAgentComponent:
+      Is active: true
+      Agent radius: 0.600000024
+      Agent height: 2
+      Max acceleration: 8
+      Max speed: 3.5
+      Collision query range: 7.20000029
+      Path optimization range: 18
+      Separation weight: 2
+      Update flags: 27
+      Obstacle avoidance type: 3
+      Query filter type: 0
 Systems:
-  - System: 7522258865418468204
-  - System: 6443649335573170893
-  - System: 9822250894310505128
-  - System: 10507411060376272809
-  - System: 15747099389357838684
-  - System: 4286742986091037320
-  - System: 12364856122512646631
-  - System: 4340022513561837824
   - System: 14623761520668869565
+  - System: 7522258865418468204
+  - System: 9822250894310505128
+  - System: 12364856122512646631
+  - System: 15747099389357838684
+  - System: 6443649335573170893
+  - System: 10507411060376272809
+  - System: 4286742986091037320
+  - System: 4340022513561837824

@@ -47,6 +47,7 @@ namespace LevEngine
         void SetClimbingMode(const Controller::ClimbingMode& climbingMode) const;
 
         void Move(Vector3 displacement, float elapsedTime) const;
+        void MoveTo(Vector3 displacement, float elapsedTime) const;
         
         [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
