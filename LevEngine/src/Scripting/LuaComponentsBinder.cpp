@@ -3,6 +3,7 @@
 
 #include "MetaUtilities.h"
 #include "ResourceManager.h"
+#include "AI/Components/AIAgentComponent.h"
 #include "Assets/PrefabAsset.h"
 #include "Audio/Audio.h"
 #include "GUI/GUI.h"
@@ -637,6 +638,21 @@ namespace LevEngine::Scripting
             {
                 return Application::Get().GetPhysics().GetGravity();
             }
+        );
+    }
+
+    void LuaComponentsBinder::CreateAIAgentComponentLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<AIAgentComponent>(
+            "AIAgentComponent",
+            "type_id", &entt::type_hash<AIAgentComponent>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return AIAgentComponent{};
+                }),
+            "setMoveTarget", &AIAgentComponent::SetMoveTarget
         );
     }
 }

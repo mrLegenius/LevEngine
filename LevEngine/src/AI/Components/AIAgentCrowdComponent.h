@@ -5,8 +5,6 @@
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
-class dtCrowd;
-
 namespace LevEngine
 {
     enum class ObstacleAvoidanceQuality : int

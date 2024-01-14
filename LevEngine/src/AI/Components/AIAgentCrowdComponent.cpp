@@ -38,8 +38,11 @@ namespace LevEngine
         m_navMeshQuery = navMeshComponent.GetNavMeshQuery();
         m_crowd->init(MAX_AGENTS_COUNT, navMeshComponent.AgentRadius, navMeshComponent.GetNavMesh());
         RegisterDefaultObstacleAvoidanceProfiles();
-        for (auto agentEntity : agentsEntities)
+        for(int i = 0; i < agentsEntities.size(); ++i)
         {
+            const auto& agentEntity = agentsEntities[i];
+            auto& agentComponent = agentEntity.GetComponent<AIAgentComponent>();
+            agentComponent.Init(this, i);
             AddAgent(agentEntity);
         }
         m_isInitialized = true;
@@ -100,13 +103,6 @@ namespace LevEngine
             agent->npos[0] = position.x;
             agent->npos[1] = position.y;
             agent->npos[2] = position.z;
-
-            if(target)
-            {
-                const auto& targetTransform = target.GetComponent<Transform>();
-                const auto& targetPosition = targetTransform.GetWorldPosition();
-                SetMoveTarget(i, targetPosition);   
-            }
         }
         
         m_crowd->update(deltaTime, m_crowdAgentDebugInfo);
