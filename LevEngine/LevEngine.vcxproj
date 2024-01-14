@@ -1445,9 +1445,6 @@
     <Natvis Include="external\entt\signal.natvis" />
     <Natvis Include="external\sol\sol2.natvis" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\AI\NewDirectory1\" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>
