@@ -405,6 +405,15 @@ namespace LevEngine
         }
     }
 
+    void CharacterController::MoveTo(const Vector3 position, const float elapsedTime) const
+    {
+        if (m_Controller != nullptr)
+        {
+            const Vector3 displacement = position - PhysicsUtils::FromPxExtendedVec3ToVector3(m_Controller->getPosition());
+            Move(displacement, elapsedTime);
+        }
+    }
+
     const Vector<Collision>& CharacterController::GetCollisionEnterBuffer() const
     {
         return m_CollisionEnterBuffer; 
