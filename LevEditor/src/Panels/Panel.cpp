@@ -19,7 +19,14 @@ namespace LevEngine::Editor
 		if (m_Active)
 		{
 			m_Window = ImGui::GetCurrentWindow();
+
+			const bool wasFocused = m_Focused;
 			m_Focused = ImGui::IsWindowFocused();
+			if (!wasFocused && m_Focused)
+				OnFocus();
+			else if (wasFocused && !m_Focused)
+				OnLostFocus();
+
 			m_Hovered = ImGui::IsWindowHovered();
 
 			DrawContent();
@@ -27,7 +34,25 @@ namespace LevEngine::Editor
 		ImGui::End();
 	}
 
-	const ImGuiPayload* Panel::BeginDragDropTargetWindow(const char* payloadType)
+	void Panel::Focus()
+	{
+		if (m_Focused) return;
+
+		ImGui::FocusWindow(m_Window);
+		m_Focused = true;
+		OnFocus();
+	}
+
+	void Panel::Unfocus()
+	{
+		if (!m_Focused) return;
+
+		ImGui::FocusWindow(nullptr);
+		m_Focused = false;
+		OnLostFocus();
+	}
+
+	void* Panel::BeginDragDropTargetWindow(const char* payloadType)
 	{
 		using namespace ImGui;
 		const ImRect innerRect = GetCurrentWindow()->InnerRect;
@@ -44,8 +69,8 @@ namespace LevEngine::Editor
 			}
 			if (payload->IsDelivery())
 			{
-				EndDragDropTarget();
-				return payload;
+				const auto data = payload->Data;
+				return data;
 			}
 		}
 

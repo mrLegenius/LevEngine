@@ -94,7 +94,7 @@ namespace LevEngine
             out << YAML::Key << c_PlayOnInitNodeKey << YAML::Value << component.GetPlayOnInit();
         }
         
-        void DeserializeData(YAML::Node& node, AnimatorComponent& component) override
+        void DeserializeData(const YAML::Node& node, AnimatorComponent& component) override
         {
             const Ref<AnimationAsset> animationAsset = DeserializeAsset<AnimationAsset>(node[c_AnimationClipNodeKey]);
 

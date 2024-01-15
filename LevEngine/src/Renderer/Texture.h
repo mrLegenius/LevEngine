@@ -117,7 +117,7 @@ namespace LevEngine
 
 		static Ref<Texture> CreateTextureCube(const String paths[6]);
 		static Ref<Texture> CreateTextureCube(const String paths[6], const bool isLinear);
-		static Ref<Texture> Create(const String& path, bool isLinear);
+		static Ref<Texture> Create(const String& path, bool isLinear, bool generateMipMaps);
 		static Ref<Texture> Create(const String& path);
 
 		[[nodiscard]] virtual void* GetId() = 0;

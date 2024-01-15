@@ -53,7 +53,7 @@ namespace LevEngine
     {
     }
 
-    void ScriptAsset::DeserializeData(YAML::Node& node)
+    void ScriptAsset::DeserializeData(const YAML::Node& node)
     {
     }
 
@@ -62,7 +62,7 @@ namespace LevEngine
         out << YAML::Key << "Type" << YAML::Value << static_cast<int>(m_Type);
     }
 
-    void ScriptAsset::DeserializeMeta(YAML::Node& node)
+    void ScriptAsset::DeserializeMeta(const YAML::Node& node)
     {
         try
         {

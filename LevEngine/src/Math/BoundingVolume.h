@@ -66,6 +66,16 @@ struct AABBBoundingVolume final :  BoundingVolume
 		: center{ center }, extents{ i, j, k }
 	{}
 
+	Vector3 GetMin() const
+	{
+		return {center.x - extents.x, center.y - extents.y, center.z - extents.z};
+	}
+
+	Vector3 GetMax() const
+	{
+		return {center.x + extents.x, center.y + extents.y, center.z + extents.z};
+	}
+	
 	std::array<Vector3, 8> GetVertices() const
 	{
 		std::array<Vector3, 8> vertices;

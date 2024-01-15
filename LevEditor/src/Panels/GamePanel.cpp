@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "GamePanel.h"
 
+#include "SceneState.h"
+
 namespace LevEngine::Editor
 {
 	ImVec2 GetLargestSizeForViewport()
@@ -33,6 +35,8 @@ namespace LevEngine::Editor
 	
 	void GamePanel::DrawContent()
 	{
+		SceneManager::GetActiveScene()->OnGUIRender();
+
         const auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
         const auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
         const auto viewportOffset = ImGui::GetWindowPos();
@@ -81,6 +85,28 @@ namespace LevEngine::Editor
             uv0,
             uv1
         );
+
+        const auto windowCenterX = ImGui::GetWindowPos().x + ImGui::GetWindowSize().x / 2.0f;
+        const auto windowCenterY = ImGui::GetWindowPos().y + ImGui::GetWindowSize().y / 2.0f;
+
+		if (m_StateGetter() == SceneState::Play && m_Focused && !ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+		{
+			App::Get().GetWindow().SetCursorPosition(
+				static_cast<uint32_t>(windowCenterX), static_cast<uint32_t>(windowCenterY));
+		}
+	}
+
+	void GamePanel::OnFocus() const
+	{
+		if (m_StateGetter() == SceneState::Play)
+		{
+			App::Get().GetWindow().DisableCursor();
+		}
+	}
+
+	void GamePanel::OnLostFocus() const
+	{
+		App::Get().GetWindow().EnableCursor();
 	}
 }
 

@@ -4,6 +4,7 @@
 
 #include "D3D11Texture.h"
 
+#include "D3D11DeferredContexts.h"
 #include "stb/include/stb_image.h"
 #include "Math/Math.h"
 #include "Renderer/SamplerState.h"
@@ -12,6 +13,7 @@
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;
+    
 extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
 inline void PrintTextureFormatReplaceWarning()
@@ -1869,8 +1871,8 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
 
     if (texture->m_GenerateMipMaps)
     {
-        context->UpdateSubresource(texture->m_Texture2D, 0, nullptr, data, texture->m_Pitch, 0);
-        context->GenerateMips(texture->m_ShaderResourceView);
+        D3D11DeferredContexts::GetContext()->UpdateSubresource(texture->m_Texture2D, 0, nullptr, data, texture->m_Pitch, 0);
+        D3D11DeferredContexts::GetContext()->GenerateMips(texture->m_ShaderResourceView);
     }
 
     texture->m_IsDirty = false;
@@ -1954,7 +1956,7 @@ Ref<Texture> D3D11Texture::CreateTextureCube(const uint16_t width, const uint16_
     return texture;
 }
 
-D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
+D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMaps) : Texture(path)
 {
     LEV_PROFILE_FUNCTION();
 
@@ -2021,7 +2023,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
 
     m_ShaderResourceViewFormatSupport = m_RenderTargetViewFormatSupport = m_TextureResourceFormatSupport;
 
-    m_GenerateMipMaps = !m_Dynamic && (m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN) != 0;
+    m_GenerateMipMaps = generateMipMaps && !m_Dynamic && (m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN) != 0;
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 
@@ -2080,6 +2082,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear) : Texture(path)
 
     if (m_GenerateMipMaps)
     {
+        auto context = D3D11DeferredContexts::GetContext();
         context->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
         context->GenerateMips(m_ShaderResourceView);
     }
@@ -2217,8 +2220,8 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
     //TODO: Do we need mip maps for cube map?
     /*if (m_GenerateMipMaps)
     {
-        context->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
-        context->GenerateMips(m_ShaderResourceView);
+        D3D11DeferredContexts::GetContext()->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
+        D3D11DeferredContexts::GetContext()->GenerateMips(m_ShaderResourceView);
     }*/
 
     m_IsDirty = false;
@@ -2471,7 +2474,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
 
 	    if (m_GenerateMipMaps)
-		    context->GenerateMips(m_ShaderResourceView);
+		    D3D11DeferredContexts::GetContext()->GenerateMips(m_ShaderResourceView);
     }
 
     if ((textureDesc.BindFlags & D3D11_BIND_RENDER_TARGET) != 0)
@@ -2614,7 +2617,7 @@ void D3D11Texture::ResizeCube(const uint16_t width, const uint16_t height)
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
 
 	    if (m_GenerateMipMaps)
-		    context->GenerateMips(m_ShaderResourceView);
+		    D3D11DeferredContexts::GetContext()->GenerateMips(m_ShaderResourceView);
     }
 
     if ((textureDesc.BindFlags & D3D11_BIND_RENDER_TARGET) != 0)

@@ -37,7 +37,7 @@ namespace LevEngine
 		out << YAML::Key << c_AnimationIndexKey << YAML::Value << m_AnimationIdx;
 		SerializeAsset(out, c_OwnerMeshKey, m_OwnerMesh);
 	}
-	void AnimationAsset::DeserializeData(YAML::Node& node)
+	void AnimationAsset::DeserializeData(const YAML::Node& node)
 	{
 		if (const auto animationIndexNode = node[c_AnimationIndexKey])
 		{

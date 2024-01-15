@@ -30,6 +30,8 @@ namespace LevEngine
     {
         const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
 
+        Material* previousMaterial{nullptr};
+
         // Process static meshes
         const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
         for (const auto entity : staticMeshGroup)
@@ -49,12 +51,21 @@ namespace LevEngine
             {
                 if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
-            
-            material.Bind(shader);
+
+            if (previousMaterial != &material)
+                material.Bind(shader);
+
             Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
-            material.Unbind(shader);
+
+            previousMaterial = &material;
         }
-        
+
+        if (previousMaterial)
+		{
+            previousMaterial->Unbind(shader);
+            previousMaterial = nullptr;
+		}
+
         // Process animated meshes
         const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
         for (const auto entity : animatedMeshGroup)
@@ -75,10 +86,21 @@ namespace LevEngine
             {
                 if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
+
+            if (previousMaterial != &material)
+			{
+                material.Bind(shader);
+			}
             
-            material.Bind(shader);
             Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, shader);
-            material.Unbind(shader);
+            
+            previousMaterial = &material;
+        }
+
+        if (previousMaterial)
+        {
+            previousMaterial->Unbind(shader);
+            previousMaterial = nullptr;
         }
     }
 

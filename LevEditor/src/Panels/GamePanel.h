@@ -3,15 +3,17 @@
 
 namespace LevEngine::Editor
 {
+	enum class SceneState;
+
 	class GamePanel final : public Panel
 	{
 	public:
-		GamePanel() : Panel()
+		GamePanel(Func<SceneState> stateGetter) : Panel(), m_StateGetter(std::move(stateGetter))
 		{
 			m_WindowPadding = Vector2{ 0, 0 };
 			m_CanScroll = false;
 		}
-		explicit GamePanel(const Ref<Texture>& renderTexture) : GamePanel()
+		explicit GamePanel(const Ref<Texture>& renderTexture, Func<SceneState> stateGetter) : GamePanel(std::move(stateGetter))
 		{
 			m_Texture = renderTexture->Clone();
 
@@ -36,10 +38,14 @@ namespace LevEngine::Editor
 	protected:
 		String GetName() override { return "Game"; }
 		void DrawContent() override;
+
+		void OnFocus() const override;
+		void OnLostFocus() const override;
 	private:
 		Vector2 m_Size{ 0.0f };
 		Vector2 m_Bounds[2];
 
 		Ref<Texture> m_Texture;
+		Func<SceneState> m_StateGetter;
 	};
 }
