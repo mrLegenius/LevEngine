@@ -1,11 +1,9 @@
 ﻿#pragma once
 #include "physx/include/PxPhysicsAPI.h"
-#include "Collider.h"
-#include "Collision.h"
-#include "DataTypes/Vector.h"
 #include "Scene/Components/TypeParseTraits.h"
-#include "ConstantForce.h"
-#include "Scene/Components/Transform/Transform.h"
+#include "Collider.h"
+#include "PhysicMaterial.h"
+#include "Collision.h"
 
 namespace LevEngine
 {
@@ -18,45 +16,53 @@ namespace LevEngine
             Static,
             Dynamic
         };
-        
+
+        enum class ForceMode
+        {
+            // Add a continuous force to the rigidbody, using its mass
+            Force,
+            // Add an instant force impulse to the rigidbody, using its mass
+            Impulse,
+            // Add a continuous acceleration to the rigidbody, ignoring its mass
+            Acceleration,
+            // Add an instant velocity change to the rigidbody, ignoring its mass
+            VelocityChange
+        };
+
+        // Don't call this method (only for internal use)
         static void OnDestroy(entt::registry& registry, entt::entity entity);
 
-        [[nodiscard]] bool IsInitialized() const;
+        // Don't call this method (only for internal use)
         void Initialize(Entity entity);
-
-        [[nodiscard]] Vector3 GetTransformScale() const;
-        void SetTransformScale(Vector3 transformScale);
-
-        [[nodiscard]] bool IsVisualizationEnabled() const;
-        void EnableVisualization(bool flag);
         
-        // Rigidbody
+        [[nodiscard]] Type GetRigidbodyType() const;
+        void SetRigidbodyType(const Type& type);
+        
+        [[nodiscard]] float GetMass() const;
+        void SetMass(float mass);
+        [[nodiscard]] float GetLinearDamping() const;
+        void SetLinearDamping(float linearDamping);
+        [[nodiscard]] float GetAngularDamping() const;
+        void SetAngularDamping(float angularDamping);
+        [[nodiscard]] Vector3 GetCenterOfMass() const;
+        void SetCenterOfMass(Vector3 centerOfMass);
+        [[nodiscard]] Vector3 GetInertiaTensor() const;
+        void SetInertiaTensor(Vector3 inertiaTensor);
+
         [[nodiscard]] bool IsGravityEnabled() const;
         void EnableGravity(bool flag);
         
         [[nodiscard]] bool IsKinematicEnabled() const;
         void EnableKinematic(bool flag);
+        [[nodiscard]] Vector3 GetKinematicTargetPosition() const;
+        void SetKinematicTargetPosition(Vector3 position);
+        [[nodiscard]] Quaternion GetKinematicTargetRotation() const;
+        void SetKinematicTargetRotation(Quaternion rotation);
         
-        [[nodiscard]] Type GetRigidbodyType() const;
-        void SetRigidbodyType(const Type& rigidbodyType);
-        
-        [[nodiscard]] float GetMass() const;
-        void SetMass(float value);
-        [[nodiscard]] Vector3 GetCenterOfMass() const;
-        void SetCenterOfMass(Vector3 value);
-        [[nodiscard]] Vector3 GetInertiaTensor() const;
-        void SetInertiaTensor(Vector3 value);
-
-        [[nodiscard]] float GetMaxLinearVelocity() const;
-        void SetMaxLinearVelocity(float value);
-        [[nodiscard]] float GetMaxAngularVelocity() const;
-        void SetMaxAngularVelocity(float value);
-        
-        [[nodiscard]] float GetLinearDamping() const;
-        void SetLinearDamping(float value);
-        [[nodiscard]] float GetAngularDamping() const;
-        void SetAngularDamping(float value);
-        
+        [[nodiscard]] bool IsPosLocked() const;
+        void LockPos(bool flag);
+        [[nodiscard]] bool IsRotLocked() const;
+        void LockRot(bool flag);
         [[nodiscard]] bool IsPosAxisXLocked() const;
         void LockPosAxisX(bool flag);
         [[nodiscard]] bool IsPosAxisYLocked() const;
@@ -69,13 +75,15 @@ namespace LevEngine
         void LockRotAxisY(bool flag);
         [[nodiscard]] bool IsRotAxisZLocked() const;
         void LockRotAxisZ(bool flag);
-
-        // Collider
+        
         [[nodiscard]] bool IsTriggerEnabled() const;
         void EnableTrigger(bool flag);
+
+        //[[nodiscard]] bool IsContactsEnabled() const;
+        //void EnableContacts(bool flag);
         
         [[nodiscard]] Collider::Type GetColliderType() const;
-        void SetColliderType(const Collider::Type& colliderType);
+        void SetColliderType(const Collider::Type& type);
         [[nodiscard]] int GetColliderCount() const;
         
         [[nodiscard]] Vector3 GetColliderOffsetPosition() const;
@@ -91,37 +99,29 @@ namespace LevEngine
         void SetCapsuleHalfHeight(float halfHeight);
         [[nodiscard]] Vector3 GetBoxHalfExtents() const;
         void SetBoxHalfExtents(Vector3 halfExtents);
-
-        // Material
-        [[nodiscard]] float GetStaticFriction() const;
-        void SetStaticFriction(float staticFriction);
+        
         [[nodiscard]] float GetDynamicFriction() const;
         void SetDynamicFriction(float dynamicFriction);
-        [[nodiscard]] float GetRestitution() const;
-        void SetRestitution(float restitution);
-        
-        // Force
-        enum class ForceMode
-        {
-            // Add a continuous force to the rigidbody, using its mass
-            Force,
-            // Add an instant force impulse to the rigidbody, using its mass
-            Impulse,
-            // Add a continuous acceleration to the rigidbody, ignoring its mass
-            Acceleration,
-            // Add an instant velocity change to the rigidbody, ignoring its mass
-            VelocityChange
-        };
+        [[nodiscard]] float GetStaticFriction() const;
+        void SetStaticFriction(float staticFriction);
+        [[nodiscard]] float GetBounciness() const;
+        void SetBounciness(float bounciness);
+        [[nodiscard]] PhysicMaterial::CombineMode GetFrictionCombineMode() const;
+        void SetFrictionCombineMode(const PhysicMaterial::CombineMode& frictionCombineMode) const;
+        [[nodiscard]] PhysicMaterial::CombineMode GetBounceCombineMode() const;
+        void SetBounceCombineMode(const PhysicMaterial::CombineMode& bounceCombineMode) const;
 
         void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
-        void AddTorque(Vector3 torque, ForceMode = ForceMode::Force) const;
-
+        void AddTorque(Vector3 torque, ForceMode mode = ForceMode::Force) const;
+        
         [[nodiscard]] const Vector<Entity>& GetTriggerEnterBuffer() const;
         [[nodiscard]] const Vector<Entity>& GetTriggerExitBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
 
+        friend class RigidbodyInitSystem;
         friend class PhysicsUpdate;
+        
         friend class ContactReportCallback;
         
     private:
@@ -129,34 +129,45 @@ namespace LevEngine
         [[nodiscard]] physx::PxShape* GetCollider() const;
         [[nodiscard]] physx::PxMaterial* GetPhysicalMaterial() const;
 
+        [[nodiscard]] bool IsInitialized() const;
+
+        [[nodiscard]] Vector3 GetTransformScale() const;
+        void SetTransformScale(Vector3 transformScale);
+
+        [[nodiscard]] bool IsVisualizationEnabled() const;
+        void EnableVisualization(bool flag);
+
         void AttachRigidbody(Entity entity);
         void DetachRigidbody();
         
         void AttachCollider();
         void DetachCollider();
 
-        bool m_IsInitialized = false;
-        bool m_IsVisualizationEnabled = false;
-        
-        physx::PxRigidActor* m_Actor = nullptr;
+        void ApplyKinematicTarget() const;
 
+        physx::PxRigidActor* m_Actor = nullptr;
+        
+        bool m_IsInitialized = false;
         Vector3 m_TransformScale = Vector3::One;
         
-        // Rigidbody
-        bool m_IsGravityEnabled = true;
-        bool m_IsKinematicEnabled = false;
-        
+        bool m_IsVisualizationEnabled = false;
+
         Type m_Type = Type::Dynamic;
-        
+
         float m_Mass = 1.0f;
-        Vector3 m_CenterOfMass = Vector3::Zero;
-        Vector3 m_InertiaTensor = Vector3::One;
         float m_LinearDamping = 0.0f;
         float m_AngularDamping = 0.05f;
-
-        float m_MaxLinearVelocity = 100.0f;
-        float m_MaxAngularVelocity = 100.0f;
+        Vector3 m_CenterOfMass = Vector3::Zero;
+        Vector3 m_InertiaTensor = Vector3::One;
         
+        bool m_IsGravityEnabled = true;
+        
+        bool m_IsKinematicEnabled = false;
+        Vector3 m_KinematicTargetPosition = Vector3::Zero;
+        Quaternion m_KinematicTargetRotation = Quaternion::Identity;
+
+        bool m_IsPosLocked = false;
+        bool m_IsRotLocked = false;
         bool m_IsPosAxisXLocked = false;
         bool m_IsPosAxisYLocked = false;
         bool m_IsPosAxisZLocked = false;
@@ -164,10 +175,8 @@ namespace LevEngine
         bool m_IsRotAxisYLocked = false;
         bool m_IsRotAxisZLocked = false;
         
-        // Collider + Material
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
-
-        // Trigger/Collision Events
+        
         Vector<Entity> m_TriggerEnterBuffer;
         Vector<Entity> m_TriggerExitBuffer;
         Vector<Collision> m_CollisionEnterBuffer;

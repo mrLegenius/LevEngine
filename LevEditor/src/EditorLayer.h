@@ -29,7 +29,7 @@ namespace LevEngine::Editor
         void OnScenePlay();
         void OnSceneStop();
         void OnEvent(Event& event) override;
-        bool OnKeyPressed(KeyPressedEvent& event) const;
+        bool OnKeyPressed(KeyPressedEvent& event);
         void OnGUIRender() override;
 
     private:

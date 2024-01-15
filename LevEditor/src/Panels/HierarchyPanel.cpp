@@ -82,7 +82,8 @@ namespace LevEngine::Editor
 			Selection::Deselect();
 
 		//Right click on a blank space
-		if (ImGui::BeginPopupContextWindow(nullptr, 1))
+		constexpr auto flags = ImGuiPopupFlags_MouseButtonDefault_ | ImGuiPopupFlags_NoOpenOverItems;
+		if (ImGui::BeginPopupContextWindow(nullptr, flags))
 		{
 			if (ImGui::MenuItem("Create New Entity"))
 				activeScene->CreateEntity("New Entity");

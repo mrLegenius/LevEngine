@@ -63,7 +63,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;lua54.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -94,24 +94,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h" />
-    <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
-    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
-    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
+    <ClInclude Include="src\AI\Components\AIAgentComponent.h" />
+    <ClInclude Include="src\AI\Components\AIAgentCrowdComponent.h" />
+    <ClInclude Include="src\AI\Systems\AIAgentCrowdUpdateSystem.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\SceneAsset.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
@@ -119,12 +104,16 @@
     <ClInclude Include="src\JobSystem\Job.h" />
     <ClInclude Include="src\JobSystem\ParallelJob.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
+    <ClInclude Include="src\Physics\Components\CharacterController.h" />
     <ClInclude Include="src\Physics\Components\Collision.h" />
+    <ClInclude Include="src\Physics\Components\Controller.h" />
     <ClInclude Include="src\Physics\Components\Destroyable.h" />
+    <ClInclude Include="src\Physics\Components\PhysicMaterial.h" />
     <ClInclude Include="src\Physics\Events\ContactReportCallback.h" />
     <ClInclude Include="src\Physics\PhysicsUpdate.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
-    <ClInclude Include="src\Physics\RigidbodyInitSystem.h" />
+    <ClInclude Include="src\Physics\Systems\CharacterControllerInitSystem.h" />
+    <ClInclude Include="src\Physics\Systems\RigidbodyInitSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DeferredContexts.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
@@ -157,28 +146,9 @@
     <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
-    <ClInclude Include="src\Physics\Components\PhysicalMaterial.h" />
     <ClInclude Include="src\Physics\Components\Rigidbody.h" />
     <ClInclude Include="src\Physics\Physics.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourCrowd.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourLocalBoundary.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourObstacleAvoidance.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathCorridor.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourPathQueue.h" />
-    <ClInclude Include="external\RecastDetour\DetourCrowd\DetourProximityGrid.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourAlloc.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourAssert.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourCommon.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourMath.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMesh.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshBuilder.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNavMeshQuery.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourNode.h" />
-    <ClInclude Include="external\RecastDetour\Detour\DetourStatus.h" />
-    <ClInclude Include="external\RecastDetour\Recast\Recast.h" />
-    <ClInclude Include="external\RecastDetour\Recast\RecastAlloc.h" />
-    <ClInclude Include="external\RecastDetour\Recast\RecastAssert.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h" />
     <ClInclude Include="src\Assets\SkeletonAsset.h" />
@@ -1062,6 +1032,9 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AI\Components\AIAgentComponent.cpp" />
+    <ClCompile Include="src\AI\Components\AIAgentCrowdComponent.cpp" />
+    <ClCompile Include="src\AI\Systems\AIAgentCrowdUpdateSystem.cpp" />
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\SceneAsset.cpp" />
@@ -1069,9 +1042,11 @@
     <ClCompile Include="src\JobSystem\Job.cpp" />
     <ClCompile Include="src\JobSystem\ParallelJob.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
+    <ClCompile Include="src\Physics\Components\CharacterController.cpp" />
     <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
-    <ClCompile Include="src\Physics\RigidbodyInitSystem.cpp" />
+    <ClCompile Include="src\Physics\Systems\CharacterControllerInitSystem.cpp" />
+    <ClCompile Include="src\Physics\Systems\RigidbodyInitSystem.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DeferredContexts.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />
@@ -1479,6 +1454,9 @@
     <Natvis Include="external\entt\resource.natvis" />
     <Natvis Include="external\entt\signal.natvis" />
     <Natvis Include="external\sol\sol2.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\AI\NewDirectory1\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

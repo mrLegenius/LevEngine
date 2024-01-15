@@ -1,43 +1,32 @@
-Prefab: Player
+Prefab: PlayerController
 RootEntity: 16534605177672028581
 Entities:
   - Entity: 16534605177672028581
-    Tag: Player
+    Tag: PlayerController
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-    Rigidbody:
-      Is Visualization Enabled: false
-      Rigidbody Type: 1
-      Is Kinematic Enabled: false
-      Is Gravity Enabled: true
-      Mass: 1
-      Center Of Mass: [0, 0, 0]
-      Inertia Tensor: [1, 1, 1]
-      Linear Damping: 1
-      Angular Damping: 0.0500000007
-      Max Linear Velocity: 30
-      Max Angular Velocity: 100
-      Is Pos Axis X Locked: false
-      Is Pos Axis Y Locked: false
-      Is Pos Axis Z Locked: false
-      Is Rot Axis X Locked: true
-      Is Rot Axis Y Locked: true
-      Is Rot Axis Z Locked: true
-      Collider Type: 1
-      Capsule Radius: 1
-      Capsule Half Height: 2
-      Offset Position: [0, 3, 0]
-      Offset Rotation: [0, 0, 90]
-      Static Friction: 0.5
-      Dynamic Friction: 0.800000012
-      Restitution: 0
-  - Entity: 3609519582529224002
-    Tag: Camera
+    Character Controller:
+      Capsule Controller Radius: 1
+      Capsule Controller Half Height: 2
+      Capsule Controller Climbing Mode: 1
+      Controller Center: [0, 2, 0]
+      Slope Limit: 45
+      Step Offset: 1
+      Contact Offset: 0.00100000005
+      Minimum Movement Distance: 0.00100000005
+      Non Walkable Mode: 0
+      Dynamic Friction: 1
+      Static Friction: 1
+      Bounciness: 0
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
+  - Entity: 11146412176837588455
+    Tag: Head
     Parent: 16534605177672028581
     Transform:
-      Position: [0, 4, 0]
+      Position: [0, 4.5, -0.5]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Camera:
@@ -46,19 +35,23 @@ Entities:
         PerspectiveFOV: 45
         PerspectiveNear: 0.100000001
         PerspectiveFar: 1000
-        OrthographicSize: 5
-        OrthographicNear: 9.99999975e-05
-        OrthographicFar: 487.200012
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
       Main: true
       FixedAspectRatio: false
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 15608248225095435140
+      Cast Shadow: true
     AudioListener:
       {}
   - Entity: 8193487410668680548
     Tag: Weapon
-    Parent: 3609519582529224002
+    Parent: 11146412176837588455
     Transform:
-      Position: [0.800000012, -0.800000012, -2.5999999]
-      Rotation: [0.0436332114, 0.0628317893, -1.16526233e-10]
+      Position: [0, -1, -1.5]
+      Rotation: [-0, 0, 0]
       Scale: [0.5, 0.5, 0.5]
     MeshRenderer:
       Mesh: 5721017995879216389

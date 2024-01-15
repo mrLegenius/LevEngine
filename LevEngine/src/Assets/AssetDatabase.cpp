@@ -269,12 +269,9 @@ namespace LevEngine
 	Ref<Asset> AssetDatabase::GetAsset(const Path& path, const bool deserialize)
 	{
 		const auto assetIt = m_AssetsByPath.find(path);
-		if (assetIt == m_AssetsByPath.end())
-		{
-			Log::CoreWarning("Asset in {0} is not found", path.string());
-			return nullptr;
-		}
-			
+
+		if (assetIt == m_AssetsByPath.end()) return nullptr;
+
 		const auto& asset = assetIt->second;
 		if (!asset->IsDeserialized() && deserialize)
 			asset->Deserialize();

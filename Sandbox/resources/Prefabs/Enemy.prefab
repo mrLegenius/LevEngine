@@ -1,38 +1,26 @@
-Prefab: Enemy
+Prefab: EnemyController
 RootEntity: 15521556991851276175
 Entities:
   - Entity: 15521556991851276175
-    Tag: Enemy
+    Tag: EnemyController
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-    Rigidbody:
-      Is Visualization Enabled: false
-      Rigidbody Type: 1
-      Is Gravity Enabled: true
-      Mass: 1
-      Center Of Mass: [0, 0, 0]
-      Inertia Tensor: [1, 1, 1]
-      Linear Damping: 0
-      Angular Damping: 0.0500000007
-      Max Linear Velocity: 100
-      Max Angular Velocity: 100
-      Is Pos Axis X Locked: false
-      Is Pos Axis Y Locked: false
-      Is Pos Axis Z Locked: false
-      Is Rot Axis X Locked: true
-      Is Rot Axis Y Locked: true
-      Is Rot Axis Z Locked: true
-      Collider Type: 1
-      Capsule Radius: 1
-      Capsule Half Height: 0.699999988
-      Offset Position: [0, 2, 0]
-      Offset Rotation: [0, 0, 90]
-      Is Trigger Enabled: false
+    Character Controller:
+      Is Visualization Enabled: true
+      Capsule Controller Radius: 1
+      Capsule Controller Half Height: 1
+      Capsule Controller Climbing Mode: 1
+      Controller Center: [0, 2, 0]
+      Slope Limit: 0.707000017
+      Step Offset: 0.5
+      Contact Offset: 0.100000001
+      Minimum Movement Distance: 0.00100000005
+      Non Walkable Mode: 0
       Static Friction: 0.5
-      Dynamic Friction: 0.5
-      Restitution: 0.600000024
+      Dynamic Friction: 0.800000012
+      Restitution: 0
   - Entity: 14004482002913778106
     Tag: Mesh
     Parent: 15521556991851276175
