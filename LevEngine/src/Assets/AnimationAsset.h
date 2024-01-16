@@ -9,10 +9,7 @@ namespace LevEngine
 	class AnimationAsset final : public Asset
 	{
 	public:
-		explicit AnimationAsset(const Path& path, const UUID uuid) : Asset(path, uuid)
-		{
-			m_AnimationIdx = -1;
-		}
+		explicit AnimationAsset(const Path& path, const UUID uuid);
 
 		[[nodiscard]] const Ref<Animation>& GetAnimation() const { return m_Animation; }
 

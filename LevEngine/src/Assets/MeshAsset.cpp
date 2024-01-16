@@ -40,8 +40,7 @@ namespace LevEngine
                 if (!AssetDatabase::AssetExists(animationAssetPath))
                 {
                     const Ref<AnimationAsset> animationAsset =
-                        eastl::static_shared_pointer_cast<AnimationAsset>(
-                            AssetDatabase::CreateAsset(animationAssetPath));
+                        AssetDatabase::CreateNewAsset<AnimationAsset>(animationAssetPath);
                     
                     animationAsset->SetAnimation(animations[animationIdx]);
                     animationAsset->SetAnimationIdx(animationIdx);

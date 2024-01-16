@@ -31,7 +31,6 @@ namespace LevEngine
 		
 		static bool IsAssetAnimationClip(const Path& path);
 
-		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path);
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid);
 
 		template<class T, class ...Args>

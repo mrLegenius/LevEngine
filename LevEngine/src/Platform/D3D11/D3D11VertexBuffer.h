@@ -17,6 +17,8 @@ public:
 	void Unbind() const override;
 	void SetData(const void* data, uint32_t size = 0) override;
 private:
+	D3D11VertexBuffer(const void* data, uint32_t count, uint32_t stride);
+	
 	ID3D11Buffer* m_Buffer = nullptr;
 };
 }

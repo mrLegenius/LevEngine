@@ -7,6 +7,8 @@
 
 namespace LevEngine
 {
+	AnimationAsset::AnimationAsset(const Path& path, const UUID uuid) : Asset(path, uuid), m_AnimationIdx(-1) {}
+
 	double AnimationAsset::GetDuration() const
 	{
 		return m_Animation->GetDuration();

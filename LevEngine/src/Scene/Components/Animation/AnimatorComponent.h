@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "EASTL/array.h"
 #include "Math/Matrix.h"
 #include "Renderer/3D/AnimationConstants.h"
 #include "Scene/Components/TypeParseTraits.h"
@@ -31,7 +30,7 @@ namespace LevEngine
         void PlayAnimation() const;
         void UpdateAnimation(float deltaTime) const;
 
-        [[nodiscard]] eastl::array<Matrix, AnimationConstants::MaxBoneCount> GetFinalBoneMatrices() const;
+        [[nodiscard]] Array<Matrix, AnimationConstants::MaxBoneCount> GetFinalBoneMatrices() const;
         void DrawDebugPose(const Transform& rootTransform) const;
         void DrawDebugSkeleton(const Transform& rootTransform) const;
 
