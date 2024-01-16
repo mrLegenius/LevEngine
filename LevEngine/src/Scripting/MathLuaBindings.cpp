@@ -318,11 +318,11 @@ namespace LevEngine::Scripting
 			"vector3", sol::overload(
 				sol::resolve<Vector3()>(&Random::Vec3),
 				sol::resolve<Vector3(float, float)>(&Random::Vec3),
-				sol::resolve<Vector3(const Vector3&, const Vector3&)>(&Random::Vec3)),
+				sol::resolve<Vector3(const Vector3, const Vector3)>(&Random::Vec3)),
 			"vector4", sol::overload(
 				sol::resolve<Vector4()>(&Random::Vec4),
 				sol::resolve<Vector4(float, float)>(&Random::Vec4),
-				sol::resolve<Vector4(const Vector4&, const Vector4&)>(&Random::Vec4)),
+				sol::resolve<Vector4(const Vector4, const Vector4)>(&Random::Vec4)),
 			"color", sol::overload(
 				sol::resolve<Color(float, float, float)>(&Random::Color),
 				sol::resolve<Color(const Color&, const Color&)>(&Random::Color)),

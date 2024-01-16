@@ -83,7 +83,7 @@ struct Random
 	/**
 	 * \return Vector3 with x = [a.x, b.x], y = [a.y, b.y], z = [a.z, b.z]
 	 */
-	static Vector3 Vec3(const Vector3& a, const Vector3& b)
+	static Vector3 Vec3(const Vector3 a, const Vector3 b)
 	{
 		return Vector3{ Float(a.x, b.x), Float(a.y, b.y), Float(a.z, b.z) };
 	}
@@ -111,7 +111,7 @@ struct Random
 	/**
 	 * \return Vector3 with x = [a.x, b.x], y = [a.y, b.y], z = [a.z, b.z], w = [a.w, b.w]
 	 */
-	static Vector4 Vec4(const Vector4& a, const Vector4& b)
+	static Vector4 Vec4(const Vector4 a, const Vector4 b)
 	{
 		return Vector4{ Float(a.x, b.x), Float(a.y, b.y), Float(a.z, b.z), Float(a.w, b.w) };
 	}
