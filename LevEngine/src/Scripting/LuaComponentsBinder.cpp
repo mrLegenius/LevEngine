@@ -383,6 +383,10 @@ namespace LevEngine::Scripting
         );
     }
 
+    void LuaComponentsBinder::CreateAnimatorComponentLuaBind(sol::state& lua)
+    {
+    }
+
     void LuaComponentsBinder::CreateLuaEntityBind(sol::state& lua, Scene* scene)
     {
         using namespace Scripting;

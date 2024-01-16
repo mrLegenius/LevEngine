@@ -48,6 +48,7 @@ namespace LevEngine::Scripting
 		static void CreateScriptsContainerLuaBind(sol::state& lua);
 		static void CreateRigidbodyLuaBind(sol::state& lua);
 		static void CreateCharacterControllerLuaBind(sol::state& lua);
+		static void CreateAnimatorComponentLuaBind(sol::state& lua);
 		
 		static void CreateLuaEntityBind(sol::state& lua, Scene* scene);
 
