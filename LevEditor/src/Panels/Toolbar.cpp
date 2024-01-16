@@ -19,25 +19,8 @@ namespace LevEngine::Editor
         m_Height = 10;
     }
 
-    void Toolbar::Render() const
+    void Toolbar::Render()
     {
-        static auto selectIcon = Icons::Select();
-        static auto translateIcon = Icons::Translate();
-        static auto rotationIcon = Icons::Rotate();
-        static auto scaleIcon = Icons::Scale();
-
-        static auto iconPlay = Icons::Play();
-        static auto iconStop = Icons::Stop();
-
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + m_MainMenuBar->GetHeight()));
-        ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, m_Height));
-        ImGui::SetNextWindowViewport(viewport->ID);
-
-        GUI::ScopedVariable windowPadding(ImGuiStyleVar_WindowPadding, Vector2(0, 2));
-        GUI::ScopedVariable itemInnerSpacing(ImGuiStyleVar_ItemInnerSpacing, Vector2::Zero);
-        GUI::ScopedVariable windowBorderSize(ImGuiStyleVar_WindowBorderSize, 0);
-
         GUI::ScopedColor buttonColor(ImGuiCol_Button, Color::Clear);
         const auto& colors = ImGui::GetStyle().Colors;
         const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
@@ -46,21 +29,50 @@ namespace LevEngine::Editor
         const auto& buttonActive = colors[ImGuiCol_ButtonActive];
         GUI::ScopedColor buttonActiveColor(ImGuiCol_ButtonActive,
                                            Color(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+        constexpr ImGuiWindowFlags windowFlags =
+            ImGuiWindowFlags_NoScrollbar
+            | ImGuiWindowFlags_NoSavedSettings
+            | ImGuiWindowFlags_MenuBar;
+
+        const auto font = ImGui::GetFont();
+        const auto originalScale = font->Scale;
+        font->Scale = 1.5f;
+        ImGui::PushFont(font);
+        m_Height = ImGui::GetFrameHeight();
+
+        if (ImGui::BeginViewportSideBar("##Toolbar", nullptr, ImGuiDir_Up, m_Height, windowFlags))
+        {
+            if (ImGui::BeginMenuBar())
+            {
+                DrawTools();
+                ImGui::EndMenuBar();
+            }
+        }
+
+        ImGui::End();
+        font->Scale = originalScale;
+        ImGui::PopFont();
+    }
+
+    void Toolbar::DrawTools() const
+    {
+        DrawViewportControlButtons();
+        DrawSceneStateButton();
+    }
+
+    void Toolbar::DrawViewportControlButtons() const
+    {
+        static auto selectIcon = Icons::Select();
+        static auto translateIcon = Icons::Translate();
+        static auto rotationIcon = Icons::Rotate();
+        static auto scaleIcon = Icons::Scale();
+
         const ImGuiIO& io = ImGui::GetIO();
         const auto boldFont = io.Fonts->Fonts[0];
 
-        constexpr ImGuiWindowFlags windowFlags = 0
-            | ImGuiWindowFlags_NoDocking
-            | ImGuiWindowFlags_NoTitleBar
-            | ImGuiWindowFlags_NoResize
-            | ImGuiWindowFlags_NoMove
-            | ImGuiWindowFlags_NoScrollbar
-            | ImGuiWindowFlags_NoSavedSettings;
-
-        ImGui::Begin("##toolbar", nullptr, windowFlags);
-
-        constexpr auto padding = 4;
-        float size = 20;
+        const auto padding = ImGui::GetStyle().FramePadding.y * 2;
+        const float size = 20;
 
         ImGui::SetCursorPosX(10);
         ImGui::SetCursorPosY(padding);
@@ -154,8 +166,15 @@ namespace LevEngine::Editor
         }
 
         ImGui::EndTable();
-        
-        size = ImGui::GetWindowHeight() - 4.0f;
+    }
+
+    void Toolbar::DrawSceneStateButton() const
+    {
+        static auto iconPlay = Icons::Play();
+        static auto iconStop = Icons::Stop();
+
+        const auto padding = ImGui::GetStyle().FramePadding.y * 2;
+        const auto size = m_Height - padding;
         const Ref<Texture> icon = m_SceneStateGetter() == SceneState::Edit ? iconPlay : iconStop;
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
         ImGui::SetCursorPosY(padding / 2);
@@ -163,6 +182,5 @@ namespace LevEngine::Editor
         {
             m_SceneStateButtonClicked();
         }
-        ImGui::End();
     }
 }

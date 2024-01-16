@@ -7,7 +7,7 @@ namespace LevEngine::Editor
     class AnimationAssetDrawer final : public AssetDrawer<AnimationAsset, AnimationAssetDrawer>
     {
     protected:
-        [[nodiscard]] String GetLabel() const override { return "AnimationAsset"; }
+        [[nodiscard]] String GetLabel() const override { return "Animation"; }
 
         void DrawContent(const Ref<AnimationAsset> assetRef) override
         {

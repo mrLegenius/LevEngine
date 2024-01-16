@@ -7,6 +7,15 @@
 
 namespace LevEngine
 {
+	AnimationAsset::AnimationAsset(const Path& path, const UUID uuid) : Asset(path, uuid), m_AnimationIdx(-1) {}
+
+	void AnimationAsset::Init(const Ref<Animation>& animation, int animationIdx, const Ref<MeshAsset>& ownerMesh)
+	{
+		SetAnimation(animation);
+		SetAnimationIdx(animationIdx);
+		SetOwnerMesh(ownerMesh);
+	}
+
 	double AnimationAsset::GetDuration() const
 	{
 		return m_Animation->GetDuration();

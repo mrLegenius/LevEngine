@@ -103,6 +103,7 @@
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
     <ClCompile Include="src\ComponentDebugRenderers\AnimatorComponentDebugRenderer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\AnimatorComponentDebugRenderer.cpp" />
     <ClCompile Include="src\AssetSelection.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\CharacterControllerDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
@@ -144,9 +145,9 @@
     <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AnimatorComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AIAgentComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AIAgentCrowdComponentDrawer.cpp" />
-    <ClCompile Include="src\GUI\Drawers\Components\AnimatorComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
@@ -201,6 +202,15 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="LevResources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\AssetSelection.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\AnimationAssetDrawer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\CharacterControllerDebugRenderer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AIAgentComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AIAgentCrowdComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AnimatorComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\CharacterControllerDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AssetSelection.cpp" />

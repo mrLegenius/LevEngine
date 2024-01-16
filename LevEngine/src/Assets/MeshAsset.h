@@ -23,6 +23,8 @@ namespace LevEngine
 		void DeserializeData(const YAML::Node& node) override;
 
 	private:
+		void LoadAnimations();
+		
 		Ref<Mesh> m_Mesh;
 	};
 }

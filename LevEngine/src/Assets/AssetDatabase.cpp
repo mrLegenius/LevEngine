@@ -74,7 +74,7 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
-		if (!exists(GetAssetsPath()))
+		if (!std::filesystem::exists(GetAssetsPath()))
 			create_directory(GetAssetsPath());
 		
 		m_AssetsByPath.clear();
@@ -201,30 +201,6 @@ namespace LevEngine
 		return extension == ".anim";
 	}
 
-	Ref<Asset> AssetDatabase::CreateAsset(const Path& path)
-	{
-		if (exists(path))
-		{
-			Log::CoreError("Asset already exists in {}", path);
-			return nullptr;
-		}
-			
-		const auto uuid = UUID();
-
-		Ref<Asset> asset = CreateAsset(path, uuid);
-		asset->Serialize();
-
-		String metaPath = path.string().c_str();
-		metaPath += ".meta";
-
-		CreateMeta(metaPath.c_str(), uuid);
-
-		m_Assets.emplace(uuid, asset);
-		m_AssetsByPath.emplace(path, asset);
-
-		return asset;
-	}
-
 	Ref<Asset> AssetDatabase::CreateAsset(const Path& path, UUID uuid)
 	{
 		if (IsAssetTexture(path))
@@ -262,7 +238,7 @@ namespace LevEngine
 
 	void AssetDatabase::CreateFolder(const Path& path)
 	{
-		if (!exists(path))
+		if (!std::filesystem::exists(path))
 			create_directory(path);
 	}
 
@@ -330,7 +306,7 @@ namespace LevEngine
 		const auto oldPath = asset->GetPath();
 		const auto newPath = directory / asset->GetFullName().c_str();
 
-		if (exists(newPath))
+		if (std::filesystem::exists(newPath))
 		{
 			Log::CoreWarning("Failed to move asset. Asset '{0}' already exists in {1}", asset->GetName(), directory);
 			return;
@@ -338,16 +314,10 @@ namespace LevEngine
 
 		try
 		{
-			if (std::filesystem::exists(oldPath))
-			{
-				std::filesystem::rename(oldPath, newPath);
-			}
+			std::filesystem::rename(oldPath, newPath);
 
-			auto oldMetaPath = oldPath.string().append(".meta");
-			if (std::filesystem::exists(oldMetaPath))
-			{
-				std::filesystem::rename(oldMetaPath, newPath.string().append(".meta"));
-			}
+			const auto oldMetaPath = oldPath.string().append(".meta");
+			std::filesystem::rename(oldMetaPath, newPath.string().append(".meta"));
 		}
 		catch (std::filesystem::filesystem_error& e)
 		{
@@ -372,7 +342,7 @@ namespace LevEngine
 			std::filesystem::remove(path);
 		}
 
-		auto metaPath = path.string().append(".meta");
+		const auto metaPath = Path(path.string().append(".meta"));
 		if (std::filesystem::exists(metaPath))
 		{
 			std::filesystem::remove(metaPath);
