@@ -10,7 +10,6 @@ namespace LevEngine
     {
     public:
         explicit Asset(const Path& path, UUID uuid);
-
         virtual ~Asset() = default;
 
         [[nodiscard]] String GetName() const { return m_Name; }

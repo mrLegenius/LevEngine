@@ -29,7 +29,8 @@
 #include "Kernel/UUID.h"
 #include "Kernel/ClassCollection.h"
 
-#include "MeshLoader.h"
+#include "Renderer/3D/MeshLoading/MeshLoader.h"
+#include "Renderer/3D/MeshLoading/AnimationLoader.h"
 #include "TextureLibrary.h"
 
 #include "Debugging/Profiler.h"
@@ -128,6 +129,7 @@
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/SkyboxRenderer/SkyboxRenderer.h"
 #include "Scene/Components/Animation/WaypointMovement.h"
+#include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Audio/AudioSource.h"
 #include "Scene/Components/Audio/AudioListener.h"
 
@@ -140,6 +142,8 @@
 
 #include "Scene/Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Scene/Systems/Animation/WaypointPositionUpdateSystem.h"
+#include "Scene/Systems/Animation/AnimatorInitSystem.h"
+#include "Scene/Systems/Animation/AnimatorUpdateSystem.h"
 #include "Scene/Systems/Audio/AudioSourceInitSystem.h"
 #include "Scene/Systems/Audio/AudioListenerInitSystem.h"
 

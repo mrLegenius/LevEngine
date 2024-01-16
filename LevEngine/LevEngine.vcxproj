@@ -924,7 +924,6 @@
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\DataTypes\String.h" />
-    <ClInclude Include="src\MeshLoader.h" />
     <ClInclude Include="src\levpch.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11BlendState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h" />
@@ -1387,6 +1386,13 @@
     <ClCompile Include="src\Renderer\Texture.cpp" />
     <ClCompile Include="src\Renderer\TransparentPass.cpp" />
     <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
+    <ClCompile Include="src\Assets\AnimationAsset.cpp" />
+    <ClCompile Include="src\Renderer\3D\Animator.cpp" />
+    <ClCompile Include="src\Renderer\3D\Animation.cpp" />
+    <ClCompile Include="src\Renderer\3D\Bone.cpp" />
+    <ClCompile Include="src\Scene\Components\Animation\AnimatorComponent.cpp" />
+    <ClCompile Include="src\Scene\Systems\Animation\AnimatorInitSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp" />
     <ClCompile Include="src\Scene\Components\Audio\AudioListener.cpp" />

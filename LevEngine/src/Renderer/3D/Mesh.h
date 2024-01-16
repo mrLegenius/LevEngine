@@ -1,7 +1,9 @@
 #pragma once
 
+#include "AnimationConstants.h"
 #include "Math/BoundingVolume.h"
 #include "Renderer/BufferBinding.h"
+#include "BoneInfo.h"
 
 namespace LevEngine
 {
@@ -58,11 +60,23 @@ namespace LevEngine
 
         [[nodiscard]] bool IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) const;
 
+		[[nodiscard]] UnorderedMap<String, BoneInfo>& GetBoneInfoMap() { return m_BoneInfoMap; }
+		
+		[[nodiscard]] Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& GetBoneWeights();
+
+		[[nodiscard]] int& GetBoneCount() { return m_BoneCounter; }
+		void SetBoneCount(int value) { m_BoneCounter = value; }
+
+		void AddBoneWeight(int vertexIdx, int boneID, float weight);
+		void ResizeBoneArrays(size_t size);
+		void NormalizeBoneWeights();
+
         Ref<IndexBuffer> IndexBuffer;
 
     private:
         Map<BufferBinding, Ref<VertexBuffer>> m_VertexBuffers;
 
+    	// Mesh vertex data
         Vector<Vector3> vertices;
         Vector<Vector2> uvs;
         Vector<uint32_t> indices;
@@ -71,6 +85,12 @@ namespace LevEngine
         Vector<Vector3> biTangents;
         Vector<Color> colors;
 
-        AABBBoundingVolume m_BoundingVolume{};
-    };
+		Vector<Array<int, AnimationConstants::MaxBoneInfluence>> m_BoneIds;
+		Vector<Array<float, AnimationConstants::MaxBoneInfluence>> m_Weights;
+		Vector<int> m_BoneWeightCounters;
+		UnorderedMap<String, BoneInfo> m_BoneInfoMap;
+		int m_BoneCounter = 0;
+
+		AABBBoundingVolume m_BoundingVolume{};
+};
 }
