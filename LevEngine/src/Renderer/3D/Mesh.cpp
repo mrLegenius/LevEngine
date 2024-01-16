@@ -121,11 +121,33 @@ Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& Mesh::GetBoneWeights
 void Mesh::AddBoneWeight(int vertexIdx, int boneID, float weight)
 {
 	const int weightsCount = m_BoneWeightCounters[vertexIdx];
-	LEV_ASSERT(weightsCount < AnimationConstants::MaxBoneInfluence);
-	
-	m_BoneIds[vertexIdx][weightsCount] = boneID;
-	m_Weights[vertexIdx][weightsCount] = weight;
-	m_BoneWeightCounters[vertexIdx]++;
+
+	if (weightsCount < AnimationConstants::MaxBoneInfluence)
+	{
+		m_BoneIds[vertexIdx][weightsCount] = boneID;
+		m_Weights[vertexIdx][weightsCount] = weight;
+		m_BoneWeightCounters[vertexIdx]++;	
+	}
+	else
+	{
+		int minBoneId = -1;
+		float minBoneWeight = FLT_MAX;
+
+		for (int i = 0; i < AnimationConstants::MaxBoneInfluence; ++i)
+		{
+			if (minBoneId == -1 || m_Weights[vertexIdx][i] < minBoneWeight)
+			{
+				minBoneId = i;
+				minBoneWeight = m_Weights[vertexIdx][i];
+			}
+		}
+
+		if (weight > minBoneWeight)
+		{
+			m_BoneIds[vertexIdx][minBoneId] = boneID;
+			m_Weights[vertexIdx][minBoneId] = weight;
+		}
+	}
 }
 
 void Mesh::ResizeBoneArrays(size_t size)
