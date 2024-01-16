@@ -37,6 +37,7 @@ namespace LevEngine::Scripting
         LuaComponentsBinder::CreateGUIBind(*m_Lua);
         LuaComponentsBinder::CreateTimeBind(*m_Lua);
         LuaComponentsBinder::CreatePhysicsBind(*m_Lua);
+        LuaComponentsBinder::CreateDebugRenderBind(*m_Lua);
 
         LuaComponentsBinder::CreateSceneBind(*m_Lua);
         LuaComponentsBinder::CreatePrefabBind(*m_Lua);
