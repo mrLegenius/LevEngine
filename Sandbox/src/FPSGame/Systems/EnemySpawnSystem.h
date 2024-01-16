@@ -18,14 +18,14 @@ namespace Sandbox
                 
                 const auto prefab = ResourceManager::LoadAsset<PrefabAsset>("EnemyPrefab");
                 const auto enemyEntity = prefab->Instantiate(scene);
-
-                auto& enemy = enemyEntity.AddComponent<Enemy>();
-                enemy.Speed = 5;
 				
                 auto& enemyTransform = enemyEntity.GetComponent<Transform>();
                 auto randomPosition = Random::Vec3(-20.0f, 20.0f);
-                randomPosition.y = 1;
+                randomPosition.y = 5.0f;
                 enemyTransform.SetWorldPosition(randomPosition);
+
+                auto& enemy = enemyEntity.AddComponent<Enemy>();
+                enemy.Speed = 1.0f;
 
                 Audio::PlayOneShot("event:/EnemySpawn", enemyEntity);
             }

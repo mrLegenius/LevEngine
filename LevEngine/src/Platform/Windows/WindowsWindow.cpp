@@ -280,6 +280,7 @@ namespace LevEngine
 	{
 		LEV_PROFILE_FUNCTION();
 
+		SetEventCallback([](auto&){});
 		DestroyWindow(m_Window);
 		m_Window = nullptr;
 	}

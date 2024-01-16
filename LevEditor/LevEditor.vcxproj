@@ -103,7 +103,9 @@
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
     <ClCompile Include="src\ComponentDebugRenderers\AnimatorComponentDebugRenderer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\AnimatorComponentDebugRenderer.cpp" />
     <ClCompile Include="src\AssetSelection.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\CharacterControllerDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\NavMeshBoundingBoxDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\NavMeshDebugRenderer.cpp" />
@@ -144,9 +146,12 @@
     <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AnimatorComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AIAgentComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AIAgentCrowdComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioSourceComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\CameraComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\CharacterControllerDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\ConstantForceDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />
@@ -177,10 +182,7 @@
     <ClCompile Include="src\EditorCamera.cpp" />
     <ClCompile Include="src\EditorLayer.cpp" />
     <ClCompile Include="src\EntitySelection.cpp" />
-    <ClCompile Include="src\LevEditor.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="src\LevEditor.cpp" />
     <ClCompile Include="src\Panels\AssetBrowserPanel.cpp" />
     <ClCompile Include="src\Panels\HierarchyPanel.cpp" />
     <ClCompile Include="src\Panels\Panel.cpp" />
@@ -200,6 +202,15 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="LevResources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\AssetSelection.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\AnimationAssetDrawer.cpp" />
+    <ClCompile Include="src\ComponentDebugRenderers\CharacterControllerDebugRenderer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AIAgentComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AIAgentCrowdComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AnimatorComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\CharacterControllerDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AssetSelection.cpp" />

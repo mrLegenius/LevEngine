@@ -5,12 +5,15 @@
 #include "Renderer/Renderer.h"
 
 #include "Entity.h"
+#include "AI/Components/AIAgentCrowdComponent.h"
+#include "AI/Systems/AIAgentCrowdUpdateSystem.h"
 #include "Assets/ScriptAsset.h"
 #include "Components/Components.h"
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Camera/Camera.h"
 #include "Components/NavMesh/NavMeshComponent.h"
+#include "Components/Transform/Transform.h"
 #include "Kernel/Application.h"
 #include "Kernel/Window.h"
 #include "Scripting/ScriptingManager.h"
@@ -23,7 +26,8 @@
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Systems/Audio/AudioListenerInitSystem.h"
 #include "Systems/Audio/AudioSourceInitSystem.h"
-#include "Physics/RigidbodyInitSystem.h"
+#include "Physics/Systems/RigidbodyInitSystem.h"
+#include "Physics/Systems/CharacterControllerInitSystem.h"
 #include "Physics/Components/Destroyable.h"
 #include "Systems/EntityDestroySystem.h"
 
@@ -67,6 +71,9 @@ namespace LevEngine
         RegisterUpdateSystem<AudioListenerInitSystem>();
 
         RegisterUpdateSystem<RigidbodyInitSystem>();
+        RegisterUpdateSystem<CharacterControllerInitSystem>();
+
+        RegisterUpdateSystem<AIAgentCrowdUpdateSystem>();
 
         RegisterLateUpdateSystem<EntityDestroySystem>();
 
@@ -78,6 +85,7 @@ namespace LevEngine
         m_Registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
         
         m_Registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
+        m_Registry.on_destroy<CharacterController>().connect<&CharacterController::OnDestroy>();
         App::Get().GetPhysics().ResetPhysicsScene();
         App::Get().GetPhysics().ClearAccumulator();
 

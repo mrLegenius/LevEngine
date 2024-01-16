@@ -14,7 +14,7 @@ namespace Sandbox
             for (const auto entity : projectileView)
             {
                 auto [transform, projectile, rigidbody] = projectileView.get<Transform, Projectile, Rigidbody>(entity);
-
+                
                 const auto scene = SceneManager::GetActiveScene();
 
                 const auto causer = Entity(entt::handle(registry, entity));

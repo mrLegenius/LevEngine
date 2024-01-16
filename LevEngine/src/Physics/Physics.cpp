@@ -1,19 +1,20 @@
 ﻿#include "levpch.h"
-#include "Physics.h"
-
-#include "PhysicsUtils.h"
-#include "Physics/Components/Rigidbody.h"
 #include "Renderer/DebugRender/DebugRender.h"
-
-constexpr auto DEFAULT_PVD_HOST = "127.0.0.1";
-constexpr auto DEFAULT_PVD_PORT = 5425;
-constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
-constexpr auto DEFAULT_NUMBER_CPU_THREADS = 2;
-
-constexpr Vector3 DEFAULT_GRAVITY_SCALE = Vector3(0.0f, -9.81f, 0.0f);
+#include "Physics.h"
+#include "PhysicsUtils.h"
+#include "Components/Controller.h"
 
 namespace LevEngine
 {
+    constexpr auto DEFAULT_PVD_HOST = "127.0.0.1";
+    constexpr auto DEFAULT_PVD_PORT = 5425;
+    constexpr auto DEFAULT_PVD_CONNECT_TIMEOUT = 10;
+    constexpr auto DEFAULT_NUMBER_CPU_THREADS = 2;
+
+    constexpr auto DEFAULT_STATIC_FRICTION = 0.5f;
+    constexpr auto DEFAULT_DYNAMIC_FRICTION = 0.5f;
+    constexpr auto DEFAULT_RESTITUTION = 0.6f;
+    
     Scope<Physics> Physics::Create()
     {
         return CreateScope<Physics>();
@@ -35,6 +36,7 @@ namespace LevEngine
 
     void Physics::Reset()
     {
+        PX_RELEASE(m_ControllerManager)
         PX_RELEASE(m_Scene)
         PX_RELEASE(m_Dispatcher)
         PX_RELEASE(m_Physics)
@@ -48,14 +50,17 @@ namespace LevEngine
 
     void Physics::ResetPhysicsScene()
     {
+        PX_RELEASE(m_ControllerManager)
         PX_RELEASE(m_Scene)
         
         physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
-        sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(DEFAULT_GRAVITY_SCALE);
+        sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(m_GravityScale);
         sceneDesc.cpuDispatcher	= m_Dispatcher;
         sceneDesc.filterShader = ContactReportCallback::ContactReportFilterShader;
         sceneDesc.simulationEventCallback = &m_ContactReportCallback;
         m_Scene = m_Physics->createScene(sceneDesc);
+        m_ControllerManager = PxCreateControllerManager(*m_Scene);
+        m_ControllerManager->setDebugRenderingFlags(physx::PxControllerDebugRenderFlag::eALL);
         
         if (m_IsDebugRenderEnabled)
         {
@@ -63,13 +68,15 @@ namespace LevEngine
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
             m_Scene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
         }
+
+        m_ActorEntityMap.clear();
     }
 
     physx::PxRigidActor* Physics::CreateStaticActor(const Entity entity)
     {
         const auto& transform = entity.GetComponent<Transform>();
         physx::PxRigidActor* actor = m_Physics->createRigidStatic(PhysicsUtils::FromTransformToPxTransform(transform));
-        m_Scene->addActor(*(reinterpret_cast<physx::PxRigidStatic*>(actor)));
+        m_Scene->addActor(*actor);
 
         m_ActorEntityMap.insert({actor, entity});
 
@@ -80,7 +87,7 @@ namespace LevEngine
     {
         const auto& transform = entity.GetComponent<Transform>();
         physx::PxRigidActor* actor = m_Physics->createRigidDynamic(PhysicsUtils::FromTransformToPxTransform(transform));
-        m_Scene->addActor(*(reinterpret_cast<physx::PxRigidDynamic*>(actor)));
+        m_Scene->addActor(*actor);
 
         m_ActorEntityMap.insert({actor, entity});
 
@@ -92,48 +99,119 @@ namespace LevEngine
         m_ActorEntityMap.erase(actor);
         
         m_Scene->removeActor(*actor);
-        PX_RELEASE(actor);
+        PX_RELEASE(actor)
     }
     
-    physx::PxMaterial* Physics::CreateMaterial(float staticFriction, float dynamicFriction, float restitution) const
+    physx::PxMaterial* Physics::CreatePhysicMaterial(
+        float staticFriction = DEFAULT_STATIC_FRICTION,
+        float dynamicFriction = DEFAULT_DYNAMIC_FRICTION,
+        float restitution = DEFAULT_RESTITUTION
+    ) const
     {
-        return m_Physics->createMaterial(
-            staticFriction,
-            dynamicFriction,
-            restitution
-        );
+        const auto material =
+            m_Physics->createMaterial(
+                staticFriction,
+                dynamicFriction,
+                restitution
+            );
+        
+        return material;
     }
 
-    physx::PxShape* Physics::CreateSphere(const float radius, const physx::PxMaterial* material) const
+    physx::PxShape* Physics::CreateSphere(const float radius) const
     {
-        return m_Physics->createShape(
-            physx::PxSphereGeometry(radius),
-            *material,
-            true
-        );
+        const auto material = CreatePhysicMaterial();
+        
+        const auto sphere =
+            m_Physics->createShape(
+                physx::PxSphereGeometry(radius),
+                *material,
+                true
+            );
+
+        material->release();
+        
+        return sphere;
     }
 
-    physx::PxShape* Physics::CreateCapsule(const float radius, const float halfHeight, const physx::PxMaterial* material) const
+    physx::PxShape* Physics::CreateCapsule(const float radius, const float halfHeight) const
     {
-        return m_Physics->createShape(
-            physx::PxCapsuleGeometry(radius, halfHeight),
-            *material,
-            true
-        );
+        const auto material = CreatePhysicMaterial();
+        
+        const auto capsule =
+            m_Physics->createShape(
+                physx::PxCapsuleGeometry(radius, halfHeight),
+                *material,
+                true
+            );
+
+        material->release();
+        
+        return capsule;
     }
 
-    physx::PxShape* Physics::CreateBox(const Vector3 halfExtents, const physx::PxMaterial* material) const
+    physx::PxShape* Physics::CreateBox(const Vector3 halfExtents) const
     {
-        return m_Physics->createShape(
-            physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents)),
-            *material,
-            true
-        );
+        const auto material = CreatePhysicMaterial();
+        
+        const auto box =
+            m_Physics->createShape(
+                physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents)),
+                *material,
+                true
+            );
+
+        material->release();
+        
+        return box;
+    }
+
+    physx::PxController* Physics::CreateCapsuleController(
+        Entity entity,
+        const float radius,
+        const float height,
+        const Controller::ClimbingMode climbingMode = Controller::ClimbingMode::Constrained
+    )
+    {
+        const auto material = CreatePhysicMaterial();
+
+        const auto controllerPosition =
+            entity.GetComponent<Transform>().GetWorldPosition() +
+                entity.GetComponent<CharacterController>().GetCenterOffset();
+        
+        physx::PxCapsuleControllerDesc desc;
+        desc.height = height;
+        desc.radius = radius;
+        desc.climbingMode = static_cast<physx::PxCapsuleClimbingMode::Enum>(static_cast<int>(climbingMode));
+        desc.material = material;
+        desc.position = PhysicsUtils::FromVector3ToPxExtendedVec3(controllerPosition);
+        desc.scaleCoeff = 1.0f;
+        physx::PxController* controller = m_ControllerManager->createController(desc);
+
+        material->release();
+        
+        const auto actor = controller->getActor();
+        m_ActorEntityMap.insert({actor, entity});
+        
+        return controller;
+    }
+
+    void Physics::RemoveController(physx::PxController* controller)
+    {
+        const auto actor = controller->getActor();
+        m_ActorEntityMap.erase(actor);
+        
+        PX_RELEASE(controller)
     }
 
     Entity Physics::GetEntityByActor(physx::PxActor* actor) const
     {
         return m_ActorEntityMap.at(actor);
+    }
+
+    Vector3 Physics::GetGravity() const
+    {
+        return m_GravityScale;
     }
     
     void Physics::ClearAccumulator()
@@ -176,7 +254,7 @@ namespace LevEngine
         {
             const physx::PxDebugPoint& point = rb.getPoints()[i];
             DebugRender::DrawPoint(Vector3(point.pos.x, point.pos.y, point.pos.z),
-                                            Color(0.8f, 0.8f, 0.8f, 1.0f));
+                                            Color(1.0f, 0.0f, 0.0f, 1.0f));
         }
         for (size_t i = 0; i < rb.getNbTriangles(); i++)
         {
@@ -199,6 +277,7 @@ namespace LevEngine
         
         if (!StepPhysics(deltaTime)) return;
         m_PhysicsUpdate.UpdateTransforms(registry);
+        m_PhysicsUpdate.ApplyKinematicTargets(registry);
         m_PhysicsUpdate.UpdateConstantForces(registry);
         
         if (!m_IsDebugRenderEnabled) return;

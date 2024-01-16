@@ -8,5 +8,6 @@ namespace LevEngine
         void ClearBuffers(entt::registry& registry);
         void UpdateTransforms(entt::registry& registry);
         void UpdateConstantForces(entt::registry& registry);
+        void ApplyKinematicTargets(entt::registry& registry);
     };
 }

@@ -3,8 +3,8 @@
 
 namespace LevEngine::Editor
 {
-    class PhysicsColliderComponentDebugRenderer final
-        : public ComponentDebugRenderer<Rigidbody, PhysicsColliderComponentDebugRenderer>
+    class RigidbodyColliderComponentDebugRenderer final
+        : public ComponentDebugRenderer<Rigidbody, RigidbodyColliderComponentDebugRenderer>
     {
     protected:
         void DrawContent(Rigidbody& component, const Entity entity) override
@@ -30,7 +30,10 @@ namespace LevEngine::Editor
                     Matrix::CreateScale(component.GetSphereRadius() * maxScale)
                     * colliderRotationTranslationModel;
                 colliderModel *= transformModel;
-                DebugRender::DrawWireSphere(colliderModel, Color::Green);
+                DebugRender::DrawWireSphere(
+                    colliderModel,
+                    Color::Green
+                );
                 break;
                 
             case Collider::Type::Capsule:
@@ -38,7 +41,12 @@ namespace LevEngine::Editor
                     Matrix::CreateScale(maxScale)
                     * colliderRotationTranslationModel;
                 colliderModel *= transformModel;
-                DebugRender::DrawWireCapsule(colliderModel, component.GetCapsuleHalfHeight(), component.GetCapsuleRadius(), Color::Green);
+                DebugRender::DrawWireCapsule(
+                    colliderModel,
+                    component.GetCapsuleHalfHeight(),
+                    component.GetCapsuleRadius(),
+                    Color::Green
+                );
                 break;
                 
             case Collider::Type::Box:
@@ -46,7 +54,10 @@ namespace LevEngine::Editor
                     Matrix::CreateScale(component.GetBoxHalfExtents() * 2 * transformScale)
                     * colliderRotationTranslationModel;
                 colliderModel *= transformModel;
-                DebugRender::DrawWireCube(colliderModel, Color::Green); 
+                DebugRender::DrawWireCube(
+                    colliderModel,
+                    Color::Green
+                ); 
                 break;
                 
             default:

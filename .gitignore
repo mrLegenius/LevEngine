@@ -48,6 +48,7 @@ LevEngineProfile-*.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+*.vcxproj.filters
 
 # Mono auto generated files
 mono_crash.*

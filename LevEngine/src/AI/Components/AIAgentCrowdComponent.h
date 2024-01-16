@@ -1,0 +1,58 @@
+#pragma once
+
+#include <DetourCrowd.h>
+
+#include "Scene/Entity.h"
+#include "Scene/Components/TypeParseTraits.h"
+
+class dtCrowd;
+
+namespace LevEngine
+{
+    enum class ObstacleAvoidanceQuality : int
+    {
+        Low,
+        Medium,
+        High,
+        Ultra,
+    };
+    
+    REGISTER_PARSE_TYPE(AIAgentCrowdComponent);
+	
+    struct AIAgentCrowdComponent
+    {
+        AIAgentCrowdComponent();
+        AIAgentCrowdComponent(const AIAgentCrowdComponent&) = default;
+
+        void Init();
+       
+        void Update(float deltaTime);
+        bool IsInitialized() const;
+        bool IsInitializationFailed() const;
+
+        void UpdateAgentsPosition(float deltaTime);
+        void SetMoveTarget(int agentIndex, Vector3 targetPos);
+
+        Vector<Entity> agentsEntities;
+        Entity navMesh;
+        Entity target;
+
+    private:
+
+        bool m_isInitialized = false;
+        bool m_isInitializationFailed = false;
+        
+        void AddAgent(const Entity& agentEntity);
+        void RegisterDefaultObstacleAvoidanceProfiles();
+        
+        dtCrowd* m_crowd;
+        dtNavMesh* m_navMesh;
+        dtNavMeshQuery* m_navMeshQuery;
+
+        dtPolyRef m_targetRef;
+
+        dtCrowdAgentDebugInfo* m_crowdAgentDebugInfo;
+
+        int MAX_AGENTS_COUNT = 25;
+    };
+}
