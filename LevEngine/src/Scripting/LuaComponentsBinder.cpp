@@ -12,6 +12,7 @@
 #include "Physics/Physics.h"
 #include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
+#include "Renderer/DebugRender/DebugRender.h"
 #include "Scene/Entity.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -338,13 +339,10 @@ namespace LevEngine::Scripting
                     return Rigidbody{};
                 }),
             "addForce", sol::overload(
+                &Rigidbody::AddForce,
                 [](const Rigidbody& rigidbody, Vector3 vector)
                 {
                     rigidbody.AddForce(vector);
-                },
-                [](const Rigidbody& rigidbody, Vector3 vector, int forceMode)
-                {
-                    rigidbody.AddForce(vector, static_cast<Rigidbody::ForceMode>(forceMode));
                 }),
             "initialize", [](Rigidbody& rigidbody, const Entity entity)
             {
@@ -638,5 +636,77 @@ namespace LevEngine::Scripting
                 return Application::Get().GetPhysics().GetGravity();
             }
         );
+    }
+
+    void LuaComponentsBinder::CreateDebugRenderBind(sol::state& lua)
+    {
+        auto debugRender = lua["DebugRender"].get_or_create<sol::table>();
+
+        debugRender.set_function(
+            "drawCube",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawCube),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawCube)
+            ));
+
+        debugRender.set_function(
+            "drawWireCube",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawWireCube),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawWireCube)
+            ));
+
+        debugRender.set_function(
+            "drawSphere",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawSphere),
+                sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawSphere)
+            ));
+
+        debugRender.set_function(
+            "drawWireSphere",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawWireSphere),
+                sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawWireSphere)
+            ));
+
+        debugRender.set_function(
+            "drawPoint",
+            sol::overload(
+                sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPoint),
+                sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPoint)
+            ));
+
+        debugRender.set_function(
+            "drawPointStar",
+            sol::overload(
+                sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPointStar),
+                sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPointStar)
+            ));
+
+        debugRender.set_function(
+            "drawLine",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawLine),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawLine)
+            ));
+
+        debugRender.set_function(
+            "drawRay",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawRay),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawRay)
+            ));
+
+        debugRender.set_function(
+            "drawCircle",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Quaternion, Color)>(&DebugRender::DrawCircle),
+                sol::resolve<void(Vector3, float, Quaternion, Color, float)>(&DebugRender::DrawCircle)
+            ));
+
+        debugRender.set_function(
+            "drawGrid",
+            sol::resolve<void(Vector3, Vector3, Vector3, uint32_t, uint32_t, float, Color)>(&DebugRender::DrawGrid));
     }
 }
