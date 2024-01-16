@@ -35,6 +35,14 @@ namespace LevEngine::Scripting
 	}
 
 	template <class TComponent>
+	auto get_or_add_component(Entity& entity, sol::this_state state)
+	{
+		auto& component = entity.GetOrAddComponent<TComponent>();
+
+		return sol::make_reference(state, std::ref(component));
+	}
+
+	template <class TComponent>
 	void LuaComponentsBinder::RegisterMetaComponent()
 	{
 		using namespace entt::literals;
@@ -43,6 +51,7 @@ namespace LevEngine::Scripting
 			.template func<&add_component<TComponent>>("add_component"_hs)
 			.template func<&has_component<TComponent>>("has_component"_hs)
 			.template func<&get_component<TComponent>>("get_component"_hs)
-			.template func<&remove_component<TComponent>>("remove_component"_hs);
+			.template func<&remove_component<TComponent>>("remove_component"_hs)
+			.template func<&get_or_add_component<TComponent>>("get_or_add_component"_hs);
 	}
 }

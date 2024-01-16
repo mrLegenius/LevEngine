@@ -470,6 +470,9 @@ namespace vgjs {
                 m_mutex.emplace_back(std::make_unique<std::mutex>());
             }
 
+            if (m_threads.size() == 0)
+                m_threads.resize(start_idx.value);
+            
             for (uint32_t i = start_idx.value; i < m_thread_count; i++) {
                 //std::cout << "Starting thread " << i << std::endl;
                 m_threads.push_back(std::thread(&JobSystem::thread_task, this, thread_index_t(i) ));	//spawn the pool threads
@@ -564,6 +567,7 @@ namespace vgjs {
                     }
                     auto is_function = m_current_job->is_function();      //save certain info since a coro might be destroyed
 
+                    m_current_job->m_thread_index = m_thread_index;
                     (*m_current_job)();   //if any job found execute it - a coro might be destroyed here!
 
                     if constexpr (c_enable_logging) {

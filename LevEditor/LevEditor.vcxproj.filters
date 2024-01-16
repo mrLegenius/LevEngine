@@ -224,6 +224,10 @@
     <ClCompile Include="src\Panels\SettingsPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshableComponentDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\NavMeshComponentDrawer.cpp">
     <ClCompile Include="src\ComponentDebugRenderers\ColliderComponentsDebugRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -267,6 +271,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\Drawers\Assets\ScriptAssetDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\ConstantForceDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Drawers\Components\ScriptsContainerDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GUI\Drawers\Assets\AnimationAssetDrawer.cpp">

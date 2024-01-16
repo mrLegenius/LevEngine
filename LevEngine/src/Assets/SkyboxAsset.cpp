@@ -20,7 +20,7 @@ namespace LevEngine
 		SerializeAsset(out, "Texture", HDRTexture);
 	}
 
-	void SkyboxAsset::DeserializeData(YAML::Node& node)
+	void SkyboxAsset::DeserializeData(const YAML::Node& node)
 	{
 		HDRTexture = DeserializeAsset<TextureAsset>(node["Texture"]);
 	}

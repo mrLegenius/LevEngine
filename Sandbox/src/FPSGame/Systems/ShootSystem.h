@@ -1,24 +1,8 @@
 #pragma once
+#include "Physics/Physics.h"
 
 namespace Sandbox
 {
-    /*
-    extern int score;
-    
-    inline void OnProjectileCollided(const Entity entity, const Entity other)
-    {
-        if (!other.HasComponent<Enemy>()) return;
-
-        const auto scene = SceneManager::GetActiveScene();
-        Audio::PlayOneShot("event:/ProjectileHit", entity);
-        scene->DestroyEntity(entity);
-
-        Audio::PlayOneShot("event:/EnemyDeath", other);
-        scene->DestroyEntity(other);
-        score++;
-    }
-    */
-    
     class ShootSystem final : public System
     {
         void Update(float deltaTime, entt::registry& registry) override
@@ -36,7 +20,7 @@ namespace Sandbox
                     const auto projectilePrefab = ResourceManager::LoadAsset<PrefabAsset>("ProjectilePrefab");
                     auto projectile = projectilePrefab->Instantiate(SceneManager::GetActiveScene());
 
-                    // TODO: ADD CORRECT PROJECTILE SPAWN POSITION AND SHOOT DIRECTION
+                    // TODO: ADD MUZZLE SOCKET
                     auto& projectileTransform = projectile.GetComponent<Transform>();
                     projectileTransform.SetWorldPosition(cameraTransform.GetWorldPosition() + cameraTransform.GetForwardDirection() * 2);
 
@@ -45,10 +29,12 @@ namespace Sandbox
                     projectileParams.Lifetime = 2;
                     projectileParams.Timer = 0;
 
+                    // TODO: NEED TO FIX INITIALIZATION SYSTEM
                     auto& projectileRigidbody = projectile.GetComponent<Rigidbody>();
-                    projectileRigidbody.Initialize(projectileTransform);
+                    const auto& gameObject = Entity(entt::handle(registry, projectile));
+                    projectileRigidbody.Initialize(gameObject);
                     projectileRigidbody.AddForce(projectileParams.Speed * cameraTransform.GetForwardDirection(), Rigidbody::ForceMode::Impulse);
-
+                    
                     Audio::PlayOneShot("event:/Shot", projectile);
                 }
             }

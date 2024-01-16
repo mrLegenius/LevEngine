@@ -1,7 +1,7 @@
 #include "levpch.h"
 
 #include "ScriptingSystems.h"
-#include "ScriptingComponent.h"
+#include "ScriptingSystemComponents.h"
 
 
 namespace LevEngine::Scripting {
@@ -15,7 +15,7 @@ namespace LevEngine::Scripting {
 			if (!result.valid()) {
 				sol::error err = result;
 				std::string what = err.what();
-				Log::Error(what);
+				Log::Error("Error while running lua system init {0}", what);
 			}
 		}
 	}
@@ -29,7 +29,7 @@ namespace LevEngine::Scripting {
 			if (!result.valid()) {
 				sol::error err = result;
 				std::string what = err.what();
-				Log::Error(what);
+				Log::Error("Error while running lua system update {0}", what);
 			}
 		}
 	}
@@ -43,7 +43,21 @@ namespace LevEngine::Scripting {
 			if (!result.valid()) {
 				sol::error err = result;
 				std::string what = err.what();
-				Log::Error(what);
+				Log::Error("Error while running lua system late update {0}", what);
+			}
+		}
+	}
+
+	void ScriptingGUIRenderSystem::Update(float deltaTime, entt::registry& registry)
+	{
+		auto scriptsView = registry.view<ScriptingGUIRenderComponent>();
+		for (const auto entity : scriptsView) {
+			auto scriptComponent = scriptsView.get<ScriptingGUIRenderComponent>(entity);
+			auto result = scriptComponent.GUIRender();
+			if (!result.valid()) {
+				sol::error err = result;
+				std::string what = err.what();
+				Log::Error("Error while running lua system GUI render {0}", what);
 			}
 		}
 	}

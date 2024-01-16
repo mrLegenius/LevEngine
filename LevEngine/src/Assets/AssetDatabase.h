@@ -25,6 +25,8 @@ namespace LevEngine
 
 		static bool IsAssetPrefab(const Path& path);
 
+		static bool IsAssetScene(const Path& path);
+
 		static bool IsAssetScript(const Path& path);
 
 		static bool IsAssetAudioBank(const Path& path);

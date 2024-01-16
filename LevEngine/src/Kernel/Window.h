@@ -44,10 +44,12 @@ public:
 
 	void EnableCursor();
 	void DisableCursor();
+	virtual void SetCursorPosition(uint32_t x, uint32_t y) = 0;
 
 	[[nodiscard]] const Ref<RendererContext>& GetContext() const { return m_Context; }
 
 	[[nodiscard]] virtual void* GetNativeWindow() const = 0;
+
 
 	static Scope<Window> Create(const WindowAttributes& attributes = WindowAttributes());
 

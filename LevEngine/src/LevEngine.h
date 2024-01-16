@@ -37,6 +37,7 @@
 
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
+#include "Events/ApplicationEvent.h"
 
 // -- GUI --------------------------------------------------
 
@@ -150,17 +151,7 @@
 // -- Physics ----------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-#include "Physics\Events\LegacyCollisionBeginEvent.h"
-#include "Physics\Events\LegacyCollisionEndEvent.h"
-
-#include "Physics\Components\LegacyCollider.h"
-#include "Physics\Components\LegacyCollisionEvents.h"
-#include "Physics\Components\LegacyRigidbody.h"
-
-#include "Physics/LegacyPhysics.h"
-
 #include "Physics/Components/Rigidbody.h"
-#include "Scene/Systems/Physics/RigidbodyInitSystem.h"
 
 // /////////////////////////////////////////////////////////
 // -- Assets -----------------------------------------------

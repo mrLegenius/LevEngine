@@ -18,7 +18,7 @@ namespace LevEngine
 
 	protected:
 		void SerializeData(YAML::Emitter& out) override;
-		void DeserializeData(YAML::Node& node) override;
+		void DeserializeData(const YAML::Node& node) override;
 	};
 }
 

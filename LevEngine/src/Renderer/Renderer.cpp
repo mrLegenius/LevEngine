@@ -30,6 +30,8 @@
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Transform/Transform.h"
 #include "Kernel/Time/Time.h"
+#include "Platform/D3D11/D3D11DeferredContexts.h"
+#include "Platform/D3D11/D3D11RendererContext.h"
 
 namespace LevEngine
 {
@@ -426,11 +428,18 @@ namespace LevEngine
         const auto perspectiveViewProjectionMatrix = cameraViewMatrix * mainCamera->GetPerspectiveProjection();
         return {mainCamera, cameraPosition, cameraViewMatrix, perspectiveViewProjectionMatrix};
     }
-
+    
     void Renderer::Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform)
     {
         LEV_PROFILE_FUNCTION();
 
+        //Multithreading hack for directx 11 and deferred contexts
+        if (RenderSettings::RendererAPI == RendererAPI::D3D11)
+        {
+            D3D11DeferredContexts::UpdateCommandLists();
+            D3D11DeferredContexts::ExecuteCommands();
+        }
+        
         if (!mainCamera)
         {
             Clear();
@@ -464,7 +473,7 @@ namespace LevEngine
             LEV_NOT_IMPLEMENTED
             break;
         }
-
+        
         m_FrameQuery->End(Time::GetFrameNumber());
         
         SampleQuery(m_FrameQuery, m_FrameStat);

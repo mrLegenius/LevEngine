@@ -48,12 +48,11 @@ namespace LevEngine
 			out << YAML::Key << "MaxParticles" << YAML::Value << component.MaxParticles;
 			out << YAML::Key << "Rate" << YAML::Value << component.Rate;
 		}
-		void DeserializeData(YAML::Node& node, EmitterComponent& component) override
+		void DeserializeData(const YAML::Node& node, EmitterComponent& component) override
 		{
 			auto& birth = component.Birth;
-			const auto birthProps = node["Birth"];
 
-			if (birthProps)
+			if (const auto birthProps = node["Birth"])
 			{
 				birth.RandomVelocity = birthProps["RandomVelocity"].as<bool>();
 				birth.Velocity = birthProps["Velocity"].as<Vector3>();

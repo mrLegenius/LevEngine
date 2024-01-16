@@ -23,7 +23,7 @@ protected:
 		out << YAML::Key << "Cast Shadow" << YAML::Value << component.castShadow;
 	}
 
-	void DeserializeData(YAML::Node& node, MeshRendererComponent& component) override
+	void DeserializeData(const YAML::Node& node, MeshRendererComponent& component) override
 	{
 		component.mesh = DeserializeAsset<MeshAsset>(node["Mesh"]);
 		component.material = DeserializeAsset<MaterialAsset>(node["Material"]);

@@ -186,6 +186,7 @@
     <ClInclude Include="src\FPSGame\Components\Player.h" />
     <ClInclude Include="src\FPSGame\Components\Projectile.h" />
     <ClInclude Include="src\FPSGame\FPSGame.h" />
+    <ClInclude Include="src\FPSGame\Systems\CollisionHandleSystem.h" />
     <ClInclude Include="src\FPSGame\Systems\EnemyMovementSystem.h" />
     <ClInclude Include="src\FPSGame\Systems\EnemySpawnSystem.h" />
     <ClInclude Include="src\FPSGame\Systems\FPSCameraRotationSystem.h" />
