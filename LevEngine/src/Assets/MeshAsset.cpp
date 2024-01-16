@@ -41,10 +41,8 @@ namespace LevEngine
                 {
                     const Ref<AnimationAsset> animationAsset =
                         AssetDatabase::CreateNewAsset<AnimationAsset>(animationAssetPath);
-                    
-                    animationAsset->SetAnimation(animations[animationIdx]);
-                    animationAsset->SetAnimationIdx(animationIdx);
-                    animationAsset->SetOwnerMesh(shared_from_this());
+
+                    animationAsset->Init(animations[animationIdx], animationIdx, shared_from_this());
                     animationAsset->Serialize();
                 }
             }
