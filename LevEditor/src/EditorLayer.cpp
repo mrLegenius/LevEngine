@@ -56,6 +56,8 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
+        m_ProjectEditor->Update();
+
         if (!Project::GetProject()) return;
         
         if (Input::IsKeyDown(KeyCode::Escape))

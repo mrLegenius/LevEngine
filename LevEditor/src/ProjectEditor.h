@@ -13,11 +13,14 @@ namespace LevEngine::Editor
         bool OpenProject();
         bool NewProject();
         static void SetCurrentSceneAsStartScene();
+        void Update();
 
         void AddMainMenuItems(const Ref<MenuBar>& menuBar);
 
     private:
         Action<> m_ProjectOpened;
+        bool OpenProjectRequested;
+        bool CreateNewProjectRequested;
     };
 }
 
