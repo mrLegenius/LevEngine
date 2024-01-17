@@ -3,6 +3,8 @@ Assets:
     Address: CubePrefab
   - UUID: 8564062042898644639
     Address: EnemyPrefab
+  - UUID: 7397114264834341716
+    Address: EnemyAgentPrefab
   - UUID: 7470222584384964424
     Address: PlayerPrefab
   - UUID: 9795598983804961518

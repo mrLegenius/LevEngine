@@ -38,8 +38,9 @@ namespace LevEngine
         m_navMeshQuery = navMeshComponent.GetNavMeshQuery();
         m_crowd->init(MAX_AGENTS_COUNT, navMeshComponent.AgentRadius, navMeshComponent.GetNavMesh());
         RegisterDefaultObstacleAvoidanceProfiles();
-        for (auto agentEntity : agentsEntities)
+        for(int i = 0; i < initialAgentsEntities.size(); ++i)
         {
+            const auto& agentEntity = initialAgentsEntities[i];
             AddAgent(agentEntity);
         }
         m_isInitialized = true;
@@ -88,25 +89,18 @@ namespace LevEngine
             return;
         }
 
-        for(int i = 0; i < agentsEntities.size(); ++i)
+        for(int i = 0; i < agents.size(); ++i)
         {
             const auto agent = m_crowd->getEditableAgent(i);
             if(!agent || !agent->active)
             {
                 continue;
             }
-            auto& agentTransform = agentsEntities[i].GetComponent<Transform>();
+            auto& agentTransform = agents[i].GetComponent<Transform>();
             const Vector3& position = agentTransform.GetWorldPosition();
             agent->npos[0] = position.x;
             agent->npos[1] = position.y;
             agent->npos[2] = position.z;
-
-            if(target)
-            {
-                const auto& targetTransform = target.GetComponent<Transform>();
-                const auto& targetPosition = targetTransform.GetWorldPosition();
-                SetMoveTarget(i, targetPosition);   
-            }
         }
         
         m_crowd->update(deltaTime, m_crowdAgentDebugInfo);
@@ -114,18 +108,26 @@ namespace LevEngine
 
     void AIAgentCrowdComponent::UpdateAgentsPosition(float deltaTime)
     {
-        for(int i = 0; i < agentsEntities.size(); ++i)
+        for(int i = 0; i < agents.size(); ++i)
         {
             const auto agent = m_crowd->getAgent(i);
             if(!agent)
             {
                 continue;
             }
-            if(!agentsEntities[i].HasComponent<CharacterController>())
+            if(!agents[i].HasComponent<CharacterController>())
             {
                 continue;
             }
-            auto& characterController = agentsEntities[i].GetComponent<CharacterController>();
+            auto& characterController = agents[i].GetComponent<CharacterController>();
+            auto & characterTransform = agents[i].GetComponent<Transform>();
+            Vector3 velocity = {agent->nvel[0], agent->nvel[1], agent->nvel[2]};
+
+            velocity.y = 0.0f;
+            velocity.Normalize();
+            
+            characterTransform.SetWorldRotation(Quaternion::LookRotation(velocity, Vector3::Up));
+            
             const Vector3 currentPosition = {agent->npos[0], agent->npos[1], agent->npos[2]};
             characterController.MoveTo(currentPosition, deltaTime);
         }
@@ -143,12 +145,16 @@ namespace LevEngine
 
     void AIAgentCrowdComponent::AddAgent(const Entity& agentEntity)
     {
-        const auto& agentComponent = agentEntity.GetComponent<AIAgentComponent>();
-        const auto& agentTransform = agentEntity.GetComponent<Transform>();
+        agents.push_back(agentEntity);
 
+        const auto& agentTransform = agentEntity.GetComponent<Transform>();
+        auto& agentComponent = agentEntity.GetComponent<AIAgentComponent>();
+        
         const Vector3 pos = agentTransform.GetLocalPosition();
             
         m_crowd->addAgent(&pos.x, agentComponent.GetAgentParams());
+        
+        agentComponent.Init(this, agents.size() - 1);
     }
 
     void AIAgentCrowdComponent::SetMoveTarget(int agentIndex, Vector3 targetPos)
@@ -174,9 +180,9 @@ namespace LevEngine
         
         void SerializeData(YAML::Emitter& out, const AIAgentCrowdComponent& component) override
         {
-            out << YAML::Key << "Agents count" << YAML::Value << static_cast<int>(component.agentsEntities.size());
+            out << YAML::Key << "Agents count" << YAML::Value << static_cast<int>(component.initialAgentsEntities.size());
             out << YAML::Key << "Agents" << YAML::Value << YAML::BeginSeq;
-            for (auto agent : component.agentsEntities)
+            for (auto agent : component.initialAgentsEntities)
             {
                 out << YAML::BeginMap;
             
@@ -205,7 +211,7 @@ namespace LevEngine
         void DeserializeData(const YAML::Node& node, AIAgentCrowdComponent& component) override
         {
             const int componentCount = node["Agents count"].as<int>();
-            component.agentsEntities = Vector<Entity>(componentCount);
+            component.initialAgentsEntities = Vector<Entity>(componentCount);
             
             const auto agentsNodes = node["Agents"];
             if (!agentsNodes)
@@ -216,7 +222,7 @@ namespace LevEngine
             {
                 auto agentNode = agent["Agent"];
                 
-                component.agentsEntities[componentIdx] = !agentNode.IsNull()
+                component.initialAgentsEntities[componentIdx] = !agentNode.IsNull()
                     ? SceneManager::GetActiveScene()->GetEntityByUUID(UUID(agentNode.as<uint64_t>()))
                     : Entity();
                 
