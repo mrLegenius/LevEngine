@@ -94,6 +94,21 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="external\eventhandling\eventhandling.hpp" />
+    <ClInclude Include="external\eventhandling\events\event.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\abstracteventhandler.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\eventhandlerptr.h" />
+    <ClInclude Include="external\eventhandling\events\handlers\functoreventhandler.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\handlercast.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\helpers\innerholder.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\helpers\objectsaver.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\methodeventhandler.hpp" />
+    <ClInclude Include="external\eventhandling\events\helpers\is_equatable.hpp" />
+    <ClInclude Include="external\eventhandling\events\joins\abstracteventjoin.h" />
+    <ClInclude Include="external\eventhandling\events\joins\eventjoinwrapper.h" />
+    <ClInclude Include="external\eventhandling\events\joins\eventjoinwrapper.hpp" />
+    <ClInclude Include="external\eventhandling\events\joins\handlereventjoin.h" />
+    <ClInclude Include="external\eventhandling\events\joins\handlereventjoin.hpp" />
     <ClInclude Include="src\AI\Components\AIAgentComponent.h" />
     <ClInclude Include="src\AI\Components\AIAgentCrowdComponent.h" />
     <ClInclude Include="src\AI\Systems\AIAgentCrowdUpdateSystem.h" />
@@ -1030,6 +1045,14 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="external\eventhandling\events\joins\abstracteventjoin.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\eventhandling\events\joins\eventjoinwrapper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\AI\Components\AIAgentComponent.cpp" />
     <ClCompile Include="src\AI\Components\AIAgentCrowdComponent.cpp" />
     <ClCompile Include="src\AI\Systems\AIAgentCrowdUpdateSystem.cpp" />
