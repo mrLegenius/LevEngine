@@ -5,6 +5,8 @@
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
+class dtCrowd;
+
 namespace LevEngine
 {
     enum class ObstacleAvoidanceQuality : int
@@ -30,21 +32,17 @@ namespace LevEngine
 
         void UpdateAgentsPosition(float deltaTime);
         void SetMoveTarget(int agentIndex, Vector3 targetPos);
-        void AddAgent(const Entity& agentEntity);
-        
-        Vector<Entity> initialAgentsEntities;
-        
+
+        Vector<Entity> agentsEntities;
         Entity navMesh;
         Entity target;
 
     private:
 
-        Vector<Entity> agents;
-        
         bool m_isInitialized = false;
         bool m_isInitializationFailed = false;
         
-
+        void AddAgent(const Entity& agentEntity);
         void RegisterDefaultObstacleAvoidanceProfiles();
         
         dtCrowd* m_crowd;

@@ -6,8 +6,6 @@
 #include "MetaUtilities.h"
 #include "MathLuaBindings.h"
 #include "LuaComponentsBinder.h"
-#include "AI/Components/AIAgentComponent.h"
-#include "AI/Components/AIAgentCrowdComponent.h"
 #include "Assets/ScriptAsset.h"
 #include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
@@ -49,8 +47,6 @@ namespace LevEngine::Scripting
         RegisterComponent(CameraComponent);
         RegisterComponent(Rigidbody)
         RegisterComponent(CharacterController);
-        RegisterComponent(AIAgentComponent);
-        RegisterComponent(AIAgentCrowdComponent)
     }
 
     ScriptingManager::ScriptingManager()

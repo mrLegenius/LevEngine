@@ -12,18 +12,12 @@ EnemySpawnSystem = {
 
 			local scene = SceneManager:getActiveScene()
 			
-			local prefab = Prefab("EnemyAgentPrefab")
+			local prefab = Prefab("EnemyPrefab")
 			local enemyEntity = prefab:instantiate(scene)
 
-			local crowdView = Registry.get_entities(Transform, AIAgentCrowdComponent)
-
-			crowdView:for_each(
-				function(entity)
-					local crowd = entity:get_component(AIAgentCrowdComponent)
-					crowd:addAgent(enemyEntity)
-				end
-			)
-	
+			local scriptsContainer = enemyEntity:get_or_add_component(ScriptsContainer)
+			scriptsContainer.Enemy = Enemy(5)
+			
 			local enemyTransform = enemyEntity:get_component(Transform)
 			local randomPosition = Random.vector3(-20.0, 20.0)
 			randomPosition.y = 1;

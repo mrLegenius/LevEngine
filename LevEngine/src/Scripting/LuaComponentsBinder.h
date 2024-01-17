@@ -43,9 +43,6 @@ namespace LevEngine::Scripting
 		static void CreatePhysicsBind(sol::state& lua);
 		static void CreateDebugRenderBind(sol::state& lua);
 		
-		static void CreateAIAgentComponentLuaBind(sol::state& lua);
-		static void CreateAIAgentCrowdComponentLuaBind(sol::state& lua);
-
 		static void CreateTransformLuaBind(sol::state& lua);
 		static void CreateCameraComponentLuaBind(sol::state& lua);
 		static void CreateScriptsContainerLuaBind(sol::state& lua);

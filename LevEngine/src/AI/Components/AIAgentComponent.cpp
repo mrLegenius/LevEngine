@@ -29,14 +29,6 @@ namespace LevEngine
     	m_agent->params = *m_agentParams;
     }
 
-    void AIAgentComponent::Init(AIAgentCrowdComponent* crowdComponent, int agentIndex)
-    {
-    	m_crowd = crowdComponent;
-    	m_agentIndex = agentIndex;
-
-    	m_initialized = true;
-    }
-
     dtCrowdAgentParams* AIAgentComponent::GetAgentParams() const
     {
     	return m_agentParams;
@@ -47,15 +39,7 @@ namespace LevEngine
     	m_agentParams = params;
     }
 
-    void AIAgentComponent::SetMoveTarget(Vector3 targetPos)
-    {
-    	if(m_initialized)
-    	{
-    		m_crowd->SetMoveTarget(m_agentIndex, targetPos);
-    	}
-    }
-
-    class AIAgentComponentSerializer final : public ComponentSerializer<AIAgentComponent, AIAgentComponentSerializer>
+	class AIAgentComponentSerializer final : public ComponentSerializer<AIAgentComponent, AIAgentComponentSerializer>
     {
     protected:
         const char* GetKey() override { return "AIAgentComponent"; }

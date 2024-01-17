@@ -6,6 +6,7 @@
 #include "DetourNavMeshQuery.h"
 #include "NavMeshBoundingBox.h"
 #include "Assets/MeshAsset.h"
+#include "Physics/Components/Rigidbody.h"
 #include "Renderer/3D/Mesh.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -20,16 +21,11 @@ namespace LevEngine
 		m_NavMeshQuery = dtAllocNavMeshQuery();
 	}
 	
-	void NavMeshComponent::OnSceneLoaded(const Ref<Scene>& sceneRef)
+	void NavMeshComponent::OnConstruct(entt::registry& registry, entt::entity entity)
 	{
-		auto& registry = sceneRef->GetRegistry();
-		const auto view = registry.view<NavMeshComponent>();
-		for (auto& entity : view)
-		{
-			NavMeshComponent& component = registry.get<NavMeshComponent>(entity);
-			const auto entityWrapped = Entity(entt::handle{ registry, entity });
-			component.ConstructComponent(entityWrapped);
-		}
+		NavMeshComponent& component = registry.get<NavMeshComponent>(entity);
+		const auto entityWrapped = Entity(entt::handle{ registry, entity });
+		component.ConstructComponent(entityWrapped);
 	}
 
 	void NavMeshComponent::ConstructComponent(Entity entity)
@@ -109,8 +105,7 @@ namespace LevEngine
 				continue;
 			}
 			
-			auto& transform = view.get<Transform>(entity);
-			transform.RecalculateModel();
+			const auto& transform = view.get<Transform>(entity);
 			const auto& meshRendererComponent = view.get<MeshRendererComponent>(entity);
 			const auto& mesh = meshRendererComponent.mesh->GetMesh();
 

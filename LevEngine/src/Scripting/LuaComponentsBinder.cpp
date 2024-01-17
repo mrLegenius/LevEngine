@@ -3,8 +3,6 @@
 
 #include "MetaUtilities.h"
 #include "ResourceManager.h"
-#include "AI/Components/AIAgentComponent.h"
-#include "AI/Components/AIAgentCrowdComponent.h"
 #include "Assets/PrefabAsset.h"
 #include "Audio/Audio.h"
 #include "GUI/GUI.h"
@@ -710,35 +708,5 @@ namespace LevEngine::Scripting
         debugRender.set_function(
             "drawGrid",
             sol::resolve<void(Vector3, Vector3, Vector3, uint32_t, uint32_t, float, Color)>(&DebugRender::DrawGrid));
-    }
-
-    void LuaComponentsBinder::CreateAIAgentCrowdComponentLuaBind(sol::state& lua)
-    {
-        lua.new_usertype<AIAgentCrowdComponent>(
-            "AIAgentCrowdComponent",
-            "type_id", &entt::type_hash<AIAgentCrowdComponent>::value,
-            sol::call_constructor,
-            sol::factories(
-                []()
-                {
-                    return AIAgentCrowdComponent{};
-                }),
-            "addAgent", &AIAgentCrowdComponent::AddAgent
-        );
-    }
-
-    void LuaComponentsBinder::CreateAIAgentComponentLuaBind(sol::state& lua)
-    {
-        lua.new_usertype<AIAgentComponent>(
-            "AIAgentComponent",
-            "type_id", &entt::type_hash<AIAgentComponent>::value,
-            sol::call_constructor,
-            sol::factories(
-                []()
-                {
-                    return AIAgentComponent{};
-                }),
-            "setMoveTarget", &AIAgentComponent::SetMoveTarget
-        );
     }
 }

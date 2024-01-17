@@ -5,7 +5,6 @@
 #include "Renderer/Renderer.h"
 
 #include "Entity.h"
-#include "SceneManager.h"
 #include "AI/Components/AIAgentCrowdComponent.h"
 #include "AI/Systems/AIAgentCrowdUpdateSystem.h"
 #include "Assets/ScriptAsset.h"
@@ -47,7 +46,7 @@ namespace LevEngine
         LuaComponentsBinder::CreateLuaEntityBind(*(scriptingManager.GetLuaState()), this);
 
         m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
-        SceneManager::SceneLoaded += FUNCTION_HANDLER(NavMeshComponent::OnSceneLoaded);
+        m_Registry.on_construct<NavMeshComponent>().connect<&NavMeshComponent::OnConstruct>();
     }
 
     void Scene::CleanupScene()
