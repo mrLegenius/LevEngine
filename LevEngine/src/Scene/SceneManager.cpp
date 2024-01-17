@@ -4,10 +4,11 @@
 #include "Scene.h"
 #include "Audio/Audio.h"
 #include "Serializers/SceneSerializer.h"
-#include "Kernel/Application.h"
 
 namespace LevEngine
 {
+    events::IEvent<Ref<Scene>>& SceneManager::SceneLoaded = m_OnSceneLoaded;
+
     void SceneManager::SaveScene(const String& path)
     {
         m_ActiveScenePath = path.c_str();
@@ -30,6 +31,8 @@ namespace LevEngine
         if (sceneSerializer.Deserialize(path.generic_string().c_str()))
         {
             m_ActiveScenePath = path;
+            m_OnSceneLoaded(m_ActiveScene);
+
             return true;
         }
 
@@ -41,7 +44,11 @@ namespace LevEngine
     const Ref<Scene>& SceneManager::LoadEmptyScene()
     {
         m_ActiveScenePath = Path();
-        return m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene = CreateRef<Scene>();
+
+        m_OnSceneLoaded(m_ActiveScene);
+
+        return m_ActiveScene;
     }
     void SceneManager::Shutdown()
     {

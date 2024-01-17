@@ -76,10 +76,10 @@ namespace LevEngine
 
 	Ref<Texture> Asset::GetIcon() const { return Icons::File(); }
 
-	bool Asset::Deserialize()
+	bool Asset::Deserialize(const bool force)
 	{
 		std::lock_guard lock(m_DeserializationMutex);
-		if (m_Deserialized) return true;
+		if (m_Deserialized && !force) return true;
 		
 		m_Deserialized = DeserializeMeta();
 		m_Deserialized = DeserializeData();

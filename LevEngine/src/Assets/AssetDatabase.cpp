@@ -1,6 +1,8 @@
 ﻿#include "levpch.h"
 
 #include "AssetDatabase.h"
+
+#include "AnimationAsset.h"
 #include "AudioBankAsset.h"
 #include "DefaultAsset.h"
 #include "MaterialPBRAsset.h"
@@ -72,7 +74,7 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
-		if (!exists(GetAssetsPath()))
+		if (!std::filesystem::exists(GetAssetsPath()))
 			create_directory(GetAssetsPath());
 		
 		m_AssetsByPath.clear();
@@ -193,6 +195,12 @@ namespace LevEngine
 		return extension == ".bank";
 	}
 
+	bool AssetDatabase::IsAssetAnimationClip(const Path& path)
+	{
+		const auto extension = path.extension().string();
+		return extension == ".anim";
+	}
+
 	Ref<Asset> AssetDatabase::CreateAsset(const Path& path, UUID uuid)
 	{
 		if (IsAssetTexture(path))
@@ -219,6 +227,9 @@ namespace LevEngine
 		if (IsAssetAudioBank(path))
 			return CreateRef<AudioBankAsset>(path, uuid);
 
+		if (IsAssetAnimationClip(path))
+			return CreateRef<AnimationAsset>(path, uuid);
+
 		if (IsAssetScript(path))
 			return CreateRef<ScriptAsset>(path, uuid);
 
@@ -227,19 +238,16 @@ namespace LevEngine
 
 	void AssetDatabase::CreateFolder(const Path& path)
 	{
-		if (!exists(path))
+		if (!std::filesystem::exists(path))
 			create_directory(path);
 	}
 
 	Ref<Asset> AssetDatabase::GetAsset(const Path& path, const bool deserialize)
 	{
 		const auto assetIt = m_AssetsByPath.find(path);
-		if (assetIt == m_AssetsByPath.end())
-		{
-			Log::CoreWarning("Asset in {0} is not found", path.string());
-			return nullptr;
-		}
-			
+
+		if (assetIt == m_AssetsByPath.end()) return nullptr;
+
 		const auto& asset = assetIt->second;
 		if (!asset->IsDeserialized() && deserialize)
 			asset->Deserialize();
@@ -267,14 +275,22 @@ namespace LevEngine
 	{
 		if (asset->GetName() == name) return;
 
-		const auto directory = asset->GetPath().parent_path();
+		const auto oldPath = asset->GetPath();
+		const auto directory = oldPath.parent_path();
 		const auto newPath = directory / (name + asset->GetExtension()).c_str();
 
-		m_AssetsByPath.erase(asset->GetPath());
-		std::filesystem::rename(asset->GetPath(), newPath);
-		std::filesystem::rename(
-			asset->GetPath().string().append(".meta").c_str(), 
-			newPath.string().append(".meta").c_str());
+		m_AssetsByPath.erase(oldPath);
+
+		if (std::filesystem::exists(oldPath))
+		{
+			std::filesystem::rename(oldPath, newPath);
+		}
+
+		const auto oldMetaPath = oldPath.string().append(".meta").c_str();
+		if (std::filesystem::exists(oldPath))
+		{
+			std::filesystem::rename(oldMetaPath, newPath.string().append(".meta").c_str());
+		}
 
 		asset->Rename(newPath);
 		m_AssetsByPath.emplace(newPath, asset);
@@ -290,7 +306,7 @@ namespace LevEngine
 		const auto oldPath = asset->GetPath();
 		const auto newPath = directory / asset->GetFullName().c_str();
 
-		if (exists(newPath))
+		if (std::filesystem::exists(newPath))
 		{
 			Log::CoreWarning("Failed to move asset. Asset '{0}' already exists in {1}", asset->GetName(), directory);
 			return;
@@ -299,9 +315,9 @@ namespace LevEngine
 		try
 		{
 			std::filesystem::rename(oldPath, newPath);
-			std::filesystem::rename(
-				oldPath.string().append(".meta"),
-				newPath.string().append(".meta"));
+
+			const auto oldMetaPath = oldPath.string().append(".meta");
+			std::filesystem::rename(oldMetaPath, newPath.string().append(".meta"));
 		}
 		catch (std::filesystem::filesystem_error& e)
 		{
@@ -321,8 +337,16 @@ namespace LevEngine
 		const auto path = asset->GetPath();
 		const auto uuid = asset->GetUUID();
 
-		std::filesystem::remove(path);
-		std::filesystem::remove(path.string().append(".meta"));
+		if (std::filesystem::exists(path))
+		{
+			std::filesystem::remove(path);
+		}
+
+		const auto metaPath = Path(path.string().append(".meta"));
+		if (std::filesystem::exists(metaPath))
+		{
+			std::filesystem::remove(metaPath);
+		}
 
 		m_AssetsByPath.erase(path);
 		m_Assets.erase(uuid);
@@ -330,7 +354,7 @@ namespace LevEngine
 
 	bool AssetDatabase::AssetExists(const Path& path)
 	{
-		return exists(path);
+		return m_AssetsByPath.count(path);
 	}
 
 	void AssetDatabase::CreateMeta(const Path& path, const UUID uuid, const YAML::Node* extraInfo)

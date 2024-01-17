@@ -7,8 +7,12 @@
 #include "Audio/Audio.h"
 #include "GUI/GUI.h"
 #include "Input/Input.h"
+#include "Kernel/Application.h"
 #include "Kernel/Time/Time.h"
+#include "Physics/Physics.h"
+#include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
+#include "Renderer/DebugRender/DebugRender.h"
 #include "Scene/Entity.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -57,13 +61,15 @@ namespace LevEngine::Scripting
                 return Input::IsMouseButtonUp(static_cast<MouseButton>(key));
             }
         );
-        
-        lua.new_enum("MouseButton",
+
+        lua.new_enum(
+            "MouseButton",
             "Left", MouseButton::Left,
             "Right", MouseButton::Right,
             "Middle", MouseButton::Middle);
 
-        lua.new_enum<false>("KeyCode",
+        lua.new_enum<false>(
+            "KeyCode",
             "None", KeyCode::None,
             "LeftButton", KeyCode::LeftButton,
             "RightButton", KeyCode::RightButton,
@@ -101,7 +107,7 @@ namespace LevEngine::Scripting
             "Insert", KeyCode::Insert,
             "Delete", KeyCode::Delete,
             "Help", KeyCode::Help
-            );
+        );
         luaKeyCode.set(
             "D0", KeyCode::D0,
             "D1", KeyCode::D1,
@@ -113,7 +119,7 @@ namespace LevEngine::Scripting
             "D7", KeyCode::D7,
             "D8", KeyCode::D8,
             "D9", KeyCode::D9
-            );
+        );
         luaKeyCode.set(
             "A", KeyCode::A,
             "B", KeyCode::B,
@@ -141,8 +147,8 @@ namespace LevEngine::Scripting
             "X", KeyCode::X,
             "Y", KeyCode::Y,
             "Z", KeyCode::Z
-            );
-        
+        );
+
         luaKeyCode.set(
             "LeftWindows", KeyCode::LeftWindows,
             "RightWindows", KeyCode::RightWindows,
@@ -164,7 +170,7 @@ namespace LevEngine::Scripting
             "Subtract", KeyCode::Subtract,
             "Decimal", KeyCode::Decimal,
             "Divide", KeyCode::Divide
-            );
+        );
         luaKeyCode.set(
             "F1", KeyCode::F1,
             "F2", KeyCode::F2,
@@ -190,7 +196,7 @@ namespace LevEngine::Scripting
             "F22", KeyCode::F22,
             "F23", KeyCode::F23,
             "F24", KeyCode::F24
-            );
+        );
         luaKeyCode.set(
             "NumLock", KeyCode::NumLock,
             "Scroll", KeyCode::Scroll,
@@ -246,7 +252,6 @@ namespace LevEngine::Scripting
             "Pa1", KeyCode::Pa1,
             "OemClear", KeyCode::OemClear
         );
-            
     }
 
     void LuaComponentsBinder::CreateTransformLuaBind(sol::state& lua)
@@ -334,13 +339,10 @@ namespace LevEngine::Scripting
                     return Rigidbody{};
                 }),
             "addForce", sol::overload(
+                &Rigidbody::AddForce,
                 [](const Rigidbody& rigidbody, Vector3 vector)
                 {
                     rigidbody.AddForce(vector);
-                },
-                [](const Rigidbody& rigidbody, Vector3 vector, int forceMode)
-                {
-                    rigidbody.AddForce(vector, static_cast<Rigidbody::ForceMode>(forceMode));
                 }),
             "initialize", [](Rigidbody& rigidbody, const Entity entity)
             {
@@ -348,20 +350,37 @@ namespace LevEngine::Scripting
             },
             "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer
         );
-        
-        lua.new_enum("ForceMode",
+
+        lua.new_enum(
+            "ForceMode",
             "Force", Rigidbody::ForceMode::Force,
             "Impulse", Rigidbody::ForceMode::Impulse,
             "Acceleration", Rigidbody::ForceMode::Acceleration,
             "VelocityChange", Rigidbody::ForceMode::VelocityChange
-            );
+        );
 
-        lua.new_usertype<Collision>("Collision",
+        lua.new_usertype<Collision>(
+            "Collision",
             "contactEntity", &Collision::ContactEntity,
             "contactPositions", &Collision::ContactPositions,
             "contactNormals", &Collision::ContactPositions,
             "contactImpulses", &Collision::ContactImpulses,
             "contactSeparations", &Collision::ContactSeparations);
+    }
+
+    void LuaComponentsBinder::CreateCharacterControllerLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<CharacterController>(
+            "CharacterController",
+            "type_id", &entt::type_hash<CharacterController>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return CharacterController{};
+                }),
+            "move", &CharacterController::Move
+        );
     }
 
     void LuaComponentsBinder::CreateLuaEntityBind(sol::state& lua, Scene* scene)
@@ -373,16 +392,16 @@ namespace LevEngine::Scripting
         {
             auto table = entityTable.value();
             table.set_function(sol::call_constructor,
-                sol::factories(
-                    [&]()
-                    {
-                        return Entity{scene->CreateEntity()};
-                    },
-                    [&](String name)
-                    {
-                        return Entity{scene->CreateEntity(name)};
-                    }
-                ));
+                               sol::factories(
+                                   [&]()
+                                   {
+                                       return Entity{scene->CreateEntity()};
+                                   },
+                                   [&](String name)
+                                   {
+                                       return Entity{scene->CreateEntity(name)};
+                                   }
+                               ));
         }
         else
         {
@@ -399,7 +418,8 @@ namespace LevEngine::Scripting
                         return Entity{scene->CreateEntity(name)};
                     }
                 ),
-                "add_component", [](Entity& entity, const sol::table& scriptComponent, sol::this_state state) -> sol::object
+                "add_component", [](Entity& entity, const sol::table& scriptComponent,
+                                    sol::this_state state) -> sol::object
                 {
                     if (!scriptComponent.valid())
                     {
@@ -508,8 +528,10 @@ namespace LevEngine::Scripting
             sol::no_constructor,
             "playOneShot",
             [](const std::string& eventName, const Entity entity)
-            { return Audio::PlayOneShot(String{eventName.c_str()}, entity); }
-            );
+            {
+                return Audio::PlayOneShot(String{eventName.c_str()}, entity);
+            }
+        );
     }
 
     void LuaComponentsBinder::CreatePrintBind(sol::state& lua)
@@ -546,34 +568,38 @@ namespace LevEngine::Scripting
             "drawCircle", sol::overload(
                 &GUI::DrawCircle,
                 [](const Vector2& pos, float radius, const Color& color)
-                    {
-                        GUI::DrawCircle(pos, radius, color);
-                    }
-                ),
+                {
+                    GUI::DrawCircle(pos, radius, color);
+                }
+            ),
             "getWindowSize", &GUI::GetWindowSize,
             "drawString", [](const Vector2& pos, const std::string& text, const float size, const Color& color)
-                {
-                    GUI::DrawString(pos, String{text.c_str()}, size, color);
-                }
-            );
+            {
+                GUI::DrawString(pos, String{text.c_str()}, size, color);
+            }
+        );
     }
 
     void LuaComponentsBinder::CreateTimeBind(sol::state& lua)
     {
         auto timestep_multiplication_overload = sol::overload(
-            [](const Timestep& v1, const Timestep& v2) {
+            [](const Timestep& v1, const Timestep& v2)
+            {
                 return v1 * v2;
             },
-            [](const Timestep& v1, float value) {
+            [](const Timestep& v1, float value)
+            {
                 return v1 * value;
             },
-            [](float value, const Timestep& v1) {
+            [](float value, const Timestep& v1)
+            {
                 return v1 * value;
             }
         );
 
         auto timestep_addition_overload = sol::overload(
-            [](const Timestep& v1, const Timestep& v2) {
+            [](const Timestep& v1, const Timestep& v2)
+            {
                 return v1 + v2;
             }
         );
@@ -586,18 +612,101 @@ namespace LevEngine::Scripting
             "getSeconds", &Timestep::GetSeconds,
             sol::meta_function::addition, timestep_addition_overload,
             sol::meta_function::multiplication, timestep_multiplication_overload,
-            sol::meta_function::to_string, [] (const Timestep& timestep)
+            sol::meta_function::to_string, [](const Timestep& timestep)
             {
                 return "Timestep " + std::to_string(timestep.GetMilliseconds());
             }
         );
-        
+
         lua.new_usertype<Time>(
             "Time",
             "getTimeSinceStartup", &Time::GetTimeSinceStartup,
             "getFrameNumber", &Time::GetFrameNumber,
             "getScaledDeltaTime", &Time::GetScaledDeltaTime,
             "GetUnscaledDeltaTime", &Time::GetUnscaledDeltaTime
-            );
+        );
+    }
+
+    void LuaComponentsBinder::CreatePhysicsBind(sol::state& lua)
+    {
+        auto physics = lua["Physics"].get_or_create<sol::table>();
+        physics.set_function(
+            "getGravity", []()
+            {
+                return Application::Get().GetPhysics().GetGravity();
+            }
+        );
+    }
+
+    void LuaComponentsBinder::CreateDebugRenderBind(sol::state& lua)
+    {
+        auto debugRender = lua["DebugRender"].get_or_create<sol::table>();
+
+        debugRender.set_function(
+            "drawCube",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawCube),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawCube)
+            ));
+
+        debugRender.set_function(
+            "drawWireCube",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawWireCube),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawWireCube)
+            ));
+
+        debugRender.set_function(
+            "drawSphere",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawSphere),
+                sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawSphere)
+            ));
+
+        debugRender.set_function(
+            "drawWireSphere",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawWireSphere),
+                sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawWireSphere)
+            ));
+
+        debugRender.set_function(
+            "drawPoint",
+            sol::overload(
+                sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPoint),
+                sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPoint)
+            ));
+
+        debugRender.set_function(
+            "drawPointStar",
+            sol::overload(
+                sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPointStar),
+                sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPointStar)
+            ));
+
+        debugRender.set_function(
+            "drawLine",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawLine),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawLine)
+            ));
+
+        debugRender.set_function(
+            "drawRay",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawRay),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawRay)
+            ));
+
+        debugRender.set_function(
+            "drawCircle",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Quaternion, Color)>(&DebugRender::DrawCircle),
+                sol::resolve<void(Vector3, float, Quaternion, Color, float)>(&DebugRender::DrawCircle)
+            ));
+
+        debugRender.set_function(
+            "drawGrid",
+            sol::resolve<void(Vector3, Vector3, Vector3, uint32_t, uint32_t, float, Color)>(&DebugRender::DrawGrid));
     }
 }

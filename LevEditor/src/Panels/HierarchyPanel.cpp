@@ -82,7 +82,8 @@ namespace LevEngine::Editor
 			Selection::Deselect();
 
 		//Right click on a blank space
-		if (ImGui::BeginPopupContextWindow(nullptr, 1))
+		constexpr auto flags = ImGuiPopupFlags_MouseButtonDefault_ | ImGuiPopupFlags_NoOpenOverItems;
+		if (ImGui::BeginPopupContextWindow(nullptr, flags))
 		{
 			if (ImGui::MenuItem("Create New Entity"))
 				activeScene->CreateEntity("New Entity");
@@ -94,9 +95,13 @@ namespace LevEngine::Editor
 	void HierarchyPanel::CreatePrefab(const Entity entity, const Path& path)
 	{
 		if (const auto& asset = AssetDatabase::CreateNewAsset<PrefabAsset>(path))
+		{
 			asset->SaveEntity(entity);
+			Log::CoreInfo("Prefab '{0}' is created at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+			return;
+		}
 
-		Log::CoreInfo("Prefab '{0}' is created at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+		Log::CoreWarning("Failed to create prefab '{0}' at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
 	}
 
 	void HierarchyPanel::SavePrefab(const Entity entity, const Path& path)
@@ -104,10 +109,13 @@ namespace LevEngine::Editor
 		if (const auto& asset = AssetDatabase::GetAsset<PrefabAsset>(path))
 		{
 			asset->SaveEntity(entity);
-			asset->Deserialize();
+			asset->Deserialize(true);
+			Log::CoreInfo("Prefab '{0}' is updated at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+			return;
 		}
 
-		Log::CoreInfo("Prefab '{0}' is updated at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+		Log::CoreWarning("Failed to update prefab '{0}' at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+
 	}
 
 	void HierarchyPanel::DrawEntityNode(Entity entity)

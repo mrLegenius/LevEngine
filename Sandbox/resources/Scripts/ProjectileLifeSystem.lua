@@ -12,6 +12,13 @@ ProjectileLifeSystem = {
 					return
 				end
 
+				local position = entity:get_component(Transform):getWorldPosition()
+
+
+				--Debug render test
+				DebugRender.drawWireSphere(position, 0.5, Color.Red)
+				--print(position)
+
 				local projectile = scriptsContainer.Projectile
 
 				projectile.timer = projectile.timer + deltaTime

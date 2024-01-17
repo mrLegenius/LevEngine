@@ -10,7 +10,10 @@ LayerStack::LayerStack() = default;
 LayerStack::~LayerStack()
 {
 	for (const auto layer : m_Layers)
+	{
+		layer->OnDetach();
 		delete layer;
+	}
 }
 
 void LayerStack::PushLayer(Layer* layer)

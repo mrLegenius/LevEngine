@@ -21,6 +21,8 @@
 #include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Scripting/LuaComponentsBinder.h"
+#include "Systems/Animation/AnimatorInitSystem.h"
+#include "Systems/Animation/AnimatorUpdateSystem.h"
 #include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Systems/Audio/AudioListenerInitSystem.h"
@@ -75,6 +77,9 @@ namespace LevEngine
         RegisterUpdateSystem<AIAgentCrowdUpdateSystem>();
 
         RegisterLateUpdateSystem<EntityDestroySystem>();
+
+        RegisterUpdateSystem<AnimatorInitSystem>();
+        RegisterUpdateSystem<AnimatorUpdateSystem>();
 
         m_Registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
         m_Registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();

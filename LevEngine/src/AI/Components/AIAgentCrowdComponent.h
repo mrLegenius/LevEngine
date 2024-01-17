@@ -26,11 +26,11 @@ namespace LevEngine
 
         void Init();
        
-        void Update(const float deltaTime);
+        void Update(float deltaTime);
         bool IsInitialized() const;
         bool IsInitializationFailed() const;
 
-        void UpdateAgentsPosition();
+        void UpdateAgentsPosition(float deltaTime);
         void SetMoveTarget(int agentIndex, Vector3 targetPos);
 
         Vector<Entity> agentsEntities;

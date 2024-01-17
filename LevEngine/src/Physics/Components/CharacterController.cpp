@@ -110,9 +110,9 @@ namespace LevEngine
             );
 
         EnableVisualization(IsVisualizationEnabled());
-        
+
         SetLayer(GetLayer());
-        
+
         SetSlopeLimit(GetSlopeLimit());
         SetStepOffset(GetStepOffset());
         SetSkinWidth(GetSkinWidth());
@@ -432,7 +432,7 @@ namespace LevEngine
     {
         m_CharacterController->IsGrounded = flag;
     }
-    
+
     void CharacterController::Move(const Vector3 displacement, const float elapsedTime) const
     {
         if (m_Controller != nullptr)
@@ -443,6 +443,15 @@ namespace LevEngine
                 elapsedTime,
                 physx::PxControllerFilters()
             );
+        }
+    }
+
+    void CharacterController::MoveTo(const Vector3 position, const float elapsedTime) const
+    {
+        if (m_Controller != nullptr)
+        {
+            const Vector3 displacement = position - PhysicsUtils::FromPxExtendedVec3ToVector3(m_Controller->getPosition());
+            Move(displacement, elapsedTime);
         }
     }
 
@@ -464,7 +473,7 @@ namespace LevEngine
         void SerializeData(YAML::Emitter& out, const CharacterController& component) override
         {
             out << YAML::Key << "Layer" << YAML::Value << static_cast<int>(component.GetLayer());
-            
+
             out << YAML::Key << "Capsule Controller Radius" << YAML::Value << component.GetRadius();
             out << YAML::Key << "Capsule Controller Half Height" << YAML::Value << component.GetHeight();
             out << YAML::Key << "Capsule Controller Climbing Mode" << YAML::Value << static_cast<int>(component.GetClimbingMode());
@@ -486,6 +495,7 @@ namespace LevEngine
 
         void DeserializeData(const YAML::Node& node, CharacterController& component) override
         {
+
             if (const auto layerNode = node["Layer"])
             {
                 const auto layer = static_cast<FilterLayer>(layerNode.as<int>());

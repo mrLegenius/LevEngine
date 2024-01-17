@@ -8,7 +8,7 @@ PlayerSpawnSystem = {
 
 		-- Check if player already exists
 
-		print("Really long message, which should be wraped as it gets longer and longer and longer and longer and longer and longer and longer and longer and longer and longer and longer")
+		--print("Really long message, which should be wraped as it gets longer and longer and longer and longer and longer and longer and longer and longer and longer and longer and longer")
 
 		local alreadyExists = false
 
@@ -37,7 +37,7 @@ PlayerSpawnSystem = {
 		local startPosition = Vector3(0.0, 1.0, 15.0)
 		playerTransform:setWorldPosition(startPosition)
 
-		local scriptsContainer = playerEntity:get_or_add_component(ScriptsContainer())
+		local scriptsContainer = playerEntity:get_or_add_component(ScriptsContainer)
 		
 		scriptsContainer.Player = Player(15.0)
 	end

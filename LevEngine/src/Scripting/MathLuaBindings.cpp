@@ -44,7 +44,7 @@ namespace LevEngine::Scripting
 		lua.new_usertype<Vector3>(
 			"Vector3",
 			sol::call_constructor,
-			sol::constructors<Vector3(float), Vector3(float, float, float)>(),
+			sol::constructors<Vector3(), Vector3(float), Vector3(float, float, float)>(),
 			"x", &Vector3::x,
 			"y", &Vector3::y,
 			"z", &Vector3::z,
@@ -103,7 +103,7 @@ namespace LevEngine::Scripting
 		lua.new_usertype<Vector2>(
 			"Vector2",
 			sol::call_constructor,
-			sol::constructors<Vector2(float), Vector2(float, float)>(),
+			sol::constructors<Vector2(), Vector2(float), Vector2(float, float)>(),
 			"x", &Vector2::x,
 			"y", &Vector2::y,
 			sol::meta_function::addition, vec2_addition_overload,
@@ -157,7 +157,7 @@ namespace LevEngine::Scripting
 		lua.new_usertype<Vector4>(
 			"Vector4",
 			sol::call_constructor,
-			sol::constructors<Vector4(float), Vector4(float, float, float, float)>(),
+			sol::constructors<Vector4(), Vector4(float), Vector4(float, float, float, float)>(),
 			"x", &Vector4::x,
 			"y", &Vector4::y,
 			"z", &Vector4::z,
@@ -275,22 +275,23 @@ namespace LevEngine::Scripting
 				+ std::to_string(vector.y) + ", "
 				+ std::to_string(vector.z) + "]";
 			},
-			"toEuler", [](Quaternion& quaternion) { return quaternion.ToEuler(); }
+			"toEuler", [](const Quaternion& quaternion)
+			{
+				return quaternion.ToEuler();
+			},
+			"lookRotation", [](const Vector3& forward, const Vector3& up)
+			{
+				return Quaternion::LookRotation(forward, up);
+			}
 		);
 	}
 
 	void MathFreeFunctions(sol::state& lua) {
 		auto math = lua["Math"].get_or_create<sol::table>();
 		math.set_function("distance", sol::overload(
-			[](const Vector2& a, const Vector2& b) {
-				return Vector2::Distance(a, b);
-			},
-			[](const Vector3& a, const Vector3& b) {
-				return Vector3::Distance(a, b);
-			},
-			[](const Vector4& a, const Vector4& b) {
-				return Vector4::Distance(a, b);
-			}
+			sol::resolve<float(const Vector2&, const Vector2&)>(&Vector2::Distance),
+			sol::resolve<float(const Vector3&, const Vector3&)>(&Vector3::Distance),
+			sol::resolve<float(const Vector4&, const Vector4&)>(&Vector4::Distance)
 		));
 
 		math.set_function("lerp", [](float a, float b, float t) {return std::lerp(a, b, t); });
@@ -301,8 +302,8 @@ namespace LevEngine::Scripting
 		));
 
 		math.set_function("createQuaternionFromYawPitchRoll", sol::overload(
-			[](float yaw, float pitch, float roll) { return Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll); },
-			[](const Vector3& angles) { return Quaternion::CreateFromYawPitchRoll(angles); }
+			sol::resolve<Quaternion(float, float, float)>(&Quaternion::CreateFromYawPitchRoll),
+			sol::resolve<Quaternion(const Vector3&)>(&Quaternion::CreateFromYawPitchRoll)
 		));
 
 		math["radToDeg"] = Math::RadToDeg;
@@ -315,19 +316,19 @@ namespace LevEngine::Scripting
 			"Random",
 			sol::no_constructor,
 			"vector3", sol::overload(
-				[](){ return Random::Vec3(); },
-				[](float min, float max) { return Random::Vec3(min, max);},
-				[](const Vector3& a, const Vector3& b) { return Random::Vec3(a, b);}),
+				sol::resolve<Vector3()>(&Random::Vec3),
+				sol::resolve<Vector3(float, float)>(&Random::Vec3),
+				sol::resolve<Vector3(const Vector3, const Vector3)>(&Random::Vec3)),
 			"vector4", sol::overload(
-				[](){ return Random::Vec4(); },
-				[](float min, float max) { return Random::Vec4(min, max);},
-				[](const Vector4& a, const Vector4& b) { return Random::Vec4(a, b);}),
+				sol::resolve<Vector4()>(&Random::Vec4),
+				sol::resolve<Vector4(float, float)>(&Random::Vec4),
+				sol::resolve<Vector4(const Vector4, const Vector4)>(&Random::Vec4)),
 			"color", sol::overload(
-				[](float min, float max, float alpha) { return Random::Color(min, max, alpha);},
-				[](const Color& a, const Color& b) { return Random::Color(a, b);}),
+				sol::resolve<Color(float, float, float)>(&Random::Color),
+				sol::resolve<Color(const Color&, const Color&)>(&Random::Color)),
 			"smoothColor", sol::overload(
-				[](float min, float max, float alpha) { return Random::SmoothColor(min, max, alpha);},
-				[](const Color& a, const Color& b) { return Random::SmoothColor(a, b);}),
+				sol::resolve<Color(float, float, float)>(&Random::SmoothColor),
+				sol::resolve<Color(const Color&, const Color&)>(&Random::SmoothColor)),
 			"rotation", &Random::Rotation
 		);
 	}

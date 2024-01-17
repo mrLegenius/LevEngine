@@ -37,4 +37,20 @@ namespace LevEngine
 			break;
 		}
 	}
+
+	Ref<VertexBuffer> VertexBuffer::Create(const int* vertices, const uint32_t size, const uint32_t stride)
+	{
+		switch (RenderSettings::RendererAPI)
+		{
+		case RendererAPI::None:
+			LEV_CORE_ASSERT(false, "None for API was chosen");
+		case RendererAPI::OpenGL:
+			LEV_NOT_IMPLEMENTED
+		case RendererAPI::D3D11:
+			return CreateRef<D3D11VertexBuffer>(vertices, size, stride);
+		default:
+			LEV_THROW("Unknown Renderer API")
+			break;
+		}
+	}
 }
