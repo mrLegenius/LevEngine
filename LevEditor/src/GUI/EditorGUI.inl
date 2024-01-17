@@ -310,9 +310,15 @@ namespace LevEngine::Editor
 
 		ImGui::AlignTextToFramePadding();
 		if (ImGui::InputText(label.c_str(), buffer, sizeof buffer, ImGuiInputTextFlags_EnterReturnsTrue))
+		{
 			onApply(buffer);
+			return;
+		}
 
 		if (ImGui::IsItemDeactivatedAfterEdit())
+		{
 			onApply(buffer);
+			return;
+		}
 	}
 }

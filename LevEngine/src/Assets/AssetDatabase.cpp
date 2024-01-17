@@ -28,6 +28,8 @@ namespace LevEngine
 
 	void AssetDatabase::ImportAsset(const Path& path)
 	{
+		if (path.extension() == ".meta") return;
+
 		auto uuid = UUID();
 		auto pathString = path.string();
 		String address;
@@ -93,8 +95,7 @@ namespace LevEngine
 				if (directoryEntry.is_directory())
 					directories.push(path);
 
-				if (path.extension() != ".meta")
-					ImportAsset(path);
+				ImportAsset(path);
 			}
 		} while (!directories.empty());
 	}
@@ -281,6 +282,14 @@ namespace LevEngine
 
 		m_AssetsByPath.erase(oldPath);
 
+		if (is_directory(newPath))
+		{
+			for (std::filesystem::recursive_directory_iterator i(newPath), end; i != end; ++i)
+			{
+				m_AssetsByPath.erase(i->path());
+			}
+		}
+
 		if (std::filesystem::exists(oldPath))
 		{
 			std::filesystem::rename(oldPath, newPath);
@@ -294,6 +303,17 @@ namespace LevEngine
 
 		asset->Rename(newPath);
 		m_AssetsByPath.emplace(newPath, asset);
+
+		if (is_directory(newPath))
+		{
+			for (std::filesystem::recursive_directory_iterator i(newPath), end; i != end; ++i)
+			{
+				if (!is_directory(i->path()))
+				{
+					ImportAsset(*i);
+				}
+			}
+		}
 	}
 
 	void AssetDatabase::MoveAsset(const Ref<Asset>& asset, const Path& directory)

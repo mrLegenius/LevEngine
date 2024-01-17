@@ -17,5 +17,6 @@ namespace LevEngine::Editor
         void DrawCreateMenu(const String& label, const String& defaultName, Args ... args) const;
 
         Path m_CurrentDirectory;
+        Ref<Asset> m_RenamingAsset{};
     };
 }
