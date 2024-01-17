@@ -1,11 +1,13 @@
 #pragma once
+#include "Scene/Components/Transform/Transform.h"
+#include "Components/Player.h"
+#include "Physics/Components/CharacterController.h"
 
 namespace Sandbox
 {
     constexpr float WALK_SPEED = 1.0f;
     constexpr float SPRINT_SPEED = 2.0f;
     constexpr float MOVEMENT_MULTIPLIER = 0.25f;
-    constexpr float GRAVITY_MULTIPLIER = 0.01f;
     
     class FPSMovementSystem final : public System
     {
@@ -24,16 +26,6 @@ namespace Sandbox
                 playerRotation.y -= delta.x;
                 playerTransform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(playerRotation * Math::DegToRad));
                 
-                if (Input::IsKeyDown(KeyCode::LeftShift))
-                {
-                    player.Speed = SPRINT_SPEED;
-                }
-                else
-                {
-                    player.Speed = WALK_SPEED;
-                }
-                player.Speed *= MOVEMENT_MULTIPLIER;
-
                 auto movementDirection = Vector3::Zero;
                 if (Input::IsKeyDown(KeyCode::W))
                 {
@@ -52,13 +44,18 @@ namespace Sandbox
                     movementDirection += playerTransform.GetRightDirection();
                 }
                 movementDirection.Normalize();
+
+                auto movement = movementDirection * MOVEMENT_MULTIPLIER;
+                if (Input::IsKeyDown(KeyCode::LeftShift))
+                {
+                    movement *= SPRINT_SPEED;
+                }
+                else
+                {
+                    movement *= WALK_SPEED;
+                }
                 
-                auto displacement = movementDirection * player.Speed;
-                
-                const auto gravity = App::Get().GetPhysics().GetGravity().y;
-                displacement.y += gravity * GRAVITY_MULTIPLIER;
-                
-                playerController.Move(displacement, deltaTime);
+                playerController.Move(movement, deltaTime);
             }
         }
     };

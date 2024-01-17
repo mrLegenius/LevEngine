@@ -1,4 +1,6 @@
 #pragma once
+#include "Scene/Components/Transform/Transform.h"
+#include "Scene/Components/Camera/Camera.h"
 
 namespace Sandbox
 {
