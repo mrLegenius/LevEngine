@@ -20,13 +20,7 @@ EnemySpawnSystem = {
 			crowdView:for_each(
 				function(entity)
 					local crowd = entity:get_component(AIAgentCrowdComponent)
-					print("123");
-					if crowd == nil then
-						print("crowd nil");
-					end
-					print("234")
 					crowd:addAgent(enemyEntity)
-					print("456");
 				end
 			)
 	

@@ -740,4 +740,5 @@ namespace LevEngine::Scripting
                 }),
             "setMoveTarget", &AIAgentComponent::SetMoveTarget
         );
+    }
 }
