@@ -18,7 +18,7 @@ namespace LevEngine
             PreventClimbingAndForceSliding
         };
 
-        FilterLayer m_Layer = FilterLayer::Layer1;
+        FilterLayer m_Layer = FilterLayer::Layer0;
         
         float SlopeLimit = 45.0f;
         float StepOffset = 0.5f;

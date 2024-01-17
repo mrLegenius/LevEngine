@@ -26,10 +26,10 @@ namespace LevEngine
         
         [[nodiscard]] Vector3 GetGravity() const;
         
-        [[nodiscard]] RaycastHit Raycast(Vector3 origin, Vector3 direction, float maxDistance, const FilterLayer& layerMask = FilterLayer::Layer0) const;
-        [[nodiscard]] RaycastHit SphereCast(float radius, Vector3 origin, Vector3 direction, float maxDistance, const FilterLayer& layerMask = FilterLayer::Layer0) const;
-        [[nodiscard]] RaycastHit CapsuleCast(float radius, float halfHeight, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance, const FilterLayer& layerMask = FilterLayer::Layer0) const;
-        [[nodiscard]] RaycastHit BoxCast(Vector3 halfExtents, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance, const FilterLayer& layerMask = FilterLayer::Layer0) const;
+        [[nodiscard]] RaycastHit Raycast(Vector3 origin, Vector3 direction, float maxDistance, bool isDebugDrawn = false, const FilterLayer& layerMask = FilterLayer::Layer0) const;
+        [[nodiscard]] RaycastHit SphereCast(float radius, Vector3 origin, Vector3 direction, float maxDistance, bool isDebugDrawn = false, const FilterLayer& layerMask = FilterLayer::Layer0) const;
+        [[nodiscard]] RaycastHit CapsuleCast(float radius, float halfHeight, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance, bool isDebugDrawn = false, const FilterLayer& layerMask = FilterLayer::Layer0) const;
+        [[nodiscard]] RaycastHit BoxCast(Vector3 halfExtents, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance, bool isDebugDrawn = false, const FilterLayer& layerMask = FilterLayer::Layer0) const;
         
         void Process(entt::registry& registry, float deltaTime);
         

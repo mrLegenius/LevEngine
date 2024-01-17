@@ -285,6 +285,7 @@ namespace LevEngine
         const Vector3 origin,
         const Vector3 direction,
         const float maxDistance,
+        const bool isDebugDrawn,
         const FilterLayer& layerMask
     ) const
     {
@@ -315,9 +316,11 @@ namespace LevEngine
             hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
             hitResult.Distance = buffer.block.distance;
 
-            // Temporary solution
-            DebugRender::DrawLine(origin, hitResult.Point, Color::Green);
-            DebugRender::DrawPoint(hitResult.Point, Color::Red);
+            if (isDebugDrawn)
+            {
+                DebugRender::DrawLine(origin, hitResult.Point, Color::Green, 3.0f);
+                DebugRender::DrawPoint(hitResult.Point, Color::Red, 3.0f);
+            }
         }
 
         return hitResult;
@@ -328,6 +331,7 @@ namespace LevEngine
         const Vector3 origin,
         const Vector3 direction,
         const float maxDistance,
+        const bool isDebugDrawn,
         const FilterLayer& layerMask
     ) const
     {
@@ -364,10 +368,12 @@ namespace LevEngine
             hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
             hitResult.Distance = buffer.block.distance;
 
-            // Temporary solution
-            const auto position = origin + direction * hitResult.Distance;
-            DebugRender::DrawWireSphere(position, radius, Color::Green);
-            DebugRender::DrawPoint(hitResult.Point, Color::Red);
+            if (isDebugDrawn)
+            {
+                const auto position = origin + direction * hitResult.Distance;
+                DebugRender::DrawWireSphere(position, radius, Color::Green, 3.0f);
+                DebugRender::DrawPoint(hitResult.Point, Color::Red, 3.0f);
+            }
         }
         
         return hitResult;
@@ -380,6 +386,7 @@ namespace LevEngine
         const Quaternion orientation,
         const Vector3 direction,
         const float maxDistance,
+        const bool isDebugDrawn,
         const FilterLayer& layerMask
     ) const
     {
@@ -416,12 +423,14 @@ namespace LevEngine
             hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
             hitResult.Distance = buffer.block.distance;
 
-            // Temporary solution
-            const auto position = origin + direction * hitResult.Distance;
-            const auto model =
-                Matrix::CreateFromQuaternion(orientation) * Matrix::CreateTranslation(position);
-            DebugRender::DrawWireCapsule(model, halfHeight, radius, Color::Green);
-            DebugRender::DrawPoint(hitResult.Point, Color::Red);
+            if (isDebugDrawn)
+            {
+                const auto position = origin + direction * hitResult.Distance;
+                const auto model =
+                    Matrix::CreateFromQuaternion(orientation) * Matrix::CreateTranslation(position);
+                DebugRender::DrawWireCapsule(model, halfHeight, radius, Color::Green, 3.0f);
+                DebugRender::DrawPoint(hitResult.Point, Color::Red, 3.0f);
+            }
         }
         
         return hitResult;
@@ -433,6 +442,7 @@ namespace LevEngine
         const Quaternion orientation,
         const Vector3 direction,
         const float maxDistance,
+        const bool isDebugDrawn,
         const FilterLayer& layerMask
     ) const
     {
@@ -469,15 +479,17 @@ namespace LevEngine
             hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
             hitResult.Distance = buffer.block.distance;
 
-            // Temporary solution
-            const auto position =
-                origin + direction * hitResult.Distance;
-            const auto transformModel =
-                Matrix::CreateScale(halfExtents * 2) *
-                    Matrix::CreateFromQuaternion(orientation) *
-                        Matrix::CreateTranslation(position);
-            DebugRender::DrawWireCube(transformModel, Color::Green);
-            DebugRender::DrawPoint(hitResult.Point, Color::Red);
+            if (isDebugDrawn)
+            {
+                const auto position =
+                    origin + direction * hitResult.Distance;
+                const auto transformModel =
+                    Matrix::CreateScale(halfExtents * 2) *
+                        Matrix::CreateFromQuaternion(orientation) *
+                            Matrix::CreateTranslation(position);
+                DebugRender::DrawWireCube(transformModel, Color::Green, 3.0f);
+                DebugRender::DrawPoint(hitResult.Point, Color::Red, 3.0f);
+            }
         }
         
         return hitResult;

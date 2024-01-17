@@ -54,7 +54,8 @@ namespace LevEngine
 
         bool IsGrounded() const;
 
-        void MoveTo(Vector3 displacement, float elapsedTime) const;
+        void Move(Vector3 displacement, float elapsedTime) const;
+        void MoveTo(Vector3 position, float elapsedTime) const;
         
         [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
