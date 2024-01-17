@@ -10,7 +10,6 @@ namespace LevEngine
     {
     public:
         explicit Asset(const Path& path, UUID uuid);
-
         virtual ~Asset() = default;
 
         [[nodiscard]] String GetName() const { return m_Name; }
@@ -24,7 +23,7 @@ namespace LevEngine
         void SetAddress(const String& address) { m_Address = address; }
 
         void Serialize();
-        bool Deserialize();
+        bool Deserialize(bool force = false);
         void SerializeMeta();
 
         void Rename(const Path& path);

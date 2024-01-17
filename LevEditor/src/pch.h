@@ -23,6 +23,8 @@
 
 #include <entt/entt.hpp>
 
+#include "eventhandling/eventhandling.hpp"
+
 #include <imgui.h>
 #include <imgui_internal.h>
 

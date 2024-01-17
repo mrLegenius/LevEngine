@@ -439,6 +439,8 @@ namespace LevEngine
             D3D11DeferredContexts::UpdateCommandLists();
             D3D11DeferredContexts::ExecuteCommands();
         }
+
+        RecalculateAllTransforms(registry);
         
         if (!mainCamera)
         {
@@ -447,8 +449,6 @@ namespace LevEngine
         }
 
         ResetStatistics();
-        
-        RecalculateAllTransforms(registry);
 
         mainCamera->RecalculateFrustum(*cameraTransform);
 

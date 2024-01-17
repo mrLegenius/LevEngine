@@ -8,6 +8,7 @@
 #include "RenderParams.h"
 #include "Shader.h"
 #include "Assets/EngineAssets.h"
+#include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Lights/Lights.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
@@ -123,10 +124,11 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 
 void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 {
-	const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
-    for (const auto entity : view)
+	// Process static meshes
+	const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
+    for (const auto entity : staticMeshGroup)
     {
-        auto [transform, mesh] = view.get<Transform, MeshRendererComponent>(entity);
+        auto [transform, mesh] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
 
 		if (!mesh.mesh) continue;
 		if (!mesh.material) continue;
@@ -134,6 +136,23 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
         if (mesh.castShadow)
             Renderer3D::DrawMesh(transform.GetModel(), mesh, ShaderAssets::CascadeShadowPass());
     }
+
+	// Process animated meshes
+	const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
+	for (const auto entity : animatedMeshGroup)
+	{
+		auto [transform, meshRenderer, animator] = animatedMeshGroup.get<Transform, MeshRendererComponent,
+			AnimatorComponent>(entity);
+
+		if (!meshRenderer.mesh) continue;
+		if (!meshRenderer.material) continue;
+    	
+		if (meshRenderer.castShadow)
+		{
+			Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(),  meshRenderer,
+				ShaderAssets::CascadeShadowPass());	
+		}
+	}
 }
 
 void ShadowMapPass::End(entt::registry& registry, RenderParams& params)

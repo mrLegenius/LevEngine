@@ -56,6 +56,8 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
+        m_ProjectEditor->Update();
+
         if (!Project::GetProject()) return;
         
         if (Input::IsKeyDown(KeyCode::Escape))
@@ -116,6 +118,9 @@ namespace LevEngine::Editor
         if (!Project::GetProject()) return;
         
         m_DockSpace->Render();
+        m_MainMenuBar->RenderAsMain();
+        m_MainToolbar->Render();
+        m_MainStatusBar->Render();
         m_Game->Render();
         m_Viewport->Render();
         m_Hierarchy->Render();
@@ -125,9 +130,6 @@ namespace LevEngine::Editor
         m_Settings->Render();
         m_Statistics->Render();
         m_ScriptsPanel->Render();
-        m_MainToolbar->Render();
-        m_MainStatusBar->Render();
-
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
@@ -209,6 +211,7 @@ namespace LevEngine::Editor
             SceneManager::LoadEmptyScene();
 
         auto mainTexture = Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0);
+        m_DockSpace = CreateRef<DockSpace>();
         m_Viewport = CreateRef<ViewportPanel>(mainTexture);
         m_Game = CreateRef<GamePanel>(mainTexture, [this]{ return m_SceneState; });
         m_Hierarchy = CreateRef<HierarchyPanel>();
@@ -218,7 +221,6 @@ namespace LevEngine::Editor
         m_MainStatusBar = CreateRef<StatusBar>();
         m_MainMenuBar = CreateRef<MenuBar>();
         m_MainToolbar = CreateRef<Toolbar>(m_MainMenuBar, [this]{ return m_SceneState; }, std::bind(&EditorLayer::OnPlayButtonClicked, this));
-        m_DockSpace = CreateRef<DockSpace>(m_MainToolbar, m_MainMenuBar);
         m_Statistics = CreateRef<StatisticsPanel>();
         m_ScriptsPanel = CreateRef<ScriptsPanel>();
 

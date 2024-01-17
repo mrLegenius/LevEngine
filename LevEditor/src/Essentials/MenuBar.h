@@ -7,6 +7,7 @@ namespace LevEngine::Editor
     public:
         void AddMenuItem(const String& path, const String& shortcut, const Action<>& callback);
         void Render();
+        void RenderAsMain();
         [[nodiscard]] float GetHeight() const { return m_Height; }
         
     private:

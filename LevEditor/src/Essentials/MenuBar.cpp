@@ -19,6 +19,17 @@ namespace LevEngine::Editor
         }
     }
 
+    void MenuBar::RenderAsMain()
+    {
+        m_Height = ImGui::GetFrameHeight();
+
+        if (ImGui::BeginMainMenuBar())
+        {
+            m_MenuTree.Draw();
+            ImGui::EndMainMenuBar();
+        }
+    }
+
     void MenuBar::MenuNode::Draw() const
     {
         //Leaf -> actual menu item

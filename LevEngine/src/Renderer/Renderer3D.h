@@ -1,6 +1,8 @@
 #pragma once
 #include "RenderSettings.h"
 #include "Math/Math.h"
+#include "3D/AnimationConstants.h"
+#include "DataTypes/Array.h"
 
 namespace LevEngine
 {
@@ -14,6 +16,7 @@ namespace LevEngine
     {
         Matrix Model;
         Matrix TransposedInvertedModel;
+    	Array<Matrix, AnimationConstants::MaxBoneCount> FinalBoneMatrices;
     };
 
     class Renderer3D
@@ -24,6 +27,10 @@ namespace LevEngine
         static void SetCameraBuffer(const SceneCamera* camera, const Matrix& viewMatrix, const Vector3& position);
         static void DrawMesh(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);
         static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader);
+    	static void DrawMesh(const Matrix& model, const Array<Matrix, AnimationConstants::MaxBoneCount>& finalBoneMatrices,
+			const Ref<Mesh>& mesh, const Ref<Shader>& shader);
+        static void DrawMesh(const Matrix& model, const Array<Matrix, AnimationConstants::MaxBoneCount>& finalBoneMatrices,
+            const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader);
         static void DrawCube(const Ref<Shader>& vertexShader);
 
         static void DrawLineList(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);

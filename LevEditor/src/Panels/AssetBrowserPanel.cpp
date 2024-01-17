@@ -63,8 +63,7 @@ namespace LevEngine::Editor
             if (fileExtension == ".meta") continue;
             
             Ref<Asset> asset = nullptr;
-            if (!directoryEntry.is_directory())
-                asset = AssetDatabase::GetAsset(path);
+            asset = AssetDatabase::GetAsset(path);
             
             GUI::ScopedID id(filenameString);
             const Ref<Texture> icon = directoryEntry.is_directory()
@@ -126,6 +125,9 @@ namespace LevEngine::Editor
                     if (ImGui::MenuItem("Reimport"))
                         AssetDatabase::ImportAsset(path);
 
+                    if (ImGui::MenuItem("Rename"))
+                        m_RenamingAsset = asset;
+
                     ImGui::EndPopup();
                 }
             }
@@ -156,7 +158,25 @@ namespace LevEngine::Editor
             }
 
 
-            ImGui::Text(stemString.c_str());
+            if (m_RenamingAsset && asset == m_RenamingAsset)
+            {
+                EditorGUI::DrawTextInputField("##Renaming", stemString, [&asset, this](const String& newValue)
+                {
+                    if (newValue.empty()) return;
+
+                    AssetDatabase::RenameAsset(asset, newValue);
+                    m_RenamingAsset = nullptr;
+                });
+            }
+            else
+            {
+                ImGui::Text(stemString.c_str());
+
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                {
+                    m_RenamingAsset = asset;
+                }
+            }
 
             ImGui::NextColumn();
         }

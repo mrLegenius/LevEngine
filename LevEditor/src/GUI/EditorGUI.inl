@@ -301,4 +301,24 @@ namespace LevEngine::Editor
 
 		return false;
 	}
+
+	template<int TMaxCharacters>
+	void EditorGUI::DrawTextInputField(const String& label, const String& text, const Action<String>& onApply)
+	{
+		char buffer[TMaxCharacters] = {};
+		strcpy_s(buffer, sizeof buffer, text.c_str());
+
+		ImGui::AlignTextToFramePadding();
+		if (ImGui::InputText(label.c_str(), buffer, sizeof buffer, ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			onApply(buffer);
+			return;
+		}
+
+		if (ImGui::IsItemDeactivatedAfterEdit())
+		{
+			onApply(buffer);
+			return;
+		}
+	}
 }

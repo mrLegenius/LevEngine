@@ -70,6 +70,9 @@ namespace LevEngine::Editor
 
 		template<class T, int N>
 		static bool DrawComboBox(String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter);
+
+		template<int TMaxCharacters = 256>
+		static void DrawTextInputField(const String& label, const String& text, const Action<String>& onApply);
 	};
 }
 

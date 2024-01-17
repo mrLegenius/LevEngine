@@ -5,4 +5,6 @@
 
 #include <entt/entt.hpp>
 
+#include "eventhandling/eventhandling.hpp"
+
 #include "LevEngine.h"
