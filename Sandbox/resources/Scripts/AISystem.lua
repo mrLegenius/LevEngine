@@ -34,7 +34,6 @@ AISystem = {
 				end
 				local characterController
 				if isPlayerFounded then
-					playerPosition
 					agentComponent:setMoveTarget(playerPosition)
 				end
 			end

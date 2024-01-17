@@ -1,5 +1,27 @@
 Scene: TestScene
 Entities:
+  - Entity: 1102527589670769532
+    Tag: Web
+    Parent: 13631027794021233931
+    Transform:
+      Position: [23.4458256, 6.96982336, -25.937397]
+      Rotation: [-0.146667957, -2.37159348, 1.7810123]
+      Scale: [6.00001001, 6.00003767, 6.00031185]
+    MeshRenderer:
+      Mesh: 5160753388332290240
+      Material: 10648776512994663525
+      Cast Shadow: false
+  - Entity: 13129059575428668352
+    Tag: Web
+    Parent: 13631027794021233931
+    Transform:
+      Position: [23.9016342, 1.80962908, -22.471386]
+      Rotation: [-0.223976925, -2.10650444, 1.83299112]
+      Scale: [6.00000238, 6.00001669, 6.00001669]
+    MeshRenderer:
+      Mesh: 5160753388332290240
+      Material: 10648776512994663525
+      Cast Shadow: false
   - Entity: 12868815795027252088
     Tag: EnemyController
     Parent: 10100203230745788342
@@ -80,9 +102,9 @@ Entities:
       Scale: [1, 1, 1]
     NavMeshBoundingBox:
       Position offset: [0, 0, 0]
-      Box half extents: [15, 1, 20]
+      Box half extents: [15, 15, 20]
     NavMesh:
-      Build on start: false
+      Build on start: true
       Cell size: 0.300000012
       Cell Height: 0.200000003
       Agent Height: 2
@@ -416,34 +438,130 @@ Entities:
       Mesh: 5160753388332290240
       Material: 10648776512994663525
       Cast Shadow: false
-  - Entity: 1102527589670769532
-    Tag: Web
+  - Entity: 15545102623973254465
+    Tag: Wall
     Parent: 13631027794021233931
     Transform:
-      Position: [23.4458256, 6.96982336, -25.937397]
-      Rotation: [-0.146667957, -2.37159348, 1.7810123]
-      Scale: [6.00001001, 6.00003767, 6.00031185]
+      Position: [-1.20967243e-05, 5.0001483, -15.6279736]
+      Rotation: [1.57078934, -9.69976441e-07, 3.14159083]
+      Scale: [19.718668, 0.999935269, 9.99945545]
+    Rigidbody:
+      Rigidbody Type: 0
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Dynamic Friction: 0.5
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
     MeshRenderer:
-      Mesh: 5160753388332290240
-      Material: 10648776512994663525
-      Cast Shadow: false
-  - Entity: 13129059575428668352
-    Tag: Web
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+    NavMeshable:
+      Use in nav mesh: true
+      Field: 0
+  - Entity: 17366567999210751859
+    Tag: Wall
     Parent: 13631027794021233931
     Transform:
-      Position: [23.9016342, 1.80962908, -22.471386]
-      Rotation: [-0.223976925, -2.10650444, 1.83299112]
-      Scale: [6.00000238, 6.00001669, 6.00001669]
+      Position: [9.68731213, 5.0001483, -5.47987556]
+      Rotation: [1.57078946, 2.51533127, -2.17308378]
+      Scale: [8.38782597, 0.999931276, 9.99942684]
+    Rigidbody:
+      Rigidbody Type: 0
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Dynamic Friction: 0.5
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
     MeshRenderer:
-      Mesh: 5160753388332290240
-      Material: 10648776512994663525
-      Cast Shadow: false
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+    NavMeshable:
+      Use in nav mesh: true
+      Field: 0
+  - Entity: 7152331741609614515
+    Tag: Wall
+    Parent: 13631027794021233931
+    Transform:
+      Position: [-1.20967243e-05, 5.0001483, 4.94832897]
+      Rotation: [1.57078934, -9.25145571e-07, 3.14159083]
+      Scale: [19.7187119, 0.99993664, 9.99947739]
+    Rigidbody:
+      Rigidbody Type: 0
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Is Trigger Enabled: false
+      Collider Type: 2
+      Box Half Extends: [0.5, 0.5, 0.5]
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Dynamic Friction: 0.5
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+    NavMeshable:
+      Use in nav mesh: true
+      Field: 0
 Systems:
-  - System: 7522258865418468204
   - System: 12364856122512646631
-  - System: 4286742986091037320
-  - System: 14623761520668869565
-  - System: 9291551050224673495
-  - System: 4340022513561837824
-  - System: 15747099389357838684
   - System: 10507411060376272809
+  - System: 7522258865418468204
+  - System: 9822250894310505128
+  - System: 9291551050224673495
+  - System: 15747099389357838684
+  - System: 14623761520668869565
+  - System: 4286742986091037320
+  - System: 4340022513561837824

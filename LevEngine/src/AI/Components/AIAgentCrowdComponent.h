@@ -30,17 +30,21 @@ namespace LevEngine
 
         void UpdateAgentsPosition(float deltaTime);
         void SetMoveTarget(int agentIndex, Vector3 targetPos);
-
-        Vector<Entity> agentsEntities;
+        void AddAgent(const Entity& agentEntity);
+        
+        Vector<Entity> initialAgentsEntities;
+        
         Entity navMesh;
         Entity target;
 
     private:
 
+        Vector<Entity> agents;
+        
         bool m_isInitialized = false;
         bool m_isInitializationFailed = false;
         
-        void AddAgent(const Entity& agentEntity);
+
         void RegisterDefaultObstacleAvoidanceProfiles();
         
         dtCrowd* m_crowd;

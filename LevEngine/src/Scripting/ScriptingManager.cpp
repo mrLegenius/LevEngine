@@ -49,6 +49,7 @@ namespace LevEngine::Scripting
         RegisterComponent(Rigidbody)
         RegisterComponent(CharacterController);
         RegisterComponent(AIAgentComponent);
+        RegisterComponent(AIAgentCrowdComponent)
     }
 
     ScriptingManager::ScriptingManager()
