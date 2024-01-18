@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AssetSelection.h"
 
+#include "GUI/EditorGUI.h"
 #include "GUI/Drawers/Assets/AssetDrawer.h"
 
 namespace LevEngine
@@ -9,28 +10,20 @@ namespace LevEngine
     {
         if (!m_Asset) return;
 
+        Editor::EditorGUI::DrawTextInputField("##Name", m_Asset->GetName(), [this](const String& newValue)
         {
-            auto name = m_Asset->GetName();
-            char buffer[256] = {};
-            strcpy_s(buffer, sizeof buffer, name.c_str());
-
-            ImGui::AlignTextToFramePadding();
-            if (ImGui::InputText("##Name", buffer, sizeof buffer, ImGuiInputTextFlags_EnterReturnsTrue))
-                AssetDatabase::RenameAsset(m_Asset, buffer);
-        }
+            AssetDatabase::RenameAsset(m_Asset, newValue);
+        });
 
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 64);
         if (ImGui::Button("Save", ImVec2{ 64, 24 }))
             m_Asset->Serialize();
 
+        Editor::EditorGUI::DrawTextInputField("Address", m_Asset->GetAddress(), [this](const String& newValue)
         {
-            const auto address = m_Asset->GetAddress();
-            char buffer[256] = {};
-            strcpy_s(buffer, sizeof buffer, address.c_str());
-            ImGui::AlignTextToFramePadding();
-            if (ImGui::InputText("Address", buffer, sizeof buffer, ImGuiInputTextFlags_EnterReturnsTrue))
-                m_Asset->SetAddress(buffer);
-        }
+            ResourceManager::ChangeAddress(m_Asset, newValue);
+            ResourceManager::Build(Project::GetRoot());
+        });
 
         ImGui::Separator();
 

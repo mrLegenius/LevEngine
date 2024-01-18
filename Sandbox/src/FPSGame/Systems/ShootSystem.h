@@ -1,4 +1,7 @@
 #pragma once
+#include "Scene/Components/Transform/Transform.h"
+#include "Components/Projectile.h"
+#include "Physics/Components/Rigidbody.h"
 
 namespace Sandbox
 {

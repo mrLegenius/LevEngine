@@ -1,5 +1,6 @@
 #pragma once
-#include "FPSGame/Components/Projectile.h"
+#include "Scene/Components/Transform/Transform.h"
+#include "Components/Projectile.h"
 
 namespace Sandbox
 {

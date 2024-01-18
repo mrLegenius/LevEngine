@@ -56,6 +56,8 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
+        m_ProjectEditor->Update();
+
         if (!Project::GetProject()) return;
         
         if (Input::IsKeyDown(KeyCode::Escape))
@@ -201,8 +203,8 @@ namespace LevEngine::Editor
         m_SaveData.SetLastOpenedProject(Project::GetPath());
         m_SaveData.Save();
 
-        ResourceManager::Init(Project::GetRoot());
         AssetDatabase::ProcessAllAssets();
+        ResourceManager::Init(Project::GetRoot());
         
         const auto startScene = Project::GetStartScene();
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))

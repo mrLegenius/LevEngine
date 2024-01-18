@@ -103,6 +103,23 @@ namespace LevEngine
             m_Actor->setActorFlag(physx::PxActorFlag::eVISUALIZATION, flag);
         }
     }
+    
+    FilterLayer Rigidbody::GetLayer() const
+    {
+        return m_ColliderCollection[0]->m_Layer;
+    }
+
+    void Rigidbody::SetLayer(const FilterLayer& layer) const
+    {
+        m_ColliderCollection[0]->m_Layer = layer;
+
+        if (m_Actor != nullptr)
+        {
+            physx::PxFilterData filterData;
+            filterData.word0 = (1 << static_cast<physx::PxU32>(layer));
+            GetCollider()->setQueryFilterData(filterData);
+        }
+    }
 
     Rigidbody::Type Rigidbody::GetRigidbodyType() const
     {
@@ -543,6 +560,8 @@ namespace LevEngine
         m_Actor->attachShape(*collider);
         
         collider->release();
+        
+        SetLayer(GetLayer());
 
         EnableTrigger(IsTriggerEnabled());
         SetColliderOffsetPosition(GetColliderOffsetPosition());
@@ -887,6 +906,8 @@ namespace LevEngine
 
         void SerializeData(YAML::Emitter& out, const Rigidbody& component) override
         {
+            out << YAML::Key << "Layer" << YAML::Value << static_cast<int>(component.GetLayer());
+            
             out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
             out << YAML::Key << "Is Kinematic Enabled" << YAML::Value << component.IsKinematicEnabled();
             out << YAML::Key << "Is Gravity Enabled" << YAML::Value << component.IsGravityEnabled();
@@ -931,6 +952,12 @@ namespace LevEngine
 
         void DeserializeData(const YAML::Node& node, Rigidbody& component) override
         {
+            if (const auto layerNode = node["Layer"])
+            {
+                const auto layer = static_cast<FilterLayer>(layerNode.as<int>());
+                component.SetLayer(layer);
+            }
+            
             if (const auto gravityEnableNode = node["Is Gravity Enabled"])
             {
                 component.EnableGravity(gravityEnableNode.as<bool>());

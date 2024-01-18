@@ -1,8 +1,8 @@
 ﻿#include "levpch.h"
-#include "Renderer/DebugRender/DebugRender.h"
 #include "Physics.h"
 #include "PhysicsUtils.h"
-#include "Components/Controller.h"
+#include "Components/CharacterController.h"
+#include "Renderer/DebugRender/DebugRender.h"
 
 namespace LevEngine
 {
@@ -166,12 +166,7 @@ namespace LevEngine
         return box;
     }
 
-    physx::PxController* Physics::CreateCapsuleController(
-        Entity entity,
-        const float radius,
-        const float height,
-        const Controller::ClimbingMode climbingMode = Controller::ClimbingMode::Constrained
-    )
+    physx::PxController* Physics::CreateCapsuleController(Entity entity, const float radius, const float height)
     {
         const auto material = CreatePhysicMaterial();
 
@@ -182,7 +177,7 @@ namespace LevEngine
         physx::PxCapsuleControllerDesc desc;
         desc.height = height;
         desc.radius = radius;
-        desc.climbingMode = static_cast<physx::PxCapsuleClimbingMode::Enum>(static_cast<int>(climbingMode));
+        desc.climbingMode = physx::PxCapsuleClimbingMode::eCONSTRAINED;
         desc.material = material;
         desc.position = PhysicsUtils::FromVector3ToPxExtendedVec3(controllerPosition);
         desc.scaleCoeff = 1.0f;
@@ -204,7 +199,7 @@ namespace LevEngine
         PX_RELEASE(controller)
     }
 
-    Entity Physics::GetEntityByActor(physx::PxActor* actor) const
+    Entity Physics::GetEntityByActor(const physx::PxActor* actor) const
     {
         return m_ActorEntityMap.at(actor);
     }
@@ -240,7 +235,7 @@ namespace LevEngine
         return true;
     }
     
-    void Physics::DrawDebugLines() const
+    void Physics::DrawDebugLines()
     {
         const physx::PxRenderBuffer& rb = m_Scene->getRenderBuffer();
         for (size_t i = 0; i < rb.getNbLines(); i++)
@@ -277,10 +272,184 @@ namespace LevEngine
         
         if (!StepPhysics(deltaTime)) return;
         m_PhysicsUpdate.UpdateTransforms(registry);
+        m_PhysicsUpdate.UpdateControllerGroundFlag(registry);
+        m_PhysicsUpdate.ApplyControllerGravity(registry, deltaTime);
         m_PhysicsUpdate.ApplyKinematicTargets(registry);
         m_PhysicsUpdate.UpdateConstantForces(registry);
-        
+
         if (!m_IsDebugRenderEnabled) return;
         DrawDebugLines();
+    }
+
+    RaycastHit Physics::Raycast(
+        const Vector3 origin,
+        const Vector3 direction,
+        const float maxDistance,
+        const FilterLayer& layerMask
+    ) const
+    {
+        if (maxDistance < 0.0f) return RaycastHit {};
+        
+        physx::PxRaycastBuffer buffer;
+        const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
+        physx::PxQueryFilterData filterData;
+        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
+        
+        const bool isHitSuccessfully =
+            m_Scene->raycast(
+                PhysicsUtils::FromVector3ToPxVec3(origin),
+                PhysicsUtils::FromVector3ToPxVec3(direction),
+                maxDistance,
+                buffer,
+                outputFlags,
+                filterData
+            );
+        
+        RaycastHit hitResult {};
+        if (isHitSuccessfully)
+        {
+            hitResult.IsSuccessful = true;
+            hitResult.Entity = GetEntityByActor(buffer.block.actor);
+            hitResult.Point = PhysicsUtils::FromPxVec3ToVector3(buffer.block.position);
+            hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
+            hitResult.Distance = buffer.block.distance;
+        }
+
+        return hitResult;
+    }
+
+    RaycastHit Physics::SphereCast(
+        const float radius,
+        const Vector3 origin,
+        const Vector3 direction,
+        const float maxDistance,
+        const FilterLayer& layerMask
+    ) const
+    {
+        if (maxDistance < 0.0f) return RaycastHit {};
+
+        const auto sphereShape =
+            physx::PxSphereGeometry(radius);
+        const auto initialPose =
+            physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(origin));
+
+        physx::PxSweepBuffer buffer;
+        const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
+        physx::PxQueryFilterData filterData;
+        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
+        
+        const bool isHitSuccessfully =
+            m_Scene->sweep(
+                sphereShape,
+                initialPose,
+                PhysicsUtils::FromVector3ToPxVec3(direction),
+                maxDistance,
+                buffer,
+                outputFlags,
+                filterData
+            );
+        
+        RaycastHit hitResult {};
+        if (isHitSuccessfully)
+        {
+            hitResult.IsSuccessful = true;
+            hitResult.Entity = GetEntityByActor(buffer.block.actor);
+            hitResult.Point = PhysicsUtils::FromPxVec3ToVector3(buffer.block.position);
+            hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
+            hitResult.Distance = buffer.block.distance;
+        }
+        
+        return hitResult;
+    }
+
+    RaycastHit Physics::CapsuleCast(
+        const float radius,
+        const float halfHeight,
+        const Vector3 origin,
+        const Quaternion orientation,
+        const Vector3 direction,
+        const float maxDistance,
+        const FilterLayer& layerMask
+    ) const
+    {
+        if (maxDistance < 0.0f) return RaycastHit {};
+        
+        const auto capsuleShape =
+            physx::PxCapsuleGeometry(radius, halfHeight);
+        const auto initialPose =
+            physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(origin), PhysicsUtils::FromQuaternionToPxQuat(orientation));
+        
+        physx::PxSweepBuffer buffer;
+        const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
+        physx::PxQueryFilterData filterData;
+        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
+        
+        const bool isHitSuccessfully =
+            m_Scene->sweep(
+                capsuleShape,
+                initialPose,
+                PhysicsUtils::FromVector3ToPxVec3(direction),
+                maxDistance,
+                buffer,
+                outputFlags,
+                filterData
+            );
+
+        RaycastHit hitResult {};
+        if (isHitSuccessfully)
+        {
+            hitResult.IsSuccessful = true;
+            hitResult.Entity = GetEntityByActor(buffer.block.actor);
+            hitResult.Point = PhysicsUtils::FromPxVec3ToVector3(buffer.block.position);
+            hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
+            hitResult.Distance = buffer.block.distance;
+        }
+        
+        return hitResult;
+    }
+
+    RaycastHit Physics::BoxCast(
+        const Vector3 halfExtents,
+        const Vector3 origin,
+        const Quaternion orientation,
+        const Vector3 direction,
+        const float maxDistance,
+        const FilterLayer& layerMask
+    ) const
+    {
+        if (maxDistance < 0.0f) return RaycastHit {};
+
+        const auto boxShape =
+            physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents));
+        const auto initialPose =
+            physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(origin), PhysicsUtils::FromQuaternionToPxQuat(orientation));
+        
+        physx::PxSweepBuffer buffer;
+        const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
+        physx::PxQueryFilterData filterData;
+        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
+        
+        const bool isHitSuccessfully =
+            m_Scene->sweep(
+                boxShape,
+                initialPose,
+                PhysicsUtils::FromVector3ToPxVec3(direction),
+                maxDistance,
+                buffer,
+                outputFlags,
+                filterData
+            );
+        
+        RaycastHit hitResult {};
+        if (isHitSuccessfully)
+        {
+            hitResult.IsSuccessful = true;
+            hitResult.Entity = GetEntityByActor(buffer.block.actor);
+            hitResult.Point = PhysicsUtils::FromPxVec3ToVector3(buffer.block.position);
+            hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
+            hitResult.Distance = buffer.block.distance;
+        }
+        
+        return hitResult;
     }
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "Scene/Components/Transform/Transform.h"
 #include "FPSGame/Components/Enemy.h"
 
 namespace Sandbox

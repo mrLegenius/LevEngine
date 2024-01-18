@@ -12,14 +12,10 @@ namespace LevEngine::Editor
 		if (m_Entity.HasComponent<TagComponent>())
 		{
 			auto& tag = m_Entity.GetComponent<TagComponent>().tag;
-
-			char buffer[256] = {};
-			strcpy_s(buffer, sizeof buffer, tag.c_str());
-
-			if (ImGui::InputText("##Tag", buffer, sizeof buffer))
+			EditorGUI::DrawTextInputField("##Tag", tag, [&tag](const String& newValue)
 			{
-				tag = String(buffer);
-			}
+				tag = newValue;
+			});
 		}
 
 		ImGui::SameLine();

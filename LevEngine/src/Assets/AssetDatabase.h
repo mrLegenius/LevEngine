@@ -9,6 +9,7 @@ namespace LevEngine
 		inline static const Path AssetsRoot = "resources";
 		
 		static Path GetAssetsPath();
+		static Path GetRelativePath(const Path& path);
 
 		static void ImportAsset(const Path& path);
 		static void ProcessAllAssets();
@@ -54,6 +55,7 @@ namespace LevEngine
 		[[nodiscard]] static Vector<Ref<T>> GetAllAssetsOfClass();
 
 		static void RenameAsset(const Ref<Asset>& asset, const String& name);
+
 		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
 		static bool AssetExists(const Path& path);
@@ -61,6 +63,9 @@ namespace LevEngine
 	private:
 		inline static UnorderedMap<UUID, Ref<Asset>> m_Assets;
 		inline static UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
+
+		static void ReimportAllAssetsInDirectory(const Path& directory);
+		static void DeleteAllAssetsInDirectory(const Path& directory);
 
 		template<class T>
 		[[nodiscard]] static Ref<T> GetAsset(const Ref<Asset>& asset);

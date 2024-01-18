@@ -1,5 +1,8 @@
 #pragma once
+#include "Scene/Components/Transform/Transform.h"
 #include "FPSGame/Components/Player.h"
+#include "FPSGame/Components/Enemy.h"
+#include "Physics/Components/CharacterController.h"
 #include "Physics/Physics.h"
 
 namespace Sandbox
@@ -11,7 +14,8 @@ namespace Sandbox
             Vector3 playerPosition;
             bool isPlayerFounded = false;
 
-            for (const auto playerView = registry.view<Transform, Player>(); const auto player : playerView)
+            const auto playerView = registry.view<Transform, Player>();
+            for (const auto player : playerView)
             {
                 playerPosition = playerView.get<Transform>(player).GetWorldPosition();
                 isPlayerFounded = true;
@@ -19,7 +23,8 @@ namespace Sandbox
             
             if (!isPlayerFounded) return;
 
-            for (const auto enemyView = registry.view<Transform, Enemy, CharacterController>(); const auto entity : enemyView)
+            const auto enemyView = registry.view<Transform, Enemy, CharacterController>();
+            for (const auto entity : enemyView)
             {
                 auto [transform, enemy, controller] = enemyView.get<Transform, Enemy, CharacterController>(entity);
 
