@@ -39,6 +39,8 @@
 #include "Events/MouseEvent.h"
 #include "Events/ApplicationEvent.h"
 
+#include "Project.h"
+
 // -- GUI --------------------------------------------------
 
 #include "GUI/ImGuiLayer.h"

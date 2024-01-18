@@ -48,8 +48,7 @@ namespace LevEngine
 		metaOut << YAML::BeginMap;
 
 		metaOut << YAML::Key << "UUID" << YAML::Value << m_UUID;
-		metaOut << YAML::Key << "Address" << YAML::Value << m_Address;
-		
+
 		SerializeMeta(metaOut);
 
 		metaOut << YAML::EndMap;
@@ -120,9 +119,7 @@ namespace LevEngine
 	{
 		try
 		{
-			YAML::Node meta = YAML::LoadFile(m_MetaPath.string());
-			if (const auto address = meta["Address"])
-				m_Address = address.as<String>();
+			const YAML::Node meta = YAML::LoadFile(m_MetaPath.string());
 			
 			DeserializeMeta(meta);
 		}

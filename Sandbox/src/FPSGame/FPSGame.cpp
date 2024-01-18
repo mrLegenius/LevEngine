@@ -29,8 +29,8 @@ namespace Sandbox
 	
 	void FPSGame::OnAttach()
 	{
-		ResourceManager::Init("");
 		AssetDatabase::ProcessAllAssets();
+		ResourceManager::Init("");
 
 		//TODO: Remove hard coded project name
 		Project::Load("Sandbox.levproject");
