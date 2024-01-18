@@ -13,6 +13,15 @@
 
 namespace LevEngine::Editor
 {
+    bool IsSubPath(const Path& base, const Path& destination)
+    {
+        const Path relative = std::filesystem::relative(destination, base);
+        // Size check for a "." result.
+        // If the path starts with "..", it's not a subdirectory.
+        const std::string string = relative.string();
+        return string.size() == 1 || string[0] != '.' && string[1] != '.';
+    }
+
     AssetBrowserPanel::AssetBrowserPanel()
         : m_CurrentDirectory(AssetDatabase::GetAssetsPath())
     {
@@ -20,17 +29,92 @@ namespace LevEngine::Editor
 
     void AssetBrowserPanel::DrawContent()
     {
+        {
+            GUI::ScopedVariable rounding{ImGuiStyleVar_FrameRounding, 0.0f};
+            GUI::ScopedVariable borderSize{ImGuiStyleVar_FrameBorderSize, 0.0f};
+
+            ImGui::BeginChild("FileTree", ImVec2{64, 0},
+                ImGuiChildFlags_ResizeX | ImGuiChildFlags_Border | ImGuiChildFlags_FrameStyle);
+
+            DrawFileTree();
+            ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical, 10);
+            ImGui::EndChild();
+        }
+
+
+        ImGui::SameLine();
+        ImGui::BeginChild("Assets");
+        DrawAssets();
+        ImGui::EndChild();
+    }
+
+    void AssetBrowserPanel::DrawFileTree()
+    {
+        DrawDirectoryNode(AssetDatabase::GetAssetsPath(), true);
+    }
+
+    void AssetBrowserPanel::DrawDirectoryNode(const Path& path, const bool isOpenByDefault)
+    {
+        if (!is_directory(path)) return;
+
+        auto flags =
+                        (m_CurrentDirectory == path ? ImGuiTreeNodeFlags_Selected : 0)
+                        | (isOpenByDefault ? ImGuiTreeNodeFlags_DefaultOpen : 0)
+                        | ImGuiTreeNodeFlags_OpenOnArrow
+                        | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+        bool empty = true;
+        for (auto &p : std::filesystem::directory_iterator(path))
+        {
+            if (p.is_directory())
+            {
+                empty = false;
+                break;
+            }
+        }
+
+        if (empty)
+            flags |= ImGuiTreeNodeFlags_Leaf;
+
+        const String stemString = ToString(path.stem());
+
+        if (m_CurrentDirectory != path && IsSubPath(path, m_CurrentDirectory))
+            ImGui::SetNextItemOpen(true);
+
+        const bool opened = ImGui::TreeNodeEx(stemString.c_str(), flags);
+
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+        {
+            m_CurrentDirectory = path;
+        }
+
+        if (opened)
+        {
+            for (const auto& childEntry : std::filesystem::directory_iterator(path))
+            {
+                DrawDirectoryNode(childEntry, false);
+            }
+        }
+
+        if (opened)
+            ImGui::TreePop();
+    }
+
+    void AssetBrowserPanel::DrawAssets()
+    {
         if (m_CurrentDirectory != AssetDatabase::GetAssetsPath())
         {
             if (ImGui::Button("<"))
 	            m_CurrentDirectory = m_CurrentDirectory.parent_path();
+
+            ImGui::SameLine();
         }
 
         static float padding = 16.0f;
         static float thumbnailSize = 64.0f;
 
         const auto relativePath = relative(m_CurrentDirectory, Project::GetRoot());
-        ImGui::SameLine();
+
         ImGui::AlignTextToFramePadding();
         ImGui::Text(relativePath.string().c_str());
 
@@ -59,12 +143,12 @@ namespace LevEngine::Editor
             String filenameString = path.filename().string().c_str();
             String stemString = path.stem().string().c_str();
             String fileExtension = path.extension().string().c_str();
-            
+
             if (fileExtension == ".meta") continue;
-            
+
             Ref<Asset> asset = nullptr;
             asset = AssetDatabase::GetAsset(path);
-            
+
             GUI::ScopedID id(filenameString);
             const Ref<Texture> icon = directoryEntry.is_directory()
                                           ? Icons::Directory()
@@ -79,7 +163,7 @@ namespace LevEngine::Editor
             const auto forceSelection =
                 Input::IsKeyDown(KeyCode::LeftControl)
                 && ImGui::IsMouseClicked(ImGuiMouseButton_Left);
-            
+
             if (ImGui::IsItemHovered() && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) || forceSelection))
             {
                 if (directoryEntry.is_directory() && !forceSelection)
@@ -144,12 +228,12 @@ namespace LevEngine::Editor
                         {
                             DrawCreateMenu<ScriptAsset>("Script System", "System.lua", ScriptAsset::Type::System);
                             DrawCreateMenu<ScriptAsset>("Script Component", "Component.lua", ScriptAsset::Type::Component);
-                            
+
                             ImGui::EndMenu();
                         }
                         if (ImGui::MenuItem("Folder"))
                             AssetDatabase::CreateFolder(m_CurrentDirectory / "Folder");
-                        
+
                         ImGui::EndMenu();
                     }
 
