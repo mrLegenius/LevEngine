@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Collision.h"
 #include "characterkinematic/PxController.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "Controller.h"

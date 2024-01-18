@@ -99,8 +99,6 @@ namespace LevEngine
                         collisionInfo.Entity = secondEntity;
                         firstRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
                     }
-
-                    Log::Debug("F_R_R: {0}", collisionInfo.Entity.GetName());
                 }
                 
                 if (secondEntity.HasComponent<Rigidbody>())
@@ -111,8 +109,6 @@ namespace LevEngine
                         collisionInfo.Entity = firstEntity;
                         secondRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
                     }
-
-                    Log::Debug("S_R_R: {0}", collisionInfo.Entity.GetName());
                 }
                 
                 if (firstEntity.HasComponent<CharacterController>())
@@ -123,8 +119,6 @@ namespace LevEngine
                         collisionInfo.Entity = firstEntity;
                         secondRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
                     }
-
-                    Log::Debug("F_R_CC: {0}", collisionInfo.Entity.GetName());
                 }
                 
                 if (secondEntity.HasComponent<CharacterController>())
@@ -134,8 +128,6 @@ namespace LevEngine
                         auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
                         collisionInfo.Entity = secondEntity;
                         firstRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
-
-                        Log::Debug("S_R_CC: {0}", collisionInfo.Entity.GetName());
                     }
                 }
             }
