@@ -116,8 +116,7 @@ namespace LevEngine
         if (m_Actor != nullptr)
         {
             physx::PxFilterData filterData;
-            const auto degreeOfTwo = std::pow(2, static_cast<physx::PxU32>(layer));
-            filterData.word0 = degreeOfTwo;
+            filterData.word0 = (1 << static_cast<physx::PxU32>(layer));
             GetCollider()->setQueryFilterData(filterData);
         }
     }

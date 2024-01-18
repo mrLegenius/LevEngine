@@ -285,7 +285,6 @@ namespace LevEngine
         const Vector3 origin,
         const Vector3 direction,
         const float maxDistance,
-        const bool isDebugDrawn,
         const FilterLayer& layerMask
     ) const
     {
@@ -294,8 +293,7 @@ namespace LevEngine
         physx::PxRaycastBuffer buffer;
         const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
         physx::PxQueryFilterData filterData;
-        const auto degreeOfTwo = std::pow(2, static_cast<physx::PxU32>(layerMask));
-        filterData.data.word0 = degreeOfTwo;
+        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
         
         const bool isHitSuccessfully =
             m_Scene->raycast(
@@ -315,12 +313,6 @@ namespace LevEngine
             hitResult.Point = PhysicsUtils::FromPxVec3ToVector3(buffer.block.position);
             hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
             hitResult.Distance = buffer.block.distance;
-
-            if (isDebugDrawn)
-            {
-                DebugRender::DrawLine(origin, hitResult.Point, Color::Green, 3.0f);
-                DebugRender::DrawPoint(hitResult.Point, Color::Red, 3.0f);
-            }
         }
 
         return hitResult;
@@ -331,7 +323,6 @@ namespace LevEngine
         const Vector3 origin,
         const Vector3 direction,
         const float maxDistance,
-        const bool isDebugDrawn,
         const FilterLayer& layerMask
     ) const
     {
@@ -345,8 +336,7 @@ namespace LevEngine
         physx::PxSweepBuffer buffer;
         const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
         physx::PxQueryFilterData filterData;
-        const auto degreeOfTwo = std::pow(2, static_cast<physx::PxU32>(layerMask));
-        filterData.data.word0 = degreeOfTwo;
+        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
         
         const bool isHitSuccessfully =
             m_Scene->sweep(
@@ -367,13 +357,6 @@ namespace LevEngine
             hitResult.Point = PhysicsUtils::FromPxVec3ToVector3(buffer.block.position);
             hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
             hitResult.Distance = buffer.block.distance;
-
-            if (isDebugDrawn)
-            {
-                const auto position = origin + direction * hitResult.Distance;
-                DebugRender::DrawWireSphere(position, radius, Color::Green, 3.0f);
-                DebugRender::DrawPoint(hitResult.Point, Color::Red, 3.0f);
-            }
         }
         
         return hitResult;
@@ -386,7 +369,6 @@ namespace LevEngine
         const Quaternion orientation,
         const Vector3 direction,
         const float maxDistance,
-        const bool isDebugDrawn,
         const FilterLayer& layerMask
     ) const
     {
@@ -400,8 +382,7 @@ namespace LevEngine
         physx::PxSweepBuffer buffer;
         const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
         physx::PxQueryFilterData filterData;
-        const auto degreeOfTwo = std::pow(2, static_cast<physx::PxU32>(layerMask));
-        filterData.data.word0 = degreeOfTwo;
+        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
         
         const bool isHitSuccessfully =
             m_Scene->sweep(
@@ -422,15 +403,6 @@ namespace LevEngine
             hitResult.Point = PhysicsUtils::FromPxVec3ToVector3(buffer.block.position);
             hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
             hitResult.Distance = buffer.block.distance;
-
-            if (isDebugDrawn)
-            {
-                const auto position = origin + direction * hitResult.Distance;
-                const auto model =
-                    Matrix::CreateFromQuaternion(orientation) * Matrix::CreateTranslation(position);
-                DebugRender::DrawWireCapsule(model, halfHeight, radius, Color::Green, 3.0f);
-                DebugRender::DrawPoint(hitResult.Point, Color::Red, 3.0f);
-            }
         }
         
         return hitResult;
@@ -442,7 +414,6 @@ namespace LevEngine
         const Quaternion orientation,
         const Vector3 direction,
         const float maxDistance,
-        const bool isDebugDrawn,
         const FilterLayer& layerMask
     ) const
     {
@@ -456,8 +427,7 @@ namespace LevEngine
         physx::PxSweepBuffer buffer;
         const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
         physx::PxQueryFilterData filterData;
-        const auto degreeOfTwo = std::pow(2, static_cast<physx::PxU32>(layerMask));
-        filterData.data.word0 = degreeOfTwo;
+        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
         
         const bool isHitSuccessfully =
             m_Scene->sweep(
@@ -478,18 +448,6 @@ namespace LevEngine
             hitResult.Point = PhysicsUtils::FromPxVec3ToVector3(buffer.block.position);
             hitResult.Normal = PhysicsUtils::FromPxVec3ToVector3(buffer.block.normal);
             hitResult.Distance = buffer.block.distance;
-
-            if (isDebugDrawn)
-            {
-                const auto position =
-                    origin + direction * hitResult.Distance;
-                const auto transformModel =
-                    Matrix::CreateScale(halfExtents * 2) *
-                        Matrix::CreateFromQuaternion(orientation) *
-                            Matrix::CreateTranslation(position);
-                DebugRender::DrawWireCube(transformModel, Color::Green, 3.0f);
-                DebugRender::DrawPoint(hitResult.Point, Color::Red, 3.0f);
-            }
         }
         
         return hitResult;
