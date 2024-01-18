@@ -3,7 +3,8 @@
 #include "PhysicsUpdate.h"
 #include "Components/FilterLayer.h"
 #include "Components/RaycastHit.h"
-#include "Events/ContactReportCallback.h"
+#include "Events/CharacterControllerEventCallback.h"
+#include "Events/RigidbodyEventCallback.h"
 #include "Scene/Entity.h"
 
 namespace LevEngine
@@ -64,7 +65,8 @@ namespace LevEngine
         // TODO: CHANGE PHYSICS UPDATE LOGIC
         PhysicsUpdate m_PhysicsUpdate;
         
-        ContactReportCallback m_ContactReportCallback;
+        RigidbodyEventCallback m_RigidbodyEventCallback;
+        CharacterControllerEventCallback m_CharacterControllerEventCallback;
 
         Vector3 m_GravityScale = {0.0f, -9.81f, 0.0f};
         

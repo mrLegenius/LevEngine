@@ -56,11 +56,11 @@ namespace LevEngine
         physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
         sceneDesc.gravity = PhysicsUtils::FromVector3ToPxVec3(m_GravityScale);
         sceneDesc.cpuDispatcher	= m_Dispatcher;
-        sceneDesc.filterShader = ContactReportCallback::ContactReportFilterShader;
-        sceneDesc.simulationEventCallback = &m_ContactReportCallback;
+        sceneDesc.filterShader = RigidbodyEventCallback::ContactReportFilterShader;
+        sceneDesc.simulationEventCallback = &m_RigidbodyEventCallback;
         m_Scene = m_Physics->createScene(sceneDesc);
+        
         m_ControllerManager = PxCreateControllerManager(*m_Scene);
-        m_ControllerManager->setDebugRenderingFlags(physx::PxControllerDebugRenderFlag::eALL);
         
         if (m_IsDebugRenderEnabled)
         {
@@ -181,6 +181,7 @@ namespace LevEngine
         desc.material = material;
         desc.position = PhysicsUtils::FromVector3ToPxExtendedVec3(controllerPosition);
         desc.scaleCoeff = 1.0f;
+        desc.reportCallback = &m_CharacterControllerEventCallback;
         physx::PxController* controller = m_ControllerManager->createController(desc);
 
         material->release();

@@ -454,14 +454,9 @@ namespace LevEngine
         }
     }
 
-    const Vector<Collision>& CharacterController::GetCollisionEnterBuffer() const
+    const Vector<ControllerColliderHit>& CharacterController::GetCollisionHitBuffer() const
     {
-        return m_CollisionEnterBuffer; 
-    }
-
-    const Vector<Collision>& CharacterController::GetCollisionExitBuffer() const
-    {
-        return m_CollisionExitBuffer;
+        return m_CollisionHitBuffer; 
     }
 
     class CharacterControllerSerializer final : public ComponentSerializer<CharacterController, CharacterControllerSerializer>

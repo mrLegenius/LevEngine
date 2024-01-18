@@ -364,11 +364,11 @@ namespace LevEngine::Scripting
 
         lua.new_usertype<Collision>(
             "Collision",
-            "contactEntity", &Collision::ContactEntity,
-            "contactPositions", &Collision::ContactPositions,
-            "contactNormals", &Collision::ContactPositions,
-            "contactImpulses", &Collision::ContactImpulses,
-            "contactSeparations", &Collision::ContactSeparations);
+            "contactEntity", &Collision::Entity,
+            "contactPositions", &Collision::Points,
+            "contactNormals", &Collision::Points,
+            "contactImpulses", &Collision::Impulses,
+            "contactSeparations", &Collision::Separations);
     }
 
     void LuaComponentsBinder::CreateCharacterControllerLuaBind(sol::state& lua)
