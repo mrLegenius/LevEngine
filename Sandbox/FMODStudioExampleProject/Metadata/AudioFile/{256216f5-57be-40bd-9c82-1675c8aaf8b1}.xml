@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{256216f5-57be-40bd-9c82-1675c8aaf8b1}">
+		<property name="assetPath">
+			<value>Audio/Damage/EnemyReceiveDamage/PillowSlap1.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>1</value>
+		</property>
+		<property name="length">
+			<value>1.0104375000000001</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{4ded28f7-06b0-4d88-abff-4255335bba89}</destination>
+		</relationship>
+	</object>
+</objects>
