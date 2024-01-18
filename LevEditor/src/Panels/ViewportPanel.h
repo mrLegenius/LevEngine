@@ -98,7 +98,7 @@ namespace LevEngine::Editor
 
 		Ref<Texture> m_Texture;
 
-		EditorCamera m_Camera{60.0f, 0.1f, 100.0f, Vector3{0, 10, -10}};
+		EditorCamera m_Camera{60.0f, 0.1f, 1000.0f, Vector3{0, 10, -10}};
 	};
 }
 
