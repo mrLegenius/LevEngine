@@ -351,7 +351,15 @@ namespace LevEngine::Scripting
             {
                 rigidbody.Initialize(entity);
             },
-            "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer
+            "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
+            "getLayer", [](const Rigidbody& rigidbody)
+            {
+                return static_cast<int>(rigidbody.GetLayer());
+            },
+            "setLayer", [](Rigidbody& rigidbody, int Layer)
+            {
+                rigidbody.SetLayer(static_cast<FilterLayer>(Layer));
+            }
         );
 
         lua.new_enum(
@@ -382,7 +390,16 @@ namespace LevEngine::Scripting
                 {
                     return CharacterController{};
                 }),
-            "move", &CharacterController::Move
+            "move", &CharacterController::Move,
+            "isGrounded", &CharacterController::IsGrounded,
+            "getLayer", [](const CharacterController& characterController)
+            {
+                return static_cast<int>(characterController.GetLayer());
+            },
+            "setLayer", [](CharacterController& characterController, int Layer)
+            {
+                characterController.SetLayer(static_cast<FilterLayer>(Layer));
+            }
         );
     }
 
@@ -656,6 +673,34 @@ namespace LevEngine::Scripting
 
     void LuaComponentsBinder::CreatePhysicsBind(sol::state& lua)
     {
+        lua.new_enum(
+            "FilterLayer",
+            "Layer0", FilterLayer::Layer0,
+            "Layer1", FilterLayer::Layer1,
+            "Layer2", FilterLayer::Layer2,
+            "Layer3", FilterLayer::Layer3,
+            "Layer4", FilterLayer::Layer4,
+            "Layer5", FilterLayer::Layer5,
+            "Layer6", FilterLayer::Layer6,
+            "Layer7", FilterLayer::Layer7,
+            "Layer8", FilterLayer::Layer8,
+            "Layer9", FilterLayer::Layer9
+        );
+
+        lua.new_usertype<RaycastHit>(
+            "RaycastHit",
+            sol::call_constructor,
+            sol::factories([]()
+            {
+                RaycastHit{};
+            }),
+            "isSuccessful", &RaycastHit::IsSuccessful,
+            "entity", &RaycastHit::Entity,
+            "point", &RaycastHit::Point,
+            "normal", &RaycastHit::Normal,
+            "distance", &RaycastHit::Distance
+        );
+
         auto physics = lua["Physics"].get_or_create<sol::table>();
         physics.set_function(
             "getGravity", []()
@@ -663,6 +708,64 @@ namespace LevEngine::Scripting
                 return Application::Get().GetPhysics().GetGravity();
             }
         );
+
+        physics.set_function(
+            "raycast", sol::overload(
+                [](Vector3 origin, Vector3 direction, float maxDistance, int layerMask)
+                {
+                    return Application::Get().GetPhysics().Raycast(origin, direction, maxDistance,
+                                                                   static_cast<FilterLayer>(layerMask));
+                },
+                [](Vector3 origin, Vector3 direction, float maxDistance)
+                {
+                    return Application::Get().GetPhysics().Raycast(origin, direction, maxDistance);
+                }
+            ));
+
+        physics.set_function(
+            "sphereCast", sol::overload(
+                [](float radius, Vector3 origin, Vector3 direction, float maxDistance, int layerMask)
+                {
+                    return Application::Get().GetPhysics().SphereCast(radius, origin, direction, maxDistance,
+                                                                      static_cast<FilterLayer>(layerMask));
+                },
+                [](float radius, Vector3 origin, Vector3 direction, float maxDistance)
+                {
+                    return Application::Get().GetPhysics().SphereCast(radius, origin, direction, maxDistance);
+                }
+            ));
+
+        physics.set_function(
+            "capsuleCast", sol::overload(
+                [](float radius, float halfHeight, Vector3 origin, Quaternion orientation, Vector3 direction,
+                   float maxDistance, int layerMask)
+                {
+                    return Application::Get().GetPhysics().CapsuleCast(radius, halfHeight, origin, orientation,
+                                                                       direction, maxDistance,
+                                                                       static_cast<FilterLayer>(layerMask));
+                },
+                [](float radius, float halfHeight, Vector3 origin, Quaternion orientation, Vector3 direction,
+                   float maxDistance)
+                {
+                    return Application::Get().GetPhysics().CapsuleCast(radius, halfHeight, origin, orientation,
+                                                                       direction, maxDistance);
+                }
+            ));
+
+        physics.set_function(
+            "boxCast", sol::overload(
+                [](Vector3 halfExtents, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance,
+                   int layerMask)
+                {
+                    return Application::Get().GetPhysics().BoxCast(halfExtents, origin, orientation, direction,
+                                                                   maxDistance, static_cast<FilterLayer>(layerMask));
+                },
+                [](Vector3 halfExtents, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance)
+                {
+                    return Application::Get().GetPhysics().BoxCast(halfExtents, origin, orientation, direction,
+                                                                   maxDistance);
+                }
+            ));
     }
 
     void LuaComponentsBinder::CreateDebugRenderBind(sol::state& lua)

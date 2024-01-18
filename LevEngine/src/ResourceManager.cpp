@@ -81,9 +81,10 @@ void ResourceManager::ChangeAddress(const Ref<Asset>& asset, const String& newAd
             auto relativePath = relative(busyAsset->GetPath(), AssetDatabase::GetAssetsPath()).string();
             Log::CoreWarning("Failed to set address for '{0}'. '{1}' belongs to '{2}'",
                 busyAsset->GetName(), newAddress, relativePath);
+            return;
         }
 
-        return;
+        m_AddressToUUIDMap.erase(newAddress);
     }
 
     m_AddressToUUIDMap.erase(asset->GetAddress());

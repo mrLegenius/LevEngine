@@ -26,6 +26,11 @@ namespace LevEngine
 		return AssetsRoot;
 	}
 
+	Path AssetDatabase::GetRelativePath(const Path& path)
+	{
+		return relative(GetAssetsPath(), path);
+	}
+
 	void AssetDatabase::ImportAsset(const Path& path)
 	{
 		if (path.extension() == ".meta") return;
@@ -290,13 +295,13 @@ namespace LevEngine
 			}
 		}
 
-		if (std::filesystem::exists(oldPath))
+		if (exists(oldPath))
 		{
 			std::filesystem::rename(oldPath, newPath);
 		}
 
 		const auto oldMetaPath = oldPath.string().append(".meta").c_str();
-		if (std::filesystem::exists(oldPath))
+		if (exists(oldPath))
 		{
 			std::filesystem::rename(oldMetaPath, newPath.string().append(".meta").c_str());
 		}
@@ -304,31 +309,25 @@ namespace LevEngine
 		asset->Rename(newPath);
 		m_AssetsByPath.emplace(newPath, asset);
 
-		if (is_directory(newPath))
-		{
-			for (std::filesystem::recursive_directory_iterator i(newPath), end; i != end; ++i)
-			{
-				if (!is_directory(i->path()))
-				{
-					ImportAsset(*i);
-				}
-			}
-		}
+		DeleteAllAssetsInDirectory(oldPath);
+		ReimportAllAssetsInDirectory(newPath);
 	}
 
 	void AssetDatabase::MoveAsset(const Ref<Asset>& asset, const Path& directory)
 	{
+		if (asset == nullptr) return;
+
 		const auto currentDirectory = asset->GetPath().parent_path();
 
 		if (currentDirectory == directory) return;
-		if (directory.has_extension()) return;
+		if (!is_directory(directory)) return;
 
 		const auto oldPath = asset->GetPath();
 		const auto newPath = directory / asset->GetFullName().c_str();
 
-		if (std::filesystem::exists(newPath))
+		if (exists(newPath))
 		{
-			Log::CoreWarning("Failed to move asset. Asset '{0}' already exists in {1}", asset->GetName(), directory);
+			Log::CoreWarning("Failed to move asset. Asset '{0}' already exists in {1}", asset->GetName(), GetRelativePath(directory));
 			return;
 		}
 
@@ -348,6 +347,9 @@ namespace LevEngine
 		asset->Rename(newPath);
 		m_AssetsByPath.emplace(newPath, asset);
 		m_AssetsByPath.erase(oldPath);
+
+		DeleteAllAssetsInDirectory(oldPath);
+		ReimportAllAssetsInDirectory(newPath);
 	}
 
 	void AssetDatabase::DeleteAsset(const Ref<Asset>& asset)
@@ -357,24 +359,63 @@ namespace LevEngine
 		const auto path = asset->GetPath();
 		const auto uuid = asset->GetUUID();
 
-		if (std::filesystem::exists(path))
+		try
 		{
-			std::filesystem::remove(path);
-		}
+			if (exists(path))
+			{
+				remove_all(path);
+			}
 
-		const auto metaPath = Path(path.string().append(".meta"));
-		if (std::filesystem::exists(metaPath))
+			const auto metaPath = Path(path.string().append(".meta"));
+			if (exists(metaPath))
+			{
+				std::filesystem::remove(metaPath);
+			}
+		}
+		catch (std::exception& e)
 		{
-			std::filesystem::remove(metaPath);
+			Log::CoreError("Failed to delete asset '{}'. Error: {}", asset->GetName(), e.what());
+			return;
 		}
 
 		m_AssetsByPath.erase(path);
 		m_Assets.erase(uuid);
+
+		DeleteAllAssetsInDirectory(path);
 	}
 
 	bool AssetDatabase::AssetExists(const Path& path)
 	{
 		return m_AssetsByPath.count(path);
+	}
+
+	void AssetDatabase::ReimportAllAssetsInDirectory(const Path& directory)
+	{
+		if (!is_directory(directory)) return;
+
+		for (std::filesystem::recursive_directory_iterator i(directory), end; i != end; ++i)
+		{
+			if (is_directory(i->path())) continue;
+
+			ImportAsset(*i);
+		}
+	}
+
+	void AssetDatabase::DeleteAllAssetsInDirectory(const Path& directory)
+	{
+		if (!is_directory(directory)) return;
+
+		for (std::filesystem::recursive_directory_iterator i(directory), end; i != end; ++i)
+		{
+			const Path& path = i->path();
+
+			if (is_directory(path)) continue;
+
+			if (const auto asset = GetAsset(path))
+				m_Assets.erase(asset->GetUUID());
+
+			m_AssetsByPath.erase(path);
+		}
 	}
 
 	void AssetDatabase::CreateMeta(const Path& path, const UUID uuid, const YAML::Node* extraInfo)
