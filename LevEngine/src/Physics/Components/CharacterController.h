@@ -12,6 +12,9 @@ namespace LevEngine
     {
         // Don't call this method (only for internal use)
         static void OnDestroy(entt::registry& registry, entt::entity entity);
+
+        [[nodiscard]] FilterLayer GetLayer() const;
+        void SetLayer(const FilterLayer& layer) const;
         
         [[nodiscard]] float GetSlopeLimit() const;
         void SetSlopeLimit(float slopeLimit) const;
@@ -46,8 +49,13 @@ namespace LevEngine
         [[nodiscard]] Controller::ClimbingMode GetClimbingMode() const;
         void SetClimbingMode(const Controller::ClimbingMode& climbingMode) const;
 
+        float GetGravityScale() const;
+        void SetGravityScale(float gravityScale) const;
+
+        bool IsGrounded() const;
+
         void Move(Vector3 displacement, float elapsedTime) const;
-        void MoveTo(Vector3 displacement, float elapsedTime) const;
+        void MoveTo(Vector3 position, float elapsedTime) const;
         
         [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
@@ -74,6 +82,8 @@ namespace LevEngine
         
         void AttachController(Entity entity);
         void DetachController() const;
+
+        void SetGroundFlag(bool flag) const;
 
         physx::PxController* m_Controller = nullptr;
         

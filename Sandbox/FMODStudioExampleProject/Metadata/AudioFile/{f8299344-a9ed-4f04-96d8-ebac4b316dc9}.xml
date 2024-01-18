@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{f8299344-a9ed-4f04-96d8-ebac4b316dc9}">
+		<property name="assetPath">
+			<value>Audio/Damage/EnemyReceiveDamage/crushing-a-lemon-1_4.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.9000625</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{4ded28f7-06b0-4d88-abff-4255335bba89}</destination>
+		</relationship>
+	</object>
+</objects>

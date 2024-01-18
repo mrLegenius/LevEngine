@@ -41,20 +41,20 @@ namespace LevEngine::Scripting
 		static void CreateGUIBind(sol::state& lua);
 		static void CreateTimeBind(sol::state& lua);
 		static void CreatePhysicsBind(sol::state& lua);
+		static void CreateDebugRenderBind(sol::state& lua);
 		
 		static void CreateTransformLuaBind(sol::state& lua);
 		static void CreateCameraComponentLuaBind(sol::state& lua);
 		static void CreateScriptsContainerLuaBind(sol::state& lua);
 		static void CreateRigidbodyLuaBind(sol::state& lua);
 		static void CreateCharacterControllerLuaBind(sol::state& lua);
+		static void CreateAnimatorComponentLuaBind(sol::state& lua);
 		
 		static void CreateLuaEntityBind(sol::state& lua, Scene* scene);
 
 		template<class TComponent>
 		static void RegisterMetaComponent();
 	};
-
-	
 
 	template <class TComponent>
 	auto add_component(Entity& entity, const sol::table& component, sol::this_state state);

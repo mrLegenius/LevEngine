@@ -1,7 +1,6 @@
 local walkSpeed = 1
 local sprintSpeed = 2
 local movementMultiplier = 0.25
-local gravityMultiplier = 0.01
 
 FPSMovement = {
 	update = function(deltaTime)
@@ -63,11 +62,6 @@ FPSMovement = {
 				--print(movement)
 
 				local displacement = movement * player.speed;
-                
-
-                local gravity = Physics.getGravity().y;
-				
-                displacement.y = displacement.y + gravity * gravityMultiplier;
                 
                 playerController:move(displacement, deltaTime);
 			end

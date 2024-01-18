@@ -34,6 +34,8 @@
 
 #include <VGJS.h>
 
+#include "eventhandling/eventhandling.hpp"
+
 #include "Debugging/Profiler.h"
 #include "Kernel/Logger.h"
 

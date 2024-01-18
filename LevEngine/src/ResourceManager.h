@@ -32,6 +32,7 @@ public:
 
     //TODO: Maybe move this to LevEditor
     static void Build(const Path& projectPath);
+    static void ChangeAddress(const Ref<Asset>& asset, const String& newAddress);
 
 private:
     inline static Map<String, UUID> m_AddressToUUIDMap;

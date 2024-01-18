@@ -1,6 +1,9 @@
 #include "levpch.h"
 #include "LuaComponentsBinder.h"
 
+#include <Assets/AnimationAsset.h>
+#include <Scene/Components/Animation/AnimatorComponent.h>
+
 #include "MetaUtilities.h"
 #include "ResourceManager.h"
 #include "Assets/PrefabAsset.h"
@@ -12,6 +15,7 @@
 #include "Physics/Physics.h"
 #include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
+#include "Renderer/DebugRender/DebugRender.h"
 #include "Scene/Entity.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -338,19 +342,24 @@ namespace LevEngine::Scripting
                     return Rigidbody{};
                 }),
             "addForce", sol::overload(
+                &Rigidbody::AddForce,
                 [](const Rigidbody& rigidbody, Vector3 vector)
                 {
                     rigidbody.AddForce(vector);
-                },
-                [](const Rigidbody& rigidbody, Vector3 vector, int forceMode)
-                {
-                    rigidbody.AddForce(vector, static_cast<Rigidbody::ForceMode>(forceMode));
                 }),
             "initialize", [](Rigidbody& rigidbody, const Entity entity)
             {
                 rigidbody.Initialize(entity);
             },
-            "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer
+            "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
+            "getLayer", [](const Rigidbody& rigidbody)
+            {
+                return static_cast<int>(rigidbody.GetLayer());
+            },
+            "setLayer", [](Rigidbody& rigidbody, int Layer)
+            {
+                rigidbody.SetLayer(static_cast<FilterLayer>(Layer));
+            }
         );
 
         lua.new_enum(
@@ -381,7 +390,40 @@ namespace LevEngine::Scripting
                 {
                     return CharacterController{};
                 }),
-            "move", &CharacterController::Move
+            "move", &CharacterController::Move,
+            "isGrounded", &CharacterController::IsGrounded,
+            "getLayer", [](const CharacterController& characterController)
+            {
+                return static_cast<int>(characterController.GetLayer());
+            },
+            "setLayer", [](CharacterController& characterController, int Layer)
+            {
+                characterController.SetLayer(static_cast<FilterLayer>(Layer));
+            }
+        );
+    }
+
+    void LuaComponentsBinder::CreateAnimatorComponentLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<AnimatorComponent>(
+            "AnimatorComponent",
+            "type_id", &entt::type_hash<AnimatorComponent>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return AnimatorComponent{};
+                }),
+            "getAnimationClip", [](const AnimatorComponent& animatorComponent)
+            {
+                return animatorComponent.GetAnimationClipConst()->GetAddress().c_str();
+            },
+            "setAnimationClip", [](AnimatorComponent& animatorComponent, const std::string& assetAddress)
+            {
+                animatorComponent.SetAnimationClip(
+                    ResourceManager::LoadAsset<AnimationAsset>(assetAddress.c_str()));
+            },
+            "playAnimation", &AnimatorComponent::PlayAnimation
         );
     }
 
@@ -631,6 +673,34 @@ namespace LevEngine::Scripting
 
     void LuaComponentsBinder::CreatePhysicsBind(sol::state& lua)
     {
+        lua.new_enum(
+            "FilterLayer",
+            "Layer0", FilterLayer::Layer0,
+            "Layer1", FilterLayer::Layer1,
+            "Layer2", FilterLayer::Layer2,
+            "Layer3", FilterLayer::Layer3,
+            "Layer4", FilterLayer::Layer4,
+            "Layer5", FilterLayer::Layer5,
+            "Layer6", FilterLayer::Layer6,
+            "Layer7", FilterLayer::Layer7,
+            "Layer8", FilterLayer::Layer8,
+            "Layer9", FilterLayer::Layer9
+        );
+
+        lua.new_usertype<RaycastHit>(
+            "RaycastHit",
+            sol::call_constructor,
+            sol::factories([]()
+            {
+                RaycastHit{};
+            }),
+            "isSuccessful", &RaycastHit::IsSuccessful,
+            "entity", &RaycastHit::Entity,
+            "point", &RaycastHit::Point,
+            "normal", &RaycastHit::Normal,
+            "distance", &RaycastHit::Distance
+        );
+
         auto physics = lua["Physics"].get_or_create<sol::table>();
         physics.set_function(
             "getGravity", []()
@@ -638,5 +708,135 @@ namespace LevEngine::Scripting
                 return Application::Get().GetPhysics().GetGravity();
             }
         );
+
+        physics.set_function(
+            "raycast", sol::overload(
+                [](Vector3 origin, Vector3 direction, float maxDistance, int layerMask)
+                {
+                    return Application::Get().GetPhysics().Raycast(origin, direction, maxDistance,
+                                                                   static_cast<FilterLayer>(layerMask));
+                },
+                [](Vector3 origin, Vector3 direction, float maxDistance)
+                {
+                    return Application::Get().GetPhysics().Raycast(origin, direction, maxDistance);
+                }
+            ));
+
+        physics.set_function(
+            "sphereCast", sol::overload(
+                [](float radius, Vector3 origin, Vector3 direction, float maxDistance, int layerMask)
+                {
+                    return Application::Get().GetPhysics().SphereCast(radius, origin, direction, maxDistance,
+                                                                      static_cast<FilterLayer>(layerMask));
+                },
+                [](float radius, Vector3 origin, Vector3 direction, float maxDistance)
+                {
+                    return Application::Get().GetPhysics().SphereCast(radius, origin, direction, maxDistance);
+                }
+            ));
+
+        physics.set_function(
+            "capsuleCast", sol::overload(
+                [](float radius, float halfHeight, Vector3 origin, Quaternion orientation, Vector3 direction,
+                   float maxDistance, int layerMask)
+                {
+                    return Application::Get().GetPhysics().CapsuleCast(radius, halfHeight, origin, orientation,
+                                                                       direction, maxDistance,
+                                                                       static_cast<FilterLayer>(layerMask));
+                },
+                [](float radius, float halfHeight, Vector3 origin, Quaternion orientation, Vector3 direction,
+                   float maxDistance)
+                {
+                    return Application::Get().GetPhysics().CapsuleCast(radius, halfHeight, origin, orientation,
+                                                                       direction, maxDistance);
+                }
+            ));
+
+        physics.set_function(
+            "boxCast", sol::overload(
+                [](Vector3 halfExtents, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance,
+                   int layerMask)
+                {
+                    return Application::Get().GetPhysics().BoxCast(halfExtents, origin, orientation, direction,
+                                                                   maxDistance, static_cast<FilterLayer>(layerMask));
+                },
+                [](Vector3 halfExtents, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance)
+                {
+                    return Application::Get().GetPhysics().BoxCast(halfExtents, origin, orientation, direction,
+                                                                   maxDistance);
+                }
+            ));
+    }
+
+    void LuaComponentsBinder::CreateDebugRenderBind(sol::state& lua)
+    {
+        auto debugRender = lua["DebugRender"].get_or_create<sol::table>();
+
+        debugRender.set_function(
+            "drawCube",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawCube),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawCube)
+            ));
+
+        debugRender.set_function(
+            "drawWireCube",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawWireCube),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawWireCube)
+            ));
+
+        debugRender.set_function(
+            "drawSphere",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawSphere),
+                sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawSphere)
+            ));
+
+        debugRender.set_function(
+            "drawWireSphere",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawWireSphere),
+                sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawWireSphere)
+            ));
+
+        debugRender.set_function(
+            "drawPoint",
+            sol::overload(
+                sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPoint),
+                sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPoint)
+            ));
+
+        debugRender.set_function(
+            "drawPointStar",
+            sol::overload(
+                sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPointStar),
+                sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPointStar)
+            ));
+
+        debugRender.set_function(
+            "drawLine",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawLine),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawLine)
+            ));
+
+        debugRender.set_function(
+            "drawRay",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawRay),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawRay)
+            ));
+
+        debugRender.set_function(
+            "drawCircle",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Quaternion, Color)>(&DebugRender::DrawCircle),
+                sol::resolve<void(Vector3, float, Quaternion, Color, float)>(&DebugRender::DrawCircle)
+            ));
+
+        debugRender.set_function(
+            "drawGrid",
+            sol::resolve<void(Vector3, Vector3, Vector3, uint32_t, uint32_t, float, Color)>(&DebugRender::DrawGrid));
     }
 }

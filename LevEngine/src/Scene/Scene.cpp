@@ -18,6 +18,7 @@
 #include "Kernel/Window.h"
 #include "Scripting/ScriptingManager.h"
 #include "Physics/Physics.h"
+#include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Scripting/LuaComponentsBinder.h"
 #include "Systems/Animation/AnimatorInitSystem.h"

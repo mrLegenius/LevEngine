@@ -3,6 +3,8 @@
 // -- Core -------------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+#include <yaml-cpp/yaml.h>
+
 // -- Data Types -------------------------------------------
 
 #include "DataTypes/Array.h"
@@ -38,6 +40,8 @@
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 #include "Events/ApplicationEvent.h"
+
+#include "Project.h"
 
 // -- GUI --------------------------------------------------
 

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{b33eda44-5239-4f09-861a-f8fdcf82234e}">
+		<property name="assetPath">
+			<value>Audio/Weapons/PeaShooter/MachineGunShotTail3.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.41149659863945576</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{4ded28f7-06b0-4d88-abff-4255335bba89}</destination>
+		</relationship>
+	</object>
+</objects>

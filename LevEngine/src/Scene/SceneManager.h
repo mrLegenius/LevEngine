@@ -25,7 +25,11 @@ namespace LevEngine
 
         static void Shutdown();
 
+        static events::IEvent<Ref<Scene>>& SceneLoaded;
+
     private:
+        static inline events::TEvent<Ref<Scene>> m_OnSceneLoaded;
+
         static inline Ref<Scene> m_ActiveScene;
         static inline Path m_ActiveScenePath;
     };
