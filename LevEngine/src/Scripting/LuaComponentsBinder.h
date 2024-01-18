@@ -56,8 +56,6 @@ namespace LevEngine::Scripting
 		static void RegisterMetaComponent();
 	};
 
-	
-
 	template <class TComponent>
 	auto add_component(Entity& entity, const sol::table& component, sol::this_state state);
 
