@@ -1,6 +1,9 @@
 #include "levpch.h"
 #include "LuaComponentsBinder.h"
 
+#include <Assets/AnimationAsset.h>
+#include <Scene/Components/Animation/AnimatorComponent.h>
+
 #include "MetaUtilities.h"
 #include "ResourceManager.h"
 #include "Assets/PrefabAsset.h"
@@ -380,6 +383,30 @@ namespace LevEngine::Scripting
                     return CharacterController{};
                 }),
             "move", &CharacterController::Move
+        );
+    }
+
+    void LuaComponentsBinder::CreateAnimatorComponentLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<AnimatorComponent>(
+            "AnimatorComponent",
+            "type_id", &entt::type_hash<AnimatorComponent>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return AnimatorComponent{};
+                }),
+            "getAnimationClip", [](const AnimatorComponent& animatorComponent)
+            {
+                return animatorComponent.GetAnimationClipConst()->GetAddress().c_str();
+            },
+            "setAnimationClip", [](AnimatorComponent& animatorComponent, const std::string& assetAddress)
+            {
+                animatorComponent.SetAnimationClip(
+                    ResourceManager::LoadAsset<AnimationAsset>(assetAddress.c_str()));
+            },
+            "playAnimation", &AnimatorComponent::PlayAnimation
         );
     }
 
