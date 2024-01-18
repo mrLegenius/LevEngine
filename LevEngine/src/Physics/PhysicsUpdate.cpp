@@ -2,8 +2,10 @@
 #include "PhysicsUtils.h"
 #include "Physics.h"
 #include "PhysicsUpdate.h"
+#include "Components/CharacterController.h"
 #include "Components/Rigidbody.h"
 #include "Components/ConstantForce.h"
+#include "Kernel/Application.h"
 
 namespace LevEngine
 {
@@ -74,6 +76,54 @@ namespace LevEngine
             
             rigidbody.AddForce(force.GetForce(), Rigidbody::ForceMode::Force);
             rigidbody.AddTorque(force.GetTorque(), Rigidbody::ForceMode::Force);
+        }
+    }
+
+    void PhysicsUpdate::UpdateControllerGroundFlag(entt::registry& registry)
+    {
+        const auto controllerView = registry.view<Transform, CharacterController>();
+        for (const auto entity : controllerView)
+        {
+            auto [transform, controller] = controllerView.get<Transform, CharacterController>(entity);
+
+            if (controller.GetController() == nullptr) continue;
+            
+            const auto position =
+                PhysicsUtils::FromPxExtendedVec3ToVector3(controller.GetController()->getPosition());
+            const auto rotation =
+                Quaternion::CreateFromAxisAngle(Vector3::Forward, Math::ToRadians(90.0f));
+
+            const auto controllerRadius = controller.GetRadius();
+            const auto controllerHalfHeight = controller.GetHeight() / 2.0f;
+            const auto hitResult =
+                App::Get().GetPhysics().CapsuleCast(
+                    controllerRadius,
+                    controllerHalfHeight,
+                    position,
+                    rotation,
+                    Vector3::Down,
+                    0.1f
+                );
+            
+            controller.SetGroundFlag(hitResult.IsSuccessful);
+        }
+    }
+
+    void PhysicsUpdate::ApplyControllerGravity(entt::registry& registry, const float deltaTime)
+    {
+        const auto controllerView = registry.view<Transform, CharacterController>();
+        for (const auto entity : controllerView)
+        {
+            auto [transform, controller] = controllerView.get<Transform, CharacterController>(entity);
+
+            if (controller.GetController() == nullptr) continue;
+            
+            if (!controller.IsGrounded())
+            {
+                const auto gravity = App::Get().GetPhysics().GetGravity().y;
+                const auto displacement = Vector3(0.0f, gravity * controller.GetGravityScale() * deltaTime, 0.0f);
+                controller.Move(displacement, deltaTime);
+            }
         }
     }
 

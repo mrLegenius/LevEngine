@@ -10,56 +10,54 @@ namespace LevEngine::Editor
         void DrawContent(Rigidbody& component, const Entity entity) override
         {
             auto transform = entity.GetComponent<Transform>();
-            
-            Matrix colliderModel;
-            Matrix transformModel =
-                Matrix::CreateFromQuaternion(transform.GetWorldRotation())
-                * Matrix::CreateTranslation(transform.GetWorldPosition());
+            const auto transformScale = transform.GetWorldScale();
+            const auto maxTransformScale = Math::MaxElement(transformScale);
 
-            Matrix colliderRotationTranslationModel =
-                Matrix::CreateFromQuaternion(Quaternion::CreateFromYawPitchRoll(Math::ToRadians(component.GetColliderOffsetRotation())))
-                * Matrix::CreateTranslation(component.GetColliderOffsetPosition());
-            
-            Vector3 transformScale = transform.GetWorldScale();
-            const float maxScale = Math::MaxElement(transformScale);
-            
+            auto colliderRotationQuaternion =
+                Quaternion::CreateFromYawPitchRoll(Math::ToRadians(component.GetColliderOffsetRotation()));
+            auto colliderRotationTranslationOffsetMatrix =
+                Matrix::CreateFromQuaternion(colliderRotationQuaternion) *
+                    Matrix::CreateTranslation(component.GetColliderOffsetPosition());
+
+            auto transformRotationTranslationMatrix =
+                Matrix::CreateFromQuaternion(transform.GetWorldRotation()) *
+                    Matrix::CreateTranslation(transform.GetWorldPosition());
+
+            Matrix model = Matrix::Identity;
             switch (component.GetColliderType())
             {
             case Collider::Type::Sphere:
-                colliderModel =
-                    Matrix::CreateScale(component.GetSphereRadius() * maxScale)
-                    * colliderRotationTranslationModel;
-                colliderModel *= transformModel;
+                model =
+                    Matrix::CreateScale(component.GetSphereRadius() * maxTransformScale) *
+                        colliderRotationTranslationOffsetMatrix *
+                            transformRotationTranslationMatrix;
                 DebugRender::DrawWireSphere(
-                    colliderModel,
+                    model,
                     Color::Green
                 );
                 break;
-                
             case Collider::Type::Capsule:
-                colliderModel =
-                    Matrix::CreateScale(maxScale)
-                    * colliderRotationTranslationModel;
-                colliderModel *= transformModel;
+                model =
+                    Matrix::CreateScale(maxTransformScale) *
+                        colliderRotationTranslationOffsetMatrix *
+                            transformRotationTranslationMatrix;
                 DebugRender::DrawWireCapsule(
-                    colliderModel,
+                    model,
                     component.GetCapsuleHalfHeight(),
                     component.GetCapsuleRadius(),
                     Color::Green
                 );
                 break;
-                
             case Collider::Type::Box:
-                colliderModel =
-                    Matrix::CreateScale(component.GetBoxHalfExtents() * 2 * transformScale)
-                    * colliderRotationTranslationModel;
-                colliderModel *= transformModel;
+                model =
+                    Matrix::CreateScale(component.GetBoxHalfExtents() * 2 * transformScale) *
+                        colliderRotationTranslationOffsetMatrix *
+                            transformRotationTranslationMatrix;
                 DebugRender::DrawWireCube(
-                    colliderModel,
+                    model,
                     Color::Green
                 ); 
                 break;
-                
             default:
                 break;
             }

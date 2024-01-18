@@ -1,10 +1,10 @@
 ﻿#include "levpch.h"
 #include "ContactReportCallback.h"
-
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Physics/PhysicsUtils.h"
+#include "Physics/Components/CharacterController.h"
 
 namespace LevEngine
 {

@@ -10,6 +10,18 @@ namespace LevEngine::Editor
         
         void DrawContent(Rigidbody& component) override
         {
+            if (ImGui::TreeNode("Layer"))
+            {
+                const Array<String, 10> layerStrings
+                {
+                    "Layer0", "Layer1", "Layer2", "Layer3", "Layer4",
+                    "Layer5", "Layer6", "Layer7", "Layer8", "Layer9"
+                };
+                EditorGUI::DrawComboBox<FilterLayer, 10>("Layer", layerStrings,
+                    BindGetter(&Rigidbody::GetLayer, &component), BindSetter(&Rigidbody::SetLayer, &component));
+                ImGui::TreePop();
+            }
+            
             if (!component.IsKinematicEnabled())
             {
                 const Array<String, 2> rigidbodyTypeStrings {"Static","Dynamic"};

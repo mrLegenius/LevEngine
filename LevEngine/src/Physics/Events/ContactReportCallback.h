@@ -3,7 +3,7 @@
 
 namespace LevEngine
 {
-    class ContactReportCallback: public physx::PxSimulationEventCallback
+    class ContactReportCallback : public physx::PxSimulationEventCallback
     {
     public:
         friend class Physics;
