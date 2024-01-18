@@ -22,5 +22,6 @@ namespace LevEngine::Editor
 
         Path m_CurrentDirectory;
         Ref<Asset> m_RenamingAsset{};
+        Ref<Asset> m_AssetToDelete{};
     };
 }

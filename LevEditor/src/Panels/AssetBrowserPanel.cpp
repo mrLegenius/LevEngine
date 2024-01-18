@@ -22,6 +22,19 @@ namespace LevEngine::Editor
         return string.size() == 1 || string[0] != '.' && string[1] != '.';
     }
 
+    bool HasSubDirectories(const Path& directory)
+    {
+        if (!is_directory(directory)) return false;
+
+        for (auto &p : std::filesystem::directory_iterator(directory))
+        {
+            if (p.is_directory())
+                return true;
+        }
+
+        return false;
+    }
+
     AssetBrowserPanel::AssetBrowserPanel()
         : m_CurrentDirectory(AssetDatabase::GetAssetsPath())
     {
@@ -41,11 +54,19 @@ namespace LevEngine::Editor
             ImGui::EndChild();
         }
 
-
         ImGui::SameLine();
         ImGui::BeginChild("Assets");
         DrawAssets();
         ImGui::EndChild();
+
+        if (m_AssetToDelete)
+        {
+            if (m_CurrentDirectory == m_AssetToDelete->GetPath())
+                m_CurrentDirectory = m_AssetToDelete->GetPath().parent_path();
+
+            AssetDatabase::DeleteAsset(m_AssetToDelete);
+            m_AssetToDelete = nullptr;
+        }
     }
 
     void AssetBrowserPanel::DrawFileTree()
@@ -63,17 +84,7 @@ namespace LevEngine::Editor
                         | ImGuiTreeNodeFlags_OpenOnArrow
                         | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-        bool empty = true;
-        for (auto &p : std::filesystem::directory_iterator(path))
-        {
-            if (p.is_directory())
-            {
-                empty = false;
-                break;
-            }
-        }
-
-        if (empty)
+        if (!HasSubDirectories(path))
             flags |= ImGuiTreeNodeFlags_Leaf;
 
         const String stemString = ToString(path.stem());
@@ -82,6 +93,32 @@ namespace LevEngine::Editor
             ImGui::SetNextItemOpen(true);
 
         const bool opened = ImGui::TreeNodeEx(stemString.c_str(), flags);
+
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(EditorGUI::AssetPayload))
+            {
+                const Path assetPath = static_cast<const wchar_t*>(payload->Data);
+
+                AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath), path);
+            }
+            ImGui::EndDragDropTarget();
+        }
+
+        //<--- Context Popup ---<<
+        {
+            GUI::ScopedVariable windowPadding {ImGuiStyleVar_WindowPadding, Vector2{ 10, 5 }};
+            if (ImGui::BeginPopupContextItem())
+            {
+                if (ImGui::MenuItem("Delete"))
+                   m_AssetToDelete = AssetDatabase::GetAsset(path);
+
+                if (ImGui::MenuItem("Reimport"))
+                    AssetDatabase::ImportAsset(path);
+
+                ImGui::EndPopup();
+            }
+        }
 
         if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
         {
@@ -204,7 +241,7 @@ namespace LevEngine::Editor
                 if (ImGui::BeginPopupContextItem())
                 {
                     if (ImGui::MenuItem("Delete"))
-                        AssetDatabase::DeleteAsset(AssetDatabase::GetAsset(path));
+                        AssetDatabase::DeleteAsset(asset);
 
                     if (ImGui::MenuItem("Reimport"))
                         AssetDatabase::ImportAsset(path);
@@ -246,10 +283,10 @@ namespace LevEngine::Editor
             {
                 EditorGUI::DrawTextInputField("##Renaming", stemString, [&asset, this](const String& newValue)
                 {
+                    m_RenamingAsset = nullptr;
                     if (newValue.empty()) return;
 
                     AssetDatabase::RenameAsset(asset, newValue);
-                    m_RenamingAsset = nullptr;
                 });
             }
             else
