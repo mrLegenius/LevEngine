@@ -112,7 +112,7 @@ namespace LevEngine
         m_crowd->update(deltaTime, m_crowdAgentDebugInfo);
     }
 
-    void AIAgentCrowdComponent::UpdateAgentsPosition(float deltaTime)
+    void AIAgentCrowdComponent::UpdateAgentsPosition()
     {
         for(int i = 0; i < agentsEntities.size(); ++i)
         {
@@ -127,7 +127,7 @@ namespace LevEngine
             }
             auto& characterController = agentsEntities[i].GetComponent<CharacterController>();
             const Vector3 currentPosition = {agent->npos[0], agent->npos[1], agent->npos[2]};
-            characterController.MoveTo(currentPosition, deltaTime);
+            characterController.MoveTo(currentPosition);
         }
     }
 

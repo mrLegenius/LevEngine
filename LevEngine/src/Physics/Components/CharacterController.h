@@ -3,6 +3,7 @@
 #include "Scene/Components/TypeParseTraits.h"
 #include "Controller.h"
 #include "ControllerColliderHit.h"
+#include "Kernel/Time/Timestep.h"
 
 namespace LevEngine
 {
@@ -54,8 +55,8 @@ namespace LevEngine
 
         bool IsGrounded() const;
 
-        void Move(Vector3 displacement, float elapsedTime) const;
-        void MoveTo(Vector3 position, float elapsedTime) const;
+        void Move(Vector3 displacement);
+        void MoveTo(Vector3 position);
         
         [[nodiscard]] const Vector<ControllerColliderHit>& GetCollisionHitBuffer() const;
 
@@ -90,6 +91,8 @@ namespace LevEngine
         Vector3 m_TransformScale = Vector3::One;
         
         bool m_IsVisualizationEnabled = false;
+
+        Timestep m_LastMoveTime;
         
         Ref<Controller> m_CharacterController { CreateRef<Controller>() };
 

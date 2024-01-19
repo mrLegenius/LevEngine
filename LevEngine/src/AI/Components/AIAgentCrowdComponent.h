@@ -30,7 +30,7 @@ namespace LevEngine
         bool IsInitialized() const;
         bool IsInitializationFailed() const;
 
-        void UpdateAgentsPosition(float deltaTime);
+        void UpdateAgentsPosition();
         void SetMoveTarget(int agentIndex, Vector3 targetPos);
 
         Vector<Entity> agentsEntities;

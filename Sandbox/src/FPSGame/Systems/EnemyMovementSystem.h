@@ -50,7 +50,7 @@ namespace Sandbox
                     displacement.y += gravity.y * 10.0f * deltaTime;
                 } 
                 
-                controller.Move(displacement, deltaTime);
+                controller.Move(displacement);
             }
         }
     };

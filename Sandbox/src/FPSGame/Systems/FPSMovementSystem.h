@@ -55,7 +55,7 @@ namespace Sandbox
                     movement *= WALK_SPEED;
                 }
                 
-                playerController.Move(movement, deltaTime);
+                playerController.Move(movement);
             }
         }
     };

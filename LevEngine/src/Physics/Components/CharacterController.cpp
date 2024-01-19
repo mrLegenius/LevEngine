@@ -2,6 +2,7 @@
 #include "CharacterController.h"
 
 #include "Kernel/Application.h"
+#include "Kernel/Time/Timestep.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Physics.h"
 #include "Scene/Components/ComponentSerializer.h"
@@ -432,25 +433,32 @@ namespace LevEngine
         m_CharacterController->IsGrounded = flag;
     }
 
-    void CharacterController::Move(const Vector3 displacement, const float elapsedTime) const
+    void CharacterController::Move(const Vector3 displacement)
     {
         if (m_Controller != nullptr)
         {
+            const auto currentTimePoint = steady_clock::now();
+            const auto currentTime =
+                std::chrono::duration_cast<seconds>(currentTimePoint.time_since_epoch()).count();
+            const auto elapsedTime = (currentTime - m_LastMoveTime.GetSeconds()) * 1000.0f;
+            
             m_Controller->move(
                 PhysicsUtils::FromVector3ToPxVec3(displacement),
                 GetMinMoveDistance(),
                 elapsedTime,
                 physx::PxControllerFilters()
             );
+
+            m_LastMoveTime = Timestep(currentTime);
         }
     }
 
-    void CharacterController::MoveTo(const Vector3 position, const float elapsedTime) const
+    void CharacterController::MoveTo(const Vector3 position)
     {
         if (m_Controller != nullptr)
         {
             const Vector3 displacement = position - PhysicsUtils::FromPxExtendedVec3ToVector3(m_Controller->getPosition());
-            Move(displacement, elapsedTime);
+            Move(displacement);
         }
     }
 

@@ -24,7 +24,7 @@ namespace LevEngine
             }
             
             agentCrowdComponent.Update(deltaTime);
-            agentCrowdComponent.UpdateAgentsPosition(deltaTime);
+            agentCrowdComponent.UpdateAgentsPosition();
         }
     }
 }
