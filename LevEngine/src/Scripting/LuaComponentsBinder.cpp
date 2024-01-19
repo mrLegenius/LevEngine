@@ -352,6 +352,7 @@ namespace LevEngine::Scripting
                 rigidbody.Initialize(entity);
             },
             "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
+            "getCollisionExitBuffer", &Rigidbody::GetCollisionExitBuffer,
             "getLayer", [](const Rigidbody& rigidbody)
             {
                 return static_cast<int>(rigidbody.GetLayer());
@@ -372,11 +373,11 @@ namespace LevEngine::Scripting
 
         lua.new_usertype<Collision>(
             "Collision",
-            "contactEntity", &Collision::Entity,
-            "contactPositions", &Collision::Points,
-            "contactNormals", &Collision::Points,
-            "contactImpulses", &Collision::Impulses,
-            "contactSeparations", &Collision::Separations);
+            "entity", &Collision::Entity,
+            "points", &Collision::Points,
+            "normals", &Collision::Normals,
+            "impulses", &Collision::Impulses,
+            "separations", &Collision::Separations);
     }
 
     void LuaComponentsBinder::CreateCharacterControllerLuaBind(sol::state& lua)
@@ -392,6 +393,7 @@ namespace LevEngine::Scripting
                 }),
             "move", &CharacterController::Move,
             "isGrounded", &CharacterController::IsGrounded,
+            "getCollisionHitBuffer", &CharacterController::GetCollisionHitBuffer,
             "getLayer", [](const CharacterController& characterController)
             {
                 return static_cast<int>(characterController.GetLayer());
@@ -401,6 +403,14 @@ namespace LevEngine::Scripting
                 characterController.SetLayer(static_cast<FilterLayer>(Layer));
             }
         );
+
+        lua.new_usertype<ControllerColliderHit>(
+            "ControllerColliderHit",
+            "entity", &ControllerColliderHit::Entity,
+            "point", &ControllerColliderHit::Point,
+            "normal", &ControllerColliderHit::Normal,
+            "moveDirection", &ControllerColliderHit::MoveDirection,
+            "moveLength", &ControllerColliderHit::MoveLength);
     }
 
     void LuaComponentsBinder::CreateAnimatorComponentLuaBind(sol::state& lua)
