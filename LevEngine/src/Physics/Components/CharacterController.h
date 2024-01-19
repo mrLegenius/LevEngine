@@ -50,15 +50,22 @@ namespace LevEngine
         [[nodiscard]] Controller::ClimbingMode GetClimbingMode() const;
         void SetClimbingMode(const Controller::ClimbingMode& climbingMode) const;
 
-        float GetGravityScale() const;
+        [[nodiscard]] Vector3 GetVelocity() const;
+        void SetVelocity(Vector3 velocity) const;
+        
+        [[nodiscard]] float GetGravityScale() const;
         void SetGravityScale(float gravityScale) const;
 
-        bool IsGrounded() const;
+        [[nodiscard]] bool IsGrounded() const;
 
         void Move(Vector3 displacement);
         void MoveTo(Vector3 position);
+
+        void Jump(float jumpHeight, float deltaTime);
         
         [[nodiscard]] const Vector<ControllerColliderHit>& GetCollisionHitBuffer() const;
+
+        Timestep m_LastMoveTime;
 
         friend class CharacterControllerInitSystem;
         friend class PhysicsUpdate;
@@ -91,8 +98,6 @@ namespace LevEngine
         Vector3 m_TransformScale = Vector3::One;
         
         bool m_IsVisualizationEnabled = false;
-
-        Timestep m_LastMoveTime;
         
         Ref<Controller> m_CharacterController { CreateRef<Controller>() };
 

@@ -18,7 +18,7 @@ namespace LevEngine
             PreventClimbingAndForceSliding
         };
 
-        FilterLayer m_Layer = FilterLayer::Layer0;
+        FilterLayer m_Layer = FilterLayer::Layer9;
         
         float SlopeLimit = 45.0f;
         float StepOffset = 0.5f;
@@ -31,7 +31,8 @@ namespace LevEngine
         float Height = 0.5f;
         ClimbingMode m_ClimbingMode = ClimbingMode::Constrained;
 
-        float GravityScale = 1.0f;
+        Vector3 Velocity = Vector3::Zero;
+        float GravityScale = 5.0f;
         bool IsGrounded = false;
 
         Ref<PhysicMaterial> m_PhysicalMaterial { CreateRef<PhysicMaterial>() };

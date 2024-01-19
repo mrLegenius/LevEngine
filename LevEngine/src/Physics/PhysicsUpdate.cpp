@@ -109,7 +109,7 @@ namespace LevEngine
         }
     }
 
-    void PhysicsUpdate::ApplyControllerGravity(entt::registry& registry)
+    void PhysicsUpdate::ApplyControllerGravity(entt::registry& registry, const float deltaTime)
     {
         const auto controllerView = registry.view<Transform, CharacterController>();
         for (const auto entity : controllerView)
@@ -118,9 +118,22 @@ namespace LevEngine
 
             if (controller.GetController() == nullptr) continue;
 
-            const auto gravity = App::Get().GetPhysics().GetGravity().y;
-            const auto displacement = Vector3(0.0f, gravity * controller.GetGravityScale(), 0.0f);
-            controller.Move(displacement);
+            const auto gravity = App::Get().GetPhysics().GetGravity();
+            const auto velocity = controller.GetVelocity();
+            
+            const auto verticalVelocity =
+                velocity.y + gravity.y * controller.GetGravityScale() * deltaTime;
+            
+            controller.SetVelocity(
+                {
+                    velocity.x,
+                    verticalVelocity,
+                    velocity.z
+                }
+            );
+
+            const auto currentVelocity = controller.GetVelocity();
+            controller.Move({currentVelocity.x, currentVelocity.y * deltaTime, currentVelocity.z});
         }
     }
 

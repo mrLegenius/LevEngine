@@ -274,7 +274,7 @@ namespace LevEngine
         if (!StepPhysics(deltaTime)) return;
         m_PhysicsUpdate.UpdateTransforms(registry);
         m_PhysicsUpdate.UpdateControllerGroundFlag(registry);
-        m_PhysicsUpdate.ApplyControllerGravity(registry);
+        m_PhysicsUpdate.ApplyControllerGravity(registry, deltaTime);
         m_PhysicsUpdate.ApplyKinematicTargets(registry);
         m_PhysicsUpdate.UpdateConstantForces(registry);
 
