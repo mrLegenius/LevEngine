@@ -21,7 +21,8 @@ namespace LevEngine
 
         Editor::EditorGUI::DrawTextInputField("Address", m_Asset->GetAddress(), [this](const String& newValue)
         {
-            m_Asset->SetAddress(newValue);
+            ResourceManager::ChangeAddress(m_Asset, newValue);
+            ResourceManager::Build(Project::GetRoot());
         });
 
         ImGui::Separator();

@@ -19,8 +19,9 @@ namespace LevEngine
         m_crowdAgentDebugInfo = new dtCrowdAgentDebugInfo();
     }
 
-    void AIAgentCrowdComponent::Init()
+    void AIAgentCrowdComponent::Init(Entity crowdEntity)
     {
+        m_selfEntity = crowdEntity;
         if(!navMesh)
         {
             Log::CoreError("AI: Cannot initialize crowd without NavMesh");
@@ -38,9 +39,8 @@ namespace LevEngine
         m_navMeshQuery = navMeshComponent.GetNavMeshQuery();
         m_crowd->init(MAX_AGENTS_COUNT, navMeshComponent.AgentRadius, navMeshComponent.GetNavMesh());
         RegisterDefaultObstacleAvoidanceProfiles();
-        for(int i = 0; i < initialAgentsEntities.size(); ++i)
+        for (Entity agentEntity : initialAgentsEntities)
         {
-            const auto& agentEntity = initialAgentsEntities[i];
             AddAgent(agentEntity);
         }
         m_isInitialized = true;
@@ -143,7 +143,7 @@ namespace LevEngine
         return m_isInitializationFailed;
     }
 
-    void AIAgentCrowdComponent::AddAgent(const Entity& agentEntity)
+    void AIAgentCrowdComponent::AddAgent(Entity agentEntity)
     {
         agents.push_back(agentEntity);
 
@@ -154,7 +154,7 @@ namespace LevEngine
             
         m_crowd->addAgent(&pos.x, agentComponent.GetAgentParams());
         
-        agentComponent.Init(this, agents.size() - 1);
+        agentComponent.Init(m_selfEntity, agents.size() - 1);
     }
 
     void AIAgentCrowdComponent::SetMoveTarget(int agentIndex, Vector3 targetPos)

@@ -9,4 +9,3 @@ namespace LevEngine
         void Deserialize(const YAML::Node& node);
     };
 }
-

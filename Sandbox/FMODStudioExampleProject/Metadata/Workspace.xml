@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="Workspace" id="{a3e9418b-3879-4e59-b34a-a9a24938d6f7}">
+		<property name="builtBanksOutputDirectory">
+			<value>D:/projects/ITMO/LevEngine/Sandbox/resources/Audio</value>
+		</property>
+		<relationship name="masterEventFolder">
+			<destination>{1a51c9d8-3ea6-4534-9d6f-0e92dc30a56d}</destination>
+		</relationship>
+		<relationship name="masterTagFolder">
+			<destination>{e90be6ff-ff7d-494d-a3c2-3824d0bf4e88}</destination>
+		</relationship>
+		<relationship name="masterEffectPresetFolder">
+			<destination>{b13f69bb-2f1f-488e-9c6b-e7341221fad6}</destination>
+		</relationship>
+		<relationship name="masterParameterPresetFolder">
+			<destination>{661a445a-e7a7-44a6-be2d-547727acb793}</destination>
+		</relationship>
+		<relationship name="masterBankFolder">
+			<destination>{888cb4c6-79ad-4e0c-b545-835adb775b45}</destination>
+		</relationship>
+		<relationship name="masterSandboxFolder">
+			<destination>{eba9d3f4-7cb4-4206-920c-4ee2696f78b0}</destination>
+		</relationship>
+		<relationship name="masterAssetFolder">
+			<destination>{4ded28f7-06b0-4d88-abff-4255335bba89}</destination>
+		</relationship>
+		<relationship name="mixer">
+			<destination>{eea9a033-8031-42d9-9fd1-0186a8a146c2}</destination>
+		</relationship>
+		<relationship name="profilerSessionFolder">
+			<destination>{e00e4594-0c24-4ce5-bbc7-1addf7907963}</destination>
+		</relationship>
+		<relationship name="platforms">
+			<destination>{b703bbd1-1d94-4b2b-8bb3-46994273f773}</destination>
+		</relationship>
+	</object>
+</objects>

@@ -1,4 +1,6 @@
 #pragma once
+#include "Scene/Components/Transform/Transform.h"
+#include "Components/Player.h"
 
 namespace Sandbox
 {
@@ -16,11 +18,13 @@ namespace Sandbox
             const auto playerEntity = playerPrefab->Instantiate(scene);
             
             auto& playerTransform = playerEntity.GetComponent<Transform>();
-            const auto& startPosition = Vector3(0.0f, 5.0f, 0.0f);
+            const auto& startPosition = Vector3(0.0f, 8.0f, 0.0f);
             playerTransform.SetWorldPosition(startPosition);
 			
-            auto& player = playerEntity.AddComponent<Player>();
-            player.Speed = 1.0f;
+            const auto& player = playerEntity.AddComponent<Player>();
+
+            const auto& playerController = playerEntity.GetComponent<CharacterController>();
+            playerController.SetLayer(FilterLayer::Layer9);
         }
     };
 }

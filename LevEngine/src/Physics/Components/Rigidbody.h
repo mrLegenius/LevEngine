@@ -32,8 +32,11 @@ namespace LevEngine
         // Don't call this method (only for internal use)
         static void OnDestroy(entt::registry& registry, entt::entity entity);
 
-        // Don't call this method (only for internal use)
+        // Call only after Instantiate function to apply initial forces to spawned object
         void Initialize(Entity entity);
+        
+        [[nodiscard]] FilterLayer GetLayer() const;
+        void SetLayer(const FilterLayer& layer) const;
         
         [[nodiscard]] Type GetRigidbodyType() const;
         void SetRigidbodyType(const Type& type);
@@ -78,9 +81,6 @@ namespace LevEngine
         
         [[nodiscard]] bool IsTriggerEnabled() const;
         void EnableTrigger(bool flag);
-
-        //[[nodiscard]] bool IsContactsEnabled() const;
-        //void EnableContacts(bool flag);
         
         [[nodiscard]] Collider::Type GetColliderType() const;
         void SetColliderType(const Collider::Type& type);
@@ -122,7 +122,7 @@ namespace LevEngine
         friend class RigidbodyInitSystem;
         friend class PhysicsUpdate;
         
-        friend class ContactReportCallback;
+        friend class RigidbodyEventCallback;
         
     private:
         [[nodiscard]] physx::PxRigidActor* GetActor() const;

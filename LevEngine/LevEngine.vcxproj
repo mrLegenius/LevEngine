@@ -63,7 +63,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;lua54.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;lua54.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -122,9 +122,13 @@
     <ClInclude Include="src\Physics\Components\CharacterController.h" />
     <ClInclude Include="src\Physics\Components\Collision.h" />
     <ClInclude Include="src\Physics\Components\Controller.h" />
+    <ClInclude Include="src\Physics\Components\ControllerColliderHit.h" />
     <ClInclude Include="src\Physics\Components\Destroyable.h" />
+    <ClInclude Include="src\Physics\Components\FilterLayer.h" />
+    <ClInclude Include="src\Physics\Components\RaycastHit.h" />
     <ClInclude Include="src\Physics\Components\PhysicMaterial.h" />
-    <ClInclude Include="src\Physics\Events\ContactReportCallback.h" />
+    <ClInclude Include="src\Physics\Events\CharacterControllerEventCallback.h" />
+    <ClInclude Include="src\Physics\Events\RigidbodyEventCallback.h" />
     <ClInclude Include="src\Physics\PhysicsUpdate.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
     <ClInclude Include="src\Physics\Systems\CharacterControllerInitSystem.h" />
@@ -1064,7 +1068,8 @@
     <ClCompile Include="src\JobSystem\ParallelJob.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
     <ClCompile Include="src\Physics\Components\CharacterController.cpp" />
-    <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />
+    <ClCompile Include="src\Physics\Events\CharacterControllerEventCallback.cpp" />
+    <ClCompile Include="src\Physics\Events\RigidbodyEventCallback.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
     <ClCompile Include="src\Physics\Systems\CharacterControllerInitSystem.cpp" />
     <ClCompile Include="src\Physics\Systems\RigidbodyInitSystem.cpp" />

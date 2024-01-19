@@ -11,6 +11,18 @@ namespace LevEngine::Editor
         
         void DrawContent(CharacterController& component) override
         {
+            if (ImGui::TreeNode("Layer"))
+            {
+                const Array<String, 10> layerStrings
+                {
+                    "Layer0", "Layer1", "Layer2", "Layer3", "Layer4",
+                    "Layer5", "Layer6", "Layer7", "Layer8", "Layer9"
+                };
+                EditorGUI::DrawComboBox<FilterLayer, 10>("Layer", layerStrings,
+                    BindGetter(&CharacterController::GetLayer, &component), BindSetter(&CharacterController::SetLayer, &component));
+                ImGui::TreePop();
+            }
+            
             EditorGUI::DrawFloatControl("Slope Limit", BindGetter(&CharacterController::GetSlopeLimit, &component), BindSetter(&CharacterController::SetSlopeLimit, &component), 1.0f, 0.0f, 45.0f);
             EditorGUI::DrawFloatControl("Step Offset", BindGetter(&CharacterController::GetStepOffset, &component), BindSetter(&CharacterController::SetStepOffset, &component), 0.1f, 0.0f, FLT_MAX);
             EditorGUI::DrawFloatControl("Skin Width", BindGetter(&CharacterController::GetSkinWidth, &component), BindSetter(&CharacterController::SetSkinWidth, &component), 0.1f, FLT_EPSILON, FLT_MAX);

@@ -22,7 +22,7 @@ namespace LevEngine
         AIAgentCrowdComponent();
         AIAgentCrowdComponent(const AIAgentCrowdComponent&) = default;
 
-        void Init();
+        void Init(Entity crowdEntity);
        
         void Update(float deltaTime);
         bool IsInitialized() const;
@@ -30,7 +30,7 @@ namespace LevEngine
 
         void UpdateAgentsPosition(float deltaTime);
         void SetMoveTarget(int agentIndex, Vector3 targetPos);
-        void AddAgent(const Entity& agentEntity);
+        void AddAgent(Entity agentEntity);
         
         Vector<Entity> initialAgentsEntities;
         
@@ -40,6 +40,8 @@ namespace LevEngine
     private:
 
         Vector<Entity> agents;
+
+        Entity m_selfEntity;
         
         bool m_isInitialized = false;
         bool m_isInitializationFailed = false;

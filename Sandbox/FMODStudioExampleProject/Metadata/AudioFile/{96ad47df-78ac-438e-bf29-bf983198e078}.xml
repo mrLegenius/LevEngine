@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{96ad47df-78ac-438e-bf29-bf983198e078}">
+		<property name="assetPath">
+			<value>Audio/Weapons/Fireball/544153__wihan98__windy-cloth.wav</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>31.650708333333334</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{4ded28f7-06b0-4d88-abff-4255335bba89}</destination>
+		</relationship>
+	</object>
+</objects>

@@ -106,12 +106,13 @@ namespace LevEngine
             App::Get().GetPhysics().CreateCapsuleController(
                 entity,
                 GetRadius(),
-                GetHeight(),
-                GetClimbingMode()
+                GetHeight()
             );
 
         EnableVisualization(IsVisualizationEnabled());
-        
+
+        SetLayer(GetLayer());
+
         SetSlopeLimit(GetSlopeLimit());
         SetStepOffset(GetStepOffset());
         SetSkinWidth(GetSkinWidth());
@@ -131,6 +132,23 @@ namespace LevEngine
     void CharacterController::DetachController() const
     {
         App::Get().GetPhysics().RemoveController(m_Controller);
+    }
+    
+    FilterLayer CharacterController::GetLayer() const
+    {
+        return m_CharacterController->m_Layer;
+    }
+
+    void CharacterController::SetLayer(const FilterLayer& layer) const
+    {
+        m_CharacterController->m_Layer = layer;
+
+        if (m_Controller != nullptr)
+        {
+            physx::PxFilterData filterData;
+            filterData.word0 = (1 << static_cast<physx::PxU32>(layer));
+            GetCollider()->setQueryFilterData(filterData);
+        }
     }
 
     float CharacterController::GetSlopeLimit() const
@@ -392,6 +410,28 @@ namespace LevEngine
         }
     }
 
+    float CharacterController::GetGravityScale() const
+    {
+        return m_CharacterController->GravityScale;
+    }
+
+    void CharacterController::SetGravityScale(const float gravityScale) const
+    {
+        if (gravityScale < 0.0f) return;
+
+        m_CharacterController->GravityScale = gravityScale;
+    }
+
+    bool CharacterController::IsGrounded() const
+    {
+        return m_CharacterController->IsGrounded;
+    }
+
+    void CharacterController::SetGroundFlag(const bool flag) const
+    {
+        m_CharacterController->IsGrounded = flag;
+    }
+
     void CharacterController::Move(const Vector3 displacement, const float elapsedTime) const
     {
         if (m_Controller != nullptr)
@@ -414,14 +454,9 @@ namespace LevEngine
         }
     }
 
-    const Vector<Collision>& CharacterController::GetCollisionEnterBuffer() const
+    const Vector<ControllerColliderHit>& CharacterController::GetCollisionHitBuffer() const
     {
-        return m_CollisionEnterBuffer; 
-    }
-
-    const Vector<Collision>& CharacterController::GetCollisionExitBuffer() const
-    {
-        return m_CollisionExitBuffer;
+        return m_CollisionHitBuffer; 
     }
 
     class CharacterControllerSerializer final : public ComponentSerializer<CharacterController, CharacterControllerSerializer>
@@ -431,6 +466,8 @@ namespace LevEngine
 
         void SerializeData(YAML::Emitter& out, const CharacterController& component) override
         {
+            out << YAML::Key << "Layer" << YAML::Value << static_cast<int>(component.GetLayer());
+
             out << YAML::Key << "Capsule Controller Radius" << YAML::Value << component.GetRadius();
             out << YAML::Key << "Capsule Controller Half Height" << YAML::Value << component.GetHeight();
             out << YAML::Key << "Capsule Controller Climbing Mode" << YAML::Value << static_cast<int>(component.GetClimbingMode());
@@ -452,6 +489,13 @@ namespace LevEngine
 
         void DeserializeData(const YAML::Node& node, CharacterController& component) override
         {
+
+            if (const auto layerNode = node["Layer"])
+            {
+                const auto layer = static_cast<FilterLayer>(layerNode.as<int>());
+                component.SetLayer(layer);
+            }
+            
             if (const auto capsuleControllerRadiusNode = node["Capsule Controller Radius"])
             {
                 component.SetRadius(capsuleControllerRadiusNode.as<float>());

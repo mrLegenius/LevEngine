@@ -1,6 +1,8 @@
 #pragma once
 #pragma once
 #include <DetourCrowd.h>
+
+#include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 class dtNavMeshQuery;
@@ -17,7 +19,7 @@ namespace LevEngine
         AIAgentComponent();
         AIAgentComponent(const AIAgentComponent&) = default;
 
-        void Init(AIAgentCrowdComponent* crowdComponent, int agentIndex);
+        void Init(Entity crowd, int agentIndex);
         
         bool isActive = false; 
         
@@ -33,7 +35,7 @@ namespace LevEngine
         
         int m_agentIndex;
         
-        AIAgentCrowdComponent* m_crowd;
+        Entity m_crowd;
         dtCrowdAgent* m_agent;
         dtCrowdAgentParams* m_agentParams;
     };

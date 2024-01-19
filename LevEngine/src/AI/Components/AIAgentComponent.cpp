@@ -29,9 +29,9 @@ namespace LevEngine
     	m_agent->params = *m_agentParams;
     }
 
-    void AIAgentComponent::Init(AIAgentCrowdComponent* crowdComponent, int agentIndex)
+    void AIAgentComponent::Init(Entity crowd, int agentIndex)
     {
-    	m_crowd = crowdComponent;
+    	m_crowd = crowd;
     	m_agentIndex = agentIndex;
 
     	m_initialized = true;
@@ -51,7 +51,8 @@ namespace LevEngine
     {
     	if(m_initialized)
     	{
-    		m_crowd->SetMoveTarget(m_agentIndex, targetPos);
+    		auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
+    		crowdComponent.SetMoveTarget(m_agentIndex, targetPos);
     	}
     }
 
