@@ -20,14 +20,11 @@ namespace LevEngine
         const auto entity = App::Get().GetPhysics().GetEntityByActor(hit.controller->getActor());
         const auto hitEntity = App::Get().GetPhysics().GetEntityByActor(hit.actor);
         
-        if (entity.HasComponent<CharacterController>())
+        if (entity.HasComponent<CharacterController>() && hitEntity.HasComponent<Rigidbody>())
         {
-            if (hitEntity.HasComponent<Rigidbody>())
-            {
-                hitInfo.Entity = hitEntity;
-                auto& controller = entity.GetComponent<CharacterController>();
-                controller.m_CollisionHitBuffer.push_back(hitInfo);
-            }
+            hitInfo.Entity = hitEntity;
+            auto& controller = entity.GetComponent<CharacterController>();
+            controller.m_CollisionHitBuffer.push_back(hitInfo);
         }
     }
 
@@ -42,24 +39,15 @@ namespace LevEngine
         const auto firstHitEntity = App::Get().GetPhysics().GetEntityByActor(hit.controller->getActor());
         const auto secondHitEntity = App::Get().GetPhysics().GetEntityByActor(hit.other->getActor());
         
-        if (firstHitEntity.HasComponent<CharacterController>())
+        if (firstHitEntity.HasComponent<CharacterController>() && secondHitEntity.HasComponent<CharacterController>())
         {
-            if (secondHitEntity.HasComponent<CharacterController>())
-            {
-                hitInfo.Entity = secondHitEntity;
-                auto& controller = firstHitEntity.GetComponent<CharacterController>();
-                controller.m_CollisionHitBuffer.push_back(hitInfo);
-            }
-        }
-        
-        if (secondHitEntity.HasComponent<CharacterController>())
-        {
-            if (firstHitEntity.HasComponent<CharacterController>())
-            {
-                hitInfo.Entity = firstHitEntity;
-                auto& controller = secondHitEntity.GetComponent<CharacterController>();
-                controller.m_CollisionHitBuffer.push_back(hitInfo);
-            }
+            hitInfo.Entity = secondHitEntity;
+            auto& firstController = firstHitEntity.GetComponent<CharacterController>();
+            firstController.m_CollisionHitBuffer.push_back(hitInfo);
+
+            hitInfo.Entity = firstHitEntity;
+            auto& secondController = secondHitEntity.GetComponent<CharacterController>();
+            secondController.m_CollisionHitBuffer.push_back(hitInfo);
         }
     }
 
