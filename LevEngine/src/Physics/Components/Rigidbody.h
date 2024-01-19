@@ -122,7 +122,7 @@ namespace LevEngine
         friend class RigidbodyInitSystem;
         friend class PhysicsUpdate;
         
-        friend class ContactReportCallback;
+        friend class RigidbodyEventCallback;
         
     private:
         [[nodiscard]] physx::PxRigidActor* GetActor() const;

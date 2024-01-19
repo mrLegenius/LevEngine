@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "Collision.h"
 #include "characterkinematic/PxController.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "Controller.h"
+#include "ControllerColliderHit.h"
 
 namespace LevEngine
 {
@@ -57,13 +57,12 @@ namespace LevEngine
         void Move(Vector3 displacement, float elapsedTime) const;
         void MoveTo(Vector3 position, float elapsedTime) const;
         
-        [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
-        [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
+        [[nodiscard]] const Vector<ControllerColliderHit>& GetCollisionHitBuffer() const;
 
         friend class CharacterControllerInitSystem;
         friend class PhysicsUpdate;
 
-        friend class ContactReportCallback;
+        friend class CharacterControllerEventCallback;
 
     private:
         [[nodiscard]] physx::PxController* GetController() const;
@@ -94,7 +93,6 @@ namespace LevEngine
         
         Ref<Controller> m_CharacterController { CreateRef<Controller>() };
 
-        Vector<Collision> m_CollisionEnterBuffer;
-        Vector<Collision> m_CollisionExitBuffer;
+        Vector<ControllerColliderHit> m_CollisionHitBuffer;
     };
 }

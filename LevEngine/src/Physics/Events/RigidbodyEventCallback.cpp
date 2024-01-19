@@ -1,5 +1,5 @@
 ﻿#include "levpch.h"
-#include "ContactReportCallback.h"
+#include "RigidbodyEventCallback.h"
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
 #include "Physics/Components/Rigidbody.h"
@@ -8,7 +8,7 @@
 
 namespace LevEngine
 {
-    physx::PxFilterFlags ContactReportCallback::ContactReportFilterShader(
+    physx::PxFilterFlags RigidbodyEventCallback::ContactReportFilterShader(
         physx::PxFilterObjectAttributes attributes0, physx::PxFilterData,
         physx::PxFilterObjectAttributes attributes1, physx::PxFilterData,
         physx::PxPairFlags& pairFlags, const void*, physx::PxU32)
@@ -27,12 +27,12 @@ namespace LevEngine
         return physx::PxFilterFlag::eDEFAULT;
     }
     
-    void ContactReportCallback::onConstraintBreak(physx::PxConstraintInfo*, physx::PxU32) {}
-    void ContactReportCallback::onWake(physx::PxActor**, physx::PxU32) {}
-    void ContactReportCallback::onSleep(physx::PxActor**, physx::PxU32) {}
-    void ContactReportCallback::onAdvance(const physx::PxRigidBody*const*, const physx::PxTransform*, const physx::PxU32) {}
+    void RigidbodyEventCallback::onConstraintBreak(physx::PxConstraintInfo*, physx::PxU32) {}
+    void RigidbodyEventCallback::onWake(physx::PxActor**, physx::PxU32) {}
+    void RigidbodyEventCallback::onSleep(physx::PxActor**, physx::PxU32) {}
+    void RigidbodyEventCallback::onAdvance(const physx::PxRigidBody*const*, const physx::PxTransform*, const physx::PxU32) {}
     
-    void ContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 nbPairs)
+    void RigidbodyEventCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 nbPairs)
     {
         for (auto i = 0; i < nbPairs; i++)
         {
@@ -60,7 +60,7 @@ namespace LevEngine
         }
     }
     
-    void ContactReportCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) 
+    void RigidbodyEventCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) 
     {
         Vector<physx::PxContactPairPoint> contactPoints;
         
@@ -79,10 +79,10 @@ namespace LevEngine
 
                 for (auto j = 0; j < contactCount; j++)
                 {
-                    collisionInfo.ContactPositions.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].position));
-                    collisionInfo.ContactNormals.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].normal));
-                    collisionInfo.ContactImpulses.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].impulse));
-                    collisionInfo.ContactSeparations.push_back(contactPoints[j].separation);
+                    collisionInfo.Points.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].position));
+                    collisionInfo.Normals.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].normal));
+                    collisionInfo.Impulses.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].impulse));
+                    collisionInfo.Separations.push_back(contactPoints[j].separation);
                 }
             }
 
@@ -91,63 +91,57 @@ namespace LevEngine
             
             if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
             {
-                if (firstEntity.HasComponent<Rigidbody>())
+                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<Rigidbody>())
                 {
                     auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
-                    collisionInfo.ContactEntity = secondEntity;
+                    collisionInfo.Entity = secondEntity;
+                    firstRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
+
+                    auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
+                    collisionInfo.Entity = firstEntity;
+                    secondRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
+                }
+
+                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<CharacterController>())
+                {
+                    auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
+                    collisionInfo.Entity = secondEntity;
                     firstRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
                 }
                 
-                if (secondEntity.HasComponent<Rigidbody>())
+                if (secondEntity.HasComponent<Rigidbody>() && firstEntity.HasComponent<CharacterController>())
                 {
                     auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
-                    collisionInfo.ContactEntity = firstEntity;
+                    collisionInfo.Entity = firstEntity;
                     secondRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
-                }
-                
-                if (firstEntity.HasComponent<CharacterController>())
-                {
-                    auto& firstController = firstEntity.GetComponent<CharacterController>();
-                    collisionInfo.ContactEntity = secondEntity;
-                    firstController.m_CollisionEnterBuffer.push_back(collisionInfo);
-                }
-                
-                if (secondEntity.HasComponent<CharacterController>())
-                {
-                    auto& secondController = secondEntity.GetComponent<CharacterController>();
-                    collisionInfo.ContactEntity = firstEntity;
-                    secondController.m_CollisionEnterBuffer.push_back(collisionInfo);
                 }
             }
             
             if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
             {
-                if (firstEntity.HasComponent<Rigidbody>())
+                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<Rigidbody>())
                 {
                     auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
-                    collisionInfo.ContactEntity = secondEntity;
+                    collisionInfo.Entity = secondEntity;
                     firstRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
-                }
-                
-                if (secondEntity.HasComponent<Rigidbody>())
-                {
+
                     auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
-                    collisionInfo.ContactEntity = firstEntity;
+                    collisionInfo.Entity = firstEntity;
                     secondRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
                 }
 
-                if (firstEntity.HasComponent<CharacterController>())
+                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<CharacterController>())
                 {
-                    auto& firstRigidbody = firstEntity.GetComponent<CharacterController>();
-                    collisionInfo.ContactEntity = secondEntity;
+                    auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
+                    collisionInfo.Entity = secondEntity;
                     firstRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
                 }
-                
-                if (secondEntity.HasComponent<CharacterController>())
+
+                if (secondEntity.HasComponent<Rigidbody>() && firstEntity.HasComponent<CharacterController>())
                 {
-                    auto& secondController = secondEntity.GetComponent<CharacterController>();
-                    collisionInfo.ContactEntity = firstEntity;
-                    secondController.m_CollisionExitBuffer.push_back(collisionInfo);
+                    auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
+                    collisionInfo.Entity = firstEntity;
+                    secondRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
                 }
             }
         }

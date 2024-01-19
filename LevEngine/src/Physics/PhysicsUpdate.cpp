@@ -20,6 +20,7 @@ namespace LevEngine
             
             rigidbody.m_TriggerEnterBuffer.clear();
             rigidbody.m_TriggerExitBuffer.clear();
+            
             rigidbody.m_CollisionEnterBuffer.clear();
             rigidbody.m_CollisionExitBuffer.clear();
         }
@@ -31,8 +32,7 @@ namespace LevEngine
 
             if (controller.GetController() == nullptr) continue;
             
-            controller.m_CollisionEnterBuffer.clear();
-            controller.m_CollisionExitBuffer.clear();
+            controller.m_CollisionHitBuffer.clear();
         }
     }
     
@@ -117,13 +117,10 @@ namespace LevEngine
             auto [transform, controller] = controllerView.get<Transform, CharacterController>(entity);
 
             if (controller.GetController() == nullptr) continue;
-            
-            if (!controller.IsGrounded())
-            {
-                const auto gravity = App::Get().GetPhysics().GetGravity().y;
-                const auto displacement = Vector3(0.0f, gravity * controller.GetGravityScale() * deltaTime, 0.0f);
-                controller.Move(displacement, deltaTime);
-            }
+
+            const auto gravity = App::Get().GetPhysics().GetGravity().y;
+            const auto displacement = Vector3(0.0f, gravity * controller.GetGravityScale() * deltaTime, 0.0f);
+            controller.Move(displacement, deltaTime);
         }
     }
 

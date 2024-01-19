@@ -22,9 +22,9 @@ namespace Sandbox
                 
                 for (const auto& collisionInfo : rigidbody.GetCollisionEnterBuffer())
                 {
-                    if (collisionInfo.ContactEntity.HasComponent<Enemy>())
+                    if (collisionInfo.Entity.HasComponent<Enemy>())
                     {
-                        scene->DestroyEntity(collisionInfo.ContactEntity);
+                        scene->DestroyEntity(collisionInfo.Entity);
                         scene->DestroyEntity(causer);
                     }
                 }
