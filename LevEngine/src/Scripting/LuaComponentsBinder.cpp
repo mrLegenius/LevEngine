@@ -393,6 +393,8 @@ namespace LevEngine::Scripting
                 }),
             "move", &CharacterController::Move,
             "jump", &CharacterController::Jump,
+            "getGravityScale", &CharacterController::GetGravityScale,
+            "setGravityScale", &CharacterController::SetGravityScale,
             "isGrounded", &CharacterController::IsGrounded,
             "getCollisionHitBuffer", &CharacterController::GetCollisionHitBuffer,
             "getLayer", [](const CharacterController& characterController)

@@ -41,22 +41,23 @@ namespace Sandbox
                 }
                 movementDirection.Normalize();
 
-                auto movement = movementDirection * player.MovementScale;
+                auto velocity = Vector3::Zero;
                 if (Input::IsKeyDown(KeyCode::LeftShift))
                 {
-                    movement *= player.SprintSpeed;
+                    velocity = movementDirection * player.SprintSpeed;
                 }
                 else
                 {
-                    movement *= player.WalkSpeed;
+                    velocity = movementDirection * player.WalkSpeed;
                 }
 
                 if (Input::IsKeyDown(KeyCode::Space))
                 {
                     playerController.Jump(player.JumpHeight, deltaTime);
                 }
-                
-                playerController.Move(movement);
+
+                const auto displacement = velocity * deltaTime;
+                playerController.Move(displacement);
             }
         }
     };

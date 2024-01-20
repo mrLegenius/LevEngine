@@ -26,7 +26,6 @@ namespace Sandbox
                 enemyTransform.SetWorldPosition(randomPosition);
 
                 auto& enemy = enemyEntity.AddComponent<Enemy>();
-                enemy.Speed = 1.0f;
 
                 Audio::PlayOneShot("event:/EnemySpawn", enemyEntity);
             }

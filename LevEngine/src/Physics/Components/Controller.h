@@ -31,8 +31,10 @@ namespace LevEngine
         float Height = 0.5f;
         ClimbingMode m_ClimbingMode = ClimbingMode::Constrained;
 
-        Vector3 Velocity = Vector3::Zero;
+        float VerticalVelocity = 0.0f;
+        
         float GravityScale = 5.0f;
+        
         bool IsGrounded = false;
 
         Ref<PhysicMaterial> m_PhysicalMaterial { CreateRef<PhysicMaterial>() };

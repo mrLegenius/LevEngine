@@ -411,16 +411,6 @@ namespace LevEngine
         }
     }
 
-    Vector3 CharacterController::GetVelocity() const
-    {
-        return m_CharacterController->Velocity;
-    }
-    
-    void CharacterController::SetVelocity(Vector3 velocity) const
-    {
-        m_CharacterController->Velocity = velocity;
-    }
-
     float CharacterController::GetGravityScale() const
     {
         return m_CharacterController->GravityScale;
@@ -441,6 +431,16 @@ namespace LevEngine
     void CharacterController::SetGroundFlag(const bool flag) const
     {
         m_CharacterController->IsGrounded = flag;
+    }
+
+    float CharacterController::GetVerticalVelocity() const
+    {
+        return m_CharacterController->VerticalVelocity;
+    }
+
+    void CharacterController::SetVerticalVelocity(const float verticalVelocity) const
+    {
+        m_CharacterController->VerticalVelocity = verticalVelocity;
     }
 
     void CharacterController::Move(const Vector3 displacement)
@@ -474,24 +474,19 @@ namespace LevEngine
 
     void CharacterController::Jump(const float jumpHeight, const float deltaTime)
     {
-        if (IsGrounded())
+        if (m_Controller != nullptr)
         {
-            const auto gravity = App::Get().GetPhysics().GetGravity();
-            const auto velocity = GetVelocity();
+            if (IsGrounded())
+            {
+                const auto gravity = App::Get().GetPhysics().GetGravity();
             
-            const auto verticalVelocity =
-                std::sqrtf(jumpHeight * -2.0f * gravity.y * GetGravityScale());
-            
-            SetVelocity(
-                {
-                    velocity.x,
-                    verticalVelocity,
-                    velocity.z
-                }
-            );
+                const auto verticalVelocity =
+                    std::sqrtf(jumpHeight * -2.0f * gravity.y * GetGravityScale());
+                SetVerticalVelocity(verticalVelocity);
 
-            const auto currentVelocity = GetVelocity();
-            Move({currentVelocity.x, currentVelocity.y * deltaTime, currentVelocity.z});
+                const auto jumpDisplacement = verticalVelocity * deltaTime;
+                Move({0.0f, jumpDisplacement, 0.0f});
+            }
         }
     }
 

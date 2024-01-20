@@ -49,18 +49,14 @@ namespace LevEngine
         void SetNonWalkableMode(const Controller::NonWalkableMode& nonWalkableMode) const;
         [[nodiscard]] Controller::ClimbingMode GetClimbingMode() const;
         void SetClimbingMode(const Controller::ClimbingMode& climbingMode) const;
-
-        [[nodiscard]] Vector3 GetVelocity() const;
-        void SetVelocity(Vector3 velocity) const;
         
         [[nodiscard]] float GetGravityScale() const;
         void SetGravityScale(float gravityScale) const;
 
-        [[nodiscard]] bool IsGrounded() const;
-
         void Move(Vector3 displacement);
         void MoveTo(Vector3 position);
 
+        [[nodiscard]] bool IsGrounded() const;
         void Jump(float jumpHeight, float deltaTime);
         
         [[nodiscard]] const Vector<ControllerColliderHit>& GetCollisionHitBuffer() const;
@@ -91,6 +87,9 @@ namespace LevEngine
         void DetachController() const;
 
         void SetGroundFlag(bool flag) const;
+
+        [[nodiscard]] float GetVerticalVelocity() const;
+        void SetVerticalVelocity(float verticalVelocity) const;
 
         physx::PxController* m_Controller = nullptr;
         
