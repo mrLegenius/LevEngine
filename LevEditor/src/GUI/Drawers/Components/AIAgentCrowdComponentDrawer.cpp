@@ -15,7 +15,7 @@ namespace LevEngine::Editor
 
         void DrawContent(AIAgentCrowdComponent& component) override
         {
-            EditorGUI::DrawSelectableComponentList<AIAgentComponent>("Agents", component.agentsEntities, m_agentCurrentIdx);
+            EditorGUI::DrawSelectableComponentList<AIAgentComponent>("Agents", component.initialAgentsEntities, m_agentCurrentIdx);
             EditorGUI::DrawSelectableComponent<NavMeshComponent>("Nav mesh", component.navMesh, m_navMeshWasSelected,
                 m_navMeshIsSelected, m_navMeshSelectableIdx);
             EditorGUI::DrawSelectableComponent<Transform>("Target", component.target, m_targetWasSelected,

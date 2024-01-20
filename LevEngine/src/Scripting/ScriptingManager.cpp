@@ -6,6 +6,8 @@
 #include "MetaUtilities.h"
 #include "ScriptingSystemComponents.h"
 #include "ScriptingSystems.h"
+#include "AI/Components/AIAgentComponent.h"
+#include "AI/Components/AIAgentCrowdComponent.h"
 #include "Assets/ScriptAsset.h"
 #include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
@@ -46,6 +48,8 @@ namespace LevEngine::Scripting
         RegisterComponent(Rigidbody)
         RegisterComponent(CharacterController);
         RegisterComponent(AnimatorComponent)
+        RegisterComponent(AIAgentComponent);
+        RegisterComponent(AIAgentCrowdComponent)
     }
 
     ScriptingManager::ScriptingManager()
