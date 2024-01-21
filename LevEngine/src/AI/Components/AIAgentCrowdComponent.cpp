@@ -41,7 +41,10 @@ namespace LevEngine
         RegisterDefaultObstacleAvoidanceProfiles();
         for (Entity agentEntity : initialAgentsEntities)
         {
-            AddAgent(agentEntity);
+            if(agentEntity)
+            {
+                AddAgent(agentEntity);
+            }
         }
         m_isInitialized = true;
     }
