@@ -148,7 +148,16 @@ namespace LevEngine
 
     void AIAgentCrowdComponent::AddAgent(Entity agentEntity)
     {
-        agents.push_back(agentEntity);
+        if(m_agentIndexesPool.empty())
+        {
+            agents.push_back(agentEntity); 
+        }
+        else
+        {
+            const int availableIndex = m_agentIndexesPool.top();
+            m_agentIndexesPool.pop();
+            agents.at(availableIndex) = agentEntity;
+        }
 
         const auto& agentTransform = agentEntity.GetComponent<Transform>();
         auto& agentComponent = agentEntity.GetComponent<AIAgentComponent>();
@@ -157,7 +166,23 @@ namespace LevEngine
             
         m_crowd->addAgent(&pos.x, agentComponent.GetAgentParams());
         
-        agentComponent.Init(m_selfEntity, agents.size() - 1);
+        agentComponent.Init(m_selfEntity, agentEntity, agents.size() - 1);
+    }
+
+    void AIAgentCrowdComponent::RemoveAgent(Entity agentEntity)
+    {
+        const auto it = eastl::find(agents.begin(), agents.end(), agentEntity);
+
+        if(it == agents.end())
+        {
+            return;
+        }
+        
+        const int index = eastl::distance(agents.begin(), it);
+        
+        agents.erase(it);
+        m_crowd->removeAgent(index);
+        m_agentIndexesPool.push(index);
     }
 
     void AIAgentCrowdComponent::SetMoveTarget(int agentIndex, Vector3 targetPos)
