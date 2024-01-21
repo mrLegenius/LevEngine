@@ -6,6 +6,7 @@
 #include "Renderer3D.h"
 #include "RenderParams.h"
 #include "3D/Mesh.h"
+#include "Assets/EngineAssets.h"
 #include "Assets/MaterialAsset.h"
 #include "Assets/MeshAsset.h"
 #include "Camera/SceneCamera.h"
@@ -28,11 +29,10 @@ namespace LevEngine
 
     void OpaquePass::Process(entt::registry& registry, RenderParams& params)
     {
-        const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
-
         Material* previousMaterial{nullptr};
 
         // Process static meshes
+        auto shader = ShaderAssets::GBufferPass();
         const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
         for (const auto entity : staticMeshGroup)
         {
@@ -67,6 +67,7 @@ namespace LevEngine
 		}
 
         // Process animated meshes
+        shader = ShaderAssets::GBufferAnimatedPass();
         const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
         for (const auto entity : animatedMeshGroup)
         {

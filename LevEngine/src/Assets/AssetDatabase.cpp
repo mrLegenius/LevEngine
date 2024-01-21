@@ -26,24 +26,45 @@ namespace LevEngine
 		return AssetsRoot;
 	}
 
+	Path AssetDatabase::GetLibraryPath()
+	{
+		if (Project::GetProject())
+			return Project::GetRoot() / LibraryRoot;
+
+		return LibraryRoot;
+	}
+
 	Path AssetDatabase::GetRelativePath(const Path& path)
 	{
 		return relative(GetAssetsPath(), path);
 	}
 
-	void AssetDatabase::ImportAsset(const Path& path)
+	Path AssetDatabase::GetLibraryPath(const Path& path)
+	{
+		const auto pathString = path.string();
+		const size_t assetsRootIdx = pathString.rfind(AssetsRoot.string());
+		return Path(pathString.substr(0, assetsRootIdx)
+			+ LibraryRoot.string()
+			+ pathString.substr(assetsRootIdx
+			+ AssetsRoot.string().length())
+			+ ".meta");
+	}
+
+	void AssetDatabase::ImportAsset(const Path& path, bool needToGenerateLibrary)
 	{
 		if (path.extension() == ".meta") return;
 
 		auto uuid = UUID();
-		auto pathString = path.string();
+		const auto pathString = path.string();
+		
+		auto metaPathString = pathString;
 		String address;
-		pathString.append(".meta");
+		metaPathString.append(".meta");
 
 		bool needToGenerateMeta = false;
-		if (std::filesystem::exists(pathString))
+		if (std::filesystem::exists(metaPathString))
 		{
-			YAML::Node data = YAML::LoadFile(pathString);
+			YAML::Node data = YAML::LoadFile(metaPathString);
 			if (const auto uuidData = data["UUID"])
 			{
 				uuid = uuidData.as<uint64_t>();
@@ -63,6 +84,12 @@ namespace LevEngine
 			needToGenerateMeta = true;
 		}
 
+		const auto libraryPath = GetLibraryPath(pathString);
+		if (!std::filesystem::exists(libraryPath))
+		{
+			needToGenerateLibrary = true;
+		}
+
 		Ref<Asset> asset = CreateAsset(path, uuid);
 		if (CastRef<ScriptAsset>(asset))
 		{
@@ -71,6 +98,11 @@ namespace LevEngine
 
 		if (needToGenerateMeta)
 			asset->SerializeMeta();
+
+		if (needToGenerateLibrary)
+		{
+			asset->SerializeLibrary();
+		}
 
 		if (!address.empty())
 			asset->SetAddress(address);
@@ -397,7 +429,7 @@ namespace LevEngine
 		{
 			if (is_directory(i->path())) continue;
 
-			ImportAsset(*i);
+			ImportAsset(*i, true);
 		}
 	}
 

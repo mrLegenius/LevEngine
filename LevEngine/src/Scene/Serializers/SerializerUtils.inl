@@ -1,5 +1,18 @@
 namespace LevEngine
 {
+    template<typename T, size_t N>
+    YAML::Emitter& operator<<(YAML::Emitter& out, const Array<T, N>& array)
+    {
+        out << YAML::Flow;
+        out << YAML::BeginSeq;
+        for (const auto arrayElement : array)
+        {
+            out << arrayElement;
+        }
+        out << YAML::EndSeq;
+        return out;
+    }
+    
     template <typename T>
     bool TryParse(const YAML::Node& node, T& value)
     {
@@ -11,6 +24,17 @@ namespace LevEngine
         }
 
         return false;
+    }
+
+    template <typename T>
+    void SerializeList(YAML::Emitter& out, const char* listName, Vector<T> list)
+    {
+        out << YAML::Key << listName << YAML::Value << YAML::BeginSeq;
+        for (const T listElement : list)
+        {
+            out << YAML::Value << listElement;
+        }
+        out << YAML::EndSeq;
     }
 
     template <class T>

@@ -1,7 +1,7 @@
 #include "levpch.h"
 #include "AnimationAsset.h"
 
-#include "MeshAsset.h"
+#include "SkeletonAsset.h"
 #include "Renderer/3D/MeshLoading/AnimationLoader.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
@@ -9,16 +9,21 @@ namespace LevEngine
 {
 	AnimationAsset::AnimationAsset(const Path& path, const UUID uuid) : Asset(path, uuid), m_AnimationIdx(-1) {}
 
-	void AnimationAsset::Init(const Ref<Animation>& animation, int animationIdx, const Ref<MeshAsset>& ownerMesh)
+	void AnimationAsset::Init(const Ref<Animation>& animation, int animationIdx, const Ref<SkeletonAsset>& skeletonAsset)
 	{
 		SetAnimation(animation);
 		SetAnimationIdx(animationIdx);
-		SetOwnerMesh(ownerMesh);
+		SetSkeletonAsset(skeletonAsset);
 	}
 
 	double AnimationAsset::GetDuration() const
 	{
 		return m_Animation->GetDuration();
+	}
+
+	const Ref<Skeleton>& AnimationAsset::GetSkeleton() const
+	{
+		return m_SkeletonAsset->GetSkeleton();
 	}
 
 	void AnimationAsset::SetAnimation(const Ref<Animation>& animation)
@@ -31,20 +36,15 @@ namespace LevEngine
 		m_AnimationIdx = animationIdx;
 	}
 
-	const Ref<MeshAsset>& AnimationAsset::GetOwnerMesh() const
+	void AnimationAsset::SetSkeletonAsset(const Ref<SkeletonAsset>& skeletonAsset)
 	{
-		return m_OwnerMesh;
-	}
-
-	void AnimationAsset::SetOwnerMesh(const Ref<MeshAsset>& ownerMesh)
-	{
-		m_OwnerMesh = ownerMesh;
+		m_SkeletonAsset = skeletonAsset;
 	}
 
 	void AnimationAsset::SerializeData(YAML::Emitter& out)
 	{
 		out << YAML::Key << c_AnimationIndexKey << YAML::Value << m_AnimationIdx;
-		SerializeAsset(out, c_OwnerMeshKey, m_OwnerMesh);
+		SerializeAsset(out, c_SkeletonAssetKey, m_SkeletonAsset);
 	}
 	void AnimationAsset::DeserializeData(const YAML::Node& node)
 	{
@@ -58,26 +58,9 @@ namespace LevEngine
 				m_Path.string(), m_AnimationIdx);
 		}
 
-		m_OwnerMesh = DeserializeAsset<MeshAsset>(node[c_OwnerMeshKey]);
-		if (m_OwnerMesh == nullptr)
+		if (const auto skeletonAssetNode = node[c_SkeletonAssetKey])
 		{
-			Log::CoreWarning("Failed to deserialize owner mesh of animation in {0}",
-				m_Path.string());
-		}
-
-		if (m_AnimationIdx == -1 || m_OwnerMesh == nullptr)
-		{
-			return;
-		}
-
-		try
-		{
-			SetAnimation(AnimationLoader::LoadAnimation(m_OwnerMesh->GetPath(), m_OwnerMesh->GetMesh(), m_AnimationIdx));
-		}
-		catch (std::exception& e)
-		{
-			Log::CoreWarning("Failed to load animation in {0} with animation index: {1}. Error: {2}",
-				m_Path.string(), m_AnimationIdx, e.what());
+			SetSkeletonAsset(DeserializeAsset<SkeletonAsset>(skeletonAssetNode));	
 		}
 	}
 }

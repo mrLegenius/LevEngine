@@ -9,6 +9,7 @@
 #include "assimp/postprocess.h"
 #include "Kernel/Asserts.h"
 #include "Renderer/3D/Skeleton.h"
+#include "Renderer/3D/SkeletonNodeData.h"
 
 namespace LevEngine
 {
@@ -53,7 +54,7 @@ namespace LevEngine
 			resultAnimation->m_TicksPerSecond = animation->mTicksPerSecond != 0.0 ? animation->mTicksPerSecond : 25.0;
 			resultAnimation->m_Name = animation->mName.C_Str();
 			
-			SkeletonNodeData* rootNode = nullptr;
+			SkeletonNodeData* rootNode = new SkeletonNodeData();
 			
 			ReadHeirarchyData(resultAnimation, rootNode, scene->mRootNode);
 			ReadKeyframes(resultAnimation, animation, resultSkeleton);

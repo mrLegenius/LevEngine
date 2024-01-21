@@ -7,11 +7,14 @@ namespace LevEngine
 	{
 	public:
 		inline static const Path AssetsRoot = "resources";
+		inline static const Path LibraryRoot = "library";
 		
 		static Path GetAssetsPath();
+		static Path GetLibraryPath();
+		static Path GetLibraryPath(const Path& path);
 		static Path GetRelativePath(const Path& path);
 
-		static void ImportAsset(const Path& path);
+		static void ImportAsset(const Path& path, bool needToGenerateLibrary = false);
 		static void ProcessAllAssets();
 
 		static bool IsAssetTexture(const Path& path);

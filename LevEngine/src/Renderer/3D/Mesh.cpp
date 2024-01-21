@@ -4,6 +4,7 @@
 #include "Renderer/IndexBuffer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexBuffer.h"
+#include "cereal/archives/binary.hpp"
 
 namespace LevEngine
 {
@@ -66,12 +67,6 @@ void Mesh::Init()
 		AddVertexBuffer(BufferBinding("BINORMAL", 0), biTangentsBuffer);
 	}
 
-	if (colors.size())
-	{
-		const auto buffer = VertexBuffer::Create(colors[0].Raw(), static_cast<uint32_t>(colors.size()), sizeof Color);
-		AddVertexBuffer(BufferBinding("COLOR", 0), buffer);
-	}
-
 	if (uvs.size())
 	{
 		const auto buffer = VertexBuffer::Create(&uvs[0].x, static_cast<uint32_t>(uvs.size()), sizeof Vector2);
@@ -113,9 +108,24 @@ bool Mesh::IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) c
 	return m_BoundingVolume.IsOnFrustum(frustum, meshTransform);
 }
 
-Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& Mesh::GetBoneWeights()
+const Vector<Array<int, AnimationConstants::MaxBoneInfluence>>& Mesh::GetBoneIds()
+{
+	return m_BoneIds;
+}
+
+void Mesh::AddBoneIDs(const Array<int, AnimationConstants::MaxBoneInfluence>& boneIDs)
+{
+	m_BoneIds.emplace_back(boneIDs);
+}
+
+const Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& Mesh::GetBoneWeights()
 {
 	return m_Weights;
+}
+
+void Mesh::AddBoneWeights(const Array<float, AnimationConstants::MaxBoneInfluence>& boneWeights)
+{
+	m_Weights.emplace_back(boneWeights);
 }
 
 void Mesh::AddBoneWeight(int vertexIdx, int boneID, float weight)
@@ -179,5 +189,22 @@ void Mesh::NormalizeBoneWeights()
 			m_Weights[vertexIdx][0] = 1.0f;
 		}
 	}
+}
+
+void Mesh::Serialize(const Path& path) const
+{
+	std::ofstream os(path, std::ios::binary);
+	cereal::BinaryOutputArchive archive( os );
+
+	save(archive);
+}
+
+void Mesh::Deserialize(const Path& path)
+{
+	std::ifstream os(path, std::ios::binary);
+	cereal::BinaryInputArchive archive( os );
+
+	load(archive);
+	Init();
 }
 }

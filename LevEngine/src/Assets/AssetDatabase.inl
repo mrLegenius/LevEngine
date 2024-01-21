@@ -11,7 +11,7 @@ namespace LevEngine
         if (exists(path))
         {
             Log::CoreError("Asset already exists in {}", path);
-            return nullptr;
+            return GetAsset<T>(path);
         }
 			
         const auto uuid = UUID();

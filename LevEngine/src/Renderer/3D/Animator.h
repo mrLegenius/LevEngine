@@ -36,6 +36,7 @@ namespace LevEngine
         Array<Matrix, AnimationConstants::MaxBoneCount> m_FinalBoneMatrices;
         Ref<AnimationAsset> m_CurrentAnimationAsset;
         Ref<Animation> m_CurrentAnimation;
+        Ref<Skeleton> m_CurrentSkeleton;
         double m_CurrentTime{};
         float m_DeltaTime{};
         bool m_IsPlaying{};

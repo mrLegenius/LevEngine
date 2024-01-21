@@ -150,7 +150,7 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 		if (meshRenderer.castShadow)
 		{
 			Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(),  meshRenderer,
-				ShaderAssets::CascadeShadowPass());	
+				ShaderAssets::CascadeShadowPassAnimated());	
 		}
 	}
 }

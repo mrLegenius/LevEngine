@@ -3,6 +3,9 @@
 #include "Animation.h"
 #include "AnimationConstants.h"
 #include "Renderer/DebugRender/DebugRender.h"
+#include "Skeleton.h"
+#include "SkeletonNodeData.h"
+#include "BoneInfo.h"
 #include <chrono>
 
 namespace LevEngine
@@ -34,20 +37,17 @@ namespace LevEngine
 			m_CurrentTime += static_cast<float>(m_CurrentAnimation->GetTicksPerSecond()) * deltaTime;
 			m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
 
-			SkeletonNodeData* node = m_CurrentAnimation->GetRootNode();
-
-			int nodeCount = 0;
-			int boneCount = 0;
+			SkeletonNodeData* node = m_CurrentSkeleton->GetRootNode();
+			
 			UpdateBoneModelToLocalTransforms(node);
 
 			auto t1 = high_resolution_clock::now();
 			Matrix parentModelToLocalTransform = Matrix::Identity;
-			CalculateFinalBoneTransforms(node, nodeCount, boneCount, parentModelToLocalTransform);
+			CalculateFinalBoneTransforms(node, parentModelToLocalTransform);
 			auto t2 = high_resolution_clock::now();
 			duration<double, std::milli> ms_double = t2 - t1;
 
 			Log::CoreWarning("CalculateFinalBoneTransforms time: {0} ms", ms_double.count());
-			Log::CoreError("Node count: {0}, bone count: {1}", nodeCount, boneCount);
 		}
 	}
 
@@ -60,6 +60,7 @@ namespace LevEngine
 	{
 		m_CurrentAnimationAsset = animationAsset;
 		m_CurrentAnimation = animationAsset->GetAnimation();
+		m_CurrentSkeleton = animationAsset->GetSkeleton();
 	}
 
 	void Animator::PlayAnimation()
@@ -88,7 +89,7 @@ namespace LevEngine
 	{
 		if (m_CurrentAnimation == nullptr) return;
 
-		const SkeletonNodeData* node = m_CurrentAnimation->GetRootNode();
+		const SkeletonNodeData* node = m_CurrentSkeleton->GetRootNode();
 
 		Matrix parentModelToLocalTransform = Matrix::Identity;
 		DrawDebugPose(node, rootTransform, rootTransform.GetWorldPosition(), parentModelToLocalTransform);
@@ -108,7 +109,7 @@ namespace LevEngine
 			parentModelToLocalTransform = node->boneBindPoseTransform * parentModelToLocalTransform;
 		}
 		
-		auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
+		auto boneInfoMap = m_CurrentSkeleton->GetBoneInfoMap();
 		const auto boneInfoIt = boneInfoMap.find(nodeName);
 		Vector3 nextBonePos;
 		
@@ -135,7 +136,7 @@ namespace LevEngine
 	{
 		if (m_CurrentAnimation == nullptr) return;
 		
-		DrawDebugSkeleton(m_CurrentAnimation->GetRootNode(), rootTransform, rootTransform.GetWorldPosition());
+		DrawDebugSkeleton(m_CurrentSkeleton->GetRootNode(), rootTransform, rootTransform.GetWorldPosition());
 	}
 
 	void Animator::DrawDebugSkeleton(const SkeletonNodeData* node, const Transform& rootTransform, Vector3 prevPosition)
@@ -149,7 +150,7 @@ namespace LevEngine
 			parent = parent->parent;
 		}
 
-		auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
+		auto boneInfoMap = m_CurrentSkeleton->GetBoneInfoMap();
 		const auto boneInfoIt = boneInfoMap.find(nodeName);
 		
 		Vector3 nextBonePos;
@@ -206,7 +207,7 @@ namespace LevEngine
 			parentModelToLocalTransform = node->boneBindPoseTransform * parentModelToLocalTransform;
 		}
 
-		auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
+		auto boneInfoMap = m_CurrentSkeleton->GetBoneInfoMap();
 		const auto boneInfoIt = boneInfoMap.find(nodeName);
 		if (boneInfoIt != boneInfoMap.end())
 		{

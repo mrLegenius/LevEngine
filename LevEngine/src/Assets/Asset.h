@@ -25,6 +25,7 @@ namespace LevEngine
         void Serialize();
         bool Deserialize(bool force = false);
         void SerializeMeta();
+        void SerializeLibrary();
 
         void Rename(const Path& path);
 
@@ -34,16 +35,23 @@ namespace LevEngine
         [[nodiscard]] virtual bool WriteDataToFile() const { return true; }
         [[nodiscard]] virtual bool ReadDataFromFile() const { return true; }
 
+        [[nodiscard]] virtual bool WriteLibraryToFile() const { return false; }
+        [[nodiscard]] virtual bool ReadLibraryFromFile() const { return false; }
+
         virtual void SerializeData(YAML::Emitter& out) = 0;
         virtual void DeserializeData(const YAML::Node& node) = 0;
 
         virtual void SerializeMeta(YAML::Emitter& out) { }
         virtual void DeserializeMeta(const YAML::Node& node) { }
 
+        virtual void SerializeToBinaryLibrary() { }
+        virtual void DeserializeFromBinaryLibrary() { }
+
         String m_Name;
         String m_FullName;
         String m_Extension;
         Path m_MetaPath;
+        Path m_LibraryPath;
         Path m_Path;
         UUID m_UUID;
         String m_Address;
@@ -56,5 +64,6 @@ namespace LevEngine
         void SerializeData();
         bool DeserializeData();
         bool DeserializeMeta();
+        bool DeserializeLibrary();
     };
 }

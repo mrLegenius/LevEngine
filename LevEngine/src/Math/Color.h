@@ -1,4 +1,5 @@
 #pragma once
+#include "cereal/access.hpp"
 
 namespace LevEngine
 {
@@ -59,5 +60,13 @@ struct Color
     static const Color Navy;
     static const Color Pink;
     static const Color Purple;
+
+private:
+	friend class cereal::access;
+	template<class Archive>
+	void serialize(Archive& archive)
+	{
+		archive(r, g, b, a);
+	}
 };
 }

@@ -1,9 +1,12 @@
 ﻿#pragma once
 
+#include "DataTypes/String.h"
+#include "DataTypes/UnorderedMap.h"
+#include "BoneInfo.h"
+
 namespace LevEngine
 {
     struct SkeletonNodeData;
-    struct BoneInfo;
 
     class Skeleton
     {

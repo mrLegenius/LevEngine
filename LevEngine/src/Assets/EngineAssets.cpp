@@ -70,9 +70,24 @@ namespace LevEngine
         return shader;
     }
 
+    Ref<Shader> ShaderAssets::CascadeShadowPassAnimated()
+    {
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("CascadeShadowPassAnimated.hlsl"),
+                                                   ShaderType::Vertex | ShaderType::Geometry);
+
+        return shader;
+    }
+
     Ref<Shader> ShaderAssets::GBufferPass()
     {
         static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaquePBR.hlsl"));
+
+        return shader;
+    }
+
+    Ref<Shader> ShaderAssets::GBufferAnimatedPass()
+    {
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaqueAnimatedPBR.hlsl"));
 
         return shader;
     }

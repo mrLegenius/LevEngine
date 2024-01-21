@@ -31,16 +31,6 @@ namespace LevEngine
         return m_Duration;
     }
 
-    SkeletonNodeData* Animation::GetRootNode()
-    {
-        return m_RootNode;
-    }
-
-    const UnorderedMap<String, BoneInfo>& Animation::GetBoneIDMap() const
-    {
-        return m_BoneInfoMap;
-    }
-
     const String& Animation::GetName() const
     {
         return m_Name;

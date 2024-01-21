@@ -34,6 +34,7 @@ public:
 			//| aiProcess_FlipWindingOrder
 			//| aiProcess_ImproveCacheLocality // It may help with rendering large models
 			| aiProcess_FixInfacingNormals //May help to fix inwards normals
+			| aiProcess_GenBoundingBoxes
 		);
 
 		Ref<Mesh> resultMesh = CreateRef<Mesh>();
@@ -46,11 +47,11 @@ public:
 
 		auto& rootNode = scene->mRootNode;
 
-		if (rootNode->mNumMeshes == 0)
-		{
-			Log::CoreWarning("There is no mesh in file {0}. Returning empty mesh", path.string());
-			return resultMesh;
-		}
+		// if (rootNode->mNumMeshes == 0)
+		// {
+		// 	Log::CoreWarning("There is no mesh in file {0}. Returning empty mesh", path.string());
+		// 	return resultMesh;
+		// }
 
 		ParseMesh(rootNode, scene, resultMesh, resultSkeleton, Matrix::Identity);
 

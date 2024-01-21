@@ -1,5 +1,6 @@
 ﻿#include "levpch.h"
 #include "Skeleton.h"
+#include "SkeletonNodeData.h"
 
 namespace LevEngine
 {

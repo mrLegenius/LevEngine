@@ -10,27 +10,18 @@ namespace LevEngine
     class SkeletonAsset final : public Asset
     {
     public:
-        explicit SkeletonAsset(const Path& path, const UUID uuid) : Asset(path, uuid)
-        {
-            m_AnimationIdx = -1;
-        }
+        explicit SkeletonAsset(const Path& path, const UUID uuid);
 
         [[nodiscard]] const Ref<Skeleton>& GetSkeleton() const;
-        
-        [[nodiscard]] const Ref<MeshAsset>& GetOwnerMesh() const;
-        void SetOwnerMesh(const Ref<MeshAsset>& ownerMesh);
+        void Init(const Ref<Skeleton>& skeleton);
 
     protected:
         void SerializeData(YAML::Emitter& out) override;
-
-        void DeserializeData(YAML::Node& node) override;
+        void DeserializeData(const YAML::Node& node) override;
 
     private:
-        const char* c_AnimationIndexKey = "AnimationIndexInModelFile";
         const char* c_OwnerMeshKey = "OwnerMesh";
 		
         Ref<Skeleton> m_Skeleton;
-        int m_AnimationIdx;
-        Ref<MeshAsset> m_OwnerMesh;
     };
 }

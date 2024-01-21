@@ -114,7 +114,7 @@ namespace LevEngine::Editor
                    m_AssetToDelete = AssetDatabase::GetAsset(path);
 
                 if (ImGui::MenuItem("Reimport"))
-                    AssetDatabase::ImportAsset(path);
+                    AssetDatabase::ImportAsset(path, true);
 
                 ImGui::EndPopup();
             }
@@ -244,7 +244,7 @@ namespace LevEngine::Editor
                         AssetDatabase::DeleteAsset(asset);
 
                     if (ImGui::MenuItem("Reimport"))
-                        AssetDatabase::ImportAsset(path);
+                        AssetDatabase::ImportAsset(path, true);
 
                     if (ImGui::MenuItem("Rename"))
                         m_RenamingAsset = asset;

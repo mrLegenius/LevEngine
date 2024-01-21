@@ -50,6 +50,9 @@ namespace LevEngine
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Color& c);
 	YAML::Emitter& operator<<(YAML::Emitter& out, const eastl::string& s);
 
+	template<typename T, size_t N>
+	YAML::Emitter& operator<<(YAML::Emitter& out, const Array<T, N>& array);
+
 	void SerializeAsset(YAML::Emitter& out, const String& nodeName, const Ref<Asset>& asset);
 
 	template<class T>
@@ -64,6 +67,9 @@ namespace LevEngine
 	
 	template <typename T>
 	bool TryParse(const YAML::Node& node, T& value);
+
+	template <typename T>
+	void SerializeList(YAML::Emitter& out, const char* listName, Vector<T> list);
 }
 
 #include "SerializerUtils.inl"
