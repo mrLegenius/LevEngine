@@ -3,7 +3,6 @@
 #include "FPSGame/Components/Player.h"
 #include "FPSGame/Components/Enemy.h"
 #include "Physics/Components/CharacterController.h"
-#include "Physics/Physics.h"
 
 namespace Sandbox
 {
@@ -29,28 +28,16 @@ namespace Sandbox
                 auto [transform, enemy, controller] = enemyView.get<Transform, Enemy, CharacterController>(entity);
 
                 auto enemyPosition = transform.GetWorldPosition();
+                auto movementDirection = playerPosition - enemyPosition;
+                movementDirection.y = 0.0f;
+                movementDirection.Normalize();
 
-                const auto gravity = App::Get().GetPhysics().GetGravity();
+                transform.SetWorldRotation(
+                    Quaternion::LookRotation(movementDirection, Vector3::Up)
+                );
 
-                auto direction = playerPosition - enemyPosition;
-                direction.y = 0.0f;
-                direction.Normalize();
-
-                transform.SetWorldRotation(Quaternion::LookRotation(direction, Vector3::Up));
-
-                auto displacement = direction * enemy.Speed * 0.1f;
-
-                // apply gravity
-                if (displacement.y <= 0.0f)
-                {
-                    displacement.y = gravity.y * deltaTime;
-                }
-                else
-                {
-                    displacement.y += gravity.y * 10.0f * deltaTime;
-                } 
-                
-                controller.Move(displacement, deltaTime);
+                const auto displacement = movementDirection * enemy.Speed * deltaTime;
+                controller.Move(displacement);
             }
         }
     };

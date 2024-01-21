@@ -2,6 +2,7 @@
 #include "CharacterController.h"
 
 #include "Kernel/Application.h"
+#include "Kernel/Time/Timestep.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Physics.h"
 #include "Scene/Components/ComponentSerializer.h"
@@ -432,26 +433,58 @@ namespace LevEngine
         m_CharacterController->IsGrounded = flag;
     }
 
-    void CharacterController::Move(const Vector3 displacement, const float elapsedTime) const
+    float CharacterController::GetVerticalVelocity() const
     {
-        if (m_Controller != nullptr)
-        {
-            m_Controller->move(
-                PhysicsUtils::FromVector3ToPxVec3(displacement),
-                GetMinMoveDistance(),
-                elapsedTime,
-                physx::PxControllerFilters()
-            );
-        }
+        return m_CharacterController->VerticalVelocity;
     }
 
-    void CharacterController::MoveTo(const Vector3 position, const float elapsedTime) const
+    void CharacterController::SetVerticalVelocity(const float verticalVelocity) const
     {
-        if (m_Controller != nullptr)
-        {
-            const Vector3 displacement = position - PhysicsUtils::FromPxExtendedVec3ToVector3(m_Controller->getPosition());
-            Move(displacement, elapsedTime);
-        }
+        m_CharacterController->VerticalVelocity = verticalVelocity;
+    }
+
+    void CharacterController::Move(const Vector3 displacement)
+    {
+        if (m_Controller == nullptr) return;
+
+        const auto currentTimePoint = steady_clock::now();
+        const auto currentTime =
+            std::chrono::duration_cast<microseconds>(currentTimePoint.time_since_epoch()).count() / 1000000.0f;
+        const auto elapsedTime = currentTime - m_LastMoveTime.GetSeconds();
+        
+        m_Controller->move(
+            PhysicsUtils::FromVector3ToPxVec3(displacement),
+            GetMinMoveDistance(),
+            elapsedTime,
+            physx::PxControllerFilters()
+        );
+        
+        m_LastMoveTime = Timestep(currentTime);
+    }
+
+    void CharacterController::MoveTo(const Vector3 position)
+    {
+        if (m_Controller == nullptr) return;
+
+        const Vector3 displacement =
+            position - PhysicsUtils::FromPxExtendedVec3ToVector3(m_Controller->getPosition());
+        Move(displacement);
+    }
+
+    void CharacterController::Jump(const float jumpHeight, const float deltaTime)
+    {
+        if (m_Controller == nullptr) return;
+
+        if (!IsGrounded()) return;
+
+        const auto gravity = App::Get().GetPhysics().GetGravity();
+    
+        const auto verticalVelocity =
+            std::sqrtf(jumpHeight * -2.0f * gravity.y * GetGravityScale());
+        SetVerticalVelocity(verticalVelocity);
+
+        const auto jumpDisplacement = verticalVelocity * deltaTime;
+        Move({0.0f, jumpDisplacement, 0.0f});
     }
 
     const Vector<ControllerColliderHit>& CharacterController::GetCollisionHitBuffer() const

@@ -118,9 +118,14 @@ namespace LevEngine
 
             if (controller.GetController() == nullptr) continue;
 
-            const auto gravity = App::Get().GetPhysics().GetGravity().y;
-            const auto displacement = Vector3(0.0f, gravity * controller.GetGravityScale() * deltaTime, 0.0f);
-            controller.Move(displacement, deltaTime);
+            const auto gravity = App::Get().GetPhysics().GetGravity();
+            
+            const auto verticalVelocity =
+                controller.GetVerticalVelocity() + gravity.y * controller.GetGravityScale() * deltaTime;
+            controller.SetVerticalVelocity(verticalVelocity);
+
+            const auto gravityDisplacement = verticalVelocity * deltaTime;
+            controller.Move({0.0f, gravityDisplacement, 0.0f});
         }
     }
 

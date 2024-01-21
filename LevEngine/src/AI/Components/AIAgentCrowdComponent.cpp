@@ -109,7 +109,7 @@ namespace LevEngine
         m_crowd->update(deltaTime, m_crowdAgentDebugInfo);
     }
 
-    void AIAgentCrowdComponent::UpdateAgentsPosition(float deltaTime)
+    void AIAgentCrowdComponent::UpdateAgentsPosition()
     {
         for(int i = 0; i < agents.size(); ++i)
         {
@@ -132,7 +132,7 @@ namespace LevEngine
             characterTransform.SetWorldRotation(Quaternion::LookRotation(velocity, Vector3::Up));
             
             const Vector3 currentPosition = {agent->npos[0], agent->npos[1], agent->npos[2]};
-            characterController.MoveTo(currentPosition, deltaTime);
+            characterController.MoveTo(currentPosition);
         }
     }
 

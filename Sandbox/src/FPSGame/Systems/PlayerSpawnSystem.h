@@ -18,13 +18,10 @@ namespace Sandbox
             const auto playerEntity = playerPrefab->Instantiate(scene);
             
             auto& playerTransform = playerEntity.GetComponent<Transform>();
-            const auto& startPosition = Vector3(0.0f, 8.0f, 0.0f);
+            const auto& startPosition = Vector3(0.0f, 10.0f, 0.0f);
             playerTransform.SetWorldPosition(startPosition);
 			
             const auto& player = playerEntity.AddComponent<Player>();
-
-            const auto& playerController = playerEntity.GetComponent<CharacterController>();
-            playerController.SetLayer(FilterLayer::Layer9);
         }
     };
 }

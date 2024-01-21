@@ -3,6 +3,7 @@
 #include "Scene/Components/TypeParseTraits.h"
 #include "Controller.h"
 #include "ControllerColliderHit.h"
+#include "Kernel/Time/Timestep.h"
 
 namespace LevEngine
 {
@@ -48,16 +49,19 @@ namespace LevEngine
         void SetNonWalkableMode(const Controller::NonWalkableMode& nonWalkableMode) const;
         [[nodiscard]] Controller::ClimbingMode GetClimbingMode() const;
         void SetClimbingMode(const Controller::ClimbingMode& climbingMode) const;
-
-        float GetGravityScale() const;
+        
+        [[nodiscard]] float GetGravityScale() const;
         void SetGravityScale(float gravityScale) const;
 
-        bool IsGrounded() const;
+        void Move(Vector3 displacement);
+        void MoveTo(Vector3 position);
 
-        void Move(Vector3 displacement, float elapsedTime) const;
-        void MoveTo(Vector3 position, float elapsedTime) const;
+        [[nodiscard]] bool IsGrounded() const;
+        void Jump(float jumpHeight, float deltaTime);
         
         [[nodiscard]] const Vector<ControllerColliderHit>& GetCollisionHitBuffer() const;
+
+        Timestep m_LastMoveTime;
 
         friend class CharacterControllerInitSystem;
         friend class PhysicsUpdate;
@@ -83,6 +87,9 @@ namespace LevEngine
         void DetachController() const;
 
         void SetGroundFlag(bool flag) const;
+
+        [[nodiscard]] float GetVerticalVelocity() const;
+        void SetVerticalVelocity(float verticalVelocity) const;
 
         physx::PxController* m_Controller = nullptr;
         

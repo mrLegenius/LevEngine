@@ -4,6 +4,8 @@ namespace Sandbox
 {
     struct Player
     {
-        Vector3 Velocity = Vector3::Zero;
+        float WalkSpeed = 10.0f;
+        float SprintSpeed = 20.0f;
+        float JumpHeight = 3.0f;
     };
 }

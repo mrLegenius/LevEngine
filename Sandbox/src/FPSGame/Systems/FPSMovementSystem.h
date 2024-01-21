@@ -5,10 +5,6 @@
 
 namespace Sandbox
 {
-    constexpr float WALK_SPEED = 1.0f;
-    constexpr float SPRINT_SPEED = 2.0f;
-    constexpr float MOVEMENT_MULTIPLIER = 0.25f;
-    
     class FPSMovementSystem final : public System
     {
         void Update(const float deltaTime, entt::registry& registry) override
@@ -45,17 +41,23 @@ namespace Sandbox
                 }
                 movementDirection.Normalize();
 
-                auto movement = movementDirection * MOVEMENT_MULTIPLIER;
+                auto velocity = Vector3::Zero;
                 if (Input::IsKeyDown(KeyCode::LeftShift))
                 {
-                    movement *= SPRINT_SPEED;
+                    velocity = movementDirection * player.SprintSpeed;
                 }
                 else
                 {
-                    movement *= WALK_SPEED;
+                    velocity = movementDirection * player.WalkSpeed;
                 }
-                
-                playerController.Move(movement, deltaTime);
+
+                if (Input::IsKeyDown(KeyCode::Space))
+                {
+                    playerController.Jump(player.JumpHeight, deltaTime);
+                }
+
+                const auto displacement = velocity * deltaTime;
+                playerController.Move(displacement);
             }
         }
     };
