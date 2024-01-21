@@ -6,6 +6,7 @@
 
 #include "Entity.h"
 #include "SceneManager.h"
+#include "AI/Components/AIAgentComponent.h"
 #include "AI/Components/AIAgentCrowdComponent.h"
 #include "AI/Systems/AIAgentCrowdUpdateSystem.h"
 #include "Assets/ScriptAsset.h"
@@ -85,6 +86,8 @@ namespace LevEngine
         m_Registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
         m_Registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
         m_Registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
+
+        m_Registry.on_destroy<AIAgentComponent>().connect<&AIAgentComponent::OnDestroy>();
         
         m_Registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
         m_Registry.on_destroy<CharacterController>().connect<&CharacterController::OnDestroy>();

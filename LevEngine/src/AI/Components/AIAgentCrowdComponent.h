@@ -2,6 +2,7 @@
 
 #include <DetourCrowd.h>
 
+#include "EASTL/stack.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
@@ -31,6 +32,7 @@ namespace LevEngine
         void UpdateAgentsPosition(float deltaTime);
         void SetMoveTarget(int agentIndex, Vector3 targetPos);
         void AddAgent(Entity agentEntity);
+        void RemoveAgent(Entity agentEntity);
         
         Vector<Entity> initialAgentsEntities;
         
@@ -47,6 +49,7 @@ namespace LevEngine
         bool m_isInitializationFailed = false;
         
 
+        eastl::stack<int> m_agentIndexesPool;
         void RegisterDefaultObstacleAvoidanceProfiles();
         
         dtCrowd* m_crowd;
@@ -57,6 +60,6 @@ namespace LevEngine
 
         dtCrowdAgentDebugInfo* m_crowdAgentDebugInfo;
 
-        int MAX_AGENTS_COUNT = 25;
+        int MAX_AGENTS_COUNT = 100;
     };
 }

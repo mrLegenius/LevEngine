@@ -29,12 +29,25 @@ namespace LevEngine
     	m_agent->params = *m_agentParams;
     }
 
-    void AIAgentComponent::Init(Entity crowd, int agentIndex)
+    void AIAgentComponent::Init(Entity crowd, Entity agent, int agentIndex)
     {
     	m_crowd = crowd;
+    	m_selfEntity = agent;
     	m_agentIndex = agentIndex;
 
     	m_initialized = true;
+    }
+
+	void AIAgentComponent::OnDestroy(entt::registry& registry, entt::entity entity)
+    {
+    	AIAgentComponent& component = registry.get<AIAgentComponent>(entity);
+    	component.OnComponentDestroy();
+    }
+
+	void AIAgentComponent::OnComponentDestroy()
+    {
+    	auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
+    	crowdComponent.RemoveAgent(m_selfEntity);
     }
 
     dtCrowdAgentParams* AIAgentComponent::GetAgentParams() const

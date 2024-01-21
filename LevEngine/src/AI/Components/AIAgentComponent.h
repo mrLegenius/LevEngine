@@ -19,7 +19,11 @@ namespace LevEngine
         AIAgentComponent();
         AIAgentComponent(const AIAgentComponent&) = default;
 
-        void Init(Entity crowd, int agentIndex);
+        void Init(Entity crowd, Entity agent, int agentIndex);
+        bool IsInitialized();
+        static void OnDestroy(entt::registry& registry, entt::entity entity);
+        void OnComponentDestroy();
+        
         
         bool isActive = false; 
         
@@ -36,6 +40,8 @@ namespace LevEngine
         int m_agentIndex;
         
         Entity m_crowd;
+        Entity m_selfEntity;
+        
         dtCrowdAgent* m_agent;
         dtCrowdAgentParams* m_agentParams;
     };
