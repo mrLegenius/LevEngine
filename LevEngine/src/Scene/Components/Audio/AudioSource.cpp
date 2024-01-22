@@ -13,11 +13,10 @@ namespace LevEngine
         Player = CreateRef<AudioPlayer>();
     }
 
-    void AudioSourceComponent::OnConstruct(entt::registry& registry, entt::entity entity)
+    void AudioSourceComponent::OnConstruct(const Entity entity)
     {
-        auto entityWrapped = Entity(entt::handle{ registry, entity });
-        AudioSourceComponent& component = entityWrapped.GetComponent<AudioSourceComponent>();
-        component.Init(entityWrapped);
+        AudioSourceComponent& component = entity.GetComponent<AudioSourceComponent>();
+        component.Init(entity);
     }
 
     void AudioSourceComponent::Init(Entity entity)

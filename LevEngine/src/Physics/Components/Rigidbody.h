@@ -30,7 +30,7 @@ namespace LevEngine
         };
 
         // Don't call this method (only for internal use)
-        static void OnDestroy(entt::registry& registry, entt::entity entity);
+        static void OnDestroy(Entity entity);
 
         // Call only after Instantiate function to apply initial forces to spawned object
         void Initialize(Entity entity);

@@ -21,7 +21,7 @@ namespace LevEngine
 
         void Init(Entity crowd, Entity agent, int agentIndex);
         bool IsInitialized();
-        static void OnDestroy(entt::registry& registry, entt::entity entity);
+        static void OnDestroy(Entity entity);
         void OnComponentDestroy();
         
         
