@@ -866,7 +866,10 @@ namespace LevEngine::Scripting
                 {
                     return AIAgentCrowdComponent{};
                 }),
-            "addAgent", &AIAgentCrowdComponent::AddAgent
+            "addAgent", &AIAgentCrowdComponent::AddAgent,
+            "getRandomPointOnNavMesh", &AIAgentCrowdComponent::GetRandomPointOnNavMesh,
+            "getRandomPointAroundCircle", &AIAgentCrowdComponent::GetRandomPointAroundCircle,
+            "getNearestPoint", &AIAgentCrowdComponent::GetNearestPoint
         );
     }
 
