@@ -2,7 +2,11 @@
 #include "AIAgentComponent.h"
 
 #include "AIAgentCrowdComponent.h"
+#include "Kernel/Application.h"
+#include "Physics/Physics.h"
+#include "Physics/Components/CharacterController.h"
 #include "Scene/Components/ComponentSerializer.h"
+#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
@@ -70,6 +74,73 @@ namespace LevEngine
     		auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
     		crowdComponent.SetMoveTarget(m_agentIndex, targetPos);
     	}
+    }
+
+	float AIAgentComponent::GetRangeOfVision() const
+	{
+	    return m_rangeOfVision;
+    }
+
+	void AIAgentComponent::SetRangeOfVision(float range)
+	{
+    	m_rangeOfVision = range;
+    }
+	
+	float AIAgentComponent::GetAngleOfVision() const
+	{
+	    return m_angleOfVision;
+    }
+
+	void AIAgentComponent::SetAngleOfVision(float angle)
+	{
+    	m_angleOfVision = angle;
+    }
+
+	Entity AIAgentComponent::FindEntityInVisibleScope(int layer) const
+    {
+    	if(!m_initialized)
+    	{
+    		return {};
+    	}
+    	
+    	const auto& agentTransform = m_selfEntity.GetComponent<Transform>();
+    	const auto& characterController = m_selfEntity.GetComponent<CharacterController>();
+    	
+    	const auto& agentPosition = agentTransform.GetWorldPosition();
+    	const auto& centerOffset = characterController.GetCenterOffset();
+    	const auto& capsuleHalfHeight = characterController.GetHeight();
+    	Vector3 eyePoint = agentPosition + centerOffset;
+    	eyePoint.y += capsuleHalfHeight;
+
+    	const auto& forwardDirection = agentTransform.GetForwardDirection();
+    	const auto& sphereCastHitResult = Application::Get().GetPhysics().SphereCast(m_rangeOfVision, eyePoint,
+    		forwardDirection, 0, static_cast<FilterLayer>(layer));
+
+    	if(!sphereCastHitResult.IsSuccessful)
+    	{
+    		return {};
+    	}
+
+    	const auto& rayCastHitResult = Application::Get().GetPhysics().Raycast(eyePoint, forwardDirection,
+    		m_rangeOfVision, static_cast<FilterLayer>(layer));
+
+    	if(!rayCastHitResult.IsSuccessful)
+    	{
+    		return {};
+    	}
+
+	    const Vector3 fromAgentToTarget = rayCastHitResult.Point - agentPosition;
+    	
+    	float dotProduct = forwardDirection.Dot(fromAgentToTarget);
+    	dotProduct /= (forwardDirection.Length() * fromAgentToTarget.Length());
+	    const float angleBetweenVisionVectorAndTarget = acos(dotProduct);
+    	
+    	if(angleBetweenVisionVectorAndTarget > m_angleOfVision)
+    	{
+    		return {};
+    	}
+    	
+	    return rayCastHitResult.Entity;
     }
 	
 	void AIAgentComponent::SetFactAsBool(const String& key, bool value)
@@ -236,6 +307,8 @@ namespace LevEngine
         	out << YAML::Key << "Update flags" << YAML::Value << static_cast<int>(agentParams->updateFlags);
         	out << YAML::Key << "Obstacle avoidance type" << YAML::Value << static_cast<int>(agentParams->obstacleAvoidanceType);
         	out << YAML::Key << "Query filter type" << YAML::Value << static_cast<int>(agentParams->queryFilterType);
+        	out << YAML::Key << "Range of vision" << YAML::Value << component.GetRangeOfVision();
+        	out << YAML::Key << "Angle of vision" << YAML::Value << component.GetAngleOfVision();
         }
         
         void DeserializeData(const YAML::Node& node, AIAgentComponent& component) override
@@ -252,6 +325,8 @@ namespace LevEngine
         	agentParams->updateFlags = node["Update flags"].as<int>();
         	agentParams->obstacleAvoidanceType = node["Obstacle avoidance type"].as<int>();
         	agentParams->queryFilterType = node["Query filter type"].as<int>();
+        	// component.SetRangeOfVision(node["Range of vision"].as<float>());
+        	// component.SetAngleOfVision(node["Angle of vision"].as<float>());
         }
     };
 }

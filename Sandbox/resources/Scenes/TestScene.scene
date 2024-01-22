@@ -449,7 +449,7 @@ Entities:
       Scale: [1, 1, 1]
     NavMeshBoundingBox:
       Position offset: [0, 0, 0]
-      Box half extents: [15, 15, 20]
+      Box half extents: [30, 15, 30]
     NavMesh:
       Build on start: true
       Cell size: 0.300000012
@@ -542,6 +542,8 @@ Entities:
       Update flags: 27
       Obstacle avoidance type: 3
       Query filter type: 0
+      Range of vision: 15
+      Angle of vision: 40
   - Entity: 13129059575428668352
     Tag: Web
     Parent: 13631027794021233931
@@ -565,11 +567,12 @@ Entities:
       Material: 10648776512994663525
       Cast Shadow: false
 Systems:
-  - System: 10507411060376272809
+  - System: 9291551050224673495
   - System: 7522258865418468204
   - System: 4340022513561837824
-  - System: 9291551050224673495
   - System: 12364856122512646631
-  - System: 4286742986091037320
-  - System: 15747099389357838684
   - System: 14623761520668869565
+  - System: 15747099389357838684
+  - System: 4286742986091037320
+  - System: 10507411060376272809
+  - System: 9822250894310505128

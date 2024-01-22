@@ -65,6 +65,20 @@ namespace LevEngine::Editor
 
             const Array<String, 4> obstacleAvoidanceTypes {"Low", "Medium", "High", "Ultra"};
             EditorGUI::DrawComboBox("Obstacle avoidance quality", obstacleAvoidanceTypes, agentParams->obstacleAvoidanceType);
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+            
+            ImGui::Text("Vision parameters");
+
+            float rangeOfVision = component.GetRangeOfVision();
+            ImGui::SliderFloat("Range of vision", &rangeOfVision, 0.1f, 1000.0f, "%.1f");
+            component.SetRangeOfVision(rangeOfVision);
+            
+            float angleOfVision = component.GetAngleOfVision();
+            ImGui::SliderFloat("Angle of vision", &angleOfVision, 0.1f, 1000.0f, "%.1f");
+            component.SetAngleOfVision(angleOfVision);
         }
     };
 }

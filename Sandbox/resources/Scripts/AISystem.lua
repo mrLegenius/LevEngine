@@ -16,34 +16,14 @@ AISystem = {
 					return
 				end
 				local agentTransform = agentEntity:get_component(Transform)
-				local playerView = Registry.get_entities(Transform, ScriptsContainer)
-				playerView:for_each(
-					function(playerEntity)
-						local scriptsContainer = playerEntity:get_component(ScriptsContainer)
-						if scriptsContainer.Player ~= nil then
-
-							local agentPosition = agentTransform:getWorldPosition()
-							local agentRotation = agentTransform:getWorldRotation()
-							local centerOffset = agentCharacterController:getCenterOffset()
-							local capsuleHalfHeight = agentCharacterController:getHeight()
-							local capsuleRadius = agentCharacterController:getRadius()
-							local eyePoint = agentPosition + centerOffset
-							eyePoint.y = eyePoint.y + capsuleHalfHeight/2
-							local forwardDirection = agentTransform:getForwardDirection()
-							local raycastHit = Physics.sphereCast(capsuleRadius, eyePoint, forwardDirection, 1, 2)
-							DebugRender.drawWireSphere(eyePoint, capsuleRadius, Color.Red)
-							local secondPoint = eyePoint + forwardDirection * 1
-							DebugRender.drawWireSphere(secondPoint, capsuleRadius, Color.Red)
-							local playerPosition = playerEntity:get_component(Transform):getWorldPosition()
-							local successful = raycastHit.isSuccessful
-							if successful == true then
-								print("HIT")
-								--agentComponent:setFactAsVector3("PlayerPosition", playerPosition)
-								--agentComponent:setFactAsBool("IsPlayerFound", true)
-							end
-						end
-					end		
-				)
+				local playerEntity = agentComponent:findEntityInVisibleScope(2)
+				local isValid = playerEntity:isValid()
+				if isValid then
+					agentComponent:setFactAsBool("IsPlayerFound", true)
+					local playerTransform = playerEntity:get_component(Transform)
+					local playerPosition = playerTransform:getWorldPosition()
+					agentComponent:setFactAsVector3("PlayerPosition", playerPosition)
+				end
 			end
 		)
 	end,

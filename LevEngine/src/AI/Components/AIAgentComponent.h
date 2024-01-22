@@ -32,6 +32,14 @@ namespace LevEngine
 
         void SetMoveTarget(Vector3 targetPos);
         
+        float GetRangeOfVision() const;
+        void SetRangeOfVision(float range);
+
+        float GetAngleOfVision() const;
+        void SetAngleOfVision(float angle);
+
+        Entity FindEntityInVisibleScope(int layer) const;
+
         void SetFactAsBool(const String&  key, bool value);
         bool HasBoolFact(const String& key);
         bool GetFactAsBool(const String& key);
@@ -55,6 +63,9 @@ namespace LevEngine
     private:
 
         bool m_initialized = false;
+
+        float m_rangeOfVision = 15.0f;
+        float m_angleOfVision = 40.0f;
         
         int m_agentIndex;
         
