@@ -10,7 +10,7 @@ namespace LevEngine
 
 		static Ref<VertexBuffer> Create(uint32_t size, uint32_t stride);
 		static Ref<VertexBuffer> Create(const float* vertices, uint32_t size, uint32_t stride);
-		static Ref<VertexBuffer> Create(const int* vertices, uint32_t size, uint32_t stride);
+		static Ref<VertexBuffer> Create(const size_t* vertices, uint32_t size, uint32_t stride);
 
 		virtual void Bind(uint32_t slot = 0) const = 0;
 		virtual void Unbind() const = 0;

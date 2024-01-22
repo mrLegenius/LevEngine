@@ -4,7 +4,6 @@
 #include "Math/BoundingVolume.h"
 #include "Renderer/BufferBinding.h"
 #include "cereal/access.hpp"
-#include "DataTypes/Set.h"
 
 namespace LevEngine
 {
@@ -70,16 +69,16 @@ namespace LevEngine
 
         [[nodiscard]] bool IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) const;
 
-		[[nodiscard]] const Vector<Array<int, AnimationConstants::MaxBoneInfluence>>& GetBoneIds();
-    	void AddBoneIDs(const Array<int, AnimationConstants::MaxBoneInfluence>& boneIDs);
+		[[nodiscard]] const Vector<Array<size_t, AnimationConstants::MaxBoneInfluence>>& GetBoneIds();
+    	void AddBoneIDs(const Array<size_t, AnimationConstants::MaxBoneInfluence>& boneIDs);
     	
 		[[nodiscard]] const Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& GetBoneWeights();
     	void AddBoneWeights(const Array<float, AnimationConstants::MaxBoneInfluence>& boneWeights);
-		void AddBoneWeight(int vertexIdx, int boneID, float weight);
+		void AddBoneWeight(int vertexIdx, size_t boneID, float weight);
 		void ResizeBoneArrays(size_t size);
 		void NormalizeBoneWeights();
 
-    	void Serialize(const Path& path) const;
+    	void Serialize(const Path& path);
     	void Deserialize(const Path& path);
 
         Ref<IndexBuffer> IndexBuffer;
@@ -87,39 +86,18 @@ namespace LevEngine
     private:
     	friend class cereal::access;
     	template <class Archive>
-		void save(Archive& output) const
+		void serialize(Archive& archive)
     	{
-    		output(vertices);
-    		output(uvs);
-    		output(indices);
-    		output(normals);
-    		output(tangents);
-    		output(biTangents);
-    		output(m_BoneIds);
-    		output(m_Weights);
-    		output(m_BoneWeightCounters);
-    		output(m_BoundingVolume.center);
-    		output(m_BoundingVolume.extents);
-    	}
-      
-    	template <class Archive>
-		void load(Archive& input)
-    	{
-    		input(vertices);
-    		input(uvs);
-    		input(indices);
-    		input(normals);
-    		input(tangents);
-    		input(biTangents);
-    		input(m_BoneIds);
-    		input(m_Weights);
-    		input(m_BoneWeightCounters);
-    		
-    		Vector3 aabbCenter = m_BoundingVolume.center;
-    		Vector3 aabbExtents = m_BoundingVolume.extents;
-    		input(aabbCenter);
-    		input(aabbExtents);
-    		m_BoundingVolume = {aabbCenter, aabbExtents.x, aabbExtents.y, aabbExtents.z};
+    		archive(vertices);
+    		archive(uvs);
+    		archive(indices);
+    		archive(normals);
+    		archive(tangents);
+    		archive(biTangents);
+    		archive(m_BoneIds);
+    		archive(m_Weights);
+    		archive(m_BoneWeightCounters);
+    		archive(m_BoundingVolume);
     	}
     	
         Map<BufferBinding, Ref<VertexBuffer>> m_VertexBuffers;
@@ -132,7 +110,7 @@ namespace LevEngine
         Vector<Vector3> tangents;
         Vector<Vector3> biTangents;
 
-		Vector<Array<int, AnimationConstants::MaxBoneInfluence>> m_BoneIds;
+		Vector<Array<size_t, AnimationConstants::MaxBoneInfluence>> m_BoneIds;
 		Vector<Array<float, AnimationConstants::MaxBoneInfluence>> m_Weights;
 		Vector<int> m_BoneWeightCounters;
 

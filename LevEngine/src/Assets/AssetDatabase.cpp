@@ -47,7 +47,7 @@ namespace LevEngine
 			+ LibraryRoot.string()
 			+ pathString.substr(assetsRootIdx
 			+ AssetsRoot.string().length())
-			+ ".meta");
+			+ ".library");
 	}
 
 	void AssetDatabase::ImportAsset(const Path& path, bool needToGenerateLibrary)

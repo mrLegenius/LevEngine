@@ -68,34 +68,11 @@ namespace LevEngine
 
 	void Asset::SerializeLibrary()
 	{
-		// YAML::Emitter libraryOut;
-		// libraryOut << YAML::BeginMap;
-		//
-		// libraryOut << YAML::Key << "UUID" << YAML::Value << m_UUID;
-		//
-		// SerializeToBinaryLibrary();
-		//
-		// libraryOut << YAML::EndMap;
-		//
-		// if (!WriteLibraryToFile()) return;
-		//
-		// try
-		// {
-		// 	std::filesystem::create_directories(m_LibraryPath.parent_path());
-		// 	std::ofstream fout(m_LibraryPath);
-		// 	fout << libraryOut.c_str();
-		// 	Log::CoreInfo("Serialized library meta of '{0}' asset in '{1}'.", m_Name, m_LibraryPath);
-		// }
-		// catch (std::exception& e)
-		// {
-		// 	Log::CoreWarning("Failed to serialize library meta of '{0}' asset. Error: {1}", m_Name, e.what());
-		// }
-
 		if (!WriteLibraryToFile()) return;
 		
 		std::filesystem::create_directories(m_LibraryPath.parent_path());
 		SerializeToBinaryLibrary();
-		Log::CoreInfo("Serialized library meta of '{0}' asset in '{1}'.", m_Name, m_LibraryPath);
+		Log::CoreInfo("Serialized library file of '{0}' asset in '{1}'.", m_Name, m_LibraryPath);
 	}
 
 	void Asset::Rename(const Path& path)
@@ -178,33 +155,8 @@ namespace LevEngine
 
 	bool Asset::DeserializeLibrary()
 	{
-		// if (!ReadLibraryFromFile())
-		// {
-		// 	const YAML::Node library;
-		// 	DeserializeFromBinaryLibrary(library);
-		// 	return true;
-		// }
-		//
-		// try
-		// {
-		// 	const YAML::Node library = YAML::LoadFile(m_LibraryPath.string());
-		// 	DeserializeFromBinaryLibrary(library);
-		// }
-		// catch (YAML::BadConversion&)
-		// {
-		// 	Log::CoreWarning("Library meta of '{0}' asset is corrupted. Regenerating...", m_Name);
-		// 	SerializeLibrary();
-		//
-		// 	return false;
-		// }
-		// catch (std::exception& e)
-		// {
-		// 	Log::CoreWarning("Failed to deserialize library meta of '{0}' asset. Error: {1}", m_Name, e.what());
-		// 	return false;
-		// }
-		// return true;
-
 		if (!ReadLibraryFromFile()) return true;
 		DeserializeFromBinaryLibrary();
+		return true;
 	}
 }

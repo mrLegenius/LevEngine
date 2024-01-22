@@ -38,7 +38,7 @@ namespace LevEngine
 		}
 	}
 
-	Ref<VertexBuffer> VertexBuffer::Create(const int* vertices, const uint32_t size, const uint32_t stride)
+	Ref<VertexBuffer> VertexBuffer::Create(const size_t* vertices, const uint32_t size, const uint32_t stride)
 	{
 		switch (RenderSettings::RendererAPI)
 		{

@@ -9,8 +9,10 @@ class D3D11VertexBuffer final : public VertexBuffer
 {
 public:
 	D3D11VertexBuffer(uint32_t count, uint32_t stride);
-	D3D11VertexBuffer(const float* data, uint32_t count, uint32_t stride);
-	D3D11VertexBuffer(const int* data, uint32_t count, uint32_t stride);
+	
+	template<typename T>
+	D3D11VertexBuffer(const T* data, uint32_t count, uint32_t stride);
+	
 	~D3D11VertexBuffer() override;
 
 	void Bind(uint32_t slot = 0) const override;
@@ -22,3 +24,5 @@ private:
 	ID3D11Buffer* m_Buffer = nullptr;
 };
 }
+
+#include "D3D11VertexBuffer.inl"

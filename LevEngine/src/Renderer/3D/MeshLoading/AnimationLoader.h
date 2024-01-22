@@ -86,7 +86,7 @@ namespace LevEngine
 			const unsigned int numChannels = aiAnimation->mNumChannels;
 
 			UnorderedMap<String, BoneInfo>& boneInfoMap = resultSkeleton->GetBoneInfoMap();
-			const int boneCount = boneInfoMap.size();
+			const size_t boneCount = boneInfoMap.size();
 
 			for (unsigned int channelIdx = 0; channelIdx < numChannels; channelIdx++)
 			{

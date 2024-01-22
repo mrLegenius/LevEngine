@@ -29,7 +29,7 @@ namespace LevEngine
     {
     public:
         /*reads keyframes from aiNodeAnim*/
-        Bone(const String& name, int ID, const aiNodeAnim* channel);
+        Bone(const String& name, size_t ID, const aiNodeAnim* channel);
 
         /*interpolates  b/w positions,rotations & scaling keys based on the curren time of
         the animation and prepares the local transformation matrix by combining all keys
@@ -38,7 +38,7 @@ namespace LevEngine
 
         [[nodiscard]] const Matrix& GetLocalTransform() const;
         [[nodiscard]] const String& GetBoneName() const;
-        [[nodiscard]] int GetBoneID() const;
+        [[nodiscard]] size_t GetBoneID() const;
 
 
         /* Gets the current index on mKeyPositions to interpolate to based on
@@ -77,7 +77,7 @@ namespace LevEngine
 
         Matrix m_LocalTransform;
         String m_Name;
-        int m_ID;
+        size_t m_ID;
 
         // Used when respective keyframes amount == 1 to accelerate updates
         Matrix m_ConstantTranslation;

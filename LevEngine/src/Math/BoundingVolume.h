@@ -1,6 +1,7 @@
 #pragma once
 #include "Frustum.h"
 #include "Scene/Components/Transform/Transform.h"
+#include "cereal/access.hpp"
 
 namespace LevEngine
 {
@@ -50,6 +51,14 @@ struct SphereBoundingVolume final : BoundingVolume
             && globalSphere.IsOnOrForwardPlane(camFrustum.topFace)
             && globalSphere.IsOnOrForwardPlane(camFrustum.bottomFace);
     };
+
+private:
+	friend class cereal::access;
+	template <class Archive>
+	void serialize(Archive& archive)
+	{
+		archive(center, radius);
+	}
 };
 
 struct AABBBoundingVolume final :  BoundingVolume
@@ -101,6 +110,14 @@ struct AABBBoundingVolume final :  BoundingVolume
 	}
 
 	[[nodiscard]] bool IsOnFrustum(const Frustum& camFrustum, const Transform& transform) const override;
+
+private:
+	friend class cereal::access;
+	template <class Archive>
+	void serialize(Archive& archive)
+	{
+		archive(center, extents);
+	}
 };
 }
 

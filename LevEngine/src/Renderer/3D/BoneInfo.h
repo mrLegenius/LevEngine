@@ -6,7 +6,7 @@ namespace LevEngine
 	struct BoneInfo
 	{
 		/* index in finalBoneMatrices */
-		int id;
+		size_t id;
 
 		/* transforms vertex from model space to bone space */
 		Matrix offset;

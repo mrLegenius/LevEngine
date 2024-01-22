@@ -7,7 +7,7 @@
 namespace LevEngine
 {
     /*reads keyframes from aiNodeAnim*/
-    Bone::Bone(const String& name, int ID, const aiNodeAnim* channel)
+    Bone::Bone(const String& name, size_t ID, const aiNodeAnim* channel)
         :
         m_Name(name),
         m_ID(ID)
@@ -94,7 +94,7 @@ namespace LevEngine
 
     const Matrix& Bone::GetLocalTransform() const { return m_LocalTransform; }
     const String& Bone::GetBoneName() const { return m_Name; }
-    int Bone::GetBoneID() const { return m_ID; }
+    size_t Bone::GetBoneID() const { return m_ID; }
 
 
     /* Gets the current index on mKeyPositions to interpolate to based on

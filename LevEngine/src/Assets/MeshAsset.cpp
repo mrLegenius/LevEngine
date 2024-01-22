@@ -23,27 +23,7 @@ namespace LevEngine
 
     void MeshAsset::DeserializeData(const YAML::Node& node)
     {
-        // if (!exists(m_MetaPath))
-        // {
-        //     ParseMeshFromUniversalFormat();
-        //     return;
-        // }
-        //
-        // auto metaNode = YAML::LoadFile(m_MetaPath.string());
-        //
-        // auto vertexNodes = metaNode[c_VertexListKey];
-        // auto indexNodes = metaNode[c_IndexListKey];
-        // auto uvNodes = metaNode[c_UVListKey];
-        // auto normalNodes = metaNode[c_NormalListKey];
-        // auto tangentNodes = metaNode[c_TangentListKey];
-        // auto biTangentNodes = metaNode[c_BiTangentListKey];
-        // auto boneIDNodes = metaNode[c_BoneIDListKey];
-        // auto boneWeightNodes = metaNode[c_BoneWeightListKey];
-        //
-        // if (!vertexNodes || !indexNodes || !uvNodes || !normalNodes || !tangentNodes || !biTangentNodes)
-        // {
-        //     ParseMeshFromUniversalFormat();
-        // }
+
     }
 
     void MeshAsset::SerializeToBinaryLibrary()
@@ -53,19 +33,6 @@ namespace LevEngine
             ParseMeshFromUniversalFormat();
         }
         
-        // SerializeList<Vector3>(out, c_VertexListKey, m_Mesh->GetVertices());
-        // SerializeList<uint32_t>(out, c_IndexListKey, m_Mesh->GetIndices());
-        // SerializeList<Vector2>(out, c_UVListKey, m_Mesh->GetUVs());
-        // SerializeList<Vector3>(out, c_NormalListKey, m_Mesh->GetNormals());
-        // SerializeList<Vector3>(out, c_TangentListKey, m_Mesh->GetTangents());
-        // SerializeList<Vector3>(out, c_BiTangentListKey, m_Mesh->GetBiTangents());
-        // SerializeList<Array<int, AnimationConstants::MaxBoneInfluence>>(out, c_BoneIDListKey, m_Mesh->GetBoneIds());
-        // SerializeList<Array<float, AnimationConstants::MaxBoneInfluence>>(out, c_BoneWeightListKey, m_Mesh->GetBoneWeights());
-        //
-        // const auto aabb = m_Mesh->GetAABBBoundingVolume();
-        // out << YAML::Key << c_AABBCenterKey << YAML::Value << aabb.center;
-        // out << YAML::Key << c_AABBExtentsKey << YAML::Value << aabb.extents;
-
         m_Mesh->Serialize(m_LibraryPath);
     }
 
@@ -75,79 +42,6 @@ namespace LevEngine
         {
             return;
         }
-        
-        //m_Mesh = CreateRef<Mesh>();
-        //
-        // auto vertexNodes = node[c_VertexListKey];
-        // auto indexNodes = node[c_IndexListKey];
-        // auto uvNodes = node[c_UVListKey];
-        // auto normalNodes = node[c_NormalListKey];
-        // auto tangentNodes = node[c_TangentListKey];
-        // auto biTangentNodes = node[c_BiTangentListKey];
-        // auto boneIDArrayNodes = node[c_BoneIDListKey];
-        // auto boneWeightArrayNodes = node[c_BoneWeightListKey];
-        //
-        // if (!vertexNodes || !indexNodes || !uvNodes || !normalNodes || !tangentNodes || !biTangentNodes)
-        // {
-        //     ParseMeshFromUniversalFormat();
-        //     return;
-        // }
-        //
-        // // Parse mesh from our YAML format
-        // for (auto vertexNode : vertexNodes)
-        // {
-        //     m_Mesh->AddVertex(vertexNode.as<Vector3>());
-        // }
-        //
-        // for (auto indexNode : indexNodes)
-        // {
-        //     m_Mesh->AddIndex(indexNode.as<uint32_t>());
-        // }
-        //
-        // for (auto uvNode : uvNodes)
-        // {
-        //     m_Mesh->AddUV(uvNode.as<Vector2>());
-        // }
-        //
-        // for (auto normalNode : normalNodes)
-        // {
-        //     m_Mesh->AddNormal(normalNode.as<Vector3>());
-        // }
-        //
-        // for (auto tangentNode : tangentNodes)
-        // {
-        //     m_Mesh->AddTangent(tangentNode.as<Vector3>());
-        // }
-        //
-        // for (auto biTangentNode : biTangentNodes)
-        // {
-        //     m_Mesh->AddBiTangent(biTangentNode.as<Vector3>());
-        // }
-        //
-        // m_Mesh->ResizeBoneArrays(m_Mesh->GetVerticesCount());
-        //
-        // int vertexIdx = 0;
-        // for (auto boneIDArrayNode : boneIDArrayNodes)
-        // {
-        //     auto boneWeightArrayNode = boneWeightArrayNodes[vertexIdx];
-        //
-        //     int weightIdx = 0;
-        //     for (auto boneIDNode : boneIDArrayNode)
-        //     {
-        //         auto boneWeightNode = boneWeightArrayNode[weightIdx];
-        //         m_Mesh->AddBoneWeight(vertexIdx, boneIDNode.as<int>(), boneWeightNode.as<float>());
-        //         
-        //         weightIdx++;
-        //     }
-        //
-        //     ++vertexIdx;
-        // }
-        //
-        // Vector3 aabbCenter = node[c_AABBCenterKey].as<Vector3>();
-        // Vector3 aabbExtents = node[c_AABBExtentsKey].as<Vector3>();
-        // m_Mesh->SetAABBBoundingVolume(aabbCenter, aabbExtents.x, aabbExtents.y, aabbExtents.z);
-        //
-        // m_Mesh->Init();
 
         m_Mesh = CreateRef<Mesh>();
         m_Mesh->Deserialize(m_LibraryPath);
@@ -166,10 +60,7 @@ namespace LevEngine
             Log::CoreWarning("Failed to load mesh in {0}. Error: {1}", m_Path.string(), e.what());
         }
 
-        if (resultSkeleton == nullptr)
-        {
-            return;
-        }
+        if (resultSkeleton == nullptr) return;
 
         Vector<Ref<Animation>> animations;
         
@@ -183,6 +74,8 @@ namespace LevEngine
         }
 
         const Ref<SkeletonAsset> skeletonAsset = CreateSkeletonAsset(resultSkeleton);
+        if (skeletonAsset == nullptr) return;
+        
         CreateAnimationAsset(animations, skeletonAsset);
     }
 
@@ -230,5 +123,7 @@ namespace LevEngine
 
             return skeletonAsset;
         }
+
+        return nullptr;
     }
 }

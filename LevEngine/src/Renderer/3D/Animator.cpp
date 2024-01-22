@@ -213,7 +213,7 @@ namespace LevEngine
 		{
 			LEV_PROFILE_SCOPE("Calculate final bone transform");
 			
-			const int index = boneInfoIt->second.id;
+			const size_t index = boneInfoIt->second.id;
 			const Matrix& offset = boneInfoIt->second.offset;
 
 			const Matrix finalBoneTransform = (offset * parentModelToLocalTransform);

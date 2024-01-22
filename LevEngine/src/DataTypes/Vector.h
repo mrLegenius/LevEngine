@@ -15,14 +15,14 @@ void save(Archive& output, Vector<T> const & vector)
 }
 
 template<class Archive, class T>
-void load(Archive& input, Vector<T> & set)
+void load(Archive& input, Vector<T> & vector)
 {
     size_t size;
     input(size);
 
-    set.resize(size);
+    vector.resize(size);
     for (int i = 0; i < size; ++i)
     {
-        input(set[i]);
+        input(vector[i]);
     }
 } 

@@ -74,13 +74,11 @@ public:
 		{
 			const int meshIdx = node->mMeshes[i];
 			const aiMesh* mesh = scene->mMeshes[meshIdx];
-	
-			const size_t nvertices = mesh->mNumVertices;
+
 			const aiVector3D* vertices = mesh->mVertices;
 			const uint32_t firstVertexId = resultMesh->GetVerticesCount(); // offset to first vertex in current aiMesh
-			resultMesh->ResizeBoneArrays(firstVertexId + nvertices);
 
-			for (size_t vertexIdx = 0; vertexIdx < nvertices; vertexIdx++)
+			for (size_t vertexIdx = 0; vertexIdx < mesh->mNumVertices; vertexIdx++)
 			{
 				const aiVector3D vertex = vertices[vertexIdx];
 				
@@ -131,21 +129,26 @@ public:
 	static void ExtractBoneWeightsAndSkeletonBones(const Ref<Mesh>& resultMesh, Ref<Skeleton>& resultSkeleton,
 		const aiMesh* mesh, const uint32_t firstVertexId)
 	{
-		if (mesh->mNumBones > 0 && resultSkeleton == nullptr)
+		if (mesh->mNumBones <= 0) return;
+		
+		if (resultSkeleton == nullptr)
 		{
 			resultSkeleton = CreateRef<Skeleton>();
 		}
-		
+
+		resultMesh->ResizeBoneArrays(firstVertexId + mesh->mNumVertices);
+		const uint32_t currentVerticesCount = resultMesh->GetVerticesCount();
+
 		for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
 		{
-			int boneID;
+			size_t boneID;
 			String boneName = mesh->mBones[boneIndex]->mName.C_Str();
 			UnorderedMap<String, BoneInfo>& boneInfoMap = resultSkeleton->GetBoneInfoMap();
 
 			if (!boneInfoMap.count(boneName))
 			{
 				BoneInfo newBoneInfo;
-				const int boneCount = boneInfoMap.size();
+				const size_t boneCount = boneInfoMap.size();
 
 				newBoneInfo.id = boneCount;
 				newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix, true);
@@ -158,8 +161,6 @@ public:
 				boneID = boneInfoMap[boneName].id;
 			}
 
-			LEV_CORE_ASSERT(boneID != -1)
-
 			const auto weights = mesh->mBones[boneIndex]->mWeights;
 			const unsigned int numWeights = mesh->mBones[boneIndex]->mNumWeights;
 
@@ -167,7 +168,7 @@ public:
 			{
 				const unsigned int vertexId = weights[weightIndex].mVertexId + firstVertexId;
 				const float weight = weights[weightIndex].mWeight;
-				LEV_CORE_ASSERT(vertexId < resultMesh->GetVerticesCount())
+				LEV_CORE_ASSERT(vertexId < currentVerticesCount)
 				resultMesh->AddBoneWeight(vertexId, boneID, weight);
 			}
 		}
