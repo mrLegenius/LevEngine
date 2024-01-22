@@ -46,8 +46,11 @@ namespace LevEngine
 
 	void AIAgentComponent::OnComponentDestroy()
     {
-    	auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
-    	crowdComponent.RemoveAgent(m_selfEntity);
+    	if(m_crowd.HasComponent<AIAgentCrowdComponent>())
+    	{
+    		auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
+    		crowdComponent.RemoveAgent(m_selfEntity);	
+    	}
     }
 
     dtCrowdAgentParams* AIAgentComponent::GetAgentParams() const
@@ -68,8 +71,153 @@ namespace LevEngine
     		crowdComponent.SetMoveTarget(m_agentIndex, targetPos);
     	}
     }
+	
+	void AIAgentComponent::SetFactAsBool(const String& key, bool value)
+    {
+    	m_boolFacts[key] = value;
+    }
 
-    class AIAgentComponentSerializer final : public ComponentSerializer<AIAgentComponent, AIAgentComponentSerializer>
+	bool AIAgentComponent::HasBoolFact(const String& key)
+    {
+    	const auto it = m_boolFacts.find(key);
+
+    	if(it == m_boolFacts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+    }
+
+	bool AIAgentComponent::GetFactAsBool(const String& key)
+    {
+	    const auto it = m_boolFacts.find(key);
+
+    	if(it == m_boolFacts.end())
+    	{
+    		return {};
+    	}
+
+    	return m_boolFacts[key];
+    }
+
+	void AIAgentComponent::SetFactAsInteger(const String& key, int value)
+	{
+    	m_integerFacts[key] = value;
+	}
+
+	bool AIAgentComponent::HasIntegerFact(const String& key)
+	{
+    	const auto it = m_integerFacts.find(key);
+
+    	if(it == m_integerFacts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+	}
+
+	int AIAgentComponent::GetFactAsInteger(const String& key)
+	{
+    	const auto it = m_integerFacts.find(key);
+
+    	if(it == m_integerFacts.end())
+    	{
+    		return {};
+    	}
+
+    	return m_integerFacts[key];
+	}
+
+	void AIAgentComponent::SetFactAsFloat(const String& key, float value)
+	{
+    	m_floatFacts[key] = value;
+	}
+
+	bool AIAgentComponent::HasFloatFact(const String& key)
+	{
+    	const auto it = m_floatFacts.find(key);
+
+    	if(it == m_floatFacts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+	}
+
+	float AIAgentComponent::GetFactAsFloat(const String& key)
+	{
+    	const auto it = m_floatFacts.find(key);
+
+    	if(it == m_floatFacts.end())
+    	{
+    		return {};
+    	}
+
+    	return m_floatFacts[key];
+	}
+
+	void AIAgentComponent::SetFactAsVector3(const String& key, Vector3 value)
+    {
+    	m_vector3Facts[key] = value;
+    }
+
+	bool AIAgentComponent::HasVector3Fact(const String& key)
+	{
+    	const auto it = m_vector3Facts.find(key);
+
+    	if(it == m_vector3Facts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+	}
+
+	Vector3 AIAgentComponent::GetFactAsVector3(const String& key)
+    {
+    	const auto it = m_vector3Facts.find(key);
+
+    	if(it == m_vector3Facts.end())
+    	{
+    		return {};
+    	}
+    	
+    	return m_vector3Facts[key];
+    }
+
+	void AIAgentComponent::SetFactAsString(const String& key, const String& value)
+	{
+    	m_stringFacts[key] = value;
+	}
+
+	bool AIAgentComponent::HasStringFact(const String& key)
+	{
+    	const auto it = m_stringFacts.find(key);
+
+    	if(it == m_stringFacts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+	}
+
+	String AIAgentComponent::GetFactAsString(const String& key)
+	{
+    	const auto it = m_stringFacts.find(key);
+
+    	if(it == m_stringFacts.end())
+    	{
+    		return {};
+    	}
+    	
+    	return m_stringFacts[key];
+	}
+
+	class AIAgentComponentSerializer final : public ComponentSerializer<AIAgentComponent, AIAgentComponentSerializer>
     {
     protected:
         const char* GetKey() override { return "AIAgentComponent"; }

@@ -881,7 +881,72 @@ namespace LevEngine::Scripting
                 {
                     return AIAgentComponent{};
                 }),
-            "setMoveTarget", &AIAgentComponent::SetMoveTarget
+            "setMoveTarget", &AIAgentComponent::SetMoveTarget,
+            //Bool facts
+            "setFactAsBool", [](AIAgentComponent& agentComponent, const std::string& key, bool value)
+            {
+                agentComponent.SetFactAsBool(key.c_str(), value);
+            },
+            "hasBoolFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasBoolFact(key.c_str());
+            },
+            "getFactAsBool", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsBool(key.c_str());
+            },
+            //Integer facts
+            "setFactAsInteger", [](AIAgentComponent& agentComponent, const std::string& key, int value)
+            {
+                agentComponent.SetFactAsInteger(key.c_str(), value);
+            },
+            "hasIntegerFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasIntegerFact(key.c_str());
+            },
+            "getFactAsInteger", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsInteger(key.c_str());
+            },
+            //Float facts
+            "setFactAsFloat", [](AIAgentComponent& agentComponent, const std::string& key, float value)
+            {
+                agentComponent.SetFactAsFloat(key.c_str(), value);
+            },
+            "hasFloatFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasFloatFact(key.c_str());
+            },
+            "getFactAsFloat", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsFloat(key.c_str());
+            },
+            //Vector3 facts
+            "setFactAsVector3", [](AIAgentComponent& agentComponent, const std::string& key, Vector3 value)
+            {
+                agentComponent.SetFactAsVector3(key.c_str(), value);
+            },
+            "hasVector3Fact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasVector3Fact(key.c_str());
+            },
+            "getFactAsVector3", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsVector3(key.c_str());
+            },
+            //String facts
+            "setFactAsString", [](AIAgentComponent& agentComponent, const std::string& key, const std::string& value)
+            {
+                agentComponent.SetFactAsString(key.c_str(), value.c_str());
+            },
+            "hasStringFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasStringFact(key.c_str());
+            },
+            "getFactAsString", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsString(key.c_str()).c_str();
+            }
         );
     }
 }
