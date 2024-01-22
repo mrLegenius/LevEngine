@@ -1,0 +1,60 @@
+Prefab: PlayerController
+RootEntity: 4015220787489955214
+Entities:
+  - Entity: 4015220787489955214
+    Tag: PlayerController
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Character Controller:
+      Layer: 2
+      Capsule Controller Radius: 1
+      Capsule Controller Half Height: 2
+      Capsule Controller Climbing Mode: 1
+      Controller Center: [0, 2, 0]
+      Slope Limit: 45
+      Step Offset: 1
+      Contact Offset: 0.00100000005
+      Minimum Movement Distance: 0.00100000005
+      Non Walkable Mode: 0
+      Dynamic Friction: 1
+      Static Friction: 1
+      Bounciness: 0
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
+  - Entity: 14768553268550011800
+    Tag: Head
+    Parent: 4015220787489955214
+    Transform:
+      Position: [0, 4.5, -0.5]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 15608248225095435140
+      Cast Shadow: true
+    AudioListener:
+      {}
+  - Entity: 12728352866807174974
+    Tag: Weapon
+    Parent: 14768553268550011800
+    Transform:
+      Position: [0, -1, -1.5]
+      Rotation: [-0, 0, 0]
+      Scale: [0.5, 0.5, 0.5]
+    MeshRenderer:
+      Mesh: 5721017995879216389
+      Material: 9981030367959526075
+      Cast Shadow: true

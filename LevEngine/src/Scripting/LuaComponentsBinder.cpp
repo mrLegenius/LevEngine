@@ -406,7 +406,10 @@ namespace LevEngine::Scripting
             "setLayer", [](CharacterController& characterController, int Layer)
             {
                 characterController.SetLayer(static_cast<FilterLayer>(Layer));
-            }
+            },
+            "getCenterOffset", &CharacterController::GetCenterOffset,
+            "getHeight", &CharacterController::GetHeight,
+            "getRadius", &CharacterController::GetRadius
         );
 
         lua.new_usertype<ControllerColliderHit>(
