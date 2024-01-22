@@ -29,21 +29,11 @@
 #ifndef CEREAL_CEREAL_HPP_
 #define CEREAL_CEREAL_HPP_
 
-#include <type_traits>
-#include <string>
-#include <memory>
-#include <functional>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-#include <cstddef>
-#include <cstdint>
-#include <functional>
-
 #include "cereal/macros.hpp"
 #include "cereal/details/traits.hpp"
 #include "cereal/details/helpers.hpp"
 #include "cereal/types/base_class.hpp"
+#include "EASTL/unordered_set.h"
 
 namespace cereal
 {
@@ -52,9 +42,9 @@ namespace cereal
   /*! @relates NameValuePair
       @ingroup Utility */
   template <class T> inline
-  NameValuePair<T> make_nvp( std::string const & name, T && value )
+  NameValuePair<T> make_nvp( eastl::string const & name, T && value )
   {
-    return {name.c_str(), std::forward<T>(value)};
+    return {name.c_str(), eastl::forward<T>(value)};
   }
 
   //! Creates a name value pair
@@ -63,7 +53,7 @@ namespace cereal
   template <class T> inline
   NameValuePair<T> make_nvp( const char * name, T && value )
   {
-    return {name, std::forward<T>(value)};
+    return {name, eastl::forward<T>(value)};
   }
 
   //! Creates a name value pair for the variable T with the same name as the variable
@@ -80,7 +70,7 @@ namespace cereal
   template <class T> inline
   BinaryData<T> binary_data( T && data, size_t size )
   {
-    return {std::forward<T>(data), size};
+    return {eastl::forward<T>(data), size};
   }
 
   // ######################################################################
@@ -95,7 +85,7 @@ namespace cereal
   template <class T> inline
   SizeTag<T> make_size_tag( T && sz )
   {
-    return {std::forward<T>(sz)};
+    return {eastl::forward<T>(sz)};
   }
 
   // ######################################################################
@@ -112,7 +102,7 @@ namespace cereal
       @code{.cpp}
       struct MyEdge
       {
-        std::shared_ptr<MyNode> connection;
+        eastl::shared_ptr<MyNode> connection;
         int some_value;
 
         template<class Archive>
@@ -126,8 +116,8 @@ namespace cereal
 
       struct MyGraphStructure
       {
-        std::vector<MyEdge> edges;
-        std::vector<MyNodes> nodes;
+        eastl::vector<MyEdge> edges;
+        eastl::vector<MyNodes> nodes;
 
         template<class Archive>
         void serialize(Archive & archive)
@@ -148,7 +138,7 @@ namespace cereal
   template <class T> inline
   DeferredData<T> defer( T && value )
   {
-    return {std::forward<T>(value)};
+    return {eastl::forward<T>(value)};
   }
 
   // ######################################################################
@@ -226,7 +216,7 @@ namespace cereal
 
       The interface for the serialization functions is nearly identical
       to non-versioned serialization with the addition of a second parameter,
-      const std::uint32_t version, which will be supplied with the correct
+      const eastl::uint32_t version, which will be supplied with the correct
       version number.  Serializing the version number on a save happens
       automatically.
 
@@ -241,7 +231,7 @@ namespace cereal
       CEREAL_CLASS_VERSION( Mytype, 77 ); // register class version
 
       template <class Archive>
-      void serialize( Archive & ar, Mytype & t, const std::uint32_t version )
+      void serialize( Archive & ar, Mytype & t, const eastl::uint32_t version )
       {
         // When performing a load, the version associated with the class
         // is whatever it was when that data was originally serialized
@@ -267,13 +257,13 @@ namespace cereal
   namespace cereal { namespace detail {                                          \
     template <> struct Version<TYPE>                                             \
     {                                                                            \
-      static std::uint32_t registerVersion()                                     \
+      static eastl::uint32_t registerVersion()                                     \
       {                                                                          \
         ::cereal::detail::StaticObject<Versions>::getInstance().mapping.emplace( \
-             std::type_index(typeid(TYPE)).hash_code(), VERSION_NUMBER );        \
+             eastl::type_index(typeid(TYPE)).hash_code(), VERSION_NUMBER );        \
         return VERSION_NUMBER;                                                   \
       }                                                                          \
-      static inline const std::uint32_t version = registerVersion();             \
+      static inline const eastl::uint32_t version = registerVersion();             \
       CEREAL_UNUSED_FUNCTION                                                     \
     }; /* end Version */                                                         \
   } } // end namespaces
@@ -282,16 +272,16 @@ namespace cereal
   namespace cereal { namespace detail {                                          \
     template <> struct Version<TYPE>                                             \
     {                                                                            \
-      static const std::uint32_t version;                                        \
-      static std::uint32_t registerVersion()                                     \
+      static const eastl::uint32_t version;                                        \
+      static eastl::uint32_t registerVersion()                                     \
       {                                                                          \
         ::cereal::detail::StaticObject<Versions>::getInstance().mapping.emplace( \
-             std::type_index(typeid(TYPE)).hash_code(), VERSION_NUMBER );        \
+             eastl::type_index(typeid(TYPE)).hash_code(), VERSION_NUMBER );        \
         return VERSION_NUMBER;                                                   \
       }                                                                          \
       CEREAL_UNUSED_FUNCTION                                                     \
     }; /* end Version */                                                         \
-    const std::uint32_t Version<TYPE>::version =                                 \
+    const eastl::uint32_t Version<TYPE>::version =                                 \
       Version<TYPE>::registerVersion();                                          \
   } } // end namespaces
 
@@ -314,7 +304,7 @@ namespace cereal
       @tparam Flags Flags to control advanced functionality.  See the Flags
                     enum for more information.
       @ingroup Internal */
-  template<class ArchiveType, std::uint32_t Flags = 0>
+  template<class ArchiveType, uint32_t Flags = 0>
   class OutputArchive : public detail::OutputArchiveBase
   {
     public:
@@ -330,7 +320,7 @@ namespace cereal
       template <class ... Types> inline
       ArchiveType & operator()( Types && ... args )
       {
-        self->process( std::forward<Types>( args )... );
+        self->process( eastl::forward<Types>( args )... );
         return *self;
       }
 
@@ -352,14 +342,14 @@ namespace cereal
           from boost, you can check this value within a member or external serialize function
           (i.e., Archive::is_loading::value) to disable behavior specific to loading, until
           you can transition to split save/load or save_minimal/load_minimal functions */
-      using is_loading = std::false_type;
+      using is_loading = eastl::false_type;
 
       //! Indicates this archive is intended for saving
       /*! This ensures compatibility with boost archive types.  If you are transitioning
           from boost, you can check this value within a member or external serialize function
           (i.e., Archive::is_saving::value) to enable behavior specific to loading, until
           you can transition to split save/load or save_minimal/load_minimal functions */
-      using is_saving = std::true_type;
+      using is_saving = eastl::true_type;
 
       //! Serializes passed in data
       /*! This is a boost compatability layer and is not the preferred way of using
@@ -368,7 +358,7 @@ namespace cereal
       template <class T> inline
       ArchiveType & operator&( T && arg )
       {
-        self->process( std::forward<T>( arg ) );
+        self->process( eastl::forward<T>( arg ) );
         return *self;
       }
 
@@ -379,7 +369,7 @@ namespace cereal
       template <class T> inline
       ArchiveType & operator<<( T && arg )
       {
-        self->process( std::forward<T>( arg ) );
+        self->process( eastl::forward<T>( arg ) );
         return *self;
       }
 
@@ -395,7 +385,7 @@ namespace cereal
                                The archive takes a copy to prevent the memory location to be freed
                                as long as the address is used as id. This is needed to prevent CVE-2020-11105.
           @return A key that uniquely identifies the pointer */
-      inline std::uint32_t registerSharedPointer(const std::shared_ptr<const void>& sharedPointer)
+      inline uint32_t registerSharedPointer(const eastl::shared_ptr<const void>& sharedPointer)
       {
         void const * addr = sharedPointer.get();
 
@@ -422,7 +412,7 @@ namespace cereal
           @internal
           @param name The name to associate with a polymorphic type
           @return A key that uniquely identifies the polymorphic type name */
-      inline std::uint32_t registerPolymorphicType( char const * name )
+      inline uint32_t registerPolymorphicType( char const * name )
       {
         auto id = itsPolymorphicTypeMap.find( name );
         if( id == itsPolymorphicTypeMap.end() )
@@ -449,8 +439,8 @@ namespace cereal
       template <class T, class ... Other> inline
       void process( T && head, Other && ... tail )
       {
-        self->process( std::forward<T>( head ) );
-        self->process( std::forward<Other>( tail )... );
+        self->process( eastl::forward<T>( head ) );
+        self->process( eastl::forward<Other>( tail )... );
       }
 
       //! Serialization of a virtual_base_class wrapper
@@ -476,13 +466,13 @@ namespace cereal
         return *self;
       }
 
-      std::vector<std::function<void(void)>> itsDeferments;
+      eastl::vector<eastl::function<void(void)>> itsDeferments;
 
       template <class T> inline
       ArchiveType & processImpl(DeferredData<T> const & d)
       {
-        std::function<void(void)> deferment( [this, d](){ self->process( d.value ); } );
-        itsDeferments.emplace_back( std::move(deferment) );
+        eastl::function<void(void)> deferment( [this, d](){ self->process( d.value ); } );
+        itsDeferments.emplace_back( eastl::move(deferment) );
 
         return *self;
       }
@@ -552,7 +542,7 @@ namespace cereal
       //! Empty class specialization
       template <class T, traits::EnableIf<(Flags & AllowEmptyClassElision),
                                           !traits::is_output_serializable<T, ArchiveType>::value,
-                                          std::is_empty<T>::value> = traits::sfinae> inline
+                                          eastl::is_empty<T>::value> = traits::sfinae> inline
       ArchiveType & processImpl(T const &)
       {
         return *self;
@@ -564,7 +554,7 @@ namespace cereal
           don't allow empty class ellision or allow it but are not serializing an empty class */
       template <class T, traits::EnableIf<traits::has_invalid_output_versioning<T, ArchiveType>::value ||
                                           (!traits::is_output_serializable<T, ArchiveType>::value &&
-                                           (!(Flags & AllowEmptyClassElision) || ((Flags & AllowEmptyClassElision) && !std::is_empty<T>::value)))> = traits::sfinae> inline
+                                           (!(Flags & AllowEmptyClassElision) || ((Flags & AllowEmptyClassElision) && !eastl::is_empty<T>::value)))> = traits::sfinae> inline
       ArchiveType & processImpl(T const &)
       {
         static_assert(traits::detail::count_output_serializers<T, ArchiveType>::value != 0,
@@ -593,7 +583,7 @@ namespace cereal
 
           @tparam T The type of the class being serialized */
       template <class T> inline
-      std::uint32_t registerClassVersion()
+      uint32_t registerClassVersion()
       {
         static const auto hash = std::type_index(typeid(T)).hash_code();
         const auto insertResult = itsVersionedTypes.insert( hash );
@@ -667,26 +657,26 @@ namespace cereal
       ArchiveType * const self;
 
       //! A set of all base classes that have been serialized
-      std::unordered_set<traits::detail::base_class_id, traits::detail::base_class_id_hash> itsBaseClassSet;
+      eastl::unordered_set<traits::detail::base_class_id, traits::detail::base_class_id_hash> itsBaseClassSet;
 
       //! Maps from addresses to pointer ids
-      std::unordered_map<void const *, std::uint32_t> itsSharedPointerMap;
+      eastl::unordered_map<void const *, uint32_t> itsSharedPointerMap;
 
       //! Copy of shared pointers used in #itsSharedPointerMap to make sure they are kept alive
       //  during lifetime of itsSharedPointerMap to prevent CVE-2020-11105.
-      std::vector<std::shared_ptr<const void>> itsSharedPointerStorage;
+      eastl::vector<eastl::shared_ptr<const void>> itsSharedPointerStorage;
 
       //! The id to be given to the next pointer
-      std::uint32_t itsCurrentPointerId;
+      uint32_t itsCurrentPointerId;
 
       //! Maps from polymorphic type name strings to ids
-      std::unordered_map<char const *, std::uint32_t> itsPolymorphicTypeMap;
+      eastl::unordered_map<char const *, uint32_t> itsPolymorphicTypeMap;
 
       //! The id to be given to the next polymorphic type name
-      std::uint32_t itsCurrentPolymorphicTypeId;
+      uint32_t itsCurrentPolymorphicTypeId;
 
       //! Keeps track of classes that have versioning information associated with them
-      std::unordered_set<size_type> itsVersionedTypes;
+      eastl::unordered_set<size_type> itsVersionedTypes;
   }; // class OutputArchive
 
   // ######################################################################
@@ -706,7 +696,7 @@ namespace cereal
       @tparam Flags Flags to control advanced functionality.  See the Flags
                     enum for more information.
       @ingroup Internal */
-  template<class ArchiveType, std::uint32_t Flags = 0>
+  template<class ArchiveType, uint32_t Flags = 0>
   class InputArchive : public detail::InputArchiveBase
   {
     public:
@@ -727,7 +717,7 @@ namespace cereal
       template <class ... Types> inline
       ArchiveType & operator()( Types && ... args )
       {
-        process( std::forward<Types>( args )... );
+        process( eastl::forward<Types>( args )... );
         return *self;
       }
 
@@ -749,14 +739,14 @@ namespace cereal
           from boost, you can check this value within a member or external serialize function
           (i.e., Archive::is_loading::value) to enable behavior specific to loading, until
           you can transition to split save/load or save_minimal/load_minimal functions */
-      using is_loading = std::true_type;
+      using is_loading = eastl::true_type;
 
       //! Indicates this archive is not intended for saving
       /*! This ensures compatibility with boost archive types.  If you are transitioning
           from boost, you can check this value within a member or external serialize function
           (i.e., Archive::is_saving::value) to disable behavior specific to loading, until
           you can transition to split save/load or save_minimal/load_minimal functions */
-      using is_saving = std::false_type;
+      using is_saving = eastl::false_type;
 
       //! Serializes passed in data
       /*! This is a boost compatability layer and is not the preferred way of using
@@ -765,7 +755,7 @@ namespace cereal
       template <class T> inline
       ArchiveType & operator&( T && arg )
       {
-        self->process( std::forward<T>( arg ) );
+        self->process( eastl::forward<T>( arg ) );
         return *self;
       }
 
@@ -776,7 +766,7 @@ namespace cereal
       template <class T> inline
       ArchiveType & operator>>( T && arg )
       {
-        self->process( std::forward<T>( arg ) );
+        self->process( eastl::forward<T>( arg ) );
         return *self;
       }
 
@@ -790,9 +780,9 @@ namespace cereal
           @param id The unique id that was serialized for the pointer
           @return A shared pointer to the data
           @throw Exception if the id does not exist */
-      inline std::shared_ptr<void> getSharedPointer(std::uint32_t const id)
+      inline eastl::shared_ptr<void> getSharedPointer(uint32_t const id)
       {
-        if(id == 0) return std::shared_ptr<void>(nullptr);
+        if(id == 0) return eastl::shared_ptr<void>(nullptr);
 
         auto iter = itsSharedPointerMap.find( id );
         if(iter == itsSharedPointerMap.end())
@@ -808,9 +798,9 @@ namespace cereal
           @internal
           @param id The unique identifier for the shared pointer
           @param ptr The actual shared pointer */
-      inline void registerSharedPointer(std::uint32_t const id, std::shared_ptr<void> ptr)
+      inline void registerSharedPointer(uint32_t const id, eastl::shared_ptr<void> ptr)
       {
-        std::uint32_t const stripped_id = id & ~detail::msb_32bit;
+        uint32_t const stripped_id = id & ~detail::msb_32bit;
         itsSharedPointerMap[stripped_id] = ptr;
       }
 
@@ -821,7 +811,7 @@ namespace cereal
           @internal
           @param id The unique id that was serialized for the polymorphic type
           @return The string identifier for the tyep */
-      inline std::string getPolymorphicName(std::uint32_t const id)
+      inline eastl::string getPolymorphicName(uint32_t const id)
       {
         auto name = itsPolymorphicTypeMap.find( id );
         if(name == itsPolymorphicTypeMap.end())
@@ -838,9 +828,9 @@ namespace cereal
           @internal
           @param id The unique identifier for the polymorphic type
           @param name The name associated with the tyep */
-      inline void registerPolymorphicName(std::uint32_t const id, std::string const & name)
+      inline void registerPolymorphicName(uint32_t const id, eastl::string const & name)
       {
-        std::uint32_t const stripped_id = id & ~detail::msb_32bit;
+        uint32_t const stripped_id = id & ~detail::msb_32bit;
         itsPolymorphicTypeMap.insert( {stripped_id, name} );
       }
 
@@ -858,8 +848,8 @@ namespace cereal
       template <class T, class ... Other> inline
       void process( T && head, Other && ... tail )
       {
-        process( std::forward<T>( head ) );
-        process( std::forward<Other>( tail )... );
+        process( eastl::forward<T>( head ) );
+        process( eastl::forward<Other>( tail )... );
       }
 
       //! Serialization of a virtual_base_class wrapper
@@ -885,13 +875,13 @@ namespace cereal
         return *self;
       }
 
-      std::vector<std::function<void(void)>> itsDeferments;
+      eastl::vector<eastl::function<void(void)>> itsDeferments;
 
       template <class T> inline
       ArchiveType & processImpl(DeferredData<T> const & d)
       {
-        std::function<void(void)> deferment( [this, d](){ self->process( d.value ); } );
-        itsDeferments.emplace_back( std::move(deferment) );
+        eastl::function<void(void)> deferment( [this, d](){ self->process( d.value ); } );
+        itsDeferments.emplace_back( eastl::move(deferment) );
 
         return *self;
       }
@@ -967,7 +957,7 @@ namespace cereal
       //! Empty class specialization
       template <class T, traits::EnableIf<(Flags & AllowEmptyClassElision),
                                           !traits::is_input_serializable<T, ArchiveType>::value,
-                                          std::is_empty<T>::value> = traits::sfinae> inline
+                                          eastl::is_empty<T>::value> = traits::sfinae> inline
       ArchiveType & processImpl(T const &)
       {
         return *self;
@@ -979,7 +969,7 @@ namespace cereal
           don't allow empty class ellision or allow it but are not serializing an empty class */
       template <class T, traits::EnableIf<traits::has_invalid_input_versioning<T, ArchiveType>::value ||
                                           (!traits::is_input_serializable<T, ArchiveType>::value &&
-                                           (!(Flags & AllowEmptyClassElision) || ((Flags & AllowEmptyClassElision) && !std::is_empty<T>::value)))> = traits::sfinae> inline
+                                           (!(Flags & AllowEmptyClassElision) || ((Flags & AllowEmptyClassElision) && !eastl::is_empty<T>::value)))> = traits::sfinae> inline
       ArchiveType & processImpl(T const &)
       {
         static_assert(traits::detail::count_input_serializers<T, ArchiveType>::value != 0,
@@ -1011,7 +1001,7 @@ namespace cereal
 
           @tparam T The type of the class being serialized */
       template <class T> inline
-      std::uint32_t loadClassVersion()
+      uint32_t loadClassVersion()
       {
         static const auto hash = std::type_index(typeid(T)).hash_code();
         auto lookupResult = itsVersionedTypes.find( hash );
@@ -1020,7 +1010,7 @@ namespace cereal
           return lookupResult->second;
         else // need to load
         {
-          std::uint32_t version;
+          uint32_t version;
 
           process( make_nvp<ArchiveType>("cereal_class_version", version) );
           itsVersionedTypes.emplace_hint( lookupResult, hash, version );
@@ -1101,16 +1091,16 @@ namespace cereal
       ArchiveType * const self;
 
       //! A set of all base classes that have been serialized
-      std::unordered_set<traits::detail::base_class_id, traits::detail::base_class_id_hash> itsBaseClassSet;
+      eastl::unordered_set<traits::detail::base_class_id, traits::detail::base_class_id_hash> itsBaseClassSet;
 
       //! Maps from pointer ids to metadata
-      std::unordered_map<std::uint32_t, std::shared_ptr<void>> itsSharedPointerMap;
+      eastl::unordered_map<uint32_t, eastl::shared_ptr<void>> itsSharedPointerMap;
 
       //! Maps from name ids to names
-      std::unordered_map<std::uint32_t, std::string> itsPolymorphicTypeMap;
+      eastl::unordered_map<uint32_t, eastl::string> itsPolymorphicTypeMap;
 
       //! Maps from type hash codes to version numbers
-      std::unordered_map<std::size_t, std::uint32_t> itsVersionedTypes;
+      eastl::unordered_map<size_t, uint32_t> itsVersionedTypes;
   }; // class InputArchive
 } // namespace cereal
 

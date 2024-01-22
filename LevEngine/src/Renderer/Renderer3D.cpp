@@ -14,7 +14,8 @@
 
 namespace LevEngine
 {
-    Ref<ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
+    Ref<ConstantBuffer> Renderer3D::m_StaticModelConstantBuffer;
+    Ref<ConstantBuffer> Renderer3D::m_AnimatedModelConstantBuffer;
     Ref<ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
     Ref<ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
 
@@ -38,7 +39,8 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION();
 
         m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
-        m_ModelConstantBuffer = ConstantBuffer::Create(sizeof StaticMeshModelBufferData, 1);
+        m_StaticModelConstantBuffer = ConstantBuffer::Create(sizeof StaticMeshModelBufferData, 1);
+        m_AnimatedModelConstantBuffer = ConstantBuffer::Create(sizeof AnimatedMeshModelBufferData, 1);
         m_ScreenToViewParamsConstantBuffer = ConstantBuffer::Create(sizeof ScreenToViewParams, 5);
     }
 
@@ -68,8 +70,8 @@ namespace LevEngine
         mesh->Bind(shader);
 
         const StaticMeshModelBufferData data = {model, model.Transpose().Invert()};
-        m_ModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
-        m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+        m_StaticModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
+        m_StaticModelConstantBuffer->Bind(ShaderType::Vertex);
 
         RenderCommand::DrawIndexed(mesh->IndexBuffer);
     }
@@ -83,8 +85,8 @@ namespace LevEngine
         mesh->Bind(shader);
 
         const AnimatedMeshModelBufferData data = { model, model.Transpose().Invert(), finalBoneMatrices };
-        m_ModelConstantBuffer->SetData(&data, sizeof(AnimatedMeshModelBufferData));
-        m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+        m_AnimatedModelConstantBuffer->SetData(&data, sizeof(AnimatedMeshModelBufferData));
+        m_AnimatedModelConstantBuffer->Bind(ShaderType::Vertex);
 
         RenderCommand::DrawIndexed(mesh->IndexBuffer);
     }
@@ -111,8 +113,8 @@ namespace LevEngine
         mesh->Bind(shader);
 
         const StaticMeshModelBufferData data = {model, model.Transpose().Invert()};
-        m_ModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
-        m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+        m_StaticModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
+        m_StaticModelConstantBuffer->Bind(ShaderType::Vertex);
 
         RenderCommand::DrawLineList(mesh->IndexBuffer);
     }
@@ -124,8 +126,8 @@ namespace LevEngine
         mesh->Bind(shader);
 
         const StaticMeshModelBufferData data = {model, model.Transpose().Invert()};
-        m_ModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
-        m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+        m_StaticModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
+        m_StaticModelConstantBuffer->Bind(ShaderType::Vertex);
 
         RenderCommand::DrawLineStrip(mesh->GetVerticesCount());
     }
@@ -159,8 +161,8 @@ namespace LevEngine
         static Ref<Mesh> mesh = Primitives::CreateSphere(20);
 
         const StaticMeshModelBufferData data = {model};
-        m_ModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
-        m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+        m_StaticModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
+        m_StaticModelConstantBuffer->Bind(ShaderType::Vertex);
 
         mesh->Bind(shader);
 
@@ -174,8 +176,8 @@ namespace LevEngine
         static Ref<Mesh> mesh = Primitives::CreateCone(1, 1, 20);
 
         const StaticMeshModelBufferData data = {model};
-        m_ModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
-        m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+        m_StaticModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
+        m_StaticModelConstantBuffer->Bind(ShaderType::Vertex);
 
         mesh->Bind(shader);
 
@@ -189,8 +191,8 @@ namespace LevEngine
         static Ref<Mesh> mesh = Primitives::CreateCube();
 
         const StaticMeshModelBufferData data = {model};
-        m_ModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
-        m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+        m_StaticModelConstantBuffer->SetData(&data, sizeof(StaticMeshModelBufferData));
+        m_StaticModelConstantBuffer->Bind(ShaderType::Vertex);
 
         mesh->Bind(shader);
 

@@ -13,15 +13,19 @@ namespace LevEngine
         explicit SkeletonAsset(const Path& path, const UUID uuid);
 
         [[nodiscard]] const Ref<Skeleton>& GetSkeleton() const;
-        void Init(const Ref<Skeleton>& skeleton);
+        void SetSkeleton(const Ref<Skeleton>& skeleton);
 
     protected:
+        [[nodiscard]] bool WriteLibraryToFile() const override { return true; }
+        [[nodiscard]] bool ReadLibraryFromFile() const override { return true; }
+        
         void SerializeData(YAML::Emitter& out) override;
         void DeserializeData(const YAML::Node& node) override;
 
+        void SerializeToBinaryLibrary() override;
+        void DeserializeFromBinaryLibrary() override;
+
     private:
-        const char* c_OwnerMeshKey = "OwnerMesh";
-		
         Ref<Skeleton> m_Skeleton;
     };
 }

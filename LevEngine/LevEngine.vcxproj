@@ -1144,6 +1144,8 @@
     <ClInclude Include="src\Scripting\ScriptingSystemComponents.h" />
     <ClInclude Include="src\Scripting\ScriptingManager.h" />
     <ClInclude Include="src\Scripting\ScriptingSystems.h" />
+    <ClInclude Include="src\Serializers\CerealEastlMemory.h" />
+    <ClInclude Include="src\Serializers\CerealEastlString.h" />
     <ClInclude Include="src\Serializers\RenderSettingsSerializer.h" />
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>

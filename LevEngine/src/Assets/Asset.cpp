@@ -19,6 +19,7 @@ namespace LevEngine
 	{
 		SerializeData();
 		SerializeMeta();
+		SerializeLibrary();
 	}
 
 	void Asset::SerializeData()

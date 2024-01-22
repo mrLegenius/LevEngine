@@ -1,6 +1,8 @@
 #include "levpch.h"
 #include "Animation.h"
 
+#include "cereal/archives/binary.hpp"
+
 namespace LevEngine
 {
     Bone* Animation::FindBone(const String& name)
@@ -34,6 +36,22 @@ namespace LevEngine
     const String& Animation::GetName() const
     {
         return m_Name;
+    }
+    
+    void Animation::Serialize(const Path& path)
+    {
+        std::ofstream os(path, std::ios::binary);
+        cereal::BinaryOutputArchive archive( os );
+
+        serialize(archive);
+    }
+
+    void Animation::Deserialize(const Path& path)
+    {
+        std::ifstream os(path, std::ios::binary);
+        cereal::BinaryInputArchive archive( os );
+
+        serialize(archive);
     }
 }
 

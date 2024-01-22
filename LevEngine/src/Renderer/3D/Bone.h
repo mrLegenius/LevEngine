@@ -4,6 +4,7 @@
 #include <Math/Vector3.h>
 #include <Math/Quaternion.h>
 #include <assimp/anim.h>
+#include "cereal/access.hpp"
 
 namespace LevEngine
 {
@@ -11,23 +12,52 @@ namespace LevEngine
     {
         Vector3 position;
         double timeStamp;
+
+    private:
+        friend class cereal::access;
+        template <class Archive>
+        void serialize(Archive& archive)
+        {
+            archive(position);
+            archive(timeStamp);
+        }
     };
 
     struct KeyRotation
     {
         Quaternion orientation;
         double timeStamp;
+
+    private:
+        friend class cereal::access;
+        template <class Archive>
+        void serialize(Archive& archive)
+        {
+            archive(orientation);
+            archive(timeStamp);
+        }
     };
 
     struct KeyScale
     {
         Vector3 scale;
         double timeStamp;
+
+    private:
+        friend class cereal::access;
+        template <class Archive>
+        void serialize(Archive& archive)
+        {
+            archive(scale);
+            archive(timeStamp);
+        }
     };
 
     class Bone
     {
     public:
+        Bone() = default;
+        
         /*reads keyframes from aiNodeAnim*/
         Bone(const String& name, size_t ID, const aiNodeAnim* channel);
 
@@ -54,7 +84,17 @@ namespace LevEngine
         [[nodiscard]] size_t GetScaleIndex(double animationTime);
 
     private:
-
+        friend class cereal::access;
+        template <class Archive>
+        void serialize(Archive& archive)
+        {
+            archive(m_Positions);
+            archive(m_Rotations);
+            archive(m_Scales);
+            archive(m_Name);
+            archive(m_ID);
+        }
+        
         /* Gets normalized value for Lerp & Slerp*/
         [[nodiscard]] double GetScaleFactor(double lastTimeStamp, double nextTimeStamp, double animationTime) const;
 
@@ -74,10 +114,10 @@ namespace LevEngine
         Vector<KeyPosition> m_Positions;
         Vector<KeyRotation> m_Rotations;
         Vector<KeyScale> m_Scales;
-
-        Matrix m_LocalTransform;
         String m_Name;
         size_t m_ID;
+
+        Matrix m_LocalTransform;
 
         // Used when respective keyframes amount == 1 to accelerate updates
         Matrix m_ConstantTranslation;

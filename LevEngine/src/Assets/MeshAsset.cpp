@@ -99,31 +99,33 @@ namespace LevEngine
                 
             const Path animationAssetPath = m_Path.parent_path().append(nameToWrite.c_str());
                 
-            if (!std::filesystem::exists(animationAssetPath))
+            if (std::filesystem::exists(animationAssetPath))
             {
-                const Ref<AnimationAsset> animationAsset =
+                std::filesystem::remove(animationAssetPath);
+            }
+
+            const Ref<AnimationAsset> animationAsset =
                     AssetDatabase::CreateNewAsset<AnimationAsset>(animationAssetPath);
 
-                animationAsset->Init(animations[animationIdx], animationIdx, skeletonAsset);
-                animationAsset->Serialize();
-            }
+            animationAsset->Init(animations[animationIdx], skeletonAsset);
+            animationAsset->Serialize();
         }
     }
 
     Ref<SkeletonAsset> MeshAsset::CreateSkeletonAsset(const Ref<Skeleton>& resultSkeleton)
     {
         const Path skeletonAssetPath = m_Path.parent_path().append((String(m_Name) + String(".skeleton")).c_str());
-        if (!std::filesystem::exists(skeletonAssetPath))
+        
+        if (std::filesystem::exists(skeletonAssetPath))
         {
-            const Ref<SkeletonAsset> skeletonAsset =
-                AssetDatabase::CreateNewAsset<SkeletonAsset>(skeletonAssetPath);
-
-            skeletonAsset->Init(resultSkeleton);
-            skeletonAsset->Serialize();
-
-            return skeletonAsset;
+            std::filesystem::remove(skeletonAssetPath);
         }
 
-        return nullptr;
+        const Ref<SkeletonAsset> skeletonAsset = AssetDatabase::CreateNewAsset<SkeletonAsset>(skeletonAssetPath);
+
+        skeletonAsset->SetSkeleton(resultSkeleton);
+        skeletonAsset->Serialize();
+
+        return skeletonAsset;
     }
 }

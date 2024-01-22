@@ -24,14 +24,14 @@ namespace LevEngine
         void StopAnimation();
         [[nodiscard]] Array<Matrix, AnimationConstants::MaxBoneCount> GetFinalBoneMatrices() const;
         void DrawDebugPose(const Transform& rootTransform);
-        void DrawDebugPose(const SkeletonNodeData* node, const Transform& rootTransform, Vector3 prevPosition,
+        void DrawDebugPose(const Ref<SkeletonNodeData>& node, const Transform& rootTransform, Vector3 prevPosition,
             Matrix& parentModelToLocalTransform);
         void DrawDebugSkeleton(const Transform& rootTransform);
-        void DrawDebugSkeleton(const SkeletonNodeData* node, const Transform& rootTransform, Vector3 prevPosition);
+        void DrawDebugSkeleton(const Ref<SkeletonNodeData>& node, const Transform& rootTransform, Vector3 prevPosition);
 
     private:
-        void UpdateBoneModelToLocalTransforms(SkeletonNodeData* node);
-        void CalculateFinalBoneTransforms(SkeletonNodeData* node, Matrix& parentModelToLocalTransform);
+        void UpdateBoneModelToLocalTransforms(const Ref<SkeletonNodeData>& node);
+        void CalculateFinalBoneTransforms(const Ref<SkeletonNodeData>& node, Matrix& parentModelToLocalTransform);
 
         Array<Matrix, AnimationConstants::MaxBoneCount> m_FinalBoneMatrices;
         Ref<AnimationAsset> m_CurrentAnimationAsset;

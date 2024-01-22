@@ -47,7 +47,8 @@ namespace LevEngine
         static void RenderCube(const Matrix& model, const Ref<Shader>& shader);
 
     private:
-        static Ref<ConstantBuffer> m_ModelConstantBuffer;
+        static Ref<ConstantBuffer> m_StaticModelConstantBuffer;
+        static Ref<ConstantBuffer> m_AnimatedModelConstantBuffer;
         static Ref<ConstantBuffer> m_CameraConstantBuffer;
         static Ref<ConstantBuffer> m_ScreenToViewParamsConstantBuffer;
 

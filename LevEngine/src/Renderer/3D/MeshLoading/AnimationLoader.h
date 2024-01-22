@@ -54,7 +54,7 @@ namespace LevEngine
 			resultAnimation->m_TicksPerSecond = animation->mTicksPerSecond != 0.0 ? animation->mTicksPerSecond : 25.0;
 			resultAnimation->m_Name = animation->mName.C_Str();
 			
-			SkeletonNodeData* rootNode = new SkeletonNodeData();
+			Ref<SkeletonNodeData> rootNode = CreateRef<SkeletonNodeData>();
 			
 			ReadHeirarchyData(resultAnimation, rootNode, scene->mRootNode);
 			ReadKeyframes(resultAnimation, animation, resultSkeleton);
@@ -64,7 +64,7 @@ namespace LevEngine
 			return resultAnimation;
 		}
 
-		static void ReadHeirarchyData(const Ref<Animation>& resultAnimation, SkeletonNodeData* dest, const aiNode* src)
+		static void ReadHeirarchyData(const Ref<Animation>& resultAnimation, const Ref<SkeletonNodeData>& dest, const aiNode* src)
 		{
 			LEV_CORE_ASSERT(src);
 
@@ -73,7 +73,7 @@ namespace LevEngine
 
 			for (unsigned int i = 0; i < src->mNumChildren; i++)
 			{
-				SkeletonNodeData* newData = new SkeletonNodeData();
+				Ref<SkeletonNodeData> newData = CreateRef<SkeletonNodeData>();
 				newData->parent = dest;
 				ReadHeirarchyData(resultAnimation, newData, src->mChildren[i]);
 				dest->children.emplace_back(newData);

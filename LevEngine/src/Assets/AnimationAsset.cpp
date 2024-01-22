@@ -7,12 +7,11 @@
 
 namespace LevEngine
 {
-	AnimationAsset::AnimationAsset(const Path& path, const UUID uuid) : Asset(path, uuid), m_AnimationIdx(-1) {}
+	AnimationAsset::AnimationAsset(const Path& path, const UUID uuid) : Asset(path, uuid) {}
 
-	void AnimationAsset::Init(const Ref<Animation>& animation, int animationIdx, const Ref<SkeletonAsset>& skeletonAsset)
+	void AnimationAsset::Init(const Ref<Animation>& animation, const Ref<SkeletonAsset>& skeletonAsset)
 	{
 		SetAnimation(animation);
-		SetAnimationIdx(animationIdx);
 		SetSkeletonAsset(skeletonAsset);
 	}
 
@@ -31,11 +30,6 @@ namespace LevEngine
 		m_Animation = animation;
 	}
 
-	void AnimationAsset::SetAnimationIdx(int animationIdx)
-	{
-		m_AnimationIdx = animationIdx;
-	}
-
 	void AnimationAsset::SetSkeletonAsset(const Ref<SkeletonAsset>& skeletonAsset)
 	{
 		m_SkeletonAsset = skeletonAsset;
@@ -43,24 +37,28 @@ namespace LevEngine
 
 	void AnimationAsset::SerializeData(YAML::Emitter& out)
 	{
-		out << YAML::Key << c_AnimationIndexKey << YAML::Value << m_AnimationIdx;
 		SerializeAsset(out, c_SkeletonAssetKey, m_SkeletonAsset);
 	}
 	void AnimationAsset::DeserializeData(const YAML::Node& node)
 	{
-		if (const auto animationIndexNode = node[c_AnimationIndexKey])
-		{
-			SetAnimationIdx(animationIndexNode.as<int>());
-		}
-		else
-		{
-			Log::CoreWarning("Failed to deserialize animation in {0}, got invalid animation index: {1}",
-				m_Path.string(), m_AnimationIdx);
-		}
-
 		if (const auto skeletonAssetNode = node[c_SkeletonAssetKey])
 		{
 			SetSkeletonAsset(DeserializeAsset<SkeletonAsset>(skeletonAssetNode));	
 		}
+	}
+
+	void AnimationAsset::SerializeToBinaryLibrary()
+	{
+		if (m_Animation == nullptr) return;
+        
+		m_Animation->Serialize(m_LibraryPath);
+	}
+
+	void AnimationAsset::DeserializeFromBinaryLibrary()
+	{
+		if (m_Animation != nullptr) return;
+
+		m_Animation = CreateRef<Animation>();
+		m_Animation->Deserialize(m_LibraryPath);
 	}
 }

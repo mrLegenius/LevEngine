@@ -239,6 +239,12 @@ namespace LevEngine
 		return extension == ".anim";
 	}
 
+	bool AssetDatabase::IsAssetSkeleton(const Path& path)
+	{
+		const auto extension = path.extension().string();
+		return extension == ".skeleton";
+	}
+
 	Ref<Asset> AssetDatabase::CreateAsset(const Path& path, UUID uuid)
 	{
 		if (IsAssetTexture(path))
@@ -267,6 +273,9 @@ namespace LevEngine
 
 		if (IsAssetAnimationClip(path))
 			return CreateRef<AnimationAsset>(path, uuid);
+
+		if (IsAssetSkeleton(path))
+			return CreateRef<SkeletonAsset>(path, uuid);
 
 		if (IsAssetScript(path))
 			return CreateRef<ScriptAsset>(path, uuid);

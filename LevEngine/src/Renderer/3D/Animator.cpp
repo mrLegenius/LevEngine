@@ -37,7 +37,7 @@ namespace LevEngine
 			m_CurrentTime += static_cast<float>(m_CurrentAnimation->GetTicksPerSecond()) * deltaTime;
 			m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
 
-			SkeletonNodeData* node = m_CurrentSkeleton->GetRootNode();
+			const Ref<SkeletonNodeData> node = m_CurrentSkeleton->GetRootNode();
 			
 			UpdateBoneModelToLocalTransforms(node);
 
@@ -89,13 +89,13 @@ namespace LevEngine
 	{
 		if (m_CurrentAnimation == nullptr) return;
 
-		const SkeletonNodeData* node = m_CurrentSkeleton->GetRootNode();
+		const Ref<SkeletonNodeData> node = m_CurrentSkeleton->GetRootNode();
 
 		Matrix parentModelToLocalTransform = Matrix::Identity;
 		DrawDebugPose(node, rootTransform, rootTransform.GetWorldPosition(), parentModelToLocalTransform);
 	}
 
-	void Animator::DrawDebugPose(const SkeletonNodeData* node, const Transform& rootTransform, Vector3 prevPosition,
+	void Animator::DrawDebugPose(const Ref<SkeletonNodeData>& node, const Transform& rootTransform, Vector3 prevPosition,
 		Matrix& parentModelToLocalTransform)
 	{
 		const String& nodeName = node->name;
@@ -139,12 +139,12 @@ namespace LevEngine
 		DrawDebugSkeleton(m_CurrentSkeleton->GetRootNode(), rootTransform, rootTransform.GetWorldPosition());
 	}
 
-	void Animator::DrawDebugSkeleton(const SkeletonNodeData* node, const Transform& rootTransform, Vector3 prevPosition)
+	void Animator::DrawDebugSkeleton(const Ref<SkeletonNodeData>& node, const Transform& rootTransform, Vector3 prevPosition)
 	{
 		const String& nodeName = node->name;
 		
 		Matrix globalTransformation = node->boneBindPoseTransform;
-		const SkeletonNodeData* parent = node->parent;
+		Ref<SkeletonNodeData> parent = node->parent;
 		while (parent != nullptr) {
 			globalTransformation = parent->boneBindPoseTransform * globalTransformation;
 			parent = parent->parent;
@@ -175,7 +175,7 @@ namespace LevEngine
 		}
 	}
 
-	void Animator::UpdateBoneModelToLocalTransforms(SkeletonNodeData* node)
+	void Animator::UpdateBoneModelToLocalTransforms(const Ref<SkeletonNodeData>& node)
 	{
 		LEV_PROFILE_FUNCTION();
 		
@@ -192,7 +192,7 @@ namespace LevEngine
 		}
 	}
 
-	void Animator::CalculateFinalBoneTransforms(SkeletonNodeData* node, Matrix& parentModelToLocalTransform)
+	void Animator::CalculateFinalBoneTransforms(const Ref<SkeletonNodeData>& node, Matrix& parentModelToLocalTransform)
 	{
 		LEV_PROFILE_FUNCTION();
 
