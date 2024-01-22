@@ -13,10 +13,6 @@ namespace LevEngine
 
     Ref<Texture> Icons::Play() { return GetIcon("PlayButton.png"); }
     Ref<Texture> Icons::Stop() { return GetIcon("StopButton.png"); }
-    Ref<Texture> Icons::Rotate() { return GetIcon("Rotate.png"); }
-    Ref<Texture> Icons::Scale() { return GetIcon("Scale.png"); }
-    Ref<Texture> Icons::Select() { return GetIcon("Select.png"); }
-    Ref<Texture> Icons::Translate() { return GetIcon("Translate.png"); }
 
     Ref<Texture> Icons::Directory() { return GetIcon("Assets\\DirectoryIcon.png"); }
     Ref<Texture> Icons::File() { return GetIcon("Assets\\FileIcon.png"); }

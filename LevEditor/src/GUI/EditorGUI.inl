@@ -321,4 +321,11 @@ namespace LevEngine::Editor
 			return;
 		}
 	}
+
+	template<typename T>
+	void EditorGUI::DrawSelectable(const String& label, ImGuiSelectableFlags flags, Vector2 size, T option, T& current)
+	{
+		if (ImGui::Selectable(label.c_str(), current == option, flags, {size.x, size.y}))
+			current = option;
+	}
 }

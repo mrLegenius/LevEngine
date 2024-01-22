@@ -13,10 +13,6 @@ namespace LevEngine
     {
         static Ref<Texture> Play();
         static Ref<Texture> Stop();
-        static Ref<Texture> Rotate();
-        static Ref<Texture> Scale();
-        static Ref<Texture> Select();
-        static Ref<Texture> Translate();
 
         static Ref<Texture> Directory();
         static Ref<Texture> File();

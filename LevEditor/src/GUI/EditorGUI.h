@@ -73,6 +73,9 @@ namespace LevEngine::Editor
 
 		template<int TMaxCharacters = 256>
 		static void DrawTextInputField(const String& label, const String& text, const Action<String>& onApply);
+
+		template<typename T>
+		static void DrawSelectable(const String& label, ImGuiSelectableFlags flags, Vector2 size, T option, T& current);
 	};
 }
 

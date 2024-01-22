@@ -14,6 +14,8 @@
 
 #include "Kernel/Window.h"
 
+#include "Icons/IconsFontAwesome6.h"
+
 namespace LevEngine
 {
 	extern ID3D11DeviceContext* context;
@@ -40,7 +42,13 @@ namespace LevEngine
 
 		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Bold.ttf", 18.0f);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Regular.ttf", 18.0f);
-		
+
+		ImFontConfig config;
+		config.MergeMode = true;
+		config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
+		static constexpr ImWchar IconRanges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Icons/fa-solid-900.ttf", 18.0f, &config, IconRanges);
+
 		ImGui::StyleColorsDark();
 
 		ImGuiStyle& style = ImGui::GetStyle();

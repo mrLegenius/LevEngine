@@ -116,6 +116,7 @@
     <ClInclude Include="src\Assets\SceneAsset.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
     <ClInclude Include="src\DataTypes\Set.h" />
+    <ClInclude Include="src\GUI\Icons\IconsFontAwesome6.h" />
     <ClInclude Include="src\JobSystem\Job.h" />
     <ClInclude Include="src\JobSystem\ParallelJob.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
