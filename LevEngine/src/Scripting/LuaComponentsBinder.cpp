@@ -406,7 +406,10 @@ namespace LevEngine::Scripting
             "setLayer", [](CharacterController& characterController, int Layer)
             {
                 characterController.SetLayer(static_cast<FilterLayer>(Layer));
-            }
+            },
+            "getCenterOffset", &CharacterController::GetCenterOffset,
+            "getHeight", &CharacterController::GetHeight,
+            "getRadius", &CharacterController::GetRadius
         );
 
         lua.new_usertype<ControllerColliderHit>(
@@ -537,6 +540,10 @@ namespace LevEngine::Scripting
                 "uuid", [](const Entity& entity)
                 {
                     return entity.GetUUID();
+                },
+                "isValid", [](const Entity& entity)
+                {
+                    return static_cast<bool>(entity);
                 }
             );
         }
@@ -892,6 +899,7 @@ namespace LevEngine::Scripting
                     return AIAgentComponent{};
                 }),
             "setMoveTarget", &AIAgentComponent::SetMoveTarget,
+            "findEntityInVisibleScope", &AIAgentComponent::FindEntityInVisibleScope,
             //Bool facts
             "setFactAsBool", [](AIAgentComponent& agentComponent, const std::string& key, bool value)
             {

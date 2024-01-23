@@ -11,17 +11,19 @@ AISystem = {
 				if agentComponent == nil then
 					return
 				end
-				local playerView = Registry.get_entities(Transform, ScriptsContainer)
-				playerView:for_each(
-					function(playerEntity)
-						local scriptsContainer = playerEntity:get_component(ScriptsContainer)
-						if scriptsContainer.Player ~= nil then
-							local playerPosition = playerEntity:get_component(Transform):getWorldPosition()
-							agentComponent:setFactAsVector3("PlayerPosition", playerPosition)
-							agentComponent:setFactAsBool("IsPlayerFound", true)
-						end
-					end		
-				)
+				local agentCharacterController = agentEntity:get_component(CharacterController)
+				if agentCharacterController == nil then
+					return
+				end
+				local agentTransform = agentEntity:get_component(Transform)
+				local playerEntity = agentComponent:findEntityInVisibleScope(2)
+				local isValid = playerEntity:isValid()
+				if isValid then
+					agentComponent:setFactAsBool("IsPlayerFound", true)
+					local playerTransform = playerEntity:get_component(Transform)
+					local playerPosition = playerTransform:getWorldPosition()
+					agentComponent:setFactAsVector3("PlayerPosition", playerPosition)
+				end
 			end
 		)
 	end,
