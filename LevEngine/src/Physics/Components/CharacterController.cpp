@@ -9,9 +9,10 @@
 
 namespace LevEngine
 {
-    void CharacterController::OnDestroy(entt::registry& registry, entt::entity entity)
+    void CharacterController::OnDestroy(const Entity entity)
     {
-        auto [transform, controller] = registry.get<Transform, CharacterController>(entity);
+        const auto controller = entity.GetComponent<CharacterController>();
+
         if (controller.GetController() != nullptr)
         {
             controller.DetachController();

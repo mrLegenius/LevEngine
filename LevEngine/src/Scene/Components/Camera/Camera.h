@@ -1,11 +1,14 @@
 ﻿#pragma once
+#include "Kernel/ClassCollection.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
+	class Entity;
+
 	REGISTER_PARSE_TYPE(CameraComponent);
-	
+
 	struct CameraComponent
 	{
 		SceneCamera Camera;
@@ -14,5 +17,7 @@ namespace LevEngine
 
 		CameraComponent();
 		CameraComponent(const CameraComponent&) = default;
+
+		static void OnConstruct(Entity entity);
 	};
 }
