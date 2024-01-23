@@ -16,7 +16,7 @@ AISystem = {
 					return
 				end
 				local agentTransform = agentEntity:get_component(Transform)
-				local playerEntity = agentComponent:findEntityInVisibleScope(2)
+				local playerEntity = agentComponent:findEntityInVisibleScope(FilterLayer.Layer2)
 				local isValid = playerEntity:isValid()
 				if isValid then
 					agentComponent:setFactAsBool("IsPlayerFound", true)
