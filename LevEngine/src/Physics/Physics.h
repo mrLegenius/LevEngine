@@ -31,7 +31,7 @@ namespace LevEngine
             Vector3 origin,
             Vector3 direction,
             float maxDistance,
-            const FilterLayer& layerMask = FilterLayer::Layer0
+            int layerMask = static_cast<int>(FilterLayer::Layer0)
         ) const;
         
         [[nodiscard]] RaycastHit SphereCast(
@@ -39,7 +39,7 @@ namespace LevEngine
             float radius,
             Vector3 direction,
             float maxDistance,
-            const FilterLayer& layerMask = FilterLayer::Layer0
+            int layerMask = static_cast<int>(FilterLayer::Layer0)
         ) const;
         
         [[nodiscard]] RaycastHit CapsuleCast(
@@ -49,7 +49,7 @@ namespace LevEngine
             float halfHeight,
             Vector3 direction,
             float maxDistance,
-            const FilterLayer& layerMask = FilterLayer::Layer0
+            int layerMask = static_cast<int>(FilterLayer::Layer0)
         ) const;
         
         [[nodiscard]] RaycastHit BoxCast(
@@ -58,7 +58,7 @@ namespace LevEngine
             Vector3 halfExtents,
             Vector3 direction,
             float maxDistance,
-            const FilterLayer& layerMask = FilterLayer::Layer0
+            int layerMask = static_cast<int>(FilterLayer::Layer0)
         ) const;
         
         void Process(entt::registry& registry, float deltaTime);

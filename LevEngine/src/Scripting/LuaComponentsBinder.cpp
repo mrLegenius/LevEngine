@@ -734,7 +734,7 @@ namespace LevEngine::Scripting
                         origin,
                         direction,
                         maxDistance,
-                        static_cast<FilterLayer>(layerMask)
+                        layerMask
                     );
                 },
                 [](const Vector3 origin, const Vector3 direction, const float maxDistance)
@@ -759,7 +759,7 @@ namespace LevEngine::Scripting
                         radius,
                         direction,
                         maxDistance,
-                        static_cast<FilterLayer>(layerMask)
+                        layerMask
                     );
                 },
                 [](const Vector3 origin, const float radius, const Vector3 direction, const float maxDistance)
@@ -788,7 +788,7 @@ namespace LevEngine::Scripting
                         halfHeight,
                         direction,
                         maxDistance,
-                        static_cast<FilterLayer>(layerMask)
+                        layerMask
                     );
                 },
                 [](
@@ -829,7 +829,7 @@ namespace LevEngine::Scripting
                         halfExtents,
                         direction,
                         maxDistance,
-                        static_cast<FilterLayer>(layerMask)
+                        layerMask
                     );
                 },
                 [](

@@ -286,7 +286,7 @@ namespace LevEngine
         const Vector3 origin,
         const Vector3 direction,
         const float maxDistance,
-        const FilterLayer& layerMask
+        const int layerMask
     ) const
     {
         if (maxDistance < 0.0f) return RaycastHit {};
@@ -294,7 +294,7 @@ namespace LevEngine
         physx::PxRaycastBuffer buffer;
         const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
         physx::PxQueryFilterData filterData;
-        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
+        filterData.data.word0 = layerMask;
         
         const bool isHitSuccessfully =
             m_Scene->raycast(
@@ -324,7 +324,7 @@ namespace LevEngine
         const float radius,
         const Vector3 direction,
         const float maxDistance,
-        const FilterLayer& layerMask
+        const int layerMask
     ) const
     {
         if (maxDistance < 0.0f) return RaycastHit {};
@@ -338,7 +338,7 @@ namespace LevEngine
         physx::PxSweepBuffer buffer;
         const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
         physx::PxQueryFilterData filterData;
-        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
+        filterData.data.word0 = layerMask;
         
         const bool isHitSuccessfully =
             m_Scene->sweep(
@@ -371,7 +371,7 @@ namespace LevEngine
         const float halfHeight,
         const Vector3 direction,
         const float maxDistance,
-        const FilterLayer& layerMask
+        const int layerMask
     ) const
     {
         if (maxDistance < 0.0f) return RaycastHit {};
@@ -387,7 +387,7 @@ namespace LevEngine
         physx::PxSweepBuffer buffer;
         const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
         physx::PxQueryFilterData filterData;
-        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
+        filterData.data.word0 = layerMask;
         
         const bool isHitSuccessfully =
             m_Scene->sweep(
@@ -419,7 +419,7 @@ namespace LevEngine
         const Vector3 halfExtents,
         const Vector3 direction,
         const float maxDistance,
-        const FilterLayer& layerMask
+        const int layerMask
     ) const
     {
         if (maxDistance < 0.0f) return RaycastHit {};
@@ -433,7 +433,7 @@ namespace LevEngine
         physx::PxSweepBuffer buffer;
         const auto outputFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
         physx::PxQueryFilterData filterData;
-        filterData.data.word0 = (1 << static_cast<physx::PxU32>(layerMask));
+        filterData.data.word0 = layerMask;
         
         const bool isHitSuccessfully =
             m_Scene->sweep(
