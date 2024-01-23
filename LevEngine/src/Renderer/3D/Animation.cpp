@@ -7,20 +7,17 @@ namespace LevEngine
 {
     Bone* Animation::FindBone(const String& name)
     {
-        auto iter = std::find_if(m_Bones.begin(), m_Bones.end(),
-            [&](const Bone& Bone)
+        const auto iter = std::find_if(m_Bones.begin(), m_Bones.end(), [&](const Bone& Bone)
         {
-            return Bone.GetBoneName() == name;
+           return Bone.GetBoneName() == name;
         });
 
         if (iter == m_Bones.end())
         {
             return nullptr;
         }
-        else
-        {
-            return &(*iter);
-        }
+
+        return &(*iter);
     }
 
     double Animation::GetTicksPerSecond() const

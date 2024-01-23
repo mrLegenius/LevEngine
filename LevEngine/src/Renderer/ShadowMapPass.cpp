@@ -114,7 +114,6 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 		m_ShadowData.ShadowMapDimensions = RenderSettings::ShadowMapResolution;
 	}
 	m_CascadeShadowMap->SetRenderTarget();
-	ShaderAssets::CascadeShadowPass()->Bind();
 	
 	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);
@@ -126,38 +125,51 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 {
 	// Process static meshes
 	const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
-    for (const auto entity : staticMeshGroup)
-    {
-        auto [transform, mesh] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
+	if (staticMeshGroup.size() > 0)
+	{
+		ShaderAssets::CascadeShadowPass()->Bind();
 
-		if (!mesh.mesh) continue;
-		if (!mesh.material) continue;
+		for (const auto entity : staticMeshGroup)
+		{
+			auto [transform, mesh] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
+
+			if (!mesh.mesh) continue;
+			if (!mesh.material) continue;
     	
-        if (mesh.castShadow)
-            Renderer3D::DrawMesh(transform.GetModel(), mesh, ShaderAssets::CascadeShadowPass());
-    }
+			if (mesh.castShadow)
+				Renderer3D::DrawMesh(transform.GetModel(), mesh, ShaderAssets::CascadeShadowPass());
+		}
 
+		ShaderAssets::CascadeShadowPass()->Unbind();
+	}
+	
 	// Process animated meshes
 	const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
-	for (const auto entity : animatedMeshGroup)
+	if (animatedMeshGroup.size() > 0)
 	{
-		auto [transform, meshRenderer, animator] = animatedMeshGroup.get<Transform, MeshRendererComponent,
-			AnimatorComponent>(entity);
+		ShaderAssets::CascadeShadowPassAnimated()->Bind();
 
-		if (!meshRenderer.mesh) continue;
-		if (!meshRenderer.material) continue;
-    	
-		if (meshRenderer.castShadow)
+		for (const auto entity : animatedMeshGroup)
 		{
-			Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(),  meshRenderer,
-				ShaderAssets::CascadeShadowPassAnimated());	
+			auto [transform, meshRenderer, animator] = animatedMeshGroup.get<Transform, MeshRendererComponent,
+				AnimatorComponent>(entity);
+
+			if (!meshRenderer.mesh) continue;
+			if (!meshRenderer.material) continue;
+    	
+			if (meshRenderer.castShadow)
+			{
+				Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(),  meshRenderer,
+					ShaderAssets::CascadeShadowPassAnimated());	
+			}
 		}
+
+		ShaderAssets::CascadeShadowPassAnimated()->Unbind();
 	}
 }
 
 void ShadowMapPass::End(entt::registry& registry, RenderParams& params)
 {
-    ShaderAssets::CascadeShadowPass()->Unbind();
     m_CascadeShadowMap->ResetRenderTarget();
     m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_ShadowMapConstantBuffer->Bind(ShaderType::Pixel);

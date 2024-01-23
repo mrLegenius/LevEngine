@@ -5,6 +5,7 @@
 #include "PipelineState.h"
 #include "Renderer3D.h"
 #include "RenderParams.h"
+#include "Shader.h"
 #include "3D/Mesh.h"
 #include "Assets/EngineAssets.h"
 #include "Assets/MaterialAsset.h"
@@ -32,7 +33,9 @@ namespace LevEngine
         Material* previousMaterial{nullptr};
 
         // Process static meshes
-        auto shader = ShaderAssets::GBufferPass();
+        const auto staticShader = ShaderAssets::GBufferVertex();
+        staticShader->Bind();
+        
         const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
         for (const auto entity : staticMeshGroup)
         {
@@ -52,22 +55,28 @@ namespace LevEngine
                 if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
 
-            if (previousMaterial != &material)
-                material.Bind(shader);
+            //if (previousMaterial != &material)
+            //    material.Bind(staticShader);
 
-            Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
+            material.Bind(staticShader);
+            Renderer3D::DrawMesh(transform.GetModel(), mesh, staticShader);
+            material.Unbind(staticShader);
 
             previousMaterial = &material;
         }
 
-        if (previousMaterial)
-		{
-            previousMaterial->Unbind(shader);
-            previousMaterial = nullptr;
-		}
+        // if (previousMaterial)
+        // {
+        //     previousMaterial->Unbind(staticShader);
+        //     previousMaterial = nullptr;
+        // }
 
+        staticShader->Unbind();
+        
+        const auto animatedShader = ShaderAssets::GBufferAnimatedVertex();
+        animatedShader->Bind();
+        
         // Process animated meshes
-        shader = ShaderAssets::GBufferAnimatedPass();
         const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
         for (const auto entity : animatedMeshGroup)
         {
@@ -88,21 +97,24 @@ namespace LevEngine
                 if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
 
-            if (previousMaterial != &material)
-			{
-                material.Bind(shader);
-			}
-            
-            Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, shader);
+   //          if (previousMaterial != &material)
+			// {
+   //              material.Bind(animatedShader);
+			// }
+
+            material.Bind(animatedShader);
+            Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, animatedShader);
+            material.Unbind(animatedShader);
             
             previousMaterial = &material;
         }
 
-        if (previousMaterial)
-        {
-            previousMaterial->Unbind(shader);
-            previousMaterial = nullptr;
-        }
+        // if (previousMaterial)
+        // {
+        //     previousMaterial->Unbind(animatedShader);
+        // }
+
+        animatedShader->Unbind();
     }
 
     void OpaquePass::End(entt::registry& registry, RenderParams& params)

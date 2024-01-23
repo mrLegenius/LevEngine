@@ -27,12 +27,6 @@ namespace LevEngine
                 m_Positions.push_back(data);   
             }
         }
-
-        if (m_Positions.size() == 1)
-        {
-            m_ConstantTranslation = Matrix::CreateTranslation(m_Positions[0].position);
-        }
-
         
         for (unsigned int rotationIndex = 0; rotationIndex < channel->mNumRotationKeys; ++rotationIndex)
         {
@@ -50,14 +44,6 @@ namespace LevEngine
             }
         }
         
-        if (m_Rotations.size() == 1)
-        {
-            Quaternion rotation = m_Rotations[0].orientation;
-            rotation.Normalize();
-            m_ConstantRotation = Matrix::CreateFromQuaternion(rotation);
-        }
-        
-
         for (unsigned int scaleIndex = 0; scaleIndex < channel->mNumScalingKeys; ++scaleIndex)
         {
             aiVector3D aiScale = channel->mScalingKeys[scaleIndex].mValue;
@@ -73,11 +59,26 @@ namespace LevEngine
                 data.timeStamp = timeStamp;
                 m_Scales.push_back(data); 
             }
+        }
+        
+        Init();
+    }
 
-            if (m_Scales.size() == 1)
-            {
-                m_ConstantScale = Matrix::CreateScale(m_Scales[0].scale);
-            }
+    void Bone::Init()
+    {
+        if (m_Positions.size() == 1)
+        {
+            m_ConstantTranslation = Matrix::CreateTranslation(m_Positions[0].position);
+        }
+        if (m_Rotations.size() == 1)
+        {
+            Quaternion rotation = m_Rotations[0].orientation;
+            rotation.Normalize();
+            m_ConstantRotation = Matrix::CreateFromQuaternion(rotation);
+        }
+        if (m_Scales.size() == 1)
+        {
+            m_ConstantScale = Matrix::CreateScale(m_Scales[0].scale);
         }
     }
 

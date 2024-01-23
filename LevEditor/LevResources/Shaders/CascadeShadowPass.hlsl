@@ -1,5 +1,4 @@
 #define CASCADE_COUNT 4
-#define MAX_BONES 100
 
 cbuffer ModelConstantBuffer : register(b1)
 {
@@ -18,8 +17,6 @@ struct VS_IN
     float3 pos : POSITION;
     float3 normal : NORMAL;
     float2 uv : UV;
-	int4 boneIds : BONEIDS;
-    float4 boneWeights : BONEWEIGHTS;
 };
 
 struct GS_IN

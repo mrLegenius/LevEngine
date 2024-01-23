@@ -157,8 +157,7 @@ namespace LevEngine
             m_GBufferPipeline = CreateRef<PipelineState>();
             m_GBufferPipeline->SetRenderTarget(m_GBufferRenderTarget);
             m_GBufferPipeline->GetRasterizerState().SetCullMode(CullMode::Back);
-            m_GBufferPipeline->SetShader(ShaderType::Vertex, ShaderAssets::GBufferPass());
-            m_GBufferPipeline->SetShader(ShaderType::Pixel, ShaderAssets::GBufferPass());
+            m_GBufferPipeline->SetShader(ShaderType::Pixel, ShaderAssets::GBufferPixel());
         }
 
         {

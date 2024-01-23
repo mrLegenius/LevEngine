@@ -5,9 +5,7 @@ PS_IN VSMain(VS_IN input)
 {
 	PS_IN output;
 
-	row_major matrix boneTransform = CalculateBoneTransform(input.boneIds, input.boneWeights);
-	
-	float4 pos = mul(float4(input.pos, 1.0f), boneTransform);
+	float4 pos = float4(input.pos, 1.0);
 	float4 fragPos = mul(pos, model);
 
 	output.pos = mul(fragPos, viewProjection);
@@ -15,9 +13,9 @@ PS_IN VSMain(VS_IN input)
 	output.fragPos = fragPos.xyz;
 	output.depth = mul(fragPos, cameraView).z;
 
-	float3 normal = mul(mul(float4(input.normal, 0.0f), boneTransform), transposedInvertedModel);
-	float3 tangent = mul(mul(float4(input.tangent, 0.0f), boneTransform), transposedInvertedModel);
-	float3 binormal = mul(mul(float4(input.binormal, 0.0f), boneTransform), transposedInvertedModel);
+	float3 normal = mul(float4(input.normal, 0.0), transposedInvertedModel);
+	float3 tangent = mul(float4(input.tangent, 0.0), transposedInvertedModel);
+	float3 binormal = mul(float4(input.binormal, 0.0), transposedInvertedModel);
 	
     output.TBN = float3x3(normalize(tangent),
                           normalize(binormal),

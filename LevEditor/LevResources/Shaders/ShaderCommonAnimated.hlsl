@@ -1,4 +1,5 @@
 #define CASCADE_COUNT 4
+#define MAX_BONES 100
 
 struct VS_IN
 {
@@ -7,6 +8,8 @@ struct VS_IN
     float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
     float2 uv : TEXCOORD;
+    int4 boneIds : BONEIDS;
+    float4 boneWeights : BONEWEIGHTS;
 };
 
 struct PS_IN
@@ -29,6 +32,7 @@ cbuffer ModelConstantBuffer : register(b1)
 {
 	row_major matrix model;
 	row_major matrix transposedInvertedModel;
+	row_major matrix finalBonesMatrices[MAX_BONES];
 };
 
 //lighting cbuffer b2
@@ -152,4 +156,21 @@ float3 CalculateNormal(Texture2D normalMap, SamplerState normalMapSampler, float
 	float3 mapNormal = normalMap.Sample(normalMapSampler, uv).rgb;
 	mapNormal = mapNormal * 2.0 - 1.0;
 	return normalize(mul(mapNormal, TBN));
+}
+
+row_major matrix CalculateBoneTransform(int4 boneIds, float4 boneWeights)
+{
+	row_major matrix boneTransform = matrix(
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0
+		);
+
+	boneTransform += mul(boneWeights[0], finalBonesMatrices[boneIds[0]]);
+	boneTransform += mul(boneWeights[1], finalBonesMatrices[boneIds[1]]);
+	boneTransform += mul(boneWeights[2], finalBonesMatrices[boneIds[2]]);
+	boneTransform += mul(boneWeights[3], finalBonesMatrices[boneIds[3]]);
+
+	return boneTransform;
 }

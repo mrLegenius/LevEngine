@@ -41,13 +41,12 @@ namespace LevEngine
 			
 			UpdateBoneModelToLocalTransforms(node);
 
-			auto t1 = high_resolution_clock::now();
-			Matrix parentModelToLocalTransform = Matrix::Identity;
-			CalculateFinalBoneTransforms(node, parentModelToLocalTransform);
-			auto t2 = high_resolution_clock::now();
-			duration<double, std::milli> ms_double = t2 - t1;
+			//auto t1 = high_resolution_clock::now();
+			CalculateFinalBoneTransforms(node, Matrix::Identity);
+			//auto t2 = high_resolution_clock::now();
+			//duration<double, std::milli> ms_double = t2 - t1;
 
-			Log::CoreWarning("CalculateFinalBoneTransforms time: {0} ms", ms_double.count());
+			//Log::CoreWarning("CalculateFinalBoneTransforms time: {0} ms", ms_double.count());
 		}
 	}
 
@@ -91,12 +90,11 @@ namespace LevEngine
 
 		const Ref<SkeletonNodeData> node = m_CurrentSkeleton->GetRootNode();
 
-		Matrix parentModelToLocalTransform = Matrix::Identity;
-		DrawDebugPose(node, rootTransform, rootTransform.GetWorldPosition(), parentModelToLocalTransform);
+		DrawDebugPose(node, rootTransform, rootTransform.GetWorldPosition(), Matrix::Identity);
 	}
 
 	void Animator::DrawDebugPose(const Ref<SkeletonNodeData>& node, const Transform& rootTransform, Vector3 prevPosition,
-		Matrix& parentModelToLocalTransform)
+		Matrix parentModelToLocalTransform)
 	{
 		const String& nodeName = node->name;
 
@@ -192,7 +190,7 @@ namespace LevEngine
 		}
 	}
 
-	void Animator::CalculateFinalBoneTransforms(const Ref<SkeletonNodeData>& node, Matrix& parentModelToLocalTransform)
+	void Animator::CalculateFinalBoneTransforms(const Ref<SkeletonNodeData>& node, Matrix parentModelToLocalTransform)
 	{
 		LEV_PROFILE_FUNCTION();
 

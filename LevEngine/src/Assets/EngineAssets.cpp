@@ -78,16 +78,26 @@ namespace LevEngine
         return shader;
     }
 
-    Ref<Shader> ShaderAssets::GBufferPass()
+    Ref<Shader> ShaderAssets::GBufferVertex()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaquePBR.hlsl"));
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaquePBRVertex.hlsl"),
+            ShaderType::Vertex);
 
         return shader;
     }
 
-    Ref<Shader> ShaderAssets::GBufferAnimatedPass()
+    Ref<Shader> ShaderAssets::GBufferPixel()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaqueAnimatedPBR.hlsl"));
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaquePBRPixel.hlsl"),
+            ShaderType::Pixel);
+
+        return shader;
+    }
+
+    Ref<Shader> ShaderAssets::GBufferAnimatedVertex()
+    {
+        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaqueAnimatedPBRVertex.hlsl"),
+            ShaderType::Vertex);
 
         return shader;
     }

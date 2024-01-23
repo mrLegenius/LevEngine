@@ -57,9 +57,11 @@ namespace LevEngine
     {
     public:
         Bone() = default;
-        
+
         /*reads keyframes from aiNodeAnim*/
         Bone(const String& name, size_t ID, const aiNodeAnim* channel);
+        
+        void Init();
 
         /*interpolates  b/w positions,rotations & scaling keys based on the curren time of
         the animation and prepares the local transformation matrix by combining all keys
@@ -86,13 +88,25 @@ namespace LevEngine
     private:
         friend class cereal::access;
         template <class Archive>
-        void serialize(Archive& archive)
+        void save(Archive& output) const
         {
-            archive(m_Positions);
-            archive(m_Rotations);
-            archive(m_Scales);
-            archive(m_Name);
-            archive(m_ID);
+            output(m_Positions);
+            output(m_Rotations);
+            output(m_Scales);
+            output(m_Name);
+            output(m_ID);
+        }
+
+        template <class Archive>
+        void load(Archive& input)
+        {
+            input(m_Positions);
+            input(m_Rotations);
+            input(m_Scales);
+            input(m_Name);
+            input(m_ID);
+
+            Init();
         }
         
         /* Gets normalized value for Lerp & Slerp*/
