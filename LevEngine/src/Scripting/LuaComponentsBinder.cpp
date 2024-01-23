@@ -301,7 +301,12 @@ namespace LevEngine::Scripting
                 return children[index];
             },
             "removeChild", &Transform::RemoveChild,
-            "setParent", &Transform::SetParent,
+            "setParent", sol::overload(
+                &Transform::SetParent,
+                [](Transform& transform, const Entity entity)
+                {
+                    transform.SetParent(entity);
+                }),
             "getParent", &Transform::GetParent,
             "getChildrenCount", &Transform::GetChildrenCount,
             //Movement
