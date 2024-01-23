@@ -16,7 +16,7 @@ namespace LevEngine::Editor
         {
             const auto agentParams = component.GetAgentParams();
             
-            ImGui::Checkbox("Active", &component.isActive);
+            ImGui::Checkbox("Active", &component.IsActive);
             
             ImGui::SliderFloat("Radius", &agentParams->radius, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Height", &agentParams->height, 0.1f, 5.0f, "%.2f");
@@ -71,14 +71,10 @@ namespace LevEngine::Editor
             ImGui::Spacing();
             
             ImGui::Text("Vision parameters");
-
-            float rangeOfVision = component.GetRangeOfVision();
-            ImGui::SliderFloat("Range of vision", &rangeOfVision, 0.1f, 1000.0f, "%.1f");
-            component.SetRangeOfVision(rangeOfVision);
             
-            float angleOfVision = component.GetAngleOfVision();
-            ImGui::SliderFloat("Angle of vision", &angleOfVision, 0.1f, 1000.0f, "%.1f");
-            component.SetAngleOfVision(angleOfVision);
+            ImGui::SliderFloat("Range of vision", &component.RangeOfVision, 0.1f, 1000.0f, "%.1f");
+            
+            ImGui::SliderFloat("Angle of vision", &component.AngleOfVision, 0.1f, 1000.0f, "%.1f");
         }
     };
 }

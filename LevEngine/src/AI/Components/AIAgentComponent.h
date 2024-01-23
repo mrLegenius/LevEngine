@@ -24,19 +24,12 @@ namespace LevEngine
         static void OnDestroy(entt::registry& registry, entt::entity entity);
         void OnComponentDestroy();
         
-        
-        bool isActive = false; 
+        bool IsActive = false; 
         
         dtCrowdAgentParams* GetAgentParams() const;
         void SetAgentParams(dtCrowdAgentParams* params);
 
         void SetMoveTarget(Vector3 targetPos);
-        
-        float GetRangeOfVision() const;
-        void SetRangeOfVision(float range);
-
-        float GetAngleOfVision() const;
-        void SetAngleOfVision(float angle);
 
         Entity FindEntityInVisibleScope(int layer) const;
 
@@ -60,12 +53,12 @@ namespace LevEngine
         bool HasStringFact(const String& key);
         String GetFactAsString(const String& key);
 
+        float RangeOfVision = 15.0f;
+        float AngleOfVision = 40.0f;
+
     private:
 
         bool m_initialized = false;
-
-        float m_rangeOfVision = 15.0f;
-        float m_angleOfVision = 40.0f;
         
         int m_agentIndex;
         
