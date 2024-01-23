@@ -549,7 +549,7 @@ namespace LevEngine::Scripting
             "getActiveScene", &SceneManager::GetActiveScene,
             "getActiveScenePath", []()
             {
-                return SceneManager::GetActiveScenePath().c_str();
+                return SceneManager::GetActiveScenePath().string();
             },
             "loadSceneFromPath", [](const std::string& path)
             {
