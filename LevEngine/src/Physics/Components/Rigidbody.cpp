@@ -10,9 +10,9 @@ namespace LevEngine
 {
     constexpr Collider::Type DEFAULT_COLLIDER_TYPE = Collider::Type::Box;
     
-    void Rigidbody::OnDestroy(entt::registry& registry, entt::entity entity)
+    void Rigidbody::OnDestroy(const Entity entity)
     {
-        auto [transform, rigidbody] = registry.get<Transform, Rigidbody>(entity);
+        auto rigidbody = entity.GetComponent<Rigidbody>();
         if (rigidbody.GetActor() != nullptr)
         {
             rigidbody.DetachRigidbody();

@@ -7,16 +7,15 @@
 
 namespace LevEngine
 {
-	void AudioListenerComponent::OnConstruct(entt::registry& registry, entt::entity entity)
+	void AudioListenerComponent::OnConstruct(const Entity entity)
 	{
-		AudioListenerComponent& component = registry.get<AudioListenerComponent>(entity);
-		auto entityWrapped = Entity(entt::handle{ registry, entity });
-		component.Init(entityWrapped);
+		AudioListenerComponent& component = entity.GetComponent<AudioListenerComponent>();
+		component.Init(entity);
 	}
 
-	void AudioListenerComponent::OnDestroy(entt::registry& registry, entt::entity entity)
+	void AudioListenerComponent::OnDestroy(const Entity entity)
 	{
-		AudioListenerComponent& component = registry.get<AudioListenerComponent>(entity);
+		AudioListenerComponent& component = entity.GetComponent<AudioListenerComponent>();
 		Audio::RemoveListener(&component);
 	}
 

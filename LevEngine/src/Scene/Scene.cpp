@@ -17,7 +17,6 @@
 #include "Components/NavMesh/NavMeshComponent.h"
 #include "Components/Transform/Transform.h"
 #include "Kernel/Application.h"
-#include "Kernel/Window.h"
 #include "Scripting/ScriptingManager.h"
 #include "Physics/Physics.h"
 #include "Physics/Components/CharacterController.h"
@@ -46,9 +45,8 @@ namespace LevEngine
         auto& scriptingManager = Application::Get().GetScriptingManager();
         scriptingManager.CreateRegistryBind(m_Registry);
 
-        LuaComponentsBinder::CreateLuaEntityBind(*(scriptingManager.GetLuaState()), this);
+        LuaComponentsBinder::CreateLuaEntityBind(*scriptingManager.GetLuaState(), this);
 
-        m_Registry.on_construct<CameraComponent>().connect<OnCameraComponentAdded>();
         SceneManager::SceneLoaded += FUNCTION_HANDLER(NavMeshComponent::OnSceneLoaded);
     }
 
@@ -83,14 +81,18 @@ namespace LevEngine
         RegisterUpdateSystem<AnimatorInitSystem>();
         RegisterUpdateSystem<AnimatorUpdateSystem>();
 
-        m_Registry.on_construct<AudioListenerComponent>().connect<&AudioListenerComponent::OnConstruct>();
-        m_Registry.on_construct<AudioSourceComponent>().connect<&AudioSourceComponent::OnConstruct>();
-        m_Registry.on_destroy<AudioListenerComponent>().connect<&AudioListenerComponent::OnDestroy>();
+        RegisterComponentOnConstruct<CameraComponent>();
 
-        m_Registry.on_destroy<AIAgentComponent>().connect<&AIAgentComponent::OnDestroy>();
-        
-        m_Registry.on_destroy<Rigidbody>().connect<&Rigidbody::OnDestroy>();
-        m_Registry.on_destroy<CharacterController>().connect<&CharacterController::OnDestroy>();
+        RegisterComponentOnConstruct<AudioListenerComponent>();
+        RegisterComponentOnDestroy<AudioListenerComponent>();
+
+        RegisterComponentOnConstruct<AudioSourceComponent>();
+
+        RegisterComponentOnDestroy<AIAgentComponent>();
+
+        RegisterComponentOnDestroy<Rigidbody>();
+        RegisterComponentOnDestroy<CharacterController>();
+
         App::Get().GetPhysics().ResetPhysicsScene();
         App::Get().GetPhysics().ClearAccumulator();
 
@@ -111,7 +113,7 @@ namespace LevEngine
                 return ConvertEntity(entity);
         }
 
-        return Entity();
+        return {};
     }
 
     entt::registry& Scene::GetRegistry()
@@ -407,7 +409,6 @@ namespace LevEngine
         m_Registry.destroy(entitiesToDestroy.begin(), entitiesToDestroy.end());
     }
 
-
     void Scene::GetAllChildren(Entity entity, Vector<Entity>& entities)
     {
         const auto& parentTransform = entity.GetComponent<Transform>();
@@ -451,13 +452,5 @@ namespace LevEngine
             DuplicateEntity(child, duplicatedEntity);
 
         return duplicatedEntity;
-    }
-
-    void Scene::OnCameraComponentAdded(entt::registry& registry, const entt::entity entity)
-    {
-        const auto& window = App::Get().GetWindow();
-        const auto width = window.GetWidth();
-        const auto height = window.GetHeight();
-        registry.get<CameraComponent>(entity).Camera.SetViewportSize(width, height);
     }
 }

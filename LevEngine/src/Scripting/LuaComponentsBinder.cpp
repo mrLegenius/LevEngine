@@ -543,12 +543,19 @@ namespace LevEngine::Scripting
     }
 
     void LuaComponentsBinder::CreateSceneManagerBind(sol::state& lua)
-    {
-        auto sceneManager = lua["SceneManager"].get_or_create<sol::table>();
-        sceneManager.set_function("getActiveScene", []()
-        {
-            return SceneManager::GetActiveScene();
-        });
+    {lua.new_usertype<SceneManager>(
+            "SceneManager",
+            sol::no_constructor,
+            "getActiveScene", &SceneManager::GetActiveScene,
+            "getActiveScenePath", []()
+            {
+                return SceneManager::GetActiveScenePath().c_str();
+            },
+            "loadSceneFromPath", [](const std::string& path)
+            {
+                return SceneManager::LoadScene(Path{path});
+            }
+        );
     }
 
     void LuaComponentsBinder::CreateSceneBind(sol::state& lua)
@@ -936,7 +943,10 @@ namespace LevEngine::Scripting
                 {
                     return AIAgentCrowdComponent{};
                 }),
-            "addAgent", &AIAgentCrowdComponent::AddAgent
+            "addAgent", &AIAgentCrowdComponent::AddAgent,
+            "getRandomPointOnNavMesh", &AIAgentCrowdComponent::GetRandomPointOnNavMesh,
+            "getRandomPointAroundCircle", &AIAgentCrowdComponent::GetRandomPointAroundCircle,
+            "getNearestPoint", &AIAgentCrowdComponent::GetNearestPoint
         );
     }
 

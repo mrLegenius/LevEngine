@@ -12,7 +12,7 @@ namespace LevEngine
     struct CharacterController
     {
         // Don't call this method (only for internal use)
-        static void OnDestroy(entt::registry& registry, entt::entity entity);
+        static void OnDestroy(Entity entity);
 
         [[nodiscard]] FilterLayer GetLayer() const;
         void SetLayer(const FilterLayer& layer) const;

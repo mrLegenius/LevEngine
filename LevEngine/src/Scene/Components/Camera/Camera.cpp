@@ -2,10 +2,21 @@
 #include "Camera.h"
 
 #include "../ComponentSerializer.h"
+#include "Kernel/Application.h"
+#include "Kernel/Window.h"
 
 namespace LevEngine
 {
 	CameraComponent::CameraComponent() = default;
+
+	void CameraComponent::OnConstruct(const Entity entity)
+	{
+		auto& camera = entity.GetComponent<CameraComponent>();
+		const auto& window = App::Get().GetWindow();
+		const auto width = window.GetWidth();
+		const auto height = window.GetHeight();
+		camera.Camera.SetViewportSize(width, height);
+	}
 
 	class CameraSerializer final : public ComponentSerializer<CameraComponent, CameraSerializer>
 	{

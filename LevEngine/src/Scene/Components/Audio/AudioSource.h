@@ -12,7 +12,7 @@ namespace LevEngine
     {
         AudioSourceComponent();
 
-        static void OnConstruct(entt::registry& registry, entt::entity entity);
+        static void OnConstruct(Entity entity);
         void Init(Entity entity);
         bool IsInitialized() const;
         void ResetInit();

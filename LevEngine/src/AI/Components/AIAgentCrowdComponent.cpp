@@ -4,6 +4,7 @@
 #include <DetourCrowd.h>
 
 #include "AIAgentComponent.h"
+#include "Math/Random.h"
 #include "Physics/Components/CharacterController.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -183,6 +184,71 @@ namespace LevEngine
         agents.erase(it);
         m_crowd->removeAgent(index);
         m_agentIndexesPool.push(index);
+    }
+
+    Vector3 AIAgentCrowdComponent::GetRandomPointOnNavMesh() const
+    {
+        if(!IsInitialized())
+        {
+            return Vector3::Zero;
+        }
+
+        const dtQueryFilter* filter = m_crowd->getFilter(0);
+        
+        float point[3];
+        dtPolyRef polyRef;
+        
+        m_navMeshQuery->findRandomPoint(filter, Random::Float, &polyRef, point);
+
+        return {point[0], point[1], point[2]};
+    }
+
+    Vector3 AIAgentCrowdComponent::GetRandomPointAroundCircle(const Vector3& searchCircleCenter,
+                                                                     float searchCircleRadius) const
+    {
+        if(!IsInitialized())
+        {
+            return Vector3::Zero;
+        }
+
+        const float* center = &searchCircleCenter.x;
+        const float radius = searchCircleRadius;
+
+        const dtQueryFilter* filter = m_crowd->getFilter(0);
+        
+        float point[3];
+        dtPolyRef startPolyRef;
+
+        const float halfExtents[3] = {radius/2, radius/2, radius/2};
+
+        m_navMeshQuery->findNearestPoly(center, halfExtents, filter, &startPolyRef, point);
+
+        dtPolyRef resultPolyRef;
+        
+        m_navMeshQuery->findRandomPointAroundCircle(startPolyRef, center, radius, filter, Random::Float, &resultPolyRef, point);
+
+        return {point[0], point[1], point[2]};
+    }
+
+    Vector3 AIAgentCrowdComponent::GetNearestPoint(const Vector3& searchBoxCenter,
+        const Vector3& searchBoxHalfExtents) const
+    {
+        if(!IsInitialized())
+        {
+            return Vector3::Zero;
+        }
+
+        const float* center = &searchBoxCenter.x;
+        const float* halfExtents = &searchBoxHalfExtents.x;
+
+        const dtQueryFilter* filter = m_crowd->getFilter(0);
+        
+        float point[3];
+        dtPolyRef polyRef;
+        
+        m_navMeshQuery->findNearestPoly(center, halfExtents, filter, &polyRef, point);
+
+        return {point[0], point[1], point[2]};
     }
 
     void AIAgentCrowdComponent::SetMoveTarget(int agentIndex, Vector3 targetPos)

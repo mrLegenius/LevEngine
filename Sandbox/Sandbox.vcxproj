@@ -182,18 +182,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\FPSGame\Components\Enemy.h" />
-    <ClInclude Include="src\FPSGame\Components\Player.h" />
-    <ClInclude Include="src\FPSGame\Components\Projectile.h" />
     <ClInclude Include="src\FPSGame\FPSGame.h" />
-    <ClInclude Include="src\FPSGame\Systems\CollisionHandleSystem.h" />
-    <ClInclude Include="src\FPSGame\Systems\EnemyMovementSystem.h" />
-    <ClInclude Include="src\FPSGame\Systems\EnemySpawnSystem.h" />
-    <ClInclude Include="src\FPSGame\Systems\FPSCameraRotationSystem.h" />
-    <ClInclude Include="src\FPSGame\Systems\FPSMovementSystem.h" />
-    <ClInclude Include="src\FPSGame\Systems\PlayerSpawnSystem.h" />
-    <ClInclude Include="src\FPSGame\Systems\ProjectileLifeSystem.h" />
-    <ClInclude Include="src\FPSGame\Systems\ShootSystem.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

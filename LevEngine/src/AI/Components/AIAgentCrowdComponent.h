@@ -34,6 +34,10 @@ namespace LevEngine
         void AddAgent(Entity agentEntity);
         void RemoveAgent(Entity agentEntity);
         
+        Vector3 GetRandomPointOnNavMesh() const;
+        Vector3 GetRandomPointAroundCircle(const Vector3& searchCircleCenter, float searchCircleRadius) const;
+        Vector3 GetNearestPoint(const Vector3& searchBoxCenter, const Vector3& searchBoxHalfExtents) const;
+
         Vector<Entity> initialAgentsEntities;
         
         Entity navMesh;

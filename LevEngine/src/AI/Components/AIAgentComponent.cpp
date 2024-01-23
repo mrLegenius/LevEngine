@@ -38,9 +38,9 @@ namespace LevEngine
     	m_initialized = true;
     }
 
-	void AIAgentComponent::OnDestroy(entt::registry& registry, entt::entity entity)
+	void AIAgentComponent::OnDestroy(const Entity entity)
     {
-    	AIAgentComponent& component = registry.get<AIAgentComponent>(entity);
+    	AIAgentComponent& component = entity.GetComponent<AIAgentComponent>();
     	component.OnComponentDestroy();
     }
 
