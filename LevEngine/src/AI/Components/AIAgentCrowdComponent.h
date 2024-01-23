@@ -52,8 +52,6 @@ namespace LevEngine
         bool m_isInitialized = false;
         bool m_isInitializationFailed = false;
         
-
-        eastl::stack<int> m_agentIndexesPool;
         void RegisterDefaultObstacleAvoidanceProfiles();
         
         dtCrowd* m_crowd;

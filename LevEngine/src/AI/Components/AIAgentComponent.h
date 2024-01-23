@@ -25,6 +25,8 @@ namespace LevEngine
         void OnComponentDestroy();
         
         
+        int GetIndexInCrowd() const;
+
         bool isActive = false; 
         
         dtCrowdAgentParams* GetAgentParams() const;

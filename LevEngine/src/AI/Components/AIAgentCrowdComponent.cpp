@@ -92,15 +92,17 @@ namespace LevEngine
         {
             return;
         }
-
-        for(int i = 0; i < agents.size(); ++i)
+        
+        for (const auto& agentEntity : agents)
         {
-            const auto agent = m_crowd->getEditableAgent(i);
+            auto& agentComponent = agentEntity.GetComponent<AIAgentComponent>();
+            const int index = agentComponent.GetIndexInCrowd();
+            const auto agent = m_crowd->getEditableAgent(index);
             if(!agent || !agent->active)
             {
                 continue;
             }
-            auto& agentTransform = agents[i].GetComponent<Transform>();
+            auto& agentTransform = agentEntity.GetComponent<Transform>();
             const Vector3& position = agentTransform.GetWorldPosition();
             agent->npos[0] = position.x;
             agent->npos[1] = position.y;
@@ -112,19 +114,21 @@ namespace LevEngine
 
     void AIAgentCrowdComponent::UpdateAgentsPosition()
     {
-        for(int i = 0; i < agents.size(); ++i)
+        for (const auto& agentEntity : agents)
         {
-            const auto agent = m_crowd->getAgent(i);
+            auto& agentComponent = agentEntity.GetComponent<AIAgentComponent>();
+            const int index = agentComponent.GetIndexInCrowd();
+            const auto agent = m_crowd->getAgent(index);
             if(!agent)
             {
                 continue;
             }
-            if(!agents[i].HasComponent<CharacterController>())
+            if(!agentEntity.HasComponent<CharacterController>())
             {
                 continue;
             }
-            auto& characterController = agents[i].GetComponent<CharacterController>();
-            auto & characterTransform = agents[i].GetComponent<Transform>();
+            auto& characterController = agentEntity.GetComponent<CharacterController>();
+            auto & characterTransform = agentEntity.GetComponent<Transform>();
             Vector3 velocity = {agent->nvel[0], agent->nvel[1], agent->nvel[2]};
 
             velocity.y = 0.0f;
@@ -149,25 +153,16 @@ namespace LevEngine
 
     void AIAgentCrowdComponent::AddAgent(Entity agentEntity)
     {
-        if(m_agentIndexesPool.empty())
-        {
-            agents.push_back(agentEntity); 
-        }
-        else
-        {
-            const int availableIndex = m_agentIndexesPool.top();
-            m_agentIndexesPool.pop();
-            agents.at(availableIndex) = agentEntity;
-        }
+        agents.push_back(agentEntity); 
 
         const auto& agentTransform = agentEntity.GetComponent<Transform>();
         auto& agentComponent = agentEntity.GetComponent<AIAgentComponent>();
         
         const Vector3 pos = agentTransform.GetLocalPosition();
-            
-        m_crowd->addAgent(&pos.x, agentComponent.GetAgentParams());
+
+        const int agentIndex = m_crowd->addAgent(&pos.x, agentComponent.GetAgentParams());
         
-        agentComponent.Init(m_selfEntity, agentEntity, agents.size() - 1);
+        agentComponent.Init(m_selfEntity, agentEntity, agentIndex);
     }
 
     void AIAgentCrowdComponent::RemoveAgent(Entity agentEntity)
@@ -183,7 +178,6 @@ namespace LevEngine
         
         agents.erase(it);
         m_crowd->removeAgent(index);
-        m_agentIndexesPool.push(index);
     }
 
     Vector3 AIAgentCrowdComponent::GetRandomPointOnNavMesh() const

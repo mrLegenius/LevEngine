@@ -55,6 +55,11 @@ namespace LevEngine
     	}
     }
 
+	int AIAgentComponent::GetIndexInCrowd() const
+	{
+	    return m_agentIndex;
+    }
+
     dtCrowdAgentParams* AIAgentComponent::GetAgentParams() const
     {
     	return m_agentParams;
