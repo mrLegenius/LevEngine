@@ -17,6 +17,19 @@ namespace LevEngine
         sceneSerializer.Serialize(path.c_str());
     }
 
+    void SceneManager::RequestSceneLoad(const Path& path)
+    {
+        m_RequestedScene = path;
+    }
+
+    void SceneManager::TryLoadRequestedScene()
+    {
+        if (m_RequestedScene.empty()) return;
+
+        LoadScene(m_RequestedScene);
+        m_RequestedScene = "";
+    }
+
     bool SceneManager::LoadScene(const Path& path)
     {
         if (m_ActiveScene != nullptr)

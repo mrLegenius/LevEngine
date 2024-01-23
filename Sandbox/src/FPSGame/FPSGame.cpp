@@ -32,6 +32,8 @@ namespace Sandbox
 
 	void FPSGame::OnUpdate(const float deltaTime)
 	{
+		SceneManager::TryLoadRequestedScene();
+
 		SceneManager::GetActiveScene()->OnUpdate(deltaTime);
 		SceneManager::GetActiveScene()->OnPhysics(deltaTime);
 		SceneManager::GetActiveScene()->OnLateUpdate(deltaTime);

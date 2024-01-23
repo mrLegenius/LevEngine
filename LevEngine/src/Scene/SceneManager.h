@@ -9,6 +9,8 @@ namespace LevEngine
     public:
 
         static void SaveScene(const String& path);
+        static void RequestSceneLoad(const Path& path);
+        static void TryLoadRequestedScene();
         static bool LoadScene(const Path& path);
 
         [[nodiscard]] static const Ref<Scene>& GetActiveScene()
@@ -32,5 +34,7 @@ namespace LevEngine
 
         static inline Ref<Scene> m_ActiveScene;
         static inline Path m_ActiveScenePath;
+
+        static inline Path m_RequestedScene;
     };
 }

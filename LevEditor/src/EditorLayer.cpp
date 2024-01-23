@@ -59,6 +59,8 @@ namespace LevEngine::Editor
         m_ProjectEditor->Update();
 
         if (!Project::GetProject()) return;
+
+        SceneManager::TryLoadRequestedScene();
         
         if (Input::IsKeyDown(KeyCode::Escape))
             m_Game->Unfocus();

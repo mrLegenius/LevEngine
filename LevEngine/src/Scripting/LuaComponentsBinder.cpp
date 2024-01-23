@@ -569,7 +569,7 @@ namespace LevEngine::Scripting
             },
             "loadSceneFromPath", [](const std::string& path)
             {
-                return SceneManager::LoadScene(Path{path});
+                return SceneManager::RequestSceneLoad(path);
             }
         );
     }
