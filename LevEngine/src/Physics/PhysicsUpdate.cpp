@@ -97,10 +97,10 @@ namespace LevEngine
             const auto controllerHalfHeight = controller.GetHeight() / 2.0f;
             const auto hitResult =
                 App::Get().GetPhysics().CapsuleCast(
-                    controllerRadius,
-                    controllerHalfHeight,
                     position,
                     rotation,
+                    controllerRadius,
+                    controllerHalfHeight,
                     Vector3::Down,
                     0.1f
                 );

@@ -16,21 +16,21 @@ namespace LevEngine::Editor
             auto colliderRotationQuaternion =
                 Quaternion::CreateFromYawPitchRoll(Math::ToRadians(component.GetColliderOffsetRotation()));
             auto colliderRotationTranslationOffsetMatrix =
-                Matrix::CreateFromQuaternion(colliderRotationQuaternion) *
-                    Matrix::CreateTranslation(component.GetColliderOffsetPosition());
+                Matrix::CreateFromQuaternion(colliderRotationQuaternion)
+                * Matrix::CreateTranslation(component.GetColliderOffsetPosition());
 
             auto transformRotationTranslationMatrix =
-                Matrix::CreateFromQuaternion(transform.GetWorldRotation()) *
-                    Matrix::CreateTranslation(transform.GetWorldPosition());
+                Matrix::CreateFromQuaternion(transform.GetWorldRotation())
+                * Matrix::CreateTranslation(transform.GetWorldPosition());
 
             Matrix model = Matrix::Identity;
             switch (component.GetColliderType())
             {
             case Collider::Type::Sphere:
                 model =
-                    Matrix::CreateScale(component.GetSphereRadius() * maxTransformScale) *
-                        colliderRotationTranslationOffsetMatrix *
-                            transformRotationTranslationMatrix;
+                    Matrix::CreateScale(component.GetSphereRadius() * maxTransformScale)
+                    * colliderRotationTranslationOffsetMatrix
+                    * transformRotationTranslationMatrix;
                 DebugRender::DrawWireSphere(
                     model,
                     Color::Green
@@ -38,9 +38,9 @@ namespace LevEngine::Editor
                 break;
             case Collider::Type::Capsule:
                 model =
-                    Matrix::CreateScale(maxTransformScale) *
-                        colliderRotationTranslationOffsetMatrix *
-                            transformRotationTranslationMatrix;
+                    Matrix::CreateScale(maxTransformScale)
+                    * colliderRotationTranslationOffsetMatrix
+                    * transformRotationTranslationMatrix;
                 DebugRender::DrawWireCapsule(
                     model,
                     component.GetCapsuleHalfHeight(),
@@ -50,9 +50,9 @@ namespace LevEngine::Editor
                 break;
             case Collider::Type::Box:
                 model =
-                    Matrix::CreateScale(component.GetBoxHalfExtents() * 2 * transformScale) *
-                        colliderRotationTranslationOffsetMatrix *
-                            transformRotationTranslationMatrix;
+                    Matrix::CreateScale(component.GetBoxHalfExtents() * 2 * transformScale)
+                    * colliderRotationTranslationOffsetMatrix
+                    * transformRotationTranslationMatrix;
                 DebugRender::DrawWireCube(
                     model,
                     Color::Green

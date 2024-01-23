@@ -543,7 +543,8 @@ namespace LevEngine::Scripting
     }
 
     void LuaComponentsBinder::CreateSceneManagerBind(sol::state& lua)
-    {lua.new_usertype<SceneManager>(
+    {
+        lua.new_usertype<SceneManager>(
             "SceneManager",
             sol::no_constructor,
             "getActiveScene", &SceneManager::GetActiveScene,
@@ -697,6 +698,7 @@ namespace LevEngine::Scripting
     {
         lua.new_enum(
             "FilterLayer",
+            "None",   FilterLayer::None,
             "Layer0", FilterLayer::Layer0,
             "Layer1", FilterLayer::Layer1,
             "Layer2", FilterLayer::Layer2,
@@ -706,16 +708,19 @@ namespace LevEngine::Scripting
             "Layer6", FilterLayer::Layer6,
             "Layer7", FilterLayer::Layer7,
             "Layer8", FilterLayer::Layer8,
-            "Layer9", FilterLayer::Layer9
+            "Layer9", FilterLayer::Layer9,
+            "All",    FilterLayer::All
         );
 
         lua.new_usertype<RaycastHit>(
             "RaycastHit",
             sol::call_constructor,
-            sol::factories([]()
-            {
-                RaycastHit{};
-            }),
+            sol::factories(
+                []()
+                {
+                    RaycastHit{};
+                }
+            ),
             "isSuccessful", &RaycastHit::IsSuccessful,
             "entity", &RaycastHit::Entity,
             "point", &RaycastHit::Point,
@@ -732,62 +737,127 @@ namespace LevEngine::Scripting
         );
 
         physics.set_function(
-            "raycast", sol::overload(
-                [](Vector3 origin, Vector3 direction, float maxDistance, int layerMask)
+            "raycast",
+            sol::overload(
+                [](const Vector3 origin, const Vector3 direction, const float maxDistance, const FilterLayer layerMask)
                 {
-                    return Application::Get().GetPhysics().Raycast(origin, direction, maxDistance,
-                                                                   static_cast<FilterLayer>(layerMask));
+                    return Application::Get().GetPhysics().Raycast(
+                        origin,
+                        direction,
+                        maxDistance,
+                        layerMask
+                    );
                 },
-                [](Vector3 origin, Vector3 direction, float maxDistance)
+                [](const Vector3 origin, const Vector3 direction, const float maxDistance)
                 {
                     return Application::Get().GetPhysics().Raycast(origin, direction, maxDistance);
                 }
-            ));
+            )
+        );
 
         physics.set_function(
-            "sphereCast", sol::overload(
-                [](float radius, Vector3 origin, Vector3 direction, float maxDistance, int layerMask)
+            "sphereCast",
+            sol::overload(
+                [](
+                    const Vector3 origin,
+                    const float radius,
+                    const Vector3 direction,
+                    const float maxDistance,
+                    const FilterLayer layerMask
+                )
                 {
-                    return Application::Get().GetPhysics().SphereCast(radius, origin, direction, maxDistance,
-                                                                      static_cast<FilterLayer>(layerMask));
+                    return Application::Get().GetPhysics().SphereCast(
+                        origin,
+                        radius,
+                        direction,
+                        maxDistance,
+                        layerMask
+                    );
                 },
-                [](float radius, Vector3 origin, Vector3 direction, float maxDistance)
+                [](const Vector3 origin, const float radius, const Vector3 direction, const float maxDistance)
                 {
-                    return Application::Get().GetPhysics().SphereCast(radius, origin, direction, maxDistance);
+                    return Application::Get().GetPhysics().SphereCast(origin, radius, direction, maxDistance);
                 }
-            ));
+            )
+        );
 
         physics.set_function(
-            "capsuleCast", sol::overload(
-                [](float radius, float halfHeight, Vector3 origin, Quaternion orientation, Vector3 direction,
-                   float maxDistance, int layerMask)
+            "capsuleCast",
+            sol::overload(
+                [](
+                    const Vector3 origin,
+                    const Quaternion orientation,
+                    const float radius,
+                    const float halfHeight,
+                    const Vector3 direction,
+                    const float maxDistance,
+                    const FilterLayer layerMask
+                )
                 {
-                    return Application::Get().GetPhysics().CapsuleCast(radius, halfHeight, origin, orientation,
-                                                                       direction, maxDistance,
-                                                                       static_cast<FilterLayer>(layerMask));
+                    return Application::Get().GetPhysics().CapsuleCast(
+                        origin,
+                        orientation,
+                        radius,
+                        halfHeight,
+                        direction,
+                        maxDistance,
+                        layerMask
+                    );
                 },
-                [](float radius, float halfHeight, Vector3 origin, Quaternion orientation, Vector3 direction,
-                   float maxDistance)
+                [](
+                    const Vector3 origin,
+                    const Quaternion orientation,
+                    const float radius,
+                    const float halfHeight,
+                    const Vector3 direction,
+                    const float maxDistance
+                )
                 {
-                    return Application::Get().GetPhysics().CapsuleCast(radius, halfHeight, origin, orientation,
-                                                                       direction, maxDistance);
+                    return Application::Get().GetPhysics().CapsuleCast(
+                        origin,
+                        orientation,
+                        radius,
+                        halfHeight,
+                        direction,
+                        maxDistance
+                    );
                 }
-            ));
+            )
+        );
 
         physics.set_function(
-            "boxCast", sol::overload(
-                [](Vector3 halfExtents, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance,
-                   int layerMask)
+            "boxCast",
+            sol::overload(
+                [](
+                    const Vector3 origin,
+                    const Quaternion orientation,
+                    const Vector3 halfExtents,
+                    const Vector3 direction,
+                    const float maxDistance,
+                    const FilterLayer layerMask
+                )
                 {
-                    return Application::Get().GetPhysics().BoxCast(halfExtents, origin, orientation, direction,
-                                                                   maxDistance, static_cast<FilterLayer>(layerMask));
+                    return Application::Get().GetPhysics().BoxCast(
+                        origin,
+                        orientation,
+                        halfExtents,
+                        direction,
+                        maxDistance,
+                        layerMask
+                    );
                 },
-                [](Vector3 halfExtents, Vector3 origin, Quaternion orientation, Vector3 direction, float maxDistance)
+                [](
+                    const Vector3 origin,
+                    const Quaternion orientation,
+                    const Vector3 halfExtents,
+                    const Vector3 direction,
+                    const float maxDistance
+                )
                 {
-                    return Application::Get().GetPhysics().BoxCast(halfExtents, origin, orientation, direction,
-                                                                   maxDistance);
+                    return Application::Get().GetPhysics().BoxCast(origin, orientation, halfExtents, direction, maxDistance);
                 }
-            ));
+            )
+        );
     }
 
     void LuaComponentsBinder::CreateDebugRenderBind(sol::state& lua)
@@ -799,67 +869,87 @@ namespace LevEngine::Scripting
             sol::overload(
                 sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawCube),
                 sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawCube)
-            ));
+            )
+        );
 
         debugRender.set_function(
             "drawWireCube",
             sol::overload(
                 sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawWireCube),
-                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawWireCube)
-            ));
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawWireCube),
+                sol::resolve<void(Vector3, Quaternion, Vector3, Color)>(&DebugRender::DrawWireCube),
+                sol::resolve<void(Vector3, Quaternion, Vector3, Color, float)>(&DebugRender::DrawWireCube)
+            )
+        );
 
         debugRender.set_function(
             "drawSphere",
             sol::overload(
                 sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawSphere),
                 sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawSphere)
-            ));
+            )
+        );
 
         debugRender.set_function(
             "drawWireSphere",
             sol::overload(
                 sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawWireSphere),
                 sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawWireSphere)
-            ));
+            )
+        );
+
+        debugRender.set_function(
+            "drawWireCapsule",
+            sol::overload(
+                sol::resolve<void(Vector3, Quaternion, float, float, Color)>(&DebugRender::DrawWireCapsule),
+                sol::resolve<void(Vector3, Quaternion, float, float, Color, float)>(&DebugRender::DrawWireCapsule)
+            )
+        );
 
         debugRender.set_function(
             "drawPoint",
             sol::overload(
                 sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPoint),
                 sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPoint)
-            ));
+            )
+        );
 
         debugRender.set_function(
             "drawPointStar",
             sol::overload(
                 sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPointStar),
                 sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPointStar)
-            ));
+            )
+        );
 
         debugRender.set_function(
             "drawLine",
             sol::overload(
                 sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawLine),
                 sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawLine)
-            ));
+            )
+        );
 
         debugRender.set_function(
             "drawRay",
             sol::overload(
                 sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawRay),
                 sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawRay)
-            ));
+            )
+        );
 
         debugRender.set_function(
             "drawCircle",
             sol::overload(
                 sol::resolve<void(Vector3, float, Quaternion, Color)>(&DebugRender::DrawCircle),
                 sol::resolve<void(Vector3, float, Quaternion, Color, float)>(&DebugRender::DrawCircle)
-            ));
+            )
+        );
 
         debugRender.set_function(
             "drawGrid",
-            sol::resolve<void(Vector3, Vector3, Vector3, uint32_t, uint32_t, float, Color)>(&DebugRender::DrawGrid));
+            sol::resolve<void(Vector3, Vector3, Vector3, uint32_t, uint32_t, float, Color)>(&DebugRender::DrawGrid)
+        );
     }
 
     void LuaComponentsBinder::CreateAIAgentCrowdComponentLuaBind(sol::state& lua)
