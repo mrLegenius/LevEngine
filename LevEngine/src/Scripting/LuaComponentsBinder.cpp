@@ -384,7 +384,15 @@ namespace LevEngine::Scripting
             "setLayer", [](Rigidbody& rigidbody, int Layer)
             {
                 rigidbody.SetLayer(static_cast<FilterLayer>(Layer));
-            }
+            },
+            "getSphereRadius",&Rigidbody::GetSphereRadius,
+            "setSphereRadius",&Rigidbody::SetSphereRadius,
+            "getCapsuleRadius",&Rigidbody::GetCapsuleRadius,
+            "setCapsuleRadius",&Rigidbody::SetCapsuleRadius,
+            "getCapsuleHalfHeight",&Rigidbody::GetCapsuleHalfHeight,
+            "setCapsuleHalfHeight",&Rigidbody::SetCapsuleHalfHeight,
+            "getBoxHalfExtents",&Rigidbody::GetBoxHalfExtents,
+            "setBoxHalfExtents",&Rigidbody::SetBoxHalfExtents
         );
 
         lua.new_enum(
