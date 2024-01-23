@@ -227,7 +227,8 @@ namespace LevEngine::Editor
         if (ImGui::Begin("##ViewportToolbar", nullptr, toolbarFlags))
         {
             // Bring the toolbar window always on top.
-            ImGui::BringWindowToDisplayFront(ImGui::GetCurrentWindow());
+            if (ImGui::IsWindowAppearing())
+                ImGui::BringWindowToDisplayFront(ImGui::GetCurrentWindow());
 
             GUI::ScopedVariable textAlign(ImGuiStyleVar_SelectableTextAlign, Vector2::One * 0.5f);
 

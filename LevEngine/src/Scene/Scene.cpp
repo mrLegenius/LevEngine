@@ -113,7 +113,7 @@ namespace LevEngine
                 return ConvertEntity(entity);
         }
 
-        return Entity();
+        return {};
     }
 
     entt::registry& Scene::GetRegistry()
