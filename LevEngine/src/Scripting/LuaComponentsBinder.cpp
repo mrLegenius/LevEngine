@@ -289,14 +289,29 @@ namespace LevEngine::Scripting
             "setLocalRotation", &Transform::SetLocalRotation,
             "getWorldRotation", &Transform::GetWorldRotation,
             "setWorldRotation", &Transform::SetWorldRotation,
+            //Direction
+            "getForwardDirection", &Transform::GetForwardDirection,
+            "getRightDirection", &Transform::GetRightDirection,
+            "getUpDirection", &Transform::GetUpDirection,
+            //Parenting
             "getChild", [](const Transform& transform, const int index)
             {
                 const auto children = transform.GetChildren();
                 LEV_ASSERT(index < children.size() && index > -1)
                 return children[index];
             },
-            "getForwardDirection", &Transform::GetForwardDirection,
-            "getRightDirection", &Transform::GetRightDirection
+            "removeChild", &Transform::RemoveChild,
+            "setParent", &Transform::SetParent,
+            "getParent", &Transform::GetParent,
+            "getChildrenCount", &Transform::GetChildrenCount,
+            //Movement
+            "move", &Transform::Move,
+            "moveForward", &Transform::MoveForward,
+            "moveBackward", &Transform::MoveBackward,
+            "moveRight", &Transform::MoveRight,
+            "moveLeft", &Transform::MoveLeft,
+            "moveUp", &Transform::MoveUp,
+            "moveDown", &Transform::MoveDown
         );
     }
 
