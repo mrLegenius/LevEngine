@@ -5,6 +5,7 @@
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
 #include "Physics/Components/CharacterController.h"
+#include "Physics/Components/Rigidbody.h"
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/Transform/Transform.h"
 
@@ -78,7 +79,7 @@ namespace LevEngine
 
 	Entity AIAgentComponent::FindEntityInVisibleScope(int layer) const
     {
-    	if(!m_initialized)
+    	if(!m_initialized || !visionCollider)
     	{
     		return {};
     	}
@@ -92,35 +93,39 @@ namespace LevEngine
     	Vector3 eyePoint = agentPosition + centerOffset;
     	eyePoint.y += capsuleHalfHeight;
 
+    	const auto& rigidBodyComponent = visionCollider.GetComponent<Rigidbody>();
+    	
+    	const auto& findedEntities = rigidBodyComponent.GetTriggerEnterBuffer();
+
+    	if(findedEntities.size() > 0)
+    	{
+    		Log::CoreInfo(findedEntities.size());
+    	}
+
     	const auto& forwardDirection = agentTransform.GetForwardDirection();
-    	const auto& sphereCastHitResult = Application::Get().GetPhysics().SphereCast(RangeOfVision, eyePoint,
-    		forwardDirection, 0, static_cast<FilterLayer>(layer));
 
-    	if(!sphereCastHitResult.IsSuccessful)
-    	{
-    		return {};
-    	}
+    	return {};
 
-    	const Vector3 fromAgentToTarget = sphereCastHitResult.Point - agentPosition;
-    	
-    	float dotProduct = forwardDirection.Dot(fromAgentToTarget);
-    	dotProduct /= (forwardDirection.Length() * fromAgentToTarget.Length());
-    	const float angleBetweenVisionVectorAndTarget = acos(dotProduct);
-    	
-    	if(angleBetweenVisionVectorAndTarget > AngleOfVision)
-    	{
-    		return {};
-    	}
-
-    	const auto& rayCastHitResult = Application::Get().GetPhysics().Raycast(eyePoint, forwardDirection,
-    		RangeOfVision, static_cast<FilterLayer>(layer));
-
-    	if(!rayCastHitResult.IsSuccessful)
-    	{
-    		return {};
-    	}
-    	
-	    return rayCastHitResult.Entity;
+    	// const Vector3 fromAgentToTarget = sphereCastHitResult.Point - agentPosition;
+    	//
+    	// float dotProduct = forwardDirection.Dot(fromAgentToTarget);
+    	// dotProduct /= (forwardDirection.Length() * fromAgentToTarget.Length());
+    	// const float angleBetweenVisionVectorAndTarget = acos(dotProduct);
+    	//
+    	// if(angleBetweenVisionVectorAndTarget > AngleOfVision)
+    	// {
+    	// 	return {};
+    	// }
+	    //
+    	// const auto& rayCastHitResult = Application::Get().GetPhysics().Raycast(eyePoint, forwardDirection,
+    	// 	RangeOfVision, static_cast<FilterLayer>(layer));
+	    //
+    	// if(!rayCastHitResult.IsSuccessful)
+    	// {
+    	// 	return {};
+    	// }
+    	//
+	    // return rayCastHitResult.Entity;
     }
 	
 	void AIAgentComponent::SetFactAsBool(const String& key, bool value)

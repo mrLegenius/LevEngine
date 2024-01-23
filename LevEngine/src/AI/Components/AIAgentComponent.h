@@ -56,6 +56,8 @@ namespace LevEngine
         float RangeOfVision = 15.0f;
         float AngleOfVision = 40.0f;
 
+        Entity visionCollider;
+
     private:
 
         bool m_initialized = false;

@@ -75,6 +75,15 @@ namespace LevEngine::Editor
             ImGui::SliderFloat("Range of vision", &component.RangeOfVision, 0.1f, 1000.0f, "%.1f");
             
             ImGui::SliderFloat("Angle of vision", &component.AngleOfVision, 0.1f, 1000.0f, "%.1f");
+
+            EditorGUI::DrawSelectableComponent<Rigidbody>("Vision collider", component.visionCollider, m_visionColliderWasSelected,
+                m_visionColliderIsSelected, m_visionColliderSelectableIdx);
         }
+
+    private:
+
+        bool m_visionColliderWasSelected = false;
+        bool m_visionColliderIsSelected = false;
+        int m_visionColliderSelectableIdx = 0;
     };
 }
