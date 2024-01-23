@@ -409,7 +409,6 @@ namespace LevEngine
         m_Registry.destroy(entitiesToDestroy.begin(), entitiesToDestroy.end());
     }
 
-
     void Scene::GetAllChildren(Entity entity, Vector<Entity>& entities)
     {
         const auto& parentTransform = entity.GetComponent<Transform>();
