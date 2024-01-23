@@ -179,7 +179,6 @@ namespace LevEngine::Scripting
 
 	void CreateColorBind(sol::state& lua)
 	{
-
 		lua.new_usertype<Color>(
 			"Color",
 			sol::call_constructor,
@@ -282,7 +281,8 @@ namespace LevEngine::Scripting
 			"lookRotation", [](const Vector3& forward, const Vector3& up)
 			{
 				return Quaternion::LookRotation(forward, up);
-			}
+			},
+			"Identity", sol::var(Quaternion::Identity)
 		);
 	}
 
@@ -304,6 +304,10 @@ namespace LevEngine::Scripting
 		math.set_function("createQuaternionFromYawPitchRoll", sol::overload(
 			sol::resolve<Quaternion(float, float, float)>(&Quaternion::CreateFromYawPitchRoll),
 			sol::resolve<Quaternion(const Vector3&)>(&Quaternion::CreateFromYawPitchRoll)
+		));
+
+		math.set_function("createQuaternionFromAxisAngle", sol::overload(
+			sol::resolve<Quaternion(const Vector3&, float)>(&Quaternion::CreateFromAxisAngle)
 		));
 
 		math["radToDeg"] = Math::RadToDeg;

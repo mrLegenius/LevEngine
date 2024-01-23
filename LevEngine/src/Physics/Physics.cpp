@@ -320,8 +320,8 @@ namespace LevEngine
     }
 
     RaycastHit Physics::SphereCast(
-        const float radius,
         const Vector3 origin,
+        const float radius,
         const Vector3 direction,
         const float maxDistance,
         const FilterLayer& layerMask
@@ -329,8 +329,9 @@ namespace LevEngine
     {
         if (maxDistance < 0.0f) return RaycastHit {};
 
-        const auto sphereShape =
-            physx::PxSphereGeometry(radius);
+        if (radius <= 0.0f) return RaycastHit {};
+
+        const auto sphereShape = physx::PxSphereGeometry(radius);
         const auto initialPose =
             physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(origin));
 
@@ -364,19 +365,22 @@ namespace LevEngine
     }
 
     RaycastHit Physics::CapsuleCast(
-        const float radius,
-        const float halfHeight,
         const Vector3 origin,
         const Quaternion orientation,
+        const float radius,
+        const float halfHeight,
         const Vector3 direction,
         const float maxDistance,
         const FilterLayer& layerMask
     ) const
     {
         if (maxDistance < 0.0f) return RaycastHit {};
+
+        if (radius <= 0.0f) return RaycastHit {};
+
+        if (halfHeight < 0.0f) return RaycastHit {};
         
-        const auto capsuleShape =
-            physx::PxCapsuleGeometry(radius, halfHeight);
+        const auto capsuleShape = physx::PxCapsuleGeometry(radius, halfHeight);
         const auto initialPose =
             physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(origin), PhysicsUtils::FromQuaternionToPxQuat(orientation));
         
@@ -410,9 +414,9 @@ namespace LevEngine
     }
 
     RaycastHit Physics::BoxCast(
-        const Vector3 halfExtents,
         const Vector3 origin,
         const Quaternion orientation,
+        const Vector3 halfExtents,
         const Vector3 direction,
         const float maxDistance,
         const FilterLayer& layerMask
@@ -420,8 +424,9 @@ namespace LevEngine
     {
         if (maxDistance < 0.0f) return RaycastHit {};
 
-        const auto boxShape =
-            physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents));
+        if (halfExtents.x <= 0.0f || halfExtents.y <= 0.0f || halfExtents.z <= 0.0f) return RaycastHit {};
+
+        const auto boxShape = physx::PxBoxGeometry(PhysicsUtils::FromVector3ToPxVec3(halfExtents));
         const auto initialPose =
             physx::PxTransform(PhysicsUtils::FromVector3ToPxVec3(origin), PhysicsUtils::FromQuaternionToPxQuat(orientation));
         
