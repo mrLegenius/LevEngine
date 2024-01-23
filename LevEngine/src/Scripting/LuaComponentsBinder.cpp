@@ -375,6 +375,8 @@ namespace LevEngine::Scripting
             },
             "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
             "getCollisionExitBuffer", &Rigidbody::GetCollisionExitBuffer,
+            "getTriggerEnterBuffer", &Rigidbody::GetTriggerEnterBuffer,
+            "getTriggerExitBuffer", &Rigidbody::GetTriggerExitBuffer,
             "getLayer", [](const Rigidbody& rigidbody)
             {
                 return static_cast<int>(rigidbody.GetLayer());

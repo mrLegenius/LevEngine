@@ -31,6 +31,7 @@
 #include "Physics/Systems/RigidbodyInitSystem.h"
 #include "Physics/Systems/CharacterControllerInitSystem.h"
 #include "Physics/Components/Destroyable.h"
+#include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 #include "Systems/EntityDestroySystem.h"
 
 namespace LevEngine
@@ -82,6 +83,7 @@ namespace LevEngine
         RegisterUpdateSystem<AnimatorUpdateSystem>();
 
         RegisterComponentOnConstruct<CameraComponent>();
+        RegisterComponentOnConstruct<ScriptsContainer>();
 
         RegisterComponentOnConstruct<AudioListenerComponent>();
         RegisterComponentOnDestroy<AudioListenerComponent>();

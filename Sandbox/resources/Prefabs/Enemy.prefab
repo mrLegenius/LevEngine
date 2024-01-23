@@ -1,14 +1,14 @@
-Prefab: EnemyController
-RootEntity: 15521556991851276175
+Prefab: Enemy
+RootEntity: 10950958486841654764
 Entities:
-  - Entity: 15521556991851276175
-    Tag: EnemyController
+  - Entity: 10950958486841654764
+    Tag: Enemy
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Character Controller:
-      Is Visualization Enabled: true
+      Layer: 2
       Capsule Controller Radius: 1
       Capsule Controller Half Height: 1
       Capsule Controller Climbing Mode: 1
@@ -18,12 +18,18 @@ Entities:
       Contact Offset: 0.100000001
       Minimum Movement Distance: 0.00100000005
       Non Walkable Mode: 0
-      Static Friction: 0.5
       Dynamic Friction: 0.800000012
-      Restitution: 0
-  - Entity: 14004482002913778106
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0
+    ScriptsContainer:
+      ScriptsContainer:
+        ScriptAssets:
+          - ScriptAssetUUID: 9535069829572463006
+  - Entity: 17739556824917004639
     Tag: Mesh
-    Parent: 15521556991851276175
+    Parent: 10950958486841654764
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]

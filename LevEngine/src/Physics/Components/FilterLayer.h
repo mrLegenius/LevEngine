@@ -3,7 +3,7 @@
 
 namespace LevEngine
 {
-    enum class FilterLayer
+    enum class FilterLayer : uint32_t
     {
         None   = 0,
         Layer0 = (1 << 0),

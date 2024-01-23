@@ -12,26 +12,24 @@ CollisionHandleSystem = {
 					return
 				end
 
-				
-
 				local projectileTransform = entity:get_component(Transform)
 				local projectileRigidbody = entity:get_component(Rigidbody)
-				local projectile = scriptsContainer.Projectile
 
-				local scene = SceneManager:getActiveScene()
-
-				
 				local collisions = projectileRigidbody:getCollisionEnterBuffer()
 
 				for k,v in ipairs(collisions) do
-					if v.contactEntity:has_component(ScriptsContainer) then
+				
+				    local contactEntity = v.entity;
+				
+					if contactEntity:has_component(ScriptsContainer) then
 						
-						--print(v.contactEntity:name())
-						scriptsContainer = v.contactEntity:get_component(ScriptsContainer)
+						scriptsContainer = contactEntity:get_component(ScriptsContainer)
 						
-						if scriptsContainer.Enemy ~= nill then
-							scene:destroyEntity(v.contactEntity)
-							scene:destroyEntity(entity)
+						if scriptsContainer.Enemy ~= nil then
+						
+						    local activeScene = SceneManager.getActiveScene()
+							activeScene:destroyEntity(contactEntity)
+							activeScene:destroyEntity(entity)
 						end
 					end
 				end

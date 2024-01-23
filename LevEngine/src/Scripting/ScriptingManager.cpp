@@ -287,35 +287,40 @@ namespace LevEngine::Scripting
 
     void ScriptingManager::InitScriptsContainers(entt::registry& registry) const
     {
-        auto view = registry.view<ScriptsContainer>();
+        const auto view = registry.view<ScriptsContainer>();
 
         for (const auto entity : view)
         {
             auto& scriptContainer = view.get<ScriptsContainer>(entity);
 
-            for (const auto& scriptAsset : scriptContainer.m_ScriptsAssets)
-            {
-                sol::optional<sol::protected_function> componentConstructor = m_Components.at(scriptAsset)["new"];
-                if (componentConstructor != sol::nullopt)
-                {
-                    auto result = componentConstructor.value()();
-                    if (!result.valid())
-                    {
-                        sol::error err = result;
-                        std::string what = err.what();
-                        Log::Error("Error while constructing lua component {0}: {1}", scriptAsset->GetName(), what);
-                        continue;
-                    }
+            InitScriptsContainer(scriptContainer);
+        }
+    }
 
-                    sol::table luaComponentInstance = result;
-                    scriptContainer.m_ScriptComponents.emplace(
-                        eastl::make_pair(scriptAsset->GetName(), luaComponentInstance));
-                }
-                else
+    void ScriptingManager::InitScriptsContainer(ScriptsContainer& container) const
+    {
+        for (const auto& scriptAsset : container.m_ScriptsAssets)
+        {
+            sol::optional<sol::protected_function> componentConstructor = m_Components.at(scriptAsset)["new"];
+            if (componentConstructor != sol::nullopt)
+            {
+                auto result = componentConstructor.value()();
+                if (!result.valid())
                 {
-                    Log::CoreError("Error while constructing lua component {0}: no new(...) function",
-                                   scriptAsset->GetName());
+                    sol::error err = result;
+                    std::string what = err.what();
+                    Log::Error("Error while constructing lua component {0}: {1}", scriptAsset->GetName(), what);
+                    continue;
                 }
+
+                sol::table luaComponentInstance = result;
+                container.m_ScriptComponents.emplace(
+                    eastl::make_pair(scriptAsset->GetName(), luaComponentInstance));
+            }
+            else
+            {
+                Log::CoreError("Error while constructing lua component {0}: no new(...) function",
+                               scriptAsset->GetName());
             }
         }
     }
