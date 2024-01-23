@@ -13,8 +13,8 @@ namespace LevEngine
     void DebugRender::DrawCube(const Vector3 position, const Vector3 size, const Color color)
     {
         const Matrix model =
-            Matrix::CreateScale(size) *
-                Matrix::CreateTranslation(position);
+            Matrix::CreateScale(size)
+            * Matrix::CreateTranslation(position);
 
         const auto cube = CreateRef<DebugCube>(model, color);
 
@@ -29,8 +29,8 @@ namespace LevEngine
     void DebugRender::DrawWireCube(const Vector3 position, const Vector3 size, const Color color)
     {
         const Matrix model =
-            Matrix::CreateScale(size) *
-                Matrix::CreateTranslation(position);
+            Matrix::CreateScale(size)
+            * Matrix::CreateTranslation(position);
 
         const auto cube = CreateRef<DebugWireCube>(model, color);
 
@@ -45,9 +45,9 @@ namespace LevEngine
     void DebugRender::DrawWireCube(const Vector3 position, const Quaternion rotation, const Vector3 size, const Color color)
     {
         const Matrix model =
-            Matrix::CreateScale(size) *
-                Matrix::CreateFromQuaternion(rotation) *
-                    Matrix::CreateTranslation(position);
+            Matrix::CreateScale(size)
+            * Matrix::CreateFromQuaternion(rotation)
+            * Matrix::CreateTranslation(position);
 
         DrawWireCube(model, color);
     }
@@ -72,8 +72,8 @@ namespace LevEngine
     void DebugRender::DrawSphere(const Vector3 position, const float radius, const Color color)
     {
         const Matrix model =
-            Matrix::CreateScale(radius) *
-                Matrix::CreateTranslation(position);
+            Matrix::CreateScale(radius)
+            * Matrix::CreateTranslation(position);
 
         const auto shape = CreateRef<DebugSphere>(model, color);
 
@@ -111,8 +111,8 @@ namespace LevEngine
     void DebugRender::DrawWireSphere(const Vector3 position, const float radius, const Color color)
     {
         const Matrix model =
-            Matrix::CreateScale(radius) *
-                Matrix::CreateTranslation(position);
+            Matrix::CreateScale(radius)
+            * Matrix::CreateTranslation(position);
 
         const auto shape = CreateRef<DebugWireSphere>(model, color);
 
@@ -137,8 +137,8 @@ namespace LevEngine
     void DebugRender::DrawWireCapsule(const Vector3 position, const Quaternion rotation, const float halfHeight, const float radius, const Color color)
     {
         const Matrix model =
-            Matrix::CreateFromQuaternion(rotation) *
-                Matrix::CreateTranslation(position);
+            Matrix::CreateFromQuaternion(rotation)
+            * Matrix::CreateTranslation(position);
 
         DrawWireCapsule(model, halfHeight, radius, color);
     }
@@ -198,9 +198,9 @@ namespace LevEngine
     void DebugRender::DrawCircle(const Vector3 position, const float radius, const Quaternion rotation, const Color color)
     {
         const Matrix model =
-            Matrix::CreateFromQuaternion(rotation) *
-                Matrix::CreateScale(radius) *
-                    Matrix::CreateTranslation(position);
+            Matrix::CreateFromQuaternion(rotation)
+            * Matrix::CreateScale(radius)
+            * Matrix::CreateTranslation(position);
 
         const auto shape = CreateRef<DebugCircle>(model, color);
         
@@ -221,8 +221,8 @@ namespace LevEngine
         const Vector3 scale = static_cast<float>(xCells) * cellSize * xAxis + static_cast<float>(yCells) * cellSize * yAxis;
         
         const Matrix model =
-            Matrix::CreateScale(scale) *
-                Matrix::CreateTranslation(position);
+            Matrix::CreateScale(scale)
+            * Matrix::CreateTranslation(position);
         
         const auto grid = CreateRef<DebugGrid>(model, xAxis, yAxis, xCells, yCells, color);
 

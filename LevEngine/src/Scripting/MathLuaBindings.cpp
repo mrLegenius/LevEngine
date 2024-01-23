@@ -282,7 +282,7 @@ namespace LevEngine::Scripting
 			{
 				return Quaternion::LookRotation(forward, up);
 			},
-			"Identity", sol::var(Quaternion::Identity)
+			"identity", sol::var(Quaternion::Identity)
 		);
 	}
 

@@ -24,14 +24,14 @@ namespace LevEngine::Editor
             const auto transformScaleMatrix = Matrix::CreateScale(maxTransformScale);
 
             const auto transformRotationTranslationMatrix =
-                Matrix::CreateFromQuaternion(transform.GetWorldRotation()) *
-                    Matrix::CreateTranslation(transform.GetWorldPosition());
+                Matrix::CreateFromQuaternion(transform.GetWorldRotation())
+                * Matrix::CreateTranslation(transform.GetWorldPosition());
             
             auto model =
-                    controllerRotationCorrectionMatrix *
-                        controllerCenterOffsetMatrix *
-                            transformScaleMatrix *
-                                transformRotationTranslationMatrix;
+                    controllerRotationCorrectionMatrix
+                    * controllerCenterOffsetMatrix
+                    * transformScaleMatrix
+                    * transformRotationTranslationMatrix;
             
             DebugRender::DrawWireCapsule(
                 model,
