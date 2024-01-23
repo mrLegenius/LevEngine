@@ -171,6 +171,8 @@ namespace LevEngine::Editor
     {
         if (!m_SceneEditor->SaveScene()) return;
 
+        App::Get().IsPlaying = true;
+
         auto& scene = SceneManager::GetActiveScene();        
 
         m_SceneState = SceneState::Play;
@@ -180,10 +182,12 @@ namespace LevEngine::Editor
     }
     void EditorLayer::OnSceneStop()
     {
+        App::Get().IsPlaying = false;
+
         m_SceneState = SceneState::Edit;
         m_Game->Unfocus();
         Selection::Deselect();
-        
+
         m_SceneEditor->OpenScene(SceneManager::GetActiveScenePath());
     }
     

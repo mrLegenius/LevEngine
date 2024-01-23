@@ -49,6 +49,9 @@ namespace LevEngine
     class Application
     {
     public:
+
+        bool IsPlaying; //TODO: Its not meant to be public. Need to think something else
+
         explicit Application(const ApplicationSpecification& specification);
         ~Application();
 

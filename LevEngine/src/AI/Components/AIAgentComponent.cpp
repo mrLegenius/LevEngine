@@ -46,10 +46,12 @@ namespace LevEngine
 
 	void AIAgentComponent::OnComponentDestroy()
     {
+    	if (!m_crowd) return;
+
     	if(m_crowd.HasComponent<AIAgentCrowdComponent>())
     	{
     		auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
-    		crowdComponent.RemoveAgent(m_selfEntity);	
+    		crowdComponent.RemoveAgent(m_selfEntity);
     	}
     }
 

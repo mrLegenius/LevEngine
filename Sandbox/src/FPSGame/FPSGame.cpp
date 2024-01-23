@@ -7,6 +7,8 @@ namespace Sandbox
 	
 	void FPSGame::OnAttach()
 	{
+		App::Get().IsPlaying = true;
+
 		AssetDatabase::ProcessAllAssets();
 		ResourceManager::Init("");
 

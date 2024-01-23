@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "Audio/Audio.h"
+#include "Kernel/Application.h"
 #include "Serializers/SceneSerializer.h"
 
 namespace LevEngine
@@ -32,6 +33,8 @@ namespace LevEngine
         {
             m_ActiveScenePath = path;
             m_OnSceneLoaded(m_ActiveScene);
+            if (App::Get().IsPlaying)
+                m_ActiveScene->OnInit();
 
             return true;
         }
