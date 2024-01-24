@@ -33,10 +33,63 @@ AISystem = {
 				if agentComponent == nil then
 					return
 				end
-				if agentComponent:hasBoolFact("IsPlayerFound") and agentComponent:getFactAsBool("IsPlayerFound") then
-					if(agentComponent:hasVector3Fact("PlayerPosition")) then
-						local playerPosition = agentComponent:getFactAsVector3("PlayerPosition")
-						agentComponent:setMoveTarget(playerPosition)
+
+				local scriptsContainer = entity:get_component(ScriptsContainer)
+
+				local aiScript = scriptsContainer.AIScript
+			
+				if aiScript ~= nil then
+					local rules = aiScript.rules
+					for ruleKey, rule in pairs(rules) do
+						--итерация по правилам
+						local matched = true
+						for conditionKey, condition in pairs(rule.conditions) do
+							--итерация по условиям правила
+							local conditionName = condition[0]
+							local conditionValue = condition[1]
+
+							local conditionPassed = false
+
+							if type(conditionValue) == "boolean" then
+								if agentComponent:hasBoolFact(conditionName) then
+									if agentComponent:getFactAsBool(conditionName) == conditionValue then
+										conditionPassed = true
+									end
+								end
+							end
+
+							if type(conditionValue) == "number" then
+								if agentComponent:hasNumberFact(conditionName) then
+									if agentComponent:getFactAsNumber(conditionName) == conditionValue then
+										conditionPassed = true
+									end
+								end
+							end
+
+							if type(conditionValue) == "Vector3" then
+								if agentComponent:hasVector3Fact(conditionName) then
+									if agentComponent:getFactAsVector3(conditionName) == conditionValue then
+										conditionPassed = true
+									end
+								end
+							end
+
+							if type(conditionValue) == "string" then 
+								if agentComponent:hasStringFact(conditionName) then
+									if agentComponent:getFactAsString(conditionName) == conditionValue then
+										conditionPassed = true
+									end
+								end
+							end
+
+							if notconditionPassed then
+								matched = false
+								break
+							end
+						end
+						if matched then
+							rulesv.action()
+						end
 					end
 				end
 			end

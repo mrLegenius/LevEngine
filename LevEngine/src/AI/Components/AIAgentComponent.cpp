@@ -54,7 +54,7 @@ namespace LevEngine
     		crowdComponent.RemoveAgent(m_selfEntity);
     	}
     }
-
+	
 	int AIAgentComponent::GetIndexInCrowd() const
 	{
 	    return m_agentIndex;
@@ -108,12 +108,12 @@ namespace LevEngine
     	return m_boolFacts[key];
     }
 
-	void AIAgentComponent::SetFactAsInteger(const String& key, int value)
+	void AIAgentComponent::SetFactAsNumber(const String& key, int value)
 	{
     	m_integerFacts[key] = value;
 	}
 
-	bool AIAgentComponent::HasIntegerFact(const String& key)
+	bool AIAgentComponent::HasNumberFact(const String& key)
 	{
     	const auto it = m_integerFacts.find(key);
 
@@ -125,7 +125,7 @@ namespace LevEngine
     	return true;
 	}
 
-	int AIAgentComponent::GetFactAsInteger(const String& key)
+	int AIAgentComponent::GetFactAsNumber(const String& key)
 	{
     	const auto it = m_integerFacts.find(key);
 
@@ -135,35 +135,6 @@ namespace LevEngine
     	}
 
     	return m_integerFacts[key];
-	}
-
-	void AIAgentComponent::SetFactAsFloat(const String& key, float value)
-	{
-    	m_floatFacts[key] = value;
-	}
-
-	bool AIAgentComponent::HasFloatFact(const String& key)
-	{
-    	const auto it = m_floatFacts.find(key);
-
-    	if(it == m_floatFacts.end())
-    	{
-    		return false;
-    	}
-
-    	return true;
-	}
-
-	float AIAgentComponent::GetFactAsFloat(const String& key)
-	{
-    	const auto it = m_floatFacts.find(key);
-
-    	if(it == m_floatFacts.end())
-    	{
-    		return {};
-    	}
-
-    	return m_floatFacts[key];
 	}
 
 	void AIAgentComponent::SetFactAsVector3(const String& key, Vector3 value)

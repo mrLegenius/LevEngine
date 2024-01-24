@@ -1047,31 +1047,18 @@ namespace LevEngine::Scripting
             {
                 return agentComponent.GetFactAsBool(key.c_str());
             },
-            //Integer facts
-            "setFactAsInteger", [](AIAgentComponent& agentComponent, const std::string& key, int value)
+            //Number facts
+            "setFactAsNumber", [](AIAgentComponent& agentComponent, const std::string& key, int value)
             {
-                agentComponent.SetFactAsInteger(key.c_str(), value);
+                agentComponent.SetFactAsNumber(key.c_str(), value);
             },
-            "hasIntegerFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            "hasNumberFact", [](AIAgentComponent& agentComponent, const std::string& key)
             {
-                return agentComponent.HasIntegerFact(key.c_str());
+                return agentComponent.HasNumberFact(key.c_str());
             },
-            "getFactAsInteger", [](AIAgentComponent& agentComponent, const std::string& key)
+            "getFactAsNumber", [](AIAgentComponent& agentComponent, const std::string& key)
             {
-                return agentComponent.GetFactAsInteger(key.c_str());
-            },
-            //Float facts
-            "setFactAsFloat", [](AIAgentComponent& agentComponent, const std::string& key, float value)
-            {
-                agentComponent.SetFactAsFloat(key.c_str(), value);
-            },
-            "hasFloatFact", [](AIAgentComponent& agentComponent, const std::string& key)
-            {
-                return agentComponent.HasFloatFact(key.c_str());
-            },
-            "getFactAsFloat", [](AIAgentComponent& agentComponent, const std::string& key)
-            {
-                return agentComponent.GetFactAsFloat(key.c_str());
+                return agentComponent.GetFactAsNumber(key.c_str());
             },
             //Vector3 facts
             "setFactAsVector3", [](AIAgentComponent& agentComponent, const std::string& key, Vector3 value)

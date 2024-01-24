@@ -37,14 +37,10 @@ namespace LevEngine
         void SetFactAsBool(const String&  key, bool value);
         bool HasBoolFact(const String& key);
         bool GetFactAsBool(const String& key);
-
-        void SetFactAsInteger(const String& key, int value);
-        bool HasIntegerFact(const String& key);
-        int GetFactAsInteger(const String& key);
         
-        void SetFactAsFloat(const String& key, float value);
-        bool HasFloatFact(const String& key);
-        float GetFactAsFloat(const String& key);
+        void SetFactAsNumber(const String& key, int value);
+        bool HasNumberFact(const String& key);
+        int GetFactAsNumber(const String& key);
         
         void SetFactAsVector3(const String& key, Vector3 value);
         bool HasVector3Fact(const String& key);
@@ -67,8 +63,7 @@ namespace LevEngine
         dtCrowdAgentParams* m_agentParams;
 
         Map<String, bool> m_boolFacts;
-        Map<String, int> m_integerFacts;
-        Map<String, float> m_floatFacts;
+        Map<String, float> m_numberFacts;
         Map<String, Vector3> m_vector3Facts;
         Map<String, String> m_stringFacts;
     };
