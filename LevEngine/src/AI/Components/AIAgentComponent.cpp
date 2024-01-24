@@ -54,6 +54,11 @@ namespace LevEngine
     		crowdComponent.RemoveAgent(m_selfEntity);
     	}
     }
+
+	Entity AIAgentComponent::GetCrowd() const
+    {
+	    return m_crowd;
+    }
 	
 	int AIAgentComponent::GetIndexInCrowd() const
 	{
@@ -108,16 +113,16 @@ namespace LevEngine
     	return m_boolFacts[key];
     }
 
-	void AIAgentComponent::SetFactAsNumber(const String& key, int value)
+	void AIAgentComponent::SetFactAsNumber(const String& key, float value)
 	{
-    	m_integerFacts[key] = value;
+    	m_numberFacts[key] = value;
 	}
 
 	bool AIAgentComponent::HasNumberFact(const String& key)
 	{
-    	const auto it = m_integerFacts.find(key);
+    	const auto it = m_numberFacts.find(key);
 
-    	if(it == m_integerFacts.end())
+    	if(it == m_numberFacts.end())
     	{
     		return false;
     	}
@@ -127,14 +132,14 @@ namespace LevEngine
 
 	int AIAgentComponent::GetFactAsNumber(const String& key)
 	{
-    	const auto it = m_integerFacts.find(key);
+    	const auto it = m_numberFacts.find(key);
 
-    	if(it == m_integerFacts.end())
+    	if(it == m_numberFacts.end())
     	{
     		return {};
     	}
 
-    	return m_integerFacts[key];
+    	return m_numberFacts[key];
 	}
 
 	void AIAgentComponent::SetFactAsVector3(const String& key, Vector3 value)

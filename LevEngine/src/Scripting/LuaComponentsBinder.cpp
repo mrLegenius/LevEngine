@@ -584,6 +584,10 @@ namespace LevEngine::Scripting
                 "uuid", [](const Entity& entity)
                 {
                     return entity.GetUUID();
+                },
+                "isValid", [](const Entity& entity)
+                {
+                    return static_cast<bool>(entity);
                 }
             );
         }
@@ -1033,6 +1037,7 @@ namespace LevEngine::Scripting
                 {
                     return AIAgentComponent{};
                 }),
+                "getCrowd", &AIAgentComponent::GetCrowd,
             "setMoveTarget", &AIAgentComponent::SetMoveTarget,
             //Bool facts
             "setFactAsBool", [](AIAgentComponent& agentComponent, const std::string& key, bool value)

@@ -25,6 +25,8 @@ namespace LevEngine
         void OnComponentDestroy();
         
         
+        Entity GetCrowd() const;
+
         int GetIndexInCrowd() const;
 
         bool isActive = false; 
@@ -38,7 +40,7 @@ namespace LevEngine
         bool HasBoolFact(const String& key);
         bool GetFactAsBool(const String& key);
         
-        void SetFactAsNumber(const String& key, int value);
+        void SetFactAsNumber(const String& key, float value);
         bool HasNumberFact(const String& key);
         int GetFactAsNumber(const String& key);
         

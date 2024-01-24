@@ -28,14 +28,14 @@ function AIScript.new(variable)
 
     self.rules.patrol = 
     {
-        conditions = { name = "IsPlayerFound", value = false },
-        action = moveToPlayerPosition
+        conditions = { {name = "IsPlayerFound", value = false} },
+        action = moveToNextPatrolPosition
     }
 
     self.rules.moveToPlayer =
     {
-        conditions = { name = "IsPlayerFound", value = true },
-        action = moveToNextPatrolPosition
+        conditions = { {name = "IsPlayerFound", value = true} },
+        action = moveToPlayerPosition
     }
 
     return self

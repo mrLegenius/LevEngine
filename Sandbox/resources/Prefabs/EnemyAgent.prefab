@@ -1,7 +1,7 @@
 Prefab: EnemyAgent
-RootEntity: 9403077377444853126
+RootEntity: 7551607325366086549
 Entities:
-  - Entity: 9403077377444853126
+  - Entity: 7551607325366086549
     Tag: EnemyAgent
     Transform:
       Position: [-6.38148355, 0, 0]
@@ -39,9 +39,10 @@ Entities:
       ScriptsContainer:
         ScriptAssets:
           - ScriptAssetUUID: 9535069829572463006
-  - Entity: 2699802823637262234
+          - ScriptAssetUUID: 12374514364531090716
+  - Entity: 2471128482123792458
     Tag: Mesh
-    Parent: 9403077377444853126
+    Parent: 7551607325366086549
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
@@ -50,3 +51,4 @@ Entities:
       Mesh: 14487929412751068277
       Material: 2751245691352325769
       Cast Shadow: true
+      Enabled: true
