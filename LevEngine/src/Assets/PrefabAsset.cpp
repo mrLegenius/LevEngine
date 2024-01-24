@@ -80,6 +80,15 @@ namespace LevEngine
         return entitiesMap[rootEntity];
     }
 
+    Entity PrefabAsset::Instantiate(const Ref<Scene>& scene, const Entity parent)
+    {
+        const auto instance = Instantiate(scene);
+        if (parent)
+            instance.GetComponent<Transform>().SetParent(parent);
+
+        return instance;
+    }
+
     void PrefabAsset::SaveEntity(const Entity entity)
     {
         LEV_CORE_ASSERT(entity.HasComponent<IDComponent>());

@@ -38,6 +38,7 @@ namespace LevEngine
         {
             auto [transform, meshRenderer] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
 
+            if (!meshRenderer.enabled) continue;
             if (!meshRenderer.material) continue;
             auto& material = meshRenderer.material->GetMaterial();
 
@@ -73,6 +74,7 @@ namespace LevEngine
             auto [transform, meshRenderer, animator] = animatedMeshGroup.get<Transform, MeshRendererComponent,
                 AnimatorComponent>(entity);
 
+            if (!meshRenderer.enabled) continue;
             if (!meshRenderer.material) continue;
             auto& material = meshRenderer.material->GetMaterial();
 

@@ -94,6 +94,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
+        if (!meshRenderer.enabled) return;
         if (!meshRenderer.mesh) return;
 
         const auto mesh = meshRenderer.mesh->GetMesh();
@@ -133,6 +134,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
+        if (!meshRenderer.enabled) return;
         if (!meshRenderer.mesh) return;
 
         const auto mesh = meshRenderer.mesh->GetMesh();

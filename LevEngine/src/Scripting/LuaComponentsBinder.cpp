@@ -22,6 +22,7 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 #include "Scene/Components/Transform/Transform.h"
 
@@ -320,6 +321,22 @@ namespace LevEngine::Scripting
         );
     }
 
+    void LuaComponentsBinder::CreateMeshRendererComponentLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<MeshRendererComponent>(
+            "MeshRendererComponent",
+            "type_id", &entt::type_hash<MeshRendererComponent>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return MeshRendererComponent{};
+                }),
+            "enabled", &MeshRendererComponent::enabled,
+            "castShadow", &MeshRendererComponent::castShadow
+        );
+    }
+
     void LuaComponentsBinder::CreateCameraComponentLuaBind(sol::state& lua)
     {
         lua.new_usertype<CameraComponent>(
@@ -607,14 +624,19 @@ namespace LevEngine::Scripting
             "Prefab",
             sol::call_constructor,
             sol::factories(
-                [](const std::string& PrefabName)
+                [](const std::string& prefabName)
                 {
-                    return ResourceManager::LoadAsset<PrefabAsset>(String(PrefabName.c_str()));
+                    return ResourceManager::LoadAsset<PrefabAsset>(String(prefabName.c_str()));
                 }),
-            "instantiate", [](PrefabAsset& prefabAsset, const Ref<Scene>& scene) -> Entity
-            {
-                return prefabAsset.Instantiate(scene);
-            }
+            "instantiate", sol::overload(
+                [](PrefabAsset& prefabAsset, const Ref<Scene>& scene, const Entity parent) -> Entity
+                {
+                    return prefabAsset.Instantiate(scene, parent);
+                },
+                [](PrefabAsset& prefabAsset, const Ref<Scene>& scene) -> Entity
+                {
+                    return prefabAsset.Instantiate(scene);
+                })
         );
     }
 

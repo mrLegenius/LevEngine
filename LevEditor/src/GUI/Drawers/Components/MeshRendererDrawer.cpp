@@ -12,6 +12,8 @@ namespace LevEngine::Editor
 
         void DrawContent(MeshRendererComponent& component) override
         {
+            ImGui::Checkbox("Enabled", &component.enabled);
+            
             EditorGUI::DrawAsset<MeshAsset>("Mesh", component.mesh);
             EditorGUI::DrawAsset<MaterialAsset>("Material", component.material);
 

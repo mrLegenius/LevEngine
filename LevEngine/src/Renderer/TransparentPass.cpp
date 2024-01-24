@@ -35,6 +35,7 @@ namespace LevEngine
             Transform transform = view.get<Transform>(entity);
             const MeshRendererComponent meshRenderer = view.get<MeshRendererComponent>(entity);
 
+            if (!meshRenderer.enabled) continue;
             if (!meshRenderer.material) continue;
             auto& material = meshRenderer.material->GetMaterial();
             

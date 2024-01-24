@@ -130,6 +130,7 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
     {
         auto [transform, mesh] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
 
+    	if (!mesh.enabled) continue;
 		if (!mesh.mesh) continue;
 		if (!mesh.material) continue;
     	
@@ -144,6 +145,7 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 		auto [transform, meshRenderer, animator] = animatedMeshGroup.get<Transform, MeshRendererComponent,
 			AnimatorComponent>(entity);
 
+		if (!meshRenderer.enabled) continue;
 		if (!meshRenderer.mesh) continue;
 		if (!meshRenderer.material) continue;
     	

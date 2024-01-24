@@ -14,6 +14,7 @@
 #include "Scene/Scene.h"
 #include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 #include "Scene/Components/Transform/Transform.h"
 #include "Scene/Serializers/SerializerUtils.h"
@@ -43,6 +44,7 @@ namespace LevEngine::Scripting
         LuaComponentsBinder::CreatePrefabBind(*m_Lua);
 
         RegisterComponent(ScriptsContainer);
+        RegisterComponent(MeshRendererComponent);
         RegisterComponent(Transform);
         RegisterComponent(CameraComponent);
         RegisterComponent(Rigidbody)
