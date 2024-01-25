@@ -9,18 +9,21 @@
 namespace LevEngine
 {
     physx::PxFilterFlags RigidbodyEventCallback::ContactReportFilterShader(
-        physx::PxFilterObjectAttributes attributes0, physx::PxFilterData,
-        physx::PxFilterObjectAttributes attributes1, physx::PxFilterData,
-        physx::PxPairFlags& pairFlags, const void*, physx::PxU32)
+        physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+        physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+        physx::PxPairFlags& pairFlags, const void*, physx::PxU32 constantBlockSize
+    )
     {
         if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
         {
             pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+            
             return physx::PxFilterFlag::eDEFAULT;
         }
         
         pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT
                   | physx::PxPairFlag::eNOTIFY_TOUCH_FOUND
+                  | physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS
                   | physx::PxPairFlag::eNOTIFY_TOUCH_LOST
                   | physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
         
@@ -45,17 +48,21 @@ namespace LevEngine
             auto& triggerRigidbody = triggerEntity.GetComponent<Rigidbody>();
 
             if (!triggerRigidbody.IsTriggerEnabled()) continue;
+
+            const auto otherEntity = App::Get().GetPhysics().GetEntityByActor(current.otherActor);
             
             if (current.status & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
             {
-                const auto otherEntity = App::Get().GetPhysics().GetEntityByActor(current.otherActor);
                 triggerRigidbody.m_TriggerEnterBuffer.push_back(otherEntity);
+                
+                triggerRigidbody.m_TriggerStayBuffer.push_back(otherEntity);
             }
-        
+            
             if (current.status & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
             {
-                const auto otherEntity = App::Get().GetPhysics().GetEntityByActor(current.otherActor);
                 triggerRigidbody.m_TriggerExitBuffer.push_back(otherEntity);
+                
+                erase(triggerRigidbody.m_TriggerStayBuffer, otherEntity);
             }
         }
     }
@@ -79,6 +86,7 @@ namespace LevEngine
 
                 for (auto j = 0; j < contactCount; j++)
                 {
+                    collisionInfo.ContactCount = contactCount;
                     collisionInfo.Points.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].position));
                     collisionInfo.Normals.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].normal));
                     collisionInfo.Impulses.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].impulse));
@@ -106,14 +114,70 @@ namespace LevEngine
                 {
                     auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = secondEntity;
-                    firstRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
+                    firstRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
                 }
-                
+
                 if (secondEntity.HasComponent<Rigidbody>() && firstEntity.HasComponent<CharacterController>())
                 {
                     auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = firstEntity;
-                    secondRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
+                    secondRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
+                }
+            }
+
+            if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+            {
+                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<Rigidbody>())
+                {
+                    auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
+                    collisionInfo.Entity = secondEntity;
+                    
+                    erase_if(firstRigidbody.m_CollisionStayBuffer,
+                        [&](const Collision& collision)
+                        {
+                            return collision.Entity == collisionInfo.Entity;
+                        }
+                    ); 
+                    firstRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
+
+                    auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
+                    collisionInfo.Entity = firstEntity;
+
+                    erase_if(secondRigidbody.m_CollisionStayBuffer,
+                        [&](const Collision& collision)
+                        {
+                            return collision.Entity == collisionInfo.Entity;
+                        }
+                    );
+                    secondRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
+                }
+                
+                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<CharacterController>())
+                {
+                    auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
+                    collisionInfo.Entity = secondEntity;
+                    
+                    erase_if(firstRigidbody.m_CollisionStayBuffer,
+                        [&](const Collision& collision)
+                        {
+                            return collision.Entity == collisionInfo.Entity;
+                        }
+                    ); 
+                    firstRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
+                }
+
+                if (secondEntity.HasComponent<Rigidbody>() && firstEntity.HasComponent<CharacterController>())
+                {
+                    auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
+                    collisionInfo.Entity = firstEntity;
+
+                    erase_if(secondRigidbody.m_CollisionStayBuffer,
+                        [&](const Collision& collision)
+                        {
+                            return collision.Entity == collisionInfo.Entity;
+                        }
+                    );
+                    secondRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
                 }
             }
             
@@ -123,10 +187,24 @@ namespace LevEngine
                 {
                     auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = secondEntity;
+                    
+                    erase_if(firstRigidbody.m_CollisionStayBuffer,
+                        [&](const Collision& collision)
+                        {
+                            return collision.Entity == collisionInfo.Entity;
+                        }
+                    );
                     firstRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
 
                     auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = firstEntity;
+                    
+                    erase_if(secondRigidbody.m_CollisionStayBuffer,
+                        [&](const Collision& collision)
+                        {
+                            return collision.Entity == collisionInfo.Entity;
+                        }
+                    );
                     secondRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
                 }
 
@@ -134,6 +212,13 @@ namespace LevEngine
                 {
                     auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = secondEntity;
+                    
+                    erase_if(firstRigidbody.m_CollisionStayBuffer,
+                        [&](const Collision& collision)
+                        {
+                            return collision.Entity == collisionInfo.Entity;
+                        }
+                    );
                     firstRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
                 }
 
@@ -141,6 +226,13 @@ namespace LevEngine
                 {
                     auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = firstEntity;
+
+                    erase_if(secondRigidbody.m_CollisionStayBuffer,
+                        [&](const Collision& collision)
+                        {
+                            return collision.Entity == collisionInfo.Entity;
+                        }
+                    );
                     secondRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
                 }
             }

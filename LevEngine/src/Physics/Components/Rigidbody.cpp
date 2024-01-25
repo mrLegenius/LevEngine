@@ -109,16 +109,19 @@ namespace LevEngine
         return m_ColliderCollection[0]->m_Layer;
     }
 
-    void Rigidbody::SetLayer(const FilterLayer& layer) const
+    void Rigidbody::SetLayer(const FilterLayer layer) const
     {
         m_ColliderCollection[0]->m_Layer = layer;
 
+        /*
         if (m_Actor != nullptr)
         {
             physx::PxFilterData filterData;
-            filterData.word0 = (1 << static_cast<physx::PxU32>(layer));
+            filterData.word0 = static_cast<physx::PxU32>(layer);
             GetCollider()->setQueryFilterData(filterData);
+            Log::Debug("Layer: {0}", layer);
         }
+        */
     }
 
     Rigidbody::Type Rigidbody::GetRigidbodyType() const
@@ -884,6 +887,11 @@ namespace LevEngine
         return m_TriggerEnterBuffer;
     }
 
+    const Vector<Entity>& Rigidbody::GetTriggerStayBuffer() const
+    {
+        return m_TriggerStayBuffer;
+    }
+
     const Vector<Entity>& Rigidbody::GetTriggerExitBuffer() const
     {
         return m_TriggerExitBuffer;
@@ -892,6 +900,11 @@ namespace LevEngine
     const Vector<Collision>& Rigidbody::GetCollisionEnterBuffer() const
     {
         return m_CollisionEnterBuffer; 
+    }
+
+    const Vector<Collision>& Rigidbody::GetCollisionStayBuffer() const
+    {
+        return m_CollisionStayBuffer;
     }
 
     const Vector<Collision>& Rigidbody::GetCollisionExitBuffer() const
@@ -906,7 +919,7 @@ namespace LevEngine
 
         void SerializeData(YAML::Emitter& out, const Rigidbody& component) override
         {
-            out << YAML::Key << "Layer" << YAML::Value << static_cast<int>(component.GetLayer());
+            //out << YAML::Key << "Layer" << YAML::Value << static_cast<int>(component.GetLayer());
             
             out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
             out << YAML::Key << "Is Kinematic Enabled" << YAML::Value << component.IsKinematicEnabled();
@@ -952,11 +965,13 @@ namespace LevEngine
 
         void DeserializeData(const YAML::Node& node, Rigidbody& component) override
         {
+            /*
             if (const auto layerNode = node["Layer"])
             {
                 const auto layer = static_cast<FilterLayer>(layerNode.as<int>());
                 component.SetLayer(layer);
             }
+            */
             
             if (const auto gravityEnableNode = node["Is Gravity Enabled"])
             {

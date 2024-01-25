@@ -7,6 +7,8 @@ namespace LevEngine
     {
         // The entity with which the collision occurred.
         Entity Entity;
+        // The number of contacts for this collision
+        int ContactCount = 0;
         // The position of the contact point between the shapes, in world space.
         Vector<Vector3> Points {};
         // The normal of the contacting surfaces at the contact point. The normal direction points from the second shape to the first shape.
