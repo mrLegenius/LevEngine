@@ -390,18 +390,20 @@ namespace LevEngine::Scripting
             {
                 rigidbody.Initialize(entity);
             },
-            "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
-            "getCollisionExitBuffer", &Rigidbody::GetCollisionExitBuffer,
             "getTriggerEnterBuffer", &Rigidbody::GetTriggerEnterBuffer,
+            "getTriggerStayBuffer", &Rigidbody::GetTriggerStayBuffer,
             "getTriggerExitBuffer", &Rigidbody::GetTriggerExitBuffer,
+            "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
+            "getCollisionStayBuffer", &Rigidbody::GetCollisionStayBuffer,
+            "getCollisionExitBuffer", &Rigidbody::GetCollisionExitBuffer,
             "getLayer", [](const Rigidbody& rigidbody)
             {
                 return static_cast<int>(rigidbody.GetLayer());
             },
-            "setLayer", [](Rigidbody& rigidbody, int Layer)
+            "setLayer", [](const Rigidbody& rigidbody, int Layer)
             {
                 rigidbody.SetLayer(static_cast<FilterLayer>(Layer));
-            },
+            }, 
             "getSphereRadius",&Rigidbody::GetSphereRadius,
             "setSphereRadius",&Rigidbody::SetSphereRadius,
             "getCapsuleRadius",&Rigidbody::GetCapsuleRadius,
@@ -423,6 +425,7 @@ namespace LevEngine::Scripting
         lua.new_usertype<Collision>(
             "Collision",
             "entity", &Collision::Entity,
+            "contactCount", &Collision::ContactCount,
             "points", &Collision::Points,
             "normals", &Collision::Normals,
             "impulses", &Collision::Impulses,
