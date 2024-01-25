@@ -420,6 +420,7 @@ namespace LevEngine::Scripting
         lua.new_usertype<Collision>(
             "Collision",
             "entity", &Collision::Entity,
+            "contactCount", &Collision::ContactCount,
             "points", &Collision::Points,
             "normals", &Collision::Normals,
             "impulses", &Collision::Impulses,

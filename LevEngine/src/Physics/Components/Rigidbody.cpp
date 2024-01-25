@@ -107,16 +107,13 @@ namespace LevEngine
     void Rigidbody::SetLayer(const FilterLayer layer) const
     {
         m_ColliderCollection[0]->m_Layer = layer;
-
-        /*
+        
         if (m_Actor != nullptr)
         {
             physx::PxFilterData filterData;
             filterData.word0 = static_cast<physx::PxU32>(layer);
             GetCollider()->setQueryFilterData(filterData);
-            Log::Debug("Layer: {0}", layer);
         }
-        */
     }
 
     Rigidbody::Type Rigidbody::GetRigidbodyType() const
