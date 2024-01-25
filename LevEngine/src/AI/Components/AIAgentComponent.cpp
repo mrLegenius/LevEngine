@@ -86,6 +86,10 @@ namespace LevEngine
 
 	const String& AIAgentComponent::Match()
 	{
+    	if(!m_isRBSDirty)
+    	{
+    		return m_lastMatchedRule;
+    	}
 		for (auto& rule : m_rules)
 		{
 			bool matched = true;
@@ -224,7 +228,9 @@ namespace LevEngine
 
 			if(matched)
 			{
-				return rule.GetName();
+				m_isRBSDirty = false;
+				m_lastMatchedRule = rule.GetName();
+				return m_lastMatchedRule;
 			}
 		}
     	
@@ -252,6 +258,13 @@ namespace LevEngine
 	
 	void AIAgentComponent::SetFactAsBool(const Pair<String, String>& key, bool value)
     {
+    	const auto it = m_boolFacts.find(key);
+
+    	if(it == m_boolFacts.end() || it->second != value)
+    	{
+    		m_isRBSDirty = true;
+    	}
+
     	m_boolFacts[key] = value;
     }
 
@@ -283,6 +296,13 @@ namespace LevEngine
 
 	void AIAgentComponent::SetFactAsNumber(const Pair<String, String>& key, float value)
 	{
+    	const auto it = m_numberFacts.find(key);
+
+    	if(it == m_numberFacts.end() || it->second != value)
+    	{
+    		m_isRBSDirty = true;
+    	}
+
     	m_numberFacts[key] = value;
 	}
 
@@ -314,6 +334,13 @@ namespace LevEngine
 
 	void AIAgentComponent::SetFactAsVector3(const Pair<String, String>& key, Vector3 value)
     {
+    	const auto it = m_vector3Facts.find(key);
+
+    	if(it == m_vector3Facts.end() || it->second != value)
+    	{
+    		m_isRBSDirty = true;
+    	}
+    	
     	m_vector3Facts[key] = value;
     }
 
@@ -345,6 +372,13 @@ namespace LevEngine
 
 	void AIAgentComponent::SetFactAsString(const Pair<String, String>& key, const String& value)
 	{
+    	const auto it = m_stringFacts.find(key);
+
+    	if(it == m_stringFacts.end() || it->second != value)
+    	{
+    		m_isRBSDirty = true;
+    	}
+    	
     	m_stringFacts[key] = value;
 	}
 

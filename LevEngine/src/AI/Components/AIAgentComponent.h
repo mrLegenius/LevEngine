@@ -79,5 +79,9 @@ namespace LevEngine
         Map<Pair<String, String>, float> m_numberFacts;
         Map<Pair<String, String>, Vector3> m_vector3Facts;
         Map<Pair<String, String>, String> m_stringFacts;
+
+        String m_lastMatchedRule;
+
+        bool m_isRBSDirty = true;
     };
 }
