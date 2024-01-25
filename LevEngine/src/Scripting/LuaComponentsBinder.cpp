@@ -1026,6 +1026,31 @@ namespace LevEngine::Scripting
         );
     }
 
+    void LuaComponentsBinder::CreateRuleBind(sol::state& lua)
+    {
+        lua.new_usertype<Rule>(
+             "Rule",
+             sol::call_constructor,
+             sol::constructors<Rule(const std::string&)>(),
+             "addCondition", sol::overload(
+             [](Rule& rule, const std::string& conditionName, const std::string& operation, bool value)
+             {
+                 rule.AddCondition(conditionName.c_str(), operation.c_str(), value);
+             },
+             [](Rule& rule, const std::string& conditionName, const std::string& operation, float value)
+             {
+                 rule.AddCondition(conditionName.c_str(), operation.c_str(), value);
+             },
+             [](Rule& rule, const std::string& conditionName, const std::string& operation, const Vector3& value)
+             {
+                 rule.AddCondition(conditionName.c_str(), operation.c_str(), value);
+             },
+             [](Rule& rule, const std::string& conditionName, const std::string& operation, const String& value)
+             {
+                 rule.AddCondition(conditionName.c_str(), operation.c_str(), value);
+             }));
+    }
+
     void LuaComponentsBinder::CreateAIAgentComponentLuaBind(sol::state& lua)
     {
         lua.new_usertype<AIAgentComponent>(
@@ -1037,7 +1062,14 @@ namespace LevEngine::Scripting
                 {
                     return AIAgentComponent{};
                 }),
-                "getCrowd", &AIAgentComponent::GetCrowd,
+            "getCrowd", &AIAgentComponent::GetCrowd,
+            "addRule", &AIAgentComponent::AddRule,
+            "match", [](AIAgentComponent& agentComponent)
+            {
+                return agentComponent.Match().c_str();
+            },
+            "initRBS", &AIAgentComponent::InitRBS,
+            "isRBSInited", &AIAgentComponent::IsRBSInited,
             "setMoveTarget", &AIAgentComponent::SetMoveTarget,
             //Bool facts
             "setFactAsBool", [](AIAgentComponent& agentComponent, const std::string& key, bool value)
@@ -1053,7 +1085,7 @@ namespace LevEngine::Scripting
                 return agentComponent.GetFactAsBool(key.c_str());
             },
             //Number facts
-            "setFactAsNumber", [](AIAgentComponent& agentComponent, const std::string& key, int value)
+            "setFactAsNumber", [](AIAgentComponent& agentComponent, const std::string& key, float value)
             {
                 agentComponent.SetFactAsNumber(key.c_str(), value);
             },

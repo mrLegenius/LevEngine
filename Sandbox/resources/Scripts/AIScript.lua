@@ -28,16 +28,26 @@ function AIScript.new(variable)
 
     self.rules.patrol = 
     {
-        conditions = { {name = "IsPlayerFound", value = false} },
-        action = moveToNextPatrolPosition
+        conditions = { {name = "IsPlayerFound", operation = "==", value = false} },
+        actions = {moveToNextPatrolPosition}
     }
 
     self.rules.moveToPlayer =
     {
-        conditions = { {name = "IsPlayerFound", value = true} },
-        action = moveToPlayerPosition
+        conditions = { {name = "IsPlayerFound", operation = "==", value = true} },
+        actions = {moveToPlayerPosition}
     }
 
+    self.rules.moveToAlly =
+    {
+        conditions = {
+             {name = "IsPlayerFound", operation = "~=", value = true},
+             {name = "IsBeautifulAllyFounded", operation = "==", value = true},
+             {name = "Amorousness", operation = ">", value = 10}
+        },
+        actions = {moveToPlayerPosition}
+    }
+    
     return self
 end
 

@@ -4,6 +4,8 @@
 #include "AIAgentCrowdComponent.h"
 #include "Scene/Components/ComponentSerializer.h"
 
+#include "Rule.h"
+
 namespace LevEngine
 {
     AIAgentComponent::AIAgentComponent()
@@ -64,6 +66,166 @@ namespace LevEngine
 	{
 	    return m_agentIndex;
     }
+
+	void AIAgentComponent::AddRule(const Rule& newRule)
+    {
+	    m_rules.push_back(newRule);
+    }
+
+	void AIAgentComponent::InitRBS()
+	{
+    	m_RBSInited = true;
+	}
+
+	bool AIAgentComponent::IsRBSInited()
+	{
+    	return m_RBSInited;
+	}
+
+	const String& AIAgentComponent::Match()
+	{
+		for (auto& rule : m_rules)
+		{
+			bool matched = true;
+			for (const auto& condition : rule.GetConditions())
+			{
+				bool conditionPassed = false;
+				const auto& conditionName = condition.name;
+				const auto& conditionOperation = condition.operation;
+				switch (condition.type)
+				{
+					case RuleConditionType::Bool:
+						{
+							if (HasBoolFact(conditionName))
+							{
+								const auto& factValue = GetFactAsBool(conditionName);
+								
+								if(conditionOperation == "==" && factValue == condition.boolValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == "~=" && factValue != condition.boolValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+							}
+							break;
+						}
+					case RuleConditionType::Number:
+						{
+							if (HasNumberFact(conditionName))
+							{
+								const auto& factValue = GetFactAsNumber(conditionName);
+			
+								if(conditionOperation == "==" && factValue == condition.numberValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == "~=" && factValue != condition.numberValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == "<" && factValue < condition.numberValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == ">" && factValue > condition.numberValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == "<=" && factValue <= condition.numberValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == ">=" && factValue >= condition.numberValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+							}
+							break;
+						}
+					case RuleConditionType::Vector3:
+						{
+							if (HasVector3Fact(conditionName))
+							{
+								const auto& factValue = GetFactAsVector3(conditionName);
+								
+								if(conditionOperation == "==" && factValue == condition.vector3Value)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == "~=" && factValue != condition.vector3Value)
+								{
+									conditionPassed = true;
+									break;
+								}
+							}
+							break;
+						}
+					case RuleConditionType::String:
+						{
+							if (HasStringFact(conditionName))
+							{
+								const auto& factValue = GetFactAsString(conditionName);
+			
+								if(conditionOperation == "==" && factValue == condition.stringValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == "~=" && factValue != condition.stringValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == "<" && factValue < condition.stringValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == ">" && factValue > condition.stringValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == "<=" && factValue <= condition.stringValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == ">=" && factValue >= condition.stringValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+							}
+							break;
+						}
+				}
+			
+				if (!conditionPassed)
+				{
+					matched = false;
+				}
+			}
+
+			if(matched)
+			{
+				return rule.GetName();
+			}
+		}
+    	
+    	return nullptr;
+	}
 
     dtCrowdAgentParams* AIAgentComponent::GetAgentParams() const
     {
@@ -130,7 +292,7 @@ namespace LevEngine
     	return true;
 	}
 
-	int AIAgentComponent::GetFactAsNumber(const String& key)
+	float AIAgentComponent::GetFactAsNumber(const String& key)
 	{
     	const auto it = m_numberFacts.find(key);
 

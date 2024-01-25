@@ -2,6 +2,7 @@
 #pragma once
 #include <DetourCrowd.h>
 
+#include "Rule.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
@@ -30,6 +31,12 @@ namespace LevEngine
         int GetIndexInCrowd() const;
 
         bool isActive = false; 
+
+        void AddRule(const Rule& newRule);
+        void InitRBS();
+        bool IsRBSInited();
+
+        const String& Match();
         
         dtCrowdAgentParams* GetAgentParams() const;
         void SetAgentParams(dtCrowdAgentParams* params);
@@ -42,7 +49,7 @@ namespace LevEngine
         
         void SetFactAsNumber(const String& key, float value);
         bool HasNumberFact(const String& key);
-        int GetFactAsNumber(const String& key);
+        float GetFactAsNumber(const String& key);
         
         void SetFactAsVector3(const String& key, Vector3 value);
         bool HasVector3Fact(const String& key);
@@ -53,6 +60,10 @@ namespace LevEngine
         String GetFactAsString(const String& key);
 
     private:
+
+        bool m_RBSInited = false;
+        
+        Vector<Rule> m_rules;
 
         bool m_initialized = false;
         
