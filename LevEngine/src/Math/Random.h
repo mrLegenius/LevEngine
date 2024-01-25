@@ -123,7 +123,7 @@ struct Random
 	/**
 	 * \return Color with each element is same and in [min, max] and a = alpha
 	 */
-	static LevEngine::Color SmoothColor(const float min, const float max, const float alpha = 1.0f)
+	static LevEngine::Color ColorSmoothGrayscale(const float min, const float max, const float alpha = 1.0f)
 	{
 		const auto delta = Float();
 		const auto value = Math::Lerp(min, max, delta);
@@ -133,7 +133,7 @@ struct Random
 	/**
 	 * \return Color with random lerp color from a to b
 	 */
-	static LevEngine::Color SmoothColor(const LevEngine::Color& a, const LevEngine::Color& b)
+	static LevEngine::Color ColorSmooth(const LevEngine::Color& a, const LevEngine::Color& b)
 	{
 		const auto delta = Float();
 		return LevEngine::Color{ Math::Lerp(a.r, b.r, delta), Math::Lerp(a.g,b.g, delta), Math::Lerp(a.b, b.b, delta), Math::Lerp(a.a, b.a, delta) };

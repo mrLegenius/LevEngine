@@ -319,6 +319,11 @@ namespace LevEngine::Scripting
 		lua.new_usertype<Random>(
 			"Random",
 			sol::no_constructor,
+			"bool", &Random::Bool,
+			"int", &Random::Int, //[min, max)
+			"float", sol::overload(
+				sol::resolve<float(float, float)>(&Random::Float), // [min, max]
+				sol::resolve<float()>(&Random::Float)), //[0, 1]
 			"vector3", sol::overload(
 				sol::resolve<Vector3()>(&Random::Vec3),
 				sol::resolve<Vector3(float, float)>(&Random::Vec3),
@@ -327,13 +332,12 @@ namespace LevEngine::Scripting
 				sol::resolve<Vector4()>(&Random::Vec4),
 				sol::resolve<Vector4(float, float)>(&Random::Vec4),
 				sol::resolve<Vector4(const Vector4, const Vector4)>(&Random::Vec4)),
+			"rotation", &Random::Rotation,
 			"color", sol::overload(
 				sol::resolve<Color(float, float, float)>(&Random::Color),
 				sol::resolve<Color(const Color&, const Color&)>(&Random::Color)),
-			"smoothColor", sol::overload(
-				sol::resolve<Color(float, float, float)>(&Random::SmoothColor),
-				sol::resolve<Color(const Color&, const Color&)>(&Random::SmoothColor)),
-			"rotation", &Random::Rotation
+			"colorSmooth", &Random::ColorSmooth, //Random lerp. ColorSmooth(Color, Color)
+			"colorGrayScale", &Random::ColorSmoothGrayscale //ColorSmoothGrayscale(Color, Color, alpha)
 		);
 	}
 
