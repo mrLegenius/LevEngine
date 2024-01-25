@@ -18,27 +18,8 @@ namespace LevEngine
 
             if (rigidbody.GetActor() == nullptr) continue;
 
-            /*
-            if (rigidbody.IsTriggerEnabled())
-            {
-                const auto object = Entity(entt::handle(registry, entity));
-                for (const auto element : rigidbody.m_TriggerStayBuffer)
-                {
-                    Log::Debug("{0} stays in {1}", element.GetName(), object.GetName());
-                } 
-
-                //Log::Debug("Enter: {0}", rigidbody.m_TriggerEnterBuffer.size());
-                //Log::Debug("Stay: {0}", rigidbody.m_TriggerStayBuffer.size());
-                //Log::Debug("Exit: {0}", rigidbody.m_TriggerExitBuffer.size());
-            }
-            */
-
             rigidbody.m_TriggerEnterBuffer.clear();
             rigidbody.m_TriggerExitBuffer.clear();
-
-            Log::Debug("Enter: {0}", rigidbody.m_CollisionEnterBuffer.size());
-            Log::Debug("Stay: {0}", rigidbody.m_CollisionStayBuffer.size());
-            Log::Debug("Exit: {0}", rigidbody.m_CollisionExitBuffer.size());
             
             rigidbody.m_CollisionEnterBuffer.clear();
             rigidbody.m_CollisionExitBuffer.clear();
