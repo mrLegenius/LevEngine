@@ -6,6 +6,8 @@
 
 #include "Rule.h"
 
+#include <regex>
+
 namespace LevEngine
 {
     AIAgentComponent::AIAgentComponent()
@@ -90,15 +92,17 @@ namespace LevEngine
 			for (const auto& condition : rule.GetConditions())
 			{
 				bool conditionPassed = false;
-				const auto& conditionName = condition.name;
+				const auto& conditionId = condition.id;
+				const auto& conditionAttribute = condition.attribute;
 				const auto& conditionOperation = condition.operation;
+				const auto& idAndAttribute = MakePair(conditionId, conditionAttribute);
 				switch (condition.type)
 				{
 					case RuleConditionType::Bool:
 						{
-							if (HasBoolFact(conditionName))
+							if (HasBoolFact(idAndAttribute))
 							{
-								const auto& factValue = GetFactAsBool(conditionName);
+								const auto& factValue = GetFactAsBool(idAndAttribute);
 								
 								if(conditionOperation == "==" && factValue == condition.boolValue)
 								{
@@ -115,9 +119,9 @@ namespace LevEngine
 						}
 					case RuleConditionType::Number:
 						{
-							if (HasNumberFact(conditionName))
+							if (HasNumberFact(idAndAttribute))
 							{
-								const auto& factValue = GetFactAsNumber(conditionName);
+								const auto& factValue = GetFactAsNumber(MakePair(conditionId, conditionAttribute));
 			
 								if(conditionOperation == "==" && factValue == condition.numberValue)
 								{
@@ -154,9 +158,9 @@ namespace LevEngine
 						}
 					case RuleConditionType::Vector3:
 						{
-							if (HasVector3Fact(conditionName))
+							if (HasVector3Fact(idAndAttribute))
 							{
-								const auto& factValue = GetFactAsVector3(conditionName);
+								const auto& factValue = GetFactAsVector3(idAndAttribute);
 								
 								if(conditionOperation == "==" && factValue == condition.vector3Value)
 								{
@@ -173,9 +177,9 @@ namespace LevEngine
 						}
 					case RuleConditionType::String:
 						{
-							if (HasStringFact(conditionName))
+							if (HasStringFact(idAndAttribute))
 							{
-								const auto& factValue = GetFactAsString(conditionName);
+								const auto& factValue = GetFactAsString(idAndAttribute);
 			
 								if(conditionOperation == "==" && factValue == condition.stringValue)
 								{
@@ -246,120 +250,128 @@ namespace LevEngine
     	}
     }
 	
-	void AIAgentComponent::SetFactAsBool(const String& key, bool value)
+	void AIAgentComponent::SetFactAsBool(const Pair<String, String>& key, bool value)
     {
     	m_boolFacts[key] = value;
     }
 
-	bool AIAgentComponent::HasBoolFact(const String& key)
+	bool AIAgentComponent::HasBoolFact(const Pair<String, String>& key)
     {
-    	const auto it = m_boolFacts.find(key);
-
-    	if(it == m_boolFacts.end())
-    	{
-    		return false;
-    	}
-
-    	return true;
+	    for (auto keyValue : m_boolFacts)
+	    {
+	    	std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+	    	if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+	    	{
+	    		return true;
+	    	}
+	    }
+    	return false;
     }
 
-	bool AIAgentComponent::GetFactAsBool(const String& key)
+	bool AIAgentComponent::GetFactAsBool(const Pair<String, String>& key)
     {
-	    const auto it = m_boolFacts.find(key);
-
-    	if(it == m_boolFacts.end())
+    	for (auto keyValue : m_boolFacts)
     	{
-    		return {};
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
     	}
-
-    	return m_boolFacts[key];
+    	return {};
     }
 
-	void AIAgentComponent::SetFactAsNumber(const String& key, float value)
+	void AIAgentComponent::SetFactAsNumber(const Pair<String, String>& key, float value)
 	{
     	m_numberFacts[key] = value;
 	}
 
-	bool AIAgentComponent::HasNumberFact(const String& key)
+	bool AIAgentComponent::HasNumberFact(const Pair<String, String>& key)
 	{
-    	const auto it = m_numberFacts.find(key);
-
-    	if(it == m_numberFacts.end())
+    	for (auto keyValue : m_numberFacts)
     	{
-    		return false;
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return true;
+    		}
     	}
-
-    	return true;
+    	return false;
 	}
 
-	float AIAgentComponent::GetFactAsNumber(const String& key)
+	float AIAgentComponent::GetFactAsNumber(const Pair<String, String>& key)
 	{
-    	const auto it = m_numberFacts.find(key);
-
-    	if(it == m_numberFacts.end())
+    	for (auto keyValue : m_numberFacts)
     	{
-    		return {};
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
     	}
-
-    	return m_numberFacts[key];
+    	return {};
 	}
 
-	void AIAgentComponent::SetFactAsVector3(const String& key, Vector3 value)
+	void AIAgentComponent::SetFactAsVector3(const Pair<String, String>& key, Vector3 value)
     {
     	m_vector3Facts[key] = value;
     }
 
-	bool AIAgentComponent::HasVector3Fact(const String& key)
+	bool AIAgentComponent::HasVector3Fact(const Pair<String, String>& key)
 	{
-    	const auto it = m_vector3Facts.find(key);
-
-    	if(it == m_vector3Facts.end())
+    	for (auto keyValue : m_vector3Facts)
     	{
-    		return false;
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return true;
+    		}
     	}
-
-    	return true;
+    	return false;
 	}
 
-	Vector3 AIAgentComponent::GetFactAsVector3(const String& key)
+	Vector3 AIAgentComponent::GetFactAsVector3(const Pair<String, String>& key)
     {
-    	const auto it = m_vector3Facts.find(key);
-
-    	if(it == m_vector3Facts.end())
+    	for (auto keyValue : m_vector3Facts)
     	{
-    		return {};
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
     	}
-    	
-    	return m_vector3Facts[key];
+    	return {};
     }
 
-	void AIAgentComponent::SetFactAsString(const String& key, const String& value)
+	void AIAgentComponent::SetFactAsString(const Pair<String, String>& key, const String& value)
 	{
     	m_stringFacts[key] = value;
 	}
 
-	bool AIAgentComponent::HasStringFact(const String& key)
+	bool AIAgentComponent::HasStringFact(const Pair<String, String>& key)
 	{
-    	const auto it = m_stringFacts.find(key);
-
-    	if(it == m_stringFacts.end())
+    	for (auto keyValue : m_stringFacts)
     	{
-    		return false;
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return true;
+    		}
     	}
-
-    	return true;
+    	return false;
 	}
 
-	String AIAgentComponent::GetFactAsString(const String& key)
+	String AIAgentComponent::GetFactAsString(const Pair<String, String>& key)
 	{
-    	const auto it = m_stringFacts.find(key);
-
-    	if(it == m_stringFacts.end())
+    	for (auto keyValue : m_stringFacts)
     	{
-    		return {};
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
     	}
-    	
-    	return m_stringFacts[key];
+    	return {};
 	}
 
 	class AIAgentComponentSerializer final : public ComponentSerializer<AIAgentComponent, AIAgentComponentSerializer>

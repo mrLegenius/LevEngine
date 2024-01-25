@@ -43,21 +43,21 @@ namespace LevEngine
 
         void SetMoveTarget(Vector3 targetPos);
         
-        void SetFactAsBool(const String&  key, bool value);
-        bool HasBoolFact(const String& key);
-        bool GetFactAsBool(const String& key);
+        void SetFactAsBool(const Pair<String, String>&, bool value);
+        bool HasBoolFact(const Pair<String, String>& key);
+        bool GetFactAsBool(const Pair<String, String>& key);
         
-        void SetFactAsNumber(const String& key, float value);
-        bool HasNumberFact(const String& key);
-        float GetFactAsNumber(const String& key);
+        void SetFactAsNumber(const Pair<String, String>& key, float value);
+        bool HasNumberFact(const Pair<String, String>& key);
+        float GetFactAsNumber(const Pair<String, String>& key);
         
-        void SetFactAsVector3(const String& key, Vector3 value);
-        bool HasVector3Fact(const String& key);
-        Vector3 GetFactAsVector3(const String& key);
+        void SetFactAsVector3(const Pair<String, String>& key, Vector3 value);
+        bool HasVector3Fact(const Pair<String, String>& key);
+        Vector3 GetFactAsVector3(const Pair<String, String>& key);
 
-        void SetFactAsString(const String& key, const String& value);
-        bool HasStringFact(const String& key);
-        String GetFactAsString(const String& key);
+        void SetFactAsString(const Pair<String, String>& key, const String& value);
+        bool HasStringFact(const Pair<String, String>& key);
+        String GetFactAsString(const Pair<String, String>& key);
 
     private:
 
@@ -75,9 +75,9 @@ namespace LevEngine
         dtCrowdAgent* m_agent;
         dtCrowdAgentParams* m_agentParams;
 
-        Map<String, bool> m_boolFacts;
-        Map<String, float> m_numberFacts;
-        Map<String, Vector3> m_vector3Facts;
-        Map<String, String> m_stringFacts;
+        Map<Pair<String, String>, bool> m_boolFacts;
+        Map<Pair<String, String>, float> m_numberFacts;
+        Map<Pair<String, String>, Vector3> m_vector3Facts;
+        Map<Pair<String, String>, String> m_stringFacts;
     };
 }

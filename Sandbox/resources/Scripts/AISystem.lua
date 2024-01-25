@@ -16,8 +16,8 @@ AISystem = {
 					return
 				end
 
-				if agentComponent:hasNumberFact("TimeFromLastPatrolTargetSwitch") then
-					local timeFromLastPatrolTargetSwitch = agentComponent:getFactAsNumber("TimeFromLastPatrolTargetSwitch")
+				if agentComponent:hasNumberFact("ME", "TimeFromLastPatrolTargetSwitch") then
+					local timeFromLastPatrolTargetSwitch = agentComponent:getFactAsNumber("ME", "TimeFromLastPatrolTargetSwitch")
 					if timeFromLastPatrolTargetSwitch >= patrolTargetSwitchInterval then
 						local crowdEntity = agentComponent:getCrowd()
 						if crowdEntity == nil or not crowdEntity:isValid() then
@@ -34,15 +34,15 @@ AISystem = {
 						end
 		
 						local randomPosition = crowd:getRandomPointOnNavMesh()
-						agentComponent:setFactAsVector3("NextPatrolPosition", randomPosition)
-						agentComponent:setFactAsNumber("TimeFromLastPatrolTargetSwitch", 0)
-						local abi = agentComponent:getFactAsNumber("TimeFromLastPatrolTargetSwitch")
+						agentComponent:setFactAsVector3("ME", "NextPatrolPosition", randomPosition)
+						agentComponent:setFactAsNumber("ME", "TimeFromLastPatrolTargetSwitch", 0)
+						local abi = agentComponent:getFactAsNumber("ME", "TimeFromLastPatrolTargetSwitch")
 					else
 						local incrementedTime = timeFromLastPatrolTargetSwitch + deltaTime
-						agentComponent:setFactAsNumber("TimeFromLastPatrolTargetSwitch", incrementedTime)
+						agentComponent:setFactAsNumber("ME", "TimeFromLastPatrolTargetSwitch", incrementedTime)
 					end
 				else
-					agentComponent:setFactAsNumber("TimeFromLastPatrolTargetSwitch", patrolTargetSwitchInterval)
+					agentComponent:setFactAsNumber("ME", "TimeFromLastPatrolTargetSwitch", patrolTargetSwitchInterval)
 				end
 			end
 		)
@@ -73,7 +73,7 @@ AISystem = {
 						for ruleKey, rule in pairs(rules) do
 							local ruleObject = Rule(ruleKey)
 							for conditionKey, condition in pairs(rule.conditions) do
-								ruleObject:addCondition(condition.name, condition.operation, condition.value)
+								ruleObject:addCondition(condition.id, condition.name, condition.operation, condition.value)
 							end
 							agentComponent:addRule(ruleObject)
 						end
@@ -104,7 +104,7 @@ AISystem = {
 				if agentComponent == nil then
 					return
 				end
-				agentComponent:setFactAsBool("IsPlayerFound", false)
+				agentComponent:setFactAsBool("ME", "IsPlayerFound", false)
 			end
 		)
 		AISystem.updatePatrol(deltaTime)

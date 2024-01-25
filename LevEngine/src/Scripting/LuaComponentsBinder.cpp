@@ -1033,21 +1033,21 @@ namespace LevEngine::Scripting
              sol::call_constructor,
              sol::constructors<Rule(const std::string&)>(),
              "addCondition", sol::overload(
-             [](Rule& rule, const std::string& conditionName, const std::string& operation, bool value)
+             [](Rule& rule, const std::string& id, const std::string& attribute, const std::string& operation, bool value)
              {
-                 rule.AddCondition(conditionName.c_str(), operation.c_str(), value);
+                 rule.AddCondition(id.c_str(), attribute.c_str(), operation.c_str(), value);
              },
-             [](Rule& rule, const std::string& conditionName, const std::string& operation, float value)
+             [](Rule& rule, const std::string& id, const std::string& attribute, const std::string& operation, float value)
              {
-                 rule.AddCondition(conditionName.c_str(), operation.c_str(), value);
+                 rule.AddCondition(id.c_str(), attribute.c_str(), operation.c_str(), value);
              },
-             [](Rule& rule, const std::string& conditionName, const std::string& operation, const Vector3& value)
+             [](Rule& rule, const std::string& id, const std::string& attribute, const std::string& operation, const Vector3& value)
              {
-                 rule.AddCondition(conditionName.c_str(), operation.c_str(), value);
+                 rule.AddCondition(id.c_str(), attribute.c_str(), operation.c_str(), value);
              },
-             [](Rule& rule, const std::string& conditionName, const std::string& operation, const String& value)
+             [](Rule& rule, const std::string& id, const std::string& attribute, const std::string& operation, const String& value)
              {
-                 rule.AddCondition(conditionName.c_str(), operation.c_str(), value);
+                 rule.AddCondition(id.c_str(), attribute.c_str(), operation.c_str(), value);
              }));
     }
 
@@ -1072,56 +1072,56 @@ namespace LevEngine::Scripting
             "isRBSInited", &AIAgentComponent::IsRBSInited,
             "setMoveTarget", &AIAgentComponent::SetMoveTarget,
             //Bool facts
-            "setFactAsBool", [](AIAgentComponent& agentComponent, const std::string& key, bool value)
+            "setFactAsBool", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute, bool value)
             {
-                agentComponent.SetFactAsBool(key.c_str(), value);
+                agentComponent.SetFactAsBool(MakePair(id.c_str(), attribute.c_str()), value);
             },
-            "hasBoolFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            "hasBoolFact", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
             {
-                return agentComponent.HasBoolFact(key.c_str());
+                return agentComponent.HasBoolFact(MakePair(id.c_str(), attribute.c_str()));
             },
-            "getFactAsBool", [](AIAgentComponent& agentComponent, const std::string& key)
+            "getFactAsBool", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
             {
-                return agentComponent.GetFactAsBool(key.c_str());
+                return agentComponent.GetFactAsBool(MakePair(id.c_str(), attribute.c_str()));
             },
             //Number facts
-            "setFactAsNumber", [](AIAgentComponent& agentComponent, const std::string& key, float value)
+            "setFactAsNumber", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute, float value)
             {
-                agentComponent.SetFactAsNumber(key.c_str(), value);
+                agentComponent.SetFactAsNumber(MakePair(id.c_str(), attribute.c_str()), value);
             },
-            "hasNumberFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            "hasNumberFact", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
             {
-                return agentComponent.HasNumberFact(key.c_str());
+                return agentComponent.HasNumberFact(MakePair(id.c_str(), attribute.c_str()));
             },
-            "getFactAsNumber", [](AIAgentComponent& agentComponent, const std::string& key)
+            "getFactAsNumber", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
             {
-                return agentComponent.GetFactAsNumber(key.c_str());
+                return agentComponent.GetFactAsNumber(MakePair(id.c_str(), attribute.c_str()));
             },
             //Vector3 facts
-            "setFactAsVector3", [](AIAgentComponent& agentComponent, const std::string& key, Vector3 value)
+            "setFactAsVector3", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute, Vector3 value)
             {
-                agentComponent.SetFactAsVector3(key.c_str(), value);
+                agentComponent.SetFactAsVector3(MakePair(id.c_str(), attribute.c_str()), value);
             },
-            "hasVector3Fact", [](AIAgentComponent& agentComponent, const std::string& key)
+            "hasVector3Fact", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
             {
-                return agentComponent.HasVector3Fact(key.c_str());
+                return agentComponent.HasVector3Fact(MakePair(id.c_str(), attribute.c_str()));
             },
-            "getFactAsVector3", [](AIAgentComponent& agentComponent, const std::string& key)
+            "getFactAsVector3", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
             {
-                return agentComponent.GetFactAsVector3(key.c_str());
+                return agentComponent.GetFactAsVector3(MakePair(id.c_str(), attribute.c_str()));
             },
             //String facts
-            "setFactAsString", [](AIAgentComponent& agentComponent, const std::string& key, const std::string& value)
+            "setFactAsString", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute, const std::string& value)
             {
-                agentComponent.SetFactAsString(key.c_str(), value.c_str());
+                agentComponent.SetFactAsString(MakePair(id.c_str(), attribute.c_str()), value.c_str());
             },
-            "hasStringFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            "hasStringFact", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
             {
-                return agentComponent.HasStringFact(key.c_str());
+                return agentComponent.HasStringFact(MakePair(id.c_str(), attribute.c_str()));
             },
-            "getFactAsString", [](AIAgentComponent& agentComponent, const std::string& key)
+            "getFactAsString", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
             {
-                return agentComponent.GetFactAsString(key.c_str()).c_str();
+                return agentComponent.GetFactAsString(MakePair(id.c_str(), attribute.c_str())).c_str();
             }
         );
     }
