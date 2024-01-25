@@ -116,6 +116,9 @@ namespace LevEngine::Editor
                 if (ImGui::MenuItem("Reimport"))
                     AssetDatabase::ImportAsset(path);
 
+                if (ImGui::MenuItem("Open in Explorer"))
+                    FileDialogs::OpenFileByExtension(path);
+
                 ImGui::EndPopup();
             }
         }
@@ -248,6 +251,9 @@ namespace LevEngine::Editor
 
                     if (ImGui::MenuItem("Rename"))
                         m_RenamingAsset = asset;
+
+                    if (is_directory(path) && ImGui::MenuItem("Open in Explorer"))
+                        FileDialogs::OpenFileByExtension(path);
 
                     ImGui::EndPopup();
                 }
