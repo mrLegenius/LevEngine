@@ -12,7 +12,7 @@ function AIScript.new(variable)
 
     local moveToPlayerPosition = function(agentComponent)
         if agentComponent:hasVector3Fact("PLAYER_*", "PlayerPosition") then
-            local playerPos = agentComponent:getFactAsVector3("PLAYER_*","PlayerPosition")
+            local playerPosition = agentComponent:getFactAsVector3("PLAYER_*","PlayerPosition")
             agentComponent:setMoveTarget(playerPosition)
         end
     end

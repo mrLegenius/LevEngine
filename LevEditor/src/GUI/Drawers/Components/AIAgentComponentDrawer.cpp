@@ -65,6 +65,15 @@ namespace LevEngine::Editor
 
             const Array<String, 4> obstacleAvoidanceTypes {"Low", "Medium", "High", "Ultra"};
             EditorGUI::DrawComboBox("Obstacle avoidance quality", obstacleAvoidanceTypes, agentParams->obstacleAvoidanceType);
+            
+            EditorGUI::DrawSelectableComponent<Rigidbody>("Vision collider", component.VisionCollider, m_visionColliderWasSelected,
+                m_visionColliderIsSelected, m_visionColliderSelectableIdx);
         }
+        
+    private:
+
+        bool m_visionColliderWasSelected = false;
+        bool m_visionColliderIsSelected = false;
+        int m_visionColliderSelectableIdx = 0;
     };
 }

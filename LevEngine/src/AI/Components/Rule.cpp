@@ -57,6 +57,17 @@ namespace LevEngine
         conditions.push_back(condition);
     }
 
+    void Rule::AddCondition(const String& id, const String& attribute, const String& operation, Entity value)
+    {
+        RuleCondition condition;
+        condition.id = id;
+        condition.attribute = attribute;
+        condition.operation = operation;
+        condition.type = RuleConditionType::Entity;
+        condition.entityValue = value;
+        conditions.push_back(condition);
+    }
+
     Vector<RuleCondition>& Rule::GetConditions()
     {
         return conditions;

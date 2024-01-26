@@ -1073,6 +1073,8 @@ namespace LevEngine::Scripting
             },
             "initRBS", &AIAgentComponent::InitRBS,
             "isRBSInited", &AIAgentComponent::IsRBSInited,
+            "findEntitiesInVisibleScope", &AIAgentComponent::FindEntitiesInVisibleScope,
+            "findClosestEntityInVisibleScope", &AIAgentComponent::FindClosestEntityInVisibleScope,
             "setMoveTarget", &AIAgentComponent::SetMoveTarget,
             //Bool facts
             "setFactAsBool", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute, bool value)

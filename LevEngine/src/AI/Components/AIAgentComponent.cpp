@@ -8,6 +8,14 @@
 
 #include <regex>
 
+#include "Kernel/Application.h"
+#include "Physics/Physics.h"
+#include "Physics/Components/CharacterController.h"
+#include "Physics/Components/Rigidbody.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneManager.h"
+#include "Scene/Components/Transform/Transform.h"
+
 namespace LevEngine
 {
     AIAgentComponent::AIAgentComponent()
@@ -67,6 +75,118 @@ namespace LevEngine
 	int AIAgentComponent::GetIndexInCrowd() const
 	{
 	    return m_agentIndex;
+    }
+
+	Vector<Entity> AIAgentComponent::FindEntitiesInVisibleScope(FilterLayer layerMask) const
+    {
+    	if(!m_initialized || !VisionCollider)
+    	{
+    		return {};
+    	}
+    	
+    	const auto& agentTransform = m_selfEntity.GetComponent<Transform>();
+    	const auto& agentCharacterController = m_selfEntity.GetComponent<CharacterController>();
+    	
+    	const auto& agentPosition = agentTransform.GetWorldPosition();
+    	const auto& centerOffset = agentCharacterController.GetCenterOffset();
+    	const auto& capsuleHalfHeight = agentCharacterController.GetHeight();
+    	Vector3 eyePoint = agentPosition + centerOffset;
+    	eyePoint.y += capsuleHalfHeight;
+
+    	const auto& rigidBodyComponent = VisionCollider.GetComponent<Rigidbody>();
+    	
+    	const auto& entitiesInCollider = rigidBodyComponent.GetTriggerStayBuffer();
+
+    	Vector<Entity> filteredEntities;
+    	for (auto entity : entitiesInCollider)
+    	{
+    		if(!entity)
+    		{
+    			continue;
+    		}
+    		if(entity.HasComponent<Rigidbody>())
+    		{
+    			const auto& rigidBody = entity.GetComponent<Rigidbody>();
+    			const auto layer = rigidBody.GetLayer();
+    			if (layer & layerMask)
+    			{
+    				filteredEntities.push_back(entity);
+    			}
+    		}
+		    else if (entity.HasComponent<CharacterController>())
+		    {
+		    	const auto& characterController = entity.GetComponent<CharacterController>();
+			    const auto layer = characterController.GetLayer();
+		    	if (layer & layerMask)
+		    	{
+		    		filteredEntities.push_back(entity);
+		    	}
+		    }
+    	}
+
+    	Vector<Entity> findedEntities;
+	    for (auto filteredEntity : filteredEntities)
+	    {
+	    	const auto& entityTransform = filteredEntity.GetComponent<Transform>();
+	    	const auto& forwardDirection = agentTransform.GetForwardDirection();
+
+	    	const Vector3 fromAgentToTarget = entityTransform.GetWorldPosition() - agentPosition;
+    	
+	    	float dotProduct = forwardDirection.Dot(fromAgentToTarget);
+	    	dotProduct /= (forwardDirection.Length() * fromAgentToTarget.Length());
+	    	const float angleBetweenVisionVectorAndTarget = acos(dotProduct);
+    	
+	    	if(angleBetweenVisionVectorAndTarget > AngleOfVision)
+	    	{
+	    		continue;
+	    	}
+    	
+	    	const auto& rayCastHitResult = Application::Get().GetPhysics().Raycast(eyePoint, forwardDirection,
+				RangeOfVision, FilterLayer::Layer4);
+    	
+	    	if(!rayCastHitResult.IsSuccessful)
+	    	{
+	    		continue;
+	    	}
+    	
+	    	findedEntities.push_back(filteredEntity);
+	    }
+
+    	if(findedEntities.size() == 0)
+    	{
+    		return {};
+    	}
+
+    	return findedEntities;
+    }
+
+	Entity AIAgentComponent::FindClosestEntityInVisibleScope(FilterLayer layerMask) const
+    {
+    	const auto& selfTransform = m_selfEntity.GetComponent<Transform>();
+    	float minDistance = std::numeric_limits<float>::max();
+    	Entity closestEntity;
+    	Vector<Entity> entities = FindEntitiesInVisibleScope(layerMask);
+	    for (auto entity : entities)
+	    {
+	    	if(!entity)
+	    	{
+	    		continue;
+	    	}
+	    	const auto& entityTransform = entity.GetComponent<Transform>();
+		    const float distance = Vector3::DistanceSquared(selfTransform.GetWorldPosition(), entityTransform.GetWorldPosition());
+	    	if (distance < minDistance)
+	    	{
+	    		minDistance = distance;
+	    		closestEntity = entity;
+	    	}
+	    }
+
+    	if(closestEntity)
+    	{
+    		return closestEntity;
+    	}
+
+    	return {};
     }
 
 	void AIAgentComponent::AddRule(const Rule& newRule)
@@ -218,6 +338,25 @@ namespace LevEngine
 							}
 							break;
 						}
+				case RuleConditionType::Entity:
+						{
+							if (HasEntityFact(idAndAttribute))
+							{
+								const auto& factValue = GetFactAsEntity(idAndAttribute);
+								
+								if(conditionOperation == "==" && factValue == condition.entityValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+								if(conditionOperation == "~=" && factValue != condition.entityValue)
+								{
+									conditionPassed = true;
+									break;
+								}
+							}
+							break;
+						}
 				}
 			
 				if (!conditionPassed)
@@ -234,7 +373,7 @@ namespace LevEngine
 			}
 		}
     	
-    	return nullptr;
+    	return {};
 	}
 
     dtCrowdAgentParams* AIAgentComponent::GetAgentParams() const
@@ -408,6 +547,44 @@ namespace LevEngine
     	return {};
 	}
 
+	void AIAgentComponent::SetFactAsEntity(const Pair<String, String>& key, Entity value)
+	{
+    	const auto it = m_entityFacts.find(key);
+
+    	if(it == m_entityFacts.end() || it->second != value)
+    	{
+    		m_isRBSDirty = true;
+    	}
+    	
+    	m_entityFacts[key] = value;
+	}
+
+	bool AIAgentComponent::HasEntityFact(const Pair<String, String>& key)
+	{
+    	for (auto keyValue : m_entityFacts)
+    	{
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return true;
+    		}
+    	}
+    	return false;
+	}
+
+	Entity AIAgentComponent::GetFactAsEntity(const Pair<String, String>& key)
+	{
+    	for (auto keyValue : m_entityFacts)
+    	{
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
+    	}
+    	return {};
+	}
+
 	class AIAgentComponentSerializer final : public ComponentSerializer<AIAgentComponent, AIAgentComponentSerializer>
     {
     protected:
@@ -427,6 +604,10 @@ namespace LevEngine
         	out << YAML::Key << "Update flags" << YAML::Value << static_cast<int>(agentParams->updateFlags);
         	out << YAML::Key << "Obstacle avoidance type" << YAML::Value << static_cast<int>(agentParams->obstacleAvoidanceType);
         	out << YAML::Key << "Query filter type" << YAML::Value << static_cast<int>(agentParams->queryFilterType);
+        	if(component.VisionCollider)
+        	{
+        		out << YAML::Key << "Vision collider" << YAML::Value << component.VisionCollider.GetUUID();
+        	}
         }
         
         void DeserializeData(const YAML::Node& node, AIAgentComponent& component) override
@@ -443,6 +624,12 @@ namespace LevEngine
         	agentParams->updateFlags = node["Update flags"].as<int>();
         	agentParams->obstacleAvoidanceType = node["Obstacle avoidance type"].as<int>();
         	agentParams->queryFilterType = node["Query filter type"].as<int>();
+        	if(const auto visionColliderNode = node["Vision collider"])
+        	{
+        		component.VisionCollider = !visionColliderNode.IsNull()
+					? SceneManager::GetActiveScene()->GetEntityByUUID(UUID(visionColliderNode.as<uint64_t>()))
+					: Entity();
+        	}
         }
     };
 }

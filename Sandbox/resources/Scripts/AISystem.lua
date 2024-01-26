@@ -104,7 +104,17 @@ AISystem = {
 				if agentComponent == nil then
 					return
 				end
-				agentComponent:setFactAsBool("ME", "IsPlayerFound", false)
+
+				local closestPlayer = agentComponent:findClosestEntityInVisibleScope(FilterLayer.Layer2)
+
+				if closestPlayer:isValid() then
+					agentComponent:setFactAsBool("ME", "IsPlayerFound", true)
+					local playerID = "PLAYER_" .. tostring(closestPlayer:uuid())
+					local playerTransform = closestPlayer:get_component(Transform)
+					agentComponent:setFactAsVector3(playerID, "PlayerPosition", playerTransform:getWorldPosition())
+				else
+					--agentComponent:setFactAsBool("ME", "IsPlayerFound", false)
+				end
 			end
 		)
 		AISystem.updatePatrol(deltaTime)
@@ -128,10 +138,13 @@ AISystem = {
 				local aiScript = scriptsContainer.AIScript
 				
 				if aiScript ~= nil then
-					local matchedRule = agentComponent:match()
-					local actions = aiScript.rules[matchedRule].actions
-					for actionKey, action in pairs(actions) do
-						action(agentComponent)
+					local matchedRuleName = agentComponent:match()
+					local matchedRule = aiScript.rules[matchedRuleName]
+					if matchedRule ~= nil then
+						local actions = matchedRule.actions
+						for actionKey, action in pairs(actions) do
+							action(agentComponent)
+						end
 					end
 				end
 			end

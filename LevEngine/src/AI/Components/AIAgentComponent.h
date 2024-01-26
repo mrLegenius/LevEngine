@@ -11,6 +11,7 @@ class dtNavMesh;
 
 namespace LevEngine
 {
+    enum class FilterLayer : uint32_t;
     struct AIAgentCrowdComponent;
 
     REGISTER_PARSE_TYPE(AIAgentComponent);
@@ -29,6 +30,8 @@ namespace LevEngine
         Entity GetCrowd() const;
 
         int GetIndexInCrowd() const;
+        Vector<Entity> FindEntitiesInVisibleScope(FilterLayer layerMask) const;
+        Entity FindClosestEntityInVisibleScope(FilterLayer layerMask) const;
 
         bool isActive = false; 
 
@@ -59,6 +62,15 @@ namespace LevEngine
         bool HasStringFact(const Pair<String, String>& key);
         String GetFactAsString(const Pair<String, String>& key);
 
+        void SetFactAsEntity(const Pair<String, String>& key, Entity value);
+        bool HasEntityFact(const Pair<String, String>& key);
+        Entity GetFactAsEntity(const Pair<String, String>& key);
+        
+        float RangeOfVision = 15.0f;
+        float AngleOfVision = 40.0f;
+
+        Entity VisionCollider;
+        
     private:
 
         bool m_RBSInited = false;
@@ -79,6 +91,7 @@ namespace LevEngine
         Map<Pair<String, String>, float> m_numberFacts;
         Map<Pair<String, String>, Vector3> m_vector3Facts;
         Map<Pair<String, String>, String> m_stringFacts;
+        Map<Pair<String, String>, Entity> m_entityFacts;
 
         String m_lastMatchedRule;
 
