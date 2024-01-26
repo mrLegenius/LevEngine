@@ -129,20 +129,22 @@ namespace LevEngine
 	    {
 	    	const auto& entityTransform = filteredEntity.GetComponent<Transform>();
 	    	const auto& forwardDirection = agentTransform.GetForwardDirection();
+	    	const auto& targetTransform = entityTransform.GetWorldPosition();
 
-	    	const Vector3 fromAgentToTarget = entityTransform.GetWorldPosition() - agentPosition;
+	    	Vector3 fromAgentToTarget = (targetTransform - eyePoint);
+	    	fromAgentToTarget.Normalize();
     	
-	    	float dotProduct = forwardDirection.Dot(fromAgentToTarget);
+	    	float dotProduct = forwardDirection.Dot(fromAgentToTarget);	
 	    	dotProduct /= (forwardDirection.Length() * fromAgentToTarget.Length());
-	    	const float angleBetweenVisionVectorAndTarget = acos(dotProduct);
-    	
+	    	const float angleBetweenVisionVectorAndTarget = acos(dotProduct) * 180.0 / 3.14159265;
+	    	
 	    	if(angleBetweenVisionVectorAndTarget > AngleOfVision)
 	    	{
 	    		continue;
 	    	}
     	
-	    	const auto& rayCastHitResult = Application::Get().GetPhysics().Raycast(eyePoint, forwardDirection,
-				RangeOfVision, FilterLayer::Layer4);
+	    	const auto& rayCastHitResult = Application::Get().GetPhysics().Raycast(eyePoint, fromAgentToTarget,
+				RangeOfVision, FilterLayer::Layer1 | FilterLayer::Layer2 |FilterLayer::Layer3 | FilterLayer::Layer4);
     	
 	    	if(!rayCastHitResult.IsSuccessful)
 	    	{
@@ -162,6 +164,14 @@ namespace LevEngine
 
 	Entity AIAgentComponent::FindClosestEntityInVisibleScope(FilterLayer layerMask) const
     {
+    	if(!m_selfEntity)
+    	{
+    		return {};
+    	}
+    	if(!m_selfEntity.HasComponent<Transform>())
+		{
+			return {};
+		}
     	const auto& selfTransform = m_selfEntity.GetComponent<Transform>();
     	float minDistance = std::numeric_limits<float>::max();
     	Entity closestEntity;
@@ -210,168 +220,182 @@ namespace LevEngine
     	{
     		return m_lastMatchedRule;
     	}
+		String bestRule;
+    	int priorityOfBestRule = -1;
 		for (auto& rule : m_rules)
 		{
 			bool matched = true;
-			for (const auto& condition : rule.GetConditions())
+			if(rule.GetPriority() < priorityOfBestRule)
 			{
-				bool conditionPassed = false;
-				const auto& conditionId = condition.id;
-				const auto& conditionAttribute = condition.attribute;
-				const auto& conditionOperation = condition.operation;
-				const auto& idAndAttribute = MakePair(conditionId, conditionAttribute);
-				switch (condition.type)
+				matched = false;
+			}
+			else
+			{
+				for (const auto& condition : rule.GetConditions())
 				{
-					case RuleConditionType::Bool:
-						{
-							if (HasBoolFact(idAndAttribute))
+					bool conditionPassed = false;
+					const auto& conditionId = condition.id;
+					const auto& conditionAttribute = condition.attribute;
+					const auto& conditionOperation = condition.operation;
+					const auto& idAndAttribute = MakePair(conditionId, conditionAttribute);
+					switch (condition.type)
+					{
+						case RuleConditionType::Bool:
 							{
-								const auto& factValue = GetFactAsBool(idAndAttribute);
-								
-								if(conditionOperation == "==" && factValue == condition.boolValue)
+								if (HasBoolFact(idAndAttribute))
 								{
-									conditionPassed = true;
-									break;
+									const auto& factValue = GetFactAsBool(idAndAttribute);
+									
+									if(conditionOperation == "==" && factValue == condition.boolValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.boolValue)
+									{
+										conditionPassed = true;
+										break;
+									}
 								}
-								if(conditionOperation == "~=" && factValue != condition.boolValue)
-								{
-									conditionPassed = true;
-									break;
-								}
+								break;
 							}
-							break;
-						}
-					case RuleConditionType::Number:
-						{
-							if (HasNumberFact(idAndAttribute))
+						case RuleConditionType::Number:
 							{
-								const auto& factValue = GetFactAsNumber(MakePair(conditionId, conditionAttribute));
-			
-								if(conditionOperation == "==" && factValue == condition.numberValue)
+								if (HasNumberFact(idAndAttribute))
 								{
-									conditionPassed = true;
-									break;
+									const auto& factValue = GetFactAsNumber(MakePair(conditionId, conditionAttribute));
+				
+									if(conditionOperation == "==" && factValue == condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "<" && factValue < condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == ">" && factValue > condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "<=" && factValue <= condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == ">=" && factValue >= condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
 								}
-								if(conditionOperation == "~=" && factValue != condition.numberValue)
-								{
-									conditionPassed = true;
-									break;
-								}
-								if(conditionOperation == "<" && factValue < condition.numberValue)
-								{
-									conditionPassed = true;
-									break;
-								}
-								if(conditionOperation == ">" && factValue > condition.numberValue)
-								{
-									conditionPassed = true;
-									break;
-								}
-								if(conditionOperation == "<=" && factValue <= condition.numberValue)
-								{
-									conditionPassed = true;
-									break;
-								}
-								if(conditionOperation == ">=" && factValue >= condition.numberValue)
-								{
-									conditionPassed = true;
-									break;
-								}
+								break;
 							}
-							break;
-						}
-					case RuleConditionType::Vector3:
-						{
-							if (HasVector3Fact(idAndAttribute))
+						case RuleConditionType::Vector3:
 							{
-								const auto& factValue = GetFactAsVector3(idAndAttribute);
-								
-								if(conditionOperation == "==" && factValue == condition.vector3Value)
+								if (HasVector3Fact(idAndAttribute))
 								{
-									conditionPassed = true;
-									break;
+									const auto& factValue = GetFactAsVector3(idAndAttribute);
+									
+									if(conditionOperation == "==" && factValue == condition.vector3Value)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.vector3Value)
+									{
+										conditionPassed = true;
+										break;
+									}
 								}
-								if(conditionOperation == "~=" && factValue != condition.vector3Value)
-								{
-									conditionPassed = true;
-									break;
-								}
+								break;
 							}
-							break;
-						}
-					case RuleConditionType::String:
-						{
-							if (HasStringFact(idAndAttribute))
+						case RuleConditionType::String:
 							{
-								const auto& factValue = GetFactAsString(idAndAttribute);
-			
-								if(conditionOperation == "==" && factValue == condition.stringValue)
+								if (HasStringFact(idAndAttribute))
 								{
-									conditionPassed = true;
-									break;
+									const auto& factValue = GetFactAsString(idAndAttribute);
+				
+									if(conditionOperation == "==" && factValue == condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "<" && factValue < condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == ">" && factValue > condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "<=" && factValue <= condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == ">=" && factValue >= condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
 								}
-								if(conditionOperation == "~=" && factValue != condition.stringValue)
-								{
-									conditionPassed = true;
-									break;
-								}
-								if(conditionOperation == "<" && factValue < condition.stringValue)
-								{
-									conditionPassed = true;
-									break;
-								}
-								if(conditionOperation == ">" && factValue > condition.stringValue)
-								{
-									conditionPassed = true;
-									break;
-								}
-								if(conditionOperation == "<=" && factValue <= condition.stringValue)
-								{
-									conditionPassed = true;
-									break;
-								}
-								if(conditionOperation == ">=" && factValue >= condition.stringValue)
-								{
-									conditionPassed = true;
-									break;
-								}
+								break;
 							}
-							break;
-						}
-				case RuleConditionType::Entity:
-						{
-							if (HasEntityFact(idAndAttribute))
+					case RuleConditionType::Entity:
 							{
-								const auto& factValue = GetFactAsEntity(idAndAttribute);
-								
-								if(conditionOperation == "==" && factValue == condition.entityValue)
+								if (HasEntityFact(idAndAttribute))
 								{
-									conditionPassed = true;
-									break;
+									const auto& factValue = GetFactAsEntity(idAndAttribute);
+									
+									if(conditionOperation == "==" && factValue == condition.entityValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.entityValue)
+									{
+										conditionPassed = true;
+										break;
+									}
 								}
-								if(conditionOperation == "~=" && factValue != condition.entityValue)
-								{
-									conditionPassed = true;
-									break;
-								}
+								break;
 							}
-							break;
-						}
-				}
-			
-				if (!conditionPassed)
-				{
-					matched = false;
+					}
+					if (!conditionPassed)
+					{
+						matched = false;
+					}
 				}
 			}
 
 			if(matched)
 			{
-				m_isRBSDirty = false;
-				m_lastMatchedRule = rule.GetName();
-				return m_lastMatchedRule;
+				bestRule = rule.GetName();
+				priorityOfBestRule = rule.GetPriority();
 			}
 		}
+
+    	if(priorityOfBestRule != -1)
+    	{
+    		m_isRBSDirty = false;
+    		m_lastMatchedRule = bestRule;
+    		return m_lastMatchedRule;
+    	}
     	
     	return {};
 	}
@@ -386,12 +410,27 @@ namespace LevEngine
     	m_agentParams = params;
     }
 
-    void AIAgentComponent::SetMoveTarget(Vector3 targetPos)
+	void AIAgentComponent::SetMoveTarget(Entity entity)
+	{
+		if(m_initialized)
+		{
+			m_targetEntity = entity;
+			HasTargetEntity = true;
+		}
+	}
+
+	Entity AIAgentComponent::GetMoveTarget() const
+	{
+	    return m_targetEntity;
+    }
+
+    void AIAgentComponent::SetMovePoint(Vector3 targetPos)
     {
     	if(m_initialized)
     	{
     		auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
     		crowdComponent.SetMoveTarget(m_agentIndex, targetPos);
+    		HasTargetEntity = false;
     	}
     }
 	

@@ -107,6 +107,18 @@ namespace LevEngine
             agent->npos[0] = position.x;
             agent->npos[1] = position.y;
             agent->npos[2] = position.z;
+
+            if(agentComponent.HasTargetEntity)
+            {
+                if(Entity targetEntity = agentComponent.GetMoveTarget())
+                {
+                    if(targetEntity.HasComponent<Transform>())
+                    {
+                        const auto& entityTransform = targetEntity.GetComponent<Transform>();
+                        SetMoveTarget(index, entityTransform.GetWorldPosition());
+                    }
+                }
+            }
         }
         
         m_crowd->update(deltaTime, m_crowdAgentDebugInfo);
@@ -290,10 +302,6 @@ namespace LevEngine
             {
                 out << YAML::Key << "Navigation mesh" << YAML::Value << component.navMesh.GetUUID();
             }
-            if(component.target)
-            {
-                out << YAML::Key << "Target" << YAML::Value << component.target.GetUUID();
-            }
         }
         
         void DeserializeData(const YAML::Node& node, AIAgentCrowdComponent& component) override
@@ -320,12 +328,6 @@ namespace LevEngine
             {
                 component.navMesh = !navMeshNode.IsNull()
                     ? SceneManager::GetActiveScene()->GetEntityByUUID(UUID(navMeshNode.as<uint64_t>()))
-                    : Entity();
-            }
-            if(auto targetNode = node["Target"])
-            {
-                component.target = !targetNode.IsNull()
-                    ? SceneManager::GetActiveScene()->GetEntityByUUID(UUID(targetNode.as<uint64_t>()))
                     : Entity();
             }
         }

@@ -1034,7 +1034,7 @@ namespace LevEngine::Scripting
         lua.new_usertype<Rule>(
              "Rule",
              sol::call_constructor,
-             sol::constructors<Rule(const std::string&)>(),
+             sol::constructors<Rule(const std::string&, int)>(),
              "addCondition", sol::overload(
              [](Rule& rule, const std::string& id, const std::string& attribute, const std::string& operation, bool value)
              {
@@ -1075,6 +1075,7 @@ namespace LevEngine::Scripting
             "isRBSInited", &AIAgentComponent::IsRBSInited,
             "findEntitiesInVisibleScope", &AIAgentComponent::FindEntitiesInVisibleScope,
             "findClosestEntityInVisibleScope", &AIAgentComponent::FindClosestEntityInVisibleScope,
+            "setMovePoint", &AIAgentComponent::SetMovePoint,
             "setMoveTarget", &AIAgentComponent::SetMoveTarget,
             //Bool facts
             "setFactAsBool", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute, bool value)
@@ -1127,6 +1128,19 @@ namespace LevEngine::Scripting
             "getFactAsString", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
             {
                 return agentComponent.GetFactAsString(MakePair(id.c_str(), attribute.c_str())).c_str();
+            },
+            //Entity facts
+            "setFactAsEntity", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute, Entity value)
+            {
+                agentComponent.SetFactAsEntity(MakePair(id.c_str(), attribute.c_str()), value);
+            },
+            "hasEntityFact", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
+            {
+                return agentComponent.HasEntityFact(MakePair(id.c_str(), attribute.c_str()));
+            },
+            "getFactAsEntity", [](AIAgentComponent& agentComponent, const std::string& id, const std::string& attribute)
+            {
+                return agentComponent.GetFactAsEntity(MakePair(id.c_str(), attribute.c_str()));
             }
         );
     }

@@ -43,8 +43,10 @@ namespace LevEngine
         
         dtCrowdAgentParams* GetAgentParams() const;
         void SetAgentParams(dtCrowdAgentParams* params);
+        void SetMoveTarget(Entity entity);
+        Entity GetMoveTarget() const;
 
-        void SetMoveTarget(Vector3 targetPos);
+        void SetMovePoint(Vector3 targetPos);
         
         void SetFactAsBool(const Pair<String, String>&, bool value);
         bool HasBoolFact(const Pair<String, String>& key);
@@ -67,9 +69,11 @@ namespace LevEngine
         Entity GetFactAsEntity(const Pair<String, String>& key);
         
         float RangeOfVision = 15.0f;
-        float AngleOfVision = 40.0f;
+        float AngleOfVision = 90.0f;
 
         Entity VisionCollider;
+
+        bool HasTargetEntity = false;
         
     private:
 
@@ -83,6 +87,8 @@ namespace LevEngine
         
         Entity m_crowd;
         Entity m_selfEntity;
+        
+        Entity m_targetEntity;
         
         dtCrowdAgent* m_agent;
         dtCrowdAgentParams* m_agentParams;

@@ -11,8 +11,8 @@ function AIScript.new(variable)
     local self = setmetatable({}, AIScript)
 
     local moveToPlayerPosition = function(agentComponent)
-        if agentComponent:hasVector3Fact("PLAYER_*", "PlayerPosition") then
-            local playerPosition = agentComponent:getFactAsVector3("PLAYER_*","PlayerPosition")
+        if agentComponent:hasEntityFact("PLAYER_*", "PlayerTarget") then
+            local playerPosition = agentComponent:getFactAsEntity("PLAYER_*","PlayerTarget")
             agentComponent:setMoveTarget(playerPosition)
         end
     end
@@ -20,7 +20,7 @@ function AIScript.new(variable)
     local moveToNextPatrolPosition = function(agentComponent)
         if agentComponent:hasVector3Fact("ME", "NextPatrolPosition") then
             local nextPatrolPosition = agentComponent:getFactAsVector3("ME", "NextPatrolPosition")
-            agentComponent:setMoveTarget(nextPatrolPosition)
+            agentComponent:setMovePoint(nextPatrolPosition)
         end
     end
 
@@ -28,18 +28,21 @@ function AIScript.new(variable)
 
     self.rules.patrol = 
     {
+        priority = 0,
         conditions = { {id = "ME", name = "IsPlayerFound", operation = "==", value = false} },
         actions = {moveToNextPatrolPosition}
     }
 
     self.rules.moveToPlayer =
     {
+        priority = 2,
         conditions = { {id = "ME", name = "IsPlayerFound", operation = "==", value = true} },
         actions = {moveToPlayerPosition}
     }
 
     self.rules.moveToAlly =
     {
+        priority = 1,
         conditions = {
              {id = "ME", name = "IsPlayerFound", operation = "~=", value = true},
              {id = "ME", name = "IsBeautifulAllyFounded", operation = "==", value = true},

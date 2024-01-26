@@ -1,10 +1,10 @@
 local perceptUpdateTimer = 0
-local perceptUpdateInterval = 0.5
+local perceptUpdateInterval = 0.1
 
 local behaveUpdateTimer = 0
 local behaveUpdateInterval = 0.5
 
-local patrolTargetSwitchInterval = 4
+local patrolTargetSwitchInterval = 5
 
 AISystem = {
 	updatePatrol = function(deltaTime)
@@ -36,7 +36,6 @@ AISystem = {
 						local randomPosition = crowd:getRandomPointOnNavMesh()
 						agentComponent:setFactAsVector3("ME", "NextPatrolPosition", randomPosition)
 						agentComponent:setFactAsNumber("ME", "TimeFromLastPatrolTargetSwitch", 0)
-						local abi = agentComponent:getFactAsNumber("ME", "TimeFromLastPatrolTargetSwitch")
 					else
 						local incrementedTime = timeFromLastPatrolTargetSwitch + deltaTime
 						agentComponent:setFactAsNumber("ME", "TimeFromLastPatrolTargetSwitch", incrementedTime)
@@ -71,7 +70,7 @@ AISystem = {
 					if not agentComponent:isRBSInited() then 
 						local rules = aiScript.rules
 						for ruleKey, rule in pairs(rules) do
-							local ruleObject = Rule(ruleKey)
+							local ruleObject = Rule(ruleKey, rule.priority)
 							for conditionKey, condition in pairs(rule.conditions) do
 								ruleObject:addCondition(condition.id, condition.name, condition.operation, condition.value)
 							end
@@ -111,9 +110,9 @@ AISystem = {
 					agentComponent:setFactAsBool("ME", "IsPlayerFound", true)
 					local playerID = "PLAYER_" .. tostring(closestPlayer:uuid())
 					local playerTransform = closestPlayer:get_component(Transform)
-					agentComponent:setFactAsVector3(playerID, "PlayerPosition", playerTransform:getWorldPosition())
+					agentComponent:setFactAsEntity(playerID, "PlayerTarget", closestPlayer)
 				else
-					--agentComponent:setFactAsBool("ME", "IsPlayerFound", false)
+					agentComponent:setFactAsBool("ME", "IsPlayerFound", false)
 				end
 			end
 		)

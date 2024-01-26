@@ -41,7 +41,6 @@ namespace LevEngine
         Vector<Entity> initialAgentsEntities;
         
         Entity navMesh;
-        Entity target;
 
     private:
 

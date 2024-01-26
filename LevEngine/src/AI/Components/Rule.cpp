@@ -3,14 +3,16 @@
 
 namespace LevEngine
 {
-    Rule::Rule(const String& ruleName)
+    Rule::Rule(const String& ruleName, int priority)
     {
-        name = ruleName;
+        m_name = ruleName;
+        m_priority = priority;
     }
 
-    Rule::Rule(const std::string& ruleName)
+    Rule::Rule(const std::string& ruleName, int priority)
     {
-        name = ruleName.c_str();
+        m_name = ruleName.c_str();
+        m_priority = priority;
     }
 
     void Rule::AddCondition(const String& id, const String& attribute, const String& operation, bool value)
@@ -21,7 +23,7 @@ namespace LevEngine
         condition.operation = operation;
         condition.type = RuleConditionType::Bool;
         condition.boolValue = value;
-        conditions.push_back(condition);
+        m_conditions.push_back(condition);
     }
 
     void Rule::AddCondition(const String& id, const String& attribute, const String& operation, float value)
@@ -32,7 +34,7 @@ namespace LevEngine
         condition.operation = operation;
         condition.type = RuleConditionType::Number;
         condition.numberValue = value;
-        conditions.push_back(condition);
+        m_conditions.push_back(condition);
     }
 
     void Rule::AddCondition(const String& id, const String& attribute, const String& operation, const Vector3& value)
@@ -43,7 +45,7 @@ namespace LevEngine
         condition.operation = operation;
         condition.type = RuleConditionType::Vector3;
         condition.vector3Value = value;
-        conditions.push_back(condition);
+        m_conditions.push_back(condition);
     }
 
     void Rule::AddCondition(const String& id, const String& attribute, const String& operation, const String& value)
@@ -54,7 +56,7 @@ namespace LevEngine
         condition.operation = operation;
         condition.type = RuleConditionType::String;
         condition.stringValue = value;
-        conditions.push_back(condition);
+        m_conditions.push_back(condition);
     }
 
     void Rule::AddCondition(const String& id, const String& attribute, const String& operation, Entity value)
@@ -65,16 +67,21 @@ namespace LevEngine
         condition.operation = operation;
         condition.type = RuleConditionType::Entity;
         condition.entityValue = value;
-        conditions.push_back(condition);
+        m_conditions.push_back(condition);
     }
 
     Vector<RuleCondition>& Rule::GetConditions()
     {
-        return conditions;
+        return m_conditions;
     }
 
     const String& Rule::GetName() const
     {
-        return name;
+        return m_name;
+    }
+
+    int Rule::GetPriority() const
+    {
+        return m_priority;
     }
 }

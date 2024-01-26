@@ -29,8 +29,8 @@ namespace LevEngine
     class Rule
     {
     public:
-        Rule(const String& ruleName);
-        Rule(const std::string& ruleName);
+        Rule(const String& ruleName, int priority);
+        Rule(const std::string& ruleName, int priority);
         
         void AddCondition(const String& id, const String& attribute, const String& operation, bool value);
         void AddCondition(const String& id, const String& attribute, const String& operation, float value);
@@ -40,9 +40,11 @@ namespace LevEngine
 
         Vector<RuleCondition>& GetConditions();
         const String& GetName() const;
+        int GetPriority() const;
     private:
-        
-        String name;
-        Vector<RuleCondition> conditions;
+
+        int m_priority;
+        String m_name;
+        Vector<RuleCondition> m_conditions;
     }; 
 }
