@@ -53,6 +53,8 @@ namespace LevEngine::Scripting
 			sol::meta_function::multiplication, vec3_multiplication_overload,
 			sol::meta_function::division, vec3_division_overload,
 			"normalize", [] (Vector3& vector) { vector.Normalize(); },
+			"length", &Vector3::Length,
+			"lengthSquared", &Vector3::LengthSquared,
 			sol::meta_function::to_string, [] (const Vector3& vector)
 			{
 				return "Vector3 [" + std::to_string(vector.x) + ", "
@@ -115,7 +117,9 @@ namespace LevEngine::Scripting
 				return "Vector2 [" + std::to_string(vector.x) + ", "
 				+ std::to_string(vector.y) + "]";
 			},
-			"normalize", [] (Vector2& vector) { vector.Normalize(); }
+			"normalize", [] (Vector2& vector) { vector.Normalize(); },
+			"length", &Vector2::Length,
+			"lengthSquared", &Vector2::LengthSquared
 		);
 	}
 
@@ -173,7 +177,9 @@ namespace LevEngine::Scripting
 				+ std::to_string(vector.z) + ", "
 				+ std::to_string(vector.w) + "]";
 			},
-			"normalize", [] (Vector4& vector) { vector.Normalize(); }
+			"normalize", [] (Vector4& vector) { vector.Normalize(); },
+			"length", &Vector4::Length,
+			"lengthSquared", &Vector4::LengthSquared
 		);
 	}
 
