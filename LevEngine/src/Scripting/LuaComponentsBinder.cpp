@@ -441,6 +441,7 @@ namespace LevEngine::Scripting
                     return CharacterController{};
                 }),
             "move", &CharacterController::Move,
+            "teleport", &CharacterController::Teleport,
             "jump", &CharacterController::Jump,
             "getGravityScale", &CharacterController::GetGravityScale,
             "setGravityScale", &CharacterController::SetGravityScale,

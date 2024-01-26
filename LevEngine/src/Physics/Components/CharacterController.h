@@ -56,6 +56,8 @@ namespace LevEngine
         void Move(Vector3 displacement);
         void MoveTo(Vector3 position);
 
+        void Teleport(Vector3 position);
+
         [[nodiscard]] bool IsGrounded() const;
         void Jump(float jumpHeight, float deltaTime);
         

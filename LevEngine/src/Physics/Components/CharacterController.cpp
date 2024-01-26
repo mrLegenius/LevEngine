@@ -472,6 +472,13 @@ namespace LevEngine
         Move(displacement);
     }
 
+    void CharacterController::Teleport(const Vector3 position)
+    {
+        if (m_Controller == nullptr) return;
+
+        m_Controller->setPosition(PhysicsUtils::FromVector3ToPxExtendedVec3(position));
+    }
+
     void CharacterController::Jump(const float jumpHeight, const float deltaTime)
     {
         if (m_Controller == nullptr) return;
