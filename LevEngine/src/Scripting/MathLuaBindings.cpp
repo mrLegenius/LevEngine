@@ -295,6 +295,9 @@ namespace LevEngine::Scripting
 		));
 
 		math.set_function("lerp", [](float a, float b, float t) {return std::lerp(a, b, t); });
+		math.set_function("sqrt", [](float a) { return std::sqrtf(a); });
+		math.set_function("pow", [](float a, float power) { return std::powf(a, power); });
+		math.set_function("exp", [](float power) { return std::expf(power); });
 		math.set_function("clamp", sol::overload(
 			[](float value, float min, float max) {return std::clamp(value, min, max); },
 			[](double value, double min, double max) {return std::clamp(value, min, max); },
