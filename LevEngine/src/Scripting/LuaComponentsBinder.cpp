@@ -387,8 +387,10 @@ namespace LevEngine::Scripting
                     rigidbody.AddForce(vector);
                 }),
             "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
+            "getCollisionStayBuffer", &Rigidbody::GetCollisionStayBuffer,
             "getCollisionExitBuffer", &Rigidbody::GetCollisionExitBuffer,
             "getTriggerEnterBuffer", &Rigidbody::GetTriggerEnterBuffer,
+            "getTriggerStayBuffer", &Rigidbody::GetTriggerStayBuffer,
             "getTriggerExitBuffer", &Rigidbody::GetTriggerExitBuffer,
             "getLayer", [](const Rigidbody& rigidbody)
             {
