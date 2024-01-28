@@ -5,15 +5,14 @@
 #include "Kernel/Time/Timestep.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Physics.h"
+#include "Physics/PhysicsSettings.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
 {
     void CharacterController::OnDestroy(const Entity entity)
     {
-        const auto controller = entity.GetComponent<CharacterController>();
-
-        if (controller.GetController() != nullptr)
+        if (const auto& controller = entity.GetComponent<CharacterController>(); controller.GetController() != nullptr)
         {
             controller.DetachController();
         }
@@ -148,7 +147,10 @@ namespace LevEngine
         if (m_Controller != nullptr)
         {
             physx::PxFilterData filterData;
-            filterData.word0 = (1 << static_cast<physx::PxU32>(layer));
+            filterData.word0 = static_cast<physx::PxU32>(layer);
+            const auto collisions = PhysicsSettings::GetLayerCollisions(layer);
+            filterData.word1 = static_cast<physx::PxU32>(collisions);
+            GetCollider()->setSimulationFilterData(filterData);
             GetCollider()->setQueryFilterData(filterData);
         }
     }
@@ -500,7 +502,7 @@ namespace LevEngine
 
         void SerializeData(YAML::Emitter& out, const CharacterController& component) override
         {
-            out << YAML::Key << "Layer" << YAML::Value << static_cast<int>(component.GetLayer());
+            out << YAML::Key << "Layer" << YAML::Value << static_cast<uint32_t>(component.GetLayer());
 
             out << YAML::Key << "Capsule Controller Radius" << YAML::Value << component.GetRadius();
             out << YAML::Key << "Capsule Controller Half Height" << YAML::Value << component.GetHeight();
@@ -523,10 +525,9 @@ namespace LevEngine
 
         void DeserializeData(const YAML::Node& node, CharacterController& component) override
         {
-
             if (const auto layerNode = node["Layer"])
             {
-                const auto layer = static_cast<FilterLayer>(layerNode.as<int>());
+                const auto layer = static_cast<FilterLayer>(layerNode.as<uint32_t>());
                 component.SetLayer(layer);
             }
             

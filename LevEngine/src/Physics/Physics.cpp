@@ -1,5 +1,7 @@
 ﻿#include "levpch.h"
 #include "Physics.h"
+
+#include "PhysicsSettings.h"
 #include "PhysicsUtils.h"
 #include "Components/CharacterController.h"
 #include "Renderer/DebugRender/DebugRender.h"
