@@ -130,6 +130,8 @@
     <ClInclude Include="src\Physics\Components\PhysicMaterial.h" />
     <ClInclude Include="src\Physics\Events\CharacterControllerEventCallback.h" />
     <ClInclude Include="src\Physics\Events\RigidbodyEventCallback.h" />
+    <ClInclude Include="src\Physics\PhysicsSettings.h" />
+    <ClInclude Include="src\Physics\PhysicsSettingsSerializer.h" />
     <ClInclude Include="src\Physics\PhysicsUpdate.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DeferredContexts.h" />
@@ -1069,6 +1071,8 @@
     <ClCompile Include="src\Physics\Components\CharacterController.cpp" />
     <ClCompile Include="src\Physics\Events\CharacterControllerEventCallback.cpp" />
     <ClCompile Include="src\Physics\Events\RigidbodyEventCallback.cpp" />
+    <ClCompile Include="src\Physics\PhysicsSettings.cpp" />
+    <ClCompile Include="src\Physics\PhysicsSettingsSerializer.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DeferredContexts.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />

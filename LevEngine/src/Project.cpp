@@ -8,134 +8,135 @@
 
 namespace LevEngine
 {
-void Project::Save()
-{
-    LEV_CORE_ASSERT(s_Project, "No loaded project");
-
-    const auto& project = s_Project;
-    
-    YAML::Emitter out;
-    out << YAML::BeginMap;
-    
-    out << YAML::Key << "Project" << YAML::Value << project->m_Name.c_str();
-    out << YAML::Key << "StartScene" << YAML::Value << project->m_StartScene.string().c_str();
-
-    out << YAML::EndMap;
-
-    std::ofstream fout(project->m_Path);
-    fout << out.c_str();
-}
-
-bool Project::Load(const Path& path)
-{
-    if (path.empty()) return false;
-    
-    s_Project = CreateRef<Project>(path);
-    YAML::Node data;
-    if (!LoadYAMLFileSafe(path, data))
+    void Project::Save()
     {
-        Log::CoreError("Failed to load project", path.string());
-        return false;
+        LEV_CORE_ASSERT(s_Project, "No loaded project");
+
+        const auto& project = s_Project;
+        
+        YAML::Emitter out;
+        out << YAML::BeginMap;
+        
+        out << YAML::Key << "Project" << YAML::Value << project->m_Name.c_str();
+        out << YAML::Key << "StartScene" << YAML::Value << project->m_StartScene.string().c_str();
+
+        out << YAML::EndMap;
+
+        std::ofstream fout(project->m_Path);
+        fout << out.c_str();
     }
 
-    if (!data["Project"]) return false;
-
-    s_Project->m_Name = data["Project"].as<String>();
-    if (const auto scene = data["StartScene"])
-        s_Project->m_StartScene = scene.as<String>().c_str();
-
-    s_Project->LoadSettings();
-    
-    return true;
-}
-
-const Path& Project::GetRoot()
-{
-    LEV_CORE_ASSERT(s_Project, "No loaded project");
-
-    return s_Project->m_Root;
-}
-
-Path Project::GetStartScene()
-{
-    LEV_CORE_ASSERT(s_Project, "No loaded project");
-
-    return s_Project->m_Root / s_Project->m_StartScene;
-}
-
-bool Project::CreateNew(const Path& path)
-{
-    if (path.empty()) return false;
-    
-    try
+    bool Project::Load(const Path& path)
     {
+        if (path.empty()) return false;
+        
         s_Project = CreateRef<Project>(path);
-        s_Project->m_Name = path.stem().string().c_str();
-        s_Project->Save();
+        YAML::Node data;
+        if (!LoadYAMLFileSafe(path, data))
+        {
+            Log::CoreError("Failed to load project", path.string());
+            return false;
+        }
+
+        if (!data["Project"]) return false;
+
+        s_Project->m_Name = data["Project"].as<String>();
+        if (const auto scene = data["StartScene"])
+            s_Project->m_StartScene = scene.as<String>().c_str();
+
+        s_Project->LoadSettings();
+        
+        return true;
     }
-    catch (std::exception& e)
+
+    const Path& Project::GetRoot()
     {
-        Log::CoreError("Failed to create new project in {0}. Error: {1}", path.string(), e.what());
-        return false;
+        LEV_CORE_ASSERT(s_Project, "No loaded project");
+
+        return s_Project->m_Root;
+    }
+
+    Path Project::GetStartScene()
+    {
+        LEV_CORE_ASSERT(s_Project, "No loaded project");
+
+        return s_Project->m_Root / s_Project->m_StartScene;
+    }
+
+    bool Project::CreateNew(const Path& path)
+    {
+        if (path.empty()) return false;
+        
+        try
+        {
+            s_Project = CreateRef<Project>(path);
+            s_Project->m_Name = path.stem().string().c_str();
+            s_Project->Save();
+        }
+        catch (std::exception& e)
+        {
+            Log::CoreError("Failed to create new project in {0}. Error: {1}", path.string(), e.what());
+            return false;
+        }
+            
+        return true;
+    }
+
+    void Project::SetStartScene(const Path& path)
+    {
+        LEV_CORE_ASSERT(s_Project, "No loaded project");
+
+        s_Project->m_StartScene = relative(path, s_Project->m_Root);
+    }
+
+    Path Project::GetPath()
+    {
+        LEV_CORE_ASSERT(s_Project, "No loaded project");
+        return s_Project->m_Path;
+    }
+
+    void Project::Build()
+    {
+        LEV_CORE_ASSERT(s_Project, "No loaded project");
+        
+        s_Project->CopyEngineResourceDirectory();
+        ResourceManager::Build(s_Project->GetRoot());
     }
         
-    return true;
-}
-
-void Project::SetStartScene(const Path& path)
-{
-    LEV_CORE_ASSERT(s_Project, "No loaded project");
-
-    s_Project->m_StartScene = relative(path, s_Project->m_Root);
-}
-
-Path Project::GetPath()
-{
-    LEV_CORE_ASSERT(s_Project, "No loaded project");
-    return s_Project->m_Path;
-}
-
-void Project::Build()
-{
-    LEV_CORE_ASSERT(s_Project, "No loaded project");
-    
-    s_Project->CopyEngineResourceDirectory();
-    ResourceManager::Build(s_Project->GetRoot());
-}
-    
-void Project::CopyEngineResourceDirectory() const noexcept
-{
-    CopyRecursively(EngineResourcesRoot, m_Root / EngineResourcesRoot);
-}
-
-void Project::LoadSettings()
-{
-    const Path settingsPath = GetRoot() / "Settings.yaml";
-
-    if(!exists(settingsPath))
+    void Project::CopyEngineResourceDirectory() const noexcept
     {
-        SaveSettings();
-        return;
+        CopyRecursively(EngineResourcesRoot, m_Root / EngineResourcesRoot);
     }
-    
-    YAML::Node data;
-    LoadYAMLFileSafe(settingsPath, data);
 
-    m_RenderSettingsSerializer.Deserialize(data);
+    void Project::LoadSettings()
+    {
+        const Path settingsPath = GetRoot() / "Settings.yaml";
+
+        if (!exists(settingsPath))
+        {
+            SaveSettings();
+            return;
+        }
+        
+        YAML::Node data;
+        LoadYAMLFileSafe(settingsPath, data);
+
+        m_RenderSettingsSerializer.Deserialize(data);
+        m_PhysicsSettingsSerializer.Deserialize(data);
+    }
+        
+    void Project::SaveSettings()
+    {
+        const Path settingsPath = "Settings.yaml";
+
+        YAML::Emitter out;
+
+        out << YAML::BeginMap;
+        s_Project->m_RenderSettingsSerializer.Serialize(out);
+        s_Project->m_PhysicsSettingsSerializer.Serialize(out);
+        out << YAML::EndMap;
+        
+        std::ofstream fout(GetRoot() / settingsPath);
+        fout << out.c_str();
+    }
 }
-    
-void Project::SaveSettings()
-{
-    const Path settingsPath = "Settings.yaml";
-
-    YAML::Emitter out;
-
-    out << YAML::BeginMap;
-    s_Project->m_RenderSettingsSerializer.Serialize(out);
-    out << YAML::EndMap;
-    
-    std::ofstream fout(GetRoot() / settingsPath);
-    fout << out.c_str();
-}
-}
-

@@ -2,6 +2,7 @@
 #include "RigidbodyEventCallback.h"
 #include "Kernel/Application.h"
 #include "Physics/Physics.h"
+#include "Physics/PhysicsSettings.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Components/CharacterController.h"
@@ -14,6 +15,8 @@ namespace LevEngine
         physx::PxPairFlags& pairFlags, const void*, physx::PxU32 constantBlockSize
     )
     {
+        if (!((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))) return physx::PxFilterFlag::eKILL;
+        
         if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
         {
             pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
