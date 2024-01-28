@@ -1,26 +1,20 @@
 ﻿#pragma once
 #include "Scene/Components/TypeParseTraits.h"
-#include "Scene/Entity.h"
 
 namespace LevEngine
 {
+    class Entity;
     class AudioPlayer; 
 
     REGISTER_PARSE_TYPE(AudioSourceComponent);
 
     struct AudioSourceComponent
     {
-        AudioSourceComponent();
-
         static void OnConstruct(Entity entity);
-        void Init(Entity entity);
-        bool IsInitialized() const;
-        void ResetInit();
-
+        
+        AudioSourceComponent();
+        
         Ref<AudioPlayer> Player;
-
-    private:
-        bool m_IsInited{};
     };
 }
 

@@ -171,9 +171,7 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h" />
-    <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
-    <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompiler.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompilertraits.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eaplatform.h" />
@@ -1113,9 +1111,7 @@
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp" />
-    <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
-    <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />
     <ClCompile Include="external\eastl\source\allocator_eastl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

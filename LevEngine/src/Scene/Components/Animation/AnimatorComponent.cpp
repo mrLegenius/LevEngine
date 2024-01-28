@@ -69,8 +69,7 @@ namespace LevEngine
         m_Animator->DrawDebugSkeleton(rootTransform);
     }
 
-    class AnimatorComponentSerializer final
-        : public ComponentSerializer<AnimatorComponent, AnimatorComponentSerializer>
+    class AnimatorComponentSerializer final : public ComponentSerializer<AnimatorComponent, AnimatorComponentSerializer>
     {
     protected:
         const char* GetKey() override { return "Animator"; } 

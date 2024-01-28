@@ -25,8 +25,6 @@
 #include "Systems/Animation/AnimatorUpdateSystem.h"
 #include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
-#include "Systems/Audio/AudioListenerInitSystem.h"
-#include "Systems/Audio/AudioSourceInitSystem.h"
 #include "Physics/Components/Destroyable.h"
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 #include "Systems/EntityDestroySystem.h"
@@ -66,7 +64,7 @@ namespace LevEngine
 
         RegisterComponentOnConstruct<AudioListenerComponent>();
         RegisterComponentOnDestroy<AudioListenerComponent>();
-
+        
         RegisterComponentOnConstruct<AudioSourceComponent>();
         
         RegisterComponentOnConstruct<AnimatorComponent>();
@@ -81,9 +79,6 @@ namespace LevEngine
 
         RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
         RegisterUpdateSystem<WaypointPositionUpdateSystem>();
-
-        RegisterUpdateSystem<AudioSourceInitSystem>();
-        RegisterUpdateSystem<AudioListenerInitSystem>();
 
         RegisterUpdateSystem<AIAgentCrowdUpdateSystem>();
 

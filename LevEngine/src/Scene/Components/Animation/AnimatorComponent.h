@@ -2,13 +2,14 @@
 #include "Math/Matrix.h"
 #include "Renderer/3D/AnimationConstants.h"
 #include "Scene/Components/TypeParseTraits.h"
-#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
     class Animation;
     class Animator;
     class AnimationAsset;
+    struct Transform;
+    class Entity;
 
     REGISTER_PARSE_TYPE(AnimatorComponent);
     
