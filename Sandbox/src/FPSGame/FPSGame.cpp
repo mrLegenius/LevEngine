@@ -19,12 +19,9 @@ namespace Sandbox
 		if (startScene.empty() || !SceneManager::LoadScene(startScene))
 			SceneManager::LoadScene(AssetDatabase::GetAssetsPath() / "Scenes" / "TestScene.scene");
 
-		auto& scene = SceneManager::GetActiveScene();
-
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.bank"), true);
 		Audio::LoadBank(ToString(AssetDatabase::GetAssetsPath() / "Audio" / "Desktop" / "Master.strings.bank"), true);
-
-		scene->OnInit();
+		
 		Application::Get().GetWindow().DisableCursor();
 	}
 

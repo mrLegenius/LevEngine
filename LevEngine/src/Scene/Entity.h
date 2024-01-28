@@ -51,9 +51,6 @@ namespace LevEngine
 
     private:
         entt::handle m_Handle;
-
-        //template <typename T>
-        inline static std::recursive_mutex s_Mutex;
     };
 }
 

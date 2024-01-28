@@ -9,29 +9,25 @@
 
 namespace LevEngine
 {
+    void CharacterController::OnConstruct(const Entity entity)
+    {
+        auto& controller = entity.GetComponent<CharacterController>();
+        controller.Initialize(entity);
+    }
+
     void CharacterController::OnDestroy(const Entity entity)
     {
-        const auto controller = entity.GetComponent<CharacterController>();
+        auto& controller = entity.GetComponent<CharacterController>();
 
-        if (controller.GetController() != nullptr)
-        {
-            controller.DetachController();
-        }
-    }
-    
-    bool CharacterController::IsInitialized() const
-    {
-        return m_IsInitialized;
+        if (controller.m_Controller == nullptr) return;
+
+        controller.DetachController();
     }
 
     void CharacterController::Initialize(const Entity entity)
     {
-        if (m_IsInitialized) return;
-        
         AttachController(entity);
         
-        m_IsInitialized = true;
-
         const auto& transform = entity.GetComponent<Transform>();
         SetTransformScale(transform.GetWorldScale());
     }
@@ -75,11 +71,8 @@ namespace LevEngine
     {
         m_TransformScale = scale;
         
-        if (m_IsInitialized)
-        {
-            SetRadius(GetRadius());
-            SetHeight(GetHeight());
-        }
+        SetRadius(GetRadius());
+        SetHeight(GetHeight());
     }
 
     bool CharacterController::IsVisualizationEnabled() const
@@ -131,9 +124,10 @@ namespace LevEngine
         SetBounceCombineMode(GetBounceCombineMode());
     }
 
-    void CharacterController::DetachController() const
+    void CharacterController::DetachController()
     {
         App::Get().GetPhysics().RemoveController(m_Controller);
+        m_Controller = nullptr;
     }
     
     FilterLayer CharacterController::GetLayer() const

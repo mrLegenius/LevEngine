@@ -386,10 +386,6 @@ namespace LevEngine::Scripting
                 {
                     rigidbody.AddForce(vector);
                 }),
-            "initialize", [](Rigidbody& rigidbody, const Entity entity)
-            {
-                rigidbody.Initialize(entity);
-            },
             "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
             "getCollisionExitBuffer", &Rigidbody::GetCollisionExitBuffer,
             "getTriggerEnterBuffer", &Rigidbody::GetTriggerEnterBuffer,
@@ -398,9 +394,9 @@ namespace LevEngine::Scripting
             {
                 return static_cast<int>(rigidbody.GetLayer());
             },
-            "setLayer", [](Rigidbody& rigidbody, int Layer)
+            "setLayer", [](const Rigidbody& rigidbody, int layer)
             {
-                rigidbody.SetLayer(static_cast<FilterLayer>(Layer));
+                rigidbody.SetLayer(static_cast<FilterLayer>(layer));
             },
             "getSphereRadius",&Rigidbody::GetSphereRadius,
             "setSphereRadius",&Rigidbody::SetSphereRadius,
@@ -409,7 +405,8 @@ namespace LevEngine::Scripting
             "getCapsuleHalfHeight",&Rigidbody::GetCapsuleHalfHeight,
             "setCapsuleHalfHeight",&Rigidbody::SetCapsuleHalfHeight,
             "getBoxHalfExtents",&Rigidbody::GetBoxHalfExtents,
-            "setBoxHalfExtents",&Rigidbody::SetBoxHalfExtents
+            "setBoxHalfExtents",&Rigidbody::SetBoxHalfExtents,
+            "teleport",&Rigidbody::Teleport
         );
 
         lua.new_enum(
@@ -637,6 +634,10 @@ namespace LevEngine::Scripting
                 [](PrefabAsset& prefabAsset, const Ref<Scene>& scene) -> Entity
                 {
                     return prefabAsset.Instantiate(scene);
+                },
+                [](PrefabAsset& prefabAsset, const Ref<Scene>& scene, const Vector3 position) -> Entity
+                {
+                    return prefabAsset.Instantiate(scene, position);
                 })
         );
     }

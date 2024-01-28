@@ -16,8 +16,9 @@ namespace LevEngine
 		Scene();
 
 		void CleanupScene();
+		void Initialize();
 
-		void OnInit();
+		void Start();
 		void OnUpdate(float deltaTime);
 		void OnPhysics(float deltaTime);
 		void OnLateUpdate(float deltaTime);

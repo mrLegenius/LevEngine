@@ -63,17 +63,18 @@ namespace LevEngine
         
         void Process(entt::registry& registry, float deltaTime);
         
-        friend class Scene;
         friend struct Rigidbody;
         friend struct CharacterController;
+
+        void ClearAccumulator();
+        void ResetPhysicsScene();
         
     private:
         void Initialize();
         bool IsAdvanced(float deltaTime);
         bool StepPhysics(float deltaTime);
         void DrawDebugLines();
-        void ClearAccumulator();
-        void ResetPhysicsScene();
+
         void Reset();
 
         [[nodiscard]] physx::PxRigidActor* CreateStaticActor(Entity entity);

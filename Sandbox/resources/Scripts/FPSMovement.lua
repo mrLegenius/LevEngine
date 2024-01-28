@@ -12,27 +12,19 @@ FPSMovement = {
 			function (entity)
 				local scriptsContainer = entity:get_component(ScriptsContainer)
 
-
-
 				if scriptsContainer.Player == nil then
 					return
 				end	
 
-				
-
 				local player = scriptsContainer.Player
 				local playerTransform = entity:get_component(Transform)
 				local playerController = entity:get_component(CharacterController)
-				
-
 				
 				local playerRotation = playerTransform:getWorldRotation():toEuler() * Math.radToDeg
 				
 				playerRotation.y = playerRotation.y - mouseDelta.x
 
 				playerTransform:setWorldRotation(Math.createQuaternionFromYawPitchRoll(playerRotation * Math.degToRad))
-
-
                 
 				local movementDirection = Vector3.Zero
 
@@ -50,8 +42,6 @@ FPSMovement = {
 
 				movementDirection:normalize()
 
-
-
 				local velocity = Vector3.Zero
 
 				if Input.isKeyDown(KeyCode.LeftShift) then
@@ -59,18 +49,14 @@ FPSMovement = {
                 else
                     velocity = movementDirection * player.walkSpeed
 				end
-
-                
 				
                 if Input.isKeyDown(KeyCode.Space) then
                     playerController:jump(player.jumpHeight, deltaTime)
 				end
 
-
-
 				local displacement = velocity * deltaTime
                 
-                playerController:move(displacement);
+                playerController:move(displacement);		
 			end
 		)
 	end

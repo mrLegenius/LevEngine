@@ -132,8 +132,6 @@
     <ClInclude Include="src\Physics\Events\RigidbodyEventCallback.h" />
     <ClInclude Include="src\Physics\PhysicsUpdate.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
-    <ClInclude Include="src\Physics\Systems\CharacterControllerInitSystem.h" />
-    <ClInclude Include="src\Physics\Systems\RigidbodyInitSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DeferredContexts.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
@@ -161,6 +159,7 @@
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.h" />
     <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h" />
     <ClInclude Include="src\Scene\Components\Transform\TransformSerializer.h" />
+    <ClInclude Include="src\Scene\EnttMutex.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
     <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
@@ -1072,8 +1071,6 @@
     <ClCompile Include="src\Physics\Events\CharacterControllerEventCallback.cpp" />
     <ClCompile Include="src\Physics\Events\RigidbodyEventCallback.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
-    <ClCompile Include="src\Physics\Systems\CharacterControllerInitSystem.cpp" />
-    <ClCompile Include="src\Physics\Systems\RigidbodyInitSystem.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DeferredContexts.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />
