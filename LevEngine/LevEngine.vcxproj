@@ -162,6 +162,7 @@
     <ClInclude Include="src\Scene\EnttMutex.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
+    <ClInclude Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.h" />
     <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
@@ -1417,7 +1418,6 @@
     <ClCompile Include="src\Renderer\3D\Animation.cpp" />
     <ClCompile Include="src\Renderer\3D\Bone.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\AnimatorComponent.cpp" />
-    <ClCompile Include="src\Scene\Systems\Animation\AnimatorInitSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp" />

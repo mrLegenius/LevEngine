@@ -14,14 +14,12 @@ namespace LevEngine
     
     struct AnimatorComponent
     {
+        static void OnConstruct(Entity entity);
+        
         AnimatorComponent();
 
-        void Init();
-        bool IsInitialized() const;
-        void ResetInit();
-
         const Ref<AnimationAsset>& GetAnimationClipConst() const;
-        Ref<AnimationAsset>& GetAnimationClip();
+        [[nodiscard]] Ref<AnimationAsset>& GetAnimationClip() const;
         void SetAnimationClip(const Ref<AnimationAsset>& animationClip);
 
         [[nodiscard]] bool GetPlayOnInit() const;
@@ -37,6 +35,5 @@ namespace LevEngine
     private:        
         Ref<Animator> m_Animator;
         bool m_PlayOnInit{};
-        bool m_IsInited{};
     };
 }

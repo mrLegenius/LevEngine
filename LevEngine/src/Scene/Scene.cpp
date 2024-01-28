@@ -22,7 +22,6 @@
 #include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Scripting/LuaComponentsBinder.h"
-#include "Systems/Animation/AnimatorInitSystem.h"
 #include "Systems/Animation/AnimatorUpdateSystem.h"
 #include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
@@ -32,6 +31,7 @@
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 #include "Systems/EntityDestroySystem.h"
 #include "EnttMutex.h"
+#include "Components/Animation/AnimatorComponent.h"
 
 namespace LevEngine
 {
@@ -68,6 +68,8 @@ namespace LevEngine
         RegisterComponentOnDestroy<AudioListenerComponent>();
 
         RegisterComponentOnConstruct<AudioSourceComponent>();
+        
+        RegisterComponentOnConstruct<AnimatorComponent>();
 
         RegisterComponentOnDestroy<AIAgentComponent>();
 
@@ -86,8 +88,7 @@ namespace LevEngine
         RegisterUpdateSystem<AIAgentCrowdUpdateSystem>();
 
         RegisterLateUpdateSystem<EntityDestroySystem>();
-
-        RegisterUpdateSystem<AnimatorInitSystem>();
+        
         RegisterUpdateSystem<AnimatorUpdateSystem>();
     }
 
