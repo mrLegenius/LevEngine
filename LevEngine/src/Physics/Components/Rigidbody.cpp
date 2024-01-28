@@ -4,6 +4,7 @@
 #include "Kernel/Application.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Physics.h"
+#include "Physics/PhysicsSettings.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
@@ -112,6 +113,9 @@ namespace LevEngine
         {
             physx::PxFilterData filterData;
             filterData.word0 = static_cast<physx::PxU32>(layer);
+            const auto collisions = PhysicsSettings::GetLayerCollisions(layer);
+            filterData.word1 = static_cast<physx::PxU32>(collisions);
+            GetCollider()->setSimulationFilterData(filterData);
             GetCollider()->setQueryFilterData(filterData);
         }
     }
@@ -922,7 +926,7 @@ namespace LevEngine
 
         void SerializeData(YAML::Emitter& out, const Rigidbody& component) override
         {
-            //out << YAML::Key << "Layer" << YAML::Value << static_cast<int>(component.GetLayer());
+            out << YAML::Key << "Layer" << YAML::Value << static_cast<int>(component.GetLayer());
             
             out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
             out << YAML::Key << "Is Kinematic Enabled" << YAML::Value << component.IsKinematicEnabled();
@@ -968,13 +972,11 @@ namespace LevEngine
 
         void DeserializeData(const YAML::Node& node, Rigidbody& component) override
         {
-            /*
             if (const auto layerNode = node["Layer"])
             {
                 const auto layer = static_cast<FilterLayer>(layerNode.as<int>());
                 component.SetLayer(layer);
             }
-            */
             
             if (const auto gravityEnableNode = node["Is Gravity Enabled"])
             {
