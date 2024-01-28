@@ -22,17 +22,14 @@
 #include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
 #include "Scripting/LuaComponentsBinder.h"
-#include "Systems/Animation/AnimatorInitSystem.h"
 #include "Systems/Animation/AnimatorUpdateSystem.h"
 #include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
-#include "Systems/Audio/AudioListenerInitSystem.h"
-#include "Systems/Audio/AudioSourceInitSystem.h"
-#include "Physics/Systems/RigidbodyInitSystem.h"
-#include "Physics/Systems/CharacterControllerInitSystem.h"
 #include "Physics/Components/Destroyable.h"
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 #include "Systems/EntityDestroySystem.h"
+#include "EnttMutex.h"
+#include "Components/Animation/AnimatorComponent.h"
 
 namespace LevEngine
 {
@@ -58,46 +55,46 @@ namespace LevEngine
         m_Registry.clear();
         Audio::ReleaseAll();
     }
-
-    void Scene::OnInit()
+    
+    //Called in Runtime before deserialization
+    void Scene::Initialize()
     {
-        auto& scriptManager = Application::Get().GetScriptingManager();
-        scriptManager.LoadScripts();
-        scriptManager.RegisterSystems(this);
-        scriptManager.InitScriptsContainers(m_Registry);
-
-        RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
-        RegisterUpdateSystem<WaypointPositionUpdateSystem>();
-
-        RegisterUpdateSystem<AudioSourceInitSystem>();
-        RegisterUpdateSystem<AudioListenerInitSystem>();
-
-        RegisterUpdateSystem<RigidbodyInitSystem>();
-        RegisterUpdateSystem<CharacterControllerInitSystem>();
-
-        RegisterUpdateSystem<AIAgentCrowdUpdateSystem>();
-
-        RegisterLateUpdateSystem<EntityDestroySystem>();
-
-        RegisterUpdateSystem<AnimatorInitSystem>();
-        RegisterUpdateSystem<AnimatorUpdateSystem>();
-
         RegisterComponentOnConstruct<CameraComponent>();
         RegisterComponentOnConstruct<ScriptsContainer>();
 
         RegisterComponentOnConstruct<AudioListenerComponent>();
         RegisterComponentOnDestroy<AudioListenerComponent>();
-
+        
         RegisterComponentOnConstruct<AudioSourceComponent>();
+        
+        RegisterComponentOnConstruct<AnimatorComponent>();
 
         RegisterComponentOnDestroy<AIAgentComponent>();
 
+        RegisterComponentOnConstruct<Rigidbody>();
         RegisterComponentOnDestroy<Rigidbody>();
+        
+        RegisterComponentOnConstruct<CharacterController>();
         RegisterComponentOnDestroy<CharacterController>();
 
-        App::Get().GetPhysics().ResetPhysicsScene();
-        App::Get().GetPhysics().ClearAccumulator();
+        RegisterUpdateSystem<WaypointDisplacementByTimeSystem>();
+        RegisterUpdateSystem<WaypointPositionUpdateSystem>();
 
+        RegisterUpdateSystem<AIAgentCrowdUpdateSystem>();
+
+        RegisterLateUpdateSystem<EntityDestroySystem>();
+        
+        RegisterUpdateSystem<AnimatorUpdateSystem>();
+    }
+
+    //Called in Runtime after deserialization
+    void Scene::Start()
+    {
+        auto& scriptManager = Application::Get().GetScriptingManager();
+        scriptManager.LoadScripts();
+        scriptManager.RegisterSystems(this);
+        scriptManager.InitScriptsContainers(m_Registry);
+        
         for (const auto& system : m_InitSystems)
         {
             system->Update(0, m_Registry);
@@ -106,6 +103,7 @@ namespace LevEngine
 
     Entity Scene::GetEntityByUUID(const UUID& uuid)
     {
+        std::lock_guard lock(EnttMutex::Mutex);
         const auto view = m_Registry.view<IDComponent>();
 
         for (const auto entity : view)

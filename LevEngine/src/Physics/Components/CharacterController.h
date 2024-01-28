@@ -11,6 +11,7 @@ namespace LevEngine
     
     struct CharacterController
     {
+        static void OnConstruct(Entity entity);
         // Don't call this method (only for internal use)
         static void OnDestroy(Entity entity);
 
@@ -64,8 +65,7 @@ namespace LevEngine
         [[nodiscard]] const Vector<ControllerColliderHit>& GetCollisionHitBuffer() const;
 
         Timestep m_LastMoveTime;
-
-        friend class CharacterControllerInitSystem;
+        
         friend class PhysicsUpdate;
 
         friend class CharacterControllerEventCallback;
@@ -76,7 +76,6 @@ namespace LevEngine
         [[nodiscard]] physx::PxShape* GetCollider() const;
         [[nodiscard]] physx::PxMaterial* GetPhysicalMaterial() const;
         
-        [[nodiscard]] bool IsInitialized() const;
         void Initialize(Entity entity);
         
         [[nodiscard]] Vector3 GetTransformScale() const;
@@ -86,7 +85,7 @@ namespace LevEngine
         void EnableVisualization(bool flag);
         
         void AttachController(Entity entity);
-        void DetachController() const;
+        void DetachController();
 
         void SetGroundFlag(bool flag) const;
 
@@ -95,7 +94,6 @@ namespace LevEngine
 
         physx::PxController* m_Controller = nullptr;
         
-        bool m_IsInitialized = false;
         Vector3 m_TransformScale = Vector3::One;
         
         bool m_IsVisualizationEnabled = false;

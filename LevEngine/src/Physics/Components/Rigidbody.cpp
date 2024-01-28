@@ -8,15 +8,31 @@
 
 namespace LevEngine
 {
-    constexpr Collider::Type DEFAULT_COLLIDER_TYPE = Collider::Type::Box;
+    constexpr Collider::Type DefaultColliderType = Collider::Type::Box;
+
+    void Rigidbody::OnConstruct(const Entity entity)
+    {
+        auto& rigidbody = entity.GetComponent<Rigidbody>();
+        
+        rigidbody.Initialize(entity);
+    }
     
     void Rigidbody::OnDestroy(const Entity entity)
     {
-        auto rigidbody = entity.GetComponent<Rigidbody>();
-        if (rigidbody.GetActor() != nullptr)
-        {
-            rigidbody.DetachRigidbody();
-        }
+        auto& rigidbody = entity.GetComponent<Rigidbody>();
+        
+        if (rigidbody.m_Actor == nullptr) return;
+
+        rigidbody.DetachRigidbody();
+    }
+
+    void Rigidbody::Initialize(const Entity entity)
+    {
+        AttachRigidbody(entity);
+        AttachCollider();
+
+        const auto& transform = entity.GetComponent<Transform>();
+        SetTransformScale(transform.GetWorldScale());
     }
     
     physx::PxRigidActor* Rigidbody::GetActor() const
@@ -41,24 +57,6 @@ namespace LevEngine
 
         return *physicalMaterial;
     }
-
-    bool Rigidbody::IsInitialized() const
-    {
-        return m_IsInitialized;
-    }
-    
-    void Rigidbody::Initialize(const Entity entity)
-    {
-        if (m_IsInitialized) return;
-        
-        AttachRigidbody(entity);
-        AttachCollider();
-        
-        m_IsInitialized = true;
-
-        const auto& transform = entity.GetComponent<Transform>();
-        SetTransformScale(transform.GetWorldScale());
-    }
     
     Vector3 Rigidbody::GetTransformScale() const
     {
@@ -69,23 +67,20 @@ namespace LevEngine
     {
         m_TransformScale = transformScale;
 
-        if (m_IsInitialized)
+        switch(GetColliderType())
         {
-            switch(GetColliderType())
-            {
-            case Collider::Type::Sphere:
-                SetSphereRadius(GetSphereRadius());
-                break;
-            case Collider::Type::Capsule:
-                SetCapsuleRadius(GetCapsuleRadius());
-                SetCapsuleHalfHeight(GetCapsuleHalfHeight());
-                break;
-            case Collider::Type::Box:
-                SetBoxHalfExtents(GetBoxHalfExtents());
-                break;
-            default:
-                break;
-            }
+        case Collider::Type::Sphere:
+            SetSphereRadius(GetSphereRadius());
+            break;
+        case Collider::Type::Capsule:
+            SetCapsuleRadius(GetCapsuleRadius());
+            SetCapsuleHalfHeight(GetCapsuleHalfHeight());
+            break;
+        case Collider::Type::Box:
+            SetBoxHalfExtents(GetBoxHalfExtents());
+            break;
+        default:
+            break;
         }
     }
 
@@ -134,7 +129,7 @@ namespace LevEngine
         {
             const auto entity = App::Get().GetPhysics().m_ActorEntityMap.at(m_Actor);
             AttachRigidbody(entity);
-            SetColliderType(DEFAULT_COLLIDER_TYPE);
+            SetColliderType(DefaultColliderType);
         }
     }
     
@@ -183,7 +178,9 @@ namespace LevEngine
         {
             DetachCollider();
         }
+        
         App::Get().GetPhysics().RemoveActor(m_Actor);
+        m_Actor = nullptr;
     }
 
     float Rigidbody::GetMass() const
@@ -877,6 +874,15 @@ namespace LevEngine
                 }
             }
         }
+    }
+
+    void Rigidbody::Teleport(const Vector3 position)
+    {
+        if (m_Actor == nullptr) return;
+
+        auto pose = m_Actor->getGlobalPose();
+        pose.p = PhysicsUtils::FromVector3ToPxVec3(position);
+        m_Actor->setGlobalPose(pose);
     }
 
     const Vector<Entity>& Rigidbody::GetTriggerEnterBuffer() const

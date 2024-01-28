@@ -132,8 +132,6 @@
     <ClInclude Include="src\Physics\Events\RigidbodyEventCallback.h" />
     <ClInclude Include="src\Physics\PhysicsUpdate.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
-    <ClInclude Include="src\Physics\Systems\CharacterControllerInitSystem.h" />
-    <ClInclude Include="src\Physics\Systems\RigidbodyInitSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DeferredContexts.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
@@ -161,8 +159,10 @@
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.h" />
     <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h" />
     <ClInclude Include="src\Scene\Components\Transform\TransformSerializer.h" />
+    <ClInclude Include="src\Scene\EnttMutex.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
+    <ClInclude Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.h" />
     <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
@@ -171,9 +171,7 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h" />
-    <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
-    <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompiler.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompilertraits.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eaplatform.h" />
@@ -1072,8 +1070,6 @@
     <ClCompile Include="src\Physics\Events\CharacterControllerEventCallback.cpp" />
     <ClCompile Include="src\Physics\Events\RigidbodyEventCallback.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
-    <ClCompile Include="src\Physics\Systems\CharacterControllerInitSystem.cpp" />
-    <ClCompile Include="src\Physics\Systems\RigidbodyInitSystem.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DeferredContexts.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />
@@ -1115,9 +1111,7 @@
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp" />
-    <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
-    <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />
     <ClCompile Include="external\eastl\source\allocator_eastl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -1420,7 +1414,6 @@
     <ClCompile Include="src\Renderer\3D\Animation.cpp" />
     <ClCompile Include="src\Renderer\3D\Bone.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\AnimatorComponent.cpp" />
-    <ClCompile Include="src\Scene\Systems\Animation\AnimatorInitSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp" />
