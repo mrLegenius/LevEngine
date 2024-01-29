@@ -3,6 +3,7 @@
 
 #include "Project.h"
 #include "GUI/EditorGUI.h"
+#include "GUI/ScopedGUIHelpers.h"
 #include "Physics/PhysicsSettings.h"
 
 namespace LevEngine::Editor
@@ -96,8 +97,6 @@ namespace LevEngine::Editor
                 constexpr int columnsCount = IM_ARRAYSIZE(columnNames);
                 constexpr int rowsCount = columnsCount - 1;
 
-                static bool tableStorage[columnsCount * rowsCount] = {};
-
                 constexpr ImGuiTableFlags tableFlags = ImGuiTableFlags_SizingFixedFit
                                                      | ImGuiTableFlags_BordersOuter
                                                      | ImGuiTableFlags_BordersInnerH
@@ -105,7 +104,7 @@ namespace LevEngine::Editor
                                                      | ImGuiTableFlags_BordersInner
                                                      | ImGuiTableFlags_NoHostExtendX;
 
-                if (ImGui::BeginTable("table", columnsCount, tableFlags))
+                if (ImGui::BeginTable("CollisionMatrix", columnsCount, tableFlags))
                 {
                     ImGui::TableSetupColumn(columnNames[0], ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_NoResize);
                     
@@ -117,7 +116,7 @@ namespace LevEngine::Editor
                     ImGui::TableHeadersRow();
                     for (int row = 0; row < rowsCount; row++)
                     {
-                        ImGui::PushID(row);
+                        GUI::ScopedID rowId { row };
                         ImGui::TableNextRow();
                         ImGui::TableSetColumnIndex(0);
                         ImGui::AlignTextToFramePadding();
@@ -127,30 +126,20 @@ namespace LevEngine::Editor
                             if (ImGui::TableSetColumnIndex(column))
                             {
                                 if (row >= column) continue;
-                                
-                                ImGui::PushID(column);
+
+                                GUI::ScopedID columnId { column };
                                 
                                 const auto firstLayer = static_cast<FilterLayer>(1 << row);
                                 const auto secondLayer = static_cast<FilterLayer>(1 << (column - 1));
-                                
-                                auto status = tableStorage[row * columnsCount + column];
-                                if (status != PhysicsSettings::IsCollisionEnabled(firstLayer, secondLayer))
-                                {
-                                    tableStorage[row * columnsCount + column] =
-                                        PhysicsSettings::IsCollisionEnabled(firstLayer, secondLayer);
-                                }
 
-                                if (ImGui::Checkbox("", &tableStorage[row * columnsCount + column]))
+                                auto status = PhysicsSettings::IsCollisionEnabled(firstLayer, secondLayer);
+                                if (EditorGUI::DrawCheckBox("", status))
                                 {
-                                    status = tableStorage[row * columnsCount + column];
                                     PhysicsSettings::EnableCollision(firstLayer, secondLayer, status);
                                     PhysicsSettings::EnableCollision(secondLayer, firstLayer, status);
                                 }
-                                
-                                ImGui::PopID();
                             }
                         }
-                        ImGui::PopID();
                     }
                     ImGui::EndTable();
                 }

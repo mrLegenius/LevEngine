@@ -87,9 +87,9 @@ namespace LevEngine
                 contactPoints.resize(contactCount);
                 pairs[i].extractContacts(&contactPoints[0], contactCount);
 
+                collisionInfo.ContactCount = contactCount;
                 for (auto j = 0; j < contactCount; j++)
                 {
-                    collisionInfo.ContactCount = contactCount;
                     collisionInfo.Points.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].position));
                     collisionInfo.Normals.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].normal));
                     collisionInfo.Impulses.push_back(PhysicsUtils::FromPxVec3ToVector3(contactPoints[j].impulse));
@@ -102,60 +102,24 @@ namespace LevEngine
             
             if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
             {
-                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<Rigidbody>())
+                if (firstEntity.HasComponent<Rigidbody>())
                 {
                     auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = secondEntity;
                     firstRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
+                }
 
+                if (secondEntity.HasComponent<Rigidbody>())
+                {
                     auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = firstEntity;
                     secondRigidbody.m_CollisionEnterBuffer.push_back(collisionInfo);
-                }
-
-                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<CharacterController>())
-                {
-                    auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
-                    collisionInfo.Entity = secondEntity;
-                    firstRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
-                }
-
-                if (secondEntity.HasComponent<Rigidbody>() && firstEntity.HasComponent<CharacterController>())
-                {
-                    auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
-                    collisionInfo.Entity = firstEntity;
-                    secondRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
                 }
             }
 
             if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
             {
-                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<Rigidbody>())
-                {
-                    auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
-                    collisionInfo.Entity = secondEntity;
-                    
-                    erase_if(firstRigidbody.m_CollisionStayBuffer,
-                        [&](const Collision& collision)
-                        {
-                            return collision.Entity == collisionInfo.Entity;
-                        }
-                    ); 
-                    firstRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
-
-                    auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
-                    collisionInfo.Entity = firstEntity;
-
-                    erase_if(secondRigidbody.m_CollisionStayBuffer,
-                        [&](const Collision& collision)
-                        {
-                            return collision.Entity == collisionInfo.Entity;
-                        }
-                    );
-                    secondRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
-                }
-                
-                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<CharacterController>())
+                if (firstEntity.HasComponent<Rigidbody>())
                 {
                     auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = secondEntity;
@@ -169,7 +133,7 @@ namespace LevEngine
                     firstRigidbody.m_CollisionStayBuffer.push_back(collisionInfo);
                 }
 
-                if (secondEntity.HasComponent<Rigidbody>() && firstEntity.HasComponent<CharacterController>())
+                if (secondEntity.HasComponent<Rigidbody>())
                 {
                     auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = firstEntity;
@@ -186,32 +150,7 @@ namespace LevEngine
             
             if (current.events & physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
             {
-                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<Rigidbody>())
-                {
-                    auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
-                    collisionInfo.Entity = secondEntity;
-                    
-                    erase_if(firstRigidbody.m_CollisionStayBuffer,
-                        [&](const Collision& collision)
-                        {
-                            return collision.Entity == collisionInfo.Entity;
-                        }
-                    );
-                    firstRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
-
-                    auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
-                    collisionInfo.Entity = firstEntity;
-                    
-                    erase_if(secondRigidbody.m_CollisionStayBuffer,
-                        [&](const Collision& collision)
-                        {
-                            return collision.Entity == collisionInfo.Entity;
-                        }
-                    );
-                    secondRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
-                }
-
-                if (firstEntity.HasComponent<Rigidbody>() && secondEntity.HasComponent<CharacterController>())
+                if (firstEntity.HasComponent<Rigidbody>())
                 {
                     auto& firstRigidbody = firstEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = secondEntity;
@@ -225,7 +164,7 @@ namespace LevEngine
                     firstRigidbody.m_CollisionExitBuffer.push_back(collisionInfo);
                 }
 
-                if (secondEntity.HasComponent<Rigidbody>() && firstEntity.HasComponent<CharacterController>())
+                if (secondEntity.HasComponent<Rigidbody>())
                 {
                     auto& secondRigidbody = secondEntity.GetComponent<Rigidbody>();
                     collisionInfo.Entity = firstEntity;

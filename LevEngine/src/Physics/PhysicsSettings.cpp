@@ -5,8 +5,8 @@ namespace LevEngine
 {
     const FilterLayer& PhysicsSettings::GetLayerCollisions(const FilterLayer layer)
     {
-        if (static_cast<int>(layer) == static_cast<int>(FilterLayer::None)) return FilterLayer::None;
-        if (static_cast<int>(layer) == static_cast<int>(FilterLayer::All)) return FilterLayer::All;
+        if (static_cast<uint32_t>(layer) == static_cast<uint32_t>(FilterLayer::None)) return FilterLayer::None;
+        if (static_cast<uint32_t>(layer) == static_cast<uint32_t>(FilterLayer::All)) return FilterLayer::All;
         
         return m_LayerCollisionArray.at(GetArrayIndex(layer));
     }
