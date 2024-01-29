@@ -17,7 +17,7 @@ namespace LevEngine
             auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
 
             if (rigidbody.GetActor() == nullptr) continue;
-            
+
             rigidbody.m_TriggerEnterBuffer.clear();
             rigidbody.m_TriggerExitBuffer.clear();
             

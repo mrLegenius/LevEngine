@@ -5,6 +5,7 @@
 #include "Kernel/Time/Timestep.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Physics.h"
+#include "Physics/PhysicsSettings.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
@@ -142,7 +143,10 @@ namespace LevEngine
         if (m_Controller != nullptr)
         {
             physx::PxFilterData filterData;
-            filterData.word0 = (1 << static_cast<physx::PxU32>(layer));
+            filterData.word0 = static_cast<physx::PxU32>(layer);
+            const auto collisions = PhysicsSettings::GetLayerCollisions(layer);
+            filterData.word1 = static_cast<physx::PxU32>(collisions);
+            GetCollider()->setSimulationFilterData(filterData);
             GetCollider()->setQueryFilterData(filterData);
         }
     }

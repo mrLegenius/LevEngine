@@ -387,8 +387,10 @@ namespace LevEngine::Scripting
                     rigidbody.AddForce(vector);
                 }),
             "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
+            "getCollisionStayBuffer", &Rigidbody::GetCollisionStayBuffer,
             "getCollisionExitBuffer", &Rigidbody::GetCollisionExitBuffer,
             "getTriggerEnterBuffer", &Rigidbody::GetTriggerEnterBuffer,
+            "getTriggerStayBuffer", &Rigidbody::GetTriggerStayBuffer,
             "getTriggerExitBuffer", &Rigidbody::GetTriggerExitBuffer,
             "getLayer", [](const Rigidbody& rigidbody)
             {
@@ -420,6 +422,7 @@ namespace LevEngine::Scripting
         lua.new_usertype<Collision>(
             "Collision",
             "entity", &Collision::Entity,
+            "contactCount", &Collision::ContactCount,
             "points", &Collision::Points,
             "normals", &Collision::Normals,
             "impulses", &Collision::Impulses,

@@ -34,7 +34,7 @@ namespace LevEngine
         static void OnDestroy(Entity entity);
         
         [[nodiscard]] FilterLayer GetLayer() const;
-        void SetLayer(const FilterLayer& layer) const;
+        void SetLayer(FilterLayer layer) const;
         
         [[nodiscard]] Type GetRigidbodyType() const;
         void SetRigidbodyType(const Type& type);
@@ -115,8 +115,10 @@ namespace LevEngine
         void Teleport(Vector3 position);
         
         [[nodiscard]] const Vector<Entity>& GetTriggerEnterBuffer() const;
+        [[nodiscard]] const Vector<Entity>& GetTriggerStayBuffer() const;
         [[nodiscard]] const Vector<Entity>& GetTriggerExitBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
+        [[nodiscard]] const Vector<Collision>& GetCollisionStayBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
 
         friend class PhysicsUpdate;
@@ -176,8 +178,10 @@ namespace LevEngine
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
         
         Vector<Entity> m_TriggerEnterBuffer;
+        Vector<Entity> m_TriggerStayBuffer;
         Vector<Entity> m_TriggerExitBuffer;
         Vector<Collision> m_CollisionEnterBuffer;
+        Vector<Collision> m_CollisionStayBuffer;
         Vector<Collision> m_CollisionExitBuffer;
     };
 }

@@ -4,6 +4,7 @@
 #include "Kernel/Application.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Physics.h"
+#include "Physics/PhysicsSettings.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
@@ -104,14 +105,17 @@ namespace LevEngine
         return m_ColliderCollection[0]->m_Layer;
     }
 
-    void Rigidbody::SetLayer(const FilterLayer& layer) const
+    void Rigidbody::SetLayer(const FilterLayer layer) const
     {
         m_ColliderCollection[0]->m_Layer = layer;
-
+        
         if (m_Actor != nullptr)
         {
             physx::PxFilterData filterData;
-            filterData.word0 = (1 << static_cast<physx::PxU32>(layer));
+            filterData.word0 = static_cast<physx::PxU32>(layer);
+            const auto collisions = PhysicsSettings::GetLayerCollisions(layer);
+            filterData.word1 = static_cast<physx::PxU32>(collisions);
+            GetCollider()->setSimulationFilterData(filterData);
             GetCollider()->setQueryFilterData(filterData);
         }
     }
@@ -890,6 +894,11 @@ namespace LevEngine
         return m_TriggerEnterBuffer;
     }
 
+    const Vector<Entity>& Rigidbody::GetTriggerStayBuffer() const
+    {
+        return m_TriggerStayBuffer;
+    }
+
     const Vector<Entity>& Rigidbody::GetTriggerExitBuffer() const
     {
         return m_TriggerExitBuffer;
@@ -898,6 +907,11 @@ namespace LevEngine
     const Vector<Collision>& Rigidbody::GetCollisionEnterBuffer() const
     {
         return m_CollisionEnterBuffer; 
+    }
+
+    const Vector<Collision>& Rigidbody::GetCollisionStayBuffer() const
+    {
+        return m_CollisionStayBuffer;
     }
 
     const Vector<Collision>& Rigidbody::GetCollisionExitBuffer() const
