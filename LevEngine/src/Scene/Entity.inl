@@ -1,11 +1,12 @@
 #pragma once
+#include "EnttMutex.h"
 
 namespace LevEngine
 {
 	template <typename T>
 	bool Entity::HasComponent() const
 	{
-		std::lock_guard lock(s_Mutex);
+		std::lock_guard lock(EnttMutex::Mutex);
 
 		LEV_CORE_ASSERT(m_Handle, "Entity is not valid");
 
@@ -15,7 +16,7 @@ namespace LevEngine
 	template <typename T, typename ... Args>
 	T& Entity::AddComponent(Args&&... args) const
 	{
-		std::lock_guard lock(s_Mutex);
+		std::lock_guard lock(EnttMutex::Mutex);
 
 		LEV_CORE_ASSERT(m_Handle, "Entity is not valid");
 		LEV_CORE_ASSERT(!HasComponent<T>(), "Entity already has this component");
@@ -27,7 +28,7 @@ namespace LevEngine
 	template <typename T, typename ... Args>
 	T& Entity::AddOrReplaceComponent(Args&&... args) const
 	{
-		std::lock_guard lock(s_Mutex);
+		std::lock_guard lock(EnttMutex::Mutex);
 
 		LEV_CORE_ASSERT(m_Handle, "Entity is not valid");
 
@@ -38,7 +39,7 @@ namespace LevEngine
 	template <typename T>
 	T& Entity::GetComponent() const
 	{
-		std::lock_guard lock(s_Mutex);
+		std::lock_guard lock(EnttMutex::Mutex);
 
 		LEV_CORE_ASSERT(m_Handle, "Entity is not valid");
 		LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
@@ -49,7 +50,7 @@ namespace LevEngine
 	template <typename T>
 	T& Entity::GetOrAddComponent() const
 	{
-		std::lock_guard lock(s_Mutex);
+		std::lock_guard lock(EnttMutex::Mutex);
 
 		LEV_CORE_ASSERT(m_Handle, "Entity is not valid");
 
@@ -59,7 +60,7 @@ namespace LevEngine
 	template <typename T>
 	void Entity::RemoveComponent() const
 	{
-		std::lock_guard lock(s_Mutex);
+		std::lock_guard lock(EnttMutex::Mutex);
 
 		LEV_CORE_ASSERT(m_Handle, "Entity is not valid");
 		LEV_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
@@ -70,7 +71,7 @@ namespace LevEngine
 	template <typename T>
 	Entity Entity::GetOtherEntity(const T& component)
 	{
-		std::lock_guard lock(s_Mutex);
+		std::lock_guard lock(EnttMutex::Mutex);
 
 		LEV_CORE_ASSERT(m_Handle, "Entity is not valid");
 

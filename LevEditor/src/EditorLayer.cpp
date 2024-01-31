@@ -19,6 +19,7 @@
 #include "Panels/StatusBar.h"
 #include "Panels/Toolbar.h"
 #include "Panels/ViewportPanel.h"
+#include "Physics/Physics.h"
 #include "Renderer/RendererContext.h"
 
 namespace LevEngine::Editor
@@ -175,11 +176,14 @@ namespace LevEngine::Editor
 
         App::Get().IsPlaying = true;
 
-        auto& scene = SceneManager::GetActiveScene();        
+        App::Get().GetPhysics().ResetPhysicsScene();
+        App::Get().GetPhysics().ClearAccumulator();
+        
+        SceneManager::LoadScene(SceneManager::GetActiveScenePath());
 
         m_SceneState = SceneState::Play;
         m_Game->Focus();
-        scene->OnInit();
+        
         Selection::Deselect();
     }
     void EditorLayer::OnSceneStop()

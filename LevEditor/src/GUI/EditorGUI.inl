@@ -289,7 +289,7 @@ namespace LevEngine::Editor
 
 		return changed;
 	}
-	
+
 	template<class T, int N>
 	bool EditorGUI::DrawComboBox(const String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter)
 	{
@@ -299,6 +299,43 @@ namespace LevEngine::Editor
 			return true;
 		}
 
+		return false;
+	}
+
+	template<class T, int N>
+	bool EditorGUI::DrawFlagComboBox(const String label, Array<String, N> stringValues, T& value)
+	{
+		bool changed = false;
+		auto currentString = stringValues[log2(static_cast<uint32_t>(value))];
+		if (ImGui::BeginCombo(label.c_str(), currentString.c_str()))
+		{
+			for (int i = 0; i < stringValues.size(); i++)
+			{
+				const bool isSelected = currentString == stringValues[i];
+				if (ImGui::Selectable(stringValues[i].c_str(), isSelected))
+				{
+					currentString = stringValues[i];
+					value = static_cast<T>(1 << i);
+					changed = true;
+				}
+				if (isSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+		return changed;
+	}
+
+	template<class T, int N>
+	bool EditorGUI::DrawFlagComboBox(const String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter)
+	{
+		if (T value = getter(); DrawFlagComboBox(label, stringValues, value))
+		{
+			setter(value);
+			return true;
+		}
 		return false;
 	}
 

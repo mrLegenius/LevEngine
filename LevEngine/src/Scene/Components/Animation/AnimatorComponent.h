@@ -2,26 +2,25 @@
 #include "Math/Matrix.h"
 #include "Renderer/3D/AnimationConstants.h"
 #include "Scene/Components/TypeParseTraits.h"
-#include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
     class Animation;
     class Animator;
     class AnimationAsset;
+    struct Transform;
+    class Entity;
 
     REGISTER_PARSE_TYPE(AnimatorComponent);
     
     struct AnimatorComponent
     {
+        static void OnConstruct(Entity entity);
+        
         AnimatorComponent();
 
-        void Init();
-        bool IsInitialized() const;
-        void ResetInit();
-
         const Ref<AnimationAsset>& GetAnimationClipConst() const;
-        Ref<AnimationAsset>& GetAnimationClip();
+        [[nodiscard]] Ref<AnimationAsset>& GetAnimationClip() const;
         void SetAnimationClip(const Ref<AnimationAsset>& animationClip);
 
         [[nodiscard]] bool GetPlayOnInit() const;
@@ -37,6 +36,5 @@ namespace LevEngine
     private:        
         Ref<Animator> m_Animator;
         bool m_PlayOnInit{};
-        bool m_IsInited{};
     };
 }

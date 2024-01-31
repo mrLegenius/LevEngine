@@ -53,6 +53,8 @@ namespace LevEngine::Scripting
 			sol::meta_function::multiplication, vec3_multiplication_overload,
 			sol::meta_function::division, vec3_division_overload,
 			"normalize", [] (Vector3& vector) { vector.Normalize(); },
+			"length", &Vector3::Length,
+			"lengthSquared", &Vector3::LengthSquared,
 			sol::meta_function::to_string, [] (const Vector3& vector)
 			{
 				return "Vector3 [" + std::to_string(vector.x) + ", "
@@ -115,7 +117,9 @@ namespace LevEngine::Scripting
 				return "Vector2 [" + std::to_string(vector.x) + ", "
 				+ std::to_string(vector.y) + "]";
 			},
-			"normalize", [] (Vector2& vector) { vector.Normalize(); }
+			"normalize", [] (Vector2& vector) { vector.Normalize(); },
+			"length", &Vector2::Length,
+			"lengthSquared", &Vector2::LengthSquared
 		);
 	}
 
@@ -173,7 +177,9 @@ namespace LevEngine::Scripting
 				+ std::to_string(vector.z) + ", "
 				+ std::to_string(vector.w) + "]";
 			},
-			"normalize", [] (Vector4& vector) { vector.Normalize(); }
+			"normalize", [] (Vector4& vector) { vector.Normalize(); },
+			"length", &Vector4::Length,
+			"lengthSquared", &Vector4::LengthSquared
 		);
 	}
 
@@ -295,6 +301,9 @@ namespace LevEngine::Scripting
 		));
 
 		math.set_function("lerp", [](float a, float b, float t) {return std::lerp(a, b, t); });
+		math.set_function("sqrt", [](float a) { return std::sqrtf(a); });
+		math.set_function("pow", [](float a, float power) { return std::powf(a, power); });
+		math.set_function("exp", [](float power) { return std::expf(power); });
 		math.set_function("clamp", sol::overload(
 			[](float value, float min, float max) {return std::clamp(value, min, max); },
 			[](double value, double min, double max) {return std::clamp(value, min, max); },
@@ -319,6 +328,11 @@ namespace LevEngine::Scripting
 		lua.new_usertype<Random>(
 			"Random",
 			sol::no_constructor,
+			"bool", &Random::Bool,
+			"int", &Random::Int, //[min, max)
+			"float", sol::overload(
+				sol::resolve<float(float, float)>(&Random::Float), // [min, max]
+				sol::resolve<float()>(&Random::Float)), //[0, 1]
 			"vector3", sol::overload(
 				sol::resolve<Vector3()>(&Random::Vec3),
 				sol::resolve<Vector3(float, float)>(&Random::Vec3),
@@ -327,13 +341,12 @@ namespace LevEngine::Scripting
 				sol::resolve<Vector4()>(&Random::Vec4),
 				sol::resolve<Vector4(float, float)>(&Random::Vec4),
 				sol::resolve<Vector4(const Vector4, const Vector4)>(&Random::Vec4)),
+			"rotation", &Random::Rotation,
 			"color", sol::overload(
 				sol::resolve<Color(float, float, float)>(&Random::Color),
 				sol::resolve<Color(const Color&, const Color&)>(&Random::Color)),
-			"smoothColor", sol::overload(
-				sol::resolve<Color(float, float, float)>(&Random::SmoothColor),
-				sol::resolve<Color(const Color&, const Color&)>(&Random::SmoothColor)),
-			"rotation", &Random::Rotation
+			"colorSmooth", &Random::ColorSmooth, //Random lerp. ColorSmooth(Color, Color)
+			"colorGrayScale", &Random::ColorSmoothGrayscale //ColorSmoothGrayscale(Color, Color, alpha)
 		);
 	}
 

@@ -5,33 +5,30 @@
 #include "Kernel/Time/Timestep.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Physics.h"
+#include "Physics/PhysicsSettings.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
 {
+    void CharacterController::OnConstruct(const Entity entity)
+    {
+        auto& controller = entity.GetComponent<CharacterController>();
+        controller.Initialize(entity);
+    }
+
     void CharacterController::OnDestroy(const Entity entity)
     {
-        const auto controller = entity.GetComponent<CharacterController>();
+        auto& controller = entity.GetComponent<CharacterController>();
 
-        if (controller.GetController() != nullptr)
-        {
-            controller.DetachController();
-        }
-    }
-    
-    bool CharacterController::IsInitialized() const
-    {
-        return m_IsInitialized;
+        if (controller.m_Controller == nullptr) return;
+
+        controller.DetachController();
     }
 
     void CharacterController::Initialize(const Entity entity)
     {
-        if (m_IsInitialized) return;
-        
         AttachController(entity);
         
-        m_IsInitialized = true;
-
         const auto& transform = entity.GetComponent<Transform>();
         SetTransformScale(transform.GetWorldScale());
     }
@@ -75,11 +72,8 @@ namespace LevEngine
     {
         m_TransformScale = scale;
         
-        if (m_IsInitialized)
-        {
-            SetRadius(GetRadius());
-            SetHeight(GetHeight());
-        }
+        SetRadius(GetRadius());
+        SetHeight(GetHeight());
     }
 
     bool CharacterController::IsVisualizationEnabled() const
@@ -131,9 +125,10 @@ namespace LevEngine
         SetBounceCombineMode(GetBounceCombineMode());
     }
 
-    void CharacterController::DetachController() const
+    void CharacterController::DetachController()
     {
         App::Get().GetPhysics().RemoveController(m_Controller);
+        m_Controller = nullptr;
     }
     
     FilterLayer CharacterController::GetLayer() const
@@ -148,7 +143,10 @@ namespace LevEngine
         if (m_Controller != nullptr)
         {
             physx::PxFilterData filterData;
-            filterData.word0 = (1 << static_cast<physx::PxU32>(layer));
+            filterData.word0 = static_cast<physx::PxU32>(layer);
+            const auto collisions = PhysicsSettings::GetLayerCollisions(layer);
+            filterData.word1 = static_cast<physx::PxU32>(collisions);
+            GetCollider()->setSimulationFilterData(filterData);
             GetCollider()->setQueryFilterData(filterData);
         }
     }
@@ -470,6 +468,13 @@ namespace LevEngine
         const Vector3 displacement =
             position - PhysicsUtils::FromPxExtendedVec3ToVector3(m_Controller->getPosition());
         Move(displacement);
+    }
+
+    void CharacterController::Teleport(const Vector3 position)
+    {
+        if (m_Controller == nullptr) return;
+
+        m_Controller->setPosition(PhysicsUtils::FromVector3ToPxExtendedVec3(position));
     }
 
     void CharacterController::Jump(const float jumpHeight, const float deltaTime)

@@ -7,7 +7,7 @@
 
 namespace LevEngine
 {
-    bool Audio::Init(int numOfChannels, int studioFlags, int flags)
+    bool Audio::Init(const int numOfChannels, const int studioFlags, const int flags)
     {
         if (m_IsInitialized)
         {
@@ -31,10 +31,8 @@ namespace LevEngine
             m_IsInitialized = true;
             return true;
         }
-        else
-        {
-            Log::CoreError("FMOD Sound System: Failed to initialize");
-        }
+
+        Log::CoreError("FMOD Sound System: Failed to initialize");
 
         AudioListenerComponent unused;
         return false;
@@ -71,7 +69,7 @@ namespace LevEngine
             UpdateInstance3DAttributes(eventInstance, eventInfo->entity);
         }
 
-        for (auto handle : m_EventsToRelease)
+        for (const auto handle : m_EventsToRelease)
         {
             ReleaseOneEvent(handle);
         }
@@ -103,9 +101,9 @@ namespace LevEngine
 
     void Audio::RemoveListener(AudioListenerComponent* listenerComponent)
     {
-        if (!m_IsInitialized) return; 
+        if (!m_IsInitialized) return;
 
-        auto iterator = eastl::find(m_Listeners.begin(), m_Listeners.end(), listenerComponent);
+        const auto iterator = eastl::find(m_Listeners.begin(), m_Listeners.end(), listenerComponent);
 
         if (iterator == m_Listeners.end())
         {
@@ -116,7 +114,7 @@ namespace LevEngine
         int listenerIdx = iterator - m_Listeners.begin();
         m_Listeners.erase(iterator);
 
-        int newListenersCount = (int) m_Listeners.size();
+        const int newListenersCount = static_cast<int>(m_Listeners.size());
         
         // Minimum listener count in FMOD is 1. Setting count to 0 will return an error code.
         CheckErrors(m_System->setNumListeners(newListenersCount == 0 ? 1 : newListenersCount));
@@ -134,23 +132,18 @@ namespace LevEngine
 
     void Audio::SetListenerAttributes()
     {
-        if (!m_IsInitialized || m_Listeners.empty())
+        if (!m_IsInitialized || m_Listeners.empty()) return;
+
+        for (int listenerIdx = 0; listenerIdx < m_Listeners.size(); listenerIdx++)
         {
-            return;
-        }
-
-        for (int listenerIdx = 0; listenerIdx < m_Listeners.size(); listenerIdx++) {
             const auto listener = m_Listeners[listenerIdx];
-            auto entity = listener->AttachedToEntity;
+            auto entity = listener->Owner;
 
-            if (!entity)
-            {
-                continue;
-            }
+            if (!entity) continue;
 
             if (entity.HasComponent<Transform>())
             {
-                Transform transform = entity.GetComponent<Transform>();
+                auto& transform = entity.GetComponent<Transform>();
                 const auto attr = Get3DAttributes(transform);
 
                 CheckErrors(m_System->setListenerAttributes(listenerIdx, &attr));
@@ -164,10 +157,9 @@ namespace LevEngine
     {
         if (!m_IsInitialized) return;
 
-        String prefixedEventName = GetPrefixedEventName(eventName);
+        const String prefixedEventName = GetPrefixedEventName(eventName);
 
-        FMOD::Studio::EventInstance* instance = CreateInstance(prefixedEventName, true, entity);
-        if (instance) 
+        if (FMOD::Studio::EventInstance* instance = CreateInstance(prefixedEventName, true, entity)) 
         {
             if (entity)
             {
@@ -181,16 +173,15 @@ namespace LevEngine
 #pragma endregion
 
 #pragma region Non-One-Shot Sounds
-    EventInstanceHandle Audio::CreateSound(const String& eventName, Entity entity, bool playOnCreate)
+    EventInstanceHandle Audio::CreateSound(const String& eventName, const Entity entity, const bool playOnCreate)
     {
         if (!m_IsInitialized) return 0;
 
-        String prefixedEventName = GetPrefixedEventName(eventName);
+        const String prefixedEventName = GetPrefixedEventName(eventName);
 
-        FMOD::Studio::EventInstance* instance = CreateInstance(prefixedEventName, false, entity);
-        if (instance)
+        if (FMOD::Studio::EventInstance* instance = CreateInstance(prefixedEventName, false, entity))
         {
-            EventInstanceHandle handle = reinterpret_cast<EventInstanceHandle>(instance);
+            const EventInstanceHandle handle = reinterpret_cast<EventInstanceHandle>(instance);
 
             if (entity)
             {
@@ -208,11 +199,11 @@ namespace LevEngine
         return 0;
     }
 
-    void Audio::PlaySound(EventInstanceHandle handle)
+    void Audio::PlaySound(const EventInstanceHandle handle)
     {
-        if (!m_IsInitialized) return; 
+        if (!m_IsInitialized) return;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator != m_Events.end())
         {
@@ -224,11 +215,11 @@ namespace LevEngine
         }
     }
 
-    void Audio::StopSound(EventInstanceHandle handle, bool forceImmediateStop)
+    void Audio::StopSound(const EventInstanceHandle handle, const bool forceImmediateStop)
     {
         if (!m_IsInitialized) return;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator != m_Events.end())
         {
@@ -240,11 +231,11 @@ namespace LevEngine
         }
     }
 
-    bool Audio::IsPaused(EventInstanceHandle handle)
+    bool Audio::IsPaused(const EventInstanceHandle handle)
     {
         if (!m_IsInitialized) return false;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator != m_Events.end())
         {
@@ -252,18 +243,16 @@ namespace LevEngine
             CheckErrors(iterator->second->getPaused(&isPaused));
             return isPaused;
         }
-        else
-        {
-            Log::CoreWarning("Attempted to check pause on a sound using an invalid handle");
-            return false;
-        }
+
+        Log::CoreWarning("Attempted to check pause on a sound using an invalid handle");
+        return false;
     }
 
-    void Audio::SetPause(EventInstanceHandle handle, bool isPaused)
+    void Audio::SetPause(const EventInstanceHandle handle, const bool isPaused)
     {
         if (!m_IsInitialized) return;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator != m_Events.end())
         {
@@ -275,11 +264,11 @@ namespace LevEngine
         }
     }
 
-    bool Audio::IsPlaying(EventInstanceHandle handle)
+    bool Audio::IsPlaying(const EventInstanceHandle handle)
     {
         if (!m_IsInitialized) return false;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator == m_Events.end())
         {
@@ -293,11 +282,11 @@ namespace LevEngine
         return !isPaused && GetPlaybackState(eventInstance) == FMOD_STUDIO_PLAYBACK_PLAYING;
     }
 
-    bool Audio::IsStartingPlaying(EventInstanceHandle handle)
+    bool Audio::IsStartingPlaying(const EventInstanceHandle handle)
     {
         if (!m_IsInitialized) return false;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator == m_Events.end())
         {
@@ -314,9 +303,7 @@ namespace LevEngine
     FMOD_STUDIO_PLAYBACK_STATE Audio::GetPlaybackState(FMOD::Studio::EventInstance* eventInstance)
     {
         if (eventInstance == nullptr)
-        {
-            return FMOD_STUDIO_PLAYBACK_STATE::FMOD_STUDIO_PLAYBACK_STOPPED;
-        }
+            return FMOD_STUDIO_PLAYBACK_STOPPED;
 
         FMOD_STUDIO_PLAYBACK_STATE state;
         eventInstance->getPlaybackState(&state);
@@ -327,69 +314,64 @@ namespace LevEngine
     Audio::EventInfo* Audio::GetEventInfo(FMOD::Studio::EventInstance* eventInstance)
     {
         EventInfo* eventInfo;
-        eventInstance->getUserData((void**)&eventInfo);
+        eventInstance->getUserData(reinterpret_cast<void**>(&eventInfo));
         return eventInfo;
     }
 
 #pragma region Banks
-    void Audio::LoadBank(const String& pathToBank, bool preloadSampleData)
+    void Audio::LoadBank(const String& pathToBank, const bool preloadSampleData)
     {
         if (IsBankRegistered(pathToBank)) return;
 
         FMOD::Studio::Bank* bank = nullptr;
         CheckErrors(m_System->loadBankFile(pathToBank.c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &bank));
-        if (bank)
+        if (!bank) return;
+        
+        if (preloadSampleData)
         {
-            if (preloadSampleData)
-            {
-                bank->loadSampleData();
-            }
-            
-            m_Banks.insert({ pathToBank, bank });
+            bank->loadSampleData();
         }
-        return;
+            
+        m_Banks.insert({ pathToBank, bank });
     }
 
     void Audio::UnloadBank(const String& pathToBank)
     {
-        if (!m_IsInitialized || !IsBankRegistered(pathToBank)) 
-        {
-            return;
-        }
+        if (!m_IsInitialized || !IsBankRegistered(pathToBank)) return;
 
-        auto keyValuePair = m_Banks.find(pathToBank);
-        if (keyValuePair->second != nullptr) 
-        {
-            CheckErrors(keyValuePair->second->unload());
-            m_Banks.erase(pathToBank);
-        }
+        const auto keyValuePair = m_Banks.find(pathToBank);
+        
+        if (keyValuePair->second == nullptr) return;
+        
+        CheckErrors(keyValuePair->second->unload());
+        m_Banks.erase(pathToBank);
     }
 
     void Audio::UnloadAllBanks()
     {
         if (!m_IsInitialized) return;
 
-        for (auto keyValuePair : m_Banks)
+        for (const auto keyValuePair : m_Banks)
         {
             CheckErrors(keyValuePair.second->unload());
         }
+        
         m_Banks.clear();
     }
 
     bool Audio::IsBankLoaded(const String& pathToBank)
     {
-        if (!m_IsInitialized || !IsBankRegistered(pathToBank))
-        {
-            return false;
-        }
+        if (!m_IsInitialized || !IsBankRegistered(pathToBank)) return false;
 
-        auto bank = m_Banks.find(pathToBank);
+        const auto bank = m_Banks.find(pathToBank);
         if (bank->second != nullptr) 
         {
             FMOD_STUDIO_LOADING_STATE state;
             CheckErrors(bank->second->getLoadingState(&state));
             return state == FMOD_STUDIO_LOADING_STATE_LOADED;
         }
+        
+        return false;
     }
 
     bool Audio::IsBankLoading(const String& pathToBank)
@@ -399,16 +381,18 @@ namespace LevEngine
             return false;
         }
 
-        auto bank = m_Banks.find(pathToBank);
+        const auto bank = m_Banks.find(pathToBank);
         if (bank->second != nullptr)
         {
             FMOD_STUDIO_LOADING_STATE state;
             CheckErrors(bank->second->getLoadingState(&state));
             return state == FMOD_STUDIO_LOADING_STATE_LOADING;
         }
+        
+        return false;
     }
 
-    bool Audio::IsBankRegistered(const String pathToBank)
+    bool Audio::IsBankRegistered(const String& pathToBank)
     {
         return m_Banks.count(pathToBank);
     }
@@ -416,7 +400,7 @@ namespace LevEngine
 
 #pragma region 3DAttributes
     auto Audio::Get3DAttributes(const FMOD_VECTOR pos,
-        const FMOD_VECTOR up, FMOD_VECTOR forward, const FMOD_VECTOR vel) -> FMOD_3D_ATTRIBUTES
+        const FMOD_VECTOR up, const FMOD_VECTOR forward, const FMOD_VECTOR vel) -> FMOD_3D_ATTRIBUTES
     {
         FMOD_3D_ATTRIBUTES f3d;
         f3d.forward = forward;
@@ -471,14 +455,14 @@ namespace LevEngine
         return value;
     }
 
-    void Audio::SetGlobalParameterByName(const String& parameterName, float value) 
+    void Audio::SetGlobalParameterByName(const String& parameterName, const float value) 
     {
         if (!m_IsInitialized) return;
 
         CheckErrors(m_System->setParameterByName(parameterName.c_str(), value));
     }
 
-    float Audio::GetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2) 
+    float Audio::GetGlobalParameterByID(const uint32_t idHalf1, const uint32_t idHalf2) 
     {
         if (!m_IsInitialized) return 0;
 
@@ -490,7 +474,7 @@ namespace LevEngine
         return value;
     }
 
-    void Audio::SetGlobalParameterByID(unsigned int idHalf1, unsigned int idHalf2, float value) 
+    void Audio::SetGlobalParameterByID(const uint32_t idHalf1, const uint32_t idHalf2, const float value) 
     {
         if (!m_IsInitialized) return;
 
@@ -500,11 +484,11 @@ namespace LevEngine
         CheckErrors(m_System->setParameterByID(id, value));
     }
 
-    float Audio::GetEventParameterByName(EventInstanceHandle handle, const String& parameterName) 
+    float Audio::GetEventParameterByName(const EventInstanceHandle handle, const String& parameterName) 
     {
         if (!m_IsInitialized) return 0;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator != m_Events.end())
         {
@@ -512,17 +496,15 @@ namespace LevEngine
             CheckErrors(iterator->second->getParameterByName(parameterName.c_str(), &value));
             return value;
         }
-        else
-        {
-            return 0;
-        }
+
+        return 0;
     }
 
-    void Audio::SetEventParameterByName(EventInstanceHandle handle, const String& parameterName, float value) 
+    void Audio::SetEventParameterByName(const EventInstanceHandle handle, const String& parameterName, const float value) 
     {
         if (!m_IsInitialized) return;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator != m_Events.end())
         {
@@ -530,11 +512,11 @@ namespace LevEngine
         }
     }
 
-    float Audio::GetEventParameterByID(EventInstanceHandle handle, unsigned int idHalf1, unsigned int idHalf2) 
+    float Audio::GetEventParameterByID(const EventInstanceHandle handle, const uint32_t idHalf1, const uint32_t idHalf2) 
     {
         if (!m_IsInitialized) return 0;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator != m_Events.end())
         {
@@ -545,17 +527,15 @@ namespace LevEngine
             CheckErrors(iterator->second->getParameterByID(id, &value));
             return value;
         }
-        else
-        {
-            return 0;
-        }
+
+        return 0;
     }
 
-    void Audio::SetEventParameterByID(EventInstanceHandle handle, unsigned int idHalf1, unsigned int idHalf2, float value) 
+    void Audio::SetEventParameterByID(const EventInstanceHandle handle, const uint32_t idHalf1, const uint32_t idHalf2, const float value) 
     {
         if (!m_IsInitialized) return;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
         if (iterator != m_Events.end())
         {
@@ -568,12 +548,11 @@ namespace LevEngine
 #pragma endregion
 
 #pragma region EventPlayback
-    void Audio::StopEventInstance(FMOD::Studio::EventInstance* eventInstance, bool forceImmediateStop)
+    void Audio::StopEventInstance(FMOD::Studio::EventInstance* eventInstance, const bool forceImmediateStop)
     {
-        FMOD_STUDIO_PLAYBACK_STATE state = GetPlaybackState(eventInstance);
+        const FMOD_STUDIO_PLAYBACK_STATE state = GetPlaybackState(eventInstance);
 
-        if (state != FMOD_STUDIO_PLAYBACK_STOPPED
-            && state != FMOD_STUDIO_PLAYBACK_STOPPING)
+        if (state != FMOD_STUDIO_PLAYBACK_STOPPED && state != FMOD_STUDIO_PLAYBACK_STOPPING)
         {
             CheckErrors(eventInstance->stop(forceImmediateStop
                 ? FMOD_STUDIO_STOP_IMMEDIATE
@@ -583,9 +562,9 @@ namespace LevEngine
 #pragma endregion
     
 #pragma region Event Lifetime
-    FMOD::Studio::EventInstance* Audio::CreateInstance(String eventPath, bool isOneShot, Entity entity)
+    FMOD::Studio::EventInstance* Audio::CreateInstance(String eventPath, const bool isOneShot, const Entity entity)
     {
-        auto iterator = m_EventDescriptions.find(eventPath);
+        const auto iterator = m_EventDescriptions.find(eventPath);
         FMOD::Studio::EventDescription* desc = nullptr;
 
         if (iterator == m_EventDescriptions.end()) 
@@ -618,8 +597,8 @@ namespace LevEngine
         return instance;
     }
 
-    FMOD::Studio::EventInstance* Audio::CreateInstance(const FMOD::Studio::EventDescription* eventDesc, bool isOneShot,
-        Entity entity)
+    FMOD::Studio::EventInstance* Audio::CreateInstance(const FMOD::Studio::EventDescription* eventDesc, const bool isOneShot,
+                                                       const Entity entity)
     {
         const auto desc = eventDesc;
         FMOD::Studio::EventInstance* instance;
@@ -636,16 +615,13 @@ namespace LevEngine
         return instance;
     }
 
-    void Audio::ReleaseOneEvent(EventInstanceHandle handle, bool forceImmediateStop)
+    void Audio::ReleaseOneEvent(const EventInstanceHandle handle, const bool forceImmediateStop)
     {
         if (!m_IsInitialized) return;
 
-        auto iterator = m_Events.find(handle);
+        const auto iterator = m_Events.find(handle);
 
-        if (iterator == m_Events.end()) 
-        {
-            return;
-        }
+        if (iterator == m_Events.end()) return;
 
         FMOD::Studio::EventInstance* eventInstance = iterator->second;
 
@@ -661,7 +637,7 @@ namespace LevEngine
     {
         if (!m_IsInitialized) return;
 
-        for (auto keyValuePair : m_Events)
+        for (const auto keyValuePair : m_Events)
         {
             FMOD::Studio::EventInstance* eventInstance = keyValuePair.second;
 

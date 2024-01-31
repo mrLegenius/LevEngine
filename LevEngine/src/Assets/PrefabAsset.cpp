@@ -2,6 +2,8 @@
 #include "PrefabAsset.h"
 
 #include "JobSystem/ParallelJob.h"
+#include "Physics/Components/CharacterController.h"
+#include "Physics/Components/Rigidbody.h"
 #include "Scene/Scene.h"
 #include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"
@@ -27,7 +29,7 @@ namespace LevEngine
         if (!entities)
         {
             Log::CoreError("Failed to instantiate a prefab. There is no entities", m_Path);
-            return {};
+            return {};  
         }
 
         std::unordered_map<UUID, Entity> entitiesMap;
@@ -86,6 +88,20 @@ namespace LevEngine
         if (parent)
             instance.GetComponent<Transform>().SetParent(parent);
 
+        return instance;
+    }
+
+    Entity PrefabAsset::Instantiate(const Ref<Scene>& scene, const Vector3 position)
+    {
+        const auto instance = Instantiate(scene);
+        
+        if (instance.HasComponent<Rigidbody>())
+            instance.GetComponent<Rigidbody>().Teleport(position);
+        else if (instance.HasComponent<CharacterController>())
+            instance.GetComponent<CharacterController>().Teleport(position);
+        else
+            instance.GetComponent<Transform>().SetWorldPosition(position);
+        
         return instance;
     }
 

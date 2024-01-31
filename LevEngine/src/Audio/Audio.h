@@ -102,7 +102,7 @@ namespace LevEngine
         static void UpdateInstance3DAttributes(FMOD::Studio::EventInstance* i, const Entity entity);
 
 
-        static bool IsBankRegistered(const String pathToBank);
+        static bool IsBankRegistered(const String& pathToBank);
 
         static int CheckErrors(FMOD_RESULT result, const std::source_location& location = std::source_location::current())
         {

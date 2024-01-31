@@ -18,8 +18,12 @@ namespace LevEngine::Editor
                     "None", "Layer0", "Layer1", "Layer2", "Layer3", "Layer4",
                     "Layer5", "Layer6", "Layer7", "Layer8", "Layer9", "All"
                 };
-                EditorGUI::DrawComboBox<FilterLayer, 12>("Layer", layerStrings,
-                    BindGetter(&Rigidbody::GetLayer, &component), BindSetter(&Rigidbody::SetLayer, &component));
+                EditorGUI::DrawFlagComboBox<FilterLayer, 10>(
+                    "Layer",
+                    layerStrings,
+                    BindGetter(&Rigidbody::GetLayer, &component),
+                    BindSetter(&Rigidbody::SetLayer, &component)
+                );
                 ImGui::TreePop();
             }
             */

@@ -7,17 +7,24 @@
 
 namespace LevEngine
 {
-    AnimatorComponent::AnimatorComponent()
+    void AnimatorComponent::OnConstruct(const Entity entity)
     {
-        m_Animator = CreateRef<Animator>();
+        const auto& component = entity.GetComponent<AnimatorComponent>();
+
+        if (component.m_PlayOnInit)
+        {
+            component.PlayAnimation();
+        }
     }
+
+    AnimatorComponent::AnimatorComponent() : m_Animator(CreateRef<Animator>()) { }
 
     const Ref<AnimationAsset>& AnimatorComponent::GetAnimationClipConst() const
     {
         return m_Animator->GetAnimationClip();
     }
 
-    Ref<AnimationAsset>& AnimatorComponent::GetAnimationClip()
+    Ref<AnimationAsset>& AnimatorComponent::GetAnimationClip() const
     {
         return m_Animator->GetAnimationClip();
     }
@@ -32,7 +39,7 @@ namespace LevEngine
         return m_PlayOnInit;
     }
 
-    void AnimatorComponent::SetPlayOnInit(bool playOnInit)
+    void AnimatorComponent::SetPlayOnInit(const bool playOnInit)
     {
         m_PlayOnInit = playOnInit;
     }
@@ -62,28 +69,7 @@ namespace LevEngine
         m_Animator->DrawDebugSkeleton(rootTransform);
     }
 
-    void AnimatorComponent::Init()
-    {
-        if (m_PlayOnInit)
-        {
-            PlayAnimation();
-        }
-        
-        m_IsInited = true;
-    }
-
-    bool AnimatorComponent::IsInitialized() const
-    {
-        return m_IsInited;
-    }
-
-    void AnimatorComponent::ResetInit()
-    {
-        m_IsInited = false;
-    }
-
-    class AnimatorComponentSerializer final
-        : public ComponentSerializer<AnimatorComponent, AnimatorComponentSerializer>
+    class AnimatorComponentSerializer final : public ComponentSerializer<AnimatorComponent, AnimatorComponentSerializer>
     {
     protected:
         const char* GetKey() override { return "Animator"; } 
@@ -107,8 +93,6 @@ namespace LevEngine
             {
                 component.SetPlayOnInit(playOnInitNode.as<bool>());
             }
-
-            component.ResetInit();
         }
 
     private:

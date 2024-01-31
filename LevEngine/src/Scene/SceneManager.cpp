@@ -38,6 +38,10 @@ namespace LevEngine
         }
 
         const Ref<Scene>& newScene = CreateRef<Scene>();
+
+        if (App::Get().IsPlaying)
+            newScene->Initialize();
+        
         SceneSerializer sceneSerializer(newScene);
 
         m_ActiveScene = newScene;
@@ -47,7 +51,7 @@ namespace LevEngine
             m_ActiveScenePath = path;
             m_OnSceneLoaded(m_ActiveScene);
             if (App::Get().IsPlaying)
-                m_ActiveScene->OnInit();
+                newScene->Start();
 
             return true;
         }

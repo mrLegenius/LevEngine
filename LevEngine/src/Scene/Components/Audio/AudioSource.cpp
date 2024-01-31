@@ -8,35 +8,13 @@
 
 namespace LevEngine
 {
-    AudioSourceComponent::AudioSourceComponent()
-    {
-        Player = CreateRef<AudioPlayer>();
-    }
-
     void AudioSourceComponent::OnConstruct(const Entity entity)
     {
-        AudioSourceComponent& component = entity.GetComponent<AudioSourceComponent>();
-        component.Init(entity);
+        const auto& component = entity.GetComponent<AudioSourceComponent>();
+        component.Player->Play(entity);
     }
-
-    void AudioSourceComponent::Init(Entity entity)
-    {
-        if (IsInitialized()) return;
-
-        m_IsInited = true;
-
-        Player->Play(entity);
-    }
-
-    bool AudioSourceComponent::IsInitialized() const
-    {
-        return m_IsInited;
-    }
-
-    void AudioSourceComponent::ResetInit()
-    {
-        m_IsInited = false;
-    }
+    
+    AudioSourceComponent::AudioSourceComponent() : Player(CreateRef<AudioPlayer>()) { }
 
     class AudioSourceSerializer final : public ComponentSerializer<AudioSourceComponent, AudioSourceSerializer>
     {
@@ -71,8 +49,6 @@ namespace LevEngine
             {
                 component.Player->SetIsOneShot(isOneShotNode.as<bool>());
             }
-
-            component.ResetInit();
         }
     };
 }

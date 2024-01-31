@@ -29,11 +29,9 @@ namespace LevEngine
             VelocityChange
         };
 
+        static void OnConstruct(Entity entity);
         // Don't call this method (only for internal use)
         static void OnDestroy(Entity entity);
-
-        // Call only after Instantiate function to apply initial forces to spawned object
-        void Initialize(Entity entity);
         
         [[nodiscard]] FilterLayer GetLayer() const;
         void SetLayer(FilterLayer layer) const;
@@ -113,6 +111,8 @@ namespace LevEngine
 
         void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
         void AddTorque(Vector3 torque, ForceMode mode = ForceMode::Force) const;
+
+        void Teleport(Vector3 position);
         
         [[nodiscard]] const Vector<Entity>& GetTriggerEnterBuffer() const;
         [[nodiscard]] const Vector<Entity>& GetTriggerStayBuffer() const;
@@ -121,17 +121,16 @@ namespace LevEngine
         [[nodiscard]] const Vector<Collision>& GetCollisionStayBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
 
-        friend class RigidbodyInitSystem;
         friend class PhysicsUpdate;
         
         friend class RigidbodyEventCallback;
         
     private:
+        void Initialize(Entity entity);
+        
         [[nodiscard]] physx::PxRigidActor* GetActor() const;
         [[nodiscard]] physx::PxShape* GetCollider() const;
         [[nodiscard]] physx::PxMaterial* GetPhysicalMaterial() const;
-
-        [[nodiscard]] bool IsInitialized() const;
 
         [[nodiscard]] Vector3 GetTransformScale() const;
         void SetTransformScale(Vector3 transformScale);
@@ -149,7 +148,6 @@ namespace LevEngine
 
         physx::PxRigidActor* m_Actor = nullptr;
         
-        bool m_IsInitialized = false;
         Vector3 m_TransformScale = Vector3::One;
         
         bool m_IsVisualizationEnabled = false;
