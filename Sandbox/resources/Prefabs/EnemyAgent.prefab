@@ -1,8 +1,9 @@
 Prefab: EnemyAgent
-RootEntity: 9403077377444853126
+RootEntity: 9702313060602538858
 Entities:
-  - Entity: 9403077377444853126
+  - Entity: 9702313060602538858
     Tag: EnemyAgent
+    Parent: 10100203230745788342
     Transform:
       Position: [-6.38148355, 0, 0]
       Rotation: [-0, 0, 0]
@@ -35,13 +36,15 @@ Entities:
       Update flags: 27
       Obstacle avoidance type: 3
       Query filter type: 0
+      Vision collider: 7742025887960780793
     ScriptsContainer:
       ScriptsContainer:
         ScriptAssets:
+          - ScriptAssetUUID: 12374514364531090716
           - ScriptAssetUUID: 9535069829572463006
-  - Entity: 2699802823637262234
+  - Entity: 8070118531680398923
     Tag: Mesh
-    Parent: 9403077377444853126
+    Parent: 9702313060602538858
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
@@ -50,3 +53,36 @@ Entities:
       Mesh: 14487929412751068277
       Material: 2751245691352325769
       Cast Shadow: true
+      Enabled: true
+  - Entity: 7742025887960780793
+    Tag: Vision collider
+    Parent: 9702313060602538858
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Rigidbody:
+      Rigidbody Type: 0
+      Is Kinematic Enabled: false
+      Is Gravity Enabled: true
+      Mass: 1
+      Center Of Mass: [0, 0, 0]
+      Inertia Tensor: [1, 1, 1]
+      Linear Damping: 0
+      Angular Damping: 0.0500000007
+      Is Pos Axis X Locked: false
+      Is Pos Axis Y Locked: false
+      Is Pos Axis Z Locked: false
+      Is Rot Axis X Locked: false
+      Is Rot Axis Y Locked: false
+      Is Rot Axis Z Locked: false
+      Is Trigger Enabled: true
+      Collider Type: 0
+      Sphere Radius: 15
+      Offset Position: [0, 0, 0]
+      Offset Rotation: [0, 0, 0]
+      Dynamic Friction: 0.5
+      Static Friction: 0.5
+      Bounciness: 0.600000024
+      Friction Combine Mode: 0
+      Bounce Combine Mode: 0

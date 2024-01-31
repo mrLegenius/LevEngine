@@ -13,21 +13,20 @@ EnemySpawnSystem = {
 			local scene = SceneManager:getActiveScene()
 			
 			local prefab = Prefab("EnemyAgentPrefab")
-			local enemyEntity = prefab:instantiate(scene)
+
+			local randomPosition = Random.vector3(-20.0, 20.0)
+			randomPosition.y = 1;
+
+			local enemyEntity = prefab:instantiate(scene, randomPosition)
 
 			local crowdView = Registry.get_entities(Transform, AIAgentCrowdComponent)
-
+	
 			crowdView:for_each(
 				function(entity)
 					local crowd = entity:get_component(AIAgentCrowdComponent)
 					crowd:addAgent(enemyEntity)
 				end
 			)
-	
-			local enemyTransform = enemyEntity:get_component(Transform)
-			local randomPosition = Random.vector3(-20.0, 20.0)
-			randomPosition.y = 1;
-			enemyTransform:setWorldPosition(randomPosition)
 
 			Audio.playOneShot("event:/EnemySpawn", enemyEntity)
 		end

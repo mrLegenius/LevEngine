@@ -111,6 +111,7 @@
     <ClInclude Include="external\eventhandling\events\joins\handlereventjoin.hpp" />
     <ClInclude Include="src\AI\Components\AIAgentComponent.h" />
     <ClInclude Include="src\AI\Components\AIAgentCrowdComponent.h" />
+    <ClInclude Include="src\AI\Components\Rule.h" />
     <ClInclude Include="src\AI\Systems\AIAgentCrowdUpdateSystem.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\SceneAsset.h" />
@@ -1060,6 +1061,7 @@
     </ClCompile>
     <ClCompile Include="src\AI\Components\AIAgentComponent.cpp" />
     <ClCompile Include="src\AI\Components\AIAgentCrowdComponent.cpp" />
+    <ClCompile Include="src\AI\Components\Rule.cpp" />
     <ClCompile Include="src\AI\Systems\AIAgentCrowdUpdateSystem.cpp" />
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />

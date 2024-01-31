@@ -1,13 +1,14 @@
-Prefab: PlayerController
-RootEntity: 16534605177672028581
+Prefab: Player
+RootEntity: 14956362892702215878
 Entities:
-  - Entity: 16534605177672028581
-    Tag: PlayerController
+  - Entity: 14956362892702215878
+    Tag: Player
     Transform:
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Character Controller:
+      Layer: 4
       Capsule Controller Radius: 1
       Capsule Controller Half Height: 2
       Capsule Controller Climbing Mode: 1
@@ -22,9 +23,9 @@ Entities:
       Bounciness: 0
       Friction Combine Mode: 0
       Bounce Combine Mode: 0
-  - Entity: 11146412176837588455
+  - Entity: 11808003800933113900
     Tag: Head
-    Parent: 16534605177672028581
+    Parent: 14956362892702215878
     Transform:
       Position: [0, 4.5, -0.5]
       Rotation: [-0, 0, 0]
@@ -44,11 +45,12 @@ Entities:
       Mesh: 6362171717149004471
       Material: 15608248225095435140
       Cast Shadow: true
+      Enabled: true
     AudioListener:
       {}
-  - Entity: 8193487410668680548
+  - Entity: 16451169863891039077
     Tag: Weapon
-    Parent: 11146412176837588455
+    Parent: 11808003800933113900
     Transform:
       Position: [0, -1, -1.5]
       Rotation: [-0, 0, 0]
@@ -57,3 +59,4 @@ Entities:
       Mesh: 5721017995879216389
       Material: 9981030367959526075
       Cast Shadow: true
+      Enabled: true

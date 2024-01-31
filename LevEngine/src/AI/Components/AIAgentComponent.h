@@ -2,6 +2,7 @@
 #pragma once
 #include <DetourCrowd.h>
 
+#include "Rule.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
@@ -10,6 +11,7 @@ class dtNavMesh;
 
 namespace LevEngine
 {
+    enum class FilterLayer : uint32_t;
     struct AIAgentCrowdComponent;
 
     REGISTER_PARSE_TYPE(AIAgentComponent);
@@ -25,36 +27,59 @@ namespace LevEngine
         void OnComponentDestroy();
         
         
+        Entity GetCrowd() const;
+
         int GetIndexInCrowd() const;
+        Vector<Entity> FindEntitiesInVisibleScope(FilterLayer layerMask) const;
+        Entity FindClosestEntityInVisibleScope(FilterLayer layerMask) const;
 
         bool isActive = false; 
+
+        void AddRule(const Rule& newRule);
+        void InitRBS();
+        bool IsRBSInited();
+
+        const String& Match();
         
         dtCrowdAgentParams* GetAgentParams() const;
         void SetAgentParams(dtCrowdAgentParams* params);
+        void SetMoveTarget(Entity entity);
+        Entity GetMoveTarget() const;
 
-        void SetMoveTarget(Vector3 targetPos);
+        void SetMovePoint(Vector3 targetPos);
         
-        void SetFactAsBool(const String&  key, bool value);
-        bool HasBoolFact(const String& key);
-        bool GetFactAsBool(const String& key);
-
-        void SetFactAsInteger(const String& key, int value);
-        bool HasIntegerFact(const String& key);
-        int GetFactAsInteger(const String& key);
+        void SetFactAsBool(const Pair<String, String>&, bool value);
+        bool HasBoolFact(const Pair<String, String>& key);
+        bool GetFactAsBool(const Pair<String, String>& key);
         
-        void SetFactAsFloat(const String& key, float value);
-        bool HasFloatFact(const String& key);
-        float GetFactAsFloat(const String& key);
+        void SetFactAsNumber(const Pair<String, String>& key, float value);
+        bool HasNumberFact(const Pair<String, String>& key);
+        float GetFactAsNumber(const Pair<String, String>& key);
         
-        void SetFactAsVector3(const String& key, Vector3 value);
-        bool HasVector3Fact(const String& key);
-        Vector3 GetFactAsVector3(const String& key);
+        void SetFactAsVector3(const Pair<String, String>& key, Vector3 value);
+        bool HasVector3Fact(const Pair<String, String>& key);
+        Vector3 GetFactAsVector3(const Pair<String, String>& key);
 
-        void SetFactAsString(const String& key, const String& value);
-        bool HasStringFact(const String& key);
-        String GetFactAsString(const String& key);
+        void SetFactAsString(const Pair<String, String>& key, const String& value);
+        bool HasStringFact(const Pair<String, String>& key);
+        String GetFactAsString(const Pair<String, String>& key);
 
+        void SetFactAsEntity(const Pair<String, String>& key, Entity value);
+        bool HasEntityFact(const Pair<String, String>& key);
+        Entity GetFactAsEntity(const Pair<String, String>& key);
+        
+        float RangeOfVision = 15.0f;
+        float AngleOfVision = 90.0f;
+
+        Entity VisionCollider;
+
+        bool HasTargetEntity = false;
+        
     private:
+
+        bool m_RBSInited = false;
+        
+        Vector<Rule> m_rules;
 
         bool m_initialized = false;
         
@@ -63,13 +88,19 @@ namespace LevEngine
         Entity m_crowd;
         Entity m_selfEntity;
         
+        Entity m_targetEntity;
+        
         dtCrowdAgent* m_agent;
         dtCrowdAgentParams* m_agentParams;
 
-        Map<String, bool> m_boolFacts;
-        Map<String, int> m_integerFacts;
-        Map<String, float> m_floatFacts;
-        Map<String, Vector3> m_vector3Facts;
-        Map<String, String> m_stringFacts;
+        Map<Pair<String, String>, bool> m_boolFacts;
+        Map<Pair<String, String>, float> m_numberFacts;
+        Map<Pair<String, String>, Vector3> m_vector3Facts;
+        Map<Pair<String, String>, String> m_stringFacts;
+        Map<Pair<String, String>, Entity> m_entityFacts;
+
+        String m_lastMatchedRule;
+
+        bool m_isRBSDirty = true;
     };
 }

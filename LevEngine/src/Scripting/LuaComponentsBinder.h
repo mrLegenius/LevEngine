@@ -40,6 +40,7 @@ namespace LevEngine::Scripting
 		static void CreatePrintBind(sol::state& lua);
 		static void CreateGUIBind(sol::state& lua);
 		static void CreateTimeBind(sol::state& lua);
+		static void CreateRuleBind(sol::state& lua);
 		static void CreatePhysicsBind(sol::state& lua);
 		static void CreateDebugRenderBind(sol::state& lua);
 		

@@ -4,6 +4,18 @@
 #include "AIAgentCrowdComponent.h"
 #include "Scene/Components/ComponentSerializer.h"
 
+#include "Rule.h"
+
+#include <regex>
+
+#include "Kernel/Application.h"
+#include "Physics/Physics.h"
+#include "Physics/Components/CharacterController.h"
+#include "Physics/Components/Rigidbody.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneManager.h"
+#include "Scene/Components/Transform/Transform.h"
+
 namespace LevEngine
 {
     AIAgentComponent::AIAgentComponent()
@@ -55,10 +67,338 @@ namespace LevEngine
     	}
     }
 
+	Entity AIAgentComponent::GetCrowd() const
+    {
+	    return m_crowd;
+    }
+	
 	int AIAgentComponent::GetIndexInCrowd() const
 	{
 	    return m_agentIndex;
     }
+
+	Vector<Entity> AIAgentComponent::FindEntitiesInVisibleScope(FilterLayer layerMask) const
+    {
+    	if(!m_initialized || !VisionCollider)
+    	{
+    		return {};
+    	}
+    	
+    	const auto& agentTransform = m_selfEntity.GetComponent<Transform>();
+    	const auto& agentCharacterController = m_selfEntity.GetComponent<CharacterController>();
+    	
+    	const auto& agentPosition = agentTransform.GetWorldPosition();
+    	const auto& centerOffset = agentCharacterController.GetCenterOffset();
+    	const auto& capsuleHalfHeight = agentCharacterController.GetHeight();
+    	Vector3 eyePoint = agentPosition + centerOffset;
+    	eyePoint.y += capsuleHalfHeight;
+
+    	const auto& rigidBodyComponent = VisionCollider.GetComponent<Rigidbody>();
+    	
+    	const auto& entitiesInCollider = rigidBodyComponent.GetTriggerStayBuffer();
+
+    	Vector<Entity> filteredEntities;
+    	for (auto entity : entitiesInCollider)
+    	{
+    		if(!entity)
+    		{
+    			continue;
+    		}
+    		if(entity.HasComponent<Rigidbody>())
+    		{
+    			const auto& rigidBody = entity.GetComponent<Rigidbody>();
+    			const auto layer = rigidBody.GetLayer();
+    			if (layer & layerMask)
+    			{
+    				filteredEntities.push_back(entity);
+    			}
+    		}
+		    else if (entity.HasComponent<CharacterController>())
+		    {
+		    	const auto& characterController = entity.GetComponent<CharacterController>();
+			    const auto layer = characterController.GetLayer();
+		    	if (layer & layerMask)
+		    	{
+		    		filteredEntities.push_back(entity);
+		    	}
+		    }
+    	}
+
+    	Vector<Entity> findedEntities;
+	    for (auto filteredEntity : filteredEntities)
+	    {
+	    	const auto& entityTransform = filteredEntity.GetComponent<Transform>();
+	    	const auto& forwardDirection = agentTransform.GetForwardDirection();
+	    	const auto& targetTransform = entityTransform.GetWorldPosition();
+
+	    	Vector3 fromAgentToTarget = (targetTransform - eyePoint);
+	    	fromAgentToTarget.Normalize();
+    	
+	    	float dotProduct = forwardDirection.Dot(fromAgentToTarget);	
+	    	dotProduct /= (forwardDirection.Length() * fromAgentToTarget.Length());
+	    	const float angleBetweenVisionVectorAndTarget = acos(dotProduct) * 180.0 / 3.14159265;
+	    	
+	    	if(angleBetweenVisionVectorAndTarget > AngleOfVision)
+	    	{
+	    		continue;
+	    	}
+    	
+	    	const auto& rayCastHitResult = Application::Get().GetPhysics().Raycast(eyePoint, fromAgentToTarget,
+				RangeOfVision, layerMask);
+    	
+	    	if(!rayCastHitResult.IsSuccessful)
+	    	{
+	    		continue;
+	    	}
+    	
+	    	findedEntities.push_back(filteredEntity);
+	    }
+
+    	if(findedEntities.size() == 0)
+    	{
+    		return {};
+    	}
+
+    	return findedEntities;
+    }
+
+	Entity AIAgentComponent::FindClosestEntityInVisibleScope(FilterLayer layerMask) const
+    {
+    	if(!m_selfEntity)
+    	{
+    		return {};
+    	}
+    	if(!m_selfEntity.HasComponent<Transform>())
+		{
+			return {};
+		}
+    	const auto& selfTransform = m_selfEntity.GetComponent<Transform>();
+    	float minDistance = std::numeric_limits<float>::max();
+    	Entity closestEntity;
+    	Vector<Entity> entities = FindEntitiesInVisibleScope(layerMask);
+	    for (auto entity : entities)
+	    {
+	    	if(!entity)
+	    	{
+	    		continue;
+	    	}
+	    	const auto& entityTransform = entity.GetComponent<Transform>();
+		    const float distance = Vector3::DistanceSquared(selfTransform.GetWorldPosition(), entityTransform.GetWorldPosition());
+	    	if (distance < minDistance)
+	    	{
+	    		minDistance = distance;
+	    		closestEntity = entity;
+	    	}
+	    }
+
+    	if(closestEntity)
+    	{
+    		return closestEntity;
+    	}
+
+    	return {};
+    }
+
+	void AIAgentComponent::AddRule(const Rule& newRule)
+    {
+	    m_rules.push_back(newRule);
+    }
+
+	void AIAgentComponent::InitRBS()
+	{
+    	m_RBSInited = true;
+	}
+
+	bool AIAgentComponent::IsRBSInited()
+	{
+    	return m_RBSInited;
+	}
+
+	const String& AIAgentComponent::Match()
+	{
+    	if(!m_isRBSDirty)
+    	{
+    		return m_lastMatchedRule;
+    	}
+		String bestRule;
+    	int priorityOfBestRule = -1;
+		for (auto& rule : m_rules)
+		{
+			bool matched = true;
+			if(rule.GetPriority() < priorityOfBestRule)
+			{
+				matched = false;
+			}
+			else
+			{
+				for (const auto& condition : rule.GetConditions())
+				{
+					bool conditionPassed = false;
+					const auto& conditionId = condition.id;
+					const auto& conditionAttribute = condition.attribute;
+					const auto& conditionOperation = condition.operation;
+					const auto& idAndAttribute = MakePair(conditionId, conditionAttribute);
+					switch (condition.type)
+					{
+						case RuleConditionType::Bool:
+							{
+								if (HasBoolFact(idAndAttribute))
+								{
+									const auto& factValue = GetFactAsBool(idAndAttribute);
+									
+									if(conditionOperation == "==" && factValue == condition.boolValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.boolValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+								}
+								break;
+							}
+						case RuleConditionType::Number:
+							{
+								if (HasNumberFact(idAndAttribute))
+								{
+									const auto& factValue = GetFactAsNumber(MakePair(conditionId, conditionAttribute));
+				
+									if(conditionOperation == "==" && factValue == condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "<" && factValue < condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == ">" && factValue > condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "<=" && factValue <= condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == ">=" && factValue >= condition.numberValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+								}
+								break;
+							}
+						case RuleConditionType::Vector3:
+							{
+								if (HasVector3Fact(idAndAttribute))
+								{
+									const auto& factValue = GetFactAsVector3(idAndAttribute);
+									
+									if(conditionOperation == "==" && factValue == condition.vector3Value)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.vector3Value)
+									{
+										conditionPassed = true;
+										break;
+									}
+								}
+								break;
+							}
+						case RuleConditionType::String:
+							{
+								if (HasStringFact(idAndAttribute))
+								{
+									const auto& factValue = GetFactAsString(idAndAttribute);
+				
+									if(conditionOperation == "==" && factValue == condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "<" && factValue < condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == ">" && factValue > condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "<=" && factValue <= condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == ">=" && factValue >= condition.stringValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+								}
+								break;
+							}
+					case RuleConditionType::Entity:
+							{
+								if (HasEntityFact(idAndAttribute))
+								{
+									const auto& factValue = GetFactAsEntity(idAndAttribute);
+									
+									if(conditionOperation == "==" && factValue == condition.entityValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+									if(conditionOperation == "~=" && factValue != condition.entityValue)
+									{
+										conditionPassed = true;
+										break;
+									}
+								}
+								break;
+							}
+					}
+					if (!conditionPassed)
+					{
+						matched = false;
+					}
+				}
+			}
+
+			if(matched)
+			{
+				bestRule = rule.GetName();
+				priorityOfBestRule = rule.GetPriority();
+			}
+		}
+
+    	if(priorityOfBestRule != -1)
+    	{
+    		m_isRBSDirty = false;
+    		m_lastMatchedRule = bestRule;
+    		return m_lastMatchedRule;
+    	}
+    	
+    	return {};
+	}
 
     dtCrowdAgentParams* AIAgentComponent::GetAgentParams() const
     {
@@ -70,158 +410,218 @@ namespace LevEngine
     	m_agentParams = params;
     }
 
-    void AIAgentComponent::SetMoveTarget(Vector3 targetPos)
+	void AIAgentComponent::SetMoveTarget(Entity entity)
+	{
+		if(m_initialized)
+		{
+			m_targetEntity = entity;
+			HasTargetEntity = true;
+		}
+	}
+
+	Entity AIAgentComponent::GetMoveTarget() const
+	{
+	    return m_targetEntity;
+    }
+
+    void AIAgentComponent::SetMovePoint(Vector3 targetPos)
     {
     	if(m_initialized)
     	{
     		auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
     		crowdComponent.SetMoveTarget(m_agentIndex, targetPos);
+    		HasTargetEntity = false;
     	}
     }
 	
-	void AIAgentComponent::SetFactAsBool(const String& key, bool value)
-    {
-    	m_boolFacts[key] = value;
-    }
-
-	bool AIAgentComponent::HasBoolFact(const String& key)
+	void AIAgentComponent::SetFactAsBool(const Pair<String, String>& key, bool value)
     {
     	const auto it = m_boolFacts.find(key);
 
-    	if(it == m_boolFacts.end())
+    	if(it == m_boolFacts.end() || it->second != value)
     	{
-    		return false;
+    		m_isRBSDirty = true;
     	}
 
-    	return true;
+    	m_boolFacts[key] = value;
     }
 
-	bool AIAgentComponent::GetFactAsBool(const String& key)
+	bool AIAgentComponent::HasBoolFact(const Pair<String, String>& key)
     {
-	    const auto it = m_boolFacts.find(key);
-
-    	if(it == m_boolFacts.end())
-    	{
-    		return {};
-    	}
-
-    	return m_boolFacts[key];
+	    for (auto keyValue : m_boolFacts)
+	    {
+	    	std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+	    	if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+	    	{
+	    		return true;
+	    	}
+	    }
+    	return false;
     }
 
-	void AIAgentComponent::SetFactAsInteger(const String& key, int value)
-	{
-    	m_integerFacts[key] = value;
-	}
-
-	bool AIAgentComponent::HasIntegerFact(const String& key)
-	{
-    	const auto it = m_integerFacts.find(key);
-
-    	if(it == m_integerFacts.end())
-    	{
-    		return false;
-    	}
-
-    	return true;
-	}
-
-	int AIAgentComponent::GetFactAsInteger(const String& key)
-	{
-    	const auto it = m_integerFacts.find(key);
-
-    	if(it == m_integerFacts.end())
-    	{
-    		return {};
-    	}
-
-    	return m_integerFacts[key];
-	}
-
-	void AIAgentComponent::SetFactAsFloat(const String& key, float value)
-	{
-    	m_floatFacts[key] = value;
-	}
-
-	bool AIAgentComponent::HasFloatFact(const String& key)
-	{
-    	const auto it = m_floatFacts.find(key);
-
-    	if(it == m_floatFacts.end())
-    	{
-    		return false;
-    	}
-
-    	return true;
-	}
-
-	float AIAgentComponent::GetFactAsFloat(const String& key)
-	{
-    	const auto it = m_floatFacts.find(key);
-
-    	if(it == m_floatFacts.end())
-    	{
-    		return {};
-    	}
-
-    	return m_floatFacts[key];
-	}
-
-	void AIAgentComponent::SetFactAsVector3(const String& key, Vector3 value)
+	bool AIAgentComponent::GetFactAsBool(const Pair<String, String>& key)
     {
+    	for (auto keyValue : m_boolFacts)
+    	{
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
+    	}
+    	return {};
+    }
+
+	void AIAgentComponent::SetFactAsNumber(const Pair<String, String>& key, float value)
+	{
+    	const auto it = m_numberFacts.find(key);
+
+    	if(it == m_numberFacts.end() || it->second != value)
+    	{
+    		m_isRBSDirty = true;
+    	}
+
+    	m_numberFacts[key] = value;
+	}
+
+	bool AIAgentComponent::HasNumberFact(const Pair<String, String>& key)
+	{
+    	for (auto keyValue : m_numberFacts)
+    	{
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return true;
+    		}
+    	}
+    	return false;
+	}
+
+	float AIAgentComponent::GetFactAsNumber(const Pair<String, String>& key)
+	{
+    	for (auto keyValue : m_numberFacts)
+    	{
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
+    	}
+    	return {};
+	}
+
+	void AIAgentComponent::SetFactAsVector3(const Pair<String, String>& key, Vector3 value)
+    {
+    	const auto it = m_vector3Facts.find(key);
+
+    	if(it == m_vector3Facts.end() || it->second != value)
+    	{
+    		m_isRBSDirty = true;
+    	}
+    	
     	m_vector3Facts[key] = value;
     }
 
-	bool AIAgentComponent::HasVector3Fact(const String& key)
+	bool AIAgentComponent::HasVector3Fact(const Pair<String, String>& key)
 	{
-    	const auto it = m_vector3Facts.find(key);
-
-    	if(it == m_vector3Facts.end())
+    	for (auto keyValue : m_vector3Facts)
     	{
-    		return false;
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return true;
+    		}
     	}
-
-    	return true;
+    	return false;
 	}
 
-	Vector3 AIAgentComponent::GetFactAsVector3(const String& key)
+	Vector3 AIAgentComponent::GetFactAsVector3(const Pair<String, String>& key)
     {
-    	const auto it = m_vector3Facts.find(key);
-
-    	if(it == m_vector3Facts.end())
+    	for (auto keyValue : m_vector3Facts)
     	{
-    		return {};
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
     	}
-    	
-    	return m_vector3Facts[key];
+    	return {};
     }
 
-	void AIAgentComponent::SetFactAsString(const String& key, const String& value)
+	void AIAgentComponent::SetFactAsString(const Pair<String, String>& key, const String& value)
 	{
+    	const auto it = m_stringFacts.find(key);
+
+    	if(it == m_stringFacts.end() || it->second != value)
+    	{
+    		m_isRBSDirty = true;
+    	}
+    	
     	m_stringFacts[key] = value;
 	}
 
-	bool AIAgentComponent::HasStringFact(const String& key)
+	bool AIAgentComponent::HasStringFact(const Pair<String, String>& key)
 	{
-    	const auto it = m_stringFacts.find(key);
-
-    	if(it == m_stringFacts.end())
+    	for (auto keyValue : m_stringFacts)
     	{
-    		return false;
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return true;
+    		}
     	}
-
-    	return true;
+    	return false;
 	}
 
-	String AIAgentComponent::GetFactAsString(const String& key)
+	String AIAgentComponent::GetFactAsString(const Pair<String, String>& key)
 	{
-    	const auto it = m_stringFacts.find(key);
-
-    	if(it == m_stringFacts.end())
+    	for (auto keyValue : m_stringFacts)
     	{
-    		return {};
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
+    	}
+    	return {};
+	}
+
+	void AIAgentComponent::SetFactAsEntity(const Pair<String, String>& key, Entity value)
+	{
+    	const auto it = m_entityFacts.find(key);
+
+    	if(it == m_entityFacts.end() || it->second != value)
+    	{
+    		m_isRBSDirty = true;
     	}
     	
-    	return m_stringFacts[key];
+    	m_entityFacts[key] = value;
+	}
+
+	bool AIAgentComponent::HasEntityFact(const Pair<String, String>& key)
+	{
+    	for (auto keyValue : m_entityFacts)
+    	{
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return true;
+    		}
+    	}
+    	return false;
+	}
+
+	Entity AIAgentComponent::GetFactAsEntity(const Pair<String, String>& key)
+	{
+    	for (auto keyValue : m_entityFacts)
+    	{
+    		std::regex self_regex(key.first.c_str(), std::regex_constants::ECMAScript | std::regex_constants::icase);
+    		if (std::regex_search(keyValue.first.first.c_str(), self_regex))
+    		{
+    			return keyValue.second;
+    		}
+    	}
+    	return {};
 	}
 
 	class AIAgentComponentSerializer final : public ComponentSerializer<AIAgentComponent, AIAgentComponentSerializer>
@@ -243,6 +643,10 @@ namespace LevEngine
         	out << YAML::Key << "Update flags" << YAML::Value << static_cast<int>(agentParams->updateFlags);
         	out << YAML::Key << "Obstacle avoidance type" << YAML::Value << static_cast<int>(agentParams->obstacleAvoidanceType);
         	out << YAML::Key << "Query filter type" << YAML::Value << static_cast<int>(agentParams->queryFilterType);
+        	if(component.VisionCollider)
+        	{
+        		out << YAML::Key << "Vision collider" << YAML::Value << component.VisionCollider.GetUUID();
+        	}
         }
         
         void DeserializeData(const YAML::Node& node, AIAgentComponent& component) override
@@ -259,6 +663,12 @@ namespace LevEngine
         	agentParams->updateFlags = node["Update flags"].as<int>();
         	agentParams->obstacleAvoidanceType = node["Obstacle avoidance type"].as<int>();
         	agentParams->queryFilterType = node["Query filter type"].as<int>();
+        	if(const auto visionColliderNode = node["Vision collider"])
+        	{
+        		component.VisionCollider = !visionColliderNode.IsNull()
+					? SceneManager::GetActiveScene()->GetEntityByUUID(UUID(visionColliderNode.as<uint64_t>()))
+					: Entity();
+        	}
         }
     };
 }
