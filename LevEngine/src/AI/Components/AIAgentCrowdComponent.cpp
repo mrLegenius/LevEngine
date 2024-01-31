@@ -170,7 +170,7 @@ namespace LevEngine
         const auto& agentTransform = agentEntity.GetComponent<Transform>();
         auto& agentComponent = agentEntity.GetComponent<AIAgentComponent>();
         
-        const Vector3 pos = agentTransform.GetLocalPosition();
+        const Vector3 pos = agentTransform.GetWorldPosition();
 
         const int agentIndex = m_crowd->addAgent(&pos.x, agentComponent.GetAgentParams());
         

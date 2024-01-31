@@ -144,7 +144,7 @@ namespace LevEngine
 	    	}
     	
 	    	const auto& rayCastHitResult = Application::Get().GetPhysics().Raycast(eyePoint, fromAgentToTarget,
-				RangeOfVision, FilterLayer::Layer1 | FilterLayer::Layer2 |FilterLayer::Layer3 | FilterLayer::Layer4);
+				RangeOfVision, layerMask);
     	
 	    	if(!rayCastHitResult.IsSuccessful)
 	    	{
