@@ -3,7 +3,7 @@
 
 #include "D3D11RenderCommands.h"
 
-#include "Renderer/IndexBuffer.h"
+#include "Renderer/Pipeline/IndexBuffer.h"
 
 namespace LevEngine
 {

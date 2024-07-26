@@ -5,12 +5,12 @@
 #include "DebugShape.h"
 #include "Assets/EngineAssets.h"
 #include "Kernel/Time/Time.h"
-#include "Renderer/ConstantBuffer.h"
-#include "Renderer/IndexBuffer.h"
-#include "Renderer/PipelineState.h"
+#include "Renderer/Pipeline/ConstantBuffer.h"
+#include "Renderer/Pipeline/IndexBuffer.h"
+#include "Renderer/Pipeline/PipelineState.h"
 #include "Renderer/RenderCommand.h"
-#include "Renderer/Shader.h"
-#include "Renderer/VertexBuffer.h"
+#include "Renderer/Shader/Shader.h"
+#include "Renderer/Pipeline/VertexBuffer.h"
 
 namespace LevEngine
 {

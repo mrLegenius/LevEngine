@@ -1,11 +1,13 @@
 #pragma once
 #include <d3d11.h>
 
-#include "Renderer/ConstantBuffer.h"
+#include "Renderer/Pipeline/ConstantBuffer.h"
 
 namespace LevEngine
 {
-class D3D11ConstantBuffer final : public ConstantBuffer
+	enum class ShaderType;
+
+	class D3D11ConstantBuffer final : public ConstantBuffer
 {
 public:
 	explicit D3D11ConstantBuffer(uint32_t size, uint32_t slot = 0);

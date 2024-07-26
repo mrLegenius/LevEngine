@@ -3,11 +3,11 @@
 
 #include "ParticleAssets.h"
 #include "ParticlesUtils.h"
-#include "Renderer/DispatchCommand.h"
+#include "Renderer/Dispatch/DispatchCommand.h"
 #include "Renderer/RenderSettings.h"
-#include "Renderer/Shader.h"
-#include "Renderer/ShaderType.h"
-#include "Renderer/StructuredBuffer.h"
+#include "Renderer/Shader/Shader.h"
+#include "Renderer/Shader/ShaderType.h"
+#include "Renderer/Pipeline/StructuredBuffer.h"
 
 namespace LevEngine
 {

@@ -2,7 +2,8 @@
 #include "EnvironmentShaders.h"
 
 #include "Assets/EngineAssets.h"
-#include "Renderer/Shader.h"
+#include "Renderer/Shader/Shader.h"
+#include "Renderer/Shader/ShaderType.h"
 
 namespace LevEngine
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/RenderPass.h"
+#include "Renderer/Passes/RenderPass.h"
 
 
 namespace LevEngine

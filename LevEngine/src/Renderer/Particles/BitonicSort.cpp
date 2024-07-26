@@ -3,10 +3,10 @@
 #include "BitonicSort.h"
 
 #include "ParticleAssets.h"
-#include "Renderer/ConstantBuffer.h"
-#include "Renderer/Shader.h"
-#include "Renderer/DispatchCommand.h"
-#include "Renderer/StructuredBuffer.h"
+#include "Renderer/Pipeline/ConstantBuffer.h"
+#include "Renderer/Shader/Shader.h"
+#include "Renderer/Pipeline/StructuredBuffer.h"
+#include "Renderer/Dispatch/DispatchCommand.h"
 
 namespace LevEngine
 {

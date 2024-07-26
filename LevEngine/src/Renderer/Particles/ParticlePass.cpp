@@ -5,12 +5,11 @@
 #include "ParticleRenderingPass.h"
 #include "ParticleSimulationPass.h"
 #include "ParticleSortingPass.h"
-#include "Renderer/RenderParams.h"
 #include "Renderer/RenderSettings.h"
-#include "Renderer/Shader.h"
-#include "Renderer/StructuredBuffer.h"
+#include "Renderer/Shader/Shader.h"
+#include "Renderer/Pipeline/StructuredBuffer.h"
 #include "Math/Random.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Pipeline/Texture.h"
 #include "ParticlesTextureArray.h"
 
 namespace LevEngine

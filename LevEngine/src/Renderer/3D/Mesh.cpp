@@ -1,9 +1,9 @@
 #include "levpch.h"
 #include "Mesh.h"
 
-#include "Renderer/IndexBuffer.h"
-#include "Renderer/Shader.h"
-#include "Renderer/VertexBuffer.h"
+#include "Renderer/Pipeline/IndexBuffer.h"
+#include "Renderer/Shader/Shader.h"
+#include "Renderer/Pipeline/VertexBuffer.h"
 
 namespace LevEngine
 {

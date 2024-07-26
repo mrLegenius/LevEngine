@@ -1,8 +1,8 @@
 ﻿#include "levpch.h"
 #include "TextureAsset.h"
 
-#include "Renderer/SamplerState.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Pipeline/SamplerState.h"
+#include "Renderer/Pipeline/Texture.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine

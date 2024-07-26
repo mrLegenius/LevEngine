@@ -2,7 +2,7 @@
 #include "EngineAssets.h"
 
 #include "TextureLibrary.h"
-#include "Renderer/Shader.h"
+#include "Renderer/Shader/Shader.h"
 
 namespace LevEngine
 {

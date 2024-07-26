@@ -8,9 +8,10 @@
 #include "TonemappingPass.h"
 #include "VignettePass.h"
 #include "Kernel/Time/Time.h"
-#include "Renderer/ConstantBuffer.h"
+#include "Renderer/Pipeline/ConstantBuffer.h"
 #include "Renderer/RenderSettings.h"
-#include "Renderer/SamplerState.h"
+#include "Renderer/Pipeline/SamplerState.h"
+#include "Renderer/Shader/ShaderType.h"
 
 namespace LevEngine
 {

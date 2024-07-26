@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
 
-#include "Renderer/BlendState.h"
+#include "Renderer/Pipeline/BlendState.h"
 
 namespace LevEngine
 {

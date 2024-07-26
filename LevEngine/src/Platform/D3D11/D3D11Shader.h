@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
 
-#include "Renderer/Shader.h"
+#include "Renderer/Shader/Shader.h"
 
 namespace LevEngine
 {

@@ -1,27 +1,36 @@
 #include "levpch.h"
 #include "Renderer.h"
 
-#include "BeginQueryPass.h"
-#include "BlendState.h"
-#include "ClearPass.h"
-#include "CopyTexturePass.h"
-#include "DeferredLightingPass.h"
-#include "DepthStencilState.h"
-#include "EndQueryPass.h"
-#include "LightCollection.h"
-#include "OpaquePass.h"
+#include "Pipeline/BlendState.h"
+#include "Pipeline/DepthStencilState.h"
+#include "Pipeline/PipelineState.h"
+#include "Pipeline/RasterizerState.h"
+#include "Pipeline/RenderTarget.h"
+#include "Pipeline/Texture.h"
+
+#include "Shader/ShaderType.h"
+
+#include "Lighting/LightCollection.h"
+
+#include "Passes/ClearPass.h"
+#include "Passes/CopyTexturePass.h"
+#include "Passes/DeferredLightingPass.h"
+#include "Passes/ShadowMapPass.h"
+#include "Passes/OpaquePass.h"
+#include "Passes/TransparentPass.h"
+
+#include "Query/BeginQueryPass.h"
+#include "Query/EndQueryPass.h"
+
 #include "Particles/ParticlePass.h"
-#include "PipelineState.h"
-#include "Query.h"
-#include "RasterizerState.h"
+
 #include "Renderer3D.h"
 #include "RendererContext.h"
-#include "RenderTarget.h"
+
 #include "RenderTechnique.h"
-#include "ShadowMapPass.h"
-#include "Texture.h"
-#include "TransparentPass.h"
+
 #include "Assets/EngineAssets.h"
+
 #include "DebugRender/DebugRenderPass.h"
 #include "Environment/EnvironmentPass.h"
 #include "Kernel/Window.h"
@@ -31,7 +40,7 @@
 #include "Scene/Components/Transform/Transform.h"
 #include "Kernel/Time/Time.h"
 #include "Platform/D3D11/D3D11DeferredContexts.h"
-#include "Platform/D3D11/D3D11RendererContext.h"
+#include "Query/Query.h"
 
 namespace LevEngine
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/DispatchCommandBase.h"
+#include "Renderer/Dispatch/DispatchCommandBase.h"
 
 namespace LevEngine
 {

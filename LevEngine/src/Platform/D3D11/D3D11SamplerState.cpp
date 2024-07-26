@@ -3,6 +3,8 @@
 
 #include "D3D11SamplerState.h"
 
+#include "Renderer/Shader/ShaderType.h"
+
 namespace LevEngine
 {
 	extern ID3D11DeviceContext* context;

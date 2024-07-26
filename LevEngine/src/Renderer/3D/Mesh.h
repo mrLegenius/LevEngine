@@ -2,7 +2,7 @@
 
 #include "AnimationConstants.h"
 #include "Math/BoundingVolume.h"
-#include "Renderer/BufferBinding.h"
+#include "Renderer/Shader/BufferBinding.h"
 #include "BoneInfo.h"
 
 namespace LevEngine

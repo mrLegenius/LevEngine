@@ -4,6 +4,8 @@
 
 #include "D3D11StructuredBuffer.h"
 
+#include "Renderer/Shader/ShaderType.h"
+
 namespace LevEngine
 {
 extern ID3D11DeviceContext* context;

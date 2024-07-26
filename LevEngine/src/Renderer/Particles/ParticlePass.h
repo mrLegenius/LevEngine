@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/RenderPass.h"
+#include "Renderer/Passes/RenderPass.h"
 
 #include "ParticleEmissionPass.h"
 #include "ParticleRenderingPass.h"

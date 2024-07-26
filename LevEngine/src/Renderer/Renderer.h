@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Query.h"
 #include "RenderParams.h"
 #include "Kernel/Statistic.h"
 

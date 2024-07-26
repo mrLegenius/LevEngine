@@ -2,9 +2,9 @@
 #include <dxgiformat.h>
 #include <d3d11.h>
 
-#include "Renderer/ClearFlags.h"
-#include "Renderer/CPUAccess.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Pipeline/ClearFlags.h"
+#include "Renderer/Pipeline/CPUAccess.h"
+#include "Renderer/Pipeline/Texture.h"
 
 namespace LevEngine
 {

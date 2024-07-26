@@ -1,6 +1,6 @@
 ﻿#include "levpch.h"
 #include "TextureLibrary.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Pipeline/Texture.h"
 
 LevEngine::Ref<LevEngine::Texture> LevEngine::TextureLibrary::GetWhiteTexture()
 {

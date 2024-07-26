@@ -3,7 +3,7 @@
 
 #include "BitonicSort.h"
 #include "Renderer/RenderSettings.h"
-#include "Renderer/StructuredBuffer.h"
+#include "Renderer/Pipeline/StructuredBuffer.h"
 
 namespace LevEngine
 {

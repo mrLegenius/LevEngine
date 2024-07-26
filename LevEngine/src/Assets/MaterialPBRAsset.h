@@ -1,6 +1,6 @@
 #pragma once
 #include "MaterialAsset.h"
-#include "Renderer/MaterialPBR.h"
+#include "Renderer/Material/MaterialPBR.h"
 
 namespace LevEngine
 {

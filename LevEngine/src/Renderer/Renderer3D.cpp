@@ -1,9 +1,9 @@
 #include "levpch.h"
 #include "Renderer3D.h"
 
-#include "ConstantBuffer.h"
+#include "Pipeline/ConstantBuffer.h"
 #include "RenderCommand.h"
-#include "Shader.h"
+#include "Shader/Shader.h"
 #include "3D/Mesh.h"
 #include "3D/Primitives.h"
 #include "Assets/MeshAsset.h"

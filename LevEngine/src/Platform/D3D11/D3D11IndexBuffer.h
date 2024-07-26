@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
 
-#include "Renderer/IndexBuffer.h"
+#include "Renderer/Pipeline/IndexBuffer.h"
 
 namespace LevEngine
 {

@@ -5,9 +5,9 @@
 #include "D3D11RendererContext.h"
 
 #include "Math/Math.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Pipeline/Texture.h"
 #include "Platform/D3D11/D3D11Texture.h"
-#include "Renderer/RenderTarget.h"
+#include "Renderer/Pipeline/RenderTarget.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")

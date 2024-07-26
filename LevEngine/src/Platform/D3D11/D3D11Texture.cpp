@@ -7,8 +7,9 @@
 #include "D3D11DeferredContexts.h"
 #include "stb/include/stb_image.h"
 #include "Math/Math.h"
-#include "Renderer/SamplerState.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Shader/ShaderType.h"
+#include "Renderer/Pipeline/SamplerState.h"
+#include "Renderer/Pipeline/Texture.h"
 
 namespace LevEngine
 {

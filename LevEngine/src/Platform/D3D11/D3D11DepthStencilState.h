@@ -1,6 +1,6 @@
 #pragma once
 #include <d3d11.h>
-#include "Renderer/DepthStencilState.h"
+#include "Renderer/Pipeline/DepthStencilState.h"
 
 namespace LevEngine
 {

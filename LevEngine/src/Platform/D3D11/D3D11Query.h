@@ -2,7 +2,7 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
-#include "Renderer/Query.h"
+#include "Renderer/Query/Query.h"
 
 namespace LevEngine
 {

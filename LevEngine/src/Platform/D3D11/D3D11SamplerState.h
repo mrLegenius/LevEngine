@@ -1,9 +1,12 @@
 ﻿#pragma once
 #include <d3d11.h>
-#include "Renderer/SamplerState.h"
+
+#include "Renderer/Pipeline/SamplerState.h"
 
 namespace LevEngine
 {
+    enum class ShaderType;
+
     class D3D11SamplerState final : public SamplerState
     {
     public:
