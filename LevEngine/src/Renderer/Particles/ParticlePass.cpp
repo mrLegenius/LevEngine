@@ -25,7 +25,7 @@ namespace LevEngine
 
         for (uint32_t i = 0; i < RenderSettings::MaxParticles; ++i)
         {
-            //particles[i].Age = -1;
+            particles[i].Age = -1;
             indices[i] = RenderSettings::MaxParticles - 1 - i;
         }
 

@@ -116,8 +116,6 @@ void CSMain(uint3 groupID : SV_GroupID)
 {
 	const uint index = DeadParticles.Consume();
 
-	if (index >= MaxParticles) return;
-
 	NumberGenerator random;
 	random.SetSeed(RandomSeed);
 	int cycleCount = (groupID.x + 1) * (groupID.y + 1) * (groupID.z + 1);

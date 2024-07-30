@@ -34,7 +34,7 @@ namespace LevEngine
             const uint32_t stride,
             const CPUAccess cpuAccess = CPUAccess::None)
             : m_Stride(stride)
-            , m_ElementsCount(static_cast<UINT>(count))
+            , m_ElementsCount(count)
             , m_CPUAccess(cpuAccess) { }
 
 
@@ -42,9 +42,9 @@ namespace LevEngine
         typedef Vector<uint8_t> BufferType;
         BufferType m_Data;
 
-        UINT m_Stride{};
+        uint32_t m_Stride{};
 
-        UINT m_ElementsCount{};
+        size_t m_ElementsCount{};
 
         // Marked dirty if the contents of the buffer differ
         // from what is stored on the GPU

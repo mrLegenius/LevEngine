@@ -45,8 +45,8 @@ namespace LevEngine
         m_ComputeData->SetData(&handler);
         m_ComputeData->Bind(ShaderType::Compute);
 
-        m_ParticlesBuffer->Bind(0, ShaderType::Compute, true, -1);
-        m_DeadBuffer->Bind(1, ShaderType::Compute, true, -1);
+        m_ParticlesBuffer->Bind(0, ShaderType::Compute, true);
+        m_DeadBuffer->Bind(1, ShaderType::Compute, true);
         
         return RenderPass::Begin(registry, params);
     }
@@ -81,7 +81,7 @@ namespace LevEngine
             emitter.Timer += deltaTime;
             const auto interval = 1 / emitter.Rate;
             uint32_t particlesToEmit = 0;
-            if (emitter.Timer > interval)
+            while (emitter.Timer > interval)
             {
                 particlesToEmit++;
                 emitter.Timer -= interval;
@@ -90,6 +90,9 @@ namespace LevEngine
             ParticleShaders::Emission()->Bind();
             const uint32_t deadParticlesCount = m_DeadBuffer->GetCounterValue();
             particlesToEmit = Math::Min(deadParticlesCount, particlesToEmit);
+
+            if (deadParticlesCount == 0)
+                Log::Error("Particles limit reached");
             
             if (particlesToEmit > 0)
                 DispatchCommand::Dispatch(particlesToEmit, 1, 1);
