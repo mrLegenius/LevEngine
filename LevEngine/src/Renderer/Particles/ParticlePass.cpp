@@ -11,12 +11,16 @@
 #include "Math/Random.h"
 #include "Renderer/Pipeline/Texture.h"
 #include "ParticlesTextureArray.h"
+#include "Renderer/RenderParams.h"
+#include "Renderer/Camera/SceneCamera.h"
+#include "Renderer/Pipeline/ConstantBuffer.h"
 
 namespace LevEngine
 {
     ParticlePass::ParticlePass(const Ref<RenderTarget>& renderTarget, const Ref<Texture>& depthTexture,
                                const Ref<Texture>& normalTexture)
-        : m_DepthTexture(depthTexture), m_NormalTexture(normalTexture)
+        : m_CameraData(ConstantBuffer::Create(sizeof ParticleCameraData, 0)), m_DepthTexture(depthTexture)
+        , m_NormalTexture(normalTexture)
     {
         LEV_PROFILE_FUNCTION();
 
@@ -57,6 +61,11 @@ namespace LevEngine
 
         m_NormalTexture->Bind(8, ShaderType::Pixel);
         m_DepthTexture->Bind(9, ShaderType::Pixel);
+
+        const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera->GetProjection(), params.CameraPosition };
+        m_CameraData->SetData(&cameraData);
+        m_CameraData->Bind(ShaderType::Vertex | ShaderType::Geometry | ShaderType::Compute);
+
         return RenderPass::Begin(registry, params);
     }
 
@@ -74,6 +83,8 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
+        m_CameraData->Unbind(ShaderType::Vertex | ShaderType::Geometry | ShaderType::Compute);
+        
         m_NormalTexture->Unbind(8, ShaderType::Pixel);
         m_DepthTexture->Unbind(9, ShaderType::Pixel);
     }

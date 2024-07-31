@@ -26,7 +26,6 @@ namespace LevEngine
             : m_ParticlesBuffer(particlesBuffer)
             , m_SortedBuffer(sortedBuffer)
             , m_PipelineState(CreateRef<PipelineState>())
-            , m_CameraData(ConstantBuffer::Create(sizeof ParticleCameraData, 0))
             , m_ParticlesTextures(particlesTextures)
         {
         m_PipelineState->GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
@@ -41,12 +40,6 @@ namespace LevEngine
 
     void ParticleRenderingPass::Process(entt::registry& registry, RenderParams& params)
     {
-        {
-            const ParticleCameraData cameraData{ params.CameraViewMatrix, params.Camera->GetProjection(), params.CameraPosition };
-            m_CameraData->SetData(&cameraData);
-            m_CameraData->Bind(ShaderType::Vertex | ShaderType::Geometry);
-        }
-	
         ParticleShaders::Rendering()->Bind();
 
         m_ParticlesBuffer->Bind(0, ShaderType::Vertex, false);

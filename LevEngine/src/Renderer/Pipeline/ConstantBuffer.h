@@ -24,6 +24,7 @@ namespace LevEngine
 
         virtual void Bind(ShaderType shaderType) = 0;
         virtual void Bind(uint32_t slot, ShaderType shaderType) = 0;
+        virtual void Unbind(ShaderType shaderType) = 0;
         virtual void Unbind(uint32_t slot, ShaderType shaderType) = 0;
 
     protected:

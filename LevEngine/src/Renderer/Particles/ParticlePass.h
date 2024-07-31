@@ -52,6 +52,8 @@ namespace LevEngine
         Ref<StructuredBuffer> m_DeadBuffer{};
         Ref<StructuredBuffer> m_SortedBuffer{};
 
+        Ref<ConstantBuffer> m_CameraData{};
+        
         Ref<Texture> m_DepthTexture{};
         Ref<Texture> m_NormalTexture{};
 

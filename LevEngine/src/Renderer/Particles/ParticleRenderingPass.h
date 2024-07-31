@@ -38,7 +38,6 @@ namespace LevEngine
         Ref<StructuredBuffer> m_SortedBuffer{};
 
         Ref<PipelineState> m_PipelineState{};
-        Ref<ConstantBuffer> m_CameraData{};
         const Ref<ParticlesTextureArray>& m_ParticlesTextures;
     };
 }
