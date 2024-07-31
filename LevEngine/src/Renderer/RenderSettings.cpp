@@ -9,5 +9,5 @@ namespace LevEngine
 
     bool RenderSettings::UseFrustumCulling = true;
     
-    uint32_t RenderSettings::MaxParticles = 1024 * 1024;
+    uint32_t RenderSettings::MaxParticles = 256 * 256;
 }
