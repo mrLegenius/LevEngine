@@ -40,14 +40,14 @@ namespace LevEngine
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Bold.ttf", 18.0f);
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Regular.ttf", 18.0f);
+		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Bold.ttf", 12.0f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Regular.ttf", 12.0f);
 
 		ImFontConfig config;
 		config.MergeMode = true;
 		config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
 		static constexpr ImWchar IconRanges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
-		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Icons/fa-solid-900.ttf", 18.0f, &config, IconRanges);
+		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Icons/fa-solid-900.ttf", 12.0f, &config, IconRanges);
 
 		ImGui::StyleColorsDark();
 
@@ -59,17 +59,17 @@ namespace LevEngine
 		}
 
 		//Spacing
-		style.ItemSpacing = ImVec2{ 10.0f, 5.0f };
+		style.ItemSpacing = ImVec2{ 5.0f, 2.0f };
 		style.ItemInnerSpacing = ImVec2{ 5.0f, 5.0f };
 		style.FramePadding = ImVec2{ 5.0f, 2.0f };
 
 		//Rounding
-		style.FrameRounding = 10;
-		style.GrabRounding = 10;
-		style.TabRounding = 10;
-		style.PopupRounding = 10;
-		style.ChildRounding = 10;
-		style.ScrollbarRounding = 10;
+		style.FrameRounding = 2;
+		style.GrabRounding = 2;
+		style.TabRounding = 2;
+		style.PopupRounding = 2;
+		style.ChildRounding = 2;
+		style.ScrollbarRounding = 2;
 
 		SetDarkThemeColors();
 
