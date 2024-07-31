@@ -417,23 +417,23 @@ namespace LevEngine
 
             if (camera.IsMain)
             {
-                using namespace entt::literals;
-                registry.ctx().emplace_as<Entity>("mainCameraEntity"_hs, Entity(entt::handle(registry, entity)));
                 mainCamera = &camera.Camera;
-                transform.RecalculateModel();
                 cameraTransform = &transform;
                 return;
             }
         }
     }
 
-    RenderParams Renderer::CreateRenderParams(SceneCamera* mainCamera, Transform* cameraTransform)
+    RenderParams Renderer::CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform)
     {
         LEV_PROFILE_FUNCTION();
-
-        cameraTransform->SetWorldScale(Vector3::One);
-        const auto cameraViewMatrix = cameraTransform->GetModel().Invert();
+        
         const auto cameraPosition = cameraTransform->GetWorldPosition();
+        const auto cameraViewMatrix =
+            (Matrix::CreateFromQuaternion(cameraTransform->GetWorldRotation())
+                * Matrix::CreateTranslation(cameraPosition))
+            .Invert();
+ 
         const auto perspectiveViewProjectionMatrix = cameraViewMatrix * mainCamera->GetPerspectiveProjection();
         return {mainCamera, cameraPosition, cameraViewMatrix, perspectiveViewProjectionMatrix};
     }

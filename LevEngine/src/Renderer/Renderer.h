@@ -25,7 +25,7 @@ namespace LevEngine
         void Clear() const;
         static void RecalculateAllTransforms(entt::registry& registry);
         void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
-        static RenderParams CreateRenderParams(SceneCamera* mainCamera, Transform* cameraTransform);
+        static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);
         void Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform);
         void Render(entt::registry& registry);
         void SetViewport(float width, float height) const;
