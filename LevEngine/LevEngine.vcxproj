@@ -138,6 +138,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11TextureFormatsUtils.h" />
     <ClInclude Include="src\Renderer\Dispatch\DispatchCommand.h" />
     <ClInclude Include="src\Renderer\Dispatch\DispatchCommandBase.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPass.h" />
