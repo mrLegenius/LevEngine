@@ -11,6 +11,7 @@ namespace LevEngine
 	RenderTarget::RenderTarget()
 	{
 		m_Textures.resize(static_cast<size_t>(AttachmentPoint::NumAttachmentPoints));
+		m_StructuredBuffers.resize(StructuredBuffersCount);
 	}
 
 	Ref<RenderTarget> RenderTarget::Create()

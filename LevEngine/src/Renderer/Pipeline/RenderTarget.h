@@ -3,7 +3,10 @@
 
 namespace LevEngine
 {
+    constexpr int StructuredBuffersCount = 8;
+    
     class Texture;
+    class StructuredBuffer;
 
     enum class AttachmentPoint : uint8_t
     {
@@ -44,6 +47,7 @@ namespace LevEngine
 
     protected:
         Vector<Ref<Texture>> m_Textures{};
+        Vector<Ref<StructuredBuffer>> m_StructuredBuffers{};
 
         // The width in pixels of textures associated to this render target.
         uint16_t m_Width = 0;
