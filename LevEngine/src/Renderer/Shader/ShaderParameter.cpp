@@ -3,6 +3,7 @@
 
 #include "Renderer/Pipeline/ConstantBuffer.h"
 #include "Renderer/Pipeline/SamplerState.h"
+#include "Renderer/Pipeline/StructuredBuffer.h"
 #include "Renderer/Pipeline/Texture.h"
 
 namespace LevEngine
@@ -43,8 +44,7 @@ void ShaderParameter::Bind() const
     }
     if (const Ref<StructuredBuffer> buffer = m_StructuredBuffer.lock())
     {
-        //TODO: Bind Structured Buffer
-        //buffer->Bind(m_SlotId, m_ShaderType);
+        buffer->Bind(m_SlotId, m_ShaderType, false);
     }
 }
 
@@ -64,8 +64,7 @@ void ShaderParameter::Unbind() const
     }
     if (const Ref<StructuredBuffer> buffer = m_StructuredBuffer.lock())
     {
-        //TODO: Unbind Structured Buffer
-        //buffer->Bind(m_SlotId, m_ShaderType);
+        buffer->Unbind(m_SlotId, m_ShaderType, false);
     }
 
 }
