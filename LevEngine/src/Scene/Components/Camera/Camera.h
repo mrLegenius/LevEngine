@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Kernel/ClassCollection.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Scene/Components/TypeParseTraits.h"
 

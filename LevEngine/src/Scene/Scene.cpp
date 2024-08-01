@@ -30,6 +30,7 @@
 #include "Systems/EntityDestroySystem.h"
 #include "EnttMutex.h"
 #include "Components/Animation/AnimatorComponent.h"
+#include "Components/Time/TimelineComponent.h"
 
 namespace LevEngine
 {
@@ -59,6 +60,9 @@ namespace LevEngine
     //Called in Runtime before deserialization
     void Scene::Initialize()
     {
+        RegisterComponentOnConstruct<TimelineComponent>();
+        RegisterComponentOnDestroy<TimelineComponent>();
+        
         RegisterComponentOnConstruct<CameraComponent>();
         RegisterComponentOnConstruct<ScriptsContainer>();
 
@@ -150,7 +154,6 @@ namespace LevEngine
     {
         for (const auto& system : m_UpdateSystems)
         {
-            //TODO Add schedule inside systems' Updates if needed
             system->Update(deltaTime, m_Registry);
         }
 
@@ -270,7 +273,6 @@ namespace LevEngine
     {
         for (const auto& system : m_LateUpdateSystems)
         {
-            //TODO Add schedule inside systems' Updates if needed
             system->Update(deltaTime, m_Registry);
         }
 
@@ -281,7 +283,6 @@ namespace LevEngine
     {
         for (const auto& system : m_EventSystems)
         {
-            //TODO Add schedule inside systems' Updates if needed
             system->Update(deltaTime, m_Registry);
         }
 
