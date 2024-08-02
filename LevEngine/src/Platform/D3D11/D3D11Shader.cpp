@@ -17,8 +17,7 @@ bool CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath)
 bool CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath);
 
 DXGI_FORMAT GetDXGIFormat(const D3D11_SIGNATURE_PARAMETER_DESC& paramDesc);
-
-D3D11Shader::D3D11Shader(const String& filepath) : D3D11Shader(filepath, ShaderType::Vertex | ShaderType::Pixel) { }
+	
 D3D11Shader::D3D11Shader(const String& filepath, const ShaderType shaderTypes) : Shader(filepath)
 {
 	LEV_PROFILE_FUNCTION();

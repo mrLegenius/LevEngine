@@ -8,8 +8,7 @@ namespace LevEngine
 class D3D11Shader : public Shader
 {
 public:
-
-	explicit D3D11Shader(const String& filepath);
+	
 	D3D11Shader(const String& filepath, ShaderType shaderTypes);
 	~D3D11Shader() override;
 

@@ -3,6 +3,8 @@
 
 namespace LevEngine
 {
+    class Application;
+    
     class RenderCommand
     {
     public:
@@ -32,6 +34,10 @@ namespace LevEngine
         }
 
     private:
-        static inline Ref<RenderCommands> s_RendererAPI = RenderCommands::Create();
+        friend Application;
+
+        static void Init() { s_RendererAPI = RenderCommands::Create(); }
+        
+        static inline Ref<RenderCommands> s_RendererAPI{};
     };
 }

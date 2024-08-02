@@ -2,6 +2,8 @@
 
 namespace LevEngine
 {
+    class Application;
+    
     class RenderDebugEvent
     {
     public:
@@ -14,7 +16,9 @@ namespace LevEngine
         virtual void EndEvent() = 0;
 
     private:
+        friend Application;
+        static void Init() { s_Instance = Create(); }
         static Ref<RenderDebugEvent> Create();
-        static inline Ref<RenderDebugEvent> s_RendererAPI = Create();
+        static inline Ref<RenderDebugEvent> s_Instance{};
     };
 }

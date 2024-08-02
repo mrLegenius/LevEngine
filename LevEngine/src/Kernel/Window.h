@@ -4,7 +4,7 @@
 
 namespace LevEngine
 {
-	class RendererContext;
+	class RenderContext;
 
 	struct WindowAttributes
 {
@@ -46,7 +46,7 @@ public:
 	void DisableCursor();
 	virtual void SetCursorPosition(uint32_t x, uint32_t y) = 0;
 
-	[[nodiscard]] const Ref<RendererContext>& GetContext() const { return m_Context; }
+	[[nodiscard]] const Ref<RenderContext>& GetContext() const { return m_Context; }
 
 	[[nodiscard]] virtual void* GetNativeWindow() const = 0;
 
@@ -63,7 +63,7 @@ protected:
 	virtual void Init(const WindowAttributes& attributes) = 0;
 	virtual void Close() = 0;
 
-	Ref<RendererContext> m_Context = nullptr;
+	Ref<RenderContext> m_Context = nullptr;
 	bool m_CursorEnabled = true;
 
 public:

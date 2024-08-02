@@ -1,8 +1,8 @@
 ﻿#include "levpch.h"
 #include "Texture.h"
 
-#include "Platform/D3D11/D3D11Texture.h"
-#include "Renderer/RenderSettings.h"
+#include "Kernel/Application.h"
+#include "Renderer/RenderDevice.h"
 
 namespace LevEngine
 {
@@ -15,18 +15,7 @@ namespace LevEngine
 		bool isLinear,
 		bool generateMipMaps)
 	{
-		switch (RenderSettings::RendererAPI)
-		{
-		case RendererAPI::None:
-			LEV_THROW("None for API was chosen");
-		case RendererAPI::OpenGL:
-			LEV_NOT_IMPLEMENTED
-		case RendererAPI::D3D11:
-			return CreateRef<D3D11Texture>(path, isLinear, generateMipMaps);
-		default:
-			LEV_THROW("Unknown Renderer API")
-			break;
-		}
+		return App::RenderDevice().CreateTexture(path, isLinear, generateMipMaps);
 	}
 
 	Ref<Texture> Texture::CreateTexture2D(
@@ -37,18 +26,7 @@ namespace LevEngine
 		const bool uav,
 		const bool generateMipMaps)
 	{
-		switch (RenderSettings::RendererAPI)
-		{
-		case RendererAPI::None:
-			LEV_THROW("None for API was chosen");
-		case RendererAPI::OpenGL:
-			LEV_NOT_IMPLEMENTED
-		case RendererAPI::D3D11:
-			return D3D11Texture::CreateTexture2D(width, height, slices, format, data, cpuAccess, uav, generateMipMaps);
-		default:
-			LEV_THROW("Unknown Renderer API")
-				break;
-		}
+		return App::RenderDevice().CreateTexture2D(width, height, slices, format, data, cpuAccess, uav, generateMipMaps);
 	}
 
 	Ref<Texture> Texture::CreateTexture2D(
@@ -58,18 +36,7 @@ namespace LevEngine
 		const bool uav,
 		const bool generateMipMaps)
 	{
-		switch (RenderSettings::RendererAPI)
-		{
-		case RendererAPI::None:
-			LEV_THROW("None for API was chosen");
-		case RendererAPI::OpenGL:
-			LEV_NOT_IMPLEMENTED
-		case RendererAPI::D3D11:
-			return D3D11Texture::CreateTexture2D(width, height, slices, format, cpuAccess, uav, generateMipMaps);
-		default:
-			LEV_THROW("Unknown Renderer API")
-			break;
-		}
+		return App::RenderDevice().CreateTexture2D(width, height, slices, format, cpuAccess, uav, generateMipMaps);
 	}
 
 	Ref<Texture> Texture::CreateTextureCube(
@@ -79,18 +46,7 @@ namespace LevEngine
 		const bool uav,
 		const bool generateMipMaps)
 	{
-		switch (RenderSettings::RendererAPI)
-		{
-		case RendererAPI::None:
-			LEV_THROW("None for API was chosen");
-		case RendererAPI::OpenGL:
-			LEV_NOT_IMPLEMENTED
-		case RendererAPI::D3D11:
-			return D3D11Texture::CreateTextureCube(width, height, format, cpuAccess, uav, generateMipMaps);
-		default:
-			LEV_THROW("Unknown Renderer API")
-			break;
-		}
+		return App::RenderDevice().CreateTextureCube(width, height, format, cpuAccess, uav, generateMipMaps);
 	}
 	
 	Ref<Texture> Texture::CreateTextureCube(const String paths[6])
@@ -100,17 +56,6 @@ namespace LevEngine
 
 	Ref<Texture> Texture::CreateTextureCube(const String paths[6], const bool isLinear)
 	{
-		switch (RenderSettings::RendererAPI)
-		{
-		case RendererAPI::None:
-			LEV_THROW("None for API was chosen");
-		case RendererAPI::OpenGL:
-			LEV_NOT_IMPLEMENTED
-		case RendererAPI::D3D11:
-			return CreateRef<D3D11Texture>(paths, isLinear);
-		default:
-			LEV_THROW("Unknown Renderer API")
-			break;
-		}
+		return App::RenderDevice().CreateTextureCube(paths, isLinear);
 	}
 }

@@ -4,13 +4,13 @@ namespace LevEngine
 {
 	class RenderTarget;
 
-	class RendererContext
+	class RenderContext
 	{
 	public:
-		RendererContext() = default;
-		virtual ~RendererContext() = default;
+		RenderContext() = default;
+		virtual ~RenderContext() = default;
 
-		static Ref<RendererContext> Create();
+		static Ref<RenderContext> Create();
 
 		virtual void Init(uint32_t width, uint32_t height, HWND window) = 0;
 		virtual void SwapBuffers() = 0;

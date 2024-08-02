@@ -88,7 +88,7 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #include "Renderer/Renderer.h"
-#include "Renderer/RendererContext.h"
+#include "Renderer/RenderContext.h"
 #include "Renderer/RenderCommand.h"
 
 #include "Renderer/Pipeline/BlendState.h"

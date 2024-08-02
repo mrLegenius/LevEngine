@@ -20,7 +20,7 @@
 #include "Panels/Toolbar.h"
 #include "Panels/ViewportPanel.h"
 #include "Physics/Physics.h"
-#include "Renderer/RendererContext.h"
+#include "Renderer/RenderContext.h"
 
 namespace LevEngine::Editor
 {

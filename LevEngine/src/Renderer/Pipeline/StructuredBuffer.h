@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "CPUAccess.h"
+#include "UAVType.h"
 
 namespace LevEngine
 {
@@ -8,14 +9,6 @@ namespace LevEngine
     class StructuredBuffer
     {
     public:
-        enum class UAVType
-        {
-            None = 0,
-            Raw = 1,
-            Append = 2,
-            Counter = 4,
-        };
-
         virtual ~StructuredBuffer() = default;
 
         static Ref<StructuredBuffer> Create(const void* data, size_t count, uint32_t stride, CPUAccess cpuAccess = CPUAccess::None, bool uav = false, UAVType uavType = UAVType::None);

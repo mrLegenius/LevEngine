@@ -25,7 +25,7 @@
 #include "Particles/ParticlePass.h"
 
 #include "Renderer3D.h"
-#include "RendererContext.h"
+#include "RenderContext.h"
 
 #include "RenderTechnique.h"
 
@@ -35,7 +35,6 @@
 #include "Environment/EnvironmentPass.h"
 #include "Kernel/Window.h"
 #include "PostProcessing/PostProcessingPass.h"
-#include "Scene/Entity.h"
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Transform/Transform.h"
 #include "Kernel/Time/Time.h"
@@ -51,7 +50,7 @@ namespace LevEngine
     }
 
     Renderer::~Renderer() = default;
-
+    
     void Renderer::Init(const Window& window)
     {
         LEV_PROFILE_FUNCTION();

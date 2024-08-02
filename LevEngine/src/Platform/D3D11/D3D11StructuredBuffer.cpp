@@ -11,7 +11,7 @@ namespace LevEngine
     extern ID3D11DeviceContext* context;
     extern Microsoft::WRL::ComPtr<ID3D11Device> device;
 
-    D3D11_BUFFER_UAV_FLAG ConvertUAVFlag(D3D11StructuredBuffer::UAVType type)
+    D3D11_BUFFER_UAV_FLAG ConvertUAVFlag(UAVType type)
     {
         return static_cast<D3D11_BUFFER_UAV_FLAG>(type);
     }

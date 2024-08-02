@@ -1,11 +1,11 @@
 #pragma once
 #include <d3d11.h>
 
-#include "Renderer/RendererContext.h"
+#include "Renderer/RenderContext.h"
 
 namespace LevEngine
 {
-class D3D11RendererContext final : public RendererContext
+class D3D11RendererContext final : public RenderContext
 {
 public:
 	D3D11RendererContext() = default;

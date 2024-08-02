@@ -36,9 +36,9 @@ namespace LevEngine
         m_ParticlesBuffer = StructuredBuffer::Create(particles, RenderSettings::MaxParticles, sizeof GPUParticleData,
                                                      CPUAccess::None, true);
         m_DeadBuffer = StructuredBuffer::Create(indices, RenderSettings::MaxParticles, sizeof uint32_t, CPUAccess::None,
-                                                true, StructuredBuffer::UAVType::Append);
+                                                true, UAVType::Append);
         m_SortedBuffer = StructuredBuffer::Create(nullptr, RenderSettings::MaxParticles, sizeof Vector2,
-                                                  CPUAccess::None, true, StructuredBuffer::UAVType::Counter);
+                                                  CPUAccess::None, true, UAVType::Counter);
 
         m_DeadBuffer->Bind(1, ShaderType::Compute, true, RenderSettings::MaxParticles);
         m_DeadBuffer->Unbind(1, ShaderType::Compute, true);

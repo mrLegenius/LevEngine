@@ -1,26 +1,15 @@
 ﻿#include "levpch.h"
 #include "SamplerState.h"
 
+#include "Kernel/Application.h"
 #include "Math/Math.h"
-#include "Platform/D3D11/D3D11SamplerState.h"
-#include "Renderer/RenderSettings.h"
+#include "Renderer/RenderDevice.h"
 
 namespace LevEngine
 {
 	Ref<SamplerState> SamplerState::Create()
 	{
-		switch (RenderSettings::RendererAPI)
-		{
-		case RendererAPI::None:
-			LEV_CORE_ASSERT(false, "None for API was chosen");
-		case RendererAPI::OpenGL:
-			LEV_NOT_IMPLEMENTED
-		case RendererAPI::D3D11:
-			return CreateRef<D3D11SamplerState>();
-		default:
-			LEV_THROW("Unknown Renderer API")
-			break;
-		}
+		return App::RenderDevice().CreateSamplerState();
 	}
 
 	void SamplerState::SetFilter(const MinFilter minFilter, const MagFilter magFilter, const MipFilter mipFilter)

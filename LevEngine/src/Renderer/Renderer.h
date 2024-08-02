@@ -19,13 +19,11 @@ namespace LevEngine
     public:
         explicit Renderer(const Window& window);
         ~Renderer();
-        
+
         void Init(const Window& window);
         
         void Clear() const;
-        static void RecalculateAllTransforms(entt::registry& registry);
-        void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
-        static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);
+        
         void Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform);
         void Render(entt::registry& registry);
         void SetViewport(float width, float height) const;
@@ -40,9 +38,13 @@ namespace LevEngine
         [[nodiscard]] Statistic GetDebugStatistic() const;
 
     private:
+        static void RecalculateAllTransforms(entt::registry& registry);
+        static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);
+        void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
+        
         void ResetStatistics();
         static void SampleQuery(const Ref<Query>& query, Statistic& stat);
-
+        
         Ref<LightCollection> m_Lights;
         Ref<RenderTarget> m_MainRenderTarget;
         
