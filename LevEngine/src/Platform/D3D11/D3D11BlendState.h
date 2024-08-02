@@ -14,7 +14,7 @@ public:
     void Unbind() override;
 
 private:
-    ID3D11BlendState* m_BlendState{};
+    ID3D11BlendState1* m_BlendState{};
 
     ID3D11Device2* m_Device{};
     ID3D11DeviceContext2* m_DeviceContext{};
