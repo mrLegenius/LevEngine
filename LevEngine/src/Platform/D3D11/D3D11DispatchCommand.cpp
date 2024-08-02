@@ -5,10 +5,13 @@
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
+    D3D11DispatchCommand::D3D11DispatchCommand(ID3D11Device2* device)
+    {
+        device->GetImmediateContext2(&m_DeviceContext);
+    }
 
-void D3D11DispatchCommand::Dispatch(const uint32_t groupX, const uint32_t groupY, const uint32_t groupZ)
-{
-    context->Dispatch(groupX, groupY, groupZ);
-}
+    void D3D11DispatchCommand::Dispatch(const uint32_t groupX, const uint32_t groupY, const uint32_t groupZ)
+    {
+        m_DeviceContext->Dispatch(groupX, groupY, groupZ);
+    }
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <d3d11.h>
+#include <d3d11_2.h>
 
 #include "Renderer/Pipeline/StructuredBuffer.h"
 
@@ -10,7 +10,7 @@ namespace LevEngine
     class D3D11StructuredBuffer : public StructuredBuffer
     {
     public:
-        D3D11StructuredBuffer(const void* data, size_t count, uint32_t stride, CPUAccess cpuAccess = CPUAccess::None,
+        D3D11StructuredBuffer(ID3D11Device2* device, const void* data, size_t count, uint32_t stride, CPUAccess cpuAccess = CPUAccess::None,
                               bool uav = false, UAVType uavType = UAVType::None);
 
         ~D3D11StructuredBuffer() override;
@@ -35,5 +35,7 @@ namespace LevEngine
         ID3D11Buffer* m_CountBuffer;
         ID3D11ShaderResourceView* m_ShaderResourceView;
         ID3D11UnorderedAccessView* m_UnorderedAccessView;
+
+        ID3D11DeviceContext2* m_DeviceContext;
     };
 }

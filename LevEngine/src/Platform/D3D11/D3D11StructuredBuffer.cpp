@@ -8,18 +8,16 @@
 
 namespace LevEngine
 {
-    extern ID3D11DeviceContext* context;
-    extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
     D3D11_BUFFER_UAV_FLAG ConvertUAVFlag(UAVType type)
     {
         return static_cast<D3D11_BUFFER_UAV_FLAG>(type);
     }
 
-    D3D11StructuredBuffer::D3D11StructuredBuffer(const void* data, size_t count, uint32_t stride,
+    D3D11StructuredBuffer::D3D11StructuredBuffer(ID3D11Device2* device, const void* data, size_t count, uint32_t stride,
                                                  CPUAccess cpuAccess, bool uav, UAVType uavType)
         : StructuredBuffer(count, stride, cpuAccess)
     {
+        device->GetImmediateContext2(&m_DeviceContext);
         m_Dynamic = m_CPUAccess & CPUAccess::Write;
         m_UAV = uav && !m_Dynamic;
 
@@ -143,16 +141,16 @@ namespace LevEngine
             switch (shaderType)
             {
             case ShaderType::Vertex:
-                context->VSSetShaderResources(id, 1, srv);
+                m_DeviceContext->VSSetShaderResources(id, 1, srv);
                 break;
             case ShaderType::Geometry:
-                context->GSSetShaderResources(id, 1, srv);
+                m_DeviceContext->GSSetShaderResources(id, 1, srv);
                 break;
             case ShaderType::Pixel:
-                context->PSSetShaderResources(id, 1, srv);
+                m_DeviceContext->PSSetShaderResources(id, 1, srv);
                 break;
             case ShaderType::Compute:
-                context->CSSetShaderResources(id, 1, srv);
+                m_DeviceContext->CSSetShaderResources(id, 1, srv);
                 break;
             }
         }
@@ -163,7 +161,7 @@ namespace LevEngine
             {
             case ShaderType::Compute:
                 const auto counter = counterValue;
-                context->CSSetUnorderedAccessViews(id, 1, uav, &counter);
+                m_DeviceContext->CSSetUnorderedAccessViews(id, 1, uav, &counter);
                 break;
             }
         }
@@ -180,16 +178,16 @@ namespace LevEngine
             switch (shaderType)
             {
             case ShaderType::Vertex:
-                context->VSSetShaderResources(id, 1, srv);
+                m_DeviceContext->VSSetShaderResources(id, 1, srv);
                 break;
             case ShaderType::Geometry:
-                context->GSSetShaderResources(id, 1, srv);
+                m_DeviceContext->GSSetShaderResources(id, 1, srv);
                 break;
             case ShaderType::Pixel:
-                context->PSSetShaderResources(id, 1, srv);
+                m_DeviceContext->PSSetShaderResources(id, 1, srv);
                 break;
             case ShaderType::Compute:
-                context->CSSetShaderResources(id, 1, srv);
+                m_DeviceContext->CSSetShaderResources(id, 1, srv);
                 break;
             }
         }
@@ -201,7 +199,7 @@ namespace LevEngine
             {
             case ShaderType::Compute:
                 uint32_t counterZero = 0;
-                context->CSSetUnorderedAccessViews(id, 1, uav, &counterZero);
+                m_DeviceContext->CSSetUnorderedAccessViews(id, 1, uav, &counterZero);
                 break;
             }
         }
@@ -220,7 +218,7 @@ namespace LevEngine
         if (srcBuffer && srcBuffer.get() != this &&
             m_ElementsCount * m_Stride == srcBuffer->m_ElementsCount * srcBuffer->m_Stride)
         {
-            context->CopyResource(m_Buffer, srcBuffer->m_Buffer);
+            m_DeviceContext->CopyResource(m_Buffer, srcBuffer->m_Buffer);
         }
         else
         {
@@ -232,13 +230,13 @@ namespace LevEngine
             D3D11_MAPPED_SUBRESOURCE mappedResource;
 
             // Copy the texture data from the buffer resource
-            auto res = context->Map(m_Buffer, 0, D3D11_MAP_READ, 0, &mappedResource);
+            auto res = m_DeviceContext->Map(m_Buffer, 0, D3D11_MAP_READ, 0, &mappedResource);
 
             LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to map texture resource for reading")
 
             memcpy_s(m_Data.data(), m_Data.size(), mappedResource.pData, m_Data.size());
 
-            context->Unmap(m_Buffer, 0);
+            m_DeviceContext->Unmap(m_Buffer, 0);
         }
     }
 
@@ -247,7 +245,7 @@ namespace LevEngine
         if (m_UAV)
         {
             constexpr float clearColor[4] = {0, 0, 0, 0};
-            context->ClearUnorderedAccessViewFloat(m_UnorderedAccessView, clearColor);
+            m_DeviceContext->ClearUnorderedAccessViewFloat(m_UnorderedAccessView, clearColor);
         }
     }
 
@@ -267,14 +265,14 @@ namespace LevEngine
             D3D11_MAPPED_SUBRESOURCE mappedResource;
             // Copy the contents of the data buffer to the GPU.
 
-            auto res = context->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+            auto res = m_DeviceContext->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
             LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to map subresource")
 
             size_t sizeInBytes = m_Data.size();
             memcpy_s(mappedResource.pData, sizeInBytes, m_Data.data(), sizeInBytes);
 
-            context->Unmap(m_Buffer, 0);
+            m_DeviceContext->Unmap(m_Buffer, 0);
 
             m_IsDirty = false;
         }
@@ -285,15 +283,15 @@ namespace LevEngine
         LEV_CORE_ASSERT(m_CountBuffer != nullptr, "Count buffer is null");
         LEV_CORE_ASSERT(m_UnorderedAccessView != nullptr, "UnorderedAccessView is null");
 
-        context->CopyStructureCount(m_CountBuffer, 0, m_UnorderedAccessView);
+        m_DeviceContext->CopyStructureCount(m_CountBuffer, 0, m_UnorderedAccessView);
 
         D3D11_MAPPED_SUBRESOURCE subresource;
-        context->Map(m_CountBuffer, 0, D3D11_MAP_READ, 0, &subresource);
+        m_DeviceContext->Map(m_CountBuffer, 0, D3D11_MAP_READ, 0, &subresource);
 
         const UINT* data = reinterpret_cast<UINT*>(subresource.pData);
         const uint32_t counterValue = data ? data[0] : 0;
 
-        context->Unmap(m_CountBuffer, 0);
+        m_DeviceContext->Unmap(m_CountBuffer, 0);
 
         return counterValue;
     }

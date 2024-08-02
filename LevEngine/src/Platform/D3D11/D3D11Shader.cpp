@@ -8,9 +8,6 @@
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
 bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target);
 bool CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath);
 bool CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath);
@@ -18,9 +15,11 @@ bool CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath);
 
 DXGI_FORMAT GetDXGIFormat(const D3D11_SIGNATURE_PARAMETER_DESC& paramDesc);
 	
-D3D11Shader::D3D11Shader(const String& filepath, const ShaderType shaderTypes) : Shader(filepath)
+D3D11Shader::D3D11Shader(ID3D11Device2* device, const String& filepath, const ShaderType shaderTypes) : Shader(filepath), m_Device(device)
 {
 	LEV_PROFILE_FUNCTION();
+
+	device->GetImmediateContext2(&m_DeviceContext);
 
 	auto lastSlash = filepath.find_last_of("/\\");
 	lastSlash = lastSlash == String::npos ? 0 : lastSlash + 1;
@@ -77,15 +76,15 @@ void D3D11Shader::Bind() const
 
 	if (m_VertexShader)
 	{
-		context->VSSetShader(m_VertexShader, nullptr, 0);
-		context->IASetInputLayout(m_InputLayout);
+		m_DeviceContext->VSSetShader(m_VertexShader, nullptr, 0);
+		m_DeviceContext->IASetInputLayout(m_InputLayout);
 	}
 	if (m_PixelShader)
-		context->PSSetShader(m_PixelShader, nullptr, 0);
+		m_DeviceContext->PSSetShader(m_PixelShader, nullptr, 0);
 	if (m_GeometryShader)
-		context->GSSetShader(m_GeometryShader, nullptr, 0);
+		m_DeviceContext->GSSetShader(m_GeometryShader, nullptr, 0);
 	if (m_ComputeShader)
-		context->CSSetShader(m_ComputeShader, nullptr, 0);
+		m_DeviceContext->CSSetShader(m_ComputeShader, nullptr, 0);
 	
 }
 
@@ -96,15 +95,15 @@ void D3D11Shader::Unbind() const
 
 	if (m_VertexShader)
 	{
-		context->VSSetShader(nullptr, nullptr, 0);
-		context->IASetInputLayout(nullptr);
+		m_DeviceContext->VSSetShader(nullptr, nullptr, 0);
+		m_DeviceContext->IASetInputLayout(nullptr);
 	}
 	if (m_PixelShader)
-		context->PSSetShader(nullptr, nullptr, 0);
+		m_DeviceContext->PSSetShader(nullptr, nullptr, 0);
 	if (m_GeometryShader)
-		context->GSSetShader(nullptr, nullptr, 0);
+		m_DeviceContext->GSSetShader(nullptr, nullptr, 0);
 	if (m_ComputeShader)
-		context->CSSetShader(nullptr, nullptr, 0);
+		m_DeviceContext->CSSetShader(nullptr, nullptr, 0);
 }
 
 bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target)
@@ -165,7 +164,7 @@ bool D3D11Shader::CreateVertexShader(ID3D11VertexShader*& shader, const String& 
 	if (!CreateShader(vertexBC, filepath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSMain", "vs_5_0"))
 		return false;
 
-	device->CreateVertexShader(
+	m_Device->CreateVertexShader(
 		vertexBC->GetBufferPointer(),
 		vertexBC->GetBufferSize(),
 		nullptr, &shader);
@@ -185,7 +184,7 @@ bool D3D11Shader::CreatePixelShader(ID3D11PixelShader*& shader, const String& fi
 	if (!CreateShader(pixelBC, filepath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PSMain", "ps_5_0"))
 		return false;
 
-	device->CreatePixelShader(
+	m_Device->CreatePixelShader(
 		pixelBC->GetBufferPointer(),
 		pixelBC->GetBufferSize(),
 		nullptr, &shader);
@@ -205,7 +204,7 @@ bool D3D11Shader::CreateGeometryShader(ID3D11GeometryShader*& shader, const Stri
 	if (!CreateShader(geometryBC, filepath, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GSMain", "gs_5_0"))
 		return false;
 
-	device->CreateGeometryShader(
+	m_Device->CreateGeometryShader(
 		geometryBC->GetBufferPointer(),
 		geometryBC->GetBufferSize(),
 		nullptr, &shader);
@@ -225,7 +224,7 @@ bool D3D11Shader::CreateComputeShader(ID3D11ComputeShader*& shader, const String
 	if (!CreateShader(blob, filepath, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CSMain", "cs_5_0"))
 		return false;
 
-	device->CreateComputeShader(
+	m_Device->CreateComputeShader(
 		blob->GetBufferPointer(),
 		blob->GetBufferSize(),
 		nullptr, &shader);
@@ -274,7 +273,7 @@ void D3D11Shader::CreateInputLayout(ID3DBlob* vertexBlob)
 
 	if (inputElements.size() > 0)
 	{
-		result = device->CreateInputLayout(inputElements.data(), 
+		result = m_Device->CreateInputLayout(inputElements.data(), 
 			static_cast<UINT>(inputElements.size()), 
 			vertexBlob->GetBufferPointer(), 
 			vertexBlob->GetBufferSize(),

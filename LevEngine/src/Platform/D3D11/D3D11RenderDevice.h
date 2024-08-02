@@ -9,6 +9,9 @@ namespace LevEngine
     class D3D11RenderDevice : public RenderDevice
     {
     public:
+        D3D11RenderDevice();
+        ~D3D11RenderDevice();
+        
         Microsoft::WRL::ComPtr<ID3D11Device2> GetDevice() const;
         Microsoft::WRL::ComPtr<ID3D11DeviceContext2> GetDeviceContext() const;
         

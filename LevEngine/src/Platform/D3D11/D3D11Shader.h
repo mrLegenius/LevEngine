@@ -1,5 +1,5 @@
 #pragma once
-#include <d3d11.h>
+#include <d3d11_2.h>
 
 #include "Renderer/Shader/Shader.h"
 
@@ -9,7 +9,7 @@ class D3D11Shader : public Shader
 {
 public:
 	
-	D3D11Shader(const String& filepath, ShaderType shaderTypes);
+	D3D11Shader(ID3D11Device2* device, const String& filepath, ShaderType shaderTypes);
 	~D3D11Shader() override;
 
 	void Bind() const override;
@@ -36,5 +36,8 @@ private:
 
 	Map<BufferBinding, uint32_t> m_InputSemantics;
 	Map<String, Ref<ShaderParameter>> m_ShaderParameters;
+
+	ID3D11Device2* m_Device;
+	ID3D11DeviceContext2* m_DeviceContext;
 };
 }

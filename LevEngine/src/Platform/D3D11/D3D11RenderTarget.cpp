@@ -2,7 +2,6 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
-
 #include "D3D11RenderTarget.h"
 
 #include "D3D11StructuredBuffer.h"
@@ -10,12 +9,15 @@
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
+    
 inline Ref<D3D11Texture> ConvertTextureToD3D11Texture(const Ref<Texture>& texture)
 {
     return CastRef<D3D11Texture>(texture);
+}
+
+D3D11RenderTarget::D3D11RenderTarget(ID3D11Device2* device)
+{
+    device->GetImmediateContext2(&m_DeviceContext);
 }
 
 void D3D11RenderTarget::Bind()
@@ -60,14 +62,14 @@ void D3D11RenderTarget::Bind()
         depthStencilView = depthStencilTexture->GetDepthStencilView();
     }
 
-    context->OMSetRenderTargetsAndUnorderedAccessViews(numRTVs, renderTargetViews, depthStencilView, uavStartSlot, numUAVs, uavViews, nullptr);
+    m_DeviceContext->OMSetRenderTargetsAndUnorderedAccessViews(numRTVs, renderTargetViews, depthStencilView, uavStartSlot, numUAVs, uavViews, nullptr);
 }
 
 void D3D11RenderTarget::Unbind()
 {
     LEV_PROFILE_FUNCTION();
 
-    context->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr, 0, 0, nullptr, nullptr);
+    m_DeviceContext->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr, 0, 0, nullptr, nullptr);
 }
 
 bool D3D11RenderTarget::IsValid() const

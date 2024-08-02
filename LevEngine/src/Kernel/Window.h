@@ -1,6 +1,9 @@
 #pragma once
 
+#include <Renderer/3D/MeshLoading/AnimationLoader.h>
+
 #include "../Events/Event.h"
+#include "Renderer/RenderDevice.h"
 
 namespace LevEngine
 {
@@ -50,8 +53,7 @@ public:
 
 	[[nodiscard]] virtual void* GetNativeWindow() const = 0;
 
-
-	static Scope<Window> Create(const WindowAttributes& attributes = WindowAttributes());
+	static Scope<Window> Create(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes = WindowAttributes());
 
 protected:
 	virtual void ConfineCursor() const = 0;
@@ -60,7 +62,7 @@ protected:
 	virtual void ShowCursor() const = 0;
 	virtual void HideCursor() const = 0;
 
-	virtual void Init(const WindowAttributes& attributes) = 0;
+	virtual void Init(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes) = 0;
 	virtual void Close() = 0;
 
 	Ref<RenderContext> m_Context = nullptr;

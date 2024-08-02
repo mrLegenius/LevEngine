@@ -1,15 +1,9 @@
 #include "levpch.h"
 #include "D3D11DepthStencilState.h"
 
-#include <cassert>
-#include <wrl/client.h>
-
 #include "Debugging/Profiler.h"
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
 inline D3D11_DEPTH_WRITE_MASK ConvertDepthWriteMask(const DepthWrite depthWrite)
 {
     D3D11_DEPTH_WRITE_MASK result = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -118,6 +112,11 @@ inline D3D11_DEPTH_STENCILOP_DESC ConvertFaceOperation(const FaceOperation faceO
     return result;
 }
 
+D3D11DepthStencilState::D3D11DepthStencilState(ID3D11Device2* device) : m_Device(device)
+{
+    device->GetImmediateContext2(&m_DeviceContext);
+}
+
 D3D11DepthStencilState::~D3D11DepthStencilState()
 {
     if (m_DepthStencilState)
@@ -144,20 +143,20 @@ void D3D11DepthStencilState::Bind()
         if (m_DepthStencilState)
             m_DepthStencilState->Release();
 
-        auto res = device->CreateDepthStencilState(&desc, &m_DepthStencilState);
+        auto res = m_Device->CreateDepthStencilState(&desc, &m_DepthStencilState);
 
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create depth stencil state")
 
         m_Dirty = false;
     }
 
-    context->OMSetDepthStencilState(m_DepthStencilState, m_StencilMode.StencilReference);
+    m_DeviceContext->OMSetDepthStencilState(m_DepthStencilState, m_StencilMode.StencilReference);
 }
 
 void D3D11DepthStencilState::Unbind()
 {
     LEV_PROFILE_FUNCTION();
 
-    context->OMSetDepthStencilState(nullptr, m_StencilMode.StencilReference);
+    m_DeviceContext->OMSetDepthStencilState(nullptr, m_StencilMode.StencilReference);
 }
 }

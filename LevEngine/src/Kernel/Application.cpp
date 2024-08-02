@@ -40,12 +40,15 @@ namespace LevEngine
         s_Instance = this;
 
         m_RenderDevice = CreateRenderDevice();
+
+        LEV_CORE_ASSERT(m_RenderDevice, "Failed to create render device");
         
-        m_Window = Window::Create(WindowAttributes(specification.Name, specification.WindowWidth,
+        m_Window = Window::Create(m_RenderDevice, WindowAttributes(specification.Name, specification.WindowWidth,
                                                    specification.WindowHeight));
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
         //TODO: Find out better way to initialize it
+        D3D11DeferredContexts::SetRenderDevice(m_RenderDevice);
         RenderCommand::Init();
         DispatchCommand::Init();
         RenderDebugEvent::Init();

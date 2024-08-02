@@ -15,12 +15,10 @@
 #include "Kernel/Window.h"
 
 #include "Icons/IconsFontAwesome6.h"
+#include "Platform/D3D11/D3D11RenderDevice.h"
 
 namespace LevEngine
 {
-	extern ID3D11DeviceContext* context;
-	extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
 	ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer")
 	{
 		
@@ -75,9 +73,12 @@ namespace LevEngine
 
 		const auto& app = Application::Get();
 		const auto window = static_cast<HWND*>(app.GetWindow().GetNativeWindow());
-
+		
 		ImGui_ImplWin32_Init(window);
-		ImGui_ImplDX11_Init(device.Get(), context);
+
+		//TODO: Make gui depending on settings
+		auto& renderDevice = (D3D11RenderDevice&) App::RenderDevice();
+		ImGui_ImplDX11_Init(renderDevice.GetDevice().Get(), renderDevice.GetDeviceContext().Get());
 	}
 
 	void ImGuiLayer::OnEvent(Event& event)
@@ -200,7 +201,8 @@ namespace LevEngine
 	void ImGuiLayer::Begin()
 	{
 		LEV_PROFILE_FUNCTION();
-		
+
+		//TODO: Make gui depending on settings
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
@@ -217,6 +219,7 @@ namespace LevEngine
 		io.DisplaySize = ImVec2(static_cast<float>(window.GetWidth()), static_cast<float>(window.GetHeight()));
 
 		ImGui::Render();
+		//TODO: Make gui depending on settings
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

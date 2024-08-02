@@ -201,7 +201,7 @@ namespace LevEngine
 		return DefWindowProc(hwnd, umessage, wparam, lparam);
 	}
 
-	void WindowsWindow::Init(const WindowAttributes& attributes)
+	void WindowsWindow::Init(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes)
 	{
 		LEV_PROFILE_FUNCTION();
 
@@ -271,7 +271,7 @@ namespace LevEngine
 			Log::CoreError("Error while registering raw input devices. Error code {0}", GetLastError());
 
 		m_Context = RenderContext::Create();
-		m_Context->Init(attributes.width, attributes.height, m_Window);
+		m_Context->Init(renderDevice, attributes.width, attributes.height, IsVSync(), m_Window);
 
 		SetVSync(true);
 	}

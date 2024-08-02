@@ -14,16 +14,12 @@
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-    
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
 static uint32_t GetPitch(const uint16_t width, const uint8_t bpp)
 {
     return (static_cast<uint64_t>(width) * bpp + 7u) / 8u;
 }
     
-static DXGI_SAMPLE_DESC GetSupportedSampleCount(const DXGI_FORMAT format, const uint8_t numSamples)
+static DXGI_SAMPLE_DESC GetSupportedSampleCount(ID3D11Device2* device, const DXGI_FORMAT format, const uint8_t numSamples)
 {
     DXGI_SAMPLE_DESC sampleDesc{};
 
@@ -44,6 +40,7 @@ static DXGI_SAMPLE_DESC GetSupportedSampleCount(const DXGI_FORMAT format, const 
 }
     
 Ref<Texture> D3D11Texture::CreateTexture2D(
+	ID3D11Device2* device, 
     const uint16_t width,
     const uint16_t height,
     const uint16_t slices,
@@ -54,7 +51,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
 {
     LEV_PROFILE_FUNCTION();
 
-	Ref<D3D11Texture> texture = CreateRef<D3D11Texture>();
+	Ref<D3D11Texture> texture = CreateRef<D3D11Texture>(device);
 
 	texture->m_TextureFormat = format;
 	texture->m_CPUAccess = cpuAccess;
@@ -68,7 +65,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
 
     const DXGI_FORMAT dxgiFormat = ConvertFormat(format);
 
-    texture->m_SampleDesc = GetSupportedSampleCount(dxgiFormat, format.NumSamples);
+    texture->m_SampleDesc = GetSupportedSampleCount(device, dxgiFormat, format.NumSamples);
 
     texture->m_TextureFormat = ConvertFormat(dxgiFormat, format.NumSamples);
 
@@ -119,6 +116,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
 }
 
 Ref<Texture> D3D11Texture::CreateTexture2D(
+	ID3D11Device2* device,
     const uint16_t width,
     const uint16_t height,
     const uint16_t slices,
@@ -134,7 +132,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
         return nullptr;
     }
 
-    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>();
+    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>(device);
 
     texture->m_IsLoaded = true;
     texture->m_Width = width;
@@ -150,7 +148,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
 
     const DXGI_FORMAT dxgiFormat = ConvertFormat(format);
 
-    texture->m_SampleDesc = GetSupportedSampleCount(dxgiFormat, format.NumSamples);
+    texture->m_SampleDesc = GetSupportedSampleCount(device,  dxgiFormat, format.NumSamples);
 
     texture->m_TextureFormat = ConvertFormat(dxgiFormat, format.NumSamples);
 
@@ -262,10 +260,10 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
     return texture;
 }
 
-Ref<Texture> D3D11Texture::CreateTextureCube(const uint16_t width, const uint16_t height, const TextureFormat& format,
+Ref<Texture> D3D11Texture::CreateTextureCube(ID3D11Device2* device, uint16_t width, const uint16_t height, const TextureFormat& format,
     const CPUAccess cpuAccess, const bool uav, const bool generateMipMaps)
 {
-    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>();
+    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>(device);
 
     if (format.NumSamples > 1)
     {
@@ -286,7 +284,7 @@ Ref<Texture> D3D11Texture::CreateTextureCube(const uint16_t width, const uint16_
 
     const DXGI_FORMAT dxgiFormat = ConvertFormat(format);
 
-    texture->m_SampleDesc = GetSupportedSampleCount(dxgiFormat, 1);
+    texture->m_SampleDesc = GetSupportedSampleCount(device, dxgiFormat, 1);
 
     texture->m_TextureFormat = ConvertFormat(dxgiFormat, 1);
 
@@ -338,10 +336,12 @@ Ref<Texture> D3D11Texture::CreateTextureCube(const uint16_t width, const uint16_
     return texture;
 }
 
-D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMaps) : Texture(path)
+D3D11Texture::D3D11Texture(ID3D11Device2* device, const String& path, bool isLinear, bool generateMipMaps) : Texture(path), m_Device(device)
 {
     LEV_PROFILE_FUNCTION();
 
+	device->GetImmediateContext2(&m_DeviceContext);
+	
 	// Load image
 
 	stbi_set_flip_vertically_on_load(1);
@@ -384,7 +384,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
         LEV_THROW("Unsupported number of channels");
     }
 
-    auto res = device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
+    auto res = m_Device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
     LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query format support")
 
 	auto textureFormatSupported = m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D;
@@ -399,7 +399,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
     m_Height = height;
     m_TextureDimension = Dimension::Texture2D;
     m_NumSlices = 1;
-    m_SampleDesc = GetSupportedSampleCount(m_TextureResourceFormat, 1);
+    m_SampleDesc = GetSupportedSampleCount(device, m_TextureResourceFormat, 1);
 
     m_ShaderResourceViewFormat = m_RenderTargetViewFormat = m_TextureResourceFormat;
 
@@ -437,7 +437,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
 	subresourceData.SysMemPitch = m_Pitch;
     subresourceData.SysMemSlicePitch = 0;
 
-	auto result = device->CreateTexture2D(
+	auto result = m_Device->CreateTexture2D(
 		&textureDesc,
         m_GenerateMipMaps ? nullptr : &subresourceData,
 		&m_Texture2D
@@ -455,7 +455,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
     resourceViewDesc.Texture2D.MostDetailedMip = 0;
 
 
-	result = device->CreateShaderResourceView(m_Texture2D,
+	result = m_Device->CreateShaderResourceView(m_Texture2D,
 		&resourceViewDesc,
 		&m_ShaderResourceView
 	);
@@ -464,9 +464,9 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
 
     if (m_GenerateMipMaps)
     {
-        auto context = D3D11DeferredContexts::GetContext();
-        context->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
-        context->GenerateMips(m_ShaderResourceView);
+        auto m_DeviceContext = D3D11DeferredContexts::GetContext();
+        m_DeviceContext->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
+        m_DeviceContext->GenerateMips(m_ShaderResourceView);
     }
 
     m_IsDirty = false;
@@ -474,9 +474,11 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
     stbi_image_free(data);
 }
 
-D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
+D3D11Texture::D3D11Texture(ID3D11Device2* device, const String paths[6], const bool isLinear) : m_Device(device)
 {
     LEV_PROFILE_FUNCTION();
+
+	device->GetImmediateContext2(&m_DeviceContext);
 
     int width, height, channels;
     bool isHDR = false;
@@ -521,7 +523,7 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
         LEV_THROW("Unsupported number of channels");
     }
 
-    auto res = device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
+    auto res = m_Device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
     LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query format support")
 
 	LEV_CORE_ASSERT(m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURECUBE, "Format is not supported");
@@ -534,7 +536,7 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
     m_Height = height;
     m_TextureDimension = Dimension::TextureCube;
     m_NumSlices = 6;
-    m_SampleDesc = GetSupportedSampleCount(m_TextureResourceFormat, 1);
+    m_SampleDesc = GetSupportedSampleCount(device, m_TextureResourceFormat, 1);
 
     m_ShaderResourceViewFormat = m_RenderTargetViewFormat = m_TextureResourceFormat;
     m_ShaderResourceViewFormatSupport = m_RenderTargetViewFormatSupport = m_TextureResourceFormatSupport;
@@ -576,7 +578,7 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
         subResourceData.SysMemSlicePitch = 0;
     }
 
-    auto result = device->CreateTexture2D(
+    auto result = m_Device->CreateTexture2D(
         &textureDesc,
         imageSubresourceData,
         &m_Texture2D
@@ -592,7 +594,7 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
     resourceViewDesc.Texture2D.MostDetailedMip = 0;
     resourceViewDesc.Texture2D.MipLevels = m_GenerateMipMaps ? -1 : 1;
 
-    result = device->CreateShaderResourceView(m_Texture2D,
+    result = m_Device->CreateShaderResourceView(m_Texture2D,
         &resourceViewDesc,
         &m_ShaderResourceView
     );
@@ -612,6 +614,11 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
         stbi_image_free(i);
 }
 
+D3D11Texture::D3D11Texture(ID3D11Device2* m_Device) : m_Device(m_Device)
+{
+	m_Device->GetImmediateContext2(&m_DeviceContext);
+}
+
 D3D11Texture::~D3D11Texture()
 {
     LEV_PROFILE_FUNCTION();
@@ -629,18 +636,17 @@ D3D11Texture::~D3D11Texture()
 void D3D11Texture::Bind(const uint32_t slot, const ShaderType type) const
 {
     LEV_PROFILE_FUNCTION();
-
-    //TODO: Fix compute shader binding (uav)
+	
     if (type & ShaderType::Vertex)
-        context->VSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        m_DeviceContext->VSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (type & ShaderType::Pixel)
-        context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        m_DeviceContext->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (type & ShaderType::Geometry)
-        context->GSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        m_DeviceContext->GSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (type & ShaderType::Compute)
     {
-        context->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
-        context->CSSetUnorderedAccessViews(slot, 1, &m_UnorderedAccessView, nullptr);
+        m_DeviceContext->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        m_DeviceContext->CSSetUnorderedAccessViews(slot, 1, &m_UnorderedAccessView, nullptr);
     }
 
     if (m_SamplerState)
@@ -655,15 +661,15 @@ void D3D11Texture::Unbind(const uint32_t slot, const ShaderType type) const
     ID3D11UnorderedAccessView* uav[] = { nullptr };
 
     if (type & ShaderType::Vertex)
-        context->VSSetShaderResources(slot, 1, srv);
+        m_DeviceContext->VSSetShaderResources(slot, 1, srv);
     if (type & ShaderType::Pixel)
-        context->PSSetShaderResources(slot, 1, srv);
+        m_DeviceContext->PSSetShaderResources(slot, 1, srv);
     if (type & ShaderType::Geometry)
-        context->GSSetShaderResources(slot, 1, srv);
+        m_DeviceContext->GSSetShaderResources(slot, 1, srv);
     if (type & ShaderType::Compute)
     {
-        context->CSSetShaderResources(slot, 1, srv);
-        context->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
+        m_DeviceContext->CSSetShaderResources(slot, 1, srv);
+        m_DeviceContext->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
     }
 
     if (m_SamplerState)
@@ -674,18 +680,18 @@ void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, const floa
 {
     LEV_PROFILE_FUNCTION();
 
-	if (m_RenderTargetView && (int)clearFlags & (int)ClearFlags::Color)
+	if (m_RenderTargetView && clearFlags & ClearFlags::Color)
 	{
-		context->ClearRenderTargetView(m_RenderTargetView, &color.x);
+		m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, &color.x);
 	}
 
 	{
 		UINT flags = 0;
-		flags |= (int)clearFlags & (int)ClearFlags::Depth ? D3D11_CLEAR_DEPTH : 0;
-		flags |= (int)clearFlags & (int)ClearFlags::Stencil ? D3D11_CLEAR_STENCIL : 0;
+		flags |= clearFlags & ClearFlags::Depth ? D3D11_CLEAR_DEPTH : 0;
+		flags |= clearFlags & ClearFlags::Stencil ? D3D11_CLEAR_STENCIL : 0;
 		if (m_DepthStencilView && flags > 0)
 		{
-			context->ClearDepthStencilView(m_DepthStencilView, flags, depth, stencil);
+			m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, flags, depth, stencil);
 		}
 	}
 }
@@ -773,7 +779,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 
     textureDesc.MiscFlags = m_GenerateMipMaps ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
 
-    auto res = device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
+    auto res = m_Device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
     LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture")
 
     if (textureDesc.BindFlags & D3D11_BIND_DEPTH_STENCIL)
@@ -812,7 +818,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 		    }
 	    }
 
-        res = device->CreateDepthStencilView(m_Texture2D, &depthStencilViewDesc, &m_DepthStencilView);
+        res = m_Device->CreateDepthStencilView(m_Texture2D, &depthStencilViewDesc, &m_DepthStencilView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create depth/stencil view")
     }
 
@@ -852,7 +858,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 			    resourceViewDesc.Texture2D.MostDetailedMip = 0;
 		    }
 	    }
-        res = device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView);
+        res = m_Device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
 
 	    if (m_GenerateMipMaps)
@@ -895,7 +901,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 		    }
 	    }
 
-        res = device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView);
+        res = m_Device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create render target view")
     }
 
@@ -920,7 +926,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 		    unorderedAccessViewDesc.Texture2D.MipSlice = 0;
 	    }
 
-        res = device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView);
+        res = m_Device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create unordered access view")
     }
 
@@ -980,7 +986,7 @@ void D3D11Texture::ResizeCube(const uint16_t width, const uint16_t height)
     textureDesc.MiscFlags = m_GenerateMipMaps ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
     textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE;
     
-    auto res = device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
+    auto res = m_Device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
     LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture")
 
     if ((textureDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE) != 0)
@@ -995,7 +1001,7 @@ void D3D11Texture::ResizeCube(const uint16_t width, const uint16_t height)
         resourceViewDesc.Texture2DArray.MipLevels = m_GenerateMipMaps ? -1 : 1;
         resourceViewDesc.Texture2DArray.MostDetailedMip = 0;
         
-        res = device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView);
+        res = m_Device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
 
 	    if (m_GenerateMipMaps)
@@ -1013,7 +1019,7 @@ void D3D11Texture::ResizeCube(const uint16_t width, const uint16_t height)
         renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
         renderTargetViewDesc.Texture2DArray.ArraySize = m_NumSlices;
 
-        res = device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView);
+        res = m_Device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create render target view")
     }
 
@@ -1030,7 +1036,7 @@ void D3D11Texture::ResizeCube(const uint16_t width, const uint16_t height)
         unorderedAccessViewDesc.Texture2DArray.FirstArraySlice = 0;
         unorderedAccessViewDesc.Texture2DArray.ArraySize = m_NumSlices;
 
-        res = device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView);
+        res = m_Device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create unordered access view")
     }
 
@@ -1069,7 +1075,7 @@ Ref<Texture> D3D11Texture::GetMipMapLevel(int level) const
     //TODO: Support for other dimensions
 
     //<--- Texture Cube ---<<
-    Ref<D3D11Texture> mipMapTexture = CreateRef<D3D11Texture>();
+    Ref<D3D11Texture> mipMapTexture = CreateRef<D3D11Texture>(m_Device);
     {
         D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
         renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
@@ -1078,7 +1084,7 @@ Ref<Texture> D3D11Texture::GetMipMapLevel(int level) const
         renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
         renderTargetViewDesc.Texture2DArray.ArraySize = m_NumSlices;
 
-        const auto res = device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &mipMapTexture->m_RenderTargetView);
+        const auto res = m_Device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &mipMapTexture->m_RenderTargetView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create render target view")
     }
     
@@ -1094,7 +1100,7 @@ Ref<Texture> D3D11Texture::GetMipMapLevel(int level) const
         resourceViewDesc.Texture2DArray.MipLevels = 1;
         resourceViewDesc.Texture2DArray.MostDetailedMip = level;
         
-        const auto res = device->CreateShaderResourceView(mipRes, &resourceViewDesc, &mipMapTexture->m_ShaderResourceView);
+        const auto res = m_Device->CreateShaderResourceView(mipRes, &resourceViewDesc, &mipMapTexture->m_ShaderResourceView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
     }
 
@@ -1121,15 +1127,15 @@ void D3D11Texture::CopyFrom(const Ref<Texture> sourceTexture)
         {
         case Dimension::Texture1D:
         case Dimension::Texture1DArray:
-	        context->CopyResource(m_Texture1D, srcTexture->m_Texture1D);
+	        m_DeviceContext->CopyResource(m_Texture1D, srcTexture->m_Texture1D);
 	        break;
         case Dimension::Texture2D:
         case Dimension::Texture2DArray:
-	        context->CopyResource(m_Texture2D, srcTexture->m_Texture2D);
+	        m_DeviceContext->CopyResource(m_Texture2D, srcTexture->m_Texture2D);
 	        break;
         case Dimension::Texture3D:
         case Dimension::TextureCube:
-	        context->CopyResource(m_Texture3D, srcTexture->m_Texture3D);
+	        m_DeviceContext->CopyResource(m_Texture3D, srcTexture->m_Texture3D);
 	        break;
         }
     }
@@ -1139,12 +1145,12 @@ void D3D11Texture::CopyFrom(const Ref<Texture> sourceTexture)
         D3D11_MAPPED_SUBRESOURCE mappedResource;
 
         // Copy the texture data from the texture resource
-        auto res = context->Map(m_Texture2D, 0, D3D11_MAP_READ, 0, &mappedResource);
+        auto res = m_DeviceContext->Map(m_Texture2D, 0, D3D11_MAP_READ, 0, &mappedResource);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to map texture resource for reading")
 
         memcpy_s(m_Buffer.data(), m_Buffer.size(), mappedResource.pData, m_Buffer.size());
 
-        context->Unmap(m_Texture2D, 0);
+        m_DeviceContext->Unmap(m_Texture2D, 0);
     }
 }
 
@@ -1158,7 +1164,7 @@ Ref<Texture> D3D11Texture::Clone()
         LEV_NOT_IMPLEMENTED
     case Dimension::Texture2D:
     case Dimension::Texture2DArray:
-        other = CreateTexture2D(m_Width, m_Height, m_NumSlices, m_TextureFormat, m_CPUAccess, m_UAV, m_GenerateMipMaps);
+        other = CreateTexture2D(m_Device, m_Width, m_Height, m_NumSlices, m_TextureFormat, m_CPUAccess, m_UAV, m_GenerateMipMaps);
         break;
     case Dimension::Texture3D:
     case Dimension::TextureCube:
@@ -1177,6 +1183,6 @@ void D3D11Texture::GenerateMipMaps()
     LEV_PROFILE_FUNCTION();
 
 	if (m_GenerateMipMaps && m_ShaderResourceView)
-		context->GenerateMips(m_ShaderResourceView);
+		m_DeviceContext->GenerateMips(m_ShaderResourceView);
 }
 }

@@ -1,5 +1,4 @@
 #include "levpch.h"
-#include <wrl/client.h>
 
 #include "D3D11ConstantBuffer.h"
 
@@ -7,11 +6,10 @@
 
 namespace LevEngine
 {
-    extern ID3D11DeviceContext* context;
-    extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
-    D3D11ConstantBuffer::D3D11ConstantBuffer(const uint32_t size, const uint32_t slot) : ConstantBuffer(size, slot)
+    D3D11ConstantBuffer::D3D11ConstantBuffer(ID3D11Device2* device, const uint32_t size, const uint32_t slot) : ConstantBuffer(size, slot)
     {
+        device->GetImmediateContext2(&m_Context);
+        
         D3D11_BUFFER_DESC bufferDesc;
 
         bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -37,9 +35,9 @@ namespace LevEngine
 
         const auto actualSize = size ? size : m_Size;
         D3D11_MAPPED_SUBRESOURCE resource;
-        context->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+        m_Context->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
         memcpy(resource.pData, data, actualSize);
-        context->Unmap(m_Buffer, 0);
+        m_Context->Unmap(m_Buffer, 0);
     }
 
     void D3D11ConstantBuffer::Bind(const ShaderType shaderType)
@@ -50,13 +48,13 @@ namespace LevEngine
     void D3D11ConstantBuffer::Bind(const uint32_t slot, const ShaderType shaderType)
     {
         if (shaderType & ShaderType::Vertex)
-            context->VSSetConstantBuffers(slot, 1, &m_Buffer);
+            m_Context->VSSetConstantBuffers(slot, 1, &m_Buffer);
         if (shaderType & ShaderType::Pixel)
-            context->PSSetConstantBuffers(slot, 1, &m_Buffer);
+            m_Context->PSSetConstantBuffers(slot, 1, &m_Buffer);
         if (shaderType & ShaderType::Geometry)
-            context->GSSetConstantBuffers(slot, 1, &m_Buffer);
+            m_Context->GSSetConstantBuffers(slot, 1, &m_Buffer);
         if (shaderType & ShaderType::Compute)
-            context->CSSetConstantBuffers(slot, 1, &m_Buffer);
+            m_Context->CSSetConstantBuffers(slot, 1, &m_Buffer);
     }
 
     void D3D11ConstantBuffer::Unbind(ShaderType shaderType)
@@ -67,12 +65,12 @@ namespace LevEngine
     void D3D11ConstantBuffer::Unbind(uint32_t slot, const ShaderType shaderType)
     {
         if (shaderType & ShaderType::Vertex)
-            context->VSSetConstantBuffers(slot, 0, nullptr);
+            m_Context->VSSetConstantBuffers(slot, 0, nullptr);
         if (shaderType & ShaderType::Pixel)
-            context->PSSetConstantBuffers(slot, 0, nullptr);
+            m_Context->PSSetConstantBuffers(slot, 0, nullptr);
         if (shaderType & ShaderType::Geometry)
-            context->GSSetConstantBuffers(slot, 0, nullptr);
+            m_Context->GSSetConstantBuffers(slot, 0, nullptr);
         if (shaderType & ShaderType::Compute)
-            context->CSSetConstantBuffers(slot, 0, nullptr);
+            m_Context->CSSetConstantBuffers(slot, 0, nullptr);
     }
 }

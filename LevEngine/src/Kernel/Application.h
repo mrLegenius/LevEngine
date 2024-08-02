@@ -94,7 +94,7 @@ namespace LevEngine
 
         Scope<Physics> m_Physics;
         Scope<LevEngine::Renderer> m_Renderer;
-        Scope<LevEngine::RenderDevice> m_RenderDevice;
+        Ref<LevEngine::RenderDevice> m_RenderDevice;
 
         LayerStack m_LayerStack;
 

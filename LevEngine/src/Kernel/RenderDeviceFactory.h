@@ -5,7 +5,7 @@
 
 namespace LevEngine
 {
-    inline Scope<RenderDevice> CreateRenderDevice()
+    inline Ref<RenderDevice> CreateRenderDevice()
     {
         switch (RenderSettings::RendererAPI)
         {
@@ -15,7 +15,7 @@ namespace LevEngine
         case RendererAPI::OpenGL:
             LEV_NOT_IMPLEMENTED
         case RendererAPI::D3D11:
-            return CreateScope<D3D11RenderDevice>();
+            return CreateRef<D3D11RenderDevice>();
         default:
             LEV_THROW("Unknown Renderer API");
         }

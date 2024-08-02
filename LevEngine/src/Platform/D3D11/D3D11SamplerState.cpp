@@ -7,8 +7,10 @@
 
 namespace LevEngine
 {
-	extern ID3D11DeviceContext* context;
-	extern Microsoft::WRL::ComPtr<ID3D11Device> device;
+	D3D11SamplerState::D3D11SamplerState(ID3D11Device2* device) : m_Device(device)
+	{
+		device->GetImmediateContext2(&m_DeviceContext);
+	}
 
 	D3D11SamplerState::~D3D11SamplerState()
 	{
@@ -134,7 +136,7 @@ namespace LevEngine
 			if (m_SamplerState)
 				m_SamplerState->Release();
 
-			const auto res = device->CreateSamplerState(&samplerDesc, &m_SamplerState);
+			const auto res = m_Device->CreateSamplerState(&samplerDesc, &m_SamplerState);
 			LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create SamplerState")
 
 			m_IsDirty = false;
@@ -143,13 +145,13 @@ namespace LevEngine
 		ID3D11SamplerState* pSamplers[] = { m_SamplerState };
 
 		if (shaderType & ShaderType::Vertex)
-			context->VSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->VSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Pixel)
-			context->PSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->PSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Geometry)
-			context->GSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->GSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Compute)
-			context->CSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->CSSetSamplers(slot, 1, pSamplers);
 	}
 
 	void D3D11SamplerState::Unbind(const uint32_t slot, const ShaderType shaderType)
@@ -157,12 +159,12 @@ namespace LevEngine
 		ID3D11SamplerState* pSamplers[] = { nullptr };
 
 		if (shaderType & ShaderType::Vertex)
-			context->VSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->VSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Pixel)
-			context->PSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->PSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Geometry)
-			context->GSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->GSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Compute)
-			context->CSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->CSSetSamplers(slot, 1, pSamplers);
 	}
 }

@@ -6,9 +6,6 @@
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
 D3D11_BLEND ConvertBlendFactor(const BlendFactor blendFactor)
 {
     D3D11_BLEND result = D3D11_BLEND_ONE;
@@ -170,6 +167,11 @@ D3D11_COLOR_WRITE_ENABLE ConvertWriteMask(BlendWrite blendWrite)
 //    return result;
 //}
 
+D3D11BlendState::D3D11BlendState(ID3D11Device2* device) : m_Device(device)
+{
+    device->GetImmediateContext2(&m_DeviceContext);
+}
+
 D3D11BlendState::~D3D11BlendState()
 {
     if (m_BlendState)
@@ -206,20 +208,20 @@ void D3D11BlendState::Bind()
         if (m_BlendState)
             m_BlendState->Release();
 
-        const auto res = device->CreateBlendState(&blendDesc, &m_BlendState);
+        const auto res = m_Device->CreateBlendState(&blendDesc, &m_BlendState);
 
         LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create blend state")
 
         m_Dirty = false;
     }
 
-    context->OMSetBlendState(m_BlendState, &m_ConstBlendFactor.x, m_SampleMask);
+    m_DeviceContext->OMSetBlendState(m_BlendState, &m_ConstBlendFactor.x, m_SampleMask);
 }
 
 void D3D11BlendState::Unbind()
 {
     LEV_PROFILE_FUNCTION();
 
-    context->OMSetBlendState(nullptr, &m_ConstBlendFactor.x, m_SampleMask);
+    m_DeviceContext->OMSetBlendState(nullptr, &m_ConstBlendFactor.x, m_SampleMask);
 }
 }

@@ -137,6 +137,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11DeferredContexts.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RefreshRateUtil.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDevice.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11TextureFormatsUtils.h" />
@@ -1013,7 +1014,7 @@
     <ClInclude Include="src\Renderer\PostProcessing\TonemappingPass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\VignettePass.h" />
     <ClInclude Include="src\Renderer\RenderContext.h" />
-    <ClInclude Include="src\Platform\D3D11\D3D11RendererContext.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RenderContext.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ShadowMap.h" />
     <ClInclude Include="src\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
@@ -1412,7 +1413,7 @@
     <ClCompile Include="src\Renderer\PostProcessing\TonemappingPass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\VignettePass.cpp" />
     <ClCompile Include="src\Renderer\RenderContext.cpp" />
-    <ClCompile Include="src\Platform\D3D11\D3D11RendererContext.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11RenderContext.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderCommands.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11ShadowMap.cpp" />
     <ClCompile Include="src\Renderer\RenderCommands.cpp" />

@@ -1,6 +1,6 @@
 #pragma once
 #include <dxgiformat.h>
-#include <d3d11.h>
+#include <d3d11_2.h>
 
 #include "Renderer/Pipeline/ClearFlags.h"
 #include "Renderer/Pipeline/CPUAccess.h"
@@ -11,31 +11,31 @@ namespace LevEngine
 class D3D11Texture : public Texture
 {
 public:
-	D3D11Texture() = default;
+	D3D11Texture(ID3D11Device2* device);
 	~D3D11Texture() override;
 	
-	static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices,
-		const TextureFormat& format,
-		CPUAccess cpuAccess = CPUAccess::None,
-		bool uav = false,
-		bool generateMipMaps = false);
+	static Ref<Texture> CreateTexture2D(ID3D11Device2* device, const uint16_t width, const uint16_t height,
+	                                    const uint16_t slices,
+	                                    const TextureFormat& format,
+	                                    const CPUAccess cpuAccess = CPUAccess::None,
+	                                    const bool uav = false, const bool generateMipMaps = false);
 	
-	static Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices,
-		TextureFormat format,
-		const void* data,
-		CPUAccess cpuAccess,
-		bool uav,
-		bool generateMipMaps);
+	static Ref<Texture> CreateTexture2D(ID3D11Device2* device, const uint16_t width, const uint16_t height,
+	                                    const uint16_t slices,
+	                                    const TextureFormat format,
+	                                    const void* data,
+	                                    const CPUAccess cpuAccess,
+	                                    const bool uav, const bool generateMipMaps);
 
-	static Ref<Texture> CreateTextureCube(const uint16_t width, const uint16_t height,
-		const TextureFormat& format,
-		const CPUAccess cpuAccess,
-		const bool uav,
-		const bool generateMipMaps);
+	static Ref<Texture> CreateTextureCube(ID3D11Device2* device, uint16_t width,
+	                                      const uint16_t height,
+	                                      const TextureFormat& format,
+	                                      const CPUAccess cpuAccess,
+	                                      const bool uav, const bool generateMipMaps);
 	
 	
-	explicit D3D11Texture(const String& path, bool isLinear, bool generateMipMaps = true);
-	explicit D3D11Texture(const String paths[6], bool isLinear);
+	explicit D3D11Texture(ID3D11Device2* device, const String& path, bool isLinear, bool generateMipMaps = true);
+	explicit D3D11Texture(ID3D11Device2* device, const String paths[6], bool isLinear);
 	
 	[[nodiscard]] uint16_t GetWidth() const override { return m_Width; }
 	[[nodiscard]] uint16_t GetHeight() const override { return m_Height; }
@@ -69,6 +69,9 @@ public:
 
 protected:
 
+	ID3D11Device2* m_Device;
+	ID3D11DeviceContext2* m_DeviceContext;
+	
 	ID3D11Texture1D* m_Texture1D = nullptr;
 	ID3D11Texture2D* m_Texture2D = nullptr;
 	ID3D11Texture3D* m_Texture3D = nullptr;
@@ -91,7 +94,7 @@ protected:
 	// DXGI texture format support flags
 	UINT m_TextureResourceFormatSupport{};
 	UINT m_DepthStencilViewFormatSupport{};
-	UINT m_ShaderResourceViewFormatSupport;
+	UINT m_ShaderResourceViewFormatSupport{};
 	UINT m_RenderTargetViewFormatSupport{};
 	UINT m_UnorderedAccessViewFormatSupport{};
 

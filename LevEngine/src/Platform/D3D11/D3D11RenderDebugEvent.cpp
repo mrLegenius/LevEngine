@@ -3,7 +3,10 @@
 
 namespace LevEngine
 {
-    extern ID3D11DeviceContext* context;
+    D3D11RenderDebugEvent::D3D11RenderDebugEvent(ID3D11Device2* device)
+    {
+        device->GetImmediateContext2(&m_DeviceContext);
+    }
 
     D3D11RenderDebugEvent::~D3D11RenderDebugEvent()
     {
@@ -16,7 +19,7 @@ namespace LevEngine
     void D3D11RenderDebugEvent::StartEvent(String label)
     {
         if (!m_UserDefinedAnnotation)
-            context->QueryInterface<ID3DUserDefinedAnnotation>(&m_UserDefinedAnnotation);
+            m_DeviceContext->QueryInterface<ID3DUserDefinedAnnotation>(&m_UserDefinedAnnotation);
         
         const auto wideString = std::wstring(label.begin(), label.end());
         m_UserDefinedAnnotation->BeginEvent(wideString.c_str());
