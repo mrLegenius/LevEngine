@@ -11,13 +11,15 @@ Game Engine based on ECS approach
 
 ### Platforms:
 * Windows
-* Linus (TODO)
+* Linux (TODO)
 
 # Features
 
 * Forward and Deferred Rendering (Forward+ in progress)
 * PBR Materials
-* Intergrated NVIDIA PhysX 5
+* Integrated NVIDIA PhysX 5 Physics system
 * Lua Scripting
 * Skeletal Animations
 * CSS-like UI (TODO)
+* Recast Detour nav mesh generation
+* Rule based AI
