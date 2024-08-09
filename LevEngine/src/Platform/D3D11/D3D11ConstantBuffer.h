@@ -18,6 +18,8 @@ namespace LevEngine
         void Bind(uint32_t slot, ShaderType shaderType) override;
         void Unbind(ShaderType shaderType) override;
         void Unbind(uint32_t slot, ShaderType shaderType) override;
+        
+        ID3D11Buffer* GetBuffer() const;
 
     private:
         ID3D11Buffer* m_Buffer = nullptr;

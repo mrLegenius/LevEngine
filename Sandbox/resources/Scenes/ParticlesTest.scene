@@ -1,92 +1,44 @@
 Scene: ParticlesTest
 Entities:
-  - Entity: 4039245118330447564
-    Tag: Light
+  - Entity: 3176018785638816459
+    Tag: Particles
     Transform:
-      Position: [-0.802221954, -0.998013258, 0.472035557]
-      Rotation: [-0.222449958, -2.36476755, 2.29386258]
-      Scale: [0.999999404, 0.999999821, 0.999999821]
-    Directional Light:
-      Color: [1, 1, 1, 1]
-  - Entity: 6977091423542637065
-    Tag: Particles 3
-    Transform:
-      Position: [-11.5398436, 2.96216559, -3.03056026]
+      Position: [0, 0, 1.30271101]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [-4, 10, -4]
-        VelocityB: [4, 15, 4]
-        RandomStartPosition: false
-        Position: [0, 0, 0]
-        PositionB: [0, 0, 0]
-        RandomStartColor: true
-        StartColor: [0, 0.0338983536, 1, 1]
-        StartColorB: [0.694915295, 1, 0.984487176, 1]
-        EndColor: [1, 0.513725519, 0.513725519, 1]
-        RandomStartSize: true
-        StartSize: 0.5
-        StartSizeB: 0.800000012
-        EndSize: 1
-        RandomStartLifeTime: false
-        LifeTime: 0.899999976
-        LifeTimeB: 1
-        GravityScale: 1
-      MaxParticles: 100
-      Rate: 100
-  - Entity: 15641203323483844237
-    Tag: Floor
+  - Entity: 6685805892667722528
+    Tag: Floor 2
     Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [50, 1, 50]
+      Position: [0, 2, 0]
+      Rotation: [0.514872134, 0, 0]
+      Scale: [10, 1, 10]
     MeshRenderer:
       Mesh: 6362171717149004471
       Material: 13469868196253741728
       Cast Shadow: true
       Enabled: true
-  - Entity: 3972464875524937577
-    Tag: Environment
+  - Entity: 11716462602945935033
+    Tag: Camera
     Transform:
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
+      Position: [16.5100002, 21.3880005, -26.8449993]
+      Rotation: [-0.505794942, 2.58193517, 0.0530761853]
       Scale: [1, 1, 1]
-    Skybox Renderer:
-      Skybox: 15524491819897438690
-  - Entity: 1441508377083623777
-    Tag: Particles 2
-    Transform:
-      Position: [6, 1.72116852, 3.20000005]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-    Emitter:
-      Birth:
-        RandomVelocity: true
-        Velocity: [-4, 10, -4]
-        VelocityB: [4, 15, 4]
-        RandomStartPosition: false
-        Position: [0, 0, 0]
-        PositionB: [0, 0, 0]
-        RandomStartColor: true
-        StartColor: [0, 0, 0, 1]
-        StartColorB: [0, 0, 0, 1]
-        EndColor: [0.980392158, 0.611764729, 0.298039228, 1]
-        RandomStartSize: true
-        StartSize: 0.5
-        StartSizeB: 0.800000012
-        EndSize: 1
-        RandomStartLifeTime: false
-        LifeTime: 20
-        LifeTimeB: 1
-        GravityScale: 1
-      MaxParticles: 100
-      Rate: 100
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 60
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
   - Entity: 1419352212147135677
-    Tag: Particles
+    Tag: Red Particles
+    Parent: 3176018785638816459
     Transform:
-      Position: [0, 1.72116852, 0]
+      Position: [-7.08952999, 1.72113383, 12.8060141]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Emitter:
@@ -102,31 +54,99 @@ Entities:
         StartColorB: [1, 0, 0, 1]
         EndColor: [1, 0.737254918, 0.513725519, 1]
         RandomStartSize: true
-        StartSize: 0.5
+        StartSize: 1
         StartSizeB: 0.800000012
         EndSize: 1
         RandomStartLifeTime: false
-        LifeTime: 0.899999976
+        LifeTime: 1
         LifeTimeB: 1
         GravityScale: 1
       MaxParticles: 100
-      Rate: 100
-  - Entity: 11716462602945935033
-    Tag: Camera
+      Rate: 20
+  - Entity: 1441508377083623777
+    Tag: Green Particles
+    Parent: 3176018785638816459
     Transform:
-      Position: [12.4103556, 19.087801, -24.5449486]
-      Rotation: [-0.299852163, 2.94505692, 0.0530997477]
+      Position: [1.17197704, 1.72116971, 10.3184729]
+      Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
-    Camera:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 90
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Main: true
-      FixedAspectRatio: false
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [-4, 10, -4]
+        VelocityB: [4, 15, 4]
+        RandomStartPosition: false
+        Position: [0, 0, 0]
+        PositionB: [0, 0, 0]
+        RandomStartColor: true
+        StartColor: [0, 0, 0, 1]
+        StartColorB: [0, 0, 0, 1]
+        EndColor: [0, 1, 0.964705706, 1]
+        RandomStartSize: true
+        StartSize: 1
+        StartSizeB: 0.800000012
+        EndSize: 1
+        RandomStartLifeTime: false
+        LifeTime: 1
+        LifeTimeB: 1
+        GravityScale: 1
+      MaxParticles: 100
+      Rate: 20
+  - Entity: 3972464875524937577
+    Tag: Environment
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Skybox Renderer:
+      Skybox: 15524491819897438690
+  - Entity: 15641203323483844237
+    Tag: Floor
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [50, 1, 50]
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 13469868196253741728
+      Cast Shadow: true
+      Enabled: true
+  - Entity: 6977091423542637065
+    Tag: Purple Particles
+    Parent: 3176018785638816459
+    Transform:
+      Position: [-3.60583854, 2.96216702, 2.43055058]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [-4, 10, -4]
+        VelocityB: [4, 15, 4]
+        RandomStartPosition: false
+        Position: [0, 0, 0]
+        PositionB: [0, 0, 0]
+        RandomStartColor: true
+        StartColor: [0.270587921, 0, 1, 1]
+        StartColorB: [0.694915295, 0.730807543, 1, 1]
+        EndColor: [0.411764622, 0, 1, 1]
+        RandomStartSize: true
+        StartSize: 1
+        StartSizeB: 0.800000012
+        EndSize: 1
+        RandomStartLifeTime: false
+        LifeTime: 1
+        LifeTimeB: 1
+        GravityScale: 1
+      MaxParticles: 100
+      Rate: 25
+  - Entity: 4039245118330447564
+    Tag: Light
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0.457276285, 0, 0]
+      Scale: [0.999999404, 1, 1]
+    Directional Light:
+      Color: [1, 1, 1, 1]
 Systems:
   []

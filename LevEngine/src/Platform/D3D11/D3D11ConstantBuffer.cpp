@@ -73,4 +73,6 @@ namespace LevEngine
         if (shaderType & ShaderType::Compute)
             m_Context->CSSetConstantBuffers(slot, 0, nullptr);
     }
+
+    ID3D11Buffer* D3D11ConstantBuffer::GetBuffer() const { return m_Buffer; }
 }

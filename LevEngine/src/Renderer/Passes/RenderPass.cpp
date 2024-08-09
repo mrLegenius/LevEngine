@@ -6,6 +6,8 @@ namespace LevEngine
 {
     bool RenderPass::Execute(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         if (Begin(registry, params))
         {
             const auto passName = PassName();

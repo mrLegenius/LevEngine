@@ -2,6 +2,7 @@
 #include <d3d11_2.h>
 
 #include "Renderer/RenderCommands.h"
+#include "Renderer/Pipeline/ConstantBuffer.h"
 
 namespace LevEngine
 {
@@ -16,6 +17,7 @@ public:
 	void DrawLineList(const Ref<IndexBuffer>& indexBuffer) override;
 	void DrawLineStrip(uint32_t vertexCount) override;
 	void DrawPointList(uint32_t count) override;
+	void DrawIndirect(const Ref<ConstantBuffer>& buffer) const;
 
 private:
 	ID3D11DeviceContext2* m_DeviceContext;

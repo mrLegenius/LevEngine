@@ -13,10 +13,12 @@ namespace LevEngine
 
         static Ref<StructuredBuffer> Create(const void* data, size_t count, uint32_t stride, CPUAccess cpuAccess = CPUAccess::None, bool uav = false, UAVType uavType = UAVType::None);
 
-        virtual bool Bind(unsigned id, ShaderType shaderType, bool readWrite, uint32_t counterValue = -1) = 0;
-        virtual void Unbind(unsigned id, ShaderType shaderType, bool readWrite) const = 0;
+        virtual bool Bind(uint32_t slot, ShaderType shaderType, bool readWrite, uint32_t counterValue = -1) = 0;
+        virtual void Unbind(uint32_t slot, ShaderType shaderType, bool readWrite) const = 0;
 
         virtual void Clear() const = 0;
+        virtual void BindCounter(uint32_t slot, ShaderType shaderType) = 0;
+        virtual void UnbindCounter(uint32_t slot, ShaderType shaderType) = 0;
         virtual uint32_t GetCounterValue() const = 0;
 
         [[nodiscard]] uint32_t GetElementCount() const { return m_ElementsCount; }

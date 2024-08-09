@@ -11,6 +11,7 @@
 #include "Math/Random.h"
 #include "Renderer/Pipeline/Texture.h"
 #include "ParticlesTextureArray.h"
+#include "Kernel/Time/Time.h"
 #include "Renderer/RenderParams.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Renderer/Pipeline/ConstantBuffer.h"
@@ -73,9 +74,17 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        m_EmissionPass->Execute(registry, params);
-        m_SimulationPass->Execute(registry, params);
-        m_SortingPass->Execute(registry, params);
+        static uint32_t updateFrame = -1;
+
+        if (updateFrame != Time::GetFrameNumber())
+        {
+            updateFrame = Time::GetFrameNumber();
+            
+            m_EmissionPass->Execute(registry, params);
+            m_SimulationPass->Execute(registry, params);
+        }
+
+        //m_SortingPass->Execute(registry, params);
         m_RenderingPass->Execute(registry, params);
     }
 

@@ -17,6 +17,8 @@ namespace LevEngine
                                                  CPUAccess cpuAccess, bool uav, UAVType uavType)
         : StructuredBuffer(count, stride, cpuAccess)
     {
+        LEV_PROFILE_FUNCTION();
+        
         device->GetImmediateContext2(&m_DeviceContext);
         m_Dynamic = m_CPUAccess & CPUAccess::Write;
         m_UAV = uav && !m_Dynamic;
@@ -100,14 +102,24 @@ namespace LevEngine
             LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create unordered access view")
 
             if (uavType == UAVType::Append || uavType == UAVType::Counter)
-            {
+            {   
+                //TODO: Support reading for cpu
+                //countBufferDesc.BindFlags = 0;
+                //countBufferDesc.Usage = D3D11_USAGE_STAGING;
+                //countBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+                //countBufferDesc.ByteWidth = 4;
+                //countBufferDesc.MiscFlags = 0;
+                //countBufferDesc.StructureByteStride = 0;
+
+                //TODO: Support indirect counter buffer
+                
                 D3D11_BUFFER_DESC countBufferDesc{};
-                countBufferDesc.BindFlags = 0;
-                countBufferDesc.Usage = D3D11_USAGE_STAGING;
-                countBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+                countBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+                countBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+                countBufferDesc.CPUAccessFlags = 0;
                 countBufferDesc.MiscFlags = 0;
                 countBufferDesc.StructureByteStride = 0;
-                countBufferDesc.ByteWidth = 4;
+                countBufferDesc.ByteWidth = 4 * sizeof uint32_t;
 
                 res = device->CreateBuffer(&countBufferDesc, nullptr, &m_CountBuffer);
                 LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create count buffer")
@@ -125,9 +137,11 @@ namespace LevEngine
             m_UnorderedAccessView->Release();
     }
 
-    bool D3D11StructuredBuffer::Bind(const unsigned id, const ShaderType shaderType, const bool readWrite,
+    bool D3D11StructuredBuffer::Bind(const uint32_t slot, const ShaderType shaderType, const bool readWrite,
                                      const uint32_t counterValue)
     {
+        LEV_PROFILE_FUNCTION();
+        
         if (m_IsDirty)
         {
             Commit();
@@ -141,16 +155,16 @@ namespace LevEngine
             switch (shaderType)
             {
             case ShaderType::Vertex:
-                m_DeviceContext->VSSetShaderResources(id, 1, srv);
+                m_DeviceContext->VSSetShaderResources(slot, 1, srv);
                 break;
             case ShaderType::Geometry:
-                m_DeviceContext->GSSetShaderResources(id, 1, srv);
+                m_DeviceContext->GSSetShaderResources(slot, 1, srv);
                 break;
             case ShaderType::Pixel:
-                m_DeviceContext->PSSetShaderResources(id, 1, srv);
+                m_DeviceContext->PSSetShaderResources(slot, 1, srv);
                 break;
             case ShaderType::Compute:
-                m_DeviceContext->CSSetShaderResources(id, 1, srv);
+                m_DeviceContext->CSSetShaderResources(slot, 1, srv);
                 break;
             }
         }
@@ -161,7 +175,7 @@ namespace LevEngine
             {
             case ShaderType::Compute:
                 const auto counter = counterValue;
-                m_DeviceContext->CSSetUnorderedAccessViews(id, 1, uav, &counter);
+                m_DeviceContext->CSSetUnorderedAccessViews(slot, 1, uav, &counter);
                 break;
             }
         }
@@ -169,8 +183,10 @@ namespace LevEngine
         return true;
     }
 
-    void D3D11StructuredBuffer::Unbind(const unsigned id, const ShaderType shaderType, const bool readWrite) const
+    void D3D11StructuredBuffer::Unbind(const uint32_t slot, const ShaderType shaderType, const bool readWrite) const
     {
+        LEV_PROFILE_FUNCTION();
+        
         if (!readWrite && m_ShaderResourceView)
         {
             ID3D11ShaderResourceView* srv[] = {nullptr};
@@ -178,16 +194,16 @@ namespace LevEngine
             switch (shaderType)
             {
             case ShaderType::Vertex:
-                m_DeviceContext->VSSetShaderResources(id, 1, srv);
+                m_DeviceContext->VSSetShaderResources(slot, 1, srv);
                 break;
             case ShaderType::Geometry:
-                m_DeviceContext->GSSetShaderResources(id, 1, srv);
+                m_DeviceContext->GSSetShaderResources(slot, 1, srv);
                 break;
             case ShaderType::Pixel:
-                m_DeviceContext->PSSetShaderResources(id, 1, srv);
+                m_DeviceContext->PSSetShaderResources(slot, 1, srv);
                 break;
             case ShaderType::Compute:
-                m_DeviceContext->CSSetShaderResources(id, 1, srv);
+                m_DeviceContext->CSSetShaderResources(slot, 1, srv);
                 break;
             }
         }
@@ -199,14 +215,16 @@ namespace LevEngine
             {
             case ShaderType::Compute:
                 uint32_t counterZero = 0;
-                m_DeviceContext->CSSetUnorderedAccessViews(id, 1, uav, &counterZero);
+                m_DeviceContext->CSSetUnorderedAccessViews(slot, 1, uav, &counterZero);
                 break;
             }
         }
     }
 
-    void D3D11StructuredBuffer::Copy(const Ref<D3D11StructuredBuffer> other)
+    void D3D11StructuredBuffer::Copy(const Ref<D3D11StructuredBuffer>& other)
     {
+        LEV_PROFILE_FUNCTION();
+        
         const Ref<D3D11StructuredBuffer> srcBuffer = other;
 
         if (srcBuffer->m_IsDirty)
@@ -225,7 +243,7 @@ namespace LevEngine
             LEV_THROW("Source buffer is not compatible with this buffer")
         }
 
-        if (((int)m_CPUAccess & (int)CPUAccess::Read) != 0)
+        if (m_CPUAccess & CPUAccess::Read)
         {
             D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -240,8 +258,43 @@ namespace LevEngine
         }
     }
 
+    void D3D11StructuredBuffer::BindCounter(unsigned slot, ShaderType shaderType)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        LEV_CORE_ASSERT(m_CountBuffer != nullptr, "Count buffer is null");
+        LEV_CORE_ASSERT(m_UnorderedAccessView != nullptr, "UnorderedAccessView is null");
+
+        m_DeviceContext->CopyStructureCount(m_CountBuffer, 0, m_UnorderedAccessView);
+        
+        if (shaderType & ShaderType::Vertex)
+            m_DeviceContext->VSSetConstantBuffers(slot, 1, &m_CountBuffer);
+        if (shaderType & ShaderType::Pixel)
+            m_DeviceContext->PSSetConstantBuffers(slot, 1, &m_CountBuffer);
+        if (shaderType & ShaderType::Geometry)
+            m_DeviceContext->GSSetConstantBuffers(slot, 1, &m_CountBuffer);
+        if (shaderType & ShaderType::Compute)
+            m_DeviceContext->CSSetConstantBuffers(slot, 1, &m_CountBuffer);
+    }
+
+    void D3D11StructuredBuffer::UnbindCounter(unsigned slot, ShaderType shaderType)
+    {
+        LEV_PROFILE_FUNCTION();
+        
+        if (shaderType & ShaderType::Vertex)
+            m_DeviceContext->VSSetConstantBuffers(slot, 0, nullptr);
+        if (shaderType & ShaderType::Pixel)
+            m_DeviceContext->PSSetConstantBuffers(slot, 0, nullptr);
+        if (shaderType & ShaderType::Geometry)
+            m_DeviceContext->GSSetConstantBuffers(slot, 0, nullptr);
+        if (shaderType & ShaderType::Compute)
+            m_DeviceContext->CSSetConstantBuffers(slot, 0, nullptr);
+    }
+
     void D3D11StructuredBuffer::Clear() const
     {
+        LEV_PROFILE_FUNCTION();
+        
         if (m_UAV)
         {
             constexpr float clearColor[4] = {0, 0, 0, 0};
@@ -251,6 +304,8 @@ namespace LevEngine
 
     void D3D11StructuredBuffer::SetData(void* data, size_t elementSize, size_t offset, size_t numElements)
     {
+        LEV_PROFILE_FUNCTION();
+        
         unsigned char* first = (unsigned char*)data + (offset * elementSize);
         unsigned char* last = first + (numElements * elementSize);
         m_Data.assign(first, last);
@@ -260,6 +315,8 @@ namespace LevEngine
 
     void D3D11StructuredBuffer::Commit()
     {
+        LEV_PROFILE_FUNCTION();
+        
         if (m_IsDirty && m_Dynamic && m_Buffer)
         {
             D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -280,15 +337,18 @@ namespace LevEngine
 
     uint32_t D3D11StructuredBuffer::GetCounterValue() const
     {
+        LEV_PROFILE_FUNCTION();
+        
         LEV_CORE_ASSERT(m_CountBuffer != nullptr, "Count buffer is null");
         LEV_CORE_ASSERT(m_UnorderedAccessView != nullptr, "UnorderedAccessView is null");
 
         m_DeviceContext->CopyStructureCount(m_CountBuffer, 0, m_UnorderedAccessView);
-
+        
         D3D11_MAPPED_SUBRESOURCE subresource;
-        m_DeviceContext->Map(m_CountBuffer, 0, D3D11_MAP_READ, 0, &subresource);
 
-        const UINT* data = reinterpret_cast<UINT*>(subresource.pData);
+        m_DeviceContext->Map(m_CountBuffer, 0, D3D11_MAP_READ, 0, &subresource);
+        
+        const UINT* data = static_cast<UINT*>(subresource.pData);
         const uint32_t counterValue = data ? data[0] : 0;
 
         m_DeviceContext->Unmap(m_CountBuffer, 0);

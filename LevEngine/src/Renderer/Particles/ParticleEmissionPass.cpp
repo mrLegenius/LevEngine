@@ -40,13 +40,18 @@ namespace LevEngine
         int groupSizeX = 0;
         int groupSizeY = 0;
         ParticlesUtils::GetGroupSize(RenderSettings::MaxParticles, groupSizeX, groupSizeY);
-
+        
+        ParticleShaders::Emission()->Bind();
+        
         const Handler handler{groupSizeY, RenderSettings::MaxParticles, deltaTime};
         m_ComputeData->SetData(&handler);
         m_ComputeData->Bind(ShaderType::Compute);
 
         m_ParticlesBuffer->Bind(0, ShaderType::Compute, true);
         m_DeadBuffer->Bind(1, ShaderType::Compute, true);
+        
+        m_ParticlesTextures->TextureSlots[0] = ParticleTextures::Default();
+        m_ParticlesTextures->TextureSlotIndex = 1;
         
         return RenderPass::Begin(registry, params);
     }
@@ -55,15 +60,26 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
         
-        m_ParticlesTextures->TextureSlots[0] = ParticleTextures::Default();
-        m_ParticlesTextures->TextureSlotIndex = 1;
-
         const float deltaTime = Time::GetScaledDeltaTime().GetSeconds();
         
         const auto group = registry.view<Transform, EmitterComponent>();
         for (const auto entity : group)
         {
             auto [transform, emitter] = group.get<Transform, EmitterComponent>(entity);
+
+            emitter.Timer += deltaTime;
+            
+            if (Math::IsZero(emitter.Rate)) continue;
+
+            const auto interval = 1 / emitter.Rate;
+            uint32_t particlesToEmit = 0;
+            while (emitter.Timer >= interval)
+            {
+                particlesToEmit++;
+                emitter.Timer -= interval;
+            }
+
+            if (particlesToEmit <= 0) continue;
             
             const auto texture = emitter.Texture ? emitter.Texture->GetTexture() : nullptr;
             const int textureIndex = GetTextureIndex(texture);
@@ -76,26 +92,9 @@ namespace LevEngine
             m_RandomData->SetData(&randomData);
             m_RandomData->Bind(ShaderType::Compute);
 
-            //<--- Emit ---<<
-
-            emitter.Timer += deltaTime;
-            const auto interval = 1 / emitter.Rate;
-            uint32_t particlesToEmit = 0;
-            while (emitter.Timer > interval)
-            {
-                particlesToEmit++;
-                emitter.Timer -= interval;
-            }
-
-            ParticleShaders::Emission()->Bind();
-            const uint32_t deadParticlesCount = m_DeadBuffer->GetCounterValue();
-            particlesToEmit = Math::Min(deadParticlesCount, particlesToEmit);
-
-            if (deadParticlesCount == 0)
-                Log::Error("Particles limit reached");
+            m_DeadBuffer->BindCounter(4, ShaderType::Compute);
             
-            if (particlesToEmit > 0)
-                DispatchCommand::Dispatch(particlesToEmit, 1, 1);
+            DispatchCommand::Dispatch(particlesToEmit, 1, 1);
         }
     }
 
@@ -103,6 +102,7 @@ namespace LevEngine
     {
         m_ParticlesBuffer->Unbind(0, ShaderType::Compute, true);
         m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
+        m_DeadBuffer->UnbindCounter(4, ShaderType::Compute);
     }
 
     Emitter ParticleEmissionPass::GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex)

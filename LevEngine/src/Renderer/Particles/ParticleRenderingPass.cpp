@@ -10,6 +10,7 @@
 #include "Renderer/Pipeline/RasterizerState.h"
 #include "Renderer/RenderCommand.h"
 #include "Renderer/RenderParams.h"
+#include "Renderer/RenderSettings.h"
 #include "Renderer/Shader/Shader.h"
 #include "Renderer/Shader/ShaderType.h"
 #include "Renderer/Pipeline/StructuredBuffer.h"
@@ -50,8 +51,7 @@ namespace LevEngine
         for (uint32_t i = 0; i < m_ParticlesTextures->TextureSlotIndex; i++)
         	m_ParticlesTextures->TextureSlots[i]->Bind(i+1, ShaderType::Pixel);
 
-        const uint32_t particlesCount = m_SortedBuffer->GetCounterValue();
-        RenderCommand::DrawPointList(particlesCount);
+        RenderCommand::DrawPointList(RenderSettings::MaxParticles);
 
         //<--- Clean ---<<
         m_ParticlesBuffer->Unbind(1, ShaderType::Vertex, false);

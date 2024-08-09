@@ -108,17 +108,24 @@ cbuffer RandomData : register(b3)
 	uint RandomSeed;
 };
 
+cbuffer DeadParticlesCountBuffer : register(b4)
+{
+	uint DeadParticlesCount;
+};
+
 RWStructuredBuffer<Particle> Particles : register(u0);
 ConsumeStructuredBuffer<uint> DeadParticles : register(u1);
 
 [numthreads(1, 1, 1)]
-void CSMain(uint3 groupID : SV_GroupID)
+void CSMain(uint3 DTid : SV_DispatchThreadID)
 {
+	if (DTid.x >= DeadParticlesCount) return;
+
 	const uint index = DeadParticles.Consume();
 
 	NumberGenerator random;
 	random.SetSeed(RandomSeed);
-	int cycleCount = (groupID.x + 1) * (groupID.y + 1) * (groupID.z + 1);
+	int cycleCount = (DTid.x + 1);
 	random.Cycle(cycleCount);
 
 	Particle particle = Particles[index];
