@@ -11,6 +11,7 @@ namespace LevEngine
         if (Begin(registry, params))
         {
             const auto passName = PassName();
+            
             if (!passName.empty())
                 RenderDebugEvent::Start(passName);
             

@@ -33,6 +33,8 @@ namespace LevEngine
 
 	bool DeferredLightingPass::Begin(entt::registry& registry, RenderParams& params)
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		m_AlbedoMap->Bind(1, ShaderType::Pixel);
 		m_NormalMap->Bind(2, ShaderType::Pixel);
 		m_MetallicRoughnessAOMap->Bind(3, ShaderType::Pixel);
@@ -43,6 +45,8 @@ namespace LevEngine
 
 	void DeferredLightingPass::Process(entt::registry& registry, RenderParams& params)
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		m_LightParams.LightIndex = 0;
 
 		const auto view = registry.group<>(entt::get<Transform, PointLightComponent>);
@@ -128,6 +132,8 @@ namespace LevEngine
 
 	void DeferredLightingPass::End(entt::registry& registry, RenderParams& params)
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		m_AlbedoMap->Unbind(1, ShaderType::Pixel);
 		m_NormalMap->Unbind(2, ShaderType::Pixel);
 		m_MetallicRoughnessAOMap->Unbind(3, ShaderType::Pixel);

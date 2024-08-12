@@ -4,6 +4,7 @@
 #include "AnimationAsset.h"
 #include "AssetDatabase.h"
 #include "EngineAssets.h"
+#include "Cache/MeshAssetCache.h"
 #include "Renderer/3D/MeshLoading/AnimationLoader.h"
 #include "Renderer/3D/MeshLoading/MeshLoader.h"
 
@@ -18,7 +19,12 @@ namespace LevEngine
     {
         try
         {
-            m_Mesh = MeshLoader::LoadMesh(m_Path);
+            auto cachedMesh = MeshAssetCache::LoadFromCache(m_UUID);
+            
+            m_Mesh = cachedMesh ? cachedMesh : MeshLoader::LoadMesh(m_Path);
+
+            if (!cachedMesh)
+                MeshAssetCache::SaveToCache(m_UUID, m_Mesh);
         }
         catch (std::exception& e)
         {

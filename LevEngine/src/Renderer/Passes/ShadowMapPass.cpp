@@ -81,6 +81,8 @@ String ShadowMapPass::PassName() { return "Shadow Map"; }
 
 bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 {
+	LEV_PROFILE_FUNCTION();
+	
 	const auto group = registry.group<>(entt::get<Transform, DirectionalLightComponent>);
 
 	if (group.empty()) return false;
@@ -123,6 +125,8 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 
 void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 {
+	LEV_PROFILE_FUNCTION();
+	
 	// Process static meshes
 	const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
     for (const auto entity : staticMeshGroup)
@@ -158,6 +162,8 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 
 void ShadowMapPass::End(entt::registry& registry, RenderParams& params)
 {
+	LEV_PROFILE_FUNCTION();
+	
     ShaderAssets::CascadeShadowPass()->Unbind();
     m_CascadeShadowMap->ResetRenderTarget();
     m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);

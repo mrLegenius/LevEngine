@@ -112,9 +112,13 @@
     <ClInclude Include="src\AI\Components\AIAgentComponent.h" />
     <ClInclude Include="src\AI\Components\AIAgentCrowdComponent.h" />
     <ClInclude Include="src\AI\Systems\AIAgentCrowdUpdateSystem.h" />
+    <ClInclude Include="src\Assets\Cache\MeshAssetCache.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\SceneAsset.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
+    <ClInclude Include="src\BinaryIO\BinaryReader.h" />
+    <None Include="src\BinaryIO\BinaryReader.inl" />
+    <ClInclude Include="src\BinaryIO\BinaryWriter.h" />
     <ClInclude Include="src\DataTypes\Set.h" />
     <ClInclude Include="src\GUI\Icons\IconsFontAwesome6.h" />
     <ClInclude Include="src\JobSystem\Job.h" />
@@ -1065,10 +1069,13 @@
     <ClCompile Include="src\AI\Components\AIAgentComponent.cpp" />
     <ClCompile Include="src\AI\Components\AIAgentCrowdComponent.cpp" />
     <ClCompile Include="src\AI\Systems\AIAgentCrowdUpdateSystem.cpp" />
+    <ClCompile Include="src\Assets\Cache\MeshAssetCache.cpp" />
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\SceneAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\BinaryIO\BinaryReader.cpp" />
+    <ClCompile Include="src\BinaryIO\BinaryWriter.cpp" />
     <ClCompile Include="src\JobSystem\Job.cpp" />
     <ClCompile Include="src\JobSystem\ParallelJob.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
@@ -1450,6 +1457,7 @@
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\BinaryIO\BinaryWriter.inl" />
     <None Include="src\Scene\Entity.inl" />
     <None Include="src\Scene\Scene.inl" />
     <None Include="src\Scripting\LuaComponentsBinder.inl" />

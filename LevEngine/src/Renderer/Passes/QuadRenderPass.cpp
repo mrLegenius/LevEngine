@@ -11,6 +11,8 @@ namespace LevEngine
 
     bool QuadRenderPass::Begin(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         m_Pipeline->Bind();
         m_ColorTexture->Bind(0, ShaderType::Pixel);
         return RenderPass::Begin(registry, params);
@@ -18,11 +20,15 @@ namespace LevEngine
 
     void QuadRenderPass::Process(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         RenderCommand::DrawFullScreenQuad();
     }
 
     void QuadRenderPass::End(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         m_ColorTexture->Unbind(0, ShaderType::Pixel);
         m_Pipeline->Unbind();
     }

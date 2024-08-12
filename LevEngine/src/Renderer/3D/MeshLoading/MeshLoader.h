@@ -52,12 +52,9 @@ public:
 		// }
 
 		ParseMesh(rootNode, scene, resultMesh, Matrix::Identity);
-
-		Vector3 aabbMin, aabbMax;
-		FindBoundingBoxBorders(resultMesh, aabbMin, aabbMax);
-		resultMesh->SetAABBBoundingVolume(aabbMin, aabbMax);
 		
 		resultMesh->Init();
+		resultMesh->GenerateAABBBoundingVolume();
 
 		return resultMesh;
 	}
@@ -164,17 +161,6 @@ public:
 				LEV_CORE_ASSERT(vertexId < resultMesh->GetVerticesCount())
 				resultMesh->AddBoneWeight(vertexId, boneID, weight);
 			}
-		}
-	}
-
-	static void FindBoundingBoxBorders(Ref<Mesh> mesh, Vector3& minPos, Vector3& maxPos)
-	{
-		for (unsigned int vertexIdx = 0; vertexIdx < mesh->GetVerticesCount(); ++vertexIdx)
-		{
-			Vector3 position = mesh->GetVertex(vertexIdx);
-
-			minPos = Vector3::Min(minPos, position);
-			maxPos = Vector3::Max(maxPos, position);
 		}
 	}
 };

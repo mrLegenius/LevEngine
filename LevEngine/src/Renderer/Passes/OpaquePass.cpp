@@ -29,6 +29,8 @@ namespace LevEngine
 
     void OpaquePass::Process(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
 
         Material* previousMaterial{nullptr};

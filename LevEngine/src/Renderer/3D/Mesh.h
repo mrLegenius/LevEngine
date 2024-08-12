@@ -39,19 +39,31 @@ namespace LevEngine
         void AddTriangle(const Vector3& value);
         void AddIndex(const uint32_t& value) { indices.emplace_back(value); }
 
+    	[[nodiscard]] size_t GetUVsCount() const { return uvs.size(); }
+    	[[nodiscard]] const Vector<Vector2>& GetUVs() { return uvs; }
         [[nodiscard]] Vector2 GetUV(const uint32_t index) const { return uvs[index]; }
         void AddUV(const Vector2& value) { uvs.emplace_back(value); }
 
+        [[nodiscard]] size_t GetNormalsCount() const { return normals.size(); }
+    	[[nodiscard]] const Vector<Vector3>& GetNormals() { return normals; }
         [[nodiscard]] Vector3 GetNormal(const uint32_t index) const { return normals[index]; }
         void AddNormal(const Vector3& value) { normals.emplace_back(value); }
 
+    	[[nodiscard]] size_t GetTangentsCount() const { return tangents.size(); }
+    	[[nodiscard]] const Vector<Vector3>& GetTangents() { return tangents; }
+    	[[nodiscard]] Vector3 GetTangent(const uint32_t index) const { return tangents[index]; }
         void AddTangent(Vector3 value) { tangents.emplace_back(value); }
+
+    	[[nodiscard]] size_t GetBiTangentsCount() const { return biTangents.size(); }
+    	[[nodiscard]] const Vector<Vector3>& GetBiTangents() { return biTangents; }
+    	[[nodiscard]] Vector3 GetBiTangent(const uint32_t index) const { return biTangents[index]; }
         void AddBiTangent(Vector3 value) { biTangents.emplace_back(value); }
 
         void AddVertexBuffer(const BufferBinding& binding, const Ref<VertexBuffer>& buffer);
         [[nodiscard]] const Map<BufferBinding, Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }
 
         void Init();
+        void GenerateAABBBoundingVolume();
 
         void Bind(const Ref<Shader>& shader) const;
 
@@ -71,6 +83,15 @@ namespace LevEngine
 		void ResizeBoneArrays(size_t size);
 		void NormalizeBoneWeights();
 
+    	[[nodiscard]] const Vector<Array<int, AnimationConstants::MaxBoneInfluence>>& GetBoneIds() const { return m_BoneIds; }
+    	void SetBoneIds(const Vector<Array<int, AnimationConstants::MaxBoneInfluence>>& data) { m_BoneIds = data; }
+    	
+    	[[nodiscard]] const Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& GetWeights() const { return m_Weights; }
+    	void SetWeights(const Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& data) { m_Weights = data; }
+    	
+    	[[nodiscard]] const Vector<int>& GetBoneWeightCounters() const { return m_BoneWeightCounters; }
+    	void SetBoneWeightCounters(const Vector<int>& data ) { m_BoneWeightCounters = data; }
+    	
         Ref<IndexBuffer> IndexBuffer;
 
     private:

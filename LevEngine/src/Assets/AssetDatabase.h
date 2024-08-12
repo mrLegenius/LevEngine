@@ -7,8 +7,11 @@ namespace LevEngine
 	{
 	public:
 		inline static const Path AssetsRoot = "resources";
+		inline static const Path AssetsCache = "AssetsCache";
 		
 		static Path GetAssetsPath();
+		static Path GetAssetsCachePath();
+		static Path GetAssetCachePath(UUID uuid);
 		static Path GetRelativePath(const Path& path);
 
 		static void ImportAsset(const Path& path);

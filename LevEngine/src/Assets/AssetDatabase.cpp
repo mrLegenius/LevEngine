@@ -26,6 +26,19 @@ namespace LevEngine
 		return AssetsRoot;
 	}
 
+	Path AssetDatabase::GetAssetsCachePath()
+	{
+		if (Project::GetProject())
+			return Project::GetRoot() / AssetsCache;
+
+		return AssetsCache;
+	}
+
+	Path AssetDatabase::GetAssetCachePath(UUID uuid)
+	{
+		return GetAssetsCachePath() / ToString(uuid).c_str();;
+	}
+
 	Path AssetDatabase::GetRelativePath(const Path& path)
 	{
 		return relative(GetAssetsPath(), path);

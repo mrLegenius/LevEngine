@@ -20,6 +20,8 @@ namespace LevEngine
 
     void BitonicSort::Sort(const Ref<StructuredBuffer>& inBuffer, const Ref<StructuredBuffer>& tempBuffer) const
     {
+        LEV_PROFILE_FUNCTION();
+        
         const uint32_t BitonicBlockSize = 1024;
         constexpr uint32_t TransposeBlockSize = 32;
         

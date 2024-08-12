@@ -34,6 +34,7 @@ namespace LevEngine
 
     void ParticleSimulationPass::Process(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
         //TODO: Bind depth and normal maps here to enable bounce again
 
         int groupSizeX = 0;

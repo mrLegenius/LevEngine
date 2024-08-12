@@ -9,6 +9,8 @@ namespace LevEngine
 
 	void CopyTexturePass::Process(entt::registry& registry, RenderParams& params)
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		if (m_DestinationTexture)
 			m_DestinationTexture->CopyFrom(m_SourceTexture);
 	}

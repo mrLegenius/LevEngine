@@ -39,6 +39,8 @@ namespace LevEngine
 
     void ClearPass::Process(entt::registry&, RenderParams&)
     {
+        LEV_PROFILE_FUNCTION();
+        
         if (m_RenderTarget)
             m_RenderTarget->Clear(m_ClearFlags, m_ClearColor, m_ClearDepth, m_ClearStencil);
 

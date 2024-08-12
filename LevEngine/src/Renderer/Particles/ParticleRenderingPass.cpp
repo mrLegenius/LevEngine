@@ -41,6 +41,8 @@ namespace LevEngine
 
     void ParticleRenderingPass::Process(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         ParticleShaders::Rendering()->Bind();
 
         m_ParticlesBuffer->Bind(0, ShaderType::Vertex, false);

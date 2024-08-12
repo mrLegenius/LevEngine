@@ -22,6 +22,8 @@ namespace LevEngine
 
     bool TransparentPass::Begin(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         m_PipelineState->Bind();
         
         return RenderPass::Begin(registry, params);
@@ -29,6 +31,8 @@ namespace LevEngine
 
     void TransparentPass::Process(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
         const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
         for (const auto entity : view)
@@ -59,6 +63,8 @@ namespace LevEngine
 
     void TransparentPass::End(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         m_PipelineState->Unbind();
     }
 }
