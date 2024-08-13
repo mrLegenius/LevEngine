@@ -59,16 +59,11 @@ namespace LevEngine
             AddVertexBuffer(BufferBinding("NORMAL", 0), buffer);
         }
 
-        if (tangents.size() && biTangents.size())
+        if (tangents.size())
         {
             const auto tangentsBuffer = VertexBuffer::Create(&tangents[0].x, static_cast<uint32_t>(tangents.size()),
                                                              sizeof Vector3);
             AddVertexBuffer(BufferBinding("TANGENT", 0), tangentsBuffer);
-
-            const auto biTangentsBuffer = VertexBuffer::Create(&biTangents[0].x,
-                                                               static_cast<uint32_t>(biTangents.size()),
-                                                               sizeof Vector3);
-            AddVertexBuffer(BufferBinding("BINORMAL", 0), biTangentsBuffer);
         }
 
         if (colors.size())

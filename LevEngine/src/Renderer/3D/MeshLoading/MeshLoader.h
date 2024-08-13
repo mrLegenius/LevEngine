@@ -84,14 +84,11 @@ public:
 					cumulativeTransform);
 				const auto tangent = Vector3::Transform(AssimpConverter::ToVector3(mesh->mTangents[vertexIdx]),
 					cumulativeTransform);
-				const auto biTangent = Vector3::Transform(AssimpConverter::ToVector3(mesh->mNormals[vertexIdx]),
-					cumulativeTransform);
 
 				resultMesh->AddVertex(point);
 				resultMesh->AddUV(uv);
 				resultMesh->AddNormal(normal);
 				resultMesh->AddTangent(tangent);
-				resultMesh->AddBiTangent(biTangent);
 			}
 
 			ExtractBoneWeightForVertices(resultMesh, mesh, firstVertexId);

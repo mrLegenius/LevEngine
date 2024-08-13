@@ -14,7 +14,6 @@ PS_IN VSMain(VS_IN input)
 
 	float3 normal = mul(mul(float4(input.normal, 0.0f), boneTransform), transposedInvertedModel);
 	float3 tangent = mul(mul(float4(input.tangent, 0.0f), boneTransform), transposedInvertedModel);
-	float3 binormal = mul(mul(float4(input.binormal, 0.0f), boneTransform), transposedInvertedModel);
 
 #else
 
@@ -23,9 +22,10 @@ PS_IN VSMain(VS_IN input)
 
 	float3 normal = mul(float4(input.normal, 0.0f), transposedInvertedModel);
 	float3 tangent = mul(float4(input.tangent, 0.0f), transposedInvertedModel);
-	float3 binormal = mul(float4(input.binormal, 0.0f), transposedInvertedModel);
 
 #endif
+
+	float3 binormal = cross(normal, tangent);
 
     output.TBN = float3x3(normalize(tangent),
                           normalize(binormal),

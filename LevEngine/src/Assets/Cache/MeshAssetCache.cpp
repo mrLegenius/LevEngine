@@ -24,7 +24,6 @@ LevEngine::Ref<LevEngine::Mesh> LevEngine::MeshAssetCache::LoadFromCache(UUID as
         reader.ReadForEach<Vector3>([&mesh](auto data){ mesh->AddVertex(data); });
         reader.ReadForEach<Vector3>([&mesh](auto data){ mesh->AddNormal(data); });
         reader.ReadForEach<Vector3>([&mesh](auto data){ mesh->AddTangent(data); });
-        reader.ReadForEach<Vector3>([&mesh](auto data){ mesh->AddBiTangent(data); });
         reader.ReadForEach<Vector2>([&mesh](auto data){ mesh->AddUV(data); });
 
         auto bonesCount = reader.Read<size_t>();
@@ -68,7 +67,6 @@ void LevEngine::MeshAssetCache::SaveToCache(UUID assetUUID, const Ref<Mesh>& mes
         writer.WriteVector(mesh->GetVertices());
         writer.WriteVector(mesh->GetNormals());
         writer.WriteVector(mesh->GetTangents());
-        writer.WriteVector(mesh->GetBiTangents());
         writer.WriteVector(mesh->GetUVs());
         
         auto bones = mesh->GetBoneIds();

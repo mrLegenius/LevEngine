@@ -54,11 +54,6 @@ namespace LevEngine
     	[[nodiscard]] Vector3 GetTangent(const uint32_t index) const { return tangents[index]; }
         void AddTangent(Vector3 value) { tangents.emplace_back(value); }
 
-    	[[nodiscard]] size_t GetBiTangentsCount() const { return biTangents.size(); }
-    	[[nodiscard]] const Vector<Vector3>& GetBiTangents() { return biTangents; }
-    	[[nodiscard]] Vector3 GetBiTangent(const uint32_t index) const { return biTangents[index]; }
-        void AddBiTangent(Vector3 value) { biTangents.emplace_back(value); }
-
         void AddVertexBuffer(const BufferBinding& binding, const Ref<VertexBuffer>& buffer);
         [[nodiscard]] const Map<BufferBinding, Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }
 
@@ -103,9 +98,9 @@ namespace LevEngine
         Vector<uint32_t> indices;
         Vector<Vector3> normals;
         Vector<Vector3> tangents;
-        Vector<Vector3> biTangents;
         Vector<Color> colors;
 
+    	// Skeleton
 		Vector<Array<int, AnimationConstants::MaxBoneInfluence>> m_BoneIds;
 		Vector<Array<float, AnimationConstants::MaxBoneInfluence>> m_Weights;
 		Vector<int> m_BoneWeightCounters;
