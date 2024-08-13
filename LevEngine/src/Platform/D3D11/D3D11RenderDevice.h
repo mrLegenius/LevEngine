@@ -42,7 +42,7 @@ namespace LevEngine
                                        bool generateMipMaps) const override;
         Ref<Texture> CreateTextureCube(const String paths[6], bool isLinear) const override;
         Ref<Query> CreateQuery(Query::QueryType queryType, uint8_t numBuffers) const override;
-        Ref<Shader> CreateShader(const String& filepath, ShaderType shaderTypes) const override;
+        Ref<Shader> CreateShader(const String& filepath, ShaderType shaderTypes, const ShaderMacros& macros) const override;
         Ref<RenderCommands> CreateRenderCommands() const override;
         Ref<DispatchCommands> CreateDispatchCommands() const override;
         Ref<RenderDebugEvent> CreateRenderDebugEvent() const override;

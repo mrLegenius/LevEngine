@@ -115,17 +115,18 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 		m_ShadowData.ShadowMapDimensions = RenderSettings::ShadowMapResolution;
 	}
 	m_CascadeShadowMap->SetRenderTarget();
-	ShaderAssets::CascadeShadowPass()->Bind();
 	
-	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
-    m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);
-
     return true;
 }
 
 void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 {
 	LEV_PROFILE_FUNCTION();
+
+	ShaderAssets::CascadeShadowPass()->Bind();
+	
+	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
+	m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);
 	
 	// Process static meshes
 	const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
@@ -141,6 +142,11 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
             Renderer3D::DrawMesh(transform.GetModel(), mesh, ShaderAssets::CascadeShadowPass());
     }
 
+	ShaderAssets::CascadeShadowPassWithAnimations()->Bind();
+	
+	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
+	m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);
+	
 	// Process animated meshes
 	const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
 	for (const auto entity : animatedMeshGroup)
@@ -155,7 +161,7 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 		if (meshRenderer.castShadow)
 		{
 			Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(),  meshRenderer,
-				ShaderAssets::CascadeShadowPass());	
+				ShaderAssets::CascadeShadowPassWithAnimations());	
 		}
 	}
 }
@@ -165,6 +171,7 @@ void ShadowMapPass::End(entt::registry& registry, RenderParams& params)
 	LEV_PROFILE_FUNCTION();
 	
     ShaderAssets::CascadeShadowPass()->Unbind();
+	ShaderAssets::CascadeShadowPassWithAnimations()->Unbind();
     m_CascadeShadowMap->ResetRenderTarget();
     m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
     m_ShadowMapConstantBuffer->Bind(ShaderType::Pixel);

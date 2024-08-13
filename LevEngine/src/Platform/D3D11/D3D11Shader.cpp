@@ -5,17 +5,24 @@
 #include <wrl/client.h>
 
 #include "Renderer/RenderSettings.h"
+#include "Renderer/Shader/ShaderMacros.h"
+
+struct ShaderDefine
+{
+	String Name;
+	String Definition;
+};
 
 namespace LevEngine
 {
-bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target);
+bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, Vector<ShaderDefine> defines, ID3DInclude* includes, const char* entrypoint, const char* target);
 bool CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath);
 bool CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath);
 bool CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath);
 
 DXGI_FORMAT GetDXGIFormat(const D3D11_SIGNATURE_PARAMETER_DESC& paramDesc);
 	
-D3D11Shader::D3D11Shader(ID3D11Device2* device, const String& filepath, const ShaderType shaderTypes) : Shader(filepath), m_Device(device)
+D3D11Shader::D3D11Shader(ID3D11Device2* device, const String& filepath, const ShaderType shaderTypes, const ShaderMacros& macros) : Shader(filepath), m_Device(device)
 {
 	LEV_PROFILE_FUNCTION();
 
@@ -30,25 +37,25 @@ D3D11Shader::D3D11Shader(ID3D11Device2* device, const String& filepath, const Sh
 
 	if (shaderTypes & ShaderType::Vertex)
 	{
-		auto result = CreateVertexShader(m_VertexShader, filepath);
+		auto result = CreateVertexShader(m_VertexShader, filepath, macros);
 		LEV_CORE_ASSERT(result, "Can't create vertex shader")
 	}
 
 	if (shaderTypes & ShaderType::Pixel)
 	{
-		auto result = CreatePixelShader(m_PixelShader, filepath);
+		auto result = CreatePixelShader(m_PixelShader, filepath, macros);
 		LEV_CORE_ASSERT(result, "Can't create pixel shader")
 	}
 
 	if (shaderTypes & ShaderType::Geometry)
 	{
-		auto result = CreateGeometryShader(m_GeometryShader, filepath);
+		auto result = CreateGeometryShader(m_GeometryShader, filepath, macros);
 		LEV_CORE_ASSERT(result, "Can't create geometry shader")
 	}
 
 	if (shaderTypes & ShaderType::Compute)
 	{
-		auto result = CreateComputeShader(m_ComputeShader, filepath);
+		auto result = CreateComputeShader(m_ComputeShader, filepath, macros);
 		LEV_CORE_ASSERT(result, "Can't create compute shader")
 	}
 
@@ -106,10 +113,19 @@ void D3D11Shader::Unbind() const
 		m_DeviceContext->CSSetShader(nullptr, nullptr, 0);
 }
 
-bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, D3D_SHADER_MACRO defines[], ID3DInclude* includes, const char* entrypoint, const char* target)
+bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, ShaderMacros defines, ID3DInclude* includes, const char* entrypoint, const char* target)
 {
 	LEV_PROFILE_FUNCTION();
 
+	Vector<D3D_SHADER_MACRO> shaderDefines{defines.size()};
+
+	for (auto shaderDefine : defines)
+	{
+		shaderDefines.push_back(D3D_SHADER_MACRO{
+			.Name = shaderDefine.first.c_str(),
+			.Definition = shaderDefine.second.c_str() });	
+	}
+	
 	const std::wstring widestr = std::wstring(shaderFilepath.begin(), shaderFilepath.end());
 	const wchar_t* wide_filepath = widestr.c_str();
 
@@ -122,7 +138,7 @@ bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, D3D_SHADER_
 
 	ID3DBlob* errorCode = nullptr;
 	const auto res = D3DCompileFromFile(wide_filepath,
-		defines /*macros*/,
+		shaderDefines.data() /*macros*/,
 		includes /*include*/,
 		entrypoint,
 		target,
@@ -155,13 +171,13 @@ bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, D3D_SHADER_
 	return true;
 }
 
-bool D3D11Shader::CreateVertexShader(ID3D11VertexShader*& shader, const String& filepath)
+bool D3D11Shader::CreateVertexShader(ID3D11VertexShader*& shader, const String& filepath, const ShaderMacros& macros)
 {
 	LEV_PROFILE_FUNCTION();
 
 	ID3DBlob* vertexBC;
 
-	if (!CreateShader(vertexBC, filepath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSMain", "vs_5_0"))
+	if (!CreateShader(vertexBC, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSMain", "vs_5_0"))
 		return false;
 
 	m_Device->CreateVertexShader(
@@ -175,13 +191,13 @@ bool D3D11Shader::CreateVertexShader(ID3D11VertexShader*& shader, const String& 
 	return true;
 }
 
-bool D3D11Shader::CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath)
+bool D3D11Shader::CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath, const ShaderMacros& macros)
 {
 	LEV_PROFILE_FUNCTION();
 
 	ID3DBlob* pixelBC;
 
-	if (!CreateShader(pixelBC, filepath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PSMain", "ps_5_0"))
+	if (!CreateShader(pixelBC, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PSMain", "ps_5_0"))
 		return false;
 
 	m_Device->CreatePixelShader(
@@ -194,14 +210,13 @@ bool D3D11Shader::CreatePixelShader(ID3D11PixelShader*& shader, const String& fi
 	return true;
 }
 
-bool D3D11Shader::CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath)
+bool D3D11Shader::CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath, const ShaderMacros& macros)
 {
 	LEV_PROFILE_FUNCTION();
 
 	ID3DBlob* geometryBC;
-	D3D_SHADER_MACRO defines[] = { nullptr, nullptr };
 
-	if (!CreateShader(geometryBC, filepath, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GSMain", "gs_5_0"))
+	if (!CreateShader(geometryBC, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GSMain", "gs_5_0"))
 		return false;
 
 	m_Device->CreateGeometryShader(
@@ -214,14 +229,13 @@ bool D3D11Shader::CreateGeometryShader(ID3D11GeometryShader*& shader, const Stri
 	return true;
 }
 
-bool D3D11Shader::CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath)
+bool D3D11Shader::CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath, const ShaderMacros& macros)
 {
 	LEV_PROFILE_FUNCTION();
 
 	ID3DBlob* blob;
-	D3D_SHADER_MACRO defines[] = { nullptr, nullptr };
 
-	if (!CreateShader(blob, filepath, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CSMain", "cs_5_0"))
+	if (!CreateShader(blob, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CSMain", "cs_5_0"))
 		return false;
 
 	m_Device->CreateComputeShader(

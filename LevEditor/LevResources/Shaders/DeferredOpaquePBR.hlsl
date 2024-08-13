@@ -5,23 +5,36 @@ PS_IN VSMain(VS_IN input)
 {
 	PS_IN output;
 
+#ifdef WITH_ANIMATIONS
+
 	row_major matrix boneTransform = CalculateBoneTransform(input.boneIds, input.boneWeights);
 	
 	float4 pos = mul(float4(input.pos, 1.0f), boneTransform);
 	float4 fragPos = mul(pos, model);
 
+	float3 normal = mul(mul(float4(input.normal, 0.0f), boneTransform), transposedInvertedModel);
+	float3 tangent = mul(mul(float4(input.tangent, 0.0f), boneTransform), transposedInvertedModel);
+	float3 binormal = mul(mul(float4(input.binormal, 0.0f), boneTransform), transposedInvertedModel);
+
+#else
+
+	float4 pos = float4(input.pos, 1.0f);
+	float4 fragPos = mul(pos, model);
+
+	float3 normal = mul(float4(input.normal, 0.0f), transposedInvertedModel);
+	float3 tangent = mul(float4(input.tangent, 0.0f), transposedInvertedModel);
+	float3 binormal = mul(float4(input.binormal, 0.0f), transposedInvertedModel);
+
+#endif
+
+    output.TBN = float3x3(normalize(tangent),
+                          normalize(binormal),
+                          normalize(normal));
+
 	output.pos = mul(fragPos, viewProjection);
 	output.uv = input.uv;
 	output.fragPos = fragPos.xyz;
 	output.depth = mul(fragPos, cameraView).z;
-	
-	float3 normal = mul(mul(float4(input.normal, 0.0f), boneTransform), transposedInvertedModel);
-	float3 tangent = mul(mul(float4(input.tangent, 0.0f), boneTransform), transposedInvertedModel);
-	float3 binormal = mul(mul(float4(input.binormal, 0.0f), boneTransform), transposedInvertedModel);
-	
-    output.TBN = float3x3(normalize(tangent),
-                          normalize(binormal),
-                          normalize(normal));
 	
 	return output;
 }

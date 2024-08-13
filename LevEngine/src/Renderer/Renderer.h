@@ -29,6 +29,7 @@ namespace LevEngine
         void SetViewport(float width, float height) const;
 
         [[nodiscard]] Statistic GetFrameStatistic() const;
+        [[nodiscard]] Statistic GetShadowMapStatistic() const;
         [[nodiscard]] Statistic GetDeferredGeometryStatistic() const;
         [[nodiscard]] Statistic GetDeferredLightingStatistic() const;
         [[nodiscard]] Statistic GetDeferredTransparentStatistic() const;
@@ -71,6 +72,9 @@ namespace LevEngine
 
         Ref<Query> m_FrameQuery;
         Statistic m_FrameStat;
+
+        Ref<Query> m_ShadowMapQuery;
+        Statistic m_ShadowMapStat;
 
         Ref<Query> m_DeferredGeometryQuery;
         Statistic m_DeferredGeometryStat;

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "BufferBinding.h"
+#include "ShaderMacros.h"
 #include "ShaderParameter.h"
 #include "ShaderType.h"
 
@@ -11,6 +12,7 @@ namespace LevEngine
 
 		static Ref<Shader> Create(const String& filepath);
 		static Ref<Shader> Create(const String& filepath, ShaderType shaderTypes);
+		static Ref<Shader> Create(const String& filepath, ShaderType shaderTypes, const ShaderMacros& macros);
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
@@ -20,7 +22,7 @@ namespace LevEngine
 		[[nodiscard]] virtual ShaderParameter& GetShaderParameterByName(const String& name) const = 0;
 
 		[[nodiscard]] ShaderType GetType() const { return m_Type; }
-
+		
 	protected:
 		explicit Shader(String filepath) : m_FilePath(Move(filepath)) { }
 		virtual ~Shader() = default;

@@ -182,9 +182,9 @@ namespace LevEngine
         return CreateRef<D3D11Query>(m_Device.Get(), queryType, numBuffers);
     }
 
-    Ref<Shader> D3D11RenderDevice::CreateShader(const String& filepath, ShaderType shaderTypes) const
+    Ref<Shader> D3D11RenderDevice::CreateShader(const String& filepath, ShaderType shaderTypes, const ShaderMacros& macros) const
     {
-        return CreateRef<D3D11Shader>(m_Device.Get(), filepath, shaderTypes);
+        return CreateRef<D3D11Shader>(m_Device.Get(), filepath, shaderTypes, macros);
     }
 
     Ref<RenderCommands> D3D11RenderDevice::CreateRenderCommands() const

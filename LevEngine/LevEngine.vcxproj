@@ -145,6 +145,14 @@
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDevice.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11TextureFormatsUtils.h" />
+    <ClInclude Include="src\Renderer\3D\Animation.h" />
+    <ClInclude Include="src\Renderer\3D\AnimationConstants.h" />
+    <ClInclude Include="src\Renderer\3D\Animator.h" />
+    <ClInclude Include="src\Renderer\3D\Bone.h" />
+    <ClInclude Include="src\Renderer\3D\BoneInfo.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\AnimationLoader.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\AssimpConverter.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\MeshLoader.h" />
     <ClInclude Include="src\Renderer\Dispatch\DispatchCommand.h" />
     <ClInclude Include="src\Renderer\Dispatch\DispatchCommands.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPass.h" />
@@ -197,6 +205,7 @@
     <ClInclude Include="src\Renderer\RenderDevice.h" />
     <ClInclude Include="src\Renderer\Shader\BufferBinding.h" />
     <ClInclude Include="src\Renderer\Shader\Shader.h" />
+    <ClInclude Include="src\Renderer\Shader\ShaderMacros.h" />
     <ClInclude Include="src\Renderer\Shader\ShaderParameter.h" />
     <ClInclude Include="src\Renderer\Shader\ShaderType.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.h" />

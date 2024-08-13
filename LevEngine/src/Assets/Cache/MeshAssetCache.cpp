@@ -9,6 +9,8 @@
 //TODO: add versioning 
 LevEngine::Ref<LevEngine::Mesh> LevEngine::MeshAssetCache::LoadFromCache(UUID assetUUID)
 {
+    LEV_PROFILE_FUNCTION();
+    
     auto cachePath = AssetDatabase::GetAssetCachePath(assetUUID);
 
     if (!exists(cachePath)) return nullptr;
@@ -54,6 +56,8 @@ LevEngine::Ref<LevEngine::Mesh> LevEngine::MeshAssetCache::LoadFromCache(UUID as
 
 void LevEngine::MeshAssetCache::SaveToCache(UUID assetUUID, const Ref<Mesh>& mesh)
 {
+    LEV_PROFILE_FUNCTION();
+    
     try
     {
         auto cachePath = AssetDatabase::GetAssetCachePath(assetUUID);

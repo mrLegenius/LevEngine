@@ -14,12 +14,16 @@ namespace LevEngine
 
 	void TextureAsset::CreateTexture()
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		m_Texture = Texture::Create(m_Path.string().c_str(), IsLinear, GenerateMipMaps);
 		m_Texture->AttachSampler(SamplerState);
 	}
 
 	void TextureAsset::SerializeMeta(YAML::Emitter& out)
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		out << YAML::Key << "IsLinear" << YAML::Value << IsLinear;
 		out << YAML::Key << "GenerateMipMaps" << YAML::Value << GenerateMipMaps;
 
@@ -63,6 +67,8 @@ namespace LevEngine
 
 	void TextureAsset::DeserializeMeta(const YAML::Node& out)
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		TryParse(out["IsLinear"], IsLinear);
 		TryParse(out["GenerateMipMaps"], GenerateMipMaps);
 

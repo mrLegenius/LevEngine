@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Pipeline/Texture.h"
 #include "Query/Query.h"
+#include "Shader/ShaderMacros.h"
 
 namespace LevEngine
 {
@@ -72,7 +73,7 @@ namespace LevEngine
         virtual Ref<Texture> CreateTextureCube(const String paths[6], bool isLinear) const = 0;
         
         virtual Ref<Query> CreateQuery(Query::QueryType queryType, uint8_t numBuffers) const = 0;
-        virtual Ref<Shader> CreateShader(const String& filepath, ShaderType shaderTypes) const = 0;
+        virtual Ref<Shader> CreateShader(const String& filepath, ShaderType shaderTypes, const ShaderMacros& macros) const = 0;
         virtual Ref<RenderCommands> CreateRenderCommands() const = 0;
         virtual Ref<DispatchCommands> CreateDispatchCommands() const = 0;
         virtual Ref<RenderDebugEvent> CreateRenderDebugEvent() const = 0;

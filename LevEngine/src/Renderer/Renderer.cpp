@@ -249,21 +249,30 @@ namespace LevEngine
             m_DebugPipeline->GetRasterizerState().SetCullMode(CullMode::None);
         }
 
-        m_FrameQuery = Query::Create(Query::QueryType::Timer, 2);
+        {
+            LEV_PROFILE_SCOPE("GPU Queries creation");
+
+            constexpr size_t gpuTimersBuffers = 5;
         
-        m_EnvironmentQuery = Query::Create(Query::QueryType::Timer, 2);
-        m_DeferredGeometryQuery = Query::Create(Query::QueryType::Timer, 2);
-        m_DeferredLightingQuery = Query::Create(Query::QueryType::Timer, 2);
-        m_DeferredTransparentQuery = Query::Create(Query::QueryType::Timer, 2);
-        m_PostProcessingQuery = Query::Create(Query::QueryType::Timer, 2);
-        m_ParticlesQuery = Query::Create(Query::QueryType::Timer, 2);
-        m_DebugQuery = Query::Create(Query::QueryType::Timer, 2);
+            m_FrameQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_ShadowMapQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_EnvironmentQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_DeferredGeometryQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_DeferredLightingQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_DeferredTransparentQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_PostProcessingQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_ParticlesQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_DebugQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+        }
 
         {
             LEV_PROFILE_SCOPE("Deferred technique creation");
 
             m_DeferredTechnique = CreateRef<RenderTechnique>();
-            m_DeferredTechnique->AddPass(CreateRef<ShadowMapPass>());
+            // m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ShadowMapQuery));
+            // m_DeferredTechnique->AddPass(CreateRef<ShadowMapPass>());
+            // m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ShadowMapQuery));
+            
             m_DeferredTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget, "Clear Main Render Target"));
             m_DeferredTechnique->AddPass(CreateRef<ClearPass>(m_GBufferRenderTarget, "Clear G-Buffer"));
             
@@ -287,9 +296,9 @@ namespace LevEngine
                 m_NormalTexture, m_DepthTexture));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredLightingQuery));
             
-            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredTransparentQuery));
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_PostProcessingQuery));
             m_DeferredTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
-            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredTransparentQuery));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_PostProcessingQuery));
 
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredTransparentQuery));
             m_DeferredTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
@@ -299,10 +308,10 @@ namespace LevEngine
             m_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(m_DebugPipeline));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DebugQuery));
             
-            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ParticlesQuery));
-            m_DeferredTechnique->AddPass(
-                CreateRef<ParticlePass>(mainRenderTarget, m_DepthTexture, m_NormalTexture));
-            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ParticlesQuery));
+            // m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ParticlesQuery));
+            // m_DeferredTechnique->AddPass(
+            //     CreateRef<ParticlePass>(mainRenderTarget, m_DepthTexture, m_NormalTexture));
+            // m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ParticlesQuery));
         }
 
         {
@@ -357,6 +366,11 @@ namespace LevEngine
     }
 
     Statistic Renderer::GetFrameStatistic() const { return m_FrameStat; }
+
+    Statistic Renderer::GetShadowMapStatistic() const
+    {
+        return m_ShadowMapStat;
+    }
 
     Statistic Renderer::GetDeferredGeometryStatistic() const
     {
@@ -456,11 +470,18 @@ namespace LevEngine
             return;
         }
 
-        ResetStatistics();
+        static float statResetTimer = 0;
+        statResetTimer += Time::GetScaledDeltaTime().GetSeconds();
+
+        if (statResetTimer > 1.0f)
+        {
+            ResetStatistics();
+            statResetTimer -= 1.0f;
+        }
 
         mainCamera->RecalculateFrustum(*cameraTransform);
 
-        const auto renderParams = CreateRenderParams(mainCamera, const_cast<Transform*>(cameraTransform));
+        const auto renderParams = CreateRenderParams(mainCamera, cameraTransform);
 
         m_Lights->Prepare(registry, renderParams);
 
@@ -485,6 +506,7 @@ namespace LevEngine
         m_FrameQuery->End(Time::GetFrameNumber());
         
         SampleQuery(m_FrameQuery, m_FrameStat);
+        SampleQuery(m_ShadowMapQuery, m_ShadowMapStat);
         SampleQuery(m_DeferredGeometryQuery, m_DeferredGeometryStat);
         SampleQuery(m_DeferredLightingQuery, m_DeferredLightingStat);
         SampleQuery(m_DeferredTransparentQuery, m_DeferredTransparentStat);
@@ -498,6 +520,7 @@ namespace LevEngine
     {
         m_FrameStat.Reset();
 
+        m_ShadowMapStat.Reset();
         m_DeferredGeometryStat.Reset();
         m_DeferredLightingStat.Reset();
         m_DeferredTransparentStat.Reset();
@@ -515,7 +538,7 @@ namespace LevEngine
         // Checking previous frame counters will alleviate GPU stalls.
         
         const auto queryResult = query->GetQueryResult(Time::GetFrameNumber() - (query->GetBufferCount() - 1));
-        if (queryResult.IsValid)
+        if (queryResult.IsValid)    
         {
             stat.Sample(queryResult.ElapsedTime * 1000.0);
         }

@@ -17,6 +17,8 @@ namespace LevEngine
 
     void MeshAsset::DeserializeData(const YAML::Node& node)
     {
+        LEV_PROFILE_FUNCTION();
+        
         try
         {
             auto cachedMesh = MeshAssetCache::LoadFromCache(m_UUID);
@@ -43,6 +45,7 @@ namespace LevEngine
 
     void MeshAsset::LoadAnimations()
     {
+        LEV_PROFILE_FUNCTION();
         const auto animations = AnimationLoader::LoadAllAnimations(m_Path, m_Mesh);
         for (int animationIdx = 0; animationIdx < animations.size(); ++animationIdx)
         {

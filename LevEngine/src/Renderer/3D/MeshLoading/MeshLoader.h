@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/Exporter.hpp>
@@ -126,7 +124,7 @@ public:
 	{
 		for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
 		{
-			int boneID = -1;
+			int boneID;
 			String boneName = mesh->mBones[boneIndex]->mName.C_Str();
 			UnorderedMap<String, BoneInfo>& boneInfoMap = resultMesh->GetBoneInfoMap();
 

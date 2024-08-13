@@ -2,6 +2,7 @@
 #include <d3d11_2.h>
 
 #include "Renderer/Shader/Shader.h"
+#include "Renderer/Shader/ShaderMacros.h"
 
 namespace LevEngine
 {
@@ -9,7 +10,7 @@ class D3D11Shader : public Shader
 {
 public:
 	
-	D3D11Shader(ID3D11Device2* device, const String& filepath, ShaderType shaderTypes);
+	D3D11Shader(ID3D11Device2* device, const String& filepath, ShaderType shaderTypes, const ShaderMacros& macros);
 	~D3D11Shader() override;
 
 	void Bind() const override;
@@ -22,10 +23,10 @@ private:
 	void CreateInputLayout(ID3DBlob* vertexBlob);
 	void CreateShaderParams(ShaderType shaderType, ID3DBlob* blob);
 
-	bool CreateVertexShader(ID3D11VertexShader*& shader, const String& filepath);
-	bool CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath);
-	bool CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath);
-	bool CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath);
+	bool CreateVertexShader(ID3D11VertexShader*& shader, const String& filepath, const ShaderMacros& macros);
+	bool CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath, const ShaderMacros& macros);
+	bool CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath, const ShaderMacros& macros);
+	bool CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath, const ShaderMacros& macros);
 
 	ID3D11VertexShader* m_VertexShader = nullptr;
 	ID3D11PixelShader* m_PixelShader = nullptr;
