@@ -29,8 +29,8 @@ public:
 			| aiProcess_GenSmoothNormals
 			//| aiProcess_SortByPType // Do not split mesh to sub meshes with different primitives types
 			//| aiProcess_FlipWindingOrder
-			//| aiProcess_ImproveCacheLocality // It may help with rendering large models
-			| aiProcess_FixInfacingNormals //May help to fix inwards normals
+			| aiProcess_ImproveCacheLocality // It may help with rendering large models
+			//| aiProcess_FixInfacingNormals //May help to fix inwards normals but can screw up double side faces
 		);
 
 		Ref<Mesh> resultMesh = CreateRef<Mesh>();
@@ -43,11 +43,11 @@ public:
 
 		auto& rootNode = scene->mRootNode;
 
-		// if (rootNode->mNumMeshes == 0)
-		// {
-		// 	Log::CoreWarning("There is no mesh in file {0}. Returning empty mesh", path.string());
-		// 	return resultMesh;
-		// }
+		if (scene->mNumMeshes == 0)
+		{
+			Log::CoreWarning("There is no mesh in file {0}. Returning empty mesh", path.string());
+			return resultMesh;
+		}
 
 		ParseMesh(rootNode, scene, resultMesh, Matrix::Identity);
 		
