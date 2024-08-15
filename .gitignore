@@ -59,8 +59,7 @@ mono_crash.*
 [Rr]elease/
 [Rr]eleases/
 
-!lib/*/[Rr]elease/
-!lib/*/[Dd]ebug/
+!lib/*
 
 x64/
 x86/

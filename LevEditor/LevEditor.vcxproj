@@ -64,7 +64,8 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
+      <Command>xcopy "$(SolutionDir)lib\*.dll" "$(TargetDir)" /d /k /y
+xcopy "$(SolutionDir)lib\$(ConfigurationName)\PhysX\*.dll" "$(TargetDir)" /d /k /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -89,7 +90,8 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
+      <Command>xcopy "$(SolutionDir)lib\*.dll" "$(TargetDir)" /d /k /y
+xcopy "$(SolutionDir)lib\$(ConfigurationName)\PhysX\*.dll" "$(TargetDir)" /d /k /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
