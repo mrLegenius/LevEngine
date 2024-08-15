@@ -22,62 +22,62 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2023 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2024 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
-// Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
+// Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
 
-#ifndef PX_FLIP_MATERIAL_H
-#define PX_FLIP_MATERIAL_H
-/** \addtogroup physics
-@{
-*/
+#ifndef PX_RESIDUAL_H
+#define PX_RESIDUAL_H
 
-#include "PxParticleMaterial.h"
+#include "PxPhysXConfig.h"
 
 #if !PX_DOXYGEN
 namespace physx
 {
 #endif
 
-	class PxScene;
 	/**
-	\brief Material class to represent a set of FLIP particle material properties.
+	\brief Structure representing residual values.
 
-	@see #PxPhysics.createFLIPMaterial()
+	This struct holds residual values, typically used in physics simulations to measure error or discrepancy.
 	*/
-	class PxFLIPMaterial : public PxParticleMaterial
+	struct PxResidual
 	{
-	public:
-		/**
-		\brief Sets viscosity
-	
-		\param[in] viscosity Viscosity. <b>Range:</b> [0, PX_MAX_F32)
+		PxReal rmsResidual; //!< Root mean square residual value.
+		PxReal maxResidual; //!< Maximum residual value.
 
-		@see #getViscosity()
-		*/
-		virtual		void	setViscosity(PxReal viscosity) = 0;
+		PxResidual() : rmsResidual(0.0f), maxResidual(0.0f) {}
+	};
 
-		/**
-		\brief Retrieves the viscosity value.
+	/**
+	\brief Structure representing residual values
 
-		\return The viscosity value.
+	This struct holds residual values for both position and velocity iterations.
+	*/
+	struct PxResiduals
+	{
+		PxResidual positionIterationResidual; //!< Residual values for position iteration.
+		PxResidual velocityIterationResidual; //!< Residual values for velocity iteration.
+	};
 
-		@see #setViscosity()
-		*/
-		virtual		PxReal		getViscosity() const = 0;
+	typedef PxResiduals PxArticulationResidual;
+	typedef PxResiduals PxSceneResidual;
 
-		virtual		const char*		getConcreteTypeName() const { return "PxFLIPMaterial"; }
+	/**
+	\brief Structure representing residual values for a constraint.
 
-	protected:
-		PX_INLINE			PxFLIPMaterial(PxType concreteType, PxBaseFlags baseFlags) : PxParticleMaterial(concreteType, baseFlags) {}
-		PX_INLINE			PxFLIPMaterial(PxBaseFlags baseFlags) : PxParticleMaterial(baseFlags) {}
-		virtual				~PxFLIPMaterial() {}
-		virtual		bool	isKindOf(const char* name) const { PX_IS_KIND_OF(name, "PxFLIPMaterial", PxParticleMaterial); }
+	This struct holds residual values for both position and velocity iterations specific to a constraint.
+	*/
+	struct PxConstraintResidual
+	{
+		PxReal positionIterationResidual; //!< Residual value for position iteration.
+		PxReal velocityIterationResidual; //!< Residual value for velocity iteration.
+
+		PxConstraintResidual() : positionIterationResidual(0.0f), velocityIterationResidual(0.0f) {}
 	};
 
 #if !PX_DOXYGEN
-} // namespace physx
+}
 #endif
 
-/** @} */
 #endif

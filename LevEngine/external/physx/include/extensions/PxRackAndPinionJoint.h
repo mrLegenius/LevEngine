@@ -22,15 +22,12 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2023 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2024 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
 #ifndef PX_RACK_AND_PINION_JOINT_H
 #define PX_RACK_AND_PINION_JOINT_H
-/** \addtogroup extensions
-  @{
-*/
 
 #include "extensions/PxJoint.h"
 
@@ -50,7 +47,7 @@ namespace physx
 	\param[in] actor1		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
 	\param[in] localFrame1	The position and orientation of the joint relative to actor1
 
-	@see PxRackAndPinionJoint
+	\see PxRackAndPinionJoint
 	*/
 	PxRackAndPinionJoint*	PxRackAndPinionJointCreate(PxPhysics& physics, PxRigidActor* actor0, const PxTransform& localFrame0, PxRigidActor* actor1, const PxTransform& localFrame1);
 
@@ -58,7 +55,7 @@ namespace physx
 	\brief A joint that connects an existing revolute joint to an existing prismatic joint,
 	and constrains their relative angular/linear velocity and position with respect to each other.
 
-	@see PxRackAndPinionJointCreate PxJoint
+	\see PxRackAndPinionJointCreate PxJoint
 	*/
 	class PxRackAndPinionJoint : public PxJoint
 	{
@@ -67,8 +64,8 @@ namespace physx
 		/**
 		\brief Set the hinge & prismatic joints connected by the rack & pinion joint.
 
-		The passed hinge joint can be either PxRevoluteJoint, PxD6Joint or PxArticulationJointReducedCoordinate. It cannot be null.
-		The passed prismatic joint can be either PxPrismaticJoint or PxD6Joint. It cannot be null.
+		The passed hinge joint can be either PxRevoluteJoint, PxD6Joint or PxArticulationJointReducedCoordinate.
+		The passed prismatic joint can be either PxPrismaticJoint or PxD6Joint.
 
 		Note that these joints are only used to compute the positional error correction term,
 		used to adjust potential drift between jointed actors. The rack & pinion joint can run without
@@ -140,5 +137,4 @@ namespace physx
 } // namespace physx
 #endif
 
-/** @} */
 #endif
