@@ -1,6 +1,5 @@
 #pragma once
 #pragma once
-#include <DetourCrowd.h>
 
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"

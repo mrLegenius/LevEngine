@@ -2,8 +2,7 @@
 #include "NavMeshComponent.h"
 
 #include "NavMeshableComponent.h"
-#include "DetourNavMeshBuilder.h"
-#include "DetourNavMeshQuery.h"
+
 #include "NavMeshBoundingBox.h"
 #include "Assets/MeshAsset.h"
 #include "Renderer/3D/Mesh.h"

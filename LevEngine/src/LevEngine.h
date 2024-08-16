@@ -3,7 +3,28 @@
 // -- Core -------------------------------------------------
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+#define ENTT_USE_ATOMIC 1 //Enable thread-safe entt
+#define ENTT_NO_ETO 1 //Enable empty components (tags) but reduce performance and increase memory consumption
+
+#include <entt/entt.hpp>
+
+#include "eventhandling/eventhandling.hpp"
+
+#include <imgui.h>
+#include <imgui_internal.h>
+
 #include <yaml-cpp/yaml.h>
+
+#include <Recast.h>
+#include <DetourNavMeshBuilder.h>
+#include <DetourNavMeshQuery.h>
+#include <DetourCrowd.h>
+
+#include <PxPhysicsAPI.h>
+
+#include "fmod_common.h"
+#include "fmod_studio.hpp"
+#include "fmod_errors.h"
 
 // -- Data Types -------------------------------------------
 
@@ -31,7 +52,7 @@
 #include "Kernel/UUID.h"
 #include "Kernel/ClassCollection.h"
 
-#include "Renderer/3D/MeshLoading/MeshLoader.h"
+#include "Renderer/3D/MeshLoading/ModelParser.h"
 #include "Renderer/3D/MeshLoading/AnimationLoader.h"
 #include "TextureLibrary.h"
 
@@ -174,3 +195,4 @@
 
 #include "Audio/Audio.h"
 #include "Audio/AudioPlayer.h"
+

@@ -25,7 +25,7 @@ struct RenderSettings
 	static bool UseFrustumCulling;
 	
 	static constexpr bool EnableShaderDebug =
-#ifdef _DEBUG
+#ifdef LEV_DEBUG
 	true;
 #else
 	false;

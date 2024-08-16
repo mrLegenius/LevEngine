@@ -1,8 +1,6 @@
 #include "levpch.h"
 #include "AIAgentCrowdComponent.h"
 
-#include <DetourCrowd.h>
-
 #include "AIAgentComponent.h"
 #include "Math/Random.h"
 #include "Physics/Components/CharacterController.h"

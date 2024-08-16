@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "physx/include/PxPhysicsAPI.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "Collider.h"
 #include "PhysicMaterial.h"
