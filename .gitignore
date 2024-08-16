@@ -59,6 +59,8 @@ mono_crash.*
 [Rr]elease/
 [Rr]eleases/
 
+!lib/*
+
 x64/
 x86/
 !FMODStudio/studio/lib/*

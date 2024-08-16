@@ -22,7 +22,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2023 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2024 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
 
@@ -30,12 +30,7 @@
 #define PX_PREPROCESSOR_H
 
 #include <stddef.h>
-#if !defined(PX_GENERATE_META_DATA)
-#include <ciso646>  
-#endif
-/** \addtogroup foundation
-  @{
-*/
+
 
 #ifndef PX_ENABLE_FEATURES_UNDER_CONSTRUCTION
 #define PX_ENABLE_FEATURES_UNDER_CONSTRUCTION 0
@@ -371,6 +366,15 @@ Final macro
 #define PX_FINAL final
 
 /**
+Unused attribute macro. Only on GCC for now.
+ */
+#if PX_GCC_FAMILY
+	#define PX_UNUSED_ATTRIBUTE __attribute__((unused))
+#else
+	#define PX_UNUSED_ATTRIBUTE 
+#endif
+
+/**
 Alignment macros
 
 PX_ALIGN_PREFIX and PX_ALIGN_SUFFIX can be used for type alignment instead of aligning individual variables as follows:
@@ -531,6 +535,5 @@ protected:                  \
 
 #define PX_FL	__FILE__, __LINE__
 
-/** @} */
 #endif
 
