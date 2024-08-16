@@ -20,6 +20,8 @@ namespace LevEngine::Editor
 
 	void ConsolePanel::DrawContent()
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		//<--- Top menu ---<<
 		if (ImGui::SmallButton("Clear")) { ClearLog(); }
 

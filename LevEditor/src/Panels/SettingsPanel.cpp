@@ -10,6 +10,8 @@ namespace LevEngine::Editor
 {
     void SettingsPanel::DrawContent()
     {
+        LEV_PROFILE_FUNCTION();
+        
         constexpr ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
                 | ImGuiTreeNodeFlags_AllowItemOverlap
                 | ImGuiTreeNodeFlags_Framed

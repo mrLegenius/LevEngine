@@ -112,6 +112,8 @@ namespace LevEngine
 
     void Mesh::Bind(const Ref<Shader>& shader) const
     {
+        LEV_PROFILE_FUNCTION();
+        
         for (auto [binding, buffer] : m_VertexBuffers)
         {
             if (shader->HasSemantic(binding))

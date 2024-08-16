@@ -42,6 +42,8 @@ namespace LevEngine::Editor
 
     void AssetBrowserPanel::DrawContent()
     {
+        LEV_PROFILE_FUNCTION();
+        
         {
             GUI::ScopedVariable rounding{ImGuiStyleVar_FrameRounding, 0.0f};
             GUI::ScopedVariable borderSize{ImGuiStyleVar_FrameBorderSize, 0.0f};
