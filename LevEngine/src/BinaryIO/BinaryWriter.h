@@ -11,6 +11,8 @@ namespace LevEngine
         template <typename T>
         void Write(T data);
 
+        void WriteString(String data);
+
         template <typename T>
         void WriteVector(Vector<T> vector);
 

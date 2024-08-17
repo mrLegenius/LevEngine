@@ -5,6 +5,7 @@
 #include "EngineAssets.h"
 #include "MeshAsset.h"
 #include "ModelNode.h"
+#include "Cache/ModelAssetCache.h"
 #include "Renderer/3D/MeshLoading/ModelParser.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/Transform/Transform.h"
@@ -63,10 +64,15 @@ namespace LevEngine
 
     void ModelAsset::DeserializeData(const YAML::Node& node)
     {
+        auto cache = ModelAssetCache::LoadFromCache(m_UUID);
+
         ModelImportParameters params{};
         params.scale = Scale;
-        auto result = ModelParser::Load(m_Path, params);
-        m_Hierarchy = result.Hierarchy;
+        
+        m_Hierarchy = cache ? cache : ModelParser::Load(m_Path, params).Hierarchy;
+
+        if (!cache)
+            ModelAssetCache::SaveToCache(m_UUID, m_Hierarchy);
     }
 
     void ModelAsset::SerializeMeta(YAML::Emitter& out)

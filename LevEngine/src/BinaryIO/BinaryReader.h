@@ -11,6 +11,8 @@ namespace LevEngine
         template<typename T>
         T Read();
 
+        String ReadString();
+
         template<typename T>
         Vector<T> ReadVector();
 
@@ -21,6 +23,9 @@ namespace LevEngine
         void ReadForEach(Action<T> onRead);
 
     private:
+
+        void ReadBlock(char* data, uint32_t size);
+        
         std::ifstream stream{}; 
     };
 }

@@ -96,10 +96,11 @@ namespace LevEngine
             String fileName = String(meshData->mName.C_Str()).substr(0, maxNameLength);
             fileName.append(".mesh");
             Path meshPath = meshesDirectory / fileName.c_str();
+
+            if (AssetDatabase::AssetExists(meshPath))
+                AssetDatabase::DeleteAsset(AssetDatabase::GetAsset<MeshAsset>(meshPath));
             
-            Ref<MeshAsset> meshAsset = AssetDatabase::AssetExists(meshPath)
-                ? AssetDatabase::GetAsset<MeshAsset>(meshPath)
-                : AssetDatabase::CreateNewAsset<MeshAsset>(meshPath, ParseMesh(meshData));
+            Ref<MeshAsset> meshAsset = AssetDatabase::CreateNewAsset<MeshAsset>(meshPath, ParseMesh(meshData));
 
             meshes.push_back(meshAsset);
         }
@@ -115,7 +116,7 @@ namespace LevEngine
 
         Ref<Mesh> resultMesh = CreateRef<Mesh>();
 		
-        if (nullptr == scene)
+        if (scene == nullptr)
         {
             Log::CoreWarning("Failed to load mesh in {0}. Returning empty mesh", path.string());
             return resultMesh;

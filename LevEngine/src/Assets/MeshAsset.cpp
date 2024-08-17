@@ -24,6 +24,8 @@ namespace LevEngine
     void MeshAsset::DeserializeData(const YAML::Node& node)
     {
         LEV_PROFILE_FUNCTION();
+
+        if (m_Mesh) return;
         
         try
         {

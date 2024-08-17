@@ -12,4 +12,11 @@ namespace LevEngine
         if (stream.is_open())
             stream.close();
     }
+    
+    void BinaryWriter::WriteString(String data)
+    {
+        size_t size = data.size();
+        Write<size_t>(size);
+        stream.write(data.begin(), size);
+    }
 }
