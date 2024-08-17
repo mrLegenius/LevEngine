@@ -5,6 +5,7 @@
 
 #include "EntitySelection.h"
 #include "ModalPopup.h"
+#include "Assets/ModelAsset.h"
 #include "Assets/PrefabAsset.h"
 #include "GUI/EditorGUI.h"
 
@@ -47,6 +48,9 @@ namespace LevEngine::Editor
 
 			if (const auto& prefab = AssetDatabase::GetAsset<PrefabAsset>(assetPath))
 				prefab->Instantiate(activeScene);
+
+			if (const auto& model = AssetDatabase::GetAsset<ModelAsset>(assetPath))
+				model->InstantiateModel(activeScene);
 
 			ImGui::EndDragDropTarget();
 		}
@@ -183,6 +187,12 @@ namespace LevEngine::Editor
 				if (const auto& prefab = AssetDatabase::GetAsset<PrefabAsset>(assetPath))
 				{
 					const auto child = prefab->Instantiate(activeScene);
+					child.GetComponent<Transform>().SetParent(entity);
+				}
+
+				if (const auto& prefab = AssetDatabase::GetAsset<ModelAsset>(assetPath))
+				{
+					const auto child = prefab->InstantiateModel(activeScene);
 					child.GetComponent<Transform>().SetParent(entity);
 				}
 			}

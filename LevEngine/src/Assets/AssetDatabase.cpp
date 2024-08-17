@@ -8,6 +8,7 @@
 #include "MaterialPBRAsset.h"
 #include "MaterialSimpleAsset.h"
 #include "MeshAsset.h"
+#include "ModelAsset.h"
 #include "PrefabAsset.h"
 #include "Project.h"
 #include "SceneAsset.h"
@@ -136,28 +137,7 @@ namespace LevEngine
 	{
 		const auto extension = path.extension().string();
 
-		return
-			extension == ".obj"
-			|| extension == ".fbx"
-			|| extension == ".dae"
-			|| extension == ".gltf"
-			|| extension == ".glb"
-			|| extension == ".blend"
-			|| extension == ".3ds"
-			|| extension == ".ase"
-			|| extension == ".ifc"
-			|| extension == ".xgl"
-			|| extension == ".zgl"
-			|| extension == ".ply"
-			|| extension == ".dxf"
-			|| extension == ".lwo"
-			|| extension == ".lws"
-			|| extension == ".lxo"
-			|| extension == ".stl"
-			|| extension == ".x"
-			|| extension == ".ac"
-			|| extension == ".ms3d"
-			;
+		return extension == ".mesh";
 	}
 
 	bool AssetDatabase::IsAssetMaterial(const Path& path)
@@ -220,6 +200,33 @@ namespace LevEngine
 		return extension == ".anim";
 	}
 
+	bool AssetDatabase::IsAssetModel(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return
+			extension == ".obj"
+			|| extension == ".fbx"
+			|| extension == ".dae"
+			|| extension == ".gltf"
+			|| extension == ".glb"
+			|| extension == ".blend"
+			|| extension == ".3ds"
+			|| extension == ".ase"
+			|| extension == ".ifc"
+			|| extension == ".xgl"
+			|| extension == ".zgl"
+			|| extension == ".ply"
+			|| extension == ".dxf"
+			|| extension == ".lwo"
+			|| extension == ".lws"
+			|| extension == ".lxo"
+			|| extension == ".stl"
+			|| extension == ".x"
+			|| extension == ".ac"
+			|| extension == ".ms3d";
+	}
+
 	Ref<Asset> AssetDatabase::CreateAsset(const Path& path, UUID uuid)
 	{
 		if (IsAssetTexture(path))
@@ -251,6 +258,9 @@ namespace LevEngine
 
 		if (IsAssetScript(path))
 			return CreateRef<ScriptAsset>(path, uuid);
+
+		if (IsAssetModel(path))
+			return CreateRef<ModelAsset>(path, uuid);
 
 		return CreateRef<DefaultAsset>(path, uuid);
 	}

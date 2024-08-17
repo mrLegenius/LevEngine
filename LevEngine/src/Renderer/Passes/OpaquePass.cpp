@@ -9,7 +9,9 @@
 #include "Renderer/3D/Mesh.h"
 #include "Assets/MaterialAsset.h"
 #include "Assets/MeshAsset.h"
+#include "Renderer/RenderSettings.h"
 #include "Renderer/Camera/SceneCamera.h"
+#include "Renderer/Material/MaterialPBR.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Transform/Transform.h"
@@ -42,24 +44,39 @@ namespace LevEngine
             auto [transform, meshRenderer] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
 
             if (!meshRenderer.enabled) continue;
-            if (!meshRenderer.material) continue;
-            auto& material = meshRenderer.material->GetMaterial();
-
+            
+            auto& material = meshRenderer.material ? meshRenderer.material->GetMaterial() : *Renderer3D::MissingMaterial;
             if (material.IsTransparent()) continue;
+            
             if (!meshRenderer.mesh) continue;
 
-            const auto mesh = meshRenderer.mesh->GetMesh();
-            if (!mesh) continue;
+            Queue<Ref<Mesh>> meshesToRender;
+            const auto initialMesh = meshRenderer.mesh->GetMesh();
 
-            if (RenderSettings::UseFrustumCulling)
-            {
-                if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
-            }
+            if (!initialMesh) continue;
 
             if (previousMaterial != &material)
                 material.Bind(shader);
+            
+            meshesToRender.push(initialMesh);
 
-            Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
+            while (meshesToRender.size() > 0)
+            {
+                auto mesh = meshesToRender.front();
+                meshesToRender.pop();
+
+                for (auto subMesh : mesh->GetSubMeshes())
+                {
+                    if (subMesh)
+                        meshesToRender.push(subMesh);
+                }
+                
+                if (RenderSettings::UseFrustumCulling)
+                    if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
+
+                if (mesh->IndexBuffer)
+                    Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
+            }
 
             previousMaterial = &material;
         }

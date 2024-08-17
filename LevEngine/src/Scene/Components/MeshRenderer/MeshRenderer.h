@@ -9,7 +9,7 @@ namespace LevEngine
 	
 	struct MeshRendererComponent
 	{
-		bool enabled;
+		bool enabled = true;
 		Ref<MeshAsset> mesh;
 		Ref<MaterialAsset> material;
 		bool castShadow = true;

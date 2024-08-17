@@ -8,11 +8,11 @@ namespace LevEngine
 	class MeshAsset final : public Asset, public eastl::enable_shared_from_this<MeshAsset>
 	{
 	public:
-		MeshAsset() = default;
+		MeshAsset() = delete;
 		explicit MeshAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
+		explicit MeshAsset(const Path& path, const UUID uuid, const Ref<Mesh>& mesh);
 		
 		[[nodiscard]] const Ref<Mesh>& GetMesh() const { return m_Mesh; }
-
 		[[nodiscard]] Ref<Texture> GetIcon() const override;
 
 	protected:

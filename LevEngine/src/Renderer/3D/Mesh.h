@@ -86,6 +86,9 @@ namespace LevEngine
     	
     	[[nodiscard]] const Vector<int>& GetBoneWeightCounters() const { return m_BoneWeightCounters; }
     	void SetBoneWeightCounters(const Vector<int>& data ) { m_BoneWeightCounters = data; }
+
+		[[nodiscard]] const Vector<Ref<Mesh>>& GetSubMeshes() const { return m_SubMeshes; }
+		void AddSubMesh(const Ref<Mesh>& mesh) { return m_SubMeshes.push_back(mesh); }
     	
         Ref<IndexBuffer> IndexBuffer;
 
@@ -106,6 +109,9 @@ namespace LevEngine
 		Vector<int> m_BoneWeightCounters;
 		UnorderedMap<String, BoneInfo> m_BoneInfoMap;
 		int m_BoneCounter = 0;
+
+    	//Other
+    	Vector<Ref<Mesh>> m_SubMeshes;
 
 		AABBBoundingVolume m_BoundingVolume{};
 };

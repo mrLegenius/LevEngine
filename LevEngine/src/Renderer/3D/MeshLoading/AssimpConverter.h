@@ -20,6 +20,11 @@ namespace LevEngine
 		{
 			return Vector3{ aiVector.x, aiVector.y, aiVector.z };
 		}
+		
+		static Vector2 ToVector2(const aiVector3D& aiVector)
+		{
+			return Vector2{ aiVector.x, aiVector.y };
+		}
 
 		static Quaternion ToQuaternion(const aiQuaternion& aiQuaternion)
 		{

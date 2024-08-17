@@ -36,6 +36,7 @@ namespace LevEngine
 		static bool IsAssetAudioBank(const Path& path);
 		
 		static bool IsAssetAnimationClip(const Path& path);
+		static bool IsAssetModel(const Path& path);
 
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid);
 

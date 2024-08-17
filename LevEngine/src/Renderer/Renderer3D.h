@@ -1,5 +1,4 @@
 #pragma once
-#include "RenderSettings.h"
 #include "Math/Math.h"
 #include "3D/AnimationConstants.h"
 #include "DataTypes/Array.h"
@@ -11,6 +10,7 @@ namespace LevEngine
     struct MeshRendererComponent;
     class SceneCamera;
     class Mesh;
+    class Material;
 
     struct MeshModelBufferData
     {
@@ -39,6 +39,8 @@ namespace LevEngine
         static void RenderSphere(const Matrix& model, const Ref<Shader>& shader);
         static void RenderCone(const Matrix& model, const Ref<Shader>& shader);
         static void RenderCube(const Matrix& model, const Ref<Shader>& shader);
+
+        static Ref<Material> MissingMaterial;
 
     private:
         static Ref<ConstantBuffer> m_ModelConstantBuffer;

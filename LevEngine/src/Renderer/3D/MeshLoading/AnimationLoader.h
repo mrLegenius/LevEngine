@@ -19,7 +19,7 @@ namespace LevEngine
 			Assimp::Importer importer;
 			const aiScene* scene = importer.ReadFile(path.string(), aiProcess_FindInvalidData);
 
-			LEV_CORE_ASSERT(scene && scene->mRootNode);
+			if (!scene || !scene->mRootNode) return Vector<Ref<Animation>>();
 
 			Vector<Ref<Animation>> animations;
 

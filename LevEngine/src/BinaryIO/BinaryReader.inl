@@ -16,6 +16,7 @@ namespace LevEngine
         auto count = Read<size_t>();
 
         Vector<T> vector;
+        vector.reserve(count);
 
         for (int i = 0; i < count; ++i)
         {
@@ -42,7 +43,8 @@ namespace LevEngine
     {
         auto count = Read<size_t>();
 
-        Vector<T> vector(count);
+        Vector<T> vector;
+        vector.reserve(count);
 
         for (int i = 0; i < count; ++i)
         {

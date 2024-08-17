@@ -61,7 +61,10 @@ namespace LevEngine
 	void SerializeEntity(YAML::Emitter& out, Entity entity);
 	YAML::Node LoadYAMLFile(const Path& filepath);
 	bool LoadYAMLFileSafe(const Path& filepath, YAML::Node& node);
-	
+
+	template <typename T>
+	void Write(YAML::Emitter& out, String key, T value);
+
 	template <typename T>
 	bool TryParse(const YAML::Node& node, T& value);
 }

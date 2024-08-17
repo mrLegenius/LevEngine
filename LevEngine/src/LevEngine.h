@@ -186,6 +186,7 @@
 #include "Assets/MeshAsset.h"
 #include "Assets/SkyboxAsset.h"
 #include "Assets/AudioBankAsset.h"
+#include "Assets/ModelAsset.h"
 
 #include "ResourceManager.h"
 

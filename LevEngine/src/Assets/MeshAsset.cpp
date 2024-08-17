@@ -6,10 +6,16 @@
 #include "EngineAssets.h"
 #include "Cache/MeshAssetCache.h"
 #include "Renderer/3D/MeshLoading/AnimationLoader.h"
-#include "Renderer/3D/MeshLoading/MeshLoader.h"
+#include "Renderer/3D/MeshLoading/ModelParser.h"
 
 namespace LevEngine
 {
+    MeshAsset::MeshAsset(const Path& path, const UUID uuid, const Ref<Mesh>& mesh)
+        : Asset(path, uuid), m_Mesh(mesh)
+    {
+        MeshAssetCache::SaveToCache(uuid, mesh);
+    }
+
     Ref<Texture> MeshAsset::GetIcon() const
     {
         return Icons::Mesh();
@@ -23,7 +29,7 @@ namespace LevEngine
         {
             auto cachedMesh = MeshAssetCache::LoadFromCache(m_UUID);
             
-            m_Mesh = cachedMesh ? cachedMesh : MeshLoader::LoadMesh(m_Path);
+            m_Mesh = cachedMesh ? cachedMesh : ModelParser::LoadModel(m_Path);
 
             if (!cachedMesh)
                 MeshAssetCache::SaveToCache(m_UUID, m_Mesh);

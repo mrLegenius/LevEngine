@@ -18,6 +18,7 @@ namespace LevEngine
         static Ref<Texture> File();
         static Ref<Texture> Material();
         static Ref<Texture> Mesh();
+        static Ref<Texture> Model();
         static Ref<Texture> Skybox();
     };
 
