@@ -17,7 +17,8 @@ namespace LevEngine
 {
     
     //TODO: Add aiProcess_GlobalScale
-    unsigned int importFlags = aiProcess_CalcTangentSpace
+    unsigned int importFlags
+        = aiProcess_CalcTangentSpace
         | aiProcess_Triangulate
         | aiProcess_RemoveRedundantMaterials
         | aiProcess_JoinIdenticalVertices
@@ -28,7 +29,7 @@ namespace LevEngine
         | aiProcess_ImproveCacheLocality // It may help with rendering large models
         //| aiProcess_FixInfacingNormals //May help to fix inwards normals but can screw up double side faces
         | aiProcess_OptimizeMeshes
-        //| aiProcess_OptimizeGraph
+        | aiProcess_OptimizeGraph
         | aiProcess_GlobalScale 
     ;
 
@@ -42,41 +43,78 @@ namespace LevEngine
         const aiScene* scene = importer.ReadFile(path.string(), importFlags);
 
         ModelNode* resultHierarchy = new ModelNode();
-        resultHierarchy->Name = scene->mRootNode->mName.C_Str();
+        resultHierarchy->Name = path.filename().string().c_str();
         resultHierarchy->Transform = Matrix::Identity;
         resultHierarchy->MeshUUID = 0;
         
-        result.Meshes = LoadMeshes(path, scene);
-        result.Hierarchy = LoadModelHierarchy(scene->mRootNode, resultHierarchy, Matrix::Identity, scene, result.Meshes);
+        LoadModelHierarchy(path, scene->mRootNode, resultHierarchy, Matrix::Identity, scene);
+        result.Hierarchy = resultHierarchy;
 
         return result;
     }
 
-    ModelNode* ModelParser::LoadModelHierarchy(const aiNode* node, ModelNode* parent, Matrix accTransform, const aiScene* scene, const Vector<Ref<MeshAsset>>& meshAssets)
+    void ModelParser::LoadModelHierarchy(const Path& path, const aiNode* node, ModelNode* parent, Matrix accTransform, const aiScene* scene)
     {
         const Matrix currentNodeTransform = AssimpConverter::ToMatrix(node->mTransformation, true);
+        ModelNode* result{};
         
-        if (node->mNumMeshes > 0)
+        for (int i = 0; i < node->mNumMeshes > 0; ++i)
         {
-            ModelNode* result = new ModelNode();
+            result = new ModelNode();
             
-            auto meshIndex = node->mMeshes[0];
-            result->MeshUUID = meshAssets[meshIndex]->GetUUID();
+            auto meshIndex = node->mMeshes[i];
+            auto meshData = scene->mMeshes[meshIndex];
+
+            auto mesh = ParseMesh(meshData, currentNodeTransform);
+
+            constexpr uint32_t maxNameLength = 64;
+            String fileName = String(meshData->mName.C_Str()).substr(0, maxNameLength);
+            auto meshAsset = CreateMeshAsset(path, fileName, mesh);
+            
+            result->MeshUUID = meshAsset->GetUUID();
 
             result->Transform = currentNodeTransform;
-            result->Name = node->mName.C_Str();
+            result->Name = meshData->mName.C_Str();
+
+            if (node->mNumMeshes > 1)
+                result->Name.append(ToString(i+1));
             
             parent->Children.push_back(result);
-
-            parent = result;
         }
+        
+        if (node->mNumChildren && node->mNumMeshes > 1)
+        {
+            result = new ModelNode();
+            result->MeshUUID = 0;
+            result->Transform = currentNodeTransform;
+            result->Name = node->mName.C_Str();
+        }
+
+        parent = result ? result : parent;
 
         Matrix transform = AssimpConverter::ToMatrix(node->mTransformation, false) * accTransform;
         
         for (uint32_t i = 0; i < node->mNumChildren; ++i)
-            LoadModelHierarchy(node->mChildren[i], parent, transform, scene, meshAssets);
+            LoadModelHierarchy(path, node->mChildren[i], parent, transform, scene);
+    }
 
-        return parent;
+    Ref<MeshAsset> ModelParser::CreateMeshAsset(const Path& path, String name, const Ref<Mesh>& mesh)
+    {
+        const auto modelDirectory = path.parent_path();
+        const auto meshesDirectory = modelDirectory / "Meshes";
+
+        if (!exists(meshesDirectory))
+            create_directory(meshesDirectory);
+        
+        name.append(".mesh");
+        Path meshPath = meshesDirectory / name.c_str();
+
+        if (AssetDatabase::AssetExists(meshPath))
+            AssetDatabase::DeleteAsset(AssetDatabase::GetAsset<MeshAsset>(meshPath));
+            
+        Ref<MeshAsset> meshAsset = AssetDatabase::CreateNewAsset<MeshAsset>(meshPath, mesh);
+
+        return meshAsset;
     }
     
     Vector<Ref<MeshAsset>> ModelParser::LoadMeshes(const Path& path, const aiScene* scene)
@@ -173,6 +211,52 @@ namespace LevEngine
 
         newMesh->Init();
         newMesh->GenerateAABBBoundingVolume();
+
+        return newMesh;
+    }
+
+    Ref<Mesh> ModelParser::ParseMesh(const aiMesh* mesh, Matrix cumulativeTransform)
+    {
+        Ref<Mesh> newMesh = CreateRef<Mesh>();
+	
+        const size_t nvertices = mesh->mNumVertices;
+        const aiVector3D* vertices = mesh->mVertices;
+        newMesh->ResizeBoneArrays(nvertices);
+
+        for (size_t vertexIdx = 0; vertexIdx < nvertices; vertexIdx++)
+        {
+            const aiVector3D vertex = vertices[vertexIdx];
+				
+            const auto point = Vector3::Transform(
+                Vector3(vertex.x, vertex.y, vertex.z), cumulativeTransform);
+
+            const auto uv = Vector2(mesh->mTextureCoords[0][vertexIdx].x, mesh->mTextureCoords[0][vertexIdx].y);
+            const auto normal = Vector3::Transform(AssimpConverter::ToVector3(mesh->mNormals[vertexIdx]),
+                                                   cumulativeTransform);
+            const auto tangent = Vector3::Transform(AssimpConverter::ToVector3(mesh->mTangents[vertexIdx]),
+                                                    cumulativeTransform);
+
+            newMesh->AddVertex(point);
+            newMesh->AddUV(uv);
+            newMesh->AddNormal(normal);
+            newMesh->AddTangent(tangent);
+        }
+
+        ExtractBoneWeightForVertices(newMesh, mesh);
+
+        const size_t nFaces = mesh->mNumFaces;
+        const aiFace* meshFaces = mesh->mFaces;
+        for (size_t faceIdx = 0; faceIdx < nFaces; faceIdx++)
+        {
+            newMesh->AddIndex(meshFaces[faceIdx].mIndices[0]);
+            newMesh->AddIndex(meshFaces[faceIdx].mIndices[1]);
+            newMesh->AddIndex(meshFaces[faceIdx].mIndices[2]);
+        }
+
+        newMesh->Init();
+        newMesh->GenerateAABBBoundingVolume();
+        
+        newMesh->NormalizeBoneWeights();
 
         return newMesh;
     }

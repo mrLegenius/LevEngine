@@ -114,6 +114,7 @@
     <ClInclude Include="src\AI\Systems\AIAgentCrowdUpdateSystem.h" />
     <ClInclude Include="src\Assets\AnimationAsset.h" />
     <ClInclude Include="src\Assets\Cache\MeshAssetCache.h" />
+    <ClInclude Include="src\Assets\Cache\ModelAssetCache.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
     <ClInclude Include="src\Assets\ModelAsset.h" />
     <ClInclude Include="src\Assets\ModelNode.h" />
@@ -1082,6 +1083,7 @@
     <ClCompile Include="src\AI\Components\AIAgentCrowdComponent.cpp" />
     <ClCompile Include="src\AI\Systems\AIAgentCrowdUpdateSystem.cpp" />
     <ClCompile Include="src\Assets\Cache\MeshAssetCache.cpp" />
+    <ClCompile Include="src\Assets\Cache\ModelAssetCache.cpp" />
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
     <ClCompile Include="src\Assets\ModelAsset.cpp" />

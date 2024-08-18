@@ -26,14 +26,17 @@ namespace LevEngine
     public:
         static ModelImportResult Load(const Path& path, ModelImportParameters params);
         
-        static ModelNode* LoadModelHierarchy(const aiNode* node, ModelNode* parent, Matrix accTransform,
-            const aiScene* scene,
-            const Vector<Ref<MeshAsset>>& meshAssets);
-        
+        static void LoadModelHierarchy(const Path& path, const aiNode* node, ModelNode* parent,
+                                       Matrix accTransform,
+                                       const aiScene* scene);
+        static Ref<MeshAsset> CreateMeshAsset(const Path& path, String name, const Ref<Mesh>& mesh);
+
         static Vector<Ref<MeshAsset>> LoadMeshes(const Path& path, const aiScene* scene);
+        static Vector<Ref<MaterialAsset>> LoadMaterials(const Path& path, const aiScene* scene);
 
         static Ref<Mesh> LoadModel(const Path& path);
         static Ref<Mesh> ParseMesh(const aiMesh* mesh);
+        static Ref<Mesh> ParseMesh(const aiMesh* mesh, Matrix cumulativeTransform);
 
         static void ParseMesh(const aiNode* node, const aiScene* scene, Ref<Mesh>& resultMesh,
                               Matrix cumulativeTransform);
