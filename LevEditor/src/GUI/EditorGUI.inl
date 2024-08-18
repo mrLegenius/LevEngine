@@ -43,8 +43,11 @@ namespace LevEngine::Editor
 
 			if (const auto& newAsset = AssetDatabase::GetAsset<T>(assetPath))
 			{
-				assetPtr = newAsset;
-				changed = true;
+				if (assetPtr != newAsset)
+				{
+					assetPtr = newAsset;
+					changed = true;
+				}
 			}
 		}
 		ImGui::EndDragDropTarget();

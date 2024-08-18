@@ -9,13 +9,16 @@
 
 #include "AssimpConverter.h"
 #include "Assets/AssetDatabase.h"
+#include "Assets/MaterialAsset.h"
+#include "Assets/MaterialPBRAsset.h"
 #include "Assets/MeshAsset.h"
 #include "Assets/ModelNode.h"
+#include "Assets/TextureAsset.h"
 #include "Renderer/3D/Mesh.h"
+#include "Renderer/Material/MaterialPBR.h"
 
 namespace LevEngine
 {
-    
     //TODO: Add aiProcess_GlobalScale
     unsigned int importFlags
         = aiProcess_CalcTangentSpace
@@ -30,8 +33,7 @@ namespace LevEngine
         //| aiProcess_FixInfacingNormals //May help to fix inwards normals but can screw up double side faces
         | aiProcess_OptimizeMeshes
         | aiProcess_OptimizeGraph
-        | aiProcess_GlobalScale 
-    ;
+        | aiProcess_GlobalScale;
 
     ModelImportResult ModelParser::Load(const Path& path, ModelImportParameters params)
     {
@@ -43,59 +45,65 @@ namespace LevEngine
         const aiScene* scene = importer.ReadFile(path.string(), importFlags);
 
         ModelNode* resultHierarchy = new ModelNode();
-        resultHierarchy->Name = path.filename().string().c_str();
+        resultHierarchy->Name = path.filename().stem().string().c_str();
         resultHierarchy->Transform = Matrix::Identity;
         resultHierarchy->MeshUUID = 0;
-        
-        LoadModelHierarchy(path, scene->mRootNode, resultHierarchy, Matrix::Identity, scene);
+        resultHierarchy->MaterialUUID = 0;
+
+        auto materials = LoadMaterials(path, scene);
+        LoadModelHierarchy(path, scene->mRootNode, resultHierarchy, Matrix::Identity, scene, materials);
         result.Hierarchy = resultHierarchy;
 
         return result;
     }
 
-    void ModelParser::LoadModelHierarchy(const Path& path, const aiNode* node, ModelNode* parent, Matrix accTransform, const aiScene* scene)
+    void ModelParser::LoadModelHierarchy(const Path& path, const aiNode* node, ModelNode* parent, Matrix accTransform,
+                                         const aiScene* scene, const Vector<Ref<MaterialAsset>>& materialAssets)
     {
         const Matrix currentNodeTransform = AssimpConverter::ToMatrix(node->mTransformation, true);
         ModelNode* result{};
-        
+
         for (int i = 0; i < node->mNumMeshes > 0; ++i)
         {
             result = new ModelNode();
-            
+
             auto meshIndex = node->mMeshes[i];
             auto meshData = scene->mMeshes[meshIndex];
 
+            auto materialIndex = meshData->mMaterialIndex;
+
             auto mesh = ParseMesh(meshData, currentNodeTransform);
 
-            constexpr uint32_t maxNameLength = 64;
-            String fileName = String(meshData->mName.C_Str()).substr(0, maxNameLength);
+            auto fileName = AssimpConverter::ToName(meshData->mName);
             auto meshAsset = CreateMeshAsset(path, fileName, mesh);
-            
+
             result->MeshUUID = meshAsset->GetUUID();
+            result->MaterialUUID = materialAssets[materialIndex]->GetUUID();
 
             result->Transform = currentNodeTransform;
-            result->Name = meshData->mName.C_Str();
+            result->Name = fileName;
 
             if (node->mNumMeshes > 1)
-                result->Name.append(ToString(i+1));
-            
+                result->Name.append(ToString(i + 1));
+
             parent->Children.push_back(result);
         }
-        
+
         if (node->mNumChildren && node->mNumMeshes > 1)
         {
             result = new ModelNode();
             result->MeshUUID = 0;
+            result->MaterialUUID = 0;
             result->Transform = currentNodeTransform;
-            result->Name = node->mName.C_Str();
+            result->Name = AssimpConverter::ToName(node->mName);
         }
 
         parent = result ? result : parent;
 
         Matrix transform = AssimpConverter::ToMatrix(node->mTransformation, false) * accTransform;
-        
+
         for (uint32_t i = 0; i < node->mNumChildren; ++i)
-            LoadModelHierarchy(path, node->mChildren[i], parent, transform, scene);
+            LoadModelHierarchy(path, node->mChildren[i], parent, transform, scene, materialAssets);
     }
 
     Ref<MeshAsset> ModelParser::CreateMeshAsset(const Path& path, String name, const Ref<Mesh>& mesh)
@@ -105,45 +113,102 @@ namespace LevEngine
 
         if (!exists(meshesDirectory))
             create_directory(meshesDirectory);
-        
+
         name.append(".mesh");
         Path meshPath = meshesDirectory / name.c_str();
 
         if (AssetDatabase::AssetExists(meshPath))
             AssetDatabase::DeleteAsset(AssetDatabase::GetAsset<MeshAsset>(meshPath));
-            
+
         Ref<MeshAsset> meshAsset = AssetDatabase::CreateNewAsset<MeshAsset>(meshPath, mesh);
 
         return meshAsset;
     }
-    
-    Vector<Ref<MeshAsset>> ModelParser::LoadMeshes(const Path& path, const aiScene* scene)
+
+    Vector<Ref<MaterialAsset>> ModelParser::LoadMaterials(const Path& path, const aiScene* scene)
     {
         const auto modelDirectory = path.parent_path();
-        const auto meshesDirectory = modelDirectory / "Meshes";
+        const auto directory = modelDirectory / "Materials";
 
-        if (!exists(meshesDirectory))
-            create_directory(meshesDirectory);
-        
-        Vector<Ref<MeshAsset>> meshes;
-        for (int i = 0; i < scene->mNumMeshes; ++i)
+        if (!exists(directory))
+            create_directory(directory);
+
+        Vector<Ref<MaterialAsset>> materials;
+        for (int i = 0; i < scene->mNumMaterials; ++i)
         {
-            auto meshData = scene->mMeshes[i];
+            auto data = scene->mMaterials[i];
 
-            constexpr uint32_t maxNameLength = 64;
-            String fileName = String(meshData->mName.C_Str()).substr(0, maxNameLength);
-            fileName.append(".mesh");
-            Path meshPath = meshesDirectory / fileName.c_str();
+            auto fileName = AssimpConverter::ToName(data->GetName());
+            fileName.append(".pbr");
+            Path assetPath = directory / fileName.c_str();
 
-            if (AssetDatabase::AssetExists(meshPath))
-                AssetDatabase::DeleteAsset(AssetDatabase::GetAsset<MeshAsset>(meshPath));
-            
-            Ref<MeshAsset> meshAsset = AssetDatabase::CreateNewAsset<MeshAsset>(meshPath, ParseMesh(meshData));
+            if (AssetDatabase::AssetExists(assetPath))
+                AssetDatabase::DeleteAsset(AssetDatabase::GetAsset<MaterialAsset>(assetPath));
 
-            meshes.push_back(meshAsset);
+            Ref<MaterialPBRAsset> asset = AssetDatabase::CreateNewAsset<MaterialPBRAsset>(
+                assetPath, ParseMaterial(data));
+
+            AssignMaterialTextures(path, data, asset);
+            asset->Serialize();
+
+            materials.push_back(asset);
         }
 
-        return meshes;
+        return materials;
+    }
+
+    void ModelParser::AssignMaterialTextures(const Path& path, const aiMaterial* material, const Ref<MaterialPBRAsset>& asset)
+    {
+        const auto modelDirectory = path.parent_path();
+        aiString colorTexture, metallicTexture, roughnessTexture, normalTexture, aoTexture, emissiveTexture;
+        material->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &colorTexture);
+        material->GetTexture(AI_MATKEY_METALLIC_TEXTURE, &metallicTexture);
+        material->GetTexture(AI_MATKEY_ROUGHNESS_TEXTURE, &roughnessTexture);
+        material->GetTexture(aiTextureType_NORMALS, 0, &normalTexture);
+        material->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &aoTexture);
+        material->GetTexture(aiTextureType_EMISSIVE, 0, &emissiveTexture);
+
+        if (!colorTexture.length)
+            material->GetTexture(aiTextureType_DIFFUSE, 0, &colorTexture);
+        
+        if (colorTexture.length)
+            asset->SetTexture(MaterialPBR::TextureType::Albedo, AssetDatabase::GetAsset<TextureAsset>(modelDirectory / colorTexture.C_Str()));
+
+        if (metallicTexture.length)
+            asset->SetTexture(MaterialPBR::TextureType::Metallic, AssetDatabase::GetAsset<TextureAsset>(modelDirectory / metallicTexture.C_Str()));
+
+        if (roughnessTexture.length)
+            asset->SetTexture(MaterialPBR::TextureType::Roughness, AssetDatabase::GetAsset<TextureAsset>(modelDirectory / roughnessTexture.C_Str()));
+
+        if (normalTexture.length)
+            asset->SetTexture(MaterialPBR::TextureType::Normal, AssetDatabase::GetAsset<TextureAsset>(modelDirectory / normalTexture.C_Str()));
+
+        if (aoTexture.length)
+            asset->SetTexture(MaterialPBR::TextureType::AmbientOcclusion, AssetDatabase::GetAsset<TextureAsset>(modelDirectory / aoTexture.C_Str()));
+
+        if (emissiveTexture.length)
+            asset->SetTexture(MaterialPBR::TextureType::Emissive, AssetDatabase::GetAsset<TextureAsset>(modelDirectory / emissiveTexture.C_Str()));
+    }
+
+    MaterialPBR ModelParser::ParseMaterial(const aiMaterial* material)
+    {
+        MaterialPBR newMaterial{};
+
+        aiColor4D color(1.f, 1.f, 1.f, 1.f);
+        if (material->Get(AI_MATKEY_BASE_COLOR, color) == aiReturn_FAILURE)
+            material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+        
+        newMaterial.SetTintColor(AssimpConverter::ToColor(color));
+
+        float metallicFactor = 0.001f;
+        material->Get(AI_MATKEY_METALLIC_FACTOR, metallicFactor);
+        newMaterial.SetMetallic(metallicFactor);
+
+        float roughnessFactor = 1.f - 0.001f;
+        material->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughnessFactor);
+        newMaterial.SetRoughness(roughnessFactor);
+        
+        return newMaterial;
     }
 
     Ref<Mesh> ModelParser::LoadModel(const Path& path)
@@ -153,7 +218,7 @@ namespace LevEngine
         const aiScene* scene = importer.ReadFile(path.string(), importFlags);
 
         Ref<Mesh> resultMesh = CreateRef<Mesh>();
-		
+
         if (scene == nullptr)
         {
             Log::CoreWarning("Failed to load mesh in {0}. Returning empty mesh", path.string());
@@ -161,7 +226,7 @@ namespace LevEngine
         }
 
         auto& rootNode = scene->mRootNode;
-		
+
         if (scene->mNumMeshes == 0)
         {
             Log::CoreWarning("There is no mesh in file {0}. Returning empty mesh", path.string());
@@ -169,7 +234,7 @@ namespace LevEngine
         }
 
         ParseMesh(rootNode, scene, resultMesh, Matrix::Identity);
-		
+
         resultMesh->Init();
         resultMesh->GenerateAABBBoundingVolume();
 
@@ -179,7 +244,7 @@ namespace LevEngine
     Ref<Mesh> ModelParser::ParseMesh(const aiMesh* mesh)
     {
         Ref<Mesh> newMesh = CreateRef<Mesh>();
-	
+
         const size_t nvertices = mesh->mNumVertices;
         const aiVector3D* vertices = mesh->mVertices;
         newMesh->ResizeBoneArrays(nvertices);
@@ -218,7 +283,7 @@ namespace LevEngine
     Ref<Mesh> ModelParser::ParseMesh(const aiMesh* mesh, Matrix cumulativeTransform)
     {
         Ref<Mesh> newMesh = CreateRef<Mesh>();
-	
+
         const size_t nvertices = mesh->mNumVertices;
         const aiVector3D* vertices = mesh->mVertices;
         newMesh->ResizeBoneArrays(nvertices);
@@ -226,7 +291,7 @@ namespace LevEngine
         for (size_t vertexIdx = 0; vertexIdx < nvertices; vertexIdx++)
         {
             const aiVector3D vertex = vertices[vertexIdx];
-				
+
             const auto point = Vector3::Transform(
                 Vector3(vertex.x, vertex.y, vertex.z), cumulativeTransform);
 
@@ -255,14 +320,14 @@ namespace LevEngine
 
         newMesh->Init();
         newMesh->GenerateAABBBoundingVolume();
-        
+
         newMesh->NormalizeBoneWeights();
 
         return newMesh;
     }
 
     void ModelParser::ParseMesh(const aiNode* node, const aiScene* scene, Ref<Mesh>& resultMesh,
-        Matrix cumulativeTransform)
+                                Matrix cumulativeTransform)
     {
         const Matrix currentNodeTransform = AssimpConverter::ToMatrix(node->mTransformation, true);
         cumulativeTransform *= currentNodeTransform;
@@ -271,9 +336,9 @@ namespace LevEngine
         {
             const uint32_t meshIdx = node->mMeshes[i];
             Ref<Mesh> newMesh = CreateRef<Mesh>();
-			
+
             const aiMesh* mesh = scene->mMeshes[meshIdx];
-	
+
             const size_t nvertices = mesh->mNumVertices;
             const aiVector3D* vertices = mesh->mVertices;
             newMesh->ResizeBoneArrays(nvertices);
@@ -281,7 +346,7 @@ namespace LevEngine
             for (size_t vertexIdx = 0; vertexIdx < nvertices; vertexIdx++)
             {
                 const aiVector3D vertex = vertices[vertexIdx];
-				
+
                 const auto point = Vector3::Transform(
                     Vector3(vertex.x, vertex.y, vertex.z), cumulativeTransform);
 
@@ -310,7 +375,7 @@ namespace LevEngine
 
             newMesh->Init();
             newMesh->GenerateAABBBoundingVolume();
-			
+
             resultMesh->AddSubMesh(newMesh);
         }
 
@@ -337,7 +402,7 @@ namespace LevEngine
 
                 newBoneInfo.id = boneCount;
                 newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix, false);
-				
+
                 boneInfoMap[boneName] = newBoneInfo;
                 boneID = boneCount;
                 boneCount++;

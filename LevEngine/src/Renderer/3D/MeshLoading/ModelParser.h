@@ -1,4 +1,9 @@
 #pragma once
+#include <assimp/material.h>
+
+#include "AI/Components/AIAgentCrowdComponent.h"
+#include "Assets/MaterialPBRAsset.h"
+#include "Renderer/Material/MaterialPBR.h"
 
 struct aiMesh;
 struct aiScene;
@@ -6,6 +11,7 @@ struct aiNode;
 
 namespace LevEngine
 {
+    class MaterialAsset;
     class MeshAsset;
     struct ModelNode;
     class Mesh;
@@ -28,12 +34,13 @@ namespace LevEngine
         
         static void LoadModelHierarchy(const Path& path, const aiNode* node, ModelNode* parent,
                                        Matrix accTransform,
-                                       const aiScene* scene);
+                                       const aiScene* scene, const Vector<Ref<MaterialAsset>>& materialAssets);
         static Ref<MeshAsset> CreateMeshAsset(const Path& path, String name, const Ref<Mesh>& mesh);
 
-        static Vector<Ref<MeshAsset>> LoadMeshes(const Path& path, const aiScene* scene);
         static Vector<Ref<MaterialAsset>> LoadMaterials(const Path& path, const aiScene* scene);
+        static void AssignMaterialTextures(const Path& path, const aiMaterial* material, const Ref<MaterialPBRAsset>& asset);
 
+        static MaterialPBR ParseMaterial(const aiMaterial* material);
         static Ref<Mesh> LoadModel(const Path& path);
         static Ref<Mesh> ParseMesh(const aiMesh* mesh);
         static Ref<Mesh> ParseMesh(const aiMesh* mesh, Matrix cumulativeTransform);

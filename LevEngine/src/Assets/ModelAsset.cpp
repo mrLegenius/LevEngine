@@ -3,6 +3,7 @@
 
 #include "AssetDatabase.h"
 #include "EngineAssets.h"
+#include "MaterialPBRAsset.h"
 #include "MeshAsset.h"
 #include "ModelNode.h"
 #include "Cache/ModelAssetCache.h"
@@ -34,10 +35,16 @@ namespace LevEngine
         transform.SetLocalRotation(rotation);
         transform.SetLocalScale(scale);
 
-        if (node->MeshUUID)
+        if (node->MeshUUID || node->MaterialUUID)
         {
             auto& meshRenderer = entity.GetOrAddComponent<MeshRendererComponent>();
-            meshRenderer.mesh = AssetDatabase::GetAsset<MeshAsset>(node->MeshUUID);
+            
+            if (node->MeshUUID)
+                meshRenderer.mesh = AssetDatabase::GetAsset<MeshAsset>(node->MeshUUID);
+
+            if (node->MaterialUUID)
+                meshRenderer.material = AssetDatabase::GetAsset<MaterialPBRAsset>(node->MaterialUUID);
+            
             meshRenderer.enabled = true;
         }
 

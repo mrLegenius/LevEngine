@@ -27,6 +27,7 @@ namespace LevEngine
         void SerializeMeta(YAML::Emitter& out) override;
         void DeserializeMeta(const YAML::Node& node) override;
 
+        bool ReadDataFromFile() const override { return false; }
         bool WriteDataToFile() const override { return false; }
         
     private:

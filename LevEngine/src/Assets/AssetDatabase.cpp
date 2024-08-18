@@ -385,15 +385,15 @@ namespace LevEngine
 		try
 		{
 			if (exists(path))
-			{
 				remove_all(path);
-			}
 
 			const auto metaPath = Path(path.string().append(".meta"));
 			if (exists(metaPath))
-			{
 				std::filesystem::remove(metaPath);
-			}
+
+			const auto cachePath = GetAssetCachePath(uuid);
+			if (exists(cachePath))
+				std::filesystem::remove(metaPath);
 		}
 		catch (std::exception& e)
 		{

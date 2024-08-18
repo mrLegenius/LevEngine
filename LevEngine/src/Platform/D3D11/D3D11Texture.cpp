@@ -366,7 +366,7 @@ D3D11Texture::D3D11Texture(ID3D11Device2* device, const String& path, bool isLin
 
     m_IsTransparent = channels == 4;
     
-    if (channels == 4 || channels == 3)
+    if (channels == 4 || channels == 3 || channels == 2)
     {
         if (isHDR)
             m_TextureResourceFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -377,7 +377,8 @@ D3D11Texture::D3D11Texture(ID3D11Device2* device, const String& path, bool isLin
     }
     else if (channels == 1)
     {
-        m_TextureResourceFormat = DXGI_FORMAT_R8_UNORM;
+    	//Somehow there is a grid on the texture with format DXGI_FORMAT_R8_UNORM. TODO: Find a reason
+        m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
     }
     else
     {

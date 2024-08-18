@@ -21,12 +21,12 @@ namespace LevEngine::Editor
             EditorGUI::DrawFloatControl("Roughness", BindGetter(&MaterialPBR::GetRoughness, &material), BindSetter(&MaterialPBR::SetRoughness, &material), 0.01f, 0.0f, 1.0f);
             EditorGUI::DrawCheckBox("Enable Transparency", BindGetter(&MaterialPBR::GetEnableTransparency, &material), BindSetter(&MaterialPBR::SetEnableTransparency, &material));
 
-            DrawMaterialTexture("Albedo", material, MaterialPBR::TextureType::Albedo, assetRef->GetAlbedo());
-            DrawMaterialTexture("Metallic", material, MaterialPBR::TextureType::Metallic, assetRef->GetMetallic());
-            DrawMaterialTexture("Roughness", material, MaterialPBR::TextureType::Roughness, assetRef->GetRoughness());
-            DrawMaterialTexture("Normal", material, MaterialPBR::TextureType::Normal, assetRef->GetNormal());
-            DrawMaterialTexture("AmbientOcclusion", material, MaterialPBR::TextureType::AmbientOcclusion, assetRef->GetAmbientOcclusion());
-            DrawMaterialTexture("Emissive", material, MaterialPBR::TextureType::Emissive, assetRef->GetEmissive());
+            DrawMaterialTexture("Albedo", MaterialPBR::TextureType::Albedo, assetRef);
+            DrawMaterialTexture("Metallic", MaterialPBR::TextureType::Metallic, assetRef);
+            DrawMaterialTexture("Roughness", MaterialPBR::TextureType::Roughness, assetRef);
+            DrawMaterialTexture("Normal", MaterialPBR::TextureType::Normal, assetRef);
+            DrawMaterialTexture("AmbientOcclusion", MaterialPBR::TextureType::AmbientOcclusion, assetRef);
+            DrawMaterialTexture("Emissive", MaterialPBR::TextureType::Emissive, assetRef);
 
             auto tiling = material.GetTextureTiling();
             if (EditorGUI::DrawVector2Control("Tiling", tiling, 1, 100))
@@ -36,14 +36,15 @@ namespace LevEngine::Editor
             if (EditorGUI::DrawVector2Control("Offset", offset, 0, 100))
                 material.SetTextureOffset(offset);
         }
-        
-        void DrawMaterialTexture(const String& label, MaterialPBR& MaterialPBR,
-            MaterialPBR::TextureType textureType, Ref<TextureAsset>& textureAsset) const
+
+        static void DrawMaterialTexture(const String& label, MaterialPBR::TextureType textureType, const Ref<MaterialPBRAsset>& assetRef)
         {
             ImGui::PushID(static_cast<int>(textureType));
 
+            //TODO: Fix Texture Clear
+            auto textureAsset = assetRef->GetTexture(textureType);
             if (EditorGUI::DrawTextureAsset(label, textureAsset))
-                MaterialPBR.SetTexture(textureType, textureAsset ? textureAsset->GetTexture() : nullptr);
+                assetRef->SetTexture(textureType, textureAsset);
             ImGui::PopID();
         }
     };

@@ -13,6 +13,7 @@ namespace LevEngine
         ModelNode* node = new ModelNode();
 
         node->MeshUUID = reader.Read<uint64_t>();
+        node->MaterialUUID = reader.Read<uint64_t>();
         node->Name = reader.ReadString();
         node->Transform = reader.Read<Matrix>();
 
@@ -52,6 +53,7 @@ namespace LevEngine
     void SaveModel(const ModelNode* data, BinaryWriter& writer)
     {
         writer.Write(data->MeshUUID);
+        writer.Write(data->MaterialUUID);
         writer.WriteString(data->Name);
         writer.Write(data->Transform);
         writer.Write(data->Children.size());

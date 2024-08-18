@@ -1,5 +1,6 @@
 #pragma once
 #include "Math/Matrix.h"
+#include "Math/Color.h"
 
 namespace LevEngine
 {
@@ -29,6 +30,28 @@ namespace LevEngine
 		static Quaternion ToQuaternion(const aiQuaternion& aiQuaternion)
 		{
 			return Quaternion{ aiQuaternion.x, aiQuaternion.y, aiQuaternion.z, aiQuaternion.w };
+		}
+
+		static Color ToColor(const aiColor4D& color)
+		{
+			return Color(color.r, color.g, color.b, color.a);
+		}
+
+		static String ToName(const aiString& string)
+		{
+			constexpr uint32_t maxNameLength = 64;
+			String name = String(string.C_Str()).substr(0, maxNameLength);
+
+			std::ranges::replace(name, '\\', '_');
+			std::ranges::replace(name, '/', '_');
+			std::ranges::replace(name, ':', '_');
+			std::ranges::replace(name, '?', '_');
+			std::ranges::replace(name, '"', '_');
+			std::ranges::replace(name, '<', '_');
+			std::ranges::replace(name, '>', '_');
+			std::ranges::replace(name, '|', '_');
+			
+			return name;
 		}
 	};
 }
