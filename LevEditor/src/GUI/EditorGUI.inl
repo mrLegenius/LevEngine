@@ -294,6 +294,33 @@ namespace LevEngine::Editor
 	}
 
 	template<class T, int N>
+	bool EditorGUI::DrawComboBox(const String label, Array<T, N> values, T& value)
+	{
+		bool changed = false;
+		auto currentValue = value;
+		if (ImGui::BeginCombo(label.c_str(), ToString(currentValue).c_str()))
+		{
+			for (int i = 0; i < values.size(); i++)
+			{
+				const bool isSelected = currentValue == values[i];
+				if (ImGui::Selectable(ToString(values[i]).c_str(), isSelected))
+				{
+					currentValue = values[i];
+					value = static_cast<T>(currentValue);
+					changed = true;
+				}
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		return changed;
+	}
+
+	template<class T, int N>
 	bool EditorGUI::DrawComboBox(const String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter)
 	{
 		if (T value = getter(); DrawComboBox(label, stringValues, value))
