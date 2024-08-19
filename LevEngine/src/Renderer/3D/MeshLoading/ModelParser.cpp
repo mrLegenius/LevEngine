@@ -27,7 +27,7 @@ namespace LevEngine
         | aiProcess_JoinIdenticalVertices
         | aiProcess_GenSmoothNormals
         | aiProcess_GenUVCoords
-        //| aiProcess_SortByPType // Do not split mesh to sub meshes with different primitives types
+        | aiProcess_SortByPType // Do not split mesh to sub meshes with different primitives types
         //| aiProcess_FlipWindingOrder
         | aiProcess_ImproveCacheLocality // It may help with rendering large models
         //| aiProcess_FixInfacingNormals //May help to fix inwards normals but can screw up double side faces

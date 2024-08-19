@@ -111,7 +111,7 @@ namespace LevEngine
 			auto& transform = view.get<Transform>(entity);
 			transform.RecalculateModel();
 			const auto& meshRendererComponent = view.get<MeshRendererComponent>(entity);
-			const auto& mesh = meshRendererComponent.mesh->GetMesh();
+			const auto& mesh = meshRendererComponent.mesh ?  meshRendererComponent.mesh->GetMesh() : nullptr;
 
 			if(!mesh)
 			{
