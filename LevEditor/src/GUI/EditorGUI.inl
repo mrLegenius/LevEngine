@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene/Components/TypeParseTraits.h"
 #include "EntitySelection.h"
+#include "ScopedGUIHelpers.h"
 #include "Selection.h"
 #include "Assets/Asset.h"
 
@@ -13,7 +14,10 @@ namespace LevEngine::Editor
 
 		const auto& asset = assetPtr;
 		auto changed = false;
-
+		
+		String idString = asset ? asset->GetName() : label;
+		GUI::ScopedID id{idString};
+		
 		if (!label.empty())
 		{
 			ImGui::AlignTextToFramePadding();
