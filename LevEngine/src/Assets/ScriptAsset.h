@@ -15,6 +15,8 @@ namespace LevEngine
         ScriptAsset(const Path& path, const UUID uuid);
         ScriptAsset(const Path& path, const UUID uuid, Type type);
 
+        bool DeserializeOnImport() override { return true; }
+        
         [[nodiscard]] Type GetType() const;
         void SetType(Type type);
 

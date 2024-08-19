@@ -32,10 +32,7 @@ namespace LevEngine
     void MaterialPBRAsset::SetTexture(MaterialPBR::TextureType type, const Ref<TextureAsset>& textureAsset)
     {
         m_Textures[type] = textureAsset;
-        
-        if (!textureAsset) return;
-        
-        m_Material.SetTexture(type, textureAsset->GetTexture());
+        m_Material.SetTexture(type, textureAsset ? textureAsset->GetTexture() : nullptr);
     }
 
     void MaterialPBRAsset::SerializeData(YAML::Emitter& out)

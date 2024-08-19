@@ -45,6 +45,22 @@ namespace LevEngine
 		return relative(GetAssetsPath(), path);
 	}
 
+	void AssetDatabase::ReimportAsset(const Path& path)
+	{
+		if (path.extension() == ".meta") return;
+
+		auto asset = m_AssetsByPath[path];
+		asset->Clear();
+		auto uuid = asset->GetUUID();
+		auto cachePath = GetAssetCachePath(uuid);
+		
+		if (exists(cachePath))
+			std::filesystem::remove(cachePath);
+
+		asset->m_Deserialized = false;
+		asset->Deserialize();
+	}
+
 	void AssetDatabase::ImportAsset(const Path& path)
 	{
 		if (path.extension() == ".meta") return;
@@ -78,10 +94,8 @@ namespace LevEngine
 		}
 
 		Ref<Asset> asset = CreateAsset(path, uuid);
-		if (CastRef<ScriptAsset>(asset))
-		{
+		if (asset->DeserializeOnImport())
 			asset->Deserialize();
-		}
 
 		if (needToGenerateMeta)
 			asset->SerializeMeta();

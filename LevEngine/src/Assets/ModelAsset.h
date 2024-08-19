@@ -19,9 +19,14 @@ namespace LevEngine
         Entity InstantiateModel(const Ref<Scene>& scene) const;
 
         float Scale = 1;
+
+        void Clear() override;
         
     protected:
-        void SerializeData(YAML::Emitter& out) override;
+        bool LoadFromCache() override;
+        void SaveToCache() override;
+        
+        void SerializeData(YAML::Emitter& out) override { }
         void DeserializeData(const YAML::Node& node) override;
 
         void SerializeMeta(YAML::Emitter& out) override;

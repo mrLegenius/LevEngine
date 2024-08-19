@@ -13,6 +13,7 @@ namespace LevEngine
 		static Path GetAssetsCachePath();
 		static Path GetAssetCachePath(UUID uuid);
 		static Path GetRelativePath(const Path& path);
+		static void ReimportAsset(const Path& path);
 
 		static void ImportAsset(const Path& path);
 		static void ProcessAllAssets();

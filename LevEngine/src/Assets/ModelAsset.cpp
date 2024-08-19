@@ -65,21 +65,47 @@ namespace LevEngine
         return InstantiateNode(scene, m_Hierarchy);
     }
 
-    void ModelAsset::SerializeData(YAML::Emitter& out)
+    void ModelAsset::Clear()
     {
+        if (!m_Hierarchy) return;
+
+        Vector<ModelNode*> nodes;
+        nodes.push_back(m_Hierarchy);
+
+        while (nodes.size())
+        {
+            auto elem = nodes[0];
+            nodes.erase(nodes.begin());
+
+            if (auto mesh = elem->MeshUUID ? AssetDatabase::GetAsset<MeshAsset>(elem->MeshUUID) : nullptr)
+                AssetDatabase::DeleteAsset(mesh);
+            
+            if (auto material = elem->MaterialUUID ? AssetDatabase::GetAsset<MaterialPBRAsset>(elem->MaterialUUID) : nullptr)
+                AssetDatabase::DeleteAsset(material);
+
+            for (auto child : elem->Children)
+                nodes.push_back(child);
+        }
     }
 
+    bool ModelAsset::LoadFromCache()
+    {
+        m_Hierarchy = ModelAssetCache::LoadFromCache(m_UUID);
+        return m_Hierarchy;
+    }
+
+    void ModelAsset::SaveToCache()
+    {
+        if (m_Hierarchy)
+            ModelAssetCache::SaveToCache(m_UUID, m_Hierarchy);
+    }
+    
     void ModelAsset::DeserializeData(const YAML::Node& node)
     {
-        auto cache = ModelAssetCache::LoadFromCache(m_UUID);
-
         ModelImportParameters params{};
         params.scale = Scale;
         
-        m_Hierarchy = cache ? cache : ModelParser::Load(m_Path, params).Hierarchy;
-
-        if (!cache)
-            ModelAssetCache::SaveToCache(m_UUID, m_Hierarchy);
+        m_Hierarchy = ModelParser::Load(m_Path, params).Hierarchy;
     }
 
     void ModelAsset::SerializeMeta(YAML::Emitter& out)

@@ -1,10 +1,9 @@
 ﻿#pragma once
 
-#include <yaml-cpp/yaml.h>
-
 namespace LevEngine
 {
     class Texture;
+    class AssetDatabase;
     
     class Asset
     {
@@ -26,14 +25,20 @@ namespace LevEngine
         bool Deserialize(bool force = false);
         void SerializeMeta();
 
+        virtual bool DeserializeOnImport() { return false; }
+
         void Rename(const Path& path);
 
         [[nodiscard]] virtual Ref<Texture> GetIcon() const;
+        virtual void Clear() { }
 
     protected:
         [[nodiscard]] virtual bool WriteDataToFile() const { return true; }
         [[nodiscard]] virtual bool ReadDataFromFile() const { return true; }
 
+        virtual bool LoadFromCache() { return false; }
+        virtual void SaveToCache() { }
+        
         virtual void SerializeData(YAML::Emitter& out) = 0;
         virtual void DeserializeData(const YAML::Node& node) = 0;
 
@@ -50,6 +55,8 @@ namespace LevEngine
         bool m_Deserialized = false;
 
     private:
+
+        friend AssetDatabase;
                 
         std::mutex m_DeserializationMutex;
         

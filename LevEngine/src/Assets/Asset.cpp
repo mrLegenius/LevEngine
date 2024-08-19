@@ -96,10 +96,19 @@ namespace LevEngine
 
 	bool Asset::DeserializeData()
 	{
+		try
+		{
+			if (LoadFromCache()) return true;
+		}
+		catch (std::exception& e)
+		{
+		}
+		
 		if (!ReadDataFromFile())
 		{
 			const YAML::Node data{};
 			DeserializeData(data);
+			SaveToCache();
 			return true;
 		}
 		
@@ -107,6 +116,7 @@ namespace LevEngine
 		{
 			const YAML::Node data = LoadYAMLFile(m_Path);
 			DeserializeData(data);
+			SaveToCache();
 		}
 		catch (YAML::BadConversion&)
 		{
