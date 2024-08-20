@@ -12,7 +12,7 @@ namespace LevEngine
 		return App::RenderDevice().CreateSamplerState();
 	}
 
-	void SamplerState::SetFilter(const MinFilter minFilter, const MagFilter magFilter, const MipFilter mipFilter)
+	void SamplerState::SetFilter(const Filter minFilter, const Filter magFilter, const Filter mipFilter)
 	{
 		m_MinFilter = minFilter;
 		m_MagFilter = magFilter;
@@ -20,7 +20,7 @@ namespace LevEngine
 		m_IsDirty = true;
 	}
 
-	void SamplerState::GetFilter(MinFilter& minFilter, MagFilter& magFilter, MipFilter& mipFilter) const
+	void SamplerState::GetFilter(Filter& minFilter, Filter& magFilter, Filter& mipFilter) const
 	{
 		minFilter = m_MinFilter;
 		magFilter = m_MagFilter;

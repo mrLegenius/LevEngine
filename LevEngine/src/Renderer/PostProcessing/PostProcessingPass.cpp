@@ -26,11 +26,11 @@ namespace LevEngine
         m_ConstantBuffer = ConstantBuffer::Create(sizeof GPUConstants, 8);
 
         m_LinearSampler = SamplerState::Create();
-        m_LinearSampler->SetFilter(SamplerState::MinFilter::Linear, SamplerState::MagFilter::Linear, SamplerState::MipFilter::Linear);
+        m_LinearSampler->SetFilter(SamplerState::Filter::Linear, SamplerState::Filter::Linear, SamplerState::Filter::Linear);
         m_LinearSampler->SetWrapMode(SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp);
         
         m_PointSampler = SamplerState::Create();
-        m_PointSampler->SetFilter(SamplerState::MinFilter::Nearest, SamplerState::MagFilter::Nearest, SamplerState::MipFilter::Nearest);
+        m_PointSampler->SetFilter(SamplerState::Filter::Nearest, SamplerState::Filter::Nearest, SamplerState::Filter::Nearest);
         m_PointSampler->SetWrapMode(SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp, SamplerState::WrapMode::Clamp);
     }
     

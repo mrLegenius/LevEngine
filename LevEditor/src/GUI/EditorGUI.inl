@@ -301,7 +301,7 @@ namespace LevEngine::Editor
 	bool EditorGUI::DrawComboBox(const String label, Array<T, N> values, T& value)
 	{
 		bool changed = false;
-		auto currentValue = value;
+		T currentValue = value;
 		if (ImGui::BeginCombo(label.c_str(), ToString(currentValue).c_str()))
 		{
 			for (int i = 0; i < values.size(); i++)
@@ -310,7 +310,7 @@ namespace LevEngine::Editor
 				if (ImGui::Selectable(ToString(values[i]).c_str(), isSelected))
 				{
 					currentValue = values[i];
-					value = static_cast<T>(currentValue);
+					value = currentValue;
 					changed = true;
 				}
 

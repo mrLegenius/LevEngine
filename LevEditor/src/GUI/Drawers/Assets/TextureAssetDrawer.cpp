@@ -11,97 +11,151 @@ namespace LevEngine::Editor
     protected:
         [[nodiscard]] String GetLabel() const override { return "TextureAsset"; }
 
-        void DrawContent(const Ref<TextureAsset> assetRef) override
-        {
-        	if (EditorGUI::DrawCheckBox("Is Linear", assetRef->IsLinear))
-        	{
-        		assetRef->CreateTexture();
-        	}
-
-        	if (EditorGUI::DrawCheckBox("Generate Mip Maps", assetRef->GenerateMipMaps))
-        	{
-        		assetRef->CreateTexture();
-        	}
+	    void DrawContent(const Ref<TextureAsset> assetRef) override
+	    {
+		    if (EditorGUI::DrawCheckBox("Is Linear", assetRef->IsLinear))
+			    assetRef->CreateTexture();
         	
+		    DrawFilters(assetRef);
+        	DrawWrapMode(assetRef);
+		    DrawCompare(assetRef);
+        	DrawMipMaps(assetRef);
+
+		    EditorGUI::DrawColor3Control("Border Color", 
+		                                 BindGetter(&SamplerState::GetBorderColor, assetRef->SamplerState.get()),
+		                                 BindSetter(&SamplerState::SetBorderColor, assetRef->SamplerState.get()));
+
+		    DrawFiltering(assetRef);
+	    }
+
+	    static void DrawFilters(const Ref<TextureAsset>& assetRef)
+	    {
+		    Array<String, 2> filterValues { "Nearest", "Linear", };
+
+        	EditorGUI::DrawCheckBox("Separate Filters", assetRef->SeparateFilters);
+        	
+		    if (assetRef->SeparateFilters)
+		    {
+			    SamplerState::Filter filter;
+			    assetRef->SamplerState->GetFilter(filter, filter, filter);
+			    bool changed = false;
+			    changed |= EditorGUI::DrawComboBox("Filters", filterValues, filter);
+
+			    if (changed)
+				    assetRef->SamplerState->SetFilter(filter, filter, filter);
+		    }
+		    else
+		    {
+			    SamplerState::Filter minFilter;
+			    SamplerState::Filter magFilter;
+			    SamplerState::Filter mipFilter;
+			    assetRef->SamplerState->GetFilter(minFilter, magFilter, mipFilter);
+			    bool changed = false;
+			    changed |= EditorGUI::DrawComboBox("Min Filter", filterValues, minFilter);
+			    changed |= EditorGUI::DrawComboBox("Mag Filter", filterValues, magFilter);
+			    changed |= EditorGUI::DrawComboBox("Mip Filter", filterValues, mipFilter);
+
+			    if (changed)
+				    assetRef->SamplerState->SetFilter(minFilter, magFilter, mipFilter);
+		    }
+	    }
+
+	    static void DrawWrapMode(const Ref<TextureAsset>& assetRef)
+	    {
+		    const Array<String, 4> stringValues{"Repeat", "Mirror", "Clamp", "Border" };
+
+        	EditorGUI::DrawCheckBox("Separate Wrap Mode", assetRef->SeparateWrapMode);
+        	
+        	if (assetRef->SeparateWrapMode)
+        	{
+        		SamplerState::WrapMode wrapMode;
+        		assetRef->SamplerState->GetWrapMode(wrapMode, wrapMode, wrapMode);
+
+        		bool changed = false;
+        		changed |= EditorGUI::DrawComboBox("Wrap Mode", stringValues, wrapMode);
+
+        		if (changed)
+        			assetRef->SamplerState->SetWrapMode(wrapMode, wrapMode, wrapMode);
+        	}
+	        else
 	        {
-		        const Array<String, 2> stringValues{"Nearest", "Linear" };
-				SamplerState::MinFilter minFilter;
-				SamplerState::MagFilter magFilter;
-				SamplerState::MipFilter mipFilter;
-				assetRef->SamplerState->GetFilter(minFilter, magFilter, mipFilter);
-				bool changed = false;
-				changed |= EditorGUI::DrawComboBox("Min Filter", stringValues, minFilter);
-				changed |= EditorGUI::DrawComboBox("Mag Filter", stringValues, magFilter);
-				changed |= EditorGUI::DrawComboBox("Mip Filter", stringValues, mipFilter);
+	        	SamplerState::WrapMode wrapModeU;
+	        	SamplerState::WrapMode wrapModeV;
+	        	SamplerState::WrapMode wrapModeW;
+	        	assetRef->SamplerState->GetWrapMode(wrapModeU, wrapModeV, wrapModeW);
 
-				if (changed)
-					assetRef->SamplerState->SetFilter(minFilter, magFilter, mipFilter);
+	        	bool changed = false;
+	        	changed |= EditorGUI::DrawComboBox("Wrap Mode U", stringValues, wrapModeU);
+	        	changed |= EditorGUI::DrawComboBox("Wrap Mode V", stringValues, wrapModeV);
+	        	changed |= EditorGUI::DrawComboBox("Wrap Mode W", stringValues, wrapModeW);
+
+	        	if (changed)
+	        		assetRef->SamplerState->SetWrapMode(wrapModeU, wrapModeV, wrapModeW);
 	        }
+	    }
 
-			{
-        		const Array<String, 4> stringValues{"Repeat", "Mirror", "Clamp", "Border" };
-				SamplerState::WrapMode wrapModeU;
-				SamplerState::WrapMode wrapModeV;
-				SamplerState::WrapMode wrapModeW;
-				assetRef->SamplerState->GetWrapMode(wrapModeU, wrapModeV, wrapModeW);
+	    static void DrawMipMaps(const Ref<TextureAsset>& assetRef)
+	    {
+		    if (EditorGUI::DrawCheckBox("Generate Mip Maps", assetRef->GenerateMipMaps))
+			    assetRef->CreateTexture();
+        	
+		    if (!assetRef->GenerateMipMaps) return;
 
-				bool changed = false;
-				changed |= EditorGUI::DrawComboBox("Wrap Mode U", stringValues, wrapModeU);
-				changed |= EditorGUI::DrawComboBox("Wrap Mode V", stringValues, wrapModeV);
-				changed |= EditorGUI::DrawComboBox("Wrap Mode W", stringValues, wrapModeW);
+		    EditorGUI::DrawFloatControl("LOD Bias",
+		                                BindGetter(&SamplerState::GetLODBias, assetRef->SamplerState.get()),
+		                                BindSetter(&SamplerState::SetLODBias, assetRef->SamplerState.get()),
+		                                1.0f, 0.0f, std::numeric_limits<float>::max());
 
-				if (changed)
-					assetRef->SamplerState->SetWrapMode(wrapModeU, wrapModeV, wrapModeW);
-			}
-			
-			{
-        		const Array<String, 2> stringValues{"None", "CompareRefToTexture" };
+		    EditorGUI::DrawFloatControl("Min LOD",
+		                                BindGetter(&SamplerState::GetMinLOD, assetRef->SamplerState.get()),
+		                                BindSetter(&SamplerState::SetMinLOD, assetRef->SamplerState.get()),
+		                                1.0f, 0.0f, std::numeric_limits<float>::max());
 
-				SamplerState::CompareMode compareMode = assetRef->SamplerState->GetCompareMode();
+		    EditorGUI::DrawFloatControl("Max LOD",
+		                                BindGetter(&SamplerState::GetMaxLOD, assetRef->SamplerState.get()),
+		                                BindSetter(&SamplerState::SetMaxLOD, assetRef->SamplerState.get()),
+		                                1.0f, 0.0f, std::numeric_limits<float>::max());
+		    
+	    }
 
-		        if (EditorGUI::DrawComboBox("Compare Mode", stringValues, compareMode))
-					assetRef->SamplerState->SetCompareMode(compareMode);
-			}
+	    static void DrawCompare(const Ref<TextureAsset>& assetRef)
+	    {
+		    {
+			    const Array<String, 2> stringValues{"None", "CompareRefToTexture" };
 
-			{
-        		const Array<String, 8> stringValues{"Never", "Less",
-        			"Equal", "LessOrEqual",
-        			"Greater", "NotEqual",
-        			"GreaterOrEqual", "Always" };
+			    SamplerState::CompareMode compareMode = assetRef->SamplerState->GetCompareMode();
 
-				SamplerState::CompareFunc compareMode = assetRef->SamplerState->GetCompareFunction();
+			    if (EditorGUI::DrawComboBox("Compare Mode", stringValues, compareMode))
+				    assetRef->SamplerState->SetCompareMode(compareMode);
+		    }
 
-				if (EditorGUI::DrawComboBox("Compare Function", stringValues, compareMode))
-					assetRef->SamplerState->SetCompareFunction(compareMode);
-			}
+        	if (assetRef->SamplerState->GetCompareMode() == SamplerState::CompareMode::None) return;
+        	
+		    {
+			    const Array<String, 8> stringValues{"Never", "Less",
+				    "Equal", "LessOrEqual",
+				    "Greater", "NotEqual",
+				    "GreaterOrEqual", "Always" };
 
-			EditorGUI::DrawFloatControl("LOD Bias",
-				BindGetter(&SamplerState::GetLODBias, assetRef->SamplerState.get()),
-				BindSetter(&SamplerState::SetLODBias, assetRef->SamplerState.get()),
-				1.0f, 0.0f, std::numeric_limits<float>::max());
+			    SamplerState::CompareFunc compareMode = assetRef->SamplerState->GetCompareFunction();
 
-			EditorGUI::DrawFloatControl("Min LOD",
-				BindGetter(&SamplerState::GetMinLOD, assetRef->SamplerState.get()),
-				BindSetter(&SamplerState::SetMinLOD, assetRef->SamplerState.get()),
-				1.0f, 0.0f, std::numeric_limits<float>::max());
+			    if (EditorGUI::DrawComboBox("Compare Function", stringValues, compareMode))
+				    assetRef->SamplerState->SetCompareFunction(compareMode);
+		    }
+	    }
 
-			EditorGUI::DrawFloatControl("Max LOD",
-				BindGetter(&SamplerState::GetMaxLOD, assetRef->SamplerState.get()),
-				BindSetter(&SamplerState::SetMaxLOD, assetRef->SamplerState.get()), 
-				1.0f, 0.0f, std::numeric_limits<float>::max());
+	    static void DrawFiltering(const Ref<TextureAsset>& assetRef)
+	    {
+		    EditorGUI::DrawCheckBox("Enable Anisotropic Filtering", 
+		                            BindGetter(&SamplerState::IsAnisotropicFilteringEnabled, assetRef->SamplerState.get()),
+		                            BindSetter(&SamplerState::EnableAnisotropicFiltering, assetRef->SamplerState.get()));
 
-			EditorGUI::DrawColor3Control("Border Color", 
-				BindGetter(&SamplerState::GetBorderColor, assetRef->SamplerState.get()),
-				BindSetter(&SamplerState::SetBorderColor, assetRef->SamplerState.get()));
+		    if (!assetRef->SamplerState->IsAnisotropicFilteringEnabled()) return;
 
-			EditorGUI::DrawCheckBox("Enable Anisotropic Filtering", 
-			                        BindGetter(&SamplerState::IsAnisotropicFilteringEnabled, assetRef->SamplerState.get()),
-			                        BindSetter(&SamplerState::EnableAnisotropicFiltering, assetRef->SamplerState.get()));
-
-			EditorGUI::DrawIntControl("Max Anisotropy",
-				BindGetter(&SamplerState::GetMaxAnisotropy, assetRef->SamplerState.get()),
-				BindSetter(&SamplerState::SetMaxAnisotropy, assetRef->SamplerState.get()), 
-				1, 1, 16);
-        }
+        	EditorGUI::DrawIntControl("Max Anisotropy",
+		                              BindGetter(&SamplerState::GetMaxAnisotropy, assetRef->SamplerState.get()),
+		                              BindSetter(&SamplerState::SetMaxAnisotropy, assetRef->SamplerState.get()),
+		                              1, 1, 16);
+	    }
     };
 }

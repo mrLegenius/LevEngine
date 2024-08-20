@@ -27,35 +27,35 @@ namespace LevEngine
 			return filter;
 		}
 
-		if (m_MinFilter == MinFilter::Nearest && m_MagFilter == MagFilter::Nearest && m_MipFilter == MipFilter::Nearest)
+		if (m_MinFilter == Filter::Nearest && m_MagFilter == Filter::Nearest && m_MipFilter == Filter::Nearest)
 		{
 			filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
 		}
-		else if (m_MinFilter == MinFilter::Nearest && m_MagFilter == MagFilter::Nearest && m_MipFilter == MipFilter::Linear)
+		else if (m_MinFilter == Filter::Nearest && m_MagFilter == Filter::Nearest && m_MipFilter == Filter::Linear)
 		{
 			filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
 		}
-		else if (m_MinFilter == MinFilter::Nearest && m_MagFilter == MagFilter::Linear && m_MipFilter == MipFilter::Nearest)
+		else if (m_MinFilter == Filter::Nearest && m_MagFilter == Filter::Linear && m_MipFilter == Filter::Nearest)
 		{
 			filter = D3D11_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT;
 		}
-		else if (m_MinFilter == MinFilter::Nearest && m_MagFilter == MagFilter::Linear && m_MipFilter == MipFilter::Linear)
+		else if (m_MinFilter == Filter::Nearest && m_MagFilter == Filter::Linear && m_MipFilter == Filter::Linear)
 		{
 			filter = D3D11_FILTER_MIN_POINT_MAG_MIP_LINEAR;
 		}
-		else if (m_MinFilter == MinFilter::Linear && m_MagFilter == MagFilter::Nearest && m_MipFilter == MipFilter::Nearest)
+		else if (m_MinFilter == Filter::Linear && m_MagFilter == Filter::Nearest && m_MipFilter == Filter::Nearest)
 		{
 			filter = D3D11_FILTER_MIN_LINEAR_MAG_MIP_POINT;
 		}
-		else if (m_MinFilter == MinFilter::Linear && m_MagFilter == MagFilter::Nearest && m_MipFilter == MipFilter::Linear)
+		else if (m_MinFilter == Filter::Linear && m_MagFilter == Filter::Nearest && m_MipFilter == Filter::Linear)
 		{
 			filter = D3D11_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
 		}
-		else if (m_MinFilter == MinFilter::Linear && m_MagFilter == MagFilter::Linear && m_MipFilter == MipFilter::Nearest)
+		else if (m_MinFilter == Filter::Linear && m_MagFilter == Filter::Linear && m_MipFilter == Filter::Nearest)
 		{
 			filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
 		}
-		else if (m_MinFilter == MinFilter::Linear && m_MagFilter == MagFilter::Linear && m_MipFilter == MipFilter::Linear)
+		else if (m_MinFilter == Filter::Linear && m_MagFilter == Filter::Linear && m_MipFilter == Filter::Linear)
 		{
 			filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 		}

@@ -38,7 +38,7 @@ CascadeShadowMap::CascadeShadowMap(const uint32_t width, const uint32_t height)
     sampler->SetMaxAnisotropy(0);
     sampler->SetCompareMode(SamplerState::CompareMode::CompareRefToTexture);
     sampler->SetCompareFunction(SamplerState::CompareFunc::LessOrEqual);
-    sampler->SetFilter(SamplerState::MinFilter::Linear, SamplerState::MagFilter::Linear, SamplerState::MipFilter::Linear);
+    sampler->SetFilter(SamplerState::Filter::Linear, SamplerState::Filter::Linear, SamplerState::Filter::Linear);
 
     m_Texture->AttachSampler(sampler);
 

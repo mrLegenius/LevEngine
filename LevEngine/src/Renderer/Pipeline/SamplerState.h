@@ -7,22 +7,14 @@ namespace LevEngine
     class SamplerState
 	{
 	public:
-        enum class MinFilter
+        enum class Filter
         {
-            Nearest,                // The nearest texel to the sampled texel.
-            Linear,                 // Linear average of the 4 closest texels.
-        };
-
-        enum class MagFilter
-        {
-            Nearest,                // The nearest texel to the sampled texel.
-            Linear,                 // Weighted average of the closest texels.
-        };
-
-        enum class MipFilter
-        {
-            Nearest,                // Choose the nearest mip level.
-            Linear,                 // Linear interpolate between the 2 nearest mip map levels.
+            // The nearest texel to the sampled texel.
+            Nearest,
+            // Min - Linear average of the 4 closest texels.
+            // Mag - Weighted average of the closest texels.
+            // Mip - Linear interpolate between the 2 nearest mip map levels.
+            Linear,                 
         };
 
         enum class WrapMode
@@ -60,8 +52,8 @@ namespace LevEngine
         // Unbind the sampler state.
         virtual void Unbind(uint32_t slot, ShaderType shaderType) = 0;
 
-        void SetFilter(MinFilter minFilter, MagFilter magFilter, MipFilter mipFilter);
-        void GetFilter(MinFilter& minFilter, MagFilter& magFilter, MipFilter& mipFilter) const;
+        void SetFilter(Filter minFilter, Filter magFilter, Filter mipFilter);
+        void GetFilter(Filter& minFilter, Filter& magFilter, Filter& mipFilter) const;
 
         void SetWrapMode(WrapMode u = WrapMode::Repeat, WrapMode v = WrapMode::Repeat, WrapMode w = WrapMode::Repeat);
         void GetWrapMode(WrapMode& u, WrapMode& v, WrapMode& w) const;
@@ -112,16 +104,16 @@ namespace LevEngine
         [[nodiscard]] uint8_t GetMaxAnisotropy() const;
 
     protected:
-        MinFilter m_MinFilter{};
-        MagFilter m_MagFilter{};
-        MipFilter m_MipFilter{};
+        Filter m_MinFilter = Filter::Linear;
+        Filter m_MagFilter = Filter::Linear;
+        Filter m_MipFilter = Filter::Linear;
         WrapMode  m_WrapModeU{}, m_WrapModeV{}, m_WrapModeW{};
         CompareMode m_CompareMode{};
         CompareFunc m_CompareFunc{};
 
-        float m_LODBias{};
-        float m_MinLOD{};
-        float m_MaxLOD{};
+        float m_LODBias = 0;
+        float m_MinLOD = 0;
+        float m_MaxLOD = std::numeric_limits<float>::max();
 
         Color m_BorderColor{};
 
