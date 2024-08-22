@@ -1,8 +1,4 @@
 #pragma once
-#include <DataTypes/Vector.h>
-#include <Math/Matrix.h>
-#include <Math/Vector3.h>
-#include <Math/Quaternion.h>
 #include <assimp/anim.h>
 
 namespace LevEngine
@@ -69,8 +65,7 @@ namespace LevEngine
         /*figures out which scaling keys to interpolate b/w and performs the interpolation
         and returns the scale matrix*/
         Matrix InterpolateScaling(double animationTime);
-
-
+        
         Vector<KeyPosition> m_Positions;
         Vector<KeyRotation> m_Rotations;
         Vector<KeyScale> m_Scales;

@@ -63,6 +63,8 @@ namespace LevEngine
 
 		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
+		static void DeleteAsset(UUID uuid);
+		static void DeleteAsset(const Path& path);
 		static bool AssetExists(const Path& path);
 
 	private:

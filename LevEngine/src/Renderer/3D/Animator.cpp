@@ -183,7 +183,7 @@ namespace LevEngine
 			node->boneModelToLocalTransform = node->boneModelToLocalTransform * parent->boneModelToLocalTransform;
 		}
 
-		auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
+		auto& boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
 		const auto boneInfoIt = boneInfoMap.find(nodeName);
 		if (boneInfoIt != boneInfoMap.end())
 		{

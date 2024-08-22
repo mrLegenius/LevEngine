@@ -1,64 +1,47 @@
 #pragma once
-#include "DataTypes/Path.h"
-#include "Renderer/3D/Animation.h"
-#include "Renderer/3D/Bone.h"
-#include "Renderer/3D/Mesh.h"
-#include "Renderer/3D/MeshLoading/AssimpConverter.h"
+
 #include "assimp/scene.h"
-#include "assimp/Importer.hpp"
-#include "assimp/postprocess.h"
-#include "Kernel/Asserts.h"
+
+#include "Assets/ModelAsset.h"
+#include "Renderer/3D/Animation.h"
+#include "Renderer/3D/MeshLoading/AssimpConverter.h"
+
+#include "Renderer/3D/BoneInfo.h"
+#include "Math/Math.h"
 
 namespace LevEngine
 {
 	class AnimationLoader
 	{
 	public:
-		static Vector<Ref<Animation>> LoadAllAnimations(const Path& path, Ref<Mesh>& mesh)
+		static Vector<Ref<Animation>> LoadAllAnimations(const aiScene* scene, UnorderedMap<String, BoneInfo>& boneInfoMap, int& boneCount)
 		{
-			Assimp::Importer importer;
-			const aiScene* scene = importer.ReadFile(path.string(), aiProcess_FindInvalidData);
-
-			if (!scene || !scene->mRootNode) return Vector<Ref<Animation>>();
-
 			Vector<Ref<Animation>> animations;
 
 			for (unsigned int animationIdx = 0; animationIdx < scene->mNumAnimations; ++animationIdx)
 			{
-				animations.push_back(ReadAnimation(scene, mesh, animationIdx));
+				animations.push_back(ReadAnimation(scene, scene->mAnimations[animationIdx], boneInfoMap, boneCount));
 			}
 
 			return animations;
 		}
 
-		static Ref<Animation> LoadAnimation(const Path& path, const Ref<Mesh>& mesh, int animationIdx)
-		{
-			Assimp::Importer importer;
-			const aiScene* scene = importer.ReadFile(path.string(), aiProcess_FindInvalidData);
-
-			LEV_CORE_ASSERT(scene && scene->mRootNode);
-
-			return ReadAnimation(scene, mesh, animationIdx);
-		}
-
 	private:
-		static Ref<Animation> ReadAnimation(const aiScene* scene, const Ref<Mesh>& resultMesh, int animationIdx)
+		static Ref<Animation> ReadAnimation(const aiScene* scene, const aiAnimation* animation, UnorderedMap<String, BoneInfo>& boneInfoMap, int& boneCount)
 		{
-			const aiAnimation* animation = scene->mAnimations[animationIdx];
-
 			Ref<Animation> resultAnimation = CreateRef<Animation>();
 
 			resultAnimation->m_Duration = animation->mDuration;
-			resultAnimation->m_TicksPerSecond = animation->mTicksPerSecond != 0.0 ? animation->mTicksPerSecond : 25.0;
-			resultAnimation->m_Name = animation->mName.C_Str();
+			resultAnimation->m_TicksPerSecond = Math::IsZero(animation->mTicksPerSecond) ? 25.0 : animation->mTicksPerSecond;
+			resultAnimation->m_Name = AssimpConverter::ToName(animation->mName);
 			NodeData* rootNode = resultAnimation->m_RootNode;
-			ReadHeirarchyData(resultAnimation, rootNode, scene->mRootNode);
-			ReadKeyframes(resultAnimation, animation, resultMesh);
+			ReadHierarchyData(resultAnimation, rootNode, scene->mRootNode);
+			ReadKeyframes(resultAnimation, animation, boneInfoMap, boneCount);
 
 			return resultAnimation;
 		}
 
-		static void ReadHeirarchyData(const Ref<Animation>& resultAnimation, NodeData* dest, const aiNode* src)
+		static void ReadHierarchyData(const Ref<Animation>& resultAnimation, NodeData* dest, const aiNode* src)
 		{
 			LEV_CORE_ASSERT(src);
 
@@ -70,18 +53,15 @@ namespace LevEngine
 			{
 				NodeData* newData = new NodeData();
 				newData->parent = dest;
-				ReadHeirarchyData(resultAnimation, newData, src->mChildren[i]);
+				ReadHierarchyData(resultAnimation, newData, src->mChildren[i]);
 				dest->children.emplace_back(newData);
 			}
 		}
 
 		static void ReadKeyframes(const Ref<Animation>& resultAnimation,
-			const aiAnimation* aiAnimation, const Ref<Mesh>& resultMesh)
+			const aiAnimation* aiAnimation, UnorderedMap<String, BoneInfo>& boneInfoMap, int& boneCount)
 		{
 			const unsigned int numChannels = aiAnimation->mNumChannels;
-
-			UnorderedMap<String, BoneInfo>& boneInfoMap = resultMesh->GetBoneInfoMap();
-			int& boneCount = resultMesh->GetBoneCount();
 
 			for (unsigned int channelIdx = 0; channelIdx < numChannels; channelIdx++)
 			{

@@ -29,8 +29,6 @@ namespace LevEngine
         static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader);
     	static void DrawMesh(const Matrix& model, const Array<Matrix, AnimationConstants::MaxBoneCount>& finalBoneMatrices,
 			const Ref<Mesh>& mesh, const Ref<Shader>& shader);
-        static void DrawMesh(const Matrix& model, const Array<Matrix, AnimationConstants::MaxBoneCount>& finalBoneMatrices,
-            const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader);
         static void DrawCube(const Ref<Shader>& vertexShader);
 
         static void DrawLineList(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);

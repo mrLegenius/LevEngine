@@ -9,11 +9,11 @@ namespace LevEngine
 {
 	AnimationAsset::AnimationAsset(const Path& path, const UUID uuid) : Asset(path, uuid), m_AnimationIdx(-1) {}
 
-	void AnimationAsset::Init(const Ref<Animation>& animation, int animationIdx, const Ref<MeshAsset>& ownerMesh)
+	void AnimationAsset::Init(const Ref<Animation>& animation, int animationIdx, const Ref<ModelAsset>& owner)
 	{
 		SetAnimation(animation);
 		SetAnimationIdx(animationIdx);
-		SetOwnerMesh(ownerMesh);
+		SetOwnerModel(owner);
 	}
 
 	double AnimationAsset::GetDuration() const
@@ -31,20 +31,20 @@ namespace LevEngine
 		m_AnimationIdx = animationIdx;
 	}
 
-	const Ref<MeshAsset>& AnimationAsset::GetOwnerMesh() const
+	const Ref<ModelAsset>& AnimationAsset::GetOwnerModel() const
 	{
-		return m_OwnerMesh;
+		return m_OwnerModel;
 	}
 
-	void AnimationAsset::SetOwnerMesh(const Ref<MeshAsset>& ownerMesh)
+	void AnimationAsset::SetOwnerModel(const Ref<ModelAsset>& ownerMesh)
 	{
-		m_OwnerMesh = ownerMesh;
+		m_OwnerModel = ownerMesh;
 	}
 
 	void AnimationAsset::SerializeData(YAML::Emitter& out)
 	{
 		out << YAML::Key << c_AnimationIndexKey << YAML::Value << m_AnimationIdx;
-		SerializeAsset(out, c_OwnerMeshKey, m_OwnerMesh);
+		SerializeAsset(out, c_OwnerMeshKey, m_OwnerModel);
 	}
 	void AnimationAsset::DeserializeData(const YAML::Node& node)
 	{
@@ -58,21 +58,19 @@ namespace LevEngine
 				m_Path.string(), m_AnimationIdx);
 		}
 
-		m_OwnerMesh = DeserializeAsset<MeshAsset>(node[c_OwnerMeshKey]);
-		if (m_OwnerMesh == nullptr)
+		m_OwnerModel = DeserializeAsset<ModelAsset>(node[c_OwnerMeshKey]);
+		if (m_OwnerModel == nullptr)
 		{
 			Log::CoreWarning("Failed to deserialize owner mesh of animation in {0}",
 				m_Path.string());
 		}
 
-		if (m_AnimationIdx == -1 || m_OwnerMesh == nullptr)
-		{
+		if (m_AnimationIdx == -1 || m_OwnerModel == nullptr)
 			return;
-		}
 
 		try
 		{
-			SetAnimation(AnimationLoader::LoadAnimation(m_OwnerMesh->GetPath(), m_OwnerMesh->GetMesh(), m_AnimationIdx));
+			//SetAnimation(AnimationLoader::LoadAnimation(m_OwnerModel->GetPath(), m_OwnerModel, m_AnimationIdx));
 		}
 		catch (std::exception& e)
 		{

@@ -59,7 +59,8 @@ namespace LevEngine
         {
             BinaryReader reader{cachePath};
 
-            return LoadMesh(reader);
+            if (reader.IsOpen())
+                return LoadMesh(reader);
         }
         catch (std::exception& e)
         {

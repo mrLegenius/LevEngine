@@ -1,6 +1,7 @@
 ﻿#include "levpch.h"
 #include "OpaquePass.h"
 
+#include "Assets/EngineAssets.h"
 #include "Renderer/Material/Material.h"
 #include "Renderer/Pipeline/PipelineState.h"
 #include "Renderer/Renderer3D.h"
@@ -11,7 +12,7 @@
 #include "Assets/MeshAsset.h"
 #include "Renderer/RenderSettings.h"
 #include "Renderer/Camera/SceneCamera.h"
-#include "Renderer/Material/MaterialPBR.h"
+#include "Renderer/Shader/Shader.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Transform/Transform.h"
@@ -33,7 +34,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
         
-        const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
+        const auto& shader = m_PipelineState->GetShader(ShaderType::Vertex);
 
         Material* previousMaterial{nullptr};
 
@@ -87,6 +88,9 @@ namespace LevEngine
             previousMaterial = nullptr;
 		}
 
+        const auto& animationShader = ShaderAssets::GBufferPassWithAnimations();
+        animationShader->Bind();
+
         // Process animated meshes
         const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
         for (const auto entity : animatedMeshGroup)
@@ -111,10 +115,10 @@ namespace LevEngine
 
             if (previousMaterial != &material)
 			{
-                material.Bind(shader);
+                material.Bind(animationShader);
 			}
             
-            Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, shader);
+            Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, animationShader);
             
             previousMaterial = &material;
         }
@@ -124,6 +128,8 @@ namespace LevEngine
             previousMaterial->Unbind(shader);
             previousMaterial = nullptr;
         }
+
+        animationShader->Unbind();
     }
 
     void OpaquePass::End(entt::registry& registry, RenderParams& params)

@@ -16,14 +16,17 @@ namespace LevEngine
 		[[nodiscard]] Ref<Texture> GetIcon() const override;
 
 	protected:
+
+		bool LoadFromCache() override;
+		void SaveToCache() override;
+		
 		[[nodiscard]] bool WriteDataToFile() const override { return false; }
 		[[nodiscard]] bool ReadDataFromFile() const override { return false; }
 
 		void SerializeData(YAML::Emitter& out) override { }
-		void DeserializeData(const YAML::Node& node) override;
+		void DeserializeData(const YAML::Node& node) override { }
 
 	private:
-		void LoadAnimations();
 		
 		Ref<Mesh> m_Mesh;
 	};

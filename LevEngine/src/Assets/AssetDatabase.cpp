@@ -421,6 +421,29 @@ namespace LevEngine
 		DeleteAllAssetsInDirectory(path);
 	}
 
+	void AssetDatabase::DeleteAsset(UUID uuid)
+	{
+		if (!uuid) return;
+		
+		auto it = m_Assets.find(uuid);
+
+		if (it == m_Assets.end()) return;
+
+		const auto asset = it->second;
+		DeleteAsset(asset);
+	}
+	void AssetDatabase::DeleteAsset(const Path& path)
+	{
+		if (!exists(path)) return;
+		
+		auto it = m_AssetsByPath.find(path);
+
+		if (it == m_AssetsByPath.end()) return;
+
+		const auto asset = it->second;
+		DeleteAsset(asset);
+	}
+
 	bool AssetDatabase::AssetExists(const Path& path)
 	{
 		return m_AssetsByPath.count(path);

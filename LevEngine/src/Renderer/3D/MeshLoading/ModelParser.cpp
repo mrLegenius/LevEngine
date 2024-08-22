@@ -7,6 +7,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/mesh.h>
 
+#include "AnimationLoader.h"
 #include "AssimpConverter.h"
 #include "Assets/AssetDatabase.h"
 #include "Assets/MaterialAsset.h"
@@ -19,7 +20,6 @@
 
 namespace LevEngine
 {
-    //TODO: Add aiProcess_GlobalScale
     unsigned int importFlags
         = aiProcess_CalcTangentSpace
         | aiProcess_Triangulate
@@ -33,6 +33,7 @@ namespace LevEngine
         //| aiProcess_FixInfacingNormals //May help to fix inwards normals but can screw up double side faces
         | aiProcess_OptimizeMeshes
         | aiProcess_OptimizeGraph
+        | aiProcess_FindInvalidData
         | aiProcess_GlobalScale;
 
     ModelImportResult ModelParser::Load(const Path& path, ModelImportParameters params)
@@ -49,16 +50,18 @@ namespace LevEngine
         resultHierarchy->Transform = Matrix::Identity;
         resultHierarchy->MeshUUID = 0;
         resultHierarchy->MaterialUUID = 0;
-
+        
         auto materials = LoadMaterials(path, scene);
-        LoadModelHierarchy(path, scene->mRootNode, resultHierarchy, Matrix::Identity, scene, materials);
+        LoadModelHierarchy(path, scene->mRootNode, resultHierarchy, Matrix::Identity, scene, materials, result.boneInfoMap, result.boneCount);
         result.Hierarchy = resultHierarchy;
+
+        result.Animations = AnimationLoader::LoadAllAnimations(scene, result.boneInfoMap, result.boneCount);
 
         return result;
     }
 
-    void ModelParser::LoadModelHierarchy(const Path& path, const aiNode* node, ModelNode* parent, Matrix accTransform,
-                                         const aiScene* scene, const Vector<Ref<MaterialAsset>>& materialAssets)
+    void ModelParser::LoadModelHierarchy(const Path& path, const aiNode* node, ModelNode* parent, const Matrix& accTransform,
+                                         const aiScene* scene, const Vector<Ref<MaterialAsset>>& materialAssets, UnorderedMap<String, BoneInfo>& boneInfoMap, int& boneCount)
     {
         const Matrix currentNodeTransform = AssimpConverter::ToMatrix(node->mTransformation, true);
         ModelNode* result{};
@@ -72,9 +75,13 @@ namespace LevEngine
 
             auto materialIndex = meshData->mMaterialIndex;
 
-            auto mesh = ParseMesh(meshData, currentNodeTransform);
+            auto mesh = ParseMesh(meshData, currentNodeTransform, boneInfoMap, boneCount);
 
             auto fileName = AssimpConverter::ToName(meshData->mName);
+
+            if (node->mNumMeshes > 1)
+                fileName.append(ToString(i + 1));
+            
             auto meshAsset = CreateMeshAsset(path, fileName, mesh);
 
             result->MeshUUID = meshAsset->GetUUID();
@@ -82,9 +89,6 @@ namespace LevEngine
 
             result->Transform = currentNodeTransform;
             result->Name = fileName;
-
-            if (node->mNumMeshes > 1)
-                result->Name.append(ToString(i + 1));
 
             parent->Children.push_back(result);
         }
@@ -103,17 +107,14 @@ namespace LevEngine
         Matrix transform = AssimpConverter::ToMatrix(node->mTransformation, false) * accTransform;
 
         for (uint32_t i = 0; i < node->mNumChildren; ++i)
-            LoadModelHierarchy(path, node->mChildren[i], parent, transform, scene, materialAssets);
+            LoadModelHierarchy(path, node->mChildren[i], parent, transform, scene, materialAssets, boneInfoMap, boneCount);
     }
 
     Ref<MeshAsset> ModelParser::CreateMeshAsset(const Path& path, String name, const Ref<Mesh>& mesh)
     {
         const auto modelDirectory = path.parent_path();
         const auto meshesDirectory = modelDirectory / "Meshes";
-
-        if (!exists(meshesDirectory))
-            create_directory(meshesDirectory);
-
+        
         name.append(".mesh");
         Path meshPath = meshesDirectory / name.c_str();
 
@@ -129,10 +130,7 @@ namespace LevEngine
     {
         const auto modelDirectory = path.parent_path();
         const auto directory = modelDirectory / "Materials";
-
-        if (!exists(directory))
-            create_directory(directory);
-
+        
         Vector<Ref<MaterialAsset>> materials;
         for (int i = 0; i < scene->mNumMaterials; ++i)
         {
@@ -210,96 +208,27 @@ namespace LevEngine
         
         return newMaterial;
     }
-
-    Ref<Mesh> ModelParser::LoadModel(const Path& path)
-    {
-        Assimp::Importer importer;
-
-        const aiScene* scene = importer.ReadFile(path.string(), importFlags);
-
-        Ref<Mesh> resultMesh = CreateRef<Mesh>();
-
-        if (scene == nullptr)
-        {
-            Log::CoreWarning("Failed to load mesh in {0}. Returning empty mesh", path.string());
-            return resultMesh;
-        }
-
-        auto& rootNode = scene->mRootNode;
-
-        if (scene->mNumMeshes == 0)
-        {
-            Log::CoreWarning("There is no mesh in file {0}. Returning empty mesh", path.string());
-            return resultMesh;
-        }
-
-        ParseMesh(rootNode, scene, resultMesh, Matrix::Identity);
-
-        resultMesh->Init();
-        resultMesh->GenerateAABBBoundingVolume();
-
-        return resultMesh;
-    }
-
-    Ref<Mesh> ModelParser::ParseMesh(const aiMesh* mesh)
+    
+    Ref<Mesh> ModelParser::ParseMesh(const aiMesh* mesh, const Matrix& cumulativeTransform, UnorderedMap<String, BoneInfo>& boneInfoMap, int& boneCount)
     {
         Ref<Mesh> newMesh = CreateRef<Mesh>();
 
-        const size_t nvertices = mesh->mNumVertices;
-        const aiVector3D* vertices = mesh->mVertices;
-        newMesh->ResizeBoneArrays(nvertices);
+        const size_t verticesCount = mesh->mNumVertices;
 
-        for (size_t vertexIdx = 0; vertexIdx < nvertices; vertexIdx++)
+        for (size_t vertexIdx = 0; vertexIdx < verticesCount; vertexIdx++)
         {
-            const auto point = AssimpConverter::ToVector3(vertices[vertexIdx]);
-
-            const auto uv = AssimpConverter::ToVector2(mesh->mTextureCoords[0][vertexIdx]);
-            const auto normal = AssimpConverter::ToVector3(mesh->mNormals[vertexIdx]);
-            const auto tangent = AssimpConverter::ToVector3(mesh->mTangents[vertexIdx]);
-
-            newMesh->AddVertex(point);
-            newMesh->AddUV(uv);
-            newMesh->AddNormal(normal);
-            newMesh->AddTangent(tangent);
-        }
-
-        ExtractBoneWeightForVertices(newMesh, mesh);
-
-        const size_t nFaces = mesh->mNumFaces;
-        const aiFace* meshFaces = mesh->mFaces;
-        for (size_t faceIdx = 0; faceIdx < nFaces; faceIdx++)
-        {
-            newMesh->AddIndex(meshFaces[faceIdx].mIndices[0]);
-            newMesh->AddIndex(meshFaces[faceIdx].mIndices[1]);
-            newMesh->AddIndex(meshFaces[faceIdx].mIndices[2]);
-        }
-
-        newMesh->Init();
-        newMesh->GenerateAABBBoundingVolume();
-
-        return newMesh;
-    }
-
-    Ref<Mesh> ModelParser::ParseMesh(const aiMesh* mesh, Matrix cumulativeTransform)
-    {
-        Ref<Mesh> newMesh = CreateRef<Mesh>();
-
-        const size_t nvertices = mesh->mNumVertices;
-        const aiVector3D* vertices = mesh->mVertices;
-        newMesh->ResizeBoneArrays(nvertices);
-
-        for (size_t vertexIdx = 0; vertexIdx < nvertices; vertexIdx++)
-        {
-            const aiVector3D vertex = vertices[vertexIdx];
+            const aiVector3D vertex = mesh->mVertices[vertexIdx];
 
             const auto point = Vector3::Transform(
-                Vector3(vertex.x, vertex.y, vertex.z), cumulativeTransform);
+                AssimpConverter::ToVector3(vertex), cumulativeTransform);
 
-            const auto uv = Vector2(mesh->mTextureCoords[0][vertexIdx].x, mesh->mTextureCoords[0][vertexIdx].y);
-            const auto normal = Vector3::Transform(AssimpConverter::ToVector3(mesh->mNormals[vertexIdx]),
-                                                   cumulativeTransform);
-            const auto tangent = Vector3::Transform(AssimpConverter::ToVector3(mesh->mTangents[vertexIdx]),
-                                                    cumulativeTransform);
+            const auto uv =  AssimpConverter::ToVector2(mesh->mTextureCoords[0][vertexIdx]);
+            
+            const auto normal = Vector3::Transform(
+                AssimpConverter::ToVector3(mesh->mNormals[vertexIdx]), cumulativeTransform);
+            
+            const auto tangent = Vector3::Transform(
+                AssimpConverter::ToVector3(mesh->mTangents[vertexIdx]), cumulativeTransform);
 
             newMesh->AddVertex(point);
             newMesh->AddUV(uv);
@@ -307,7 +236,11 @@ namespace LevEngine
             newMesh->AddTangent(tangent);
         }
 
-        ExtractBoneWeightForVertices(newMesh, mesh);
+        if (mesh->mNumBones)
+        {
+            newMesh->ResizeBoneArrays(verticesCount);
+            ExtractBoneWeightForVertices(mesh, newMesh, boneInfoMap, boneCount);
+        }
 
         const size_t nFaces = mesh->mNumFaces;
         const aiFace* meshFaces = mesh->mFaces;
@@ -326,79 +259,16 @@ namespace LevEngine
         return newMesh;
     }
 
-    void ModelParser::ParseMesh(const aiNode* node, const aiScene* scene, Ref<Mesh>& resultMesh,
-                                Matrix cumulativeTransform)
-    {
-        const Matrix currentNodeTransform = AssimpConverter::ToMatrix(node->mTransformation, true);
-        cumulativeTransform *= currentNodeTransform;
-
-        for (unsigned int i = 0; i < node->mNumMeshes; ++i)
-        {
-            const uint32_t meshIdx = node->mMeshes[i];
-            Ref<Mesh> newMesh = CreateRef<Mesh>();
-
-            const aiMesh* mesh = scene->mMeshes[meshIdx];
-
-            const size_t nvertices = mesh->mNumVertices;
-            const aiVector3D* vertices = mesh->mVertices;
-            newMesh->ResizeBoneArrays(nvertices);
-
-            for (size_t vertexIdx = 0; vertexIdx < nvertices; vertexIdx++)
-            {
-                const aiVector3D vertex = vertices[vertexIdx];
-
-                const auto point = Vector3::Transform(
-                    Vector3(vertex.x, vertex.y, vertex.z), cumulativeTransform);
-
-                const auto uv = Vector2(mesh->mTextureCoords[0][vertexIdx].x, mesh->mTextureCoords[0][vertexIdx].y);
-                const auto normal = Vector3::Transform(AssimpConverter::ToVector3(mesh->mNormals[vertexIdx]),
-                                                       cumulativeTransform);
-                const auto tangent = Vector3::Transform(AssimpConverter::ToVector3(mesh->mTangents[vertexIdx]),
-                                                        cumulativeTransform);
-
-                newMesh->AddVertex(point);
-                newMesh->AddUV(uv);
-                newMesh->AddNormal(normal);
-                newMesh->AddTangent(tangent);
-            }
-
-            ExtractBoneWeightForVertices(newMesh, mesh);
-
-            const size_t nFaces = mesh->mNumFaces;
-            const aiFace* meshFaces = mesh->mFaces;
-            for (size_t faceIdx = 0; faceIdx < nFaces; faceIdx++)
-            {
-                newMesh->AddIndex(meshFaces[faceIdx].mIndices[0]);
-                newMesh->AddIndex(meshFaces[faceIdx].mIndices[1]);
-                newMesh->AddIndex(meshFaces[faceIdx].mIndices[2]);
-            }
-
-            newMesh->Init();
-            newMesh->GenerateAABBBoundingVolume();
-
-            resultMesh->AddSubMesh(newMesh);
-        }
-
-        for (unsigned int i = 0; i < node->mNumChildren; ++i)
-        {
-            ParseMesh(node->mChildren[i], scene, resultMesh, cumulativeTransform);
-        }
-
-        resultMesh->NormalizeBoneWeights();
-    }
-
-    void ModelParser::ExtractBoneWeightForVertices(const Ref<Mesh>& resultMesh, const aiMesh* mesh)
+    void ModelParser::ExtractBoneWeightForVertices(const aiMesh* mesh, const Ref<Mesh>& resultMesh, UnorderedMap<String, BoneInfo>& boneInfoMap, int& boneCount)
     {
         for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
         {
             int boneID;
             String boneName = mesh->mBones[boneIndex]->mName.C_Str();
-            UnorderedMap<String, BoneInfo>& boneInfoMap = resultMesh->GetBoneInfoMap();
 
             if (!boneInfoMap.count(boneName))
             {
                 BoneInfo newBoneInfo;
-                int boneCount = resultMesh->GetBoneCount();
 
                 newBoneInfo.id = boneCount;
                 newBoneInfo.offset = AssimpConverter::ToMatrix(mesh->mBones[boneIndex]->mOffsetMatrix, false);
@@ -406,8 +276,6 @@ namespace LevEngine
                 boneInfoMap[boneName] = newBoneInfo;
                 boneID = boneCount;
                 boneCount++;
-
-                resultMesh->SetBoneCount(boneCount);
             }
             else
             {
@@ -423,7 +291,7 @@ namespace LevEngine
             {
                 const unsigned int vertexId = weights[weightIndex].mVertexId;
                 const float weight = weights[weightIndex].mWeight;
-                LEV_CORE_ASSERT(vertexId < resultMesh->GetVerticesCount())
+                LEV_CORE_ASSERT(vertexId < mesh->mNumVertices)
                 resultMesh->AddBoneWeight(vertexId, boneID, weight);
             }
         }

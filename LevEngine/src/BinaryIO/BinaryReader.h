@@ -21,6 +21,7 @@ namespace LevEngine
 
         template<typename T>
         void ReadForEach(Action<T> onRead);
+        [[nodiscard]] bool IsOpen() const { return stream.is_open(); }
 
     private:
 

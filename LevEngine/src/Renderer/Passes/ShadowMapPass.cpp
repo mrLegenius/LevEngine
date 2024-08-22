@@ -178,12 +178,14 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 		if (!meshRenderer.enabled) continue;
 		if (!meshRenderer.mesh) continue;
 		if (!meshRenderer.material) continue;
-    	
-		if (meshRenderer.castShadow)
-		{
-			Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(),  meshRenderer,
-				ShaderAssets::CascadeShadowPassWithAnimations());	
-		}
+		if (!meshRenderer.castShadow) continue;
+		
+		const auto mesh = meshRenderer.mesh->GetMesh();
+		
+		if (!mesh) continue;
+
+		Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh,
+		                     ShaderAssets::CascadeShadowPassWithAnimations());
 	}
 }
 

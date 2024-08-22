@@ -40,6 +40,17 @@
 #include "DataTypes/Vector.h"
 #include "DataTypes/Utility.h"
 
+// -- Math -------------------------------------------------
+
+#include "Math/Color.h"
+#include "Math/Vector2.h"
+#include "Math/Vector3.h"
+#include "Math/Vector4.h"
+#include "Math/Matrix.h"
+#include "Math/Quaternion.h"
+#include "Math/Math.h"
+#include "Math/Random.h"
+
 // -- Kernel -------------------------------------------
 #include "Kernel/Logger.h"
 #include "Kernel/Asserts.h"
@@ -92,17 +103,6 @@
 
 #include "Scene/Serializers/SceneSerializer.h"
 #include "Scene/Serializers/SerializerUtils.h"
-
-// -- Math -------------------------------------------------
-
-#include "Math/Color.h"
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
-#include "Math/Vector4.h"
-#include "Math/Matrix.h"
-#include "Math/Quaternion.h"
-#include "Math/Math.h"
-#include "Math/Random.h"
 
 // /////////////////////////////////////////////////////////
 // -- Renderer ---------------------------------------------

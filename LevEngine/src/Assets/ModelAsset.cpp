@@ -1,12 +1,14 @@
 ﻿#include "levpch.h"
 #include "ModelAsset.h"
 
+#include "AnimationAsset.h"
 #include "AssetDatabase.h"
 #include "EngineAssets.h"
 #include "MaterialPBRAsset.h"
 #include "MeshAsset.h"
 #include "ModelNode.h"
 #include "Cache/ModelAssetCache.h"
+#include "Renderer/3D/MeshLoading/AnimationLoader.h"
 #include "Renderer/3D/MeshLoading/ModelParser.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/Transform/Transform.h"
@@ -76,15 +78,42 @@ namespace LevEngine
         {
             auto elem = nodes[0];
             nodes.erase(nodes.begin());
-
-            if (auto mesh = elem->MeshUUID ? AssetDatabase::GetAsset<MeshAsset>(elem->MeshUUID) : nullptr)
-                AssetDatabase::DeleteAsset(mesh);
             
-            if (auto material = elem->MaterialUUID ? AssetDatabase::GetAsset<MaterialPBRAsset>(elem->MaterialUUID) : nullptr)
-                AssetDatabase::DeleteAsset(material);
+            AssetDatabase::DeleteAsset(elem->MeshUUID);
+            AssetDatabase::DeleteAsset(elem->MaterialUUID);
 
             for (auto child : elem->Children)
                 nodes.push_back(child);
+        }
+    }
+
+    void ModelAsset::LoadAnimations(Vector<Ref<Animation>> animations)
+    {
+        LEV_PROFILE_FUNCTION();
+        for (int animationIdx = 0; animationIdx < animations.size(); ++animationIdx)
+        {
+            String animationName = animations[animationIdx]->GetName();
+
+            const size_t idx = animationName.find_last_of("|");
+            if (idx != String::npos)
+            {
+                animationName = animationName.substr(idx + 1);
+            }
+                
+            String nameToWrite = (animationName.empty()
+                                      ? ToString(animationIdx)
+                                      : animationName)
+                + String(".anim");
+
+            const Path directory = m_Path.parent_path() / "Animations";
+            const Path animationAssetPath = directory / nameToWrite.c_str();
+            
+            AssetDatabase::DeleteAsset(animationAssetPath);
+            
+            const Ref<AnimationAsset> animationAsset = AssetDatabase::CreateNewAsset<AnimationAsset>(animationAssetPath);
+
+            animationAsset->Init(animations[animationIdx], animationIdx, shared_from_this());
+            animationAsset->Serialize();    
         }
     }
 
@@ -104,8 +133,13 @@ namespace LevEngine
     {
         ModelImportParameters params{};
         params.scale = Scale;
-        
-        m_Hierarchy = ModelParser::Load(m_Path, params).Hierarchy;
+
+        auto result = ModelParser::Load(m_Path, params);
+        m_Hierarchy = result.Hierarchy;
+        m_BoneInfoMap = result.boneInfoMap;
+        m_BoneCounter = result.boneCount;
+
+        LoadAnimations(result.Animations);
     }
 
     void ModelAsset::SerializeMeta(YAML::Emitter& out)
