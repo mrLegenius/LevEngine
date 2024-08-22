@@ -117,7 +117,8 @@ bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, ShaderMacro
 {
 	LEV_PROFILE_FUNCTION();
 
-	Vector<D3D_SHADER_MACRO> shaderDefines{defines.size()};
+	Vector<D3D_SHADER_MACRO> shaderDefines;
+	shaderDefines.reserve(defines.size() + 1);
 
 	for (auto shaderDefine : defines)
 	{
@@ -125,6 +126,7 @@ bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, ShaderMacro
 			.Name = shaderDefine.first.c_str(),
 			.Definition = shaderDefine.second.c_str() });	
 	}
+	shaderDefines.push_back({nullptr, nullptr});
 	
 	const std::wstring widestr = std::wstring(shaderFilepath.begin(), shaderFilepath.end());
 	const wchar_t* wide_filepath = widestr.c_str();
