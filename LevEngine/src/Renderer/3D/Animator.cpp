@@ -167,10 +167,8 @@ namespace LevEngine
 			node->boneCurrentTransform = Bone->GetLocalTransform();
 		}
 
-		for (size_t i = 0; i < node->children.size(); i++)
-		{
-			UpdateBoneModelToLocalTransforms(node->children[i]);
-		}
+		for (auto child : node->children)
+			UpdateBoneModelToLocalTransforms(child);
 	}
 
 	void Animator::CalculateFinalBoneTransforms(NodeData* node)

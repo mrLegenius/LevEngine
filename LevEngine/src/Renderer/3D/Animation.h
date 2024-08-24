@@ -24,7 +24,7 @@ namespace LevEngine
 
         [[nodiscard]] double GetTicksPerSecond() const;
         [[nodiscard]] double GetDuration() const;
-        [[nodiscard]] NodeData* GetRootNode();
+        [[nodiscard]] NodeData* GetRootNode() const;
         [[nodiscard]] const UnorderedMap<String, BoneInfo>& GetBoneIDMap() const;
         [[nodiscard]] const String& GetName() const;
 
