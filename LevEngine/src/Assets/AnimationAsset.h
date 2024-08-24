@@ -3,18 +3,18 @@
 
 namespace LevEngine
 {
-	class MeshAsset;
+	class ModelAsset;
 	class Animation;
 
 	class AnimationAsset final : public Asset
 	{
 	public:
-		explicit AnimationAsset(const Path& path, const UUID uuid);
-		void Init(const Ref<Animation>& animation, int animationIdx, const Ref<MeshAsset>& ownerMesh);
+		explicit AnimationAsset(const Path& path, UUID uuid);
+		void Init(const Ref<Animation>& animation, int animationIdx, const Ref<ModelAsset>& owner);
 
 		[[nodiscard]] const Ref<Animation>& GetAnimation() const { return m_Animation; }
 		[[nodiscard]] double GetDuration() const;
-		[[nodiscard]] const Ref<MeshAsset>& GetOwnerMesh() const;
+		[[nodiscard]] const Ref<ModelAsset>& GetOwnerModel() const;
 
 	protected:
 		void SerializeData(YAML::Emitter& out) override;
@@ -23,14 +23,14 @@ namespace LevEngine
 	private:
 		void SetAnimation(const Ref<Animation>& animation);
 		void SetAnimationIdx(int animationIdx);
-		void SetOwnerMesh(const Ref<MeshAsset>& ownerMesh);
+		void SetOwnerModel(const Ref<ModelAsset>& owner);
 		
 		const char* c_AnimationIndexKey = "AnimationIndexInModelFile";
 		const char* c_OwnerMeshKey = "OwnerMesh";
 		
 		Ref<Animation> m_Animation;
 		int m_AnimationIdx;
-		Ref<MeshAsset> m_OwnerMesh;
+		Ref<ModelAsset> m_OwnerModel;
 	};
 }
 

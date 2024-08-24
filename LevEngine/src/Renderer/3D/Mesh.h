@@ -3,7 +3,6 @@
 #include "AnimationConstants.h"
 #include "Math/BoundingVolume.h"
 #include "Renderer/Shader/BufferBinding.h"
-#include "BoneInfo.h"
 
 namespace LevEngine
 {
@@ -66,13 +65,8 @@ namespace LevEngine
         [[nodiscard]] const AABBBoundingVolume& GetAABBBoundingVolume() { return m_BoundingVolume; }
 
         [[nodiscard]] bool IsOnFrustum(const Frustum& frustum, const Transform& meshTransform) const;
-
-		[[nodiscard]] UnorderedMap<String, BoneInfo>& GetBoneInfoMap() { return m_BoneInfoMap; }
 		
 		[[nodiscard]] Vector<Array<float, AnimationConstants::MaxBoneInfluence>>& GetBoneWeights();
-
-		[[nodiscard]] int& GetBoneCount() { return m_BoneCounter; }
-		void SetBoneCount(int value) { m_BoneCounter = value; }
 
 		void AddBoneWeight(int vertexIdx, int boneID, float weight);
 		void ResizeBoneArrays(size_t size);
@@ -86,6 +80,9 @@ namespace LevEngine
     	
     	[[nodiscard]] const Vector<int>& GetBoneWeightCounters() const { return m_BoneWeightCounters; }
     	void SetBoneWeightCounters(const Vector<int>& data ) { m_BoneWeightCounters = data; }
+    	
+    	[[nodiscard]] const Vector<Ref<Mesh>>& GetSubMeshes() const { return m_SubMeshes; }
+    	void AddSubMesh(const Ref<Mesh>& mesh) { return m_SubMeshes.push_back(mesh); }
     	
         Ref<IndexBuffer> IndexBuffer;
 
@@ -104,9 +101,10 @@ namespace LevEngine
 		Vector<Array<int, AnimationConstants::MaxBoneInfluence>> m_BoneIds;
 		Vector<Array<float, AnimationConstants::MaxBoneInfluence>> m_Weights;
 		Vector<int> m_BoneWeightCounters;
-		UnorderedMap<String, BoneInfo> m_BoneInfoMap;
-		int m_BoneCounter = 0;
 
+    	//Other
+    	Vector<Ref<Mesh>> m_SubMeshes;
+    	
 		AABBBoundingVolume m_BoundingVolume{};
 };
 }

@@ -1,8 +1,4 @@
 #pragma once
-#include "DataTypes/String.h"
-#include "DataTypes/Vector.h"
-#include "DataTypes/UnorderedMap.h"
-#include "Math/Matrix.h"
 #include "BoneInfo.h"
 #include "Bone.h"
 
@@ -28,7 +24,7 @@ namespace LevEngine
 
         [[nodiscard]] double GetTicksPerSecond() const;
         [[nodiscard]] double GetDuration() const;
-        [[nodiscard]] NodeData* GetRootNode();
+        [[nodiscard]] NodeData* GetRootNode() const;
         [[nodiscard]] const UnorderedMap<String, BoneInfo>& GetBoneIDMap() const;
         [[nodiscard]] const String& GetName() const;
 

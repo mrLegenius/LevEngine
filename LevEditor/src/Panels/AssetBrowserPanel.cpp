@@ -116,7 +116,7 @@ namespace LevEngine::Editor
                    m_AssetToDelete = AssetDatabase::GetAsset(path);
 
                 if (ImGui::MenuItem("Reimport"))
-                    AssetDatabase::ImportAsset(path);
+                    AssetDatabase::ReimportAsset(path);
 
                 if (ImGui::MenuItem("Open in Explorer"))
                     FileDialogs::OpenFileByExtension(path);
@@ -249,7 +249,7 @@ namespace LevEngine::Editor
                         AssetDatabase::DeleteAsset(asset);
 
                     if (ImGui::MenuItem("Reimport"))
-                        AssetDatabase::ImportAsset(path);
+                        AssetDatabase::ReimportAsset(path);
 
                     if (ImGui::MenuItem("Rename"))
                         m_RenamingAsset = asset;

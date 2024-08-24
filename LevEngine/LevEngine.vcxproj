@@ -112,8 +112,12 @@
     <ClInclude Include="src\AI\Components\AIAgentComponent.h" />
     <ClInclude Include="src\AI\Components\AIAgentCrowdComponent.h" />
     <ClInclude Include="src\AI\Systems\AIAgentCrowdUpdateSystem.h" />
+    <ClInclude Include="src\Assets\AnimationAsset.h" />
     <ClInclude Include="src\Assets\Cache\MeshAssetCache.h" />
+    <ClInclude Include="src\Assets\Cache\ModelAssetCache.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
+    <ClInclude Include="src\Assets\ModelAsset.h" />
+    <ClInclude Include="src\Assets\ModelNode.h" />
     <ClInclude Include="src\Assets\SceneAsset.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
     <ClInclude Include="src\BinaryIO\BinaryReader.h" />
@@ -152,7 +156,7 @@
     <ClInclude Include="src\Renderer\3D\BoneInfo.h" />
     <ClInclude Include="src\Renderer\3D\MeshLoading\AnimationLoader.h" />
     <ClInclude Include="src\Renderer\3D\MeshLoading\AssimpConverter.h" />
-    <ClInclude Include="src\Renderer\3D\MeshLoading\MeshLoader.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\ModelParser.h" />
     <ClInclude Include="src\Renderer\Dispatch\DispatchCommand.h" />
     <ClInclude Include="src\Renderer\Dispatch\DispatchCommands.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPass.h" />
@@ -1079,8 +1083,10 @@
     <ClCompile Include="src\AI\Components\AIAgentCrowdComponent.cpp" />
     <ClCompile Include="src\AI\Systems\AIAgentCrowdUpdateSystem.cpp" />
     <ClCompile Include="src\Assets\Cache\MeshAssetCache.cpp" />
+    <ClCompile Include="src\Assets\Cache\ModelAssetCache.cpp" />
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
+    <ClCompile Include="src\Assets\ModelAsset.cpp" />
     <ClCompile Include="src\Assets\SceneAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
     <ClCompile Include="src\BinaryIO\BinaryReader.cpp" />
@@ -1100,6 +1106,7 @@
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
     <ClCompile Include="src\Physics\Components\ConstantForce.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDevice.cpp" />
+    <ClCompile Include="src\Renderer\3D\MeshLoading\ModelParser.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugGrid.cpp" />

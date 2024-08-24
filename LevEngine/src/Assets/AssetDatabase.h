@@ -13,6 +13,7 @@ namespace LevEngine
 		static Path GetAssetsCachePath();
 		static Path GetAssetCachePath(UUID uuid);
 		static Path GetRelativePath(const Path& path);
+		static void ReimportAsset(const Path& path);
 
 		static void ImportAsset(const Path& path);
 		static void ProcessAllAssets();
@@ -36,6 +37,7 @@ namespace LevEngine
 		static bool IsAssetAudioBank(const Path& path);
 		
 		static bool IsAssetAnimationClip(const Path& path);
+		static bool IsAssetModel(const Path& path);
 
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid);
 
@@ -61,6 +63,8 @@ namespace LevEngine
 
 		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
+		static void DeleteAsset(UUID uuid);
+		static void DeleteAsset(const Path& path);
 		static bool AssetExists(const Path& path);
 
 	private:

@@ -11,6 +11,8 @@ namespace LevEngine
 		Ref<SamplerState> SamplerState;
 		bool IsLinear = false;
 		bool GenerateMipMaps = false;
+		bool SeparateFilters;
+		bool SeparateWrapMode;
 
 		TextureAsset(const Path& path, const UUID& uuid);
 

@@ -69,6 +69,9 @@ namespace LevEngine::Editor
 		static bool DrawComboBox(String label, Array<String, N> stringValues, T& value);
 
 		template<class T, int N>
+		static bool DrawComboBox(String label, Array<T, N> values, T& value);
+		
+		template<class T, int N>
 		static bool DrawComboBox(String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter);
 
 		template<class T, int N>

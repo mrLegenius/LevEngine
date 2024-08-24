@@ -8,6 +8,7 @@
 #include "MaterialPBRAsset.h"
 #include "MaterialSimpleAsset.h"
 #include "MeshAsset.h"
+#include "ModelAsset.h"
 #include "PrefabAsset.h"
 #include "Project.h"
 #include "SceneAsset.h"
@@ -44,6 +45,22 @@ namespace LevEngine
 		return relative(GetAssetsPath(), path);
 	}
 
+	void AssetDatabase::ReimportAsset(const Path& path)
+	{
+		if (path.extension() == ".meta") return;
+
+		auto asset = m_AssetsByPath[path];
+		asset->Clear();
+		auto uuid = asset->GetUUID();
+		auto cachePath = GetAssetCachePath(uuid);
+		
+		if (exists(cachePath))
+			std::filesystem::remove(cachePath);
+
+		asset->m_Deserialized = false;
+		asset->Deserialize();
+	}
+
 	void AssetDatabase::ImportAsset(const Path& path)
 	{
 		if (path.extension() == ".meta") return;
@@ -77,10 +94,8 @@ namespace LevEngine
 		}
 
 		Ref<Asset> asset = CreateAsset(path, uuid);
-		if (CastRef<ScriptAsset>(asset))
-		{
+		if (asset->DeserializeOnImport())
 			asset->Deserialize();
-		}
 
 		if (needToGenerateMeta)
 			asset->SerializeMeta();
@@ -136,28 +151,7 @@ namespace LevEngine
 	{
 		const auto extension = path.extension().string();
 
-		return
-			extension == ".obj"
-			|| extension == ".fbx"
-			|| extension == ".dae"
-			|| extension == ".gltf"
-			|| extension == ".glb"
-			|| extension == ".blend"
-			|| extension == ".3ds"
-			|| extension == ".ase"
-			|| extension == ".ifc"
-			|| extension == ".xgl"
-			|| extension == ".zgl"
-			|| extension == ".ply"
-			|| extension == ".dxf"
-			|| extension == ".lwo"
-			|| extension == ".lws"
-			|| extension == ".lxo"
-			|| extension == ".stl"
-			|| extension == ".x"
-			|| extension == ".ac"
-			|| extension == ".ms3d"
-			;
+		return extension == ".mesh";
 	}
 
 	bool AssetDatabase::IsAssetMaterial(const Path& path)
@@ -220,6 +214,33 @@ namespace LevEngine
 		return extension == ".anim";
 	}
 
+	bool AssetDatabase::IsAssetModel(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return
+			extension == ".obj"
+			|| extension == ".fbx"
+			|| extension == ".dae"
+			|| extension == ".gltf"
+			|| extension == ".glb"
+			|| extension == ".blend"
+			|| extension == ".3ds"
+			|| extension == ".ase"
+			|| extension == ".ifc"
+			|| extension == ".xgl"
+			|| extension == ".zgl"
+			|| extension == ".ply"
+			|| extension == ".dxf"
+			|| extension == ".lwo"
+			|| extension == ".lws"
+			|| extension == ".lxo"
+			|| extension == ".stl"
+			|| extension == ".x"
+			|| extension == ".ac"
+			|| extension == ".ms3d";
+	}
+
 	Ref<Asset> AssetDatabase::CreateAsset(const Path& path, UUID uuid)
 	{
 		if (IsAssetTexture(path))
@@ -251,6 +272,9 @@ namespace LevEngine
 
 		if (IsAssetScript(path))
 			return CreateRef<ScriptAsset>(path, uuid);
+
+		if (IsAssetModel(path))
+			return CreateRef<ModelAsset>(path, uuid);
 
 		return CreateRef<DefaultAsset>(path, uuid);
 	}
@@ -375,15 +399,15 @@ namespace LevEngine
 		try
 		{
 			if (exists(path))
-			{
 				remove_all(path);
-			}
 
 			const auto metaPath = Path(path.string().append(".meta"));
 			if (exists(metaPath))
-			{
 				std::filesystem::remove(metaPath);
-			}
+
+			const auto cachePath = GetAssetCachePath(uuid);
+			if (exists(cachePath))
+				std::filesystem::remove(metaPath);
 		}
 		catch (std::exception& e)
 		{
@@ -395,6 +419,29 @@ namespace LevEngine
 		m_Assets.erase(uuid);
 
 		DeleteAllAssetsInDirectory(path);
+	}
+
+	void AssetDatabase::DeleteAsset(UUID uuid)
+	{
+		if (!uuid) return;
+		
+		auto it = m_Assets.find(uuid);
+
+		if (it == m_Assets.end()) return;
+
+		const auto asset = it->second;
+		DeleteAsset(asset);
+	}
+	void AssetDatabase::DeleteAsset(const Path& path)
+	{
+		if (!exists(path)) return;
+		
+		auto it = m_AssetsByPath.find(path);
+
+		if (it == m_AssetsByPath.end()) return;
+
+		const auto asset = it->second;
+		DeleteAsset(asset);
 	}
 
 	bool AssetDatabase::AssetExists(const Path& path)

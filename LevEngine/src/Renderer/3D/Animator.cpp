@@ -167,10 +167,8 @@ namespace LevEngine
 			node->boneCurrentTransform = Bone->GetLocalTransform();
 		}
 
-		for (size_t i = 0; i < node->children.size(); i++)
-		{
-			UpdateBoneModelToLocalTransforms(node->children[i]);
-		}
+		for (auto child : node->children)
+			UpdateBoneModelToLocalTransforms(child);
 	}
 
 	void Animator::CalculateFinalBoneTransforms(NodeData* node)
@@ -183,7 +181,7 @@ namespace LevEngine
 			node->boneModelToLocalTransform = node->boneModelToLocalTransform * parent->boneModelToLocalTransform;
 		}
 
-		auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
+		auto& boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
 		const auto boneInfoIt = boneInfoMap.find(nodeName);
 		if (boneInfoIt != boneInfoMap.end())
 		{

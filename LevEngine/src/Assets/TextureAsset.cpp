@@ -26,10 +26,12 @@ namespace LevEngine
 		
 		out << YAML::Key << "IsLinear" << YAML::Value << IsLinear;
 		out << YAML::Key << "GenerateMipMaps" << YAML::Value << GenerateMipMaps;
+		out << YAML::Key << "SeparateFilters" << YAML::Value << SeparateFilters;
+		out << YAML::Key << "SeparateWrapMode" << YAML::Value << SeparateWrapMode;
 
-		SamplerState::MinFilter minFilter;
-		SamplerState::MagFilter magFilter;
-		SamplerState::MipFilter mipFilter;
+		SamplerState::Filter minFilter;
+		SamplerState::Filter magFilter;
+		SamplerState::Filter mipFilter;
 		SamplerState->GetFilter(minFilter, magFilter, mipFilter);
 		out << YAML::Key << "MinFilter" << YAML::Value << static_cast<int>(minFilter);
 		out << YAML::Key << "MagFilter" << YAML::Value << static_cast<int>(magFilter);
@@ -71,10 +73,12 @@ namespace LevEngine
 		
 		TryParse(out["IsLinear"], IsLinear);
 		TryParse(out["GenerateMipMaps"], GenerateMipMaps);
+		TryParse(out["SeparateFilters"], SeparateFilters);
+		TryParse(out["SeparateWrapMode"], SeparateWrapMode);
 
-		const auto minFilter = static_cast<SamplerState::MinFilter>(out["MinFilter"].as<int>());
-		const auto magFilter = static_cast<SamplerState::MagFilter>(out["MagFilter"].as<int>());
-		const auto mipFilter = static_cast<SamplerState::MipFilter>(out["MipFilter"].as<int>());
+		const auto minFilter = static_cast<SamplerState::Filter>(out["MinFilter"].as<int>());
+		const auto magFilter = static_cast<SamplerState::Filter>(out["MagFilter"].as<int>());
+		const auto mipFilter = static_cast<SamplerState::Filter>(out["MipFilter"].as<int>());
 		SamplerState->SetFilter(minFilter, magFilter, mipFilter);
 
 		const auto wrapModeU = static_cast<SamplerState::WrapMode>(out["WrapModeU"].as<int>());

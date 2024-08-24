@@ -176,6 +176,8 @@ namespace LevEngine
 
     void Mesh::NormalizeBoneWeights()
     {
+        if (m_Weights.size() == 0) return;
+        
         for (int vertexIdx = 0; vertexIdx < GetVerticesCount(); ++vertexIdx)
         {
             float totalWeight = 0.0f;

@@ -1,6 +1,12 @@
 namespace LevEngine
 {
     template <typename T>
+    void Write(YAML::Emitter& out, String key, T value)
+    {
+        out << YAML::Key << key << YAML::Value << value;
+    }
+    
+    template <typename T>
     bool TryParse(const YAML::Node& node, T& value)
     {
         if (const auto data = node)

@@ -22,19 +22,26 @@ namespace LevEngine
 
 	void Asset::SerializeData()
 	{
-		YAML::Emitter out;
-		out << YAML::BeginMap;
-
-		SerializeData(out);
-
-		out << YAML::EndMap;
-
-		if (!WriteDataToFile()) return;
-
 		try
 		{
-			std::ofstream fout(m_Path);
-			fout << out.c_str();
+			if (!exists(m_Path) && !WriteDataToFile())
+			{
+				std::ofstream fout(m_Path);
+				return;
+			}
+
+			if (WriteDataToFile())
+			{
+				std::ofstream fout(m_Path);
+				
+				YAML::Emitter out;
+				out << YAML::BeginMap;
+
+				SerializeData(out);
+
+				out << YAML::EndMap;
+				fout << out.c_str();
+			}
 		}
 		catch (std::exception& e)
 		{
@@ -89,10 +96,19 @@ namespace LevEngine
 
 	bool Asset::DeserializeData()
 	{
+		try
+		{
+			if (LoadFromCache()) return true;
+		}
+		catch (std::exception& e)
+		{
+		}
+		
 		if (!ReadDataFromFile())
 		{
 			const YAML::Node data{};
 			DeserializeData(data);
+			SaveToCache();
 			return true;
 		}
 		
@@ -100,6 +116,7 @@ namespace LevEngine
 		{
 			const YAML::Node data = LoadYAMLFile(m_Path);
 			DeserializeData(data);
+			SaveToCache();
 		}
 		catch (YAML::BadConversion&)
 		{

@@ -16,6 +16,13 @@ namespace LevEngine
         auto count = Read<size_t>();
 
         Vector<T> vector;
+        if (count > 0x80000000)
+        {
+            Log::CoreError("Trying to read too large sequence with size {}", count);
+            return vector;
+        }
+        
+        vector.reserve(count);
 
         for (int i = 0; i < count; ++i)
         {
@@ -41,8 +48,6 @@ namespace LevEngine
     void BinaryReader::ReadForEach(Action<T> onRead)
     {
         auto count = Read<size_t>();
-
-        Vector<T> vector(count);
 
         for (int i = 0; i < count; ++i)
         {

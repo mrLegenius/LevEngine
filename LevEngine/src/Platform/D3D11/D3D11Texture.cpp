@@ -350,13 +350,18 @@ D3D11Texture::D3D11Texture(ID3D11Device2* device, const String& path, bool isLin
     bool isHDR = false;
     bool is16Bit = false;
 
+	int components;
+	stbi_info(path.c_str(), &width, &height, &components);
+
+	auto desiredChannels = components == 3 ? 4 : 0;
+	
     isHDR |= stbi_is_hdr(path.c_str());
     is16Bit |= stbi_is_16_bit(path.c_str());
     void* data;
     if (isHDR)
-        data = stbi_loadf(path.c_str(), &width, &height, &channels, 4);
+        data = stbi_loadf(path.c_str(), &width, &height, &channels, desiredChannels);
     else
-        data = stbi_load(path.c_str(), &width, &height, &channels, 4);
+        data = stbi_load(path.c_str(), &width, &height, &channels, desiredChannels);
     
     if (!data)
     {
@@ -375,9 +380,13 @@ D3D11Texture::D3D11Texture(ID3D11Device2* device, const String& path, bool isLin
         else
             m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     }
+	else if (channels == 2)
+	{
+		m_TextureResourceFormat = DXGI_FORMAT_R8G8_UNORM;
+	}
     else if (channels == 1)
     {
-        m_TextureResourceFormat = DXGI_FORMAT_R8_UNORM;
+    	m_TextureResourceFormat = DXGI_FORMAT_R8_UNORM;
     }
     else
     {
@@ -399,7 +408,7 @@ D3D11Texture::D3D11Texture(ID3D11Device2* device, const String& path, bool isLin
     m_Height = height;
     m_TextureDimension = Dimension::Texture2D;
     m_NumSlices = 1;
-    m_SampleDesc = GetSupportedSampleCount(device, m_TextureResourceFormat, 1);
+    m_SampleDesc = GetSupportedSampleCount(device, m_TextureResourceFormat, m_NumSlices);
 
     m_ShaderResourceViewFormat = m_RenderTargetViewFormat = m_TextureResourceFormat;
 

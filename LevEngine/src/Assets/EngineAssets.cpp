@@ -18,6 +18,7 @@ namespace LevEngine
     Ref<Texture> Icons::File() { return GetIcon("Assets\\FileIcon.png"); }
     Ref<Texture> Icons::Material() { return GetIcon("Assets\\MaterialIcon.png"); }
     Ref<Texture> Icons::Mesh() { return GetIcon("Assets\\MeshIcon.png"); }
+    Ref<Texture> Icons::Model() { return GetIcon("Assets\\ModelIcon.png"); }
     Ref<Texture> Icons::Skybox() { return GetIcon("Assets\\SkyboxIcon.png"); }
 
     Ref<Shader> ShaderAssets::DebugShape()

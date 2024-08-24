@@ -1,6 +1,7 @@
 ﻿#include "levpch.h"
 #include "OpaquePass.h"
 
+#include "Assets/EngineAssets.h"
 #include "Renderer/Material/Material.h"
 #include "Renderer/Pipeline/PipelineState.h"
 #include "Renderer/Renderer3D.h"
@@ -9,7 +10,9 @@
 #include "Renderer/3D/Mesh.h"
 #include "Assets/MaterialAsset.h"
 #include "Assets/MeshAsset.h"
+#include "Renderer/RenderSettings.h"
 #include "Renderer/Camera/SceneCamera.h"
+#include "Renderer/Shader/Shader.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Transform/Transform.h"
@@ -31,7 +34,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
         
-        const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
+        const auto& shader = m_PipelineState->GetShader(ShaderType::Vertex);
 
         Material* previousMaterial{nullptr};
 
@@ -42,24 +45,39 @@ namespace LevEngine
             auto [transform, meshRenderer] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
 
             if (!meshRenderer.enabled) continue;
-            if (!meshRenderer.material) continue;
-            auto& material = meshRenderer.material->GetMaterial();
-
+            
+            auto& material = meshRenderer.material ? meshRenderer.material->GetMaterial() : *Renderer3D::MissingMaterial;
             if (material.IsTransparent()) continue;
+            
             if (!meshRenderer.mesh) continue;
 
-            const auto mesh = meshRenderer.mesh->GetMesh();
-            if (!mesh) continue;
+            Queue<Ref<Mesh>> meshesToRender;
+            const auto initialMesh = meshRenderer.mesh->GetMesh();
 
-            if (RenderSettings::UseFrustumCulling)
-            {
-                if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
-            }
+            if (!initialMesh) continue;
 
             if (previousMaterial != &material)
                 material.Bind(shader);
+            
+            meshesToRender.push(initialMesh);
 
-            Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
+            while (meshesToRender.size() > 0)
+            {
+                auto mesh = meshesToRender.front();
+                meshesToRender.pop();
+
+                for (auto subMesh : mesh->GetSubMeshes())
+                {
+                    if (subMesh)
+                        meshesToRender.push(subMesh);
+                }
+                
+                if (RenderSettings::UseFrustumCulling)
+                    if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
+
+                if (mesh->IndexBuffer)
+                    Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
+            }
 
             previousMaterial = &material;
         }
@@ -69,6 +87,9 @@ namespace LevEngine
             previousMaterial->Unbind(shader);
             previousMaterial = nullptr;
 		}
+
+        const auto& animationShader = ShaderAssets::GBufferPassWithAnimations();
+        animationShader->Bind();
 
         // Process animated meshes
         const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
@@ -94,10 +115,10 @@ namespace LevEngine
 
             if (previousMaterial != &material)
 			{
-                material.Bind(shader);
+                material.Bind(animationShader);
 			}
             
-            Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, shader);
+            Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, animationShader);
             
             previousMaterial = &material;
         }
@@ -107,6 +128,8 @@ namespace LevEngine
             previousMaterial->Unbind(shader);
             previousMaterial = nullptr;
         }
+
+        animationShader->Unbind();
     }
 
     void OpaquePass::End(entt::registry& registry, RenderParams& params)

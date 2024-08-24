@@ -150,6 +150,7 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClCompile Include="src\GUI\Drawers\Assets\MaterialSimpleAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\MaterialPBRAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\ModelAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\AnimationAssetDrawer.cpp" />

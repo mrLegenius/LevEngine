@@ -7,6 +7,8 @@
 #include "Renderer/RenderParams.h"
 #include "Renderer/Shader/Shader.h"
 #include "Assets/EngineAssets.h"
+#include "Assets/MeshAsset.h"
+#include "Renderer/3D/Mesh.h"
 #include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Lights/Lights.h"
@@ -132,14 +134,33 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 	const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
     for (const auto entity : staticMeshGroup)
     {
-        auto [transform, mesh] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
+        auto [transform, meshComponent] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
 
-    	if (!mesh.enabled) continue;
-		if (!mesh.mesh) continue;
-		if (!mesh.material) continue;
-    	
-        if (mesh.castShadow)
-            Renderer3D::DrawMesh(transform.GetModel(), mesh, ShaderAssets::CascadeShadowPass());
+    	if (!meshComponent.enabled) continue;
+		if (!meshComponent.mesh) continue;
+		if (!meshComponent.material) continue;
+        if (!meshComponent.castShadow) continue;
+
+    	Queue<Ref<Mesh>> meshesToRender;
+    	const auto initialMesh = meshComponent.mesh->GetMesh();
+
+    	if (!initialMesh) continue;
+            
+    	meshesToRender.push(initialMesh);
+
+    	while (meshesToRender.size() > 0)
+    	{
+    		auto mesh = meshesToRender.front();
+    		meshesToRender.pop();
+  	
+    		Renderer3D::DrawMesh(transform.GetModel(), mesh, ShaderAssets::CascadeShadowPass());
+
+    		for (auto subMesh : mesh->GetSubMeshes())
+    		{
+    			if (subMesh)
+    				meshesToRender.push(subMesh);
+    		}
+    	}
     }
 
 	ShaderAssets::CascadeShadowPassWithAnimations()->Bind();
@@ -157,12 +178,14 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 		if (!meshRenderer.enabled) continue;
 		if (!meshRenderer.mesh) continue;
 		if (!meshRenderer.material) continue;
-    	
-		if (meshRenderer.castShadow)
-		{
-			Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(),  meshRenderer,
-				ShaderAssets::CascadeShadowPassWithAnimations());	
-		}
+		if (!meshRenderer.castShadow) continue;
+		
+		const auto mesh = meshRenderer.mesh->GetMesh();
+		
+		if (!mesh) continue;
+
+		Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh,
+		                     ShaderAssets::CascadeShadowPassWithAnimations());
 	}
 }
 

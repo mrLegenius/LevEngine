@@ -9,6 +9,7 @@
 #include "Renderer/Pipeline/Texture.h"
 #include "Renderer/Camera/SceneCamera.h"
 #include "Math/BoundingVolume.h"
+#include "Renderer/RenderSettings.h"
 #include "Scene/Components/Lights/Lights.h"
 #include "Scene/Components/Transform/Transform.h"
 #include "Renderer/Shader/ShaderType.h"

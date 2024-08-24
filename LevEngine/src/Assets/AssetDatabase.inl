@@ -13,6 +13,9 @@ namespace LevEngine
             Log::CoreError("Asset already exists in {}", path);
             return nullptr;
         }
+
+        if (!exists(path.parent_path()))
+            create_directory(path.parent_path());
 			
         const auto uuid = UUID();
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene/Components/TypeParseTraits.h"
 #include "EntitySelection.h"
+#include "ScopedGUIHelpers.h"
 #include "Selection.h"
 #include "Assets/Asset.h"
 
@@ -13,7 +14,10 @@ namespace LevEngine::Editor
 
 		const auto& asset = assetPtr;
 		auto changed = false;
-
+		
+		String idString = asset ? asset->GetName() : label;
+		GUI::ScopedID id{idString};
+		
 		if (!label.empty())
 		{
 			ImGui::AlignTextToFramePadding();
@@ -43,8 +47,11 @@ namespace LevEngine::Editor
 
 			if (const auto& newAsset = AssetDatabase::GetAsset<T>(assetPath))
 			{
-				assetPtr = newAsset;
-				changed = true;
+				if (assetPtr != newAsset)
+				{
+					assetPtr = newAsset;
+					changed = true;
+				}
 			}
 		}
 		ImGui::EndDragDropTarget();
@@ -277,6 +284,33 @@ namespace LevEngine::Editor
 				{
 					currentString = stringValues[i];
 					value = static_cast<T>(i);
+					changed = true;
+				}
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		return changed;
+	}
+
+	template<class T, int N>
+	bool EditorGUI::DrawComboBox(const String label, Array<T, N> values, T& value)
+	{
+		bool changed = false;
+		T currentValue = value;
+		if (ImGui::BeginCombo(label.c_str(), ToString(currentValue).c_str()))
+		{
+			for (int i = 0; i < values.size(); i++)
+			{
+				const bool isSelected = currentValue == values[i];
+				if (ImGui::Selectable(ToString(values[i]).c_str(), isSelected))
+				{
+					currentValue = values[i];
+					value = currentValue;
 					changed = true;
 				}
 

@@ -269,9 +269,9 @@ namespace LevEngine
             LEV_PROFILE_SCOPE("Deferred technique creation");
 
             m_DeferredTechnique = CreateRef<RenderTechnique>();
-            // m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ShadowMapQuery));
-            // m_DeferredTechnique->AddPass(CreateRef<ShadowMapPass>());
-            // m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ShadowMapQuery));
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ShadowMapQuery));
+            m_DeferredTechnique->AddPass(CreateRef<ShadowMapPass>());
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ShadowMapQuery));
             
             m_DeferredTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget, "Clear Main Render Target"));
             m_DeferredTechnique->AddPass(CreateRef<ClearPass>(m_GBufferRenderTarget, "Clear G-Buffer"));

@@ -17,7 +17,7 @@ namespace LevEngine::Editor
 		void Draw(Ref<Asset> assetRef) override
 		{
 			// Check that used drawer type is meant for the received assetRef.  
-			auto castAssetRef = eastl::dynamic_pointer_cast<TAsset>(assetRef);
+			auto castAssetRef = CastRef<TAsset>(assetRef);
 			if (castAssetRef == nullptr)
 			{
 				return;	
