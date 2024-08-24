@@ -221,19 +221,27 @@ namespace LevEngine
 
             const auto point = Vector3::Transform(
                 AssimpConverter::ToVector3(vertex), cumulativeTransform);
-
-            const auto uv =  AssimpConverter::ToVector2(mesh->mTextureCoords[0][vertexIdx]);
-            
-            const auto normal = Vector3::Transform(
-                AssimpConverter::ToVector3(mesh->mNormals[vertexIdx]), cumulativeTransform);
-            
-            const auto tangent = Vector3::Transform(
-                AssimpConverter::ToVector3(mesh->mTangents[vertexIdx]), cumulativeTransform);
-
             newMesh->AddVertex(point);
-            newMesh->AddUV(uv);
-            newMesh->AddNormal(normal);
-            newMesh->AddTangent(tangent);
+            
+            if (mesh->mTextureCoords[0])
+            {
+                const auto uv = AssimpConverter::ToVector2(mesh->mTextureCoords[0][vertexIdx]);
+                newMesh->AddUV(uv);
+            }
+
+            if (mesh->mNormals)
+            {
+                const auto normal = Vector3::Transform(
+                    AssimpConverter::ToVector3(mesh->mNormals[vertexIdx]), cumulativeTransform);
+                newMesh->AddNormal(normal);
+            }
+
+            if (mesh->mTangents)
+            {
+                const auto tangent = Vector3::Transform(
+                    AssimpConverter::ToVector3(mesh->mTangents[vertexIdx]), cumulativeTransform);
+                newMesh->AddTangent(tangent);
+            }
         }
 
         if (mesh->mNumBones)
