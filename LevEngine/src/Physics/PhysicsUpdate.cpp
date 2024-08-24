@@ -2,8 +2,10 @@
 #include "PhysicsUtils.h"
 #include "Physics.h"
 #include "PhysicsUpdate.h"
+#include "Components/CharacterController.h"
 #include "Components/Rigidbody.h"
 #include "Components/ConstantForce.h"
+#include "Kernel/Application.h"
 
 namespace LevEngine
 {
@@ -15,9 +17,10 @@ namespace LevEngine
             auto [transform, rigidbody] = rigidbodyView.get<Transform, Rigidbody>(entity);
 
             if (rigidbody.GetActor() == nullptr) continue;
-            
+
             rigidbody.m_TriggerEnterBuffer.clear();
             rigidbody.m_TriggerExitBuffer.clear();
+            
             rigidbody.m_CollisionEnterBuffer.clear();
             rigidbody.m_CollisionExitBuffer.clear();
         }
@@ -29,8 +32,7 @@ namespace LevEngine
 
             if (controller.GetController() == nullptr) continue;
             
-            controller.m_CollisionEnterBuffer.clear();
-            controller.m_CollisionExitBuffer.clear();
+            controller.m_CollisionHitBuffer.clear();
         }
     }
     
@@ -74,6 +76,56 @@ namespace LevEngine
             
             rigidbody.AddForce(force.GetForce(), Rigidbody::ForceMode::Force);
             rigidbody.AddTorque(force.GetTorque(), Rigidbody::ForceMode::Force);
+        }
+    }
+
+    void PhysicsUpdate::UpdateControllerGroundFlag(entt::registry& registry)
+    {
+        const auto controllerView = registry.view<Transform, CharacterController>();
+        for (const auto entity : controllerView)
+        {
+            auto [transform, controller] = controllerView.get<Transform, CharacterController>(entity);
+
+            if (controller.GetController() == nullptr) continue;
+            
+            const auto position =
+                PhysicsUtils::FromPxExtendedVec3ToVector3(controller.GetController()->getPosition());
+            const auto rotation =
+                Quaternion::CreateFromAxisAngle(Vector3::Forward, Math::ToRadians(90.0f));
+
+            const auto controllerRadius = controller.GetRadius();
+            const auto controllerHalfHeight = controller.GetHeight() / 2.0f;
+            const auto hitResult =
+                App::Get().GetPhysics().CapsuleCast(
+                    position,
+                    rotation,
+                    controllerRadius,
+                    controllerHalfHeight,
+                    Vector3::Down,
+                    0.1f
+                );
+            
+            controller.SetGroundFlag(hitResult.IsSuccessful);
+        }
+    }
+
+    void PhysicsUpdate::ApplyControllerGravity(entt::registry& registry, const float deltaTime)
+    {
+        const auto controllerView = registry.view<Transform, CharacterController>();
+        for (const auto entity : controllerView)
+        {
+            auto [transform, controller] = controllerView.get<Transform, CharacterController>(entity);
+
+            if (controller.GetController() == nullptr) continue;
+
+            const auto gravity = App::Get().GetPhysics().GetGravity();
+            
+            const auto verticalVelocity =
+                controller.GetVerticalVelocity() + gravity.y * controller.GetGravityScale() * deltaTime;
+            controller.SetVerticalVelocity(verticalVelocity);
+
+            const auto gravityDisplacement = verticalVelocity * deltaTime;
+            controller.Move({0.0f, gravityDisplacement, 0.0f});
         }
     }
 

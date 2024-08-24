@@ -1,0 +1,135 @@
+Scene: SkeletalAnimationTestScene
+Entities:
+  - Entity: 2539448613340456345
+    Tag: Wall
+    Parent: 11837398838170000115
+    Transform:
+      Position: [-1.20967243e-05, 5.0001483, 25.5]
+      Rotation: [1.57078934, -9.65900881e-07, 3.14159083]
+      Scale: [50, 0.999938488, 9.99950695]
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+  - Entity: 8940989960097836712
+    Tag: Floor
+    Parent: 11837398838170000115
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [50, 1, 50]
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 7582525064410579512
+      Cast Shadow: false
+  - Entity: 559294869247852198
+    Tag: CubeChain
+    Transform:
+      Position: [4.64867592, 1.60000002, -12.71626]
+      Rotation: [-0, 0.928715289, 0]
+      Scale: [0.999998569, 0.999999404, 0.999998569]
+    Animator:
+      Animation Clip: 11368744320383883438
+      PlayOnInit: true
+    MeshRenderer:
+      Mesh: 9364184730413657212
+      Material: 13469868196253741728
+      Cast Shadow: true
+  - Entity: 11837398838170000115
+    Tag: Environment
+    Transform:
+      Position: [0, 0, -15.4914751]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 10643143387032444507
+    Tag: Camera
+    Transform:
+      Position: [7.06699991, 3.22399998, -7.2420001]
+      Rotation: [0.101423815, 3.05361199, -0.00893094111]
+      Scale: [1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 60
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+  - Entity: 4309460406928129217
+    Tag: Wall
+    Parent: 11837398838170000115
+    Transform:
+      Position: [0, 4.99981117, -25.5]
+      Rotation: [1.57079613, 0, -3.14159203]
+      Scale: [50, 0.999977112, 9.99981594]
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+  - Entity: 3572382593622191945
+    Tag: Wall
+    Parent: 11837398838170000115
+    Transform:
+      Position: [-25.5, 5, 5.15551474e-05]
+      Rotation: [1.57079613, 0, 1.5707953]
+      Scale: [50, 0.999999702, 10]
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+  - Entity: 15392721754015773208
+    Tag: Directional Light
+    Transform:
+      Position: [-4.61883545, 11.7034178, -2.41830444]
+      Rotation: [-0.695321262, 2.53542233, 1.39101541]
+      Scale: [0.999945402, 0.999966264, 0.999982893]
+    Directional Light:
+      Color: [1, 1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 5
+        OrthographicNear: 2
+        OrthographicFar: 2000
+      Main: false
+      FixedAspectRatio: false
+  - Entity: 5052278192581293938
+    Tag: Wall
+    Parent: 11837398838170000115
+    Transform:
+      Position: [25.5, 5, 3.73348342e-07]
+      Rotation: [1.57079613, 0, 1.5707953]
+      Scale: [50, 0.999999702, 10]
+    MeshRenderer:
+      Mesh: 6362171717149004471
+      Material: 16895830209131566910
+      Cast Shadow: true
+  - Entity: 13456512130421139173
+    Tag: KnightMaria
+    Transform:
+      Position: [6.53599977, 0.5, -3.00099993]
+      Rotation: [-0, 3.05169082, 0]
+      Scale: [0.0300000031, 0.0299999993, 0.0300000031]
+    Animator:
+      Animation Clip: 4624050910787142586
+      PlayOnInit: true
+    MeshRenderer:
+      Mesh: 6114609495172298552
+      Material: 14977735129500092752
+      Cast Shadow: true
+  - Entity: 13631027794021233931
+    Tag: Skybox
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Skybox Renderer:
+      Skybox: 17530323575141006770
+Systems:
+  []

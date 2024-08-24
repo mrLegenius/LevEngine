@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma region Built-in
+
 #include <stdint.h>
 #include <fstream>
 #include <iostream>
@@ -22,6 +24,10 @@
 #include <unordered_set>
 #include <set>
 
+#pragma endregion
+
+#pragma region External
+
 #define ENTT_USE_ATOMIC 1 //Enable thread-safe entt
 #define ENTT_NO_ETO 1 //Enable empty components (tags) but reduce performance and increase memory consumption
 
@@ -33,6 +39,23 @@
 #include <yaml-cpp/yaml.h>
 
 #include <VGJS.h>
+
+#include <DetourCrowd.h>
+#include <DetourNavMeshBuilder.h>
+#include <DetourNavMeshQuery.h>
+#include <Recast.h>
+
+#include <PxPhysicsAPI.h>
+
+#include <eventhandling/eventhandling.hpp>
+
+#include "fmod_common.h"
+#include "fmod_studio.hpp"
+#include "fmod_errors.h"
+
+#pragma endregion
+
+#pragma region Primitives
 
 #include "Debugging/Profiler.h"
 #include "Kernel/Logger.h"
@@ -60,6 +83,10 @@
 #include "Math/Matrix.h"
 #include "Math/Color.h"
 
+#pragma endregion
+
+#pragma region Platforms
+
 #define LEV_PLATFORM_WINDOWS
 
 #ifdef LEV_PLATFORM_WINDOWS
@@ -70,3 +97,5 @@
 #include <commdlg.h>
 
 #endif
+
+#pragma endregion

@@ -2,13 +2,13 @@
 #include "EnvironmentRenderPass.h"
 
 #include "EnvironmentShaders.h"
-#include "Renderer/ConstantBuffer.h"
-#include "Renderer/DepthStencilState.h"
-#include "Renderer/PipelineState.h"
-#include "Renderer/RasterizerState.h"
+#include "Renderer/Pipeline/ConstantBuffer.h"
+#include "Renderer/Pipeline/DepthStencilState.h"
+#include "Renderer/Pipeline/PipelineState.h"
+#include "Renderer/Pipeline/RasterizerState.h"
 #include "Renderer/Renderer3D.h"
 #include "Renderer/RenderParams.h"
-#include "Renderer/Shader.h"
+#include "Renderer/Shader/Shader.h"
 
 namespace LevEngine
 {

@@ -22,15 +22,12 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2023 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2024 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
 #ifndef PX_CUSTOM_GEOMETRY_EXT_H
 #define PX_CUSTOM_GEOMETRY_EXT_H
-/** \addtogroup extensions
-  @{
-*/
 
 #include <geometry/PxCustomGeometry.h>
 #include <geometry/PxGjkQuery.h>
@@ -81,7 +78,7 @@ public:
 		float margin;
 
 		// Substitute geometry
-		virtual bool useSubstituteGeometry(PxGeometryHolder& geom, PxTransform& preTransform, const PxContactPoint& p, const PxTransform& pose0, const PxVec3& pos1) const = 0;
+		virtual bool useSubstituteGeometry(PxGeometryHolder& geom, PxTransform& preTransform, const PxContactPoint& p, const PxTransform& pose0) const = 0;
 	};
 	/// \endcond
 
@@ -140,7 +137,7 @@ public:
 		int axis;
 
 		// Substitute geometry
-		virtual bool useSubstituteGeometry(PxGeometryHolder& geom, PxTransform& preTransform, const PxContactPoint& p, const PxTransform& pose0, const PxVec3& pos1) const;
+		virtual bool useSubstituteGeometry(PxGeometryHolder& geom, PxTransform& preTransform, const PxContactPoint& p, const PxTransform& pose0) const;
 
 		// Radius at height
 		float getRadiusAtHeight(float height) const;
@@ -202,7 +199,7 @@ public:
 		int axis;
 
 		// Substitute geometry
-		virtual bool useSubstituteGeometry(PxGeometryHolder& geom, PxTransform& preTransform, const PxContactPoint& p, const PxTransform& pose0, const PxVec3& pos1) const;
+		virtual bool useSubstituteGeometry(PxGeometryHolder& geom, PxTransform& preTransform, const PxContactPoint& p, const PxTransform& pose0) const;
 
 		// Radius at height
 		float getRadiusAtHeight(float height) const;
@@ -221,5 +218,4 @@ typedef PxCustomGeometryExt::ConeCallbacks PxCustomGeometryExtConeCallbacks;
 }
 #endif
 
-/** @} */
 #endif

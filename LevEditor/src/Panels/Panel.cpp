@@ -9,6 +9,8 @@ namespace LevEngine::Editor
 {
 	void Panel::Render()
 	{
+		LEV_PROFILE_FUNCTION();
+		
 		GUI::ScopedVariable padding {ImGuiStyleVar_WindowPadding, m_WindowPadding};
 
 		ImGuiWindowFlags flags = ImGuiWindowFlags_None;

@@ -4,21 +4,21 @@
 #include <imgui.h>
 
 #include "Platform/Windows/WindowsWindow.h"
-#include "Renderer/RendererContext.h"
+#include "Renderer/RenderContext.h"
 
 namespace LevEngine
 {
-Scope<Window> Window::Create(const WindowAttributes& attributes)
+Scope<Window> Window::Create(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes)
 {
 	LEV_PROFILE_FUNCTION();
 
 	//TODO: Choose window for each platform
-	return CreateScope<WindowsWindow>(attributes);
+	return CreateScope<WindowsWindow>(renderDevice, attributes);
 }
 
 void Window::Update() const
 {
-	m_Context->SwapBuffers();
+	m_Context->SwapBuffers(IsVSync());
 }
 
 void Window::EnableCursor()

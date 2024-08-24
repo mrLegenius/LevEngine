@@ -9,7 +9,6 @@ namespace LevEngine
     {
     public:
         static Ref<Timeline> CreateTimeline(const TimelineParameters&& timelineParameters);
-        static void RemoveTimeline(const Ref<Timeline>& timeline);
     };
 }
 

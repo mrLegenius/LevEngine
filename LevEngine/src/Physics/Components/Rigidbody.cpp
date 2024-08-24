@@ -4,19 +4,36 @@
 #include "Kernel/Application.h"
 #include "Physics/PhysicsUtils.h"
 #include "Physics/Physics.h"
+#include "Physics/PhysicsSettings.h"
 #include "Scene/Components/ComponentSerializer.h"
 
 namespace LevEngine
 {
-    constexpr Collider::Type DEFAULT_COLLIDER_TYPE = Collider::Type::Box;
-    
-    void Rigidbody::OnDestroy(entt::registry& registry, entt::entity entity)
+    constexpr Collider::Type DefaultColliderType = Collider::Type::Box;
+
+    void Rigidbody::OnConstruct(const Entity entity)
     {
-        auto [transform, rigidbody] = registry.get<Transform, Rigidbody>(entity);
-        if (rigidbody.GetActor() != nullptr)
-        {
-            rigidbody.DetachRigidbody();
-        }
+        auto& rigidbody = entity.GetComponent<Rigidbody>();
+        
+        rigidbody.Initialize(entity);
+    }
+    
+    void Rigidbody::OnDestroy(const Entity entity)
+    {
+        auto& rigidbody = entity.GetComponent<Rigidbody>();
+        
+        if (rigidbody.m_Actor == nullptr) return;
+
+        rigidbody.DetachRigidbody();
+    }
+
+    void Rigidbody::Initialize(const Entity entity)
+    {
+        AttachRigidbody(entity);
+        AttachCollider();
+
+        const auto& transform = entity.GetComponent<Transform>();
+        SetTransformScale(transform.GetWorldScale());
     }
     
     physx::PxRigidActor* Rigidbody::GetActor() const
@@ -41,24 +58,6 @@ namespace LevEngine
 
         return *physicalMaterial;
     }
-
-    bool Rigidbody::IsInitialized() const
-    {
-        return m_IsInitialized;
-    }
-    
-    void Rigidbody::Initialize(const Entity entity)
-    {
-        if (m_IsInitialized) return;
-        
-        AttachRigidbody(entity);
-        AttachCollider();
-        
-        m_IsInitialized = true;
-
-        const auto& transform = entity.GetComponent<Transform>();
-        SetTransformScale(transform.GetWorldScale());
-    }
     
     Vector3 Rigidbody::GetTransformScale() const
     {
@@ -69,23 +68,20 @@ namespace LevEngine
     {
         m_TransformScale = transformScale;
 
-        if (m_IsInitialized)
+        switch(GetColliderType())
         {
-            switch(GetColliderType())
-            {
-            case Collider::Type::Sphere:
-                SetSphereRadius(GetSphereRadius());
-                break;
-            case Collider::Type::Capsule:
-                SetCapsuleRadius(GetCapsuleRadius());
-                SetCapsuleHalfHeight(GetCapsuleHalfHeight());
-                break;
-            case Collider::Type::Box:
-                SetBoxHalfExtents(GetBoxHalfExtents());
-                break;
-            default:
-                break;
-            }
+        case Collider::Type::Sphere:
+            SetSphereRadius(GetSphereRadius());
+            break;
+        case Collider::Type::Capsule:
+            SetCapsuleRadius(GetCapsuleRadius());
+            SetCapsuleHalfHeight(GetCapsuleHalfHeight());
+            break;
+        case Collider::Type::Box:
+            SetBoxHalfExtents(GetBoxHalfExtents());
+            break;
+        default:
+            break;
         }
     }
 
@@ -103,6 +99,26 @@ namespace LevEngine
             m_Actor->setActorFlag(physx::PxActorFlag::eVISUALIZATION, flag);
         }
     }
+    
+    FilterLayer Rigidbody::GetLayer() const
+    {
+        return m_ColliderCollection[0]->m_Layer;
+    }
+
+    void Rigidbody::SetLayer(const FilterLayer layer) const
+    {
+        m_ColliderCollection[0]->m_Layer = layer;
+        
+        if (m_Actor != nullptr)
+        {
+            physx::PxFilterData filterData;
+            filterData.word0 = static_cast<physx::PxU32>(layer);
+            const auto collisions = PhysicsSettings::GetLayerCollisions(layer);
+            filterData.word1 = static_cast<physx::PxU32>(collisions);
+            GetCollider()->setSimulationFilterData(filterData);
+            GetCollider()->setQueryFilterData(filterData);
+        }
+    }
 
     Rigidbody::Type Rigidbody::GetRigidbodyType() const
     {
@@ -117,7 +133,7 @@ namespace LevEngine
         {
             const auto entity = App::Get().GetPhysics().m_ActorEntityMap.at(m_Actor);
             AttachRigidbody(entity);
-            SetColliderType(DEFAULT_COLLIDER_TYPE);
+            SetColliderType(DefaultColliderType);
         }
     }
     
@@ -166,7 +182,9 @@ namespace LevEngine
         {
             DetachCollider();
         }
+        
         App::Get().GetPhysics().RemoveActor(m_Actor);
+        m_Actor = nullptr;
     }
 
     float Rigidbody::GetMass() const
@@ -543,6 +561,8 @@ namespace LevEngine
         m_Actor->attachShape(*collider);
         
         collider->release();
+        
+        SetLayer(GetLayer());
 
         EnableTrigger(IsTriggerEnabled());
         SetColliderOffsetPosition(GetColliderOffsetPosition());
@@ -860,9 +880,23 @@ namespace LevEngine
         }
     }
 
+    void Rigidbody::Teleport(const Vector3 position)
+    {
+        if (m_Actor == nullptr) return;
+
+        auto pose = m_Actor->getGlobalPose();
+        pose.p = PhysicsUtils::FromVector3ToPxVec3(position);
+        m_Actor->setGlobalPose(pose);
+    }
+
     const Vector<Entity>& Rigidbody::GetTriggerEnterBuffer() const
     {
         return m_TriggerEnterBuffer;
+    }
+
+    const Vector<Entity>& Rigidbody::GetTriggerStayBuffer() const
+    {
+        return m_TriggerStayBuffer;
     }
 
     const Vector<Entity>& Rigidbody::GetTriggerExitBuffer() const
@@ -873,6 +907,11 @@ namespace LevEngine
     const Vector<Collision>& Rigidbody::GetCollisionEnterBuffer() const
     {
         return m_CollisionEnterBuffer; 
+    }
+
+    const Vector<Collision>& Rigidbody::GetCollisionStayBuffer() const
+    {
+        return m_CollisionStayBuffer;
     }
 
     const Vector<Collision>& Rigidbody::GetCollisionExitBuffer() const
@@ -887,6 +926,8 @@ namespace LevEngine
 
         void SerializeData(YAML::Emitter& out, const Rigidbody& component) override
         {
+            out << YAML::Key << "Layer" << YAML::Value << static_cast<int>(component.GetLayer());
+            
             out << YAML::Key << "Rigidbody Type" << YAML::Value << static_cast<int>(component.GetRigidbodyType());
             out << YAML::Key << "Is Kinematic Enabled" << YAML::Value << component.IsKinematicEnabled();
             out << YAML::Key << "Is Gravity Enabled" << YAML::Value << component.IsGravityEnabled();
@@ -931,6 +972,12 @@ namespace LevEngine
 
         void DeserializeData(const YAML::Node& node, Rigidbody& component) override
         {
+            if (const auto layerNode = node["Layer"])
+            {
+                const auto layer = static_cast<FilterLayer>(layerNode.as<int>());
+                component.SetLayer(layer);
+            }
+            
             if (const auto gravityEnableNode = node["Is Gravity Enabled"])
             {
                 component.EnableGravity(gravityEnableNode.as<bool>());

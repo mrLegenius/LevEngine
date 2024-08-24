@@ -1,6 +1,3 @@
-
-local rotationSpeed = 45
-
 FPSCameraRotation = {
 
 	update = function(deltaTime)
@@ -8,9 +5,9 @@ FPSCameraRotation = {
 
 		local mouse = Input.getMouseDelta()
 		
-		local delta = mouse * rotationSpeed * deltaTime
-
-		--print("Kek")
+		local sensitivity = 45
+		
+		local delta = mouse * sensitivity * deltaTime
 
 		view:for_each(
 			function(entity)
@@ -19,17 +16,15 @@ FPSCameraRotation = {
 				if not camera.isMain then
 					return
 				end
-
-				--print("Found entity", entity:name())
 				
 				local transform = entity:get_component(Transform)
 
 				local rotation = transform:getWorldRotation():toEuler() * Math.radToDeg
+
 				rotation.x = rotation.x - delta.y
 				rotation.x = Math.clamp(rotation.x, -89.999, 89.999)
-				rotation.y = rotation.y - delta.x;
 
-				transform:setWorldRotation(Math.createQuaternionFromYawPitchRoll(rotation * Math.degToRad))
+				transform:setWorldRotation(Math.createQuaternionFromYawPitchRoll(rotation * Math.degToRad)) 
 			end
 		)
 	end

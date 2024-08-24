@@ -1,21 +1,23 @@
 #include "levpch.h"
 #include "ScriptingManager.h"
-#include "ScriptingSystems.h"
-#include "ScriptingSystemComponents.h"
 
-#include "MetaUtilities.h"
-#include "MathLuaBindings.h"
 #include "LuaComponentsBinder.h"
+#include "MathLuaBindings.h"
+#include "MetaUtilities.h"
+#include "ScriptingSystemComponents.h"
+#include "ScriptingSystems.h"
+#include "AI/Components/AIAgentComponent.h"
+#include "AI/Components/AIAgentCrowdComponent.h"
 #include "Assets/ScriptAsset.h"
 #include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
-
 #include "Scene/Scene.h"
-#include "Scene/Serializers/SerializerUtils.h"
-
-#include "Scene/Components/Transform/Transform.h"
+#include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
+#include "Scene/Components/Transform/Transform.h"
+#include "Scene/Serializers/SerializerUtils.h"
 
 #define RegisterComponent(x)    LuaComponentsBinder::Create##x##LuaBind(*m_Lua);\
                                 LuaComponentsBinder::RegisterMetaComponent<x>();\
@@ -23,13 +25,12 @@
 
 namespace LevEngine::Scripting
 {
-
     void ScriptingManager::Init()
     {
         m_Lua->open_libraries(sol::lib::base, sol::lib::package);
 
         MathLuaBindings::CreateLuaBindings(*m_Lua);
-        
+
         LuaComponentsBinder::CreateInputLuaBind(*m_Lua);
         LuaComponentsBinder::CreateSceneManagerBind(*m_Lua);
         LuaComponentsBinder::CreateAudioBind(*m_Lua);
@@ -37,15 +38,20 @@ namespace LevEngine::Scripting
         LuaComponentsBinder::CreateGUIBind(*m_Lua);
         LuaComponentsBinder::CreateTimeBind(*m_Lua);
         LuaComponentsBinder::CreatePhysicsBind(*m_Lua);
+        LuaComponentsBinder::CreateDebugRenderBind(*m_Lua);
 
         LuaComponentsBinder::CreateSceneBind(*m_Lua);
         LuaComponentsBinder::CreatePrefabBind(*m_Lua);
-        
+
         RegisterComponent(ScriptsContainer);
+        RegisterComponent(MeshRendererComponent);
         RegisterComponent(Transform);
         RegisterComponent(CameraComponent);
         RegisterComponent(Rigidbody)
         RegisterComponent(CharacterController);
+        RegisterComponent(AnimatorComponent)
+        RegisterComponent(AIAgentComponent);
+        RegisterComponent(AIAgentCrowdComponent)
     }
 
     ScriptingManager::ScriptingManager()
@@ -71,15 +77,17 @@ namespace LevEngine::Scripting
                 {
                     auto result = m_Lua->safe_script_file(script->GetPath().string());
                     Log::Trace("Loading lua script: {0}", scriptName);
-                    
+
                     sol::optional<sol::table> luaScriptTable = (*m_Lua)[scriptName.c_str()];
                     if (luaScriptTable == sol::nullopt)
                     {
-                        Log::CoreError("Error loading lua script {0}: lua table should be named as lua script file", scriptName);
+                        Log::CoreError("Error loading lua script {0}: lua table should be named as lua script file",
+                                       scriptName);
                     }
                     else
                     {
-                        switch (script->GetType()) {
+                        switch (script->GetType())
+                        {
                         case ScriptAsset::Type::System:
                             m_Systems.emplace(make_pair(script, eastl::move(luaScriptTable.value())));
                             break;
@@ -88,7 +96,7 @@ namespace LevEngine::Scripting
                             break;
                         default: ;
                         }
-                    }                    
+                    }
                 }
                 catch (const sol::error& err)
                 {
@@ -102,7 +110,7 @@ namespace LevEngine::Scripting
             Log::CoreWarning("Failed to load lua scripts. Error: {}", e.what());
             return false;
         }
-        
+
         return isSuccessful;
     }
 
@@ -114,34 +122,34 @@ namespace LevEngine::Scripting
             {
                 continue;
             }
-            
+
             auto name = scriptAsset->GetName();
             auto scriptingEntity = scene->CreateEntity("ScriptingEntity_" + name);
-                
-            if (sol::optional<sol::protected_function> init = luaSystemTable["init"]; 
+
+            if (sol::optional<sol::protected_function> init = luaSystemTable["init"];
                 init != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingInitComponent>();
                 scriptingComponent.init = init.value();
             }
 
-                
-            if (sol::optional<sol::protected_function> update = luaSystemTable["update"]; 
+
+            if (sol::optional<sol::protected_function> update = luaSystemTable["update"];
                 update != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingUpdateComponent>();
                 scriptingComponent.update = update.value();
             }
 
-                
-            if (sol::optional<sol::protected_function> lateUpdate = luaSystemTable["lateUpdate"]; 
+
+            if (sol::optional<sol::protected_function> lateUpdate = luaSystemTable["lateUpdate"];
                 lateUpdate != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingLateUpdateComponent>();
                 scriptingComponent.lateUpdate = lateUpdate.value();
             }
 
-            if (sol::optional<sol::protected_function> lateUpdate = luaSystemTable["GUIRender"]; 
+            if (sol::optional<sol::protected_function> lateUpdate = luaSystemTable["GUIRender"];
                 lateUpdate != sol::nullopt)
             {
                 auto& scriptingComponent = scriptingEntity.AddComponent<ScriptingGUIRenderComponent>();
@@ -168,7 +176,7 @@ namespace LevEngine::Scripting
 
             for (auto entityType : view)
             {
-                Entity entity{ {registry, entityType} };
+                Entity entity{{registry, entityType}};
                 callback(entity);
             }
         };
@@ -200,20 +208,21 @@ namespace LevEngine::Scripting
         else
         {
             m_Lua->new_usertype<entt::runtime_view>(
-            "RuntimeView",
-            sol::no_constructor,
-            "for_each",
-            forEach,
-            "exclude",
-            exclude,
-            "size_hint", &entt::runtime_view::size_hint
-        );
+                "RuntimeView",
+                sol::no_constructor,
+                "for_each",
+                forEach,
+                "exclude",
+                exclude,
+                "size_hint", &entt::runtime_view::size_hint
+            );
         }
-        
+
 #pragma warning(push)
 #pragma warning(disable : 4996)
-        
-        auto getEntity = [&](const sol::variadic_args& va) {
+
+        auto getEntity = [&](const sol::variadic_args& va)
+        {
             entt::runtime_view view{};
             for (const auto& type : va)
             {
@@ -231,10 +240,10 @@ namespace LevEngine::Scripting
             }
 
             return view;
-            };
+        };
 
-        auto clear = [&](){ registry.clear(); };
-        
+        auto clear = [&]() { registry.clear(); };
+
         if (const sol::optional<sol::table> registryTable = (*m_Lua)["Registry"];
             registryTable != sol::nullopt)
         {
@@ -267,44 +276,53 @@ namespace LevEngine::Scripting
 
     Ref<ScriptAsset> ScriptingManager::GetComponentScriptAssetByName(const String& name) const
     {
-        for (const auto [scriptAsset, table]: m_Components) {
-            if (scriptAsset->GetName() == name) {
+        for (const auto [scriptAsset, table] : m_Components)
+        {
+            if (scriptAsset->GetName() == name)
+            {
                 return scriptAsset;
             }
         }
 
         return nullptr;
     }
+
     void ScriptingManager::InitScriptsContainers(entt::registry& registry) const
     {
-        auto view = registry.view<ScriptsContainer>();
+        const auto view = registry.view<ScriptsContainer>();
 
-        for (const auto entity : view) 
+        for (const auto entity : view)
         {
             auto& scriptContainer = view.get<ScriptsContainer>(entity);
 
-            for (const auto& scriptAsset : scriptContainer.m_ScriptsAssets) 
-            {
-                sol::optional<sol::protected_function> componentConstructor = m_Components.at(scriptAsset)["new"];
-                if (componentConstructor != sol::nullopt)
-                {
-                    auto result = componentConstructor.value()();
-                    if (!result.valid()) 
-                    {
-                        sol::error err = result;
-                        std::string what = err.what();
-                        Log::Error("Error while constructing lua component {0}: {1}", scriptAsset->GetName(), what);
-                        continue;
-                    }
+            InitScriptsContainer(scriptContainer);
+        }
+    }
 
-                    sol::table luaComponentInstance = result;
-                    scriptContainer.m_ScriptComponents.emplace(
-                        eastl::make_pair(scriptAsset->GetName(), luaComponentInstance));
-                }
-                else
+    void ScriptingManager::InitScriptsContainer(ScriptsContainer& container) const
+    {
+        for (const auto& scriptAsset : container.m_ScriptsAssets)
+        {
+            sol::optional<sol::protected_function> componentConstructor = m_Components.at(scriptAsset)["new"];
+            if (componentConstructor != sol::nullopt)
+            {
+                auto result = componentConstructor.value()();
+                if (!result.valid())
                 {
-                    Log::CoreError("Error while constructing lua component {0}: no new(...) function", scriptAsset->GetName());
+                    sol::error err = result;
+                    std::string what = err.what();
+                    Log::Error("Error while constructing lua component {0}: {1}", scriptAsset->GetName(), what);
+                    continue;
                 }
+
+                sol::table luaComponentInstance = result;
+                container.m_ScriptComponents.emplace(
+                    eastl::make_pair(scriptAsset->GetName(), luaComponentInstance));
+            }
+            else
+            {
+                Log::CoreError("Error while constructing lua component {0}: no new(...) function",
+                               scriptAsset->GetName());
             }
         }
     }

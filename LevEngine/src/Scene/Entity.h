@@ -32,7 +32,7 @@ namespace LevEngine
         UUID GetUUID() const;
         String GetName() const;
 
-        operator bool() const { return m_Handle.entity() != entt::null && m_Handle.valid(); }
+        operator bool() const { return static_cast<bool>(m_Handle); }
         operator uint32_t() const { return static_cast<uint32_t>(m_Handle.entity()); }
         operator entt::entity() const { return m_Handle.entity(); }
 
@@ -51,9 +51,6 @@ namespace LevEngine
 
     private:
         entt::handle m_Handle;
-
-        //template <typename T>
-        inline static std::recursive_mutex s_Mutex;
     };
 }
 

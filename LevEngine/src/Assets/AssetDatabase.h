@@ -7,8 +7,13 @@ namespace LevEngine
 	{
 	public:
 		inline static const Path AssetsRoot = "resources";
+		inline static const Path AssetsCache = "AssetsCache";
 		
 		static Path GetAssetsPath();
+		static Path GetAssetsCachePath();
+		static Path GetAssetCachePath(UUID uuid);
+		static Path GetRelativePath(const Path& path);
+		static void ReimportAsset(const Path& path);
 
 		static void ImportAsset(const Path& path);
 		static void ProcessAllAssets();
@@ -30,6 +35,9 @@ namespace LevEngine
 		static bool IsAssetScript(const Path& path);
 
 		static bool IsAssetAudioBank(const Path& path);
+		
+		static bool IsAssetAnimationClip(const Path& path);
+		static bool IsAssetModel(const Path& path);
 
 		[[nodiscard]] static Ref<Asset> CreateAsset(const Path& path, UUID uuid);
 
@@ -52,13 +60,19 @@ namespace LevEngine
 		[[nodiscard]] static Vector<Ref<T>> GetAllAssetsOfClass();
 
 		static void RenameAsset(const Ref<Asset>& asset, const String& name);
+
 		static void MoveAsset(const Ref<Asset>& asset, const Path& directory);
 		static void DeleteAsset(const Ref<Asset>& asset);
+		static void DeleteAsset(UUID uuid);
+		static void DeleteAsset(const Path& path);
 		static bool AssetExists(const Path& path);
 
 	private:
 		inline static UnorderedMap<UUID, Ref<Asset>> m_Assets;
 		inline static UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
+
+		static void ReimportAllAssetsInDirectory(const Path& directory);
+		static void DeleteAllAssetsInDirectory(const Path& directory);
 
 		template<class T>
 		[[nodiscard]] static Ref<T> GetAsset(const Ref<Asset>& asset);

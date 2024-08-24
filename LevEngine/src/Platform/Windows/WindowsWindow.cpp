@@ -5,7 +5,7 @@
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 #include "Input/KeyCodes.h"
-#include "Renderer/RendererContext.h"
+#include "Renderer/RenderContext.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -201,7 +201,7 @@ namespace LevEngine
 		return DefWindowProc(hwnd, umessage, wparam, lparam);
 	}
 
-	void WindowsWindow::Init(const WindowAttributes& attributes)
+	void WindowsWindow::Init(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes)
 	{
 		LEV_PROFILE_FUNCTION();
 
@@ -270,8 +270,8 @@ namespace LevEngine
 		if (res == FALSE)
 			Log::CoreError("Error while registering raw input devices. Error code {0}", GetLastError());
 
-		m_Context = RendererContext::Create();
-		m_Context->Init(attributes.width, attributes.height, m_Window);
+		m_Context = RenderContext::Create();
+		m_Context->Init(renderDevice, attributes.width, attributes.height, IsVSync(), m_Window);
 
 		SetVSync(true);
 	}

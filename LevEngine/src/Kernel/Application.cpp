@@ -15,19 +15,21 @@
 #include "Physics/Physics.h"
 #include "Platform/D3D11/D3D11DeferredContexts.h"
 #include "Renderer/RenderDebugEvent.h"
-#include "Renderer/RendererContext.h"
-#include "Renderer/RenderTarget.h"
+#include "Renderer/RenderContext.h"
+#include "Renderer/Pipeline/RenderTarget.h"
 #include "Scene/Scene.h"
 #include "Time/Time.h"
 #include "Time/TimelineRunner.h"
 #include "Scripting/ScriptingManager.h"
 #include "Scene/SceneManager.h"
+#include "RenderDeviceFactory.h"
+#include "Renderer/RenderCommand.h"
+#include "Renderer/Dispatch/DispatchCommand.h"
 
 namespace LevEngine
 {
     Application* Application::s_Instance = nullptr;
-
-
+    
     Application::Application(const ApplicationSpecification& specification)
         : m_Specification(specification),
           m_JobSystem(new vgjs::JobSystem(vgjs::thread_count_t(0), vgjs::thread_index_t(1)))
@@ -37,12 +39,22 @@ namespace LevEngine
         LEV_CORE_ASSERT(!s_Instance, "Only one application is allowed");
         s_Instance = this;
 
-        m_Window = Window::Create(WindowAttributes(specification.Name, specification.WindowWidth,
+        m_RenderDevice = CreateRenderDevice();
+
+        LEV_CORE_ASSERT(m_RenderDevice, "Failed to create render device");
+        
+        m_Window = Window::Create(m_RenderDevice, WindowAttributes(specification.Name, specification.WindowWidth,
                                                    specification.WindowHeight));
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
+        //TODO: Find out better way to initialize it
+        D3D11DeferredContexts::SetRenderDevice(m_RenderDevice);
+        RenderCommand::Init();
+        DispatchCommand::Init();
+        RenderDebugEvent::Init();
+        
         m_Renderer = CreateScope<LevEngine::Renderer>(*m_Window);
-
+        
         m_ImGuiLayer = new ImGuiLayer;
         PushOverlay(m_ImGuiLayer);
 
@@ -141,8 +153,7 @@ namespace LevEngine
                 layer->OnRender();
         }
 
-        //We need to bind main render target before drawing GUI
-        //TODO: Maybe move to another place
+        //Main render target may be unbound, so we have to bind it here for gui 
         m_Window->GetContext()->GetRenderTarget()->Bind();
 
         RenderDebugEvent::Start("GUI");

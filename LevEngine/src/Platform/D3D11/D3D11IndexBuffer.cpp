@@ -5,11 +5,11 @@
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
-D3D11IndexBuffer::D3D11IndexBuffer(const uint32_t* indices, const uint32_t count) : IndexBuffer(count)
+	
+D3D11IndexBuffer::D3D11IndexBuffer(ID3D11Device2* device, const uint32_t* indices, const uint32_t count) : IndexBuffer(count)
 {
+	device->GetImmediateContext2(&m_DeviceContext);
+	
 	D3D11_BUFFER_DESC indexBufDesc;
 	indexBufDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -35,7 +35,7 @@ D3D11IndexBuffer::~D3D11IndexBuffer()
 
 void D3D11IndexBuffer::Bind() const
 {
-	context->IASetIndexBuffer(m_Buffer, DXGI_FORMAT_R32_UINT, 0);
+	m_DeviceContext->IASetIndexBuffer(m_Buffer, DXGI_FORMAT_R32_UINT, 0);
 }
 
 void D3D11IndexBuffer::Unbind() const

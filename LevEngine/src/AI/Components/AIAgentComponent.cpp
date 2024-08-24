@@ -29,6 +29,37 @@ namespace LevEngine
     	m_agent->params = *m_agentParams;
     }
 
+    void AIAgentComponent::Init(Entity crowd, Entity agent, int agentIndex)
+    {
+    	m_crowd = crowd;
+    	m_selfEntity = agent;
+    	m_agentIndex = agentIndex;
+
+    	m_initialized = true;
+    }
+
+	void AIAgentComponent::OnDestroy(const Entity entity)
+    {
+    	AIAgentComponent& component = entity.GetComponent<AIAgentComponent>();
+    	component.OnComponentDestroy();
+    }
+
+	void AIAgentComponent::OnComponentDestroy()
+    {
+    	if (!m_crowd) return;
+
+    	if(m_crowd.HasComponent<AIAgentCrowdComponent>())
+    	{
+    		auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
+    		crowdComponent.RemoveAgent(m_selfEntity);
+    	}
+    }
+
+	int AIAgentComponent::GetIndexInCrowd() const
+	{
+	    return m_agentIndex;
+    }
+
     dtCrowdAgentParams* AIAgentComponent::GetAgentParams() const
     {
     	return m_agentParams;
@@ -38,6 +69,160 @@ namespace LevEngine
     {
     	m_agentParams = params;
     }
+
+    void AIAgentComponent::SetMoveTarget(Vector3 targetPos)
+    {
+    	if(m_initialized)
+    	{
+    		auto& crowdComponent = m_crowd.GetComponent<AIAgentCrowdComponent>();
+    		crowdComponent.SetMoveTarget(m_agentIndex, targetPos);
+    	}
+    }
+	
+	void AIAgentComponent::SetFactAsBool(const String& key, bool value)
+    {
+    	m_boolFacts[key] = value;
+    }
+
+	bool AIAgentComponent::HasBoolFact(const String& key)
+    {
+    	const auto it = m_boolFacts.find(key);
+
+    	if(it == m_boolFacts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+    }
+
+	bool AIAgentComponent::GetFactAsBool(const String& key)
+    {
+	    const auto it = m_boolFacts.find(key);
+
+    	if(it == m_boolFacts.end())
+    	{
+    		return {};
+    	}
+
+    	return m_boolFacts[key];
+    }
+
+	void AIAgentComponent::SetFactAsInteger(const String& key, int value)
+	{
+    	m_integerFacts[key] = value;
+	}
+
+	bool AIAgentComponent::HasIntegerFact(const String& key)
+	{
+    	const auto it = m_integerFacts.find(key);
+
+    	if(it == m_integerFacts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+	}
+
+	int AIAgentComponent::GetFactAsInteger(const String& key)
+	{
+    	const auto it = m_integerFacts.find(key);
+
+    	if(it == m_integerFacts.end())
+    	{
+    		return {};
+    	}
+
+    	return m_integerFacts[key];
+	}
+
+	void AIAgentComponent::SetFactAsFloat(const String& key, float value)
+	{
+    	m_floatFacts[key] = value;
+	}
+
+	bool AIAgentComponent::HasFloatFact(const String& key)
+	{
+    	const auto it = m_floatFacts.find(key);
+
+    	if(it == m_floatFacts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+	}
+
+	float AIAgentComponent::GetFactAsFloat(const String& key)
+	{
+    	const auto it = m_floatFacts.find(key);
+
+    	if(it == m_floatFacts.end())
+    	{
+    		return {};
+    	}
+
+    	return m_floatFacts[key];
+	}
+
+	void AIAgentComponent::SetFactAsVector3(const String& key, Vector3 value)
+    {
+    	m_vector3Facts[key] = value;
+    }
+
+	bool AIAgentComponent::HasVector3Fact(const String& key)
+	{
+    	const auto it = m_vector3Facts.find(key);
+
+    	if(it == m_vector3Facts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+	}
+
+	Vector3 AIAgentComponent::GetFactAsVector3(const String& key)
+    {
+    	const auto it = m_vector3Facts.find(key);
+
+    	if(it == m_vector3Facts.end())
+    	{
+    		return {};
+    	}
+    	
+    	return m_vector3Facts[key];
+    }
+
+	void AIAgentComponent::SetFactAsString(const String& key, const String& value)
+	{
+    	m_stringFacts[key] = value;
+	}
+
+	bool AIAgentComponent::HasStringFact(const String& key)
+	{
+    	const auto it = m_stringFacts.find(key);
+
+    	if(it == m_stringFacts.end())
+    	{
+    		return false;
+    	}
+
+    	return true;
+	}
+
+	String AIAgentComponent::GetFactAsString(const String& key)
+	{
+    	const auto it = m_stringFacts.find(key);
+
+    	if(it == m_stringFacts.end())
+    	{
+    		return {};
+    	}
+    	
+    	return m_stringFacts[key];
+	}
 
 	class AIAgentComponentSerializer final : public ComponentSerializer<AIAgentComponent, AIAgentComponentSerializer>
     {

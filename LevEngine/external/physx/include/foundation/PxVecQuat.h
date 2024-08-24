@@ -22,7 +22,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2023 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2024 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
 
@@ -297,7 +297,7 @@ PX_FORCE_INLINE bool isFiniteQuatV(const QuatV q)
 	return isFiniteVec4V(q);
 }
 
-#if PX_LINUX && PX_CLANG
+#if (PX_LINUX || PX_SWITCH) && PX_CLANG
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wbitwise-instead-of-logical" // bitwise intentionally chosen for performance
 #endif

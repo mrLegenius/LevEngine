@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/RenderPass.h"
+#include "Renderer/Passes/RenderPass.h"
 
 
 namespace LevEngine
@@ -19,8 +19,8 @@ namespace LevEngine
         void End(entt::registry& registry, RenderParams& params) override;
 
     private:
+        static void AddTemporaryShapesToDrawQueue();
         Ref<ConstantBuffer> m_ConstantBuffer;
-
         Ref<PipelineState> m_PipelineState;
     };
 }

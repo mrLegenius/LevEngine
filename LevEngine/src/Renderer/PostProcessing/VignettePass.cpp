@@ -1,15 +1,16 @@
 #include "levpch.h"
 #include "VignettePass.h"
 
-#include "Renderer/PipelineState.h"
+#include "Renderer/Pipeline/PipelineState.h"
 #include "Renderer/RenderCommand.h"
 
 #include "Assets/EngineAssets.h"
-#include "Renderer/BlendState.h"
-#include "Renderer/DepthStencilState.h"
-#include "Renderer/RasterizerState.h"
+#include "Renderer/Pipeline/BlendState.h"
+#include "Renderer/Pipeline/DepthStencilState.h"
+#include "Renderer/Pipeline/RasterizerState.h"
 
 #include "Renderer/RenderSettings.h"
+#include "Renderer/Shader/ShaderType.h"
 
 namespace LevEngine
 {

@@ -21,6 +21,7 @@ protected:
 		SerializeAsset(out, "Material", component.material);
 
 		out << YAML::Key << "Cast Shadow" << YAML::Value << component.castShadow;
+		out << YAML::Key << "Enabled" << YAML::Value << component.enabled;
 	}
 
 	void DeserializeData(const YAML::Node& node, MeshRendererComponent& component) override
@@ -29,6 +30,7 @@ protected:
 		component.material = DeserializeAsset<MaterialAsset>(node["Material"]);
 
 		component.castShadow = node["Cast Shadow"].as<bool>();
+		TryParse(node["Enabled"], component.enabled);
 	}
 };
 }

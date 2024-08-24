@@ -12,6 +12,11 @@ namespace LevEngine
 		UUID& operator=(const UUID&) = default;
 
 		operator uint64_t() const { return m_UUID; }
+
+		std::string string() const
+		{
+			return std::to_string(m_UUID);
+		}
 	private:
 		uint64_t m_UUID;
 	};

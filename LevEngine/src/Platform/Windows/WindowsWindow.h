@@ -6,13 +6,13 @@ namespace LevEngine
 	class WindowsWindow final : public Window
 	{
 	public:
-		explicit WindowsWindow(const WindowAttributes& attributes)
+		explicit WindowsWindow(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes)
 		{
-			Init(attributes);
+			Init(renderDevice, attributes);
 		}
 		~WindowsWindow() override { Close(); }
 		[[nodiscard]] void* GetNativeWindow() const override { return m_Window; }
-		void Init(const WindowAttributes& attributes) override;
+		void Init(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes) override;
 		void HandleInput() override;
 		void SetWindowTitle(String& title) override;
 		void SetCursorPosition(uint32_t x, uint32_t y) override;

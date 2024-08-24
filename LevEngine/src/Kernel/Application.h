@@ -9,6 +9,7 @@ namespace LevEngine
 {
     class Event;
     class Renderer;
+    class RenderDevice;
     class WindowResizedEvent;
     class WindowClosedEvent;
     class KeyReleasedEvent;
@@ -49,6 +50,9 @@ namespace LevEngine
     class Application
     {
     public:
+
+        bool IsPlaying; //TODO: Its not meant to be public. Need to think something else
+
         explicit Application(const ApplicationSpecification& specification);
         ~Application();
 
@@ -68,6 +72,7 @@ namespace LevEngine
         static Application& Get() { return *s_Instance; }
         [[nodiscard]] Physics& GetPhysics() const;
         [[nodiscard]] static Renderer& Renderer();
+        static const RenderDevice& RenderDevice() { return *Get().m_RenderDevice; }
         [[nodiscard]] Scripting::ScriptingManager& GetScriptingManager();
 
         [[nodiscard]] Statistic GetFrameStat() const;
@@ -89,6 +94,7 @@ namespace LevEngine
 
         Scope<Physics> m_Physics;
         Scope<LevEngine::Renderer> m_Renderer;
+        Ref<LevEngine::RenderDevice> m_RenderDevice;
 
         LayerStack m_LayerStack;
 

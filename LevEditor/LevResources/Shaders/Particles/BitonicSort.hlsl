@@ -1,6 +1,6 @@
 #include "ParticlesCommon.hlsl"
 
-#define BITONIC_BLOCK_SIZE 512
+#define BITONIC_BLOCK_SIZE 1024
 
 cbuffer cb : register(b0)
 {

@@ -4,8 +4,10 @@
 
 namespace LevEngine
 {
+	class Entity;
+
 	REGISTER_PARSE_TYPE(CameraComponent);
-	
+
 	struct CameraComponent
 	{
 		SceneCamera Camera;
@@ -14,5 +16,7 @@ namespace LevEngine
 
 		CameraComponent();
 		CameraComponent(const CameraComponent&) = default;
+
+		static void OnConstruct(Entity entity);
 	};
 }

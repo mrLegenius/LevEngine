@@ -7,8 +7,7 @@ setmetatable(Enemy, {
     end
 })
 
-function Enemy.new(speed)
+function Enemy.new(variable)
     local self = setmetatable({}, Enemy)
-    self.speed = speed or 0.0
     return self
 end

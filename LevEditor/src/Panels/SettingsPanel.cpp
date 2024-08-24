@@ -3,17 +3,21 @@
 
 #include "Project.h"
 #include "GUI/EditorGUI.h"
+#include "GUI/ScopedGUIHelpers.h"
+#include "Physics/PhysicsSettings.h"
 
 namespace LevEngine::Editor
 {
     void SettingsPanel::DrawContent()
     {
+        LEV_PROFILE_FUNCTION();
+        
         constexpr ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
                 | ImGuiTreeNodeFlags_AllowItemOverlap
                 | ImGuiTreeNodeFlags_Framed
                 | ImGuiTreeNodeFlags_FramePadding;
 
-        if(ImGui::TreeNodeEx("Render Settings", treeNodeFlags, "Render Settings"))
+        if (ImGui::TreeNodeEx("Render Settings", treeNodeFlags, "Render Settings"))
         {
             if(ImGui::TreeNodeEx("Post Processing", treeNodeFlags, "Post Processing"))
             {
@@ -78,9 +82,75 @@ namespace LevEngine::Editor
                 
                 ImGui::TreePop();
             }
-            
             ImGui::TreePop();
         }
+
+        ImGui::Separator();
+        
+        if (ImGui::TreeNodeEx("Physics Settings", treeNodeFlags, "Physics Settings"))
+        {
+            if (ImGui::TreeNodeEx("Layer Collision Matrix", treeNodeFlags, "Layer Collision Matrix"))
+            {
+                const char* columnNames[] = {
+                    "", "L 0", "L 1", "L 2", "L 3", "L 4",
+                        "L 5", "L 6", "L 7", "L 8", "L 9"
+                };
+                
+                constexpr int columnsCount = IM_ARRAYSIZE(columnNames);
+                constexpr int rowsCount = columnsCount - 1;
+
+                constexpr ImGuiTableFlags tableFlags = ImGuiTableFlags_SizingFixedFit
+                                                     | ImGuiTableFlags_BordersOuter
+                                                     | ImGuiTableFlags_BordersInnerH
+                                                     | ImGuiTableFlags_Hideable
+                                                     | ImGuiTableFlags_BordersInner
+                                                     | ImGuiTableFlags_NoHostExtendX;
+
+                if (ImGui::BeginTable("CollisionMatrix", columnsCount, tableFlags))
+                {
+                    ImGui::TableSetupColumn(columnNames[0], ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_NoResize);
+                    
+                    for (int column = 1; column < columnsCount; column++)
+                    {
+                        ImGui::TableSetupColumn(columnNames[column], ImGuiTableColumnFlags_WidthFixed);
+                    }
+                    
+                    ImGui::TableHeadersRow();
+                    for (int row = 0; row < rowsCount; row++)
+                    {
+                        GUI::ScopedID rowId { row };
+                        ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::AlignTextToFramePadding();
+                        ImGui::Text("L %d", row);
+                        for (int column = 1; column < columnsCount; column++)
+                        {
+                            if (ImGui::TableSetColumnIndex(column))
+                            {
+                                if (row >= column) continue;
+
+                                GUI::ScopedID columnId { column };
+                                
+                                const auto firstLayer = static_cast<FilterLayer>(1 << row);
+                                const auto secondLayer = static_cast<FilterLayer>(1 << (column - 1));
+
+                                auto status = PhysicsSettings::IsCollisionEnabled(firstLayer, secondLayer);
+                                if (EditorGUI::DrawCheckBox("", status))
+                                {
+                                    PhysicsSettings::EnableCollision(firstLayer, secondLayer, status);
+                                    PhysicsSettings::EnableCollision(secondLayer, firstLayer, status);
+                                }
+                            }
+                        }
+                    }
+                    ImGui::EndTable();
+                }
+                ImGui::TreePop();
+            }
+            ImGui::TreePop();
+        }
+
+        ImGui::Separator(); 
 
         if (ImGui::Button("Save"))
             Project::SaveSettings();

@@ -35,6 +35,7 @@ Latest commit 491040e on Jan 26, 2022
 # LevEngine ignores
 Sandbox/LevResources/
 LevEditor/SaveData.editor
+Sandbox/AssetsCache/
 
 #Profiler output
 LevEngineProfile-*.json
@@ -48,6 +49,7 @@ LevEngineProfile-*.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+*.vcxproj.filters
 
 # Mono auto generated files
 mono_crash.*
@@ -57,6 +59,8 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+
+!lib/*
 
 x64/
 x86/

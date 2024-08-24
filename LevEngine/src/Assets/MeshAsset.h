@@ -5,23 +5,29 @@ namespace LevEngine
 {
 	class Mesh;
 
-	class MeshAsset final : public Asset
+	class MeshAsset final : public Asset, public eastl::enable_shared_from_this<MeshAsset>
 	{
 	public:
+		MeshAsset() = delete;
 		explicit MeshAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
+		explicit MeshAsset(const Path& path, const UUID uuid, const Ref<Mesh>& mesh);
 		
 		[[nodiscard]] const Ref<Mesh>& GetMesh() const { return m_Mesh; }
-
 		[[nodiscard]] Ref<Texture> GetIcon() const override;
 
 	protected:
-		bool WriteDataToFile() const override { return false; }
-		bool ReadDataFromFile() const override { return false; }
+
+		bool LoadFromCache() override;
+		void SaveToCache() override;
+		
+		[[nodiscard]] bool WriteDataToFile() const override { return false; }
+		[[nodiscard]] bool ReadDataFromFile() const override { return false; }
 
 		void SerializeData(YAML::Emitter& out) override { }
-		void DeserializeData(const YAML::Node& node) override;
+		void DeserializeData(const YAML::Node& node) override { }
 
 	private:
+		
 		Ref<Mesh> m_Mesh;
 	};
 }

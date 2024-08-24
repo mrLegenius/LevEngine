@@ -14,11 +14,11 @@
 
 #include "Kernel/Window.h"
 
+#include "Icons/IconsFontAwesome6.h"
+#include "Platform/D3D11/D3D11RenderDevice.h"
+
 namespace LevEngine
 {
-	extern ID3D11DeviceContext* context;
-	extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
 	ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer")
 	{
 		
@@ -38,9 +38,15 @@ namespace LevEngine
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Bold.ttf", 18.0f);
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Regular.ttf", 18.0f);
-		
+		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Bold.ttf", 12.0f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Ubuntu/Ubuntu-Regular.ttf", 12.0f);
+
+		ImFontConfig config;
+		config.MergeMode = true;
+		config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
+		static constexpr ImWchar IconRanges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+		io.Fonts->AddFontFromFileTTF("LevResources/Fonts/Icons/fa-solid-900.ttf", 12.0f, &config, IconRanges);
+
 		ImGui::StyleColorsDark();
 
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -51,25 +57,28 @@ namespace LevEngine
 		}
 
 		//Spacing
-		style.ItemSpacing = ImVec2{ 10.0f, 5.0f };
+		style.ItemSpacing = ImVec2{ 5.0f, 2.0f };
 		style.ItemInnerSpacing = ImVec2{ 5.0f, 5.0f };
 		style.FramePadding = ImVec2{ 5.0f, 2.0f };
 
 		//Rounding
-		style.FrameRounding = 10;
-		style.GrabRounding = 10;
-		style.TabRounding = 10;
-		style.PopupRounding = 10;
-		style.ChildRounding = 10;
-		style.ScrollbarRounding = 10;
+		style.FrameRounding = 2;
+		style.GrabRounding = 2;
+		style.TabRounding = 2;
+		style.PopupRounding = 2;
+		style.ChildRounding = 2;
+		style.ScrollbarRounding = 2;
 
 		SetDarkThemeColors();
 
 		const auto& app = Application::Get();
 		const auto window = static_cast<HWND*>(app.GetWindow().GetNativeWindow());
-
+		
 		ImGui_ImplWin32_Init(window);
-		ImGui_ImplDX11_Init(device.Get(), context);
+
+		//TODO: Make gui depending on settings
+		auto& renderDevice = (D3D11RenderDevice&) App::RenderDevice();
+		ImGui_ImplDX11_Init(renderDevice.GetDevice().Get(), renderDevice.GetDeviceContext().Get());
 	}
 
 	void ImGuiLayer::OnEvent(Event& event)
@@ -192,7 +201,8 @@ namespace LevEngine
 	void ImGuiLayer::Begin()
 	{
 		LEV_PROFILE_FUNCTION();
-		
+
+		//TODO: Make gui depending on settings
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
@@ -209,6 +219,7 @@ namespace LevEngine
 		io.DisplaySize = ImVec2(static_cast<float>(window.GetWidth()), static_cast<float>(window.GetHeight()));
 
 		ImGui::Render();
+		//TODO: Make gui depending on settings
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 		if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

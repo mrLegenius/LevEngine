@@ -64,7 +64,11 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
+      <Command>xcopy "$(SolutionDir)lib\*.dll" "$(TargetDir)" /d /k /y
+xcopy "$(SolutionDir)lib\$(ConfigurationName)\PhysX\*.dll" "$(TargetDir)" /d /k /y
+xcopy "$(SolutionDir)FMODStudio\studio\lib\$(Platform)\*.dll" "$(TargetDir)" /d /k /y
+xcopy "$(SolutionDir)FMODStudio\core\lib\$(Platform)\*.dll" "$(TargetDir)" /d /k /y 
+xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)" /d /k /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -75,7 +79,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;$(SolutionDir)LevEngine\external\physx\include;$(SolutionDir)LevEngine\external\lua\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)LevEditor\src;$(SolutionDir)LevEngine\external;$(SolutionDir)LevEngine\src;$(SolutionDir)LevEngine\external\imgui;$(SolutionDir)LevEngine\external\spdlog\include;$(SolutionDir)LevEngine\external\yaml-cpp\include;$(SolutionDir)\DirectXTK\Inc;$(SolutionDir)LevEngine\external\eastl\include;$(SolutionDir)LevEngine\external\eabase\include\Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;$(SolutionDir)LevEngine\external\assimp\include;$(SolutionDir)LevEngine\external\vgjs\include;$(SolutionDir)LevEngine\external\physx\include;$(SolutionDir)LevEngine\external\lua\include;$(SolutionDir)LevEngine\external\recastnavigation\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -89,7 +93,11 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)\lib\*.dll" "$(TargetDir)" /d /k /y</Command>
+      <Command>xcopy "$(SolutionDir)lib\*.dll" "$(TargetDir)" /d /k /y
+xcopy "$(SolutionDir)lib\$(ConfigurationName)\PhysX\*.dll" "$(TargetDir)" /d /k /y
+xcopy "$(SolutionDir)FMODStudio\studio\lib\$(Platform)\*.dll" "$(TargetDir)" /d /k /y
+xcopy "$(SolutionDir)FMODStudio\core\lib\$(Platform)\*.dll" "$(TargetDir)" /d /k /y 
+xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)" /d /k /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -102,6 +110,7 @@
     <ClInclude Include="src\Essentials\MenuBar.h" />
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
+    <ClCompile Include="src\ComponentDebugRenderers\AnimatorComponentDebugRenderer.cpp" />
     <ClCompile Include="src\AssetSelection.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\CharacterControllerDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
@@ -141,8 +150,12 @@
     <ClCompile Include="src\GUI\Drawers\Assets\MaterialSimpleAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\MaterialPBRAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\MeshAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\ModelAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\SkyboxAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Assets\TextureAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\AnimationAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\ScriptAssetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\AnimatorComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AIAgentComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AIAgentCrowdComponentDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AudioListenerComponentDrawer.cpp" />
@@ -199,12 +212,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="LevResources\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\GUI\Drawers\Assets\ScriptAssetDrawer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="src\GUI\Drawers\Components\ScriptsContainerDrawer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

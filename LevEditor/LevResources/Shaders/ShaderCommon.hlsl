@@ -1,12 +1,21 @@
 #define CASCADE_COUNT 4
 
+#ifdef WITH_ANIMATIONS
+#define MAX_BONES 100
+#endif
+
 struct VS_IN
 {
 	float3 pos : POSITION;
 	float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 binormal : BINORMAL;
     float2 uv : TEXCOORD;
+
+#ifdef WITH_ANIMATIONS
+    int4 boneIds : BONEIDS;
+    float4 boneWeights : BONEWEIGHTS;
+#endif
+
 };
 
 struct PS_IN
@@ -29,6 +38,10 @@ cbuffer ModelConstantBuffer : register(b1)
 {
 	row_major matrix model;
 	row_major matrix transposedInvertedModel;
+
+#ifdef WITH_ANIMATIONS
+	row_major matrix finalBonesMatrices[MAX_BONES];
+#endif
 };
 
 //lighting cbuffer b2
@@ -54,6 +67,7 @@ cbuffer ScreenToViewParams : register(b5)
 
 Texture2DArray shadowMapTexture : register(t9);
 SamplerComparisonState shadowMapSampler : register(s9);
+
 
 float4 ClipToView(float4 clip)
 {
@@ -154,3 +168,52 @@ float3 CalculateNormal(Texture2D normalMap, SamplerState normalMapSampler, float
 	return normalize(mul(mapNormal, TBN));
 }
 
+#ifdef WITH_ANIMATIONS
+row_major matrix CalculateBoneTransform(int4 boneIds, float4 boneWeights)
+{
+	row_major matrix boneTransform = matrix(
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0
+		);
+
+	boneTransform += mul(boneWeights[0], finalBonesMatrices[boneIds[0]]);
+	boneTransform += mul(boneWeights[1], finalBonesMatrices[boneIds[1]]);
+	boneTransform += mul(boneWeights[2], finalBonesMatrices[boneIds[2]]);
+	boneTransform += mul(boneWeights[3], finalBonesMatrices[boneIds[3]]);
+
+	return boneTransform;
+}
+#endif
+
+
+struct VertexCalculationResult
+{
+	float4 pos;
+	float3 normal;
+	float3 tangent;
+};
+
+VertexCalculationResult CalculateVertex(VS_IN input)
+{
+	VertexCalculationResult result;
+
+#ifdef WITH_ANIMATIONS
+
+	row_major matrix boneTransform = CalculateBoneTransform(input.boneIds, input.boneWeights);
+	
+	result.pos = mul(float4(input.pos, 1.0f), boneTransform);
+	result.normal = mul(mul(float4(input.normal, 0.0f), boneTransform), transposedInvertedModel);
+	result.tangent = mul(mul(float4(input.tangent, 0.0f), boneTransform), transposedInvertedModel);
+
+#else
+
+	result.pos = float4(input.pos, 1.0f);
+	result.normal = mul(float4(input.normal, 0.0f), transposedInvertedModel);
+	result.tangent = mul(float4(input.tangent, 0.0f), transposedInvertedModel);
+
+#endif
+
+	return result;
+}

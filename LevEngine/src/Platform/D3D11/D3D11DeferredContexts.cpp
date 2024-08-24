@@ -3,11 +3,10 @@
 
 #include <wrl/client.h>
 
+#include "D3D11RenderDevice.h"
+
 namespace LevEngine
 {
-    extern ID3D11DeviceContext* context;
-    extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
     static std::mutex mutex;
     static bool isInitializing = true; 
 
@@ -33,7 +32,7 @@ namespace LevEngine
                     {
                         ID3D11DeviceContext* deferredContext;
                         std::lock_guard lock(mutex);
-                        const auto result = device->CreateDeferredContext(0, &deferredContext);
+                        const auto result = m_Device->CreateDeferredContext(0, &deferredContext);
                         LEV_CORE_ASSERT(SUCCEEDED(result), "Failed to create deferred context")
                         m_DeferredContexts.push_back(deferredContext);
                         m_CommandLists.push_back(nullptr);
@@ -89,7 +88,7 @@ namespace LevEngine
         {
             if (const auto list = m_CommandLists[i])
             {
-                context->ExecuteCommandList(list, true);
+                m_DeviceContext->ExecuteCommandList(list, true);
             }
         }
 
@@ -114,12 +113,18 @@ namespace LevEngine
         });
     }
 
+    void D3D11DeferredContexts::SetRenderDevice(const Ref<RenderDevice>& renderDevice)
+    {
+        m_Device = CastRef<D3D11RenderDevice>(renderDevice)->GetDevice().Get();
+        m_Device->GetImmediateContext2(&m_DeviceContext);
+    }
+
     ID3D11DeviceContext* D3D11DeferredContexts::GetContext()
     {
         const auto job = vgjs::current_job();
-        if (!job) return context;
+        if (!job) return m_DeviceContext;
 
-        if (job->m_thread_index == 0) return context;
+        if (job->m_thread_index == 0) return m_DeviceContext;
 
         return m_DeferredContexts[job->m_thread_index.value - 1];
     }

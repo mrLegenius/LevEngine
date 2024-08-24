@@ -1,5 +1,5 @@
 #pragma once
-#include "Recast.h"
+
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
@@ -8,6 +8,8 @@ class dtNavMesh;
 
 namespace LevEngine
 {
+    class Scene;
+
     enum SamplePartitionType : int
     {
         SamplePartitionWatershed = 0,
@@ -23,7 +25,7 @@ namespace LevEngine
         NavMeshComponent(const NavMeshComponent&) = default;
 
         void ConstructComponent(Entity entity);
-        static void OnConstruct(entt::registry& registry, entt::entity entity);
+        static void OnSceneLoaded(const Ref<Scene>& sceneRef);
         
         void Build();
         dtNavMesh* GetNavMesh() const;

@@ -60,17 +60,34 @@ namespace LevEngine::Editor
         Project::Save();
     }
 
+    void ProjectEditor::Update()
+    {
+        if (OpenProjectRequested)
+        {
+            if (!OpenProject())
+                Log::CoreWarning("Failed to open project");
+
+            OpenProjectRequested = false;
+        }
+
+        if (CreateNewProjectRequested)
+        {
+            if(!NewProject())
+                Log::CoreWarning("Failed to open project");
+
+            CreateNewProjectRequested = false;
+        }
+    }
+
     void ProjectEditor::AddMainMenuItems(const Ref<MenuBar>& menuBar)
     {
         menuBar->AddMenuItem("Project/Open project...", String(), [this]
         {
-            if (!OpenProject())
-                Log::CoreWarning("Failed to open project");
+            OpenProjectRequested = true;
         });
         menuBar->AddMenuItem("Project/Create New...", String(), [this]
         {
-            if(!NewProject())
-                Log::CoreWarning("Failed to open project");
+            CreateNewProjectRequested = true;
         });
         menuBar->AddMenuItem("Project/Set current scene as start scene", String(), [this]
         {

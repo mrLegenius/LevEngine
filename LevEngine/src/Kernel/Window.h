@@ -1,10 +1,13 @@
 #pragma once
 
+#include <Renderer/3D/MeshLoading/AnimationLoader.h>
+
 #include "../Events/Event.h"
+#include "Renderer/RenderDevice.h"
 
 namespace LevEngine
 {
-	class RendererContext;
+	class RenderContext;
 
 	struct WindowAttributes
 {
@@ -46,12 +49,11 @@ public:
 	void DisableCursor();
 	virtual void SetCursorPosition(uint32_t x, uint32_t y) = 0;
 
-	[[nodiscard]] const Ref<RendererContext>& GetContext() const { return m_Context; }
+	[[nodiscard]] const Ref<RenderContext>& GetContext() const { return m_Context; }
 
 	[[nodiscard]] virtual void* GetNativeWindow() const = 0;
 
-
-	static Scope<Window> Create(const WindowAttributes& attributes = WindowAttributes());
+	static Scope<Window> Create(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes = WindowAttributes());
 
 protected:
 	virtual void ConfineCursor() const = 0;
@@ -60,10 +62,10 @@ protected:
 	virtual void ShowCursor() const = 0;
 	virtual void HideCursor() const = 0;
 
-	virtual void Init(const WindowAttributes& attributes) = 0;
+	virtual void Init(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes) = 0;
 	virtual void Close() = 0;
 
-	Ref<RendererContext> m_Context = nullptr;
+	Ref<RenderContext> m_Context = nullptr;
 	bool m_CursorEnabled = true;
 
 public:

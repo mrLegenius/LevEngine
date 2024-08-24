@@ -4,12 +4,12 @@
 
 namespace LevEngine
 {
+	struct ScriptsContainer;
 	class ScriptAsset;
 	class Scene;
 
 	namespace Scripting
 	{	
-
 		class ScriptingManager
 		{
 		public:
@@ -37,6 +37,7 @@ namespace LevEngine
 			Ref<ScriptAsset> GetComponentScriptAssetByName(const String& name) const;
 
 			void InitScriptsContainers(entt::registry& registry) const;
+			void InitScriptsContainer(ScriptsContainer& container) const;
 
 		private:
 			UnorderedMap<Ref<ScriptAsset>, sol::table> m_Systems;

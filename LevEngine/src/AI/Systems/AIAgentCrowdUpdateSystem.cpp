@@ -20,7 +20,8 @@ namespace LevEngine
             
             if(!agentCrowdComponent.IsInitialized())
             {
-                agentCrowdComponent.Init();    
+                const auto entityWrapped = Entity(entt::handle{ registry, entity });
+                agentCrowdComponent.Init(entityWrapped);    
             }
             
             agentCrowdComponent.Update(deltaTime);

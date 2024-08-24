@@ -1,15 +1,15 @@
 #include "levpch.h"
 #include "BloomPass.h"
 
-#include "Renderer/PipelineState.h"
+#include "Renderer/Pipeline/PipelineState.h"
 #include "Renderer/RenderCommand.h"
 
 #include "Assets/EngineAssets.h"
-#include "Renderer/DepthStencilState.h"
-#include "Renderer/RasterizerState.h"
-#include "Renderer/RenderTarget.h"
-#include "Renderer/Shader.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Pipeline/DepthStencilState.h"
+#include "Renderer/Pipeline/RasterizerState.h"
+#include "Renderer/Pipeline/RenderTarget.h"
+#include "Renderer/Shader/Shader.h"
+#include "Renderer/Pipeline/Texture.h"
 
 namespace LevEngine
 {

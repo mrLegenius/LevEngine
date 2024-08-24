@@ -2,12 +2,13 @@
 #include "LuminanceAdaptationPass.h"
 
 #include "Assets/EngineAssets.h"
-#include "Renderer/DepthStencilState.h"
-#include "Renderer/PipelineState.h"
-#include "Renderer/RasterizerState.h"
+#include "Renderer/Pipeline/DepthStencilState.h"
+#include "Renderer/Pipeline/PipelineState.h"
+#include "Renderer/Pipeline/RasterizerState.h"
 #include "Renderer/RenderCommand.h"
-#include "Renderer/RenderTarget.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Shader/ShaderType.h"
+#include "Renderer/Pipeline/RenderTarget.h"
+#include "Renderer/Pipeline/Texture.h"
 
 namespace LevEngine
 {

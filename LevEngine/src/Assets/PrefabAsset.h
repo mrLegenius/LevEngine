@@ -13,6 +13,8 @@ public:
     PrefabAsset(const Path& path, const UUID& uuid) : Asset(path, uuid) { }
 
     Entity Instantiate(const Ref<Scene>& scene);
+    Entity Instantiate(const Ref<Scene>& scene, Entity parent);
+    Entity Instantiate(const Ref<Scene>& scene, Vector3 position);
     void SaveEntity(Entity entity);
 
 protected:

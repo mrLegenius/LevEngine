@@ -5,1643 +5,21 @@
 #include "D3D11Texture.h"
 
 #include "D3D11DeferredContexts.h"
+#include "D3D11TextureFormatsUtils.h"
 #include "stb/include/stb_image.h"
 #include "Math/Math.h"
-#include "Renderer/SamplerState.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Shader/ShaderType.h"
+#include "Renderer/Pipeline/SamplerState.h"
+#include "Renderer/Pipeline/Texture.h"
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-    
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
-inline void PrintTextureFormatReplaceWarning()
-{
-    Log::CoreWarning("Unsupported texture format. Trying best alternative");
-}
-
-inline void UnknownFormatThrow()
-{
-	LEV_THROW("Unknown texture format")
-}
-
-DXGI_FORMAT ConvertFormat(const Texture::TextureFormat& format)
-{
-    DXGI_FORMAT result = DXGI_FORMAT_UNKNOWN;
-
-    switch (format.Components)
-    {
-    case Texture::Components::R:
-        switch (format.Type)
-        {
-        case Texture::Type::Typeless:
-            if (format.RedBits == 8)
-            {
-                result = DXGI_FORMAT_R8_TYPELESS;
-            }
-            else if (format.RedBits == 16)
-            {
-                result = DXGI_FORMAT_R16_TYPELESS;
-            }
-            else if (format.RedBits == 32)
-            {
-                result = DXGI_FORMAT_R32_TYPELESS;
-            }
-            else
-            {
-                // Try to choose the best format based on the requested format.
-                if (format.RedBits > 16)
-                {
-                    result = DXGI_FORMAT_R32_TYPELESS;
-                }
-                else if (format.RedBits > 8)
-                {
-                    result = DXGI_FORMAT_R16_TYPELESS;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8_TYPELESS;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::UnsignedNormalized:
-            if (format.RedBits == 1)
-            {
-                result = DXGI_FORMAT_R1_UNORM;
-            }
-            else if (format.RedBits == 8)
-            {
-                result = DXGI_FORMAT_R8_UNORM;
-            }
-            else if (format.RedBits == 16)
-            {
-                result = DXGI_FORMAT_R16_UNORM;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative to the requested format.
-                if (format.RedBits > 8)
-                {
-                    result = DXGI_FORMAT_R16_UNORM;
-                }
-                else if (format.RedBits > 1)
-                {
-                    result = DXGI_FORMAT_R8_UNORM;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R1_UNORM;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::SignedNormalized:
-            if (format.RedBits == 8)
-            {
-                result = DXGI_FORMAT_R8_SNORM;
-            }
-            else if (format.RedBits == 16)
-            {
-                result = DXGI_FORMAT_R16_SNORM;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 8)
-                {
-                    result = DXGI_FORMAT_R16_SNORM;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8_SNORM;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::Float:
-            if (format.RedBits == 16)
-            {
-                result = DXGI_FORMAT_R16_FLOAT;
-            }
-            else if (format.RedBits == 32)
-            {
-                result = DXGI_FORMAT_R32_FLOAT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 16)
-                {
-                    result = DXGI_FORMAT_R32_FLOAT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R16_FLOAT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::UnsignedInteger:
-            if (format.RedBits == 8)
-            {
-                result = DXGI_FORMAT_R8_UINT;
-            }
-            else if (format.RedBits == 16)
-            {
-                result = DXGI_FORMAT_R16_UINT;
-            }
-            else if (format.RedBits == 32)
-            {
-                result = DXGI_FORMAT_R32_UINT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 16)
-                {
-                    result = DXGI_FORMAT_R32_UINT;
-                }
-                else if (format.RedBits > 8)
-                {
-                    result = DXGI_FORMAT_R16_UINT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8_UINT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::SignedInteger:
-            if (format.RedBits == 8)
-            {
-                result = DXGI_FORMAT_R8_SINT;
-            }
-            else if (format.RedBits == 16)
-            {
-                result = DXGI_FORMAT_R16_SINT;
-            }
-            else if (format.RedBits == 32)
-            {
-                result = DXGI_FORMAT_R32_SINT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative
-                if (format.RedBits > 16)
-                {
-                    result = DXGI_FORMAT_R32_SINT;
-                }
-                else if (format.RedBits > 8)
-                {
-                    result = DXGI_FORMAT_R16_SINT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8_SINT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        default:
-            UnknownFormatThrow();
-            break;
-        }
-        break;
-    case Texture::Components::RG:
-        switch (format.Type)
-        {
-        case Texture::Type::Typeless:
-            if (format.RedBits == 8 && format.GreenBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8_TYPELESS;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16_TYPELESS;
-            }
-            else if (format.RedBits == 24 && format.GreenBits == 8)
-            {
-                result = DXGI_FORMAT_R24G8_TYPELESS;
-            }
-            else if (format.RedBits == 32 && format.GreenBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32_TYPELESS;
-            }
-            else
-            {
-                // Try to choose the best format based on the requested format.
-                if (format.RedBits > 24 || format.GreenBits > 16)
-                {
-                    result = DXGI_FORMAT_R32G32_TYPELESS;
-                }
-                else if (format.RedBits > 16 && format.GreenBits <= 8)
-                {
-                    result = DXGI_FORMAT_R24G8_TYPELESS;
-                }
-                else if (format.RedBits > 8 || format.GreenBits > 8)
-                {
-                    result = DXGI_FORMAT_R16G16_TYPELESS;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8_TYPELESS;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::UnsignedNormalized:
-            if (format.RedBits == 8 && format.GreenBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8_UNORM;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16_UNORM;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 8 || format.GreenBits > 8)
-                {
-                    result = DXGI_FORMAT_R16G16_UNORM;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8_UNORM;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::SignedNormalized:
-            if (format.RedBits == 8 && format.GreenBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8_SNORM;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16_SNORM;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 8 || format.GreenBits > 8)
-                {
-                    result = DXGI_FORMAT_R16G16_SNORM;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8_SNORM;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::Float:
-            if (format.RedBits == 16 && format.GreenBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16_FLOAT;
-            }
-            else if (format.RedBits == 32 && format.GreenBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32_FLOAT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 16 || format.GreenBits > 16)
-                {
-                    result = DXGI_FORMAT_R32G32_FLOAT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R16G16_FLOAT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::UnsignedInteger:
-            if (format.RedBits == 8 && format.GreenBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8_UINT;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16_UINT;
-            }
-            else if (format.RedBits == 32 && format.GreenBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32_UINT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 16 || format.GreenBits > 16)
-                {
-                    result = DXGI_FORMAT_R32G32_UINT;
-                }
-                else if (format.RedBits > 8 || format.GreenBits > 8)
-                {
-                    result = DXGI_FORMAT_R16G16_UINT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8_UINT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::SignedInteger:
-            if (format.RedBits == 8 && format.GreenBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8_SINT;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16_SINT;
-            }
-            else if (format.RedBits == 32 && format.GreenBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32_SINT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 16 || format.GreenBits > 16)
-                {
-                    result = DXGI_FORMAT_R32G32_SINT;
-                }
-                else if (format.RedBits > 8 || format.GreenBits > 8)
-                {
-                    result = DXGI_FORMAT_R16G16_SINT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8_SINT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        default:
-            UnknownFormatThrow();
-            break;
-        }
-        break;
-    case Texture::Components::RGB:
-        switch (format.Type)
-        {
-        case Texture::Type::Typeless:
-            if (format.RedBits == 32 && format.GreenBits == 32 && format.BlueBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32B32_TYPELESS;
-            }
-            else
-            {
-                // There is only 1 RGB typeless format
-                result = DXGI_FORMAT_R32G32B32_TYPELESS;
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::Float:
-            if (format.RedBits == 11 && format.GreenBits == 11 && format.BlueBits == 10)
-            {
-                result = DXGI_FORMAT_R11G11B10_FLOAT;
-            }
-            else if (format.RedBits == 32 && format.GreenBits == 32 && format.BlueBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32B32_FLOAT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 11 || format.GreenBits > 11 || format.BlueBits > 10)
-                {
-                    result = DXGI_FORMAT_R32G32B32_FLOAT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R11G11B10_FLOAT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::UnsignedInteger:
-            if (format.RedBits == 32 && format.GreenBits == 32 && format.BlueBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32B32_UINT;
-            }
-            else
-            {
-                // There is only 1 3-component UINT format.
-                result = DXGI_FORMAT_R32G32B32_UINT;
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::SignedInteger:
-            if (format.RedBits == 32 && format.GreenBits == 32 && format.BlueBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32B32_SINT;
-            }
-            else
-            {
-                // There is only 1 3-component SINT format.
-                result = DXGI_FORMAT_R32G32B32_SINT;
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        default:
-            // Try to choose a reasonable alternative
-            switch (format.Type)
-            {
-            case Texture::Type::UnsignedNormalized:
-                // This is a non-normalized format. May result in unintended behavior.
-                result = DXGI_FORMAT_R32G32B32_UINT;
-                break;
-            case Texture::Type::SignedNormalized:
-                // Non-normalized format. May result in unintended behavior.
-                result = DXGI_FORMAT_R32G32B32_SINT;
-                break;
-            default:
-                UnknownFormatThrow();
-                break;
-            }
-
-            PrintTextureFormatReplaceWarning();
-            break;
-        }
-        break;
-    case Texture::Components::RGBA:
-        switch (format.Type)
-        {
-        case Texture::Type::Typeless:
-            if (format.RedBits == 8 && format.GreenBits == 8 && format.BlueBits == 8 && format.AlphaBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8B8A8_TYPELESS;
-            }
-            else if (format.RedBits == 10 && format.GreenBits == 10 && format.BlueBits == 10 && format.AlphaBits == 2)
-            {
-                result = DXGI_FORMAT_R10G10B10A2_TYPELESS;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16 && format.BlueBits == 16 && format.AlphaBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16B16A16_TYPELESS;
-            }
-            else if (format.RedBits == 32 && format.GreenBits == 32 && format.BlueBits == 32 && format.AlphaBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32B32A32_TYPELESS;
-            }
-            else
-            {
-                // Try to choose the best format based on the requested format.
-                if (format.RedBits > 16 || format.GreenBits > 16 || format.BlueBits > 16 || format.AlphaBits > 16)
-                {
-                    result = DXGI_FORMAT_R32G32B32A32_TYPELESS;
-                }
-                else if ((format.RedBits > 10 || format.GreenBits > 10 || format.BlueBits > 10) && format.AlphaBits <= 2)
-                {
-                    result = DXGI_FORMAT_R10G10B10A2_TYPELESS;
-                }
-                else if (format.RedBits > 8 || format.GreenBits > 8 || format.BlueBits > 8 || format.AlphaBits > 8)
-                {
-                    result = DXGI_FORMAT_R16G16B16A16_TYPELESS;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8B8A8_TYPELESS;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::SRGB:
-            if (format.RedBits == 8 && format.GreenBits == 8 && format.BlueBits == 8 && format.AlphaBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-            }
-            else
-            {
-                result = DXGI_FORMAT_R8G8B8A8_UNORM;
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::UnsignedNormalized:
-            if (format.RedBits == 8 && format.GreenBits == 8 && format.BlueBits == 8 && format.AlphaBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8B8A8_UNORM;
-            }
-            else if (format.RedBits == 10 && format.GreenBits == 10 && format.BlueBits == 10 && format.AlphaBits == 2)
-            {
-                result = DXGI_FORMAT_R10G10B10A2_UNORM;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16 && format.BlueBits == 16 && format.AlphaBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16B16A16_UNORM;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 10 || format.GreenBits > 10 || format.BlueBits > 10 || format.AlphaBits > 8)
-                {
-                    result = DXGI_FORMAT_R16G16B16A16_UNORM;
-                }
-                else if ((format.RedBits > 8 || format.GreenBits > 8 || format.BlueBits > 8) && format.AlphaBits <= 2)
-                {
-                    result = DXGI_FORMAT_R10G10B10A2_UNORM;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8B8A8_UNORM;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::SignedNormalized:
-            if (format.RedBits == 8 && format.GreenBits == 8 && format.BlueBits == 8 && format.AlphaBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8B8A8_SNORM;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16 && format.BlueBits == 16 && format.AlphaBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16B16A16_SNORM;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 8 || format.GreenBits > 8 || format.BlueBits > 8 || format.AlphaBits > 8)
-                {
-                    result = DXGI_FORMAT_R16G16B16A16_SNORM;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8B8A8_SNORM;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::Float:
-            if (format.RedBits == 32 && format.GreenBits == 32 && format.BlueBits && format.AlphaBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32B32A32_FLOAT;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16 && format.BlueBits == 16 && format.AlphaBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16B16A16_FLOAT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 16 || format.GreenBits > 16 || format.BlueBits > 16 || format.AlphaBits > 16)
-                {
-                    result = DXGI_FORMAT_R32G32B32A32_FLOAT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R16G16B16A16_FLOAT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::UnsignedInteger:
-            if (format.RedBits == 8 && format.GreenBits == 8 && format.BlueBits == 8 && format.AlphaBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8B8A8_UINT;
-            }
-            else if (format.RedBits == 10 && format.GreenBits == 10 && format.BlueBits == 10 && format.AlphaBits == 2)
-            {
-                result = DXGI_FORMAT_R10G10B10A2_UINT;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16 && format.BlueBits == 16 && format.AlphaBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16B16A16_UINT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 10 || format.GreenBits > 10 || format.BlueBits > 10 || format.AlphaBits > 10)
-                {
-                    result = DXGI_FORMAT_R16G16B16A16_UINT;
-                }
-                else if ((format.RedBits > 8 || format.GreenBits > 8 || format.BlueBits > 8) && format.AlphaBits <= 2)
-                {
-                    result = DXGI_FORMAT_R10G10B10A2_UINT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8B8A8_UINT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::SignedInteger:
-            if (format.RedBits == 8 && format.GreenBits == 8 && format.BlueBits == 8 && format.AlphaBits == 8)
-            {
-                result = DXGI_FORMAT_R8G8B8A8_SINT;
-            }
-            else if (format.RedBits == 16 && format.GreenBits == 16 && format.BlueBits == 16 && format.AlphaBits == 16)
-            {
-                result = DXGI_FORMAT_R16G16B16A16_SINT;
-            }
-            else if (format.RedBits == 32 && format.GreenBits == 32 && format.BlueBits == 32 && format.AlphaBits == 32)
-            {
-                result = DXGI_FORMAT_R32G32B32A32_SINT;
-            }
-            else
-            {
-                // Try to choose a reasonable alternative.
-                if (format.RedBits > 16 || format.GreenBits > 16 || format.BlueBits > 16 || format.AlphaBits > 16)
-                {
-                    result = DXGI_FORMAT_R32G32B32A32_SINT;
-                }
-                if (format.RedBits > 8 || format.GreenBits > 8 || format.BlueBits > 8 || format.AlphaBits > 8)
-                {
-                    result = DXGI_FORMAT_R16G16B16A16_SINT;
-                }
-                else
-                {
-                    result = DXGI_FORMAT_R8G8B8A8_SINT;
-                }
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        default:
-            UnknownFormatThrow();
-            break;
-        }
-        break;
-    case Texture::Components::Depth:
-        switch (format.Type)
-        {
-        case Texture::Type::UnsignedNormalized:
-            if (format.DepthBits == 16)
-            {
-                result = DXGI_FORMAT_D16_UNORM;
-            }
-            else
-            {
-                // Only 1 format that could match.
-                result = DXGI_FORMAT_D16_UNORM;
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        case Texture::Type::Float:
-            if (format.DepthBits == 32)
-            {
-                result = DXGI_FORMAT_D32_FLOAT;
-            }
-            else
-            {
-                // Only 1 format that could match.
-                result = DXGI_FORMAT_D32_FLOAT;
-
-                PrintTextureFormatReplaceWarning();
-            }
-            break;
-        default:
-            // There are no SNORM, SINT, or UINT depth-only formats.
-            UnknownFormatThrow();
-            break;
-        }
-        break;
-    case Texture::Components::DepthStencil:
-        // For Depth/Stencil formats, we'll ignore the type and try to deduce the format
-        // based on the bit-depth values.
-        if (format.DepthBits == 24 && format.StencilBits == 8)
-        {
-            result = DXGI_FORMAT_D24_UNORM_S8_UINT;
-        }
-        else if (format.DepthBits == 32 && format.StencilBits == 8)
-        {
-            result = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
-        }
-        else
-        {
-            // Try to choose a reasonable alternative...
-            if (format.DepthBits > 24)
-            {
-                result = result = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
-            }
-            else
-            {
-                result = DXGI_FORMAT_D24_UNORM_S8_UINT;
-            }
-
-            PrintTextureFormatReplaceWarning();
-        }
-        break;
-    default:
-        UnknownFormatThrow();
-        break;
-    }
-
-    return result;
-}
-
-Texture::TextureFormat ConvertFormat(DXGI_FORMAT format, uint8_t numSamples)
-{
-    Texture::TextureFormat result;
-    result.NumSamples = numSamples;
-
-    switch (format)
-    {
-    case DXGI_FORMAT_R32G32B32A32_TYPELESS:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 32;
-        result.AlphaBits = 32;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32B32A32_FLOAT:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 32;
-        result.AlphaBits = 32;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32B32A32_UINT:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 32;
-        result.AlphaBits = 32;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32B32A32_SINT:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 32;
-        result.AlphaBits = 32;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32B32_TYPELESS:
-        result.Components = Texture::Components::RGB;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 32;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32B32_FLOAT:
-        result.Components = Texture::Components::RGB;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 32;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32B32_UINT:
-        result.Components = Texture::Components::RGB;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 32;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32B32_SINT:
-        result.Components = Texture::Components::RGB;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 32;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16B16A16_TYPELESS:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 16;
-        result.AlphaBits = 16;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16B16A16_FLOAT:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 16;
-        result.AlphaBits = 16;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16B16A16_UINT:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 16;
-        result.AlphaBits = 16;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16B16A16_SNORM:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::SignedNormalized;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 16;
-        result.AlphaBits = 16;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16B16A16_SINT:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 16;
-        result.AlphaBits = 16;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32_TYPELESS:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32_FLOAT:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32_UINT:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32G32_SINT:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 32;
-        result.GreenBits = 32;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
-        result.Components = Texture::Components::DepthStencil;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 0;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 32;
-        result.StencilBits = 8;
-        break;
-    case DXGI_FORMAT_R10G10B10A2_TYPELESS:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 10;
-        result.GreenBits = 10;
-        result.BlueBits = 10;
-        result.AlphaBits = 2;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R10G10B10A2_UNORM:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::UnsignedNormalized;
-        result.RedBits = 10;
-        result.GreenBits = 10;
-        result.BlueBits = 10;
-        result.AlphaBits = 2;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R10G10B10A2_UINT:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 10;
-        result.GreenBits = 10;
-        result.BlueBits = 10;
-        result.AlphaBits = 2;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R11G11B10_FLOAT:
-        result.Components = Texture::Components::RGB;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 11;
-        result.GreenBits = 11;
-        result.BlueBits = 10;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8B8A8_TYPELESS:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 8;
-        result.AlphaBits = 8;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::SRGB;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 8;
-        result.AlphaBits = 8;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8B8A8_UNORM:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::UnsignedNormalized;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 8;
-        result.AlphaBits = 8;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8B8A8_UINT:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 8;
-        result.AlphaBits = 8;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8B8A8_SNORM:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::SignedNormalized;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 8;
-        result.AlphaBits = 8;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8B8A8_SINT:
-        result.Components = Texture::Components::RGBA;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 8;
-        result.AlphaBits = 8;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16_TYPELESS:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16_FLOAT:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16_UNORM:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::UnsignedNormalized;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16_UINT:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16G16_SINT:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 16;
-        result.GreenBits = 16;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32_TYPELESS:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 32;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_D32_FLOAT:
-        result.Components = Texture::Components::Depth;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 0;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 32;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32_FLOAT:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 32;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32_UINT:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 32;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R32_SINT:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 32;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R24G8_TYPELESS:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 24;
-        result.GreenBits = 8;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_D24_UNORM_S8_UINT:
-        result.Components = Texture::Components::DepthStencil;
-        result.Type = Texture::Type::UnsignedNormalized;
-        result.RedBits = 0;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 24;
-        result.StencilBits = 8;
-        break;
-    case DXGI_FORMAT_R8G8_TYPELESS:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8_UNORM:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::UnsignedNormalized;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8_UINT:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8_SNORM:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::SignedNormalized;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8G8_SINT:
-        result.Components = Texture::Components::RG;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 8;
-        result.GreenBits = 8;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16_TYPELESS:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 16;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16_FLOAT:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::Float;
-        result.RedBits = 16;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_D16_UNORM:
-        result.Components = Texture::Components::Depth;
-        result.Type = Texture::Type::UnsignedNormalized;
-        result.RedBits = 0;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 16;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16_UNORM:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::UnsignedNormalized;
-        result.RedBits = 16;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16_UINT:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 16;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16_SNORM:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::SignedNormalized;
-        result.RedBits = 16;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R16_SINT:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 16;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8_TYPELESS:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::Typeless;
-        result.RedBits = 8;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8_UNORM:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::UnsignedNormalized;
-        result.RedBits = 8;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8_UINT:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::UnsignedInteger;
-        result.RedBits = 8;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8_SNORM:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::SignedNormalized;
-        result.RedBits = 8;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R8_SINT:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::SignedInteger;
-        result.RedBits = 8;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    case DXGI_FORMAT_R1_UNORM:
-        result.Components = Texture::Components::R;
-        result.Type = Texture::Type::UnsignedNormalized;
-        result.RedBits = 1;
-        result.GreenBits = 0;
-        result.BlueBits = 0;
-        result.AlphaBits = 0;
-        result.DepthBits = 0;
-        result.StencilBits = 0;
-        break;
-    default:
-        LEV_THROW("Unsupported DXGI format");
-        break;
-    }
-
-    return result;
-}
-
-DXGI_FORMAT GetTextureFormat(const DXGI_FORMAT format)
-{
-    DXGI_FORMAT result = format;
-
-    switch (format)
-    {
-    case DXGI_FORMAT_D16_UNORM:
-        result = DXGI_FORMAT_R16_TYPELESS;
-        break;
-    case DXGI_FORMAT_D24_UNORM_S8_UINT:
-        result = DXGI_FORMAT_R24G8_TYPELESS;
-        break;
-    case DXGI_FORMAT_D32_FLOAT:
-        result = DXGI_FORMAT_R32_TYPELESS;
-        break;
-    case DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
-        result = DXGI_FORMAT_R32G8X24_TYPELESS;
-        break;
-    }
-
-    return result;
-}
-
-DXGI_FORMAT GetDSVFormat(const DXGI_FORMAT format)
-{
-    DXGI_FORMAT result = format;
-
-    switch (format)
-    {
-    case DXGI_FORMAT_R16_TYPELESS:
-        result = DXGI_FORMAT_D16_UNORM;
-        break;
-    case DXGI_FORMAT_R24G8_TYPELESS:
-    case DXGI_FORMAT_R24_UNORM_X8_TYPELESS:
-        result = DXGI_FORMAT_D24_UNORM_S8_UINT;
-        break;
-    case DXGI_FORMAT_R32_TYPELESS:
-        result = DXGI_FORMAT_D32_FLOAT;
-        break;
-    case DXGI_FORMAT_R32G8X24_TYPELESS:
-    case DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS:
-        result = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
-        break;
-    }
-
-    return result;
-}
-
-DXGI_FORMAT GetSRVFormat(const DXGI_FORMAT format)
-{
-    DXGI_FORMAT result = format;
-    switch (format)
-    {
-    case DXGI_FORMAT_R32G32B32A32_TYPELESS:
-        result = DXGI_FORMAT_R32G32B32A32_FLOAT;
-        break;
-    case DXGI_FORMAT_R32G32B32_TYPELESS:
-        result = DXGI_FORMAT_R32G32B32_FLOAT;
-        break;
-    case DXGI_FORMAT_R16G16B16A16_TYPELESS:
-        result = DXGI_FORMAT_R16G16B16A16_UNORM;
-        break;
-    case DXGI_FORMAT_R32G32_TYPELESS:
-        result = DXGI_FORMAT_R32G32_FLOAT;
-        break;
-    case DXGI_FORMAT_R10G10B10A2_TYPELESS:
-        result = DXGI_FORMAT_R10G10B10A2_UNORM;
-        break;
-    case DXGI_FORMAT_R8G8B8A8_TYPELESS:
-        result = DXGI_FORMAT_R8G8B8A8_UNORM;
-        break;
-    case DXGI_FORMAT_R16G16_TYPELESS:
-        result = DXGI_FORMAT_R16G16_UNORM;
-        break;
-    case DXGI_FORMAT_R16_TYPELESS:
-    case DXGI_FORMAT_D16_UNORM:
-        result = DXGI_FORMAT_R16_UNORM;
-        break;
-    case DXGI_FORMAT_R24G8_TYPELESS:
-    case DXGI_FORMAT_D24_UNORM_S8_UINT:
-        result = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-        break;
-    case DXGI_FORMAT_R32_TYPELESS:
-    case DXGI_FORMAT_D32_FLOAT:
-        result = DXGI_FORMAT_R32_FLOAT;
-        break;
-    case DXGI_FORMAT_R32G8X24_TYPELESS:
-    case DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
-        result = DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
-        break;
-    case DXGI_FORMAT_R8G8_TYPELESS:
-        result = DXGI_FORMAT_R8G8_UNORM;
-        break;
-    case DXGI_FORMAT_R8_TYPELESS:
-        result = DXGI_FORMAT_R8_UNORM;
-        break;
-    }
-
-    return result;
-}
-
-DXGI_FORMAT GetRTVFormat(const DXGI_FORMAT format)
-{
-    DXGI_FORMAT result = format;
-
-    switch (format)
-    {
-    case DXGI_FORMAT_R32G32B32A32_TYPELESS:
-        result = DXGI_FORMAT_R32G32B32A32_FLOAT;
-        break;
-    case DXGI_FORMAT_R32G32B32_TYPELESS:
-        result = DXGI_FORMAT_R32G32B32_FLOAT;
-        break;
-    case DXGI_FORMAT_R16G16B16A16_TYPELESS:
-        result = DXGI_FORMAT_R16G16B16A16_UNORM;
-        break;
-    case DXGI_FORMAT_R32G32_TYPELESS:
-        result = DXGI_FORMAT_R32G32_FLOAT;
-        break;
-    case DXGI_FORMAT_R10G10B10A2_TYPELESS:
-        result = DXGI_FORMAT_R10G10B10A2_UNORM;
-        break;
-    case DXGI_FORMAT_R8G8B8A8_TYPELESS:
-        result = DXGI_FORMAT_R8G8B8A8_UNORM;
-        break;
-    case DXGI_FORMAT_R16G16_TYPELESS:
-        result = DXGI_FORMAT_R16G16_UNORM;
-        break;
-    case DXGI_FORMAT_R8G8_TYPELESS:
-        result = DXGI_FORMAT_R8G8_UNORM;
-        break;
-    case DXGI_FORMAT_R32_TYPELESS:
-        result = DXGI_FORMAT_R32_FLOAT;
-        break;
-    case DXGI_FORMAT_R8_TYPELESS:
-        result = DXGI_FORMAT_R8_UNORM;
-        break;
-    }
-
-    return result;
-}
-
-DXGI_FORMAT GetUAVFormat(const DXGI_FORMAT format)
-{
-    return GetRTVFormat(format);
-}
-
-uint8_t GetBytesPerPixel(const DXGI_FORMAT format)
-{
-    uint8_t bpp = 0;
-
-    switch (format)
-    {
-    case DXGI_FORMAT_R32G32B32A32_TYPELESS:
-    case DXGI_FORMAT_R32G32B32A32_FLOAT:
-    case DXGI_FORMAT_R32G32B32A32_UINT:
-    case DXGI_FORMAT_R32G32B32A32_SINT:
-        bpp = 128;
-        break;
-    case DXGI_FORMAT_R32G32B32_TYPELESS:
-    case DXGI_FORMAT_R32G32B32_FLOAT:
-    case DXGI_FORMAT_R32G32B32_UINT:
-    case DXGI_FORMAT_R32G32B32_SINT:
-        bpp = 96;
-        break;
-    case DXGI_FORMAT_R16G16B16A16_TYPELESS:
-    case DXGI_FORMAT_R16G16B16A16_FLOAT:
-    case DXGI_FORMAT_R16G16B16A16_UNORM:
-    case DXGI_FORMAT_R16G16B16A16_UINT:
-    case DXGI_FORMAT_R16G16B16A16_SNORM:
-    case DXGI_FORMAT_R16G16B16A16_SINT:
-        bpp = 64;
-        break;
-    case DXGI_FORMAT_R32G32_TYPELESS:
-    case DXGI_FORMAT_R32G32_FLOAT:
-    case DXGI_FORMAT_R32G32_UINT:
-    case DXGI_FORMAT_R32G32_SINT:
-        bpp = 64;
-        break;
-    case DXGI_FORMAT_R32G8X24_TYPELESS:
-    case DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
-    case DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS:
-    case DXGI_FORMAT_X32_TYPELESS_G8X24_UINT:
-        bpp = 64;
-        break;
-    case DXGI_FORMAT_R10G10B10A2_TYPELESS:
-    case DXGI_FORMAT_R10G10B10A2_UNORM:
-    case DXGI_FORMAT_R10G10B10A2_UINT:
-    case DXGI_FORMAT_R11G11B10_FLOAT:
-        bpp = 32;
-        break;
-    case DXGI_FORMAT_R8G8B8A8_TYPELESS:
-    case DXGI_FORMAT_R8G8B8A8_UNORM:
-    case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
-    case DXGI_FORMAT_R8G8B8A8_UINT:
-    case DXGI_FORMAT_R8G8B8A8_SNORM:
-    case DXGI_FORMAT_R8G8B8A8_SINT:
-        bpp = 32;
-        break;
-    case DXGI_FORMAT_R16G16_TYPELESS:
-    case DXGI_FORMAT_R16G16_FLOAT:
-    case DXGI_FORMAT_R16G16_UNORM:
-    case DXGI_FORMAT_R16G16_UINT:
-    case DXGI_FORMAT_R16G16_SNORM:
-    case DXGI_FORMAT_R16G16_SINT:
-        bpp = 32;
-        break;
-    case DXGI_FORMAT_R32_TYPELESS:
-    case DXGI_FORMAT_D32_FLOAT:
-    case DXGI_FORMAT_R32_FLOAT:
-    case DXGI_FORMAT_R32_UINT:
-    case DXGI_FORMAT_R32_SINT:
-        bpp = 32;
-        break;
-    case DXGI_FORMAT_R24G8_TYPELESS:
-    case DXGI_FORMAT_D24_UNORM_S8_UINT:
-    case DXGI_FORMAT_R24_UNORM_X8_TYPELESS:
-    case DXGI_FORMAT_X24_TYPELESS_G8_UINT:
-        bpp = 32;
-        break;
-    case DXGI_FORMAT_R8G8_TYPELESS:
-    case DXGI_FORMAT_R8G8_UNORM:
-    case DXGI_FORMAT_R8G8_UINT:
-    case DXGI_FORMAT_R8G8_SNORM:
-    case DXGI_FORMAT_R8G8_SINT:
-        bpp = 16;
-        break;
-    case DXGI_FORMAT_R16_TYPELESS:
-    case DXGI_FORMAT_R16_FLOAT:
-    case DXGI_FORMAT_D16_UNORM:
-    case DXGI_FORMAT_R16_UNORM:
-    case DXGI_FORMAT_R16_UINT:
-    case DXGI_FORMAT_R16_SNORM:
-    case DXGI_FORMAT_R16_SINT:
-        bpp = 16;
-        break;
-    case DXGI_FORMAT_R8_TYPELESS:
-    case DXGI_FORMAT_R8_UNORM:
-    case DXGI_FORMAT_R8_UINT:
-    case DXGI_FORMAT_R8_SNORM:
-    case DXGI_FORMAT_R8_SINT:
-    case DXGI_FORMAT_A8_UNORM:
-        bpp = 8;
-        break;
-    case DXGI_FORMAT_R1_UNORM:
-        bpp = 1;
-        break;
-    case DXGI_FORMAT_R9G9B9E5_SHAREDEXP:
-        bpp = 32;
-        break;
-    case DXGI_FORMAT_R8G8_B8G8_UNORM:
-    case DXGI_FORMAT_G8R8_G8B8_UNORM:
-        bpp = 32;
-        break;
-    case DXGI_FORMAT_B5G6R5_UNORM:
-        bpp = 16;
-        break;
-    case DXGI_FORMAT_B5G5R5A1_UNORM:
-        bpp = 16;
-        break;
-    case DXGI_FORMAT_B8G8R8A8_UNORM:
-    case DXGI_FORMAT_B8G8R8X8_UNORM:
-        bpp = 32;
-        break;
-    case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM:
-        bpp = 32;
-        break;
-    case DXGI_FORMAT_B8G8R8A8_TYPELESS:
-    case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
-    case DXGI_FORMAT_B8G8R8X8_TYPELESS:
-    case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:
-        bpp = 32;
-        break;
-    default:
-        LEV_THROW("Unsupported texture format")
-        break;
-    }
-
-    return bpp;
-}
-
-uint32_t GetPitch(const uint16_t width, const uint8_t bpp)
+static uint32_t GetPitch(const uint16_t width, const uint8_t bpp)
 {
     return (static_cast<uint64_t>(width) * bpp + 7u) / 8u;
 }
     
-DXGI_SAMPLE_DESC GetSupportedSampleCount(const DXGI_FORMAT format, const uint8_t numSamples)
+static DXGI_SAMPLE_DESC GetSupportedSampleCount(ID3D11Device2* device, const DXGI_FORMAT format, const uint8_t numSamples)
 {
     DXGI_SAMPLE_DESC sampleDesc{};
 
@@ -1662,6 +40,7 @@ DXGI_SAMPLE_DESC GetSupportedSampleCount(const DXGI_FORMAT format, const uint8_t
 }
     
 Ref<Texture> D3D11Texture::CreateTexture2D(
+	ID3D11Device2* device, 
     const uint16_t width,
     const uint16_t height,
     const uint16_t slices,
@@ -1672,7 +51,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
 {
     LEV_PROFILE_FUNCTION();
 
-	Ref<D3D11Texture> texture = CreateRef<D3D11Texture>();
+	Ref<D3D11Texture> texture = CreateRef<D3D11Texture>(device);
 
 	texture->m_TextureFormat = format;
 	texture->m_CPUAccess = cpuAccess;
@@ -1686,7 +65,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
 
     const DXGI_FORMAT dxgiFormat = ConvertFormat(format);
 
-    texture->m_SampleDesc = GetSupportedSampleCount(dxgiFormat, format.NumSamples);
+    texture->m_SampleDesc = GetSupportedSampleCount(device, dxgiFormat, format.NumSamples);
 
     texture->m_TextureFormat = ConvertFormat(dxgiFormat, format.NumSamples);
 
@@ -1737,6 +116,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
 }
 
 Ref<Texture> D3D11Texture::CreateTexture2D(
+	ID3D11Device2* device,
     const uint16_t width,
     const uint16_t height,
     const uint16_t slices,
@@ -1752,7 +132,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
         return nullptr;
     }
 
-    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>();
+    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>(device);
 
     texture->m_IsLoaded = true;
     texture->m_Width = width;
@@ -1768,7 +148,7 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
 
     const DXGI_FORMAT dxgiFormat = ConvertFormat(format);
 
-    texture->m_SampleDesc = GetSupportedSampleCount(dxgiFormat, format.NumSamples);
+    texture->m_SampleDesc = GetSupportedSampleCount(device,  dxgiFormat, format.NumSamples);
 
     texture->m_TextureFormat = ConvertFormat(dxgiFormat, format.NumSamples);
 
@@ -1880,10 +260,10 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
     return texture;
 }
 
-Ref<Texture> D3D11Texture::CreateTextureCube(const uint16_t width, const uint16_t height, const TextureFormat& format,
+Ref<Texture> D3D11Texture::CreateTextureCube(ID3D11Device2* device, uint16_t width, const uint16_t height, const TextureFormat& format,
     const CPUAccess cpuAccess, const bool uav, const bool generateMipMaps)
 {
-    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>();
+    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>(device);
 
     if (format.NumSamples > 1)
     {
@@ -1904,7 +284,7 @@ Ref<Texture> D3D11Texture::CreateTextureCube(const uint16_t width, const uint16_
 
     const DXGI_FORMAT dxgiFormat = ConvertFormat(format);
 
-    texture->m_SampleDesc = GetSupportedSampleCount(dxgiFormat, 1);
+    texture->m_SampleDesc = GetSupportedSampleCount(device, dxgiFormat, 1);
 
     texture->m_TextureFormat = ConvertFormat(dxgiFormat, 1);
 
@@ -1956,10 +336,12 @@ Ref<Texture> D3D11Texture::CreateTextureCube(const uint16_t width, const uint16_
     return texture;
 }
 
-D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMaps) : Texture(path)
+D3D11Texture::D3D11Texture(ID3D11Device2* device, const String& path, bool isLinear, bool generateMipMaps) : Texture(path), m_Device(device)
 {
     LEV_PROFILE_FUNCTION();
 
+	device->GetImmediateContext2(&m_DeviceContext);
+	
 	// Load image
 
 	stbi_set_flip_vertically_on_load(1);
@@ -1968,13 +350,18 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
     bool isHDR = false;
     bool is16Bit = false;
 
+	int components;
+	stbi_info(path.c_str(), &width, &height, &components);
+
+	auto desiredChannels = components == 3 ? 4 : 0;
+	
     isHDR |= stbi_is_hdr(path.c_str());
     is16Bit |= stbi_is_16_bit(path.c_str());
     void* data;
     if (isHDR)
-        data = stbi_loadf(path.c_str(), &width, &height, &channels, 4);
+        data = stbi_loadf(path.c_str(), &width, &height, &channels, desiredChannels);
     else
-        data = stbi_load(path.c_str(), &width, &height, &channels, 4);
+        data = stbi_load(path.c_str(), &width, &height, &channels, desiredChannels);
     
     if (!data)
     {
@@ -1993,16 +380,20 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
         else
             m_TextureResourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     }
+	else if (channels == 2)
+	{
+		m_TextureResourceFormat = DXGI_FORMAT_R8G8_UNORM;
+	}
     else if (channels == 1)
     {
-        m_TextureResourceFormat = DXGI_FORMAT_R8_UNORM;
+    	m_TextureResourceFormat = DXGI_FORMAT_R8_UNORM;
     }
     else
     {
         LEV_THROW("Unsupported number of channels");
     }
 
-    auto res = device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
+    auto res = m_Device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
     LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query format support")
 
 	auto textureFormatSupported = m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D;
@@ -2017,7 +408,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
     m_Height = height;
     m_TextureDimension = Dimension::Texture2D;
     m_NumSlices = 1;
-    m_SampleDesc = GetSupportedSampleCount(m_TextureResourceFormat, 1);
+    m_SampleDesc = GetSupportedSampleCount(device, m_TextureResourceFormat, m_NumSlices);
 
     m_ShaderResourceViewFormat = m_RenderTargetViewFormat = m_TextureResourceFormat;
 
@@ -2055,7 +446,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
 	subresourceData.SysMemPitch = m_Pitch;
     subresourceData.SysMemSlicePitch = 0;
 
-	auto result = device->CreateTexture2D(
+	auto result = m_Device->CreateTexture2D(
 		&textureDesc,
         m_GenerateMipMaps ? nullptr : &subresourceData,
 		&m_Texture2D
@@ -2073,7 +464,7 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
     resourceViewDesc.Texture2D.MostDetailedMip = 0;
 
 
-	result = device->CreateShaderResourceView(m_Texture2D,
+	result = m_Device->CreateShaderResourceView(m_Texture2D,
 		&resourceViewDesc,
 		&m_ShaderResourceView
 	);
@@ -2082,9 +473,9 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
 
     if (m_GenerateMipMaps)
     {
-        auto context = D3D11DeferredContexts::GetContext();
-        context->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
-        context->GenerateMips(m_ShaderResourceView);
+        auto m_DeviceContext = D3D11DeferredContexts::GetContext();
+        m_DeviceContext->UpdateSubresource(m_Texture2D, 0, nullptr, data, m_Pitch, 0);
+        m_DeviceContext->GenerateMips(m_ShaderResourceView);
     }
 
     m_IsDirty = false;
@@ -2092,9 +483,11 @@ D3D11Texture::D3D11Texture(const String& path, bool isLinear, bool generateMipMa
     stbi_image_free(data);
 }
 
-D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
+D3D11Texture::D3D11Texture(ID3D11Device2* device, const String paths[6], const bool isLinear) : m_Device(device)
 {
     LEV_PROFILE_FUNCTION();
+
+	device->GetImmediateContext2(&m_DeviceContext);
 
     int width, height, channels;
     bool isHDR = false;
@@ -2139,7 +532,7 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
         LEV_THROW("Unsupported number of channels");
     }
 
-    auto res = device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
+    auto res = m_Device->CheckFormatSupport(m_TextureResourceFormat, &m_TextureResourceFormatSupport);
     LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to query format support")
 
 	LEV_CORE_ASSERT(m_TextureResourceFormatSupport & D3D11_FORMAT_SUPPORT_TEXTURECUBE, "Format is not supported");
@@ -2152,7 +545,7 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
     m_Height = height;
     m_TextureDimension = Dimension::TextureCube;
     m_NumSlices = 6;
-    m_SampleDesc = GetSupportedSampleCount(m_TextureResourceFormat, 1);
+    m_SampleDesc = GetSupportedSampleCount(device, m_TextureResourceFormat, 1);
 
     m_ShaderResourceViewFormat = m_RenderTargetViewFormat = m_TextureResourceFormat;
     m_ShaderResourceViewFormatSupport = m_RenderTargetViewFormatSupport = m_TextureResourceFormatSupport;
@@ -2194,7 +587,7 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
         subResourceData.SysMemSlicePitch = 0;
     }
 
-    auto result = device->CreateTexture2D(
+    auto result = m_Device->CreateTexture2D(
         &textureDesc,
         imageSubresourceData,
         &m_Texture2D
@@ -2210,7 +603,7 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
     resourceViewDesc.Texture2D.MostDetailedMip = 0;
     resourceViewDesc.Texture2D.MipLevels = m_GenerateMipMaps ? -1 : 1;
 
-    result = device->CreateShaderResourceView(m_Texture2D,
+    result = m_Device->CreateShaderResourceView(m_Texture2D,
         &resourceViewDesc,
         &m_ShaderResourceView
     );
@@ -2230,6 +623,11 @@ D3D11Texture::D3D11Texture(const String paths[6], const bool isLinear)
         stbi_image_free(i);
 }
 
+D3D11Texture::D3D11Texture(ID3D11Device2* m_Device) : m_Device(m_Device)
+{
+	m_Device->GetImmediateContext2(&m_DeviceContext);
+}
+
 D3D11Texture::~D3D11Texture()
 {
     LEV_PROFILE_FUNCTION();
@@ -2247,18 +645,17 @@ D3D11Texture::~D3D11Texture()
 void D3D11Texture::Bind(const uint32_t slot, const ShaderType type) const
 {
     LEV_PROFILE_FUNCTION();
-
-    //TODO: Fix compute shader binding (uav)
+	
     if (type & ShaderType::Vertex)
-        context->VSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        m_DeviceContext->VSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (type & ShaderType::Pixel)
-        context->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        m_DeviceContext->PSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (type & ShaderType::Geometry)
-        context->GSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        m_DeviceContext->GSSetShaderResources(slot, 1, &m_ShaderResourceView);
     if (type & ShaderType::Compute)
     {
-        context->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
-        context->CSSetUnorderedAccessViews(slot, 1, &m_UnorderedAccessView, nullptr);
+        m_DeviceContext->CSSetShaderResources(slot, 1, &m_ShaderResourceView);
+        m_DeviceContext->CSSetUnorderedAccessViews(slot, 1, &m_UnorderedAccessView, nullptr);
     }
 
     if (m_SamplerState)
@@ -2273,15 +670,15 @@ void D3D11Texture::Unbind(const uint32_t slot, const ShaderType type) const
     ID3D11UnorderedAccessView* uav[] = { nullptr };
 
     if (type & ShaderType::Vertex)
-        context->VSSetShaderResources(slot, 1, srv);
+        m_DeviceContext->VSSetShaderResources(slot, 1, srv);
     if (type & ShaderType::Pixel)
-        context->PSSetShaderResources(slot, 1, srv);
+        m_DeviceContext->PSSetShaderResources(slot, 1, srv);
     if (type & ShaderType::Geometry)
-        context->GSSetShaderResources(slot, 1, srv);
+        m_DeviceContext->GSSetShaderResources(slot, 1, srv);
     if (type & ShaderType::Compute)
     {
-        context->CSSetShaderResources(slot, 1, srv);
-        context->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
+        m_DeviceContext->CSSetShaderResources(slot, 1, srv);
+        m_DeviceContext->CSSetUnorderedAccessViews(slot, 1, uav, nullptr);
     }
 
     if (m_SamplerState)
@@ -2292,18 +689,18 @@ void D3D11Texture::Clear(ClearFlags clearFlags, const Vector4& color, const floa
 {
     LEV_PROFILE_FUNCTION();
 
-	if (m_RenderTargetView && (int)clearFlags & (int)ClearFlags::Color)
+	if (m_RenderTargetView && clearFlags & ClearFlags::Color)
 	{
-		context->ClearRenderTargetView(m_RenderTargetView, &color.x);
+		m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, &color.x);
 	}
 
 	{
 		UINT flags = 0;
-		flags |= (int)clearFlags & (int)ClearFlags::Depth ? D3D11_CLEAR_DEPTH : 0;
-		flags |= (int)clearFlags & (int)ClearFlags::Stencil ? D3D11_CLEAR_STENCIL : 0;
+		flags |= clearFlags & ClearFlags::Depth ? D3D11_CLEAR_DEPTH : 0;
+		flags |= clearFlags & ClearFlags::Stencil ? D3D11_CLEAR_STENCIL : 0;
 		if (m_DepthStencilView && flags > 0)
 		{
-			context->ClearDepthStencilView(m_DepthStencilView, flags, depth, stencil);
+			m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, flags, depth, stencil);
 		}
 	}
 }
@@ -2391,7 +788,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 
     textureDesc.MiscFlags = m_GenerateMipMaps ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
 
-    auto res = device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
+    auto res = m_Device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
     LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture")
 
     if (textureDesc.BindFlags & D3D11_BIND_DEPTH_STENCIL)
@@ -2430,7 +827,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 		    }
 	    }
 
-        res = device->CreateDepthStencilView(m_Texture2D, &depthStencilViewDesc, &m_DepthStencilView);
+        res = m_Device->CreateDepthStencilView(m_Texture2D, &depthStencilViewDesc, &m_DepthStencilView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create depth/stencil view")
     }
 
@@ -2470,7 +867,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 			    resourceViewDesc.Texture2D.MostDetailedMip = 0;
 		    }
 	    }
-        res = device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView);
+        res = m_Device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
 
 	    if (m_GenerateMipMaps)
@@ -2513,7 +910,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 		    }
 	    }
 
-        res = device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView);
+        res = m_Device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create render target view")
     }
 
@@ -2538,7 +935,7 @@ void D3D11Texture::Resize2D(uint16_t width, uint16_t height)
 		    unorderedAccessViewDesc.Texture2D.MipSlice = 0;
 	    }
 
-        res = device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView);
+        res = m_Device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create unordered access view")
     }
 
@@ -2598,7 +995,7 @@ void D3D11Texture::ResizeCube(const uint16_t width, const uint16_t height)
     textureDesc.MiscFlags = m_GenerateMipMaps ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
     textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE;
     
-    auto res = device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
+    auto res = m_Device->CreateTexture2D(&textureDesc, nullptr, &m_Texture2D);
     LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture")
 
     if ((textureDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE) != 0)
@@ -2613,7 +1010,7 @@ void D3D11Texture::ResizeCube(const uint16_t width, const uint16_t height)
         resourceViewDesc.Texture2DArray.MipLevels = m_GenerateMipMaps ? -1 : 1;
         resourceViewDesc.Texture2DArray.MostDetailedMip = 0;
         
-        res = device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView);
+        res = m_Device->CreateShaderResourceView(m_Texture2D, &resourceViewDesc, &m_ShaderResourceView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
 
 	    if (m_GenerateMipMaps)
@@ -2631,7 +1028,7 @@ void D3D11Texture::ResizeCube(const uint16_t width, const uint16_t height)
         renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
         renderTargetViewDesc.Texture2DArray.ArraySize = m_NumSlices;
 
-        res = device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView);
+        res = m_Device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &m_RenderTargetView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create render target view")
     }
 
@@ -2648,7 +1045,7 @@ void D3D11Texture::ResizeCube(const uint16_t width, const uint16_t height)
         unorderedAccessViewDesc.Texture2DArray.FirstArraySlice = 0;
         unorderedAccessViewDesc.Texture2DArray.ArraySize = m_NumSlices;
 
-        res = device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView);
+        res = m_Device->CreateUnorderedAccessView(m_Texture2D, &unorderedAccessViewDesc, &m_UnorderedAccessView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create unordered access view")
     }
 
@@ -2687,7 +1084,7 @@ Ref<Texture> D3D11Texture::GetMipMapLevel(int level) const
     //TODO: Support for other dimensions
 
     //<--- Texture Cube ---<<
-    Ref<D3D11Texture> mipMapTexture = CreateRef<D3D11Texture>();
+    Ref<D3D11Texture> mipMapTexture = CreateRef<D3D11Texture>(m_Device);
     {
         D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
         renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
@@ -2696,7 +1093,7 @@ Ref<Texture> D3D11Texture::GetMipMapLevel(int level) const
         renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
         renderTargetViewDesc.Texture2DArray.ArraySize = m_NumSlices;
 
-        const auto res = device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &mipMapTexture->m_RenderTargetView);
+        const auto res = m_Device->CreateRenderTargetView(m_Texture2D, &renderTargetViewDesc, &mipMapTexture->m_RenderTargetView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create render target view")
     }
     
@@ -2712,7 +1109,7 @@ Ref<Texture> D3D11Texture::GetMipMapLevel(int level) const
         resourceViewDesc.Texture2DArray.MipLevels = 1;
         resourceViewDesc.Texture2DArray.MostDetailedMip = level;
         
-        const auto res = device->CreateShaderResourceView(mipRes, &resourceViewDesc, &mipMapTexture->m_ShaderResourceView);
+        const auto res = m_Device->CreateShaderResourceView(mipRes, &resourceViewDesc, &mipMapTexture->m_ShaderResourceView);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create texture resource view")
     }
 
@@ -2739,15 +1136,15 @@ void D3D11Texture::CopyFrom(const Ref<Texture> sourceTexture)
         {
         case Dimension::Texture1D:
         case Dimension::Texture1DArray:
-	        context->CopyResource(m_Texture1D, srcTexture->m_Texture1D);
+	        m_DeviceContext->CopyResource(m_Texture1D, srcTexture->m_Texture1D);
 	        break;
         case Dimension::Texture2D:
         case Dimension::Texture2DArray:
-	        context->CopyResource(m_Texture2D, srcTexture->m_Texture2D);
+	        m_DeviceContext->CopyResource(m_Texture2D, srcTexture->m_Texture2D);
 	        break;
         case Dimension::Texture3D:
         case Dimension::TextureCube:
-	        context->CopyResource(m_Texture3D, srcTexture->m_Texture3D);
+	        m_DeviceContext->CopyResource(m_Texture3D, srcTexture->m_Texture3D);
 	        break;
         }
     }
@@ -2757,12 +1154,12 @@ void D3D11Texture::CopyFrom(const Ref<Texture> sourceTexture)
         D3D11_MAPPED_SUBRESOURCE mappedResource;
 
         // Copy the texture data from the texture resource
-        auto res = context->Map(m_Texture2D, 0, D3D11_MAP_READ, 0, &mappedResource);
+        auto res = m_DeviceContext->Map(m_Texture2D, 0, D3D11_MAP_READ, 0, &mappedResource);
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to map texture resource for reading")
 
         memcpy_s(m_Buffer.data(), m_Buffer.size(), mappedResource.pData, m_Buffer.size());
 
-        context->Unmap(m_Texture2D, 0);
+        m_DeviceContext->Unmap(m_Texture2D, 0);
     }
 }
 
@@ -2776,7 +1173,7 @@ Ref<Texture> D3D11Texture::Clone()
         LEV_NOT_IMPLEMENTED
     case Dimension::Texture2D:
     case Dimension::Texture2DArray:
-        other = CreateTexture2D(m_Width, m_Height, m_NumSlices, m_TextureFormat, m_CPUAccess, m_UAV, m_GenerateMipMaps);
+        other = CreateTexture2D(m_Device, m_Width, m_Height, m_NumSlices, m_TextureFormat, m_CPUAccess, m_UAV, m_GenerateMipMaps);
         break;
     case Dimension::Texture3D:
     case Dimension::TextureCube:
@@ -2795,6 +1192,6 @@ void D3D11Texture::GenerateMipMaps()
     LEV_PROFILE_FUNCTION();
 
 	if (m_GenerateMipMaps && m_ShaderResourceView)
-		context->GenerateMips(m_ShaderResourceView);
+		m_DeviceContext->GenerateMips(m_ShaderResourceView);
 }
 }

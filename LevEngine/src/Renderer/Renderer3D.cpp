@@ -1,19 +1,21 @@
 #include "levpch.h"
 #include "Renderer3D.h"
 
-#include "ConstantBuffer.h"
+#include "Pipeline/ConstantBuffer.h"
 #include "RenderCommand.h"
-#include "Shader.h"
+#include "Shader/Shader.h"
 #include "3D/Mesh.h"
 #include "3D/Primitives.h"
 #include "Assets/MeshAsset.h"
 #include "Camera/SceneCamera.h"
 #include "Kernel/Application.h"
 #include "Kernel/Window.h"
+#include "Material/MaterialPBR.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 
 namespace LevEngine
 {
+    Ref<Material> Renderer3D::MissingMaterial;
     Ref<ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
     Ref<ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
     Ref<ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
@@ -40,6 +42,8 @@ namespace LevEngine
         m_CameraConstantBuffer = ConstantBuffer::Create(sizeof CameraData, 0);
         m_ModelConstantBuffer = ConstantBuffer::Create(sizeof MeshModelBufferData, 1);
         m_ScreenToViewParamsConstantBuffer = ConstantBuffer::Create(sizeof ScreenToViewParams, 5);
+
+        MissingMaterial = CreateRef<MaterialPBR>();
     }
 
     void Renderer3D::SetCameraBuffer(const SceneCamera* camera, const Matrix& viewMatrix, const Vector3& position)
@@ -65,9 +69,40 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
+        if (!mesh->IndexBuffer) return;
+        
         mesh->Bind(shader);
 
-        const MeshModelBufferData data = {model, model.Transpose().Invert()};
+        Matrix transposeInvertedModel;
+
+        {
+            LEV_PROFILE_SCOPE("Calculate transposed inverted model");
+            transposeInvertedModel = model.Transpose().Invert();
+        }
+
+        {
+            LEV_PROFILE_SCOPE("Bind Per-Instance Data");
+            
+            const MeshModelBufferData data = {model, transposeInvertedModel};
+            m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
+            m_ModelConstantBuffer->Bind(ShaderType::Vertex);
+        }
+
+        {
+            LEV_PROFILE_SCOPE("Draw indexed mesh");
+            
+            RenderCommand::DrawIndexed(mesh->IndexBuffer);
+        }
+    }
+
+    void Renderer3D::DrawMesh(const Matrix& model, const Array<Matrix, AnimationConstants::MaxBoneCount>& finalBoneMatrices, const Ref<Mesh>& mesh,
+        const Ref<Shader>& shader)
+    {
+        LEV_PROFILE_FUNCTION();
+    
+        mesh->Bind(shader);
+
+        const MeshModelBufferData data = { model, model.Transpose().Invert(), finalBoneMatrices };
         m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
         m_ModelConstantBuffer->Bind(ShaderType::Vertex);
 
@@ -104,6 +139,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
+        if (!meshRenderer.enabled) return;
         if (!meshRenderer.mesh) return;
 
         const auto mesh = meshRenderer.mesh->GetMesh();

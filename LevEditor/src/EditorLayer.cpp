@@ -19,7 +19,8 @@
 #include "Panels/StatusBar.h"
 #include "Panels/Toolbar.h"
 #include "Panels/ViewportPanel.h"
-#include "Renderer/RendererContext.h"
+#include "Physics/Physics.h"
+#include "Renderer/RenderContext.h"
 
 namespace LevEngine::Editor
 {
@@ -56,7 +57,11 @@ namespace LevEngine::Editor
     {
         LEV_PROFILE_FUNCTION();
 
+        m_ProjectEditor->Update();
+
         if (!Project::GetProject()) return;
+
+        SceneManager::TryLoadRequestedScene();
         
         if (Input::IsKeyDown(KeyCode::Escape))
             m_Game->Unfocus();
@@ -116,6 +121,9 @@ namespace LevEngine::Editor
         if (!Project::GetProject()) return;
         
         m_DockSpace->Render();
+        m_MainMenuBar->RenderAsMain();
+        m_MainToolbar->Render();
+        m_MainStatusBar->Render();
         m_Game->Render();
         m_Viewport->Render();
         m_Hierarchy->Render();
@@ -125,9 +133,6 @@ namespace LevEngine::Editor
         m_Settings->Render();
         m_Statistics->Render();
         m_ScriptsPanel->Render();
-        m_MainToolbar->Render();
-        m_MainStatusBar->Render();
-
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
@@ -169,19 +174,26 @@ namespace LevEngine::Editor
     {
         if (!m_SceneEditor->SaveScene()) return;
 
-        auto& scene = SceneManager::GetActiveScene();        
+        App::Get().IsPlaying = true;
+
+        App::Get().GetPhysics().ResetPhysicsScene();
+        App::Get().GetPhysics().ClearAccumulator();
+        
+        SceneManager::LoadScene(SceneManager::GetActiveScenePath());
 
         m_SceneState = SceneState::Play;
         m_Game->Focus();
-        scene->OnInit();
+        
         Selection::Deselect();
     }
     void EditorLayer::OnSceneStop()
     {
+        App::Get().IsPlaying = false;
+
         m_SceneState = SceneState::Edit;
         m_Game->Unfocus();
         Selection::Deselect();
-        
+
         m_SceneEditor->OpenScene(SceneManager::GetActiveScenePath());
     }
     
@@ -201,14 +213,15 @@ namespace LevEngine::Editor
         m_SaveData.SetLastOpenedProject(Project::GetPath());
         m_SaveData.Save();
 
-        ResourceManager::Init(Project::GetRoot());
         AssetDatabase::ProcessAllAssets();
+        ResourceManager::Init(Project::GetRoot());
         
         const auto startScene = Project::GetStartScene();
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))
             SceneManager::LoadEmptyScene();
 
         auto mainTexture = Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0);
+        m_DockSpace = CreateRef<DockSpace>();
         m_Viewport = CreateRef<ViewportPanel>(mainTexture);
         m_Game = CreateRef<GamePanel>(mainTexture, [this]{ return m_SceneState; });
         m_Hierarchy = CreateRef<HierarchyPanel>();
@@ -218,7 +231,6 @@ namespace LevEngine::Editor
         m_MainStatusBar = CreateRef<StatusBar>();
         m_MainMenuBar = CreateRef<MenuBar>();
         m_MainToolbar = CreateRef<Toolbar>(m_MainMenuBar, [this]{ return m_SceneState; }, std::bind(&EditorLayer::OnPlayButtonClicked, this));
-        m_DockSpace = CreateRef<DockSpace>(m_MainToolbar, m_MainMenuBar);
         m_Statistics = CreateRef<StatisticsPanel>();
         m_ScriptsPanel = CreateRef<ScriptsPanel>();
 

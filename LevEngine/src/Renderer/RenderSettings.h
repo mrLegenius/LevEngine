@@ -24,7 +24,13 @@ struct RenderSettings
 
 	static bool UseFrustumCulling;
 	
-	static constexpr bool EnableShaderDebug = false;
+	static constexpr bool EnableShaderDebug =
+#ifdef LEV_DEBUG
+	true;
+#else
+	false;
+#endif
+	
 	static constexpr uint32_t ShadowMapSlot = 9;
 	static constexpr uint32_t MaterialSlot = 4;
 

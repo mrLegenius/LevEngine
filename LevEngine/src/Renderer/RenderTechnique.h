@@ -1,20 +1,21 @@
 #pragma once
-#include "RenderPass.h"
+#include "Passes/RenderPass.h"
 
 namespace LevEngine
 {
-class RenderTechnique
-{
-public:
-	RenderTechnique() = default;
+    class RenderTechnique
+    {
+    public:
+        RenderTechnique() = default;
 
-	void AddPass(Ref<RenderPass> renderPass);
-	void Process(entt::registry& registry, RenderParams params) const;
+        void AddPass(Ref<RenderPass> renderPass);
+        void Process(entt::registry& registry, RenderParams params) const;
 
-	void SetViewport(const Viewport& viewport);
-private:
-	using PassList = Vector<Ref<RenderPass>>;
+        void SetViewport(const Viewport& viewport);
 
-	PassList m_PassList;
-};
+    private:
+        using PassList = Vector<Ref<RenderPass>>;
+
+        PassList m_PassList;
+    };
 }

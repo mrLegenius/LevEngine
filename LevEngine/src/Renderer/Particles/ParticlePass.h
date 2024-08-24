@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/RenderPass.h"
+#include "Renderer/Passes/RenderPass.h"
 
 #include "ParticleEmissionPass.h"
 #include "ParticleRenderingPass.h"
@@ -52,6 +52,8 @@ namespace LevEngine
         Ref<StructuredBuffer> m_DeadBuffer{};
         Ref<StructuredBuffer> m_SortedBuffer{};
 
+        Ref<ConstantBuffer> m_CameraData{};
+        
         Ref<Texture> m_DepthTexture{};
         Ref<Texture> m_NormalTexture{};
 

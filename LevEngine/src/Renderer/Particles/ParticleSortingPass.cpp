@@ -3,7 +3,7 @@
 
 #include "BitonicSort.h"
 #include "Renderer/RenderSettings.h"
-#include "Renderer/StructuredBuffer.h"
+#include "Renderer/Pipeline/StructuredBuffer.h"
 
 namespace LevEngine
 {
@@ -19,6 +19,8 @@ namespace LevEngine
 
     void ParticleSortingPass::Process(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
+        
         m_BitonicSort->Sort(m_SortedBuffer, m_TempBuffer);
     }
 }

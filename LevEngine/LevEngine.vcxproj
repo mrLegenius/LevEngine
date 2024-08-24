@@ -62,8 +62,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;lua54.lib;DetourCrowd-d.lib;Detour-d.lib;Recast-d.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform);$(SolutionDir)lib\$(ConfigurationName)\PhysX\;$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;lua54.lib;DetourCrowd.lib;Detour.lib;DetourTileCache.lib;Recast.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -75,7 +75,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;YAML_CPP_STATIC_DEFINE;%(PreprocessorDefinitions);_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;external\sol;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external;src;external/yaml-cpp/include;external/spdlog/include;external/imgui;$(SolutionDir)\DirectXTK\Inc;external/eastl/include;external/eabase/include/Common;$(SolutionDir)\FMODStudio\studio\inc;$(SolutionDir)\FMODStudio\core\inc;external/assimp/include;external/vgjs/include;external\lua\include;external/physx/include;external\sol;external/recastnavigation/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>levpch.h</PrecompiledHeaderFile>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
@@ -87,46 +87,87 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;lua54.lib;Detour.lib;DetourCrowd.lib;DetourTileCache.lib;Recast.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;lua54.lib;Detour.lib;DetourCrowd.lib;DetourTileCache.lib;Recast.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform);$(SolutionDir)lib\$(ConfigurationName)\PhysX\;$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="external\eventhandling\eventhandling.hpp" />
+    <ClInclude Include="external\eventhandling\events\event.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\abstracteventhandler.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\eventhandlerptr.h" />
+    <ClInclude Include="external\eventhandling\events\handlers\functoreventhandler.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\handlercast.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\helpers\innerholder.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\helpers\objectsaver.hpp" />
+    <ClInclude Include="external\eventhandling\events\handlers\methodeventhandler.hpp" />
+    <ClInclude Include="external\eventhandling\events\helpers\is_equatable.hpp" />
+    <ClInclude Include="external\eventhandling\events\joins\abstracteventjoin.h" />
+    <ClInclude Include="external\eventhandling\events\joins\eventjoinwrapper.h" />
+    <ClInclude Include="external\eventhandling\events\joins\eventjoinwrapper.hpp" />
+    <ClInclude Include="external\eventhandling\events\joins\handlereventjoin.h" />
+    <ClInclude Include="external\eventhandling\events\joins\handlereventjoin.hpp" />
     <ClInclude Include="src\AI\Components\AIAgentComponent.h" />
     <ClInclude Include="src\AI\Components\AIAgentCrowdComponent.h" />
     <ClInclude Include="src\AI\Systems\AIAgentCrowdUpdateSystem.h" />
+    <ClInclude Include="src\Assets\AnimationAsset.h" />
+    <ClInclude Include="src\Assets\Cache\MeshAssetCache.h" />
+    <ClInclude Include="src\Assets\Cache\ModelAssetCache.h" />
     <ClInclude Include="src\Assets\EngineAssets.h" />
+    <ClInclude Include="src\Assets\ModelAsset.h" />
+    <ClInclude Include="src\Assets\ModelNode.h" />
     <ClInclude Include="src\Assets\SceneAsset.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
+    <ClInclude Include="src\BinaryIO\BinaryReader.h" />
+    <None Include="src\BinaryIO\BinaryReader.inl" />
+    <ClInclude Include="src\BinaryIO\BinaryWriter.h" />
     <ClInclude Include="src\DataTypes\Set.h" />
+    <ClInclude Include="src\GUI\Icons\IconsFontAwesome6.h" />
     <ClInclude Include="src\JobSystem\Job.h" />
     <ClInclude Include="src\JobSystem\ParallelJob.h" />
     <ClInclude Include="src\Kernel\Statistic.h" />
     <ClInclude Include="src\Physics\Components\CharacterController.h" />
     <ClInclude Include="src\Physics\Components\Collision.h" />
     <ClInclude Include="src\Physics\Components\Controller.h" />
+    <ClInclude Include="src\Physics\Components\ControllerColliderHit.h" />
     <ClInclude Include="src\Physics\Components\Destroyable.h" />
+    <ClInclude Include="src\Physics\Components\FilterLayer.h" />
+    <ClInclude Include="src\Physics\Components\RaycastHit.h" />
     <ClInclude Include="src\Physics\Components\PhysicMaterial.h" />
-    <ClInclude Include="src\Physics\Events\ContactReportCallback.h" />
+    <ClInclude Include="src\Physics\Events\CharacterControllerEventCallback.h" />
+    <ClInclude Include="src\Physics\Events\RigidbodyEventCallback.h" />
+    <ClInclude Include="src\Physics\PhysicsSettings.h" />
+    <ClInclude Include="src\Physics\PhysicsSettingsSerializer.h" />
     <ClInclude Include="src\Physics\PhysicsUpdate.h" />
     <ClInclude Include="src\Physics\PhysicsUtils.h" />
-    <ClInclude Include="src\Physics\Systems\CharacterControllerInitSystem.h" />
-    <ClInclude Include="src\Physics\Systems\RigidbodyInitSystem.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DeferredContexts.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11DispatchCommand.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Query.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RefreshRateUtil.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11RenderDebugEvent.h" />
-    <ClInclude Include="src\Renderer\BeginQueryPass.h" />
-    <ClInclude Include="src\Renderer\DispatchCommand.h" />
-    <ClInclude Include="src\Renderer\DispatchCommandBase.h" />
-    <ClInclude Include="src\Renderer\EndQueryPass.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RenderDevice.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11TextureFormatsUtils.h" />
+    <ClInclude Include="src\Renderer\3D\Animation.h" />
+    <ClInclude Include="src\Renderer\3D\AnimationConstants.h" />
+    <ClInclude Include="src\Renderer\3D\Animator.h" />
+    <ClInclude Include="src\Renderer\3D\Bone.h" />
+    <ClInclude Include="src\Renderer\3D\BoneInfo.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\AnimationLoader.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\AssimpConverter.h" />
+    <ClInclude Include="src\Renderer\3D\MeshLoading\ModelParser.h" />
+    <ClInclude Include="src\Renderer\Dispatch\DispatchCommand.h" />
+    <ClInclude Include="src\Renderer\Dispatch\DispatchCommands.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPrecomputePass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentRenderPass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentShaders.h" />
-    <ClInclude Include="src\Renderer\LightCollection.h" />
+    <ClInclude Include="src\Renderer\Lighting\CascadeShadowMap.h" />
+    <ClInclude Include="src\Renderer\Lighting\LightCollection.h" />
+    <ClInclude Include="src\Renderer\Material\Material.h" />
+    <ClInclude Include="src\Renderer\Material\MaterialPBR.h" />
+    <ClInclude Include="src\Renderer\Material\MaterialSimple.h" />
     <ClInclude Include="src\Renderer\Particles\BitonicSort.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleAssets.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleEmissionPass.h" />
@@ -136,13 +177,48 @@
     <ClInclude Include="src\Renderer\Particles\ParticleSortingPass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticlesTextureArray.h" />
     <ClInclude Include="src\Renderer\Particles\ParticlesUtils.h" />
-    <ClInclude Include="src\Renderer\Query.h" />
+    <ClInclude Include="src\Renderer\Passes\ClearPass.h" />
+    <ClInclude Include="src\Renderer\Passes\CopyTexturePass.h" />
+    <ClInclude Include="src\Renderer\Passes\DeferredLightingPass.h" />
+    <ClInclude Include="src\Renderer\Passes\OpaquePass.h" />
+    <ClInclude Include="src\Renderer\Passes\QuadRenderPass.h" />
+    <ClInclude Include="src\Renderer\Passes\RenderPass.h" />
+    <ClInclude Include="src\Renderer\Passes\ShadowMapPass.h" />
+    <ClInclude Include="src\Renderer\Passes\TransparentPass.h" />
+    <ClInclude Include="src\Renderer\Pipeline\BlendState.h" />
+    <ClInclude Include="src\Renderer\Pipeline\ClearFlags.h" />
+    <ClInclude Include="src\Renderer\Pipeline\ConstantBuffer.h" />
+    <ClInclude Include="src\Renderer\Pipeline\CPUAccess.h" />
+    <ClInclude Include="src\Renderer\Pipeline\DepthFunc.h" />
+    <ClInclude Include="src\Renderer\Pipeline\DepthStencilState.h" />
+    <ClInclude Include="src\Renderer\Pipeline\IndexBuffer.h" />
+    <ClInclude Include="src\Renderer\Pipeline\PipelineState.h" />
+    <ClInclude Include="src\Renderer\Pipeline\RasterizerState.h" />
+    <ClInclude Include="src\Renderer\Pipeline\Rect.h" />
+    <ClInclude Include="src\Renderer\Pipeline\RenderTarget.h" />
+    <ClInclude Include="src\Renderer\Pipeline\SamplerState.h" />
+    <ClInclude Include="src\Renderer\Pipeline\StructuredBuffer.h" />
+    <ClInclude Include="src\Renderer\Pipeline\Texture.h" />
+    <ClInclude Include="src\Renderer\Pipeline\UAVType.h" />
+    <ClInclude Include="src\Renderer\Pipeline\VertexBuffer.h" />
+    <ClInclude Include="src\Renderer\Pipeline\Viewport.h" />
+    <ClInclude Include="src\Renderer\Query\BeginQueryPass.h" />
+    <ClInclude Include="src\Renderer\Query\EndQueryPass.h" />
+    <ClInclude Include="src\Renderer\Query\Query.h" />
     <ClInclude Include="src\Renderer\RenderDebugEvent.h" />
+    <ClInclude Include="src\Renderer\RenderDevice.h" />
+    <ClInclude Include="src\Renderer\Shader\BufferBinding.h" />
+    <ClInclude Include="src\Renderer\Shader\Shader.h" />
+    <ClInclude Include="src\Renderer\Shader\ShaderMacros.h" />
+    <ClInclude Include="src\Renderer\Shader\ShaderParameter.h" />
+    <ClInclude Include="src\Renderer\Shader\ShaderType.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.h" />
     <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h" />
     <ClInclude Include="src\Scene\Components\Transform\TransformSerializer.h" />
+    <ClInclude Include="src\Scene\EnttMutex.h" />
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
+    <ClInclude Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.h" />
     <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
@@ -151,9 +227,7 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugCircle.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshableComponent.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshComponent.h" />
-    <ClInclude Include="src\Scene\Systems\Audio\AudioListenerInitSystem.h" />
     <ClInclude Include="src\Audio\AudioPlayer.h" />
-    <ClInclude Include="src\Scene\Systems\Audio\AudioSourceInitSystem.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompiler.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eacompilertraits.h" />
     <ClInclude Include="external\eabase\include\Common\EABase\config\eaplatform.h" />
@@ -924,7 +998,6 @@
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\DataTypes\String.h" />
-    <ClInclude Include="src\MeshLoader.h" />
     <ClInclude Include="src\levpch.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11BlendState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h" />
@@ -942,13 +1015,7 @@
     <ClInclude Include="src\Project.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
     <ClInclude Include="src\Renderer\3D\Primitives.h" />
-    <ClInclude Include="src\Renderer\BlendState.h" />
-    <ClInclude Include="src\Renderer\BufferBinding.h" />
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
-    <ClInclude Include="src\Renderer\CascadeShadowMap.h" />
-    <ClInclude Include="src\Renderer\ClearFlags.h" />
-    <ClInclude Include="src\Renderer\ClearPass.h" />
-    <ClInclude Include="src\Renderer\ConstantBuffer.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCube.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugGrid.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugRender.h" />
@@ -957,48 +1024,21 @@
     <ClInclude Include="src\Renderer\DebugRender\DebugSphere.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugWireCube.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugWireSphere.h" />
-    <ClInclude Include="src\Renderer\Material.h" />
-    <ClInclude Include="src\Renderer\MaterialPBR.h" />
     <ClInclude Include="src\Renderer\PostProcessing\BloomPass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\LuminancePass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\PostProcessingPass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\TonemappingPass.h" />
     <ClInclude Include="src\Renderer\PostProcessing\VignettePass.h" />
-    <ClInclude Include="src\Renderer\QuadRenderPass.h" />
-    <ClInclude Include="src\Renderer\RendererContext.h" />
-    <ClInclude Include="src\Renderer\CopyTexturePass.h" />
-    <ClInclude Include="src\Renderer\CPUAccess.h" />
-    <ClInclude Include="src\Platform\D3D11\D3D11RendererContext.h" />
-    <ClInclude Include="src\Platform\D3D11\D3D11ShadowMap.h" />
-    <ClInclude Include="src\Renderer\DeferredLightingPass.h" />
-    <ClInclude Include="src\Renderer\DepthFunc.h" />
-    <ClInclude Include="src\Renderer\DepthStencilState.h" />
-    <ClInclude Include="src\Renderer\IndexBuffer.h" />
-    <ClInclude Include="src\Renderer\MaterialSimple.h" />
-    <ClInclude Include="src\Renderer\OpaquePass.h" />
-    <ClInclude Include="src\Renderer\PipelineState.h" />
-    <ClInclude Include="src\Renderer\RasterizerState.h" />
-    <ClInclude Include="src\Renderer\Rect.h" />
+    <ClInclude Include="src\Renderer\RenderContext.h" />
+    <ClInclude Include="src\Platform\D3D11\D3D11RenderContext.h" />
     <ClInclude Include="src\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\Renderer3D.h" />
     <ClInclude Include="src\Renderer\RenderCommands.h" />
     <ClInclude Include="src\Renderer\RenderParams.h" />
-    <ClInclude Include="src\Renderer\RenderPass.h" />
     <ClInclude Include="src\Renderer\RenderSettings.h" />
-    <ClInclude Include="src\Renderer\RenderTarget.h" />
     <ClInclude Include="src\Renderer\RenderTechnique.h" />
-    <ClInclude Include="src\Renderer\SamplerState.h" />
-    <ClInclude Include="src\Renderer\Shader.h" />
-    <ClInclude Include="src\Renderer\ShaderParameter.h" />
-    <ClInclude Include="src\Renderer\ShaderType.h" />
-    <ClInclude Include="src\Renderer\ShadowMapPass.h" />
-    <ClInclude Include="src\Renderer\StructuredBuffer.h" />
-    <ClInclude Include="src\Renderer\Texture.h" />
-    <ClInclude Include="src\Renderer\TransparentPass.h" />
-    <ClInclude Include="src\Renderer\VertexBuffer.h" />
-    <ClInclude Include="src\Renderer\Viewport.h" />
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\Scene\Components\Animation\WaypointMovement.h" />
     <ClInclude Include="src\Scene\Components\Audio\AudioListener.h" />
@@ -1031,41 +1071,59 @@
     <ClInclude Include="src\TextureLibrary.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="external\eventhandling\events\joins\abstracteventjoin.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="external\eventhandling\events\joins\eventjoinwrapper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\AI\Components\AIAgentComponent.cpp" />
     <ClCompile Include="src\AI\Components\AIAgentCrowdComponent.cpp" />
     <ClCompile Include="src\AI\Systems\AIAgentCrowdUpdateSystem.cpp" />
+    <ClCompile Include="src\Assets\Cache\MeshAssetCache.cpp" />
+    <ClCompile Include="src\Assets\Cache\ModelAssetCache.cpp" />
     <ClCompile Include="src\Assets\EngineAssets.cpp" />
     <ClCompile Include="src\Assets\MaterialAsset.cpp" />
+    <ClCompile Include="src\Assets\ModelAsset.cpp" />
     <ClCompile Include="src\Assets\SceneAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\BinaryIO\BinaryReader.cpp" />
+    <ClCompile Include="src\BinaryIO\BinaryWriter.cpp" />
     <ClCompile Include="src\JobSystem\Job.cpp" />
     <ClCompile Include="src\JobSystem\ParallelJob.cpp" />
     <ClCompile Include="src\Kernel\Statistic.cpp" />
     <ClCompile Include="src\Physics\Components\CharacterController.cpp" />
-    <ClCompile Include="src\Physics\Events\ContactReportCallback.cpp" />
+    <ClCompile Include="src\Physics\Events\CharacterControllerEventCallback.cpp" />
+    <ClCompile Include="src\Physics\Events\RigidbodyEventCallback.cpp" />
+    <ClCompile Include="src\Physics\PhysicsSettings.cpp" />
+    <ClCompile Include="src\Physics\PhysicsSettingsSerializer.cpp" />
     <ClCompile Include="src\Physics\PhysicsUpdate.cpp" />
-    <ClCompile Include="src\Physics\Systems\CharacterControllerInitSystem.cpp" />
-    <ClCompile Include="src\Physics\Systems\RigidbodyInitSystem.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DeferredContexts.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11DispatchCommand.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11Query.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderDebugEvent.cpp" />
-    <ClCompile Include="src\Renderer\BeginQueryPass.cpp" />
     <ClCompile Include="src\Physics\Components\ConstantForce.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11RenderDevice.cpp" />
+    <ClCompile Include="src\Renderer\3D\MeshLoading\ModelParser.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCircle.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugGrid.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugSphere.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireCube.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugWireSphere.cpp" />
-    <ClCompile Include="src\Renderer\DispatchCommand.cpp" />
-    <ClCompile Include="src\Renderer\DispatchCommandBase.cpp" />
-    <ClCompile Include="src\Renderer\EndQueryPass.cpp" />
+    <ClCompile Include="src\Renderer\Dispatch\DispatchCommand.cpp" />
+    <ClCompile Include="src\Renderer\Dispatch\DispatchCommands.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentPass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentPrecomputePass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentShaders.cpp" />
-    <ClCompile Include="src\Renderer\LightCollection.cpp" />
+    <ClCompile Include="src\Renderer\Lighting\CascadeShadowMap.cpp" />
+    <ClCompile Include="src\Renderer\Lighting\LightCollection.cpp" />
+    <ClCompile Include="src\Renderer\Material\Material.cpp" />
+    <ClCompile Include="src\Renderer\Material\MaterialPBR.cpp" />
+    <ClCompile Include="src\Renderer\Material\MaterialSimple.cpp" />
     <ClCompile Include="src\Renderer\Particles\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleAssets.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleEmissionPass.cpp" />
@@ -1074,10 +1132,32 @@
     <ClCompile Include="src\Renderer\Particles\ParticleSimulationPass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleSortingPass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticlesUtils.cpp" />
-    <ClCompile Include="src\Renderer\Query.cpp" />
+    <ClCompile Include="src\Renderer\Passes\ClearPass.cpp" />
+    <ClCompile Include="src\Renderer\Passes\CopyTexturePass.cpp" />
+    <ClCompile Include="src\Renderer\Passes\DeferredLightingPass.cpp" />
+    <ClCompile Include="src\Renderer\Passes\OpaquePass.cpp" />
+    <ClCompile Include="src\Renderer\Passes\QuadRenderPass.cpp" />
+    <ClCompile Include="src\Renderer\Passes\RenderPass.cpp" />
+    <ClCompile Include="src\Renderer\Passes\ShadowMapPass.cpp" />
+    <ClCompile Include="src\Renderer\Passes\TransparentPass.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\BlendState.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\ConstantBuffer.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\DepthStencilState.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\IndexBuffer.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\PipelineState.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\RasterizerState.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\RenderTarget.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\SamplerState.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\StructuredBuffer.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\Texture.cpp" />
+    <ClCompile Include="src\Renderer\Pipeline\VertexBuffer.cpp" />
+    <ClCompile Include="src\Renderer\Query\BeginQueryPass.cpp" />
+    <ClCompile Include="src\Renderer\Query\EndQueryPass.cpp" />
+    <ClCompile Include="src\Renderer\Query\Query.cpp" />
     <ClCompile Include="src\Renderer\RenderDebugEvent.cpp" />
-    <ClCompile Include="src\Renderer\RenderPass.cpp" />
     <ClCompile Include="src\Renderer\RenderSettings.cpp" />
+    <ClCompile Include="src\Renderer\Shader\Shader.cpp" />
+    <ClCompile Include="src\Renderer\Shader\ShaderParameter.cpp" />
     <ClCompile Include="src\Scene\Components\Transform\TransformSerializer.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.cpp" />
     <ClCompile Include="src\Scene\Systems\EntityDestroySystem.cpp" />
@@ -1087,9 +1167,7 @@
     <ClCompile Include="src\Physics\Components\Rigidbody.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshableComponent.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshComponent.cpp" />
-    <ClCompile Include="src\Scene\Systems\Audio\AudioListenerInitSystem.cpp" />
     <ClCompile Include="src\Audio\AudioPlayer.cpp" />
-    <ClCompile Include="src\Scene\Systems\Audio\AudioSourceInitSystem.cpp" />
     <ClCompile Include="external\eastl\source\allocator_eastl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -1317,6 +1395,7 @@
     <ClCompile Include="src\Kernel\Layer.cpp" />
     <ClCompile Include="src\Kernel\LayerStack.cpp" />
     <ClCompile Include="src\Kernel\Logger.cpp" />
+    <ClInclude Include="src\Kernel\RenderDeviceFactory.h" />
     <ClCompile Include="src\Kernel\Time\Time.cpp" />
     <ClCompile Include="src\Kernel\Time\Timeline.cpp" />
     <ClCompile Include="src\Kernel\Time\TimelineFactory.cpp" />
@@ -1346,47 +1425,28 @@
     <ClCompile Include="src\Project.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
     <ClCompile Include="src\Renderer\3D\Primitives.cpp" />
-    <ClCompile Include="src\Renderer\BlendState.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
-    <ClCompile Include="src\Renderer\CascadeShadowMap.cpp" />
-    <ClCompile Include="src\Renderer\ClearPass.cpp" />
-    <ClCompile Include="src\Renderer\ConstantBuffer.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugRender.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugRenderPass.cpp" />
-    <ClCompile Include="src\Renderer\Material.cpp" />
-    <ClCompile Include="src\Renderer\MaterialPBR.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\BloomPass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\LuminanceAdaptationPass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\LuminancePass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\PostProcessingPass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\TonemappingPass.cpp" />
     <ClCompile Include="src\Renderer\PostProcessing\VignettePass.cpp" />
-    <ClCompile Include="src\Renderer\QuadRenderPass.cpp" />
-    <ClCompile Include="src\Renderer\RendererContext.cpp" />
-    <ClCompile Include="src\Renderer\CopyTexturePass.cpp" />
-    <ClCompile Include="src\Platform\D3D11\D3D11RendererContext.cpp" />
+    <ClCompile Include="src\Renderer\RenderContext.cpp" />
+    <ClCompile Include="src\Platform\D3D11\D3D11RenderContext.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11RenderCommands.cpp" />
-    <ClCompile Include="src\Platform\D3D11\D3D11ShadowMap.cpp" />
-    <ClCompile Include="src\Renderer\DeferredLightingPass.cpp" />
-    <ClCompile Include="src\Renderer\DepthStencilState.cpp" />
-    <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
-    <ClCompile Include="src\Renderer\MaterialSimple.cpp" />
-    <ClCompile Include="src\Renderer\OpaquePass.cpp" />
-    <ClCompile Include="src\Renderer\PipelineState.cpp" />
-    <ClCompile Include="src\Renderer\RasterizerState.cpp" />
     <ClCompile Include="src\Renderer\RenderCommands.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
-    <ClCompile Include="src\Renderer\RenderTarget.cpp" />
     <ClCompile Include="src\Renderer\RenderTechnique.cpp" />
-    <ClCompile Include="src\Renderer\SamplerState.cpp" />
-    <ClCompile Include="src\Renderer\Shader.cpp" />
-    <ClCompile Include="src\Renderer\ShaderParameter.cpp" />
-    <ClCompile Include="src\Renderer\ShadowMapPass.cpp" />
-    <ClCompile Include="src\Renderer\StructuredBuffer.cpp" />
-    <ClCompile Include="src\Renderer\Texture.cpp" />
-    <ClCompile Include="src\Renderer\TransparentPass.cpp" />
-    <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
+    <ClCompile Include="src\Assets\AnimationAsset.cpp" />
+    <ClCompile Include="src\Renderer\3D\Animator.cpp" />
+    <ClCompile Include="src\Renderer\3D\Animation.cpp" />
+    <ClCompile Include="src\Renderer\3D\Bone.cpp" />
+    <ClCompile Include="src\Scene\Components\Animation\AnimatorComponent.cpp" />
+    <ClCompile Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp" />
     <ClCompile Include="src\Scene\Components\Audio\AudioListener.cpp" />
@@ -1413,6 +1473,7 @@
     <ClCompile Include="src\TextureLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\BinaryIO\BinaryWriter.inl" />
     <None Include="src\Scene\Entity.inl" />
     <None Include="src\Scene\Scene.inl" />
     <None Include="src\Scripting\LuaComponentsBinder.inl" />
@@ -1444,9 +1505,6 @@
     <Natvis Include="external\entt\resource.natvis" />
     <Natvis Include="external\entt\signal.natvis" />
     <Natvis Include="external\sol\sol2.natvis" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\AI\NewDirectory1\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

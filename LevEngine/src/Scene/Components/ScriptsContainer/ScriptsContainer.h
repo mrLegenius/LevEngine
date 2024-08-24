@@ -6,19 +6,21 @@
 
 namespace LevEngine
 {
+    class Entity;
     class ScriptAsset;
     
     REGISTER_PARSE_TYPE(ScriptsContainer);
     
     struct ScriptsContainer
     {
+        static void OnConstruct(Entity entity);
+
         UnorderedMap<String, sol::table> m_ScriptComponents;
         Set<Ref<ScriptAsset>> m_ScriptsAssets;
         
         sol::object Get(sol::stack_object key, sol::this_state L);
 
-        void Set(sol::stack_object key, sol::stack_object value,
-                 sol::this_state);
+        void Set(sol::stack_object key, sol::stack_object value, sol::this_state);
     };
 }
 

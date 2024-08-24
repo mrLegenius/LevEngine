@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "PhysicMaterial.h"
+#include "FilterLayer.h"
 
 namespace LevEngine
 {
@@ -16,6 +17,8 @@ namespace LevEngine
             PreventClimbing,
             PreventClimbingAndForceSliding
         };
+
+        FilterLayer m_Layer = FilterLayer::Layer1;
         
         float SlopeLimit = 45.0f;
         float StepOffset = 0.5f;
@@ -27,6 +30,12 @@ namespace LevEngine
         float Radius = 0.5f;
         float Height = 0.5f;
         ClimbingMode m_ClimbingMode = ClimbingMode::Constrained;
+
+        float VerticalVelocity = 0.0f;
+        
+        float GravityScale = 5.0f;
+        
+        bool IsGrounded = false;
 
         Ref<PhysicMaterial> m_PhysicalMaterial { CreateRef<PhysicMaterial>() };
     };

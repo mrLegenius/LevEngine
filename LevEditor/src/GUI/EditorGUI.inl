@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene/Components/TypeParseTraits.h"
 #include "EntitySelection.h"
+#include "ScopedGUIHelpers.h"
 #include "Selection.h"
 #include "Assets/Asset.h"
 
@@ -13,7 +14,10 @@ namespace LevEngine::Editor
 
 		const auto& asset = assetPtr;
 		auto changed = false;
-
+		
+		String idString = asset ? asset->GetName() : label;
+		GUI::ScopedID id{idString};
+		
 		if (!label.empty())
 		{
 			ImGui::AlignTextToFramePadding();
@@ -43,8 +47,11 @@ namespace LevEngine::Editor
 
 			if (const auto& newAsset = AssetDatabase::GetAsset<T>(assetPath))
 			{
-				assetPtr = newAsset;
-				changed = true;
+				if (assetPtr != newAsset)
+				{
+					assetPtr = newAsset;
+					changed = true;
+				}
 			}
 		}
 		ImGui::EndDragDropTarget();
@@ -289,7 +296,34 @@ namespace LevEngine::Editor
 
 		return changed;
 	}
-	
+
+	template<class T, int N>
+	bool EditorGUI::DrawComboBox(const String label, Array<T, N> values, T& value)
+	{
+		bool changed = false;
+		T currentValue = value;
+		if (ImGui::BeginCombo(label.c_str(), ToString(currentValue).c_str()))
+		{
+			for (int i = 0; i < values.size(); i++)
+			{
+				const bool isSelected = currentValue == values[i];
+				if (ImGui::Selectable(ToString(values[i]).c_str(), isSelected))
+				{
+					currentValue = values[i];
+					value = currentValue;
+					changed = true;
+				}
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		return changed;
+	}
+
 	template<class T, int N>
 	bool EditorGUI::DrawComboBox(const String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter)
 	{
@@ -300,5 +334,69 @@ namespace LevEngine::Editor
 		}
 
 		return false;
+	}
+
+	template<class T, int N>
+	bool EditorGUI::DrawFlagComboBox(const String label, Array<String, N> stringValues, T& value)
+	{
+		bool changed = false;
+		auto currentString = stringValues[log2(static_cast<uint32_t>(value))];
+		if (ImGui::BeginCombo(label.c_str(), currentString.c_str()))
+		{
+			for (int i = 0; i < stringValues.size(); i++)
+			{
+				const bool isSelected = currentString == stringValues[i];
+				if (ImGui::Selectable(stringValues[i].c_str(), isSelected))
+				{
+					currentString = stringValues[i];
+					value = static_cast<T>(1 << i);
+					changed = true;
+				}
+				if (isSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+		return changed;
+	}
+
+	template<class T, int N>
+	bool EditorGUI::DrawFlagComboBox(const String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter)
+	{
+		if (T value = getter(); DrawFlagComboBox(label, stringValues, value))
+		{
+			setter(value);
+			return true;
+		}
+		return false;
+	}
+
+	template<int TMaxCharacters>
+	void EditorGUI::DrawTextInputField(const String& label, const String& text, const Action<String>& onApply)
+	{
+		char buffer[TMaxCharacters] = {};
+		strcpy_s(buffer, sizeof buffer, text.c_str());
+
+		ImGui::AlignTextToFramePadding();
+		if (ImGui::InputText(label.c_str(), buffer, sizeof buffer, ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			onApply(buffer);
+			return;
+		}
+
+		if (ImGui::IsItemDeactivatedAfterEdit())
+		{
+			onApply(buffer);
+			return;
+		}
+	}
+
+	template<typename T>
+	void EditorGUI::DrawSelectable(const String& label, ImGuiSelectableFlags flags, Vector2 size, T option, T& current)
+	{
+		if (ImGui::Selectable(label.c_str(), current == option, flags, {size.x, size.y}))
+			current = option;
 	}
 }

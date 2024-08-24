@@ -1,0 +1,37 @@
+Scene: ParticlesTest
+Entities:
+  - Entity: 11716462602945935033
+    Tag: Camera
+    Transform:
+      Position: [16.5100002, 21.3880005, -26.8449993]
+      Rotation: [-0.505794942, 2.58193517, 0.0530761853]
+      Scale: [1, 1, 1]
+    Camera:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 60
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Main: true
+      FixedAspectRatio: false
+  - Entity: 3972464875524937577
+    Tag: Environment
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Skybox Renderer:
+      Skybox: 15524491819897438690
+  - Entity: 4039245118330447564
+    Tag: Light
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [-0.457276285, 0, 0]
+      Scale: [0.999999404, 1, 1]
+    Directional Light:
+      Color: [1, 1, 1, 1]
+Systems:
+  []

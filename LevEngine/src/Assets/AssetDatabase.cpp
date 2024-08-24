@@ -1,11 +1,14 @@
 ﻿#include "levpch.h"
 
 #include "AssetDatabase.h"
+
+#include "AnimationAsset.h"
 #include "AudioBankAsset.h"
 #include "DefaultAsset.h"
 #include "MaterialPBRAsset.h"
 #include "MaterialSimpleAsset.h"
 #include "MeshAsset.h"
+#include "ModelAsset.h"
 #include "PrefabAsset.h"
 #include "Project.h"
 #include "SceneAsset.h"
@@ -24,8 +27,44 @@ namespace LevEngine
 		return AssetsRoot;
 	}
 
+	Path AssetDatabase::GetAssetsCachePath()
+	{
+		if (Project::GetProject())
+			return Project::GetRoot() / AssetsCache;
+
+		return AssetsCache;
+	}
+
+	Path AssetDatabase::GetAssetCachePath(UUID uuid)
+	{
+		return GetAssetsCachePath() / ToString(uuid).c_str();;
+	}
+
+	Path AssetDatabase::GetRelativePath(const Path& path)
+	{
+		return relative(GetAssetsPath(), path);
+	}
+
+	void AssetDatabase::ReimportAsset(const Path& path)
+	{
+		if (path.extension() == ".meta") return;
+
+		auto asset = m_AssetsByPath[path];
+		asset->Clear();
+		auto uuid = asset->GetUUID();
+		auto cachePath = GetAssetCachePath(uuid);
+		
+		if (exists(cachePath))
+			std::filesystem::remove(cachePath);
+
+		asset->m_Deserialized = false;
+		asset->Deserialize();
+	}
+
 	void AssetDatabase::ImportAsset(const Path& path)
 	{
+		if (path.extension() == ".meta") return;
+
 		auto uuid = UUID();
 		auto pathString = path.string();
 		String address;
@@ -55,10 +94,8 @@ namespace LevEngine
 		}
 
 		Ref<Asset> asset = CreateAsset(path, uuid);
-		if (CastRef<ScriptAsset>(asset))
-		{
+		if (asset->DeserializeOnImport())
 			asset->Deserialize();
-		}
 
 		if (needToGenerateMeta)
 			asset->SerializeMeta();
@@ -72,7 +109,7 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
-		if (!exists(GetAssetsPath()))
+		if (!std::filesystem::exists(GetAssetsPath()))
 			create_directory(GetAssetsPath());
 		
 		m_AssetsByPath.clear();
@@ -91,8 +128,7 @@ namespace LevEngine
 				if (directoryEntry.is_directory())
 					directories.push(path);
 
-				if (path.extension() != ".meta")
-					ImportAsset(path);
+				ImportAsset(path);
 			}
 		} while (!directories.empty());
 	}
@@ -115,28 +151,7 @@ namespace LevEngine
 	{
 		const auto extension = path.extension().string();
 
-		return
-			extension == ".obj"
-			|| extension == ".fbx"
-			|| extension == ".dae"
-			|| extension == ".gltf"
-			|| extension == ".glb"
-			|| extension == ".blend"
-			|| extension == ".3ds"
-			|| extension == ".ase"
-			|| extension == ".ifc"
-			|| extension == ".xgl"
-			|| extension == ".zgl"
-			|| extension == ".ply"
-			|| extension == ".dxf"
-			|| extension == ".lwo"
-			|| extension == ".lws"
-			|| extension == ".lxo"
-			|| extension == ".stl"
-			|| extension == ".x"
-			|| extension == ".ac"
-			|| extension == ".ms3d"
-			;
+		return extension == ".mesh";
 	}
 
 	bool AssetDatabase::IsAssetMaterial(const Path& path)
@@ -193,6 +208,39 @@ namespace LevEngine
 		return extension == ".bank";
 	}
 
+	bool AssetDatabase::IsAssetAnimationClip(const Path& path)
+	{
+		const auto extension = path.extension().string();
+		return extension == ".anim";
+	}
+
+	bool AssetDatabase::IsAssetModel(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return
+			extension == ".obj"
+			|| extension == ".fbx"
+			|| extension == ".dae"
+			|| extension == ".gltf"
+			|| extension == ".glb"
+			|| extension == ".blend"
+			|| extension == ".3ds"
+			|| extension == ".ase"
+			|| extension == ".ifc"
+			|| extension == ".xgl"
+			|| extension == ".zgl"
+			|| extension == ".ply"
+			|| extension == ".dxf"
+			|| extension == ".lwo"
+			|| extension == ".lws"
+			|| extension == ".lxo"
+			|| extension == ".stl"
+			|| extension == ".x"
+			|| extension == ".ac"
+			|| extension == ".ms3d";
+	}
+
 	Ref<Asset> AssetDatabase::CreateAsset(const Path& path, UUID uuid)
 	{
 		if (IsAssetTexture(path))
@@ -219,15 +267,21 @@ namespace LevEngine
 		if (IsAssetAudioBank(path))
 			return CreateRef<AudioBankAsset>(path, uuid);
 
+		if (IsAssetAnimationClip(path))
+			return CreateRef<AnimationAsset>(path, uuid);
+
 		if (IsAssetScript(path))
 			return CreateRef<ScriptAsset>(path, uuid);
+
+		if (IsAssetModel(path))
+			return CreateRef<ModelAsset>(path, uuid);
 
 		return CreateRef<DefaultAsset>(path, uuid);
 	}
 
 	void AssetDatabase::CreateFolder(const Path& path)
 	{
-		if (!exists(path))
+		if (!std::filesystem::exists(path))
 			create_directory(path);
 	}
 
@@ -264,41 +318,62 @@ namespace LevEngine
 	{
 		if (asset->GetName() == name) return;
 
-		const auto directory = asset->GetPath().parent_path();
+		const auto oldPath = asset->GetPath();
+		const auto directory = oldPath.parent_path();
 		const auto newPath = directory / (name + asset->GetExtension()).c_str();
 
-		m_AssetsByPath.erase(asset->GetPath());
-		std::filesystem::rename(asset->GetPath(), newPath);
-		std::filesystem::rename(
-			asset->GetPath().string().append(".meta").c_str(), 
-			newPath.string().append(".meta").c_str());
+		m_AssetsByPath.erase(oldPath);
+
+		if (is_directory(newPath))
+		{
+			for (std::filesystem::recursive_directory_iterator i(newPath), end; i != end; ++i)
+			{
+				m_AssetsByPath.erase(i->path());
+			}
+		}
+
+		if (exists(oldPath))
+		{
+			std::filesystem::rename(oldPath, newPath);
+		}
+
+		const auto oldMetaPath = oldPath.string().append(".meta").c_str();
+		if (exists(oldPath))
+		{
+			std::filesystem::rename(oldMetaPath, newPath.string().append(".meta").c_str());
+		}
 
 		asset->Rename(newPath);
 		m_AssetsByPath.emplace(newPath, asset);
+
+		DeleteAllAssetsInDirectory(oldPath);
+		ReimportAllAssetsInDirectory(newPath);
 	}
 
 	void AssetDatabase::MoveAsset(const Ref<Asset>& asset, const Path& directory)
 	{
+		if (asset == nullptr) return;
+
 		const auto currentDirectory = asset->GetPath().parent_path();
 
 		if (currentDirectory == directory) return;
-		if (directory.has_extension()) return;
+		if (!is_directory(directory)) return;
 
 		const auto oldPath = asset->GetPath();
 		const auto newPath = directory / asset->GetFullName().c_str();
 
 		if (exists(newPath))
 		{
-			Log::CoreWarning("Failed to move asset. Asset '{0}' already exists in {1}", asset->GetName(), directory);
+			Log::CoreWarning("Failed to move asset. Asset '{0}' already exists in {1}", asset->GetName(), GetRelativePath(directory));
 			return;
 		}
 
 		try
 		{
 			std::filesystem::rename(oldPath, newPath);
-			std::filesystem::rename(
-				oldPath.string().append(".meta"),
-				newPath.string().append(".meta"));
+
+			const auto oldMetaPath = oldPath.string().append(".meta");
+			std::filesystem::rename(oldMetaPath, newPath.string().append(".meta"));
 		}
 		catch (std::filesystem::filesystem_error& e)
 		{
@@ -309,6 +384,9 @@ namespace LevEngine
 		asset->Rename(newPath);
 		m_AssetsByPath.emplace(newPath, asset);
 		m_AssetsByPath.erase(oldPath);
+
+		DeleteAllAssetsInDirectory(oldPath);
+		ReimportAllAssetsInDirectory(newPath);
 	}
 
 	void AssetDatabase::DeleteAsset(const Ref<Asset>& asset)
@@ -318,16 +396,86 @@ namespace LevEngine
 		const auto path = asset->GetPath();
 		const auto uuid = asset->GetUUID();
 
-		std::filesystem::remove(path);
-		std::filesystem::remove(path.string().append(".meta"));
+		try
+		{
+			if (exists(path))
+				remove_all(path);
+
+			const auto metaPath = Path(path.string().append(".meta"));
+			if (exists(metaPath))
+				std::filesystem::remove(metaPath);
+
+			const auto cachePath = GetAssetCachePath(uuid);
+			if (exists(cachePath))
+				std::filesystem::remove(metaPath);
+		}
+		catch (std::exception& e)
+		{
+			Log::CoreError("Failed to delete asset '{}'. Error: {}", asset->GetName(), e.what());
+			return;
+		}
 
 		m_AssetsByPath.erase(path);
 		m_Assets.erase(uuid);
+
+		DeleteAllAssetsInDirectory(path);
+	}
+
+	void AssetDatabase::DeleteAsset(UUID uuid)
+	{
+		if (!uuid) return;
+		
+		auto it = m_Assets.find(uuid);
+
+		if (it == m_Assets.end()) return;
+
+		const auto asset = it->second;
+		DeleteAsset(asset);
+	}
+	void AssetDatabase::DeleteAsset(const Path& path)
+	{
+		if (!exists(path)) return;
+		
+		auto it = m_AssetsByPath.find(path);
+
+		if (it == m_AssetsByPath.end()) return;
+
+		const auto asset = it->second;
+		DeleteAsset(asset);
 	}
 
 	bool AssetDatabase::AssetExists(const Path& path)
 	{
-		return exists(path);
+		return m_AssetsByPath.count(path);
+	}
+
+	void AssetDatabase::ReimportAllAssetsInDirectory(const Path& directory)
+	{
+		if (!is_directory(directory)) return;
+
+		for (std::filesystem::recursive_directory_iterator i(directory), end; i != end; ++i)
+		{
+			if (is_directory(i->path())) continue;
+
+			ImportAsset(*i);
+		}
+	}
+
+	void AssetDatabase::DeleteAllAssetsInDirectory(const Path& directory)
+	{
+		if (!is_directory(directory)) return;
+
+		for (std::filesystem::recursive_directory_iterator i(directory), end; i != end; ++i)
+		{
+			const Path& path = i->path();
+
+			if (is_directory(path)) continue;
+
+			if (const auto asset = GetAsset(path))
+				m_Assets.erase(asset->GetUUID());
+
+			m_AssetsByPath.erase(path);
+		}
 	}
 
 	void AssetDatabase::CreateMeta(const Path& path, const UUID uuid, const YAML::Node* extraInfo)

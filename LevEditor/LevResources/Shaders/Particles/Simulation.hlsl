@@ -31,23 +31,26 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 	Particle particle = Particles[index];
 
 	[branch]
-	if (particle.Age >= particle.LifeTime)
+	if (particle.Age < 0)
 	{
-		SortedParticles[index] = float2(index, 1000);
+		particle.Color = float4(1.0f, 0.0f, 1.0f, 1.0f);
+		particle.Size = 10;
+		Particles[index] = particle;
+
+		SortedParticles[index] = float2(index, 1000000);
 		return;
 	}
 
 	particle.Age += DeltaTime;
 
 	[branch]
-	if (particle.Age >= particle.LifeTime || particle.Age < 0)
+	if (particle.Age >= particle.LifeTime)
 	{
-		particle.Color = float4(1.0f, 0.0f, 1.0f, 1.0f);
-		particle.Size = 1;
+		particle.Age = -1;
 		Particles[index] = particle;
 
 		DeadParticles.Append(index);
-		SortedParticles[index] = float2(index, 1000);
+		SortedParticles[index] = float2(index, 999999);
 		return;
 	}
 

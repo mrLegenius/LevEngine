@@ -3,6 +3,7 @@
 
 namespace LevEngine
 {
+    class Entity;
     class Timeline;
     
     REGISTER_PARSE_TYPE(TimelineComponent);
@@ -10,15 +11,10 @@ namespace LevEngine
     struct TimelineComponent
     {
         TimelineComponent();
-        ~TimelineComponent();
         
         bool playOnInit{true};
         Ref<Timeline> timeline = nullptr;
-
-        void Init();
-        bool IsInitialized() const;
-        void ResetInit();
-
+        
         bool IsPlaying() const;
         void Play() const;
         void Pause() const;
@@ -33,7 +29,7 @@ namespace LevEngine
         void SetPlayOnInit(bool playOnInit);
         [[nodiscard]] double GetElapsedTime() const;
 
-    private:
-        bool m_IsInited{};
+        static void OnConstruct(Entity entity);
+        static void OnDestroy(Entity entity);
     };
 }

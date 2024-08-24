@@ -5,6 +5,7 @@
 #include "Vector4.h"
 #include "Matrix.h"
 #include "Quaternion.h"
+#include "Renderer/Particles/BitonicSort.h"
 
 namespace LevEngine
 {
@@ -67,6 +68,12 @@ namespace LevEngine
 		                               Vector3& outScale)
 		{
 			return  transform.Decompose(outScale, outRotation, outPosition);
+		}
+
+		template<typename T>
+		static float Log2(const T numElements)
+		{
+			return std::log2f(numElements);
 		}
 	};
 }

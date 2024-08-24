@@ -3,11 +3,11 @@
 
 #include "ParticleAssets.h"
 #include "ParticlesUtils.h"
-#include "Renderer/DispatchCommand.h"
+#include "Renderer/Dispatch/DispatchCommand.h"
 #include "Renderer/RenderSettings.h"
-#include "Renderer/Shader.h"
-#include "Renderer/ShaderType.h"
-#include "Renderer/StructuredBuffer.h"
+#include "Renderer/Shader/Shader.h"
+#include "Renderer/Shader/ShaderType.h"
+#include "Renderer/Pipeline/StructuredBuffer.h"
 
 namespace LevEngine
 {
@@ -34,6 +34,7 @@ namespace LevEngine
 
     void ParticleSimulationPass::Process(entt::registry& registry, RenderParams& params)
     {
+        LEV_PROFILE_FUNCTION();
         //TODO: Bind depth and normal maps here to enable bounce again
 
         int groupSizeX = 0;

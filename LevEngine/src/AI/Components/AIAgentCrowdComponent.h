@@ -1,11 +1,8 @@
 #pragma once
 
-#include <DetourCrowd.h>
-
+#include "EASTL/stack.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
-
-class dtCrowd;
 
 namespace LevEngine
 {
@@ -24,25 +21,35 @@ namespace LevEngine
         AIAgentCrowdComponent();
         AIAgentCrowdComponent(const AIAgentCrowdComponent&) = default;
 
-        void Init();
+        void Init(Entity crowdEntity);
        
-        void Update(const float deltaTime);
+        void Update(float deltaTime);
         bool IsInitialized() const;
         bool IsInitializationFailed() const;
 
         void UpdateAgentsPosition();
         void SetMoveTarget(int agentIndex, Vector3 targetPos);
+        void AddAgent(Entity agentEntity);
+        void RemoveAgent(Entity agentEntity);
+        
+        Vector3 GetRandomPointOnNavMesh() const;
+        Vector3 GetRandomPointAroundCircle(const Vector3& searchCircleCenter, float searchCircleRadius) const;
+        Vector3 GetNearestPoint(const Vector3& searchBoxCenter, const Vector3& searchBoxHalfExtents) const;
 
-        Vector<Entity> agentsEntities;
+        Vector<Entity> initialAgentsEntities;
+        
         Entity navMesh;
         Entity target;
 
     private:
 
+        Vector<Entity> agents;
+
+        Entity m_selfEntity;
+        
         bool m_isInitialized = false;
         bool m_isInitializationFailed = false;
         
-        void AddAgent(const Entity& agentEntity);
         void RegisterDefaultObstacleAvoidanceProfiles();
         
         dtCrowd* m_crowd;
@@ -53,6 +60,6 @@ namespace LevEngine
 
         dtCrowdAgentDebugInfo* m_crowdAgentDebugInfo;
 
-        int MAX_AGENTS_COUNT = 25;
+        int MAX_AGENTS_COUNT = 100;
     };
 }

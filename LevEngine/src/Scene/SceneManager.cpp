@@ -3,16 +3,31 @@
 
 #include "Scene.h"
 #include "Audio/Audio.h"
-#include "Serializers/SceneSerializer.h"
 #include "Kernel/Application.h"
+#include "Serializers/SceneSerializer.h"
 
 namespace LevEngine
 {
+    events::IEvent<Ref<Scene>>& SceneManager::SceneLoaded = m_OnSceneLoaded;
+
     void SceneManager::SaveScene(const String& path)
     {
         m_ActiveScenePath = path.c_str();
         const SceneSerializer sceneSerializer(m_ActiveScene);
         sceneSerializer.Serialize(path.c_str());
+    }
+
+    void SceneManager::RequestSceneLoad(const Path& path)
+    {
+        m_RequestedScene = path;
+    }
+
+    void SceneManager::TryLoadRequestedScene()
+    {
+        if (m_RequestedScene.empty()) return;
+
+        LoadScene(m_RequestedScene);
+        m_RequestedScene = "";
     }
 
     bool SceneManager::LoadScene(const Path& path)
@@ -23,6 +38,10 @@ namespace LevEngine
         }
 
         const Ref<Scene>& newScene = CreateRef<Scene>();
+
+        if (App::Get().IsPlaying)
+            newScene->Initialize();
+        
         SceneSerializer sceneSerializer(newScene);
 
         m_ActiveScene = newScene;
@@ -30,6 +49,10 @@ namespace LevEngine
         if (sceneSerializer.Deserialize(path.generic_string().c_str()))
         {
             m_ActiveScenePath = path;
+            m_OnSceneLoaded(m_ActiveScene);
+            if (App::Get().IsPlaying)
+                newScene->Start();
+
             return true;
         }
 
@@ -41,7 +64,11 @@ namespace LevEngine
     const Ref<Scene>& SceneManager::LoadEmptyScene()
     {
         m_ActiveScenePath = Path();
-        return m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene = CreateRef<Scene>();
+
+        m_OnSceneLoaded(m_ActiveScene);
+
+        return m_ActiveScene;
     }
     void SceneManager::Shutdown()
     {

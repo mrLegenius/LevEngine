@@ -2,18 +2,22 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
-
 #include "D3D11RenderTarget.h"
+
+#include "D3D11StructuredBuffer.h"
 #include "D3D11Texture.h"
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
+    
 inline Ref<D3D11Texture> ConvertTextureToD3D11Texture(const Ref<Texture>& texture)
 {
     return CastRef<D3D11Texture>(texture);
+}
+
+D3D11RenderTarget::D3D11RenderTarget(ID3D11Device2* device)
+{
+    device->GetImmediateContext2(&m_DeviceContext);
 }
 
 void D3D11RenderTarget::Bind()
@@ -34,19 +38,16 @@ void D3D11RenderTarget::Bind()
 	    if (const Ref<D3D11Texture> texture = ConvertTextureToD3D11Texture(m_Textures[i]))
 		    renderTargetViews[numRTVs++] = texture->GetRenderTargetView();
     }
-
-    /* //TODO: UAV Support
+    
     ID3D11UnorderedAccessView* uavViews[8];
     const UINT uavStartSlot = numRTVs;
     UINT numUAVs = 0;
 
-    for (uint8_t i = 0; i < 8; i++)
+    for (uint8_t i = 0; i < StructuredBuffersCount; i++)
     {
-        Ref<StructuredBufferDX11> rwbuffer = m_StructuredBuffers[i];
-        if (rwbuffer)
-	        uavViews[numUAVs++] = rwbuffer->GetUnorderedAccessView();
+        if (Ref<D3D11StructuredBuffer> rwBuffer = CastRef<D3D11StructuredBuffer>(m_StructuredBuffers[i]))
+	        uavViews[numUAVs++] = rwBuffer->GetUnorderedAccessView();
     }
-    */
 
     ID3D11DepthStencilView* depthStencilView = nullptr;
     const Ref<D3D11Texture> depthTexture = ConvertTextureToD3D11Texture(m_Textures[static_cast<uint8_t>(AttachmentPoint::Depth)]);
@@ -61,16 +62,14 @@ void D3D11RenderTarget::Bind()
         depthStencilView = depthStencilTexture->GetDepthStencilView();
     }
 
-	context->OMSetRenderTargets(numRTVs, renderTargetViews, depthStencilView);
-    //context->OMSetRenderTargetsAndUnorderedAccessViews(numRTVs, renderTargetViews, depthStencilView, uavStartSlot, numUAVs, uavViews, nullptr); //TODO: UAV Support
+    m_DeviceContext->OMSetRenderTargetsAndUnorderedAccessViews(numRTVs, renderTargetViews, depthStencilView, uavStartSlot, numUAVs, uavViews, nullptr);
 }
 
 void D3D11RenderTarget::Unbind()
 {
     LEV_PROFILE_FUNCTION();
 
-    context->OMSetRenderTargets(0, nullptr, nullptr);
-    //context->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr, 0, 0, nullptr, nullptr); //TODO: UAV Support
+    m_DeviceContext->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr, 0, 0, nullptr, nullptr);
 }
 
 bool D3D11RenderTarget::IsValid() const
@@ -102,14 +101,13 @@ bool D3D11RenderTarget::IsValid() const
     }
 
     UINT numUAV = 0;
-    //TODO: UAV Support
-    /*for (auto rwBuffer : m_StructuredBuffers)
+    for (auto rwBuffer : m_StructuredBuffers)
     {
         if (rwBuffer)
         {
             ++numUAV;
         }
-    }*/
+    }
 
     if (numRTV + numUAV > 8)
     {

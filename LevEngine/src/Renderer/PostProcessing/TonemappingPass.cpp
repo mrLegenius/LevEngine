@@ -1,15 +1,15 @@
 #include "levpch.h"
 #include "TonemappingPass.h"
 
-#include "Renderer/PipelineState.h"
+#include "Renderer/Pipeline/PipelineState.h"
 #include "Renderer/RenderCommand.h"
 
 #include "Assets/EngineAssets.h"
-#include "Renderer/DepthStencilState.h"
-#include "Renderer/RasterizerState.h"
+#include "Renderer/Pipeline/DepthStencilState.h"
+#include "Renderer/Shader/ShaderType.h"
+#include "Renderer/Pipeline/RasterizerState.h"
 
-#include "Renderer/RenderSettings.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Pipeline/Texture.h"
 
 namespace LevEngine
 {

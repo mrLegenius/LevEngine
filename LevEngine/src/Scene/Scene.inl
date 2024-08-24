@@ -1,10 +1,35 @@
 #pragma once
 #include "Entity.h"
-#include "Scene.h"
 #include "Systems/EventSystem.h"
 
 namespace LevEngine 
 {
+	template<typename T>
+	void Scene::RegisterComponentOnConstruct()
+	{
+		m_Registry.on_construct<T>().connect<&Scene::OnComponentConstruct<T>>(this);
+	}
+
+	template<typename T>
+	void Scene::RegisterComponentOnDestroy()
+	{
+		m_Registry.on_destroy<T>().connect<&Scene::OnComponentDestroy<T>>(this);
+	}
+
+	template<typename TComponent>
+	void Scene::OnComponentConstruct(entt::registry& registry, const entt::entity entity)
+	{
+		if constexpr ( requires { TComponent::OnConstruct(Entity{}); })
+			TComponent::OnConstruct(Entity(entt::handle(registry, entity)));
+	}
+
+	template<typename TComponent>
+	void Scene::OnComponentDestroy(entt::registry& registry, const entt::entity entity)
+	{
+		if constexpr ( requires { TComponent::OnDestroy(Entity{}); })
+			TComponent::OnDestroy(Entity(entt::handle(registry, entity)));
+	}
+
 	template <class T>
 	void Scene::RegisterInitSystem()
 	{

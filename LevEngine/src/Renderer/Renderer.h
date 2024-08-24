@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Query.h"
 #include "RenderParams.h"
 #include "Kernel/Statistic.h"
 
@@ -20,18 +19,17 @@ namespace LevEngine
     public:
         explicit Renderer(const Window& window);
         ~Renderer();
-        
+
         void Init(const Window& window);
         
         void Clear() const;
-        static void RecalculateAllTransforms(entt::registry& registry);
-        void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
-        static RenderParams CreateRenderParams(SceneCamera* mainCamera, Transform* cameraTransform);
+        
         void Render(entt::registry& registry, SceneCamera* mainCamera, const Transform* cameraTransform);
         void Render(entt::registry& registry);
         void SetViewport(float width, float height) const;
 
         [[nodiscard]] Statistic GetFrameStatistic() const;
+        [[nodiscard]] Statistic GetShadowMapStatistic() const;
         [[nodiscard]] Statistic GetDeferredGeometryStatistic() const;
         [[nodiscard]] Statistic GetDeferredLightingStatistic() const;
         [[nodiscard]] Statistic GetDeferredTransparentStatistic() const;
@@ -41,9 +39,13 @@ namespace LevEngine
         [[nodiscard]] Statistic GetDebugStatistic() const;
 
     private:
+        static void RecalculateAllTransforms(entt::registry& registry);
+        static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);
+        void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
+        
         void ResetStatistics();
         static void SampleQuery(const Ref<Query>& query, Statistic& stat);
-
+        
         Ref<LightCollection> m_Lights;
         Ref<RenderTarget> m_MainRenderTarget;
         
@@ -70,6 +72,9 @@ namespace LevEngine
 
         Ref<Query> m_FrameQuery;
         Statistic m_FrameStat;
+
+        Ref<Query> m_ShadowMapQuery;
+        Statistic m_ShadowMapStat;
 
         Ref<Query> m_DeferredGeometryQuery;
         Statistic m_DeferredGeometryStat;

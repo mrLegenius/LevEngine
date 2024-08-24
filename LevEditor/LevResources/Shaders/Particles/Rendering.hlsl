@@ -15,6 +15,7 @@ struct PixelInput
     float4 Color : COLOR;
     float Size : COLOR1;
     uint TextureIndex : COLOR2;
+	float Distance : COLOR3;
 };
 
 struct PixelOutput
@@ -26,7 +27,10 @@ PixelInput VSMain(VertexInput input)
 {
     PixelInput output;
 
-    uint particleIndex = SortedParticles[input.VertexID].x;
+	float2 particleInfo = SortedParticles[input.VertexID];
+    uint particleIndex = particleInfo.x;
+	float distance = particleInfo.y;
+
     Particle particle = Particles[particleIndex];
 
     float4 worldPosition = float4(particle.Position, 1);
@@ -36,6 +40,7 @@ PixelInput VSMain(VertexInput input)
     output.Color = particle.Color;
     output.Size = particle.Size;
     output.TextureIndex = particle.TextureIndex;
+    output.Distance = distance;
 
     return output;
 }
@@ -55,6 +60,8 @@ void GSMain(point PixelInput input[1], inout TriangleStream<PixelInput> stream)
     PixelInput pointOut = input[0];
 
     const float size = pointOut.Size;
+
+	if (pointOut.Distance > size) return;
 
     stream.Append(_offsetNprojected(pointOut, float2(-1, -1) * size, float2(0, 0)));
     stream.Append(_offsetNprojected(pointOut, float2(-1, 1) * size, float2(0, 1)));

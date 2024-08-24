@@ -5,4 +5,8 @@
 
 #include <entt/entt.hpp>
 
+#include "eventhandling/eventhandling.hpp"
+
+#include "yaml-cpp/yaml.h"
+
 #include "LevEngine.h"

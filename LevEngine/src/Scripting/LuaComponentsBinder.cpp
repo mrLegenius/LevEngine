@@ -1,8 +1,13 @@
 #include "levpch.h"
 #include "LuaComponentsBinder.h"
 
+#include <Assets/AnimationAsset.h>
+#include <Scene/Components/Animation/AnimatorComponent.h>
+
 #include "MetaUtilities.h"
 #include "ResourceManager.h"
+#include "AI/Components/AIAgentComponent.h"
+#include "AI/Components/AIAgentCrowdComponent.h"
 #include "Assets/PrefabAsset.h"
 #include "Audio/Audio.h"
 #include "GUI/GUI.h"
@@ -12,10 +17,12 @@
 #include "Physics/Physics.h"
 #include "Physics/Components/CharacterController.h"
 #include "Physics/Components/Rigidbody.h"
+#include "Renderer/DebugRender/DebugRender.h"
 #include "Scene/Entity.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Components/Camera/Camera.h"
+#include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 #include "Scene/Components/Transform/Transform.h"
 
@@ -283,14 +290,50 @@ namespace LevEngine::Scripting
             "setLocalRotation", &Transform::SetLocalRotation,
             "getWorldRotation", &Transform::GetWorldRotation,
             "setWorldRotation", &Transform::SetWorldRotation,
+            //Direction
+            "getForwardDirection", &Transform::GetForwardDirection,
+            "getRightDirection", &Transform::GetRightDirection,
+            "getUpDirection", &Transform::GetUpDirection,
+            //Parenting
             "getChild", [](const Transform& transform, const int index)
             {
                 const auto children = transform.GetChildren();
                 LEV_ASSERT(index < children.size() && index > -1)
                 return children[index];
             },
-            "getForwardDirection", &Transform::GetForwardDirection,
-            "getRightDirection", &Transform::GetRightDirection
+            "removeChild", &Transform::RemoveChild,
+            "setParent", sol::overload(
+                &Transform::SetParent,
+                [](Transform& transform, const Entity entity)
+                {
+                    transform.SetParent(entity);
+                }),
+            "getParent", &Transform::GetParent,
+            "getChildrenCount", &Transform::GetChildrenCount,
+            //Movement
+            "move", &Transform::Move,
+            "moveForward", &Transform::MoveForward,
+            "moveBackward", &Transform::MoveBackward,
+            "moveRight", &Transform::MoveRight,
+            "moveLeft", &Transform::MoveLeft,
+            "moveUp", &Transform::MoveUp,
+            "moveDown", &Transform::MoveDown
+        );
+    }
+
+    void LuaComponentsBinder::CreateMeshRendererComponentLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<MeshRendererComponent>(
+            "MeshRendererComponent",
+            "type_id", &entt::type_hash<MeshRendererComponent>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return MeshRendererComponent{};
+                }),
+            "enabled", &MeshRendererComponent::enabled,
+            "castShadow", &MeshRendererComponent::castShadow
         );
     }
 
@@ -338,19 +381,34 @@ namespace LevEngine::Scripting
                     return Rigidbody{};
                 }),
             "addForce", sol::overload(
+                &Rigidbody::AddForce,
                 [](const Rigidbody& rigidbody, Vector3 vector)
                 {
                     rigidbody.AddForce(vector);
-                },
-                [](const Rigidbody& rigidbody, Vector3 vector, int forceMode)
-                {
-                    rigidbody.AddForce(vector, static_cast<Rigidbody::ForceMode>(forceMode));
                 }),
-            "initialize", [](Rigidbody& rigidbody, const Entity entity)
+            "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer,
+            "getCollisionStayBuffer", &Rigidbody::GetCollisionStayBuffer,
+            "getCollisionExitBuffer", &Rigidbody::GetCollisionExitBuffer,
+            "getTriggerEnterBuffer", &Rigidbody::GetTriggerEnterBuffer,
+            "getTriggerStayBuffer", &Rigidbody::GetTriggerStayBuffer,
+            "getTriggerExitBuffer", &Rigidbody::GetTriggerExitBuffer,
+            "getLayer", [](const Rigidbody& rigidbody)
             {
-                rigidbody.Initialize(entity);
+                return static_cast<int>(rigidbody.GetLayer());
             },
-            "getCollisionEnterBuffer", &Rigidbody::GetCollisionEnterBuffer
+            "setLayer", [](const Rigidbody& rigidbody, int layer)
+            {
+                rigidbody.SetLayer(static_cast<FilterLayer>(layer));
+            },
+            "getSphereRadius",&Rigidbody::GetSphereRadius,
+            "setSphereRadius",&Rigidbody::SetSphereRadius,
+            "getCapsuleRadius",&Rigidbody::GetCapsuleRadius,
+            "setCapsuleRadius",&Rigidbody::SetCapsuleRadius,
+            "getCapsuleHalfHeight",&Rigidbody::GetCapsuleHalfHeight,
+            "setCapsuleHalfHeight",&Rigidbody::SetCapsuleHalfHeight,
+            "getBoxHalfExtents",&Rigidbody::GetBoxHalfExtents,
+            "setBoxHalfExtents",&Rigidbody::SetBoxHalfExtents,
+            "teleport",&Rigidbody::Teleport
         );
 
         lua.new_enum(
@@ -363,11 +421,12 @@ namespace LevEngine::Scripting
 
         lua.new_usertype<Collision>(
             "Collision",
-            "contactEntity", &Collision::ContactEntity,
-            "contactPositions", &Collision::ContactPositions,
-            "contactNormals", &Collision::ContactPositions,
-            "contactImpulses", &Collision::ContactImpulses,
-            "contactSeparations", &Collision::ContactSeparations);
+            "entity", &Collision::Entity,
+            "contactCount", &Collision::ContactCount,
+            "points", &Collision::Points,
+            "normals", &Collision::Normals,
+            "impulses", &Collision::Impulses,
+            "separations", &Collision::Separations);
     }
 
     void LuaComponentsBinder::CreateCharacterControllerLuaBind(sol::state& lua)
@@ -381,7 +440,53 @@ namespace LevEngine::Scripting
                 {
                     return CharacterController{};
                 }),
-            "move", &CharacterController::Move
+            "move", &CharacterController::Move,
+            "teleport", &CharacterController::Teleport,
+            "jump", &CharacterController::Jump,
+            "getGravityScale", &CharacterController::GetGravityScale,
+            "setGravityScale", &CharacterController::SetGravityScale,
+            "isGrounded", &CharacterController::IsGrounded,
+            "getCollisionHitBuffer", &CharacterController::GetCollisionHitBuffer,
+            "getLayer", [](const CharacterController& characterController)
+            {
+                return static_cast<int>(characterController.GetLayer());
+            },
+            "setLayer", [](CharacterController& characterController, int Layer)
+            {
+                characterController.SetLayer(static_cast<FilterLayer>(Layer));
+            }
+        );
+
+        lua.new_usertype<ControllerColliderHit>(
+            "ControllerColliderHit",
+            "entity", &ControllerColliderHit::Entity,
+            "point", &ControllerColliderHit::Point,
+            "normal", &ControllerColliderHit::Normal,
+            "moveDirection", &ControllerColliderHit::MoveDirection,
+            "moveLength", &ControllerColliderHit::MoveLength);
+    }
+
+    void LuaComponentsBinder::CreateAnimatorComponentLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<AnimatorComponent>(
+            "AnimatorComponent",
+            "type_id", &entt::type_hash<AnimatorComponent>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return AnimatorComponent{};
+                }),
+            "getAnimationClip", [](const AnimatorComponent& animatorComponent)
+            {
+                return animatorComponent.GetAnimationClipConst()->GetAddress().c_str();
+            },
+            "setAnimationClip", [](AnimatorComponent& animatorComponent, const std::string& assetAddress)
+            {
+                animatorComponent.SetAnimationClip(
+                    ResourceManager::LoadAsset<AnimationAsset>(assetAddress.c_str()));
+            },
+            "playAnimation", &AnimatorComponent::PlayAnimation
         );
     }
 
@@ -487,11 +592,19 @@ namespace LevEngine::Scripting
 
     void LuaComponentsBinder::CreateSceneManagerBind(sol::state& lua)
     {
-        auto sceneManager = lua["SceneManager"].get_or_create<sol::table>();
-        sceneManager.set_function("getActiveScene", []()
-        {
-            return SceneManager::GetActiveScene();
-        });
+        lua.new_usertype<SceneManager>(
+            "SceneManager",
+            sol::no_constructor,
+            "getActiveScene", &SceneManager::GetActiveScene,
+            "getActiveScenePath", []()
+            {
+                return SceneManager::GetActiveScenePath().string();
+            },
+            "loadSceneFromPath", [](const std::string& path)
+            {
+                return SceneManager::RequestSceneLoad(path);
+            }
+        );
     }
 
     void LuaComponentsBinder::CreateSceneBind(sol::state& lua)
@@ -512,14 +625,23 @@ namespace LevEngine::Scripting
             "Prefab",
             sol::call_constructor,
             sol::factories(
-                [](const std::string& PrefabName)
+                [](const std::string& prefabName)
                 {
-                    return ResourceManager::LoadAsset<PrefabAsset>(String(PrefabName.c_str()));
+                    return ResourceManager::LoadAsset<PrefabAsset>(String(prefabName.c_str()));
                 }),
-            "instantiate", [](PrefabAsset& prefabAsset, const Ref<Scene>& scene) -> Entity
-            {
-                return prefabAsset.Instantiate(scene);
-            }
+            "instantiate", sol::overload(
+                [](PrefabAsset& prefabAsset, const Ref<Scene>& scene, const Entity parent) -> Entity
+                {
+                    return prefabAsset.Instantiate(scene, parent);
+                },
+                [](PrefabAsset& prefabAsset, const Ref<Scene>& scene) -> Entity
+                {
+                    return prefabAsset.Instantiate(scene);
+                },
+                [](PrefabAsset& prefabAsset, const Ref<Scene>& scene, const Vector3 position) -> Entity
+                {
+                    return prefabAsset.Instantiate(scene, position);
+                })
         );
     }
 
@@ -631,11 +753,356 @@ namespace LevEngine::Scripting
 
     void LuaComponentsBinder::CreatePhysicsBind(sol::state& lua)
     {
+        lua.new_enum(
+            "FilterLayer",
+            "None",   FilterLayer::None,
+            "Layer0", FilterLayer::Layer0,
+            "Layer1", FilterLayer::Layer1,
+            "Layer2", FilterLayer::Layer2,
+            "Layer3", FilterLayer::Layer3,
+            "Layer4", FilterLayer::Layer4,
+            "Layer5", FilterLayer::Layer5,
+            "Layer6", FilterLayer::Layer6,
+            "Layer7", FilterLayer::Layer7,
+            "Layer8", FilterLayer::Layer8,
+            "Layer9", FilterLayer::Layer9,
+            "All",    FilterLayer::All
+        );
+
+        lua.new_usertype<RaycastHit>(
+            "RaycastHit",
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    RaycastHit{};
+                }
+            ),
+            "isSuccessful", &RaycastHit::IsSuccessful,
+            "entity", &RaycastHit::Entity,
+            "point", &RaycastHit::Point,
+            "normal", &RaycastHit::Normal,
+            "distance", &RaycastHit::Distance
+        );
+
         auto physics = lua["Physics"].get_or_create<sol::table>();
         physics.set_function(
             "getGravity", []()
             {
                 return Application::Get().GetPhysics().GetGravity();
+            }
+        );
+
+        physics.set_function(
+            "raycast",
+            sol::overload(
+                [](const Vector3 origin, const Vector3 direction, const float maxDistance, const FilterLayer layerMask)
+                {
+                    return Application::Get().GetPhysics().Raycast(
+                        origin,
+                        direction,
+                        maxDistance,
+                        layerMask
+                    );
+                },
+                [](const Vector3 origin, const Vector3 direction, const float maxDistance)
+                {
+                    return Application::Get().GetPhysics().Raycast(origin, direction, maxDistance);
+                }
+            )
+        );
+
+        physics.set_function(
+            "sphereCast",
+            sol::overload(
+                [](
+                    const Vector3 origin,
+                    const float radius,
+                    const Vector3 direction,
+                    const float maxDistance,
+                    const FilterLayer layerMask
+                )
+                {
+                    return Application::Get().GetPhysics().SphereCast(
+                        origin,
+                        radius,
+                        direction,
+                        maxDistance,
+                        layerMask
+                    );
+                },
+                [](const Vector3 origin, const float radius, const Vector3 direction, const float maxDistance)
+                {
+                    return Application::Get().GetPhysics().SphereCast(origin, radius, direction, maxDistance);
+                }
+            )
+        );
+
+        physics.set_function(
+            "capsuleCast",
+            sol::overload(
+                [](
+                    const Vector3 origin,
+                    const Quaternion orientation,
+                    const float radius,
+                    const float halfHeight,
+                    const Vector3 direction,
+                    const float maxDistance,
+                    const FilterLayer layerMask
+                )
+                {
+                    return Application::Get().GetPhysics().CapsuleCast(
+                        origin,
+                        orientation,
+                        radius,
+                        halfHeight,
+                        direction,
+                        maxDistance,
+                        layerMask
+                    );
+                },
+                [](
+                    const Vector3 origin,
+                    const Quaternion orientation,
+                    const float radius,
+                    const float halfHeight,
+                    const Vector3 direction,
+                    const float maxDistance
+                )
+                {
+                    return Application::Get().GetPhysics().CapsuleCast(
+                        origin,
+                        orientation,
+                        radius,
+                        halfHeight,
+                        direction,
+                        maxDistance
+                    );
+                }
+            )
+        );
+
+        physics.set_function(
+            "boxCast",
+            sol::overload(
+                [](
+                    const Vector3 origin,
+                    const Quaternion orientation,
+                    const Vector3 halfExtents,
+                    const Vector3 direction,
+                    const float maxDistance,
+                    const FilterLayer layerMask
+                )
+                {
+                    return Application::Get().GetPhysics().BoxCast(
+                        origin,
+                        orientation,
+                        halfExtents,
+                        direction,
+                        maxDistance,
+                        layerMask
+                    );
+                },
+                [](
+                    const Vector3 origin,
+                    const Quaternion orientation,
+                    const Vector3 halfExtents,
+                    const Vector3 direction,
+                    const float maxDistance
+                )
+                {
+                    return Application::Get().GetPhysics().BoxCast(origin, orientation, halfExtents, direction, maxDistance);
+                }
+            )
+        );
+    }
+
+    void LuaComponentsBinder::CreateDebugRenderBind(sol::state& lua)
+    {
+        auto debugRender = lua["DebugRender"].get_or_create<sol::table>();
+
+        debugRender.set_function(
+            "drawCube",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawCube),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawCube)
+            )
+        );
+
+        debugRender.set_function(
+            "drawWireCube",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawWireCube),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawWireCube),
+                sol::resolve<void(Vector3, Quaternion, Vector3, Color)>(&DebugRender::DrawWireCube),
+                sol::resolve<void(Vector3, Quaternion, Vector3, Color, float)>(&DebugRender::DrawWireCube)
+            )
+        );
+
+        debugRender.set_function(
+            "drawSphere",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawSphere),
+                sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawSphere)
+            )
+        );
+
+        debugRender.set_function(
+            "drawWireSphere",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Color)>(&DebugRender::DrawWireSphere),
+                sol::resolve<void(Vector3, float, Color, float)>(&DebugRender::DrawWireSphere)
+            )
+        );
+
+        debugRender.set_function(
+            "drawWireCapsule",
+            sol::overload(
+                sol::resolve<void(Vector3, Quaternion, float, float, Color)>(&DebugRender::DrawWireCapsule),
+                sol::resolve<void(Vector3, Quaternion, float, float, Color, float)>(&DebugRender::DrawWireCapsule)
+            )
+        );
+
+        debugRender.set_function(
+            "drawPoint",
+            sol::overload(
+                sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPoint),
+                sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPoint)
+            )
+        );
+
+        debugRender.set_function(
+            "drawPointStar",
+            sol::overload(
+                sol::resolve<void(Vector3, Color)>(&DebugRender::DrawPointStar),
+                sol::resolve<void(Vector3, Color, float)>(&DebugRender::DrawPointStar)
+            )
+        );
+
+        debugRender.set_function(
+            "drawLine",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawLine),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawLine)
+            )
+        );
+
+        debugRender.set_function(
+            "drawRay",
+            sol::overload(
+                sol::resolve<void(Vector3, Vector3, Color)>(&DebugRender::DrawRay),
+                sol::resolve<void(Vector3, Vector3, Color, float)>(&DebugRender::DrawRay)
+            )
+        );
+
+        debugRender.set_function(
+            "drawCircle",
+            sol::overload(
+                sol::resolve<void(Vector3, float, Quaternion, Color)>(&DebugRender::DrawCircle),
+                sol::resolve<void(Vector3, float, Quaternion, Color, float)>(&DebugRender::DrawCircle)
+            )
+        );
+
+        debugRender.set_function(
+            "drawGrid",
+            sol::resolve<void(Vector3, Vector3, Vector3, uint32_t, uint32_t, float, Color)>(&DebugRender::DrawGrid)
+        );
+    }
+
+    void LuaComponentsBinder::CreateAIAgentCrowdComponentLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<AIAgentCrowdComponent>(
+            "AIAgentCrowdComponent",
+            "type_id", &entt::type_hash<AIAgentCrowdComponent>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return AIAgentCrowdComponent{};
+                }),
+            "addAgent", &AIAgentCrowdComponent::AddAgent,
+            "getRandomPointOnNavMesh", &AIAgentCrowdComponent::GetRandomPointOnNavMesh,
+            "getRandomPointAroundCircle", &AIAgentCrowdComponent::GetRandomPointAroundCircle,
+            "getNearestPoint", &AIAgentCrowdComponent::GetNearestPoint
+        );
+    }
+
+    void LuaComponentsBinder::CreateAIAgentComponentLuaBind(sol::state& lua)
+    {
+        lua.new_usertype<AIAgentComponent>(
+            "AIAgentComponent",
+            "type_id", &entt::type_hash<AIAgentComponent>::value,
+            sol::call_constructor,
+            sol::factories(
+                []()
+                {
+                    return AIAgentComponent{};
+                }),
+            "setMoveTarget", &AIAgentComponent::SetMoveTarget,
+            //Bool facts
+            "setFactAsBool", [](AIAgentComponent& agentComponent, const std::string& key, bool value)
+            {
+                agentComponent.SetFactAsBool(key.c_str(), value);
+            },
+            "hasBoolFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasBoolFact(key.c_str());
+            },
+            "getFactAsBool", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsBool(key.c_str());
+            },
+            //Integer facts
+            "setFactAsInteger", [](AIAgentComponent& agentComponent, const std::string& key, int value)
+            {
+                agentComponent.SetFactAsInteger(key.c_str(), value);
+            },
+            "hasIntegerFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasIntegerFact(key.c_str());
+            },
+            "getFactAsInteger", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsInteger(key.c_str());
+            },
+            //Float facts
+            "setFactAsFloat", [](AIAgentComponent& agentComponent, const std::string& key, float value)
+            {
+                agentComponent.SetFactAsFloat(key.c_str(), value);
+            },
+            "hasFloatFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasFloatFact(key.c_str());
+            },
+            "getFactAsFloat", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsFloat(key.c_str());
+            },
+            //Vector3 facts
+            "setFactAsVector3", [](AIAgentComponent& agentComponent, const std::string& key, Vector3 value)
+            {
+                agentComponent.SetFactAsVector3(key.c_str(), value);
+            },
+            "hasVector3Fact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasVector3Fact(key.c_str());
+            },
+            "getFactAsVector3", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsVector3(key.c_str());
+            },
+            //String facts
+            "setFactAsString", [](AIAgentComponent& agentComponent, const std::string& key, const std::string& value)
+            {
+                agentComponent.SetFactAsString(key.c_str(), value.c_str());
+            },
+            "hasStringFact", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.HasStringFact(key.c_str());
+            },
+            "getFactAsString", [](AIAgentComponent& agentComponent, const std::string& key)
+            {
+                return agentComponent.GetFactAsString(key.c_str()).c_str();
             }
         );
     }

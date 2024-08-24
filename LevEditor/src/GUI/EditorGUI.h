@@ -64,12 +64,27 @@ namespace LevEngine::Editor
 		template<class T>
 		static bool DrawSelectableAsset(const Ref<T>& asset, bool wasSelected,
 			bool& isSelected);
-
+		
 		template<class T, int N>
 		static bool DrawComboBox(String label, Array<String, N> stringValues, T& value);
 
 		template<class T, int N>
+		static bool DrawComboBox(String label, Array<T, N> values, T& value);
+		
+		template<class T, int N>
 		static bool DrawComboBox(String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter);
+
+		template<class T, int N>
+		static bool DrawFlagComboBox(String label, Array<String, N> stringValues, T& value);
+		
+		template<class T, int N>
+		static bool DrawFlagComboBox(String label, Array<String, N> stringValues, const Func<T>& getter, const Action<T>& setter);
+
+		template<int TMaxCharacters = 256>
+		static void DrawTextInputField(const String& label, const String& text, const Action<String>& onApply);
+
+		template<typename T>
+		static void DrawSelectable(const String& label, ImGuiSelectableFlags flags, Vector2 size, T option, T& current);
 	};
 }
 

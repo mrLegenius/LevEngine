@@ -1,6 +1,7 @@
 #include "levpch.h"
 #include "ResourceManager.h"
 
+#include "Project.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
@@ -9,7 +10,11 @@ void ResourceManager::Init(const Path& projectPath)
 {
     try
     {
-        YAML::Node data = YAML::LoadFile((projectPath / ResourcesDatabaseFilename.c_str()).string().c_str());
+        Path path = projectPath / ResourcesDatabaseFilename.c_str();
+
+        if (!exists(path)) return;
+
+        YAML::Node data = YAML::LoadFile(path.string());
 
         if (!data["Assets"]) return;
 
@@ -21,6 +26,9 @@ void ResourceManager::Init(const Path& projectPath)
             auto address = asset["Address"].as<String>();
 
             m_AddressToUUIDMap.emplace(address, uuid);
+
+            if (const auto assetToAddress = AssetDatabase::GetAsset(uuid))
+                assetToAddress->SetAddress(address);
         }
     }
     catch (std::exception& e)
@@ -38,34 +46,13 @@ void ResourceManager::Build(const Path& projectPath)
     
     out << YAML::BeginSeq;
 
-    Queue<Path> directories;
-    directories.push(AssetDatabase::GetAssetsPath());
-    do
+    for (auto [address, uuid] : m_AddressToUUIDMap)
     {
-        auto directory = directories.front();
-        directories.pop();
-
-        for (auto& directoryEntry : std::filesystem::directory_iterator(directory))
-        {
-            auto path = directoryEntry.path();
-
-            if (directoryEntry.is_directory())
-                directories.push(path);
-            else if (path.extension() != ".meta")
-            {
-                const auto& asset = AssetDatabase::GetAsset(path, false);
-                if (asset && !asset->GetAddress().empty())
-                {
-                    auto relativePath = relative(asset->GetPath(), AssetDatabase::GetAssetsPath());
-                    
-                    out << YAML::BeginMap;
-                    out << YAML::Key << "UUID" << YAML::Value << asset->GetUUID();
-                    out << YAML::Key << "Address" << YAML::Value << asset->GetAddress().c_str();
-                    out << YAML::EndMap;
-                }
-            }
-        }
-    } while (!directories.empty());
+        out << YAML::BeginMap;
+        out << YAML::Key << "UUID" << YAML::Value << uuid;
+        out << YAML::Key << "Address" << YAML::Value << address;
+        out << YAML::EndMap;
+    }
     
     out << YAML::EndSeq;
     out << YAML::EndMap;
@@ -79,5 +66,30 @@ void ResourceManager::Build(const Path& projectPath)
     {
         Log::CoreWarning("Failed to serialize resources database. Error: {0}", e.what());
     }
+}
+
+void ResourceManager::ChangeAddress(const Ref<Asset>& asset, const String& newAddress)
+{
+    if (asset->GetAddress() == newAddress) return;
+
+    const auto it = m_AddressToUUIDMap.find(newAddress);
+    if (it != m_AddressToUUIDMap.end())
+    {
+        const auto uuid = it->second;
+        if (const auto busyAsset = AssetDatabase::GetAsset(uuid))
+        {
+            auto relativePath = relative(busyAsset->GetPath(), AssetDatabase::GetAssetsPath()).string();
+            Log::CoreWarning("Failed to set address for '{0}'. '{1}' belongs to '{2}'",
+                busyAsset->GetName(), newAddress, relativePath);
+            return;
+        }
+
+        m_AddressToUUIDMap.erase(newAddress);
+    }
+
+    m_AddressToUUIDMap.erase(asset->GetAddress());
+    m_AddressToUUIDMap.emplace(newAddress, asset->GetUUID());
+
+    asset->SetAddress(newAddress);
 }
 }

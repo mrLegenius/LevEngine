@@ -1,11 +1,14 @@
 #pragma once
 #include "DataTypes/Path.h"
+#include "Kernel/UUID.h"
 
 using String = eastl::string;
 
-inline String ToString(const float value) { return std::to_string(value).c_str(); }
+inline String ToString(const LevEngine::UUID value) { return value.string().data(); }
+inline String ToString(const float value) { return std::to_string(value).data(); }
+inline String ToString(const double value) { return std::to_string(value).data(); }
 inline String ToString(const int value) { return std::to_string(value).c_str(); }
-inline String ToString(const Path& value) { return value.string().c_str(); }
+inline String ToString(const Path& value) { return value.string().data(); }
 
 template <typename... T>
 constexpr String Format(fmt::format_string<T...> format, T&&... args)

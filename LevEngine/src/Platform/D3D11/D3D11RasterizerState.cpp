@@ -6,9 +6,6 @@
 
 namespace LevEngine
 {
-extern ID3D11DeviceContext* context;
-extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
 inline D3D11_FILL_MODE ConvertFillMode(const FillMode fillMode)
 {
     switch (fillMode)
@@ -93,6 +90,11 @@ Vector<D3D11_VIEWPORT> TranslateViewports(const Vector<Viewport>& viewports)
 }
 
 
+D3D11RasterizerState::D3D11RasterizerState(ID3D11Device2* device) : m_Device(device)
+{
+    device->GetImmediateContext2(&m_DeviceContext);
+}
+
 D3D11RasterizerState::~D3D11RasterizerState()
 {
     if (m_RasterizerState)
@@ -120,7 +122,7 @@ void D3D11RasterizerState::Bind()
         if (m_RasterizerState)
             m_RasterizerState->Release();
 
-        auto res = device->CreateRasterizerState(&rasterizerDesc, &m_RasterizerState);
+        auto res = m_Device->CreateRasterizerState(&rasterizerDesc, &m_RasterizerState);
 
         LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to create rasterizer state")
 
@@ -139,15 +141,15 @@ void D3D11RasterizerState::Bind()
         m_ViewportsDirty = false;
     }
 
-    context->RSSetViewports(static_cast<UINT>(m_d3dViewports.size()), m_d3dViewports.data());
-    context->RSSetScissorRects(static_cast<UINT>(m_d3dRects.size()), m_d3dRects.data());
-    context->RSSetState(m_RasterizerState);
+    m_DeviceContext->RSSetViewports(static_cast<UINT>(m_d3dViewports.size()), m_d3dViewports.data());
+    m_DeviceContext->RSSetScissorRects(static_cast<UINT>(m_d3dRects.size()), m_d3dRects.data());
+    m_DeviceContext->RSSetState(m_RasterizerState);
 }
 
 void D3D11RasterizerState::Unbind()
 {
     LEV_PROFILE_FUNCTION();
 
-    context->RSSetState(nullptr);
+    m_DeviceContext->RSSetState(nullptr);
 }
 }

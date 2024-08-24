@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "physx/include/PxPhysicsAPI.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "Collider.h"
 #include "PhysicMaterial.h"
@@ -29,11 +28,12 @@ namespace LevEngine
             VelocityChange
         };
 
+        static void OnConstruct(Entity entity);
         // Don't call this method (only for internal use)
-        static void OnDestroy(entt::registry& registry, entt::entity entity);
-
-        // Don't call this method (only for internal use)
-        void Initialize(Entity entity);
+        static void OnDestroy(Entity entity);
+        
+        [[nodiscard]] FilterLayer GetLayer() const;
+        void SetLayer(FilterLayer layer) const;
         
         [[nodiscard]] Type GetRigidbodyType() const;
         void SetRigidbodyType(const Type& type);
@@ -78,9 +78,6 @@ namespace LevEngine
         
         [[nodiscard]] bool IsTriggerEnabled() const;
         void EnableTrigger(bool flag);
-
-        //[[nodiscard]] bool IsContactsEnabled() const;
-        //void EnableContacts(bool flag);
         
         [[nodiscard]] Collider::Type GetColliderType() const;
         void SetColliderType(const Collider::Type& type);
@@ -113,23 +110,26 @@ namespace LevEngine
 
         void AddForce(Vector3 force, ForceMode mode = ForceMode::Force) const;
         void AddTorque(Vector3 torque, ForceMode mode = ForceMode::Force) const;
+
+        void Teleport(Vector3 position);
         
         [[nodiscard]] const Vector<Entity>& GetTriggerEnterBuffer() const;
+        [[nodiscard]] const Vector<Entity>& GetTriggerStayBuffer() const;
         [[nodiscard]] const Vector<Entity>& GetTriggerExitBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
+        [[nodiscard]] const Vector<Collision>& GetCollisionStayBuffer() const;
         [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
 
-        friend class RigidbodyInitSystem;
         friend class PhysicsUpdate;
         
-        friend class ContactReportCallback;
+        friend class RigidbodyEventCallback;
         
     private:
+        void Initialize(Entity entity);
+        
         [[nodiscard]] physx::PxRigidActor* GetActor() const;
         [[nodiscard]] physx::PxShape* GetCollider() const;
         [[nodiscard]] physx::PxMaterial* GetPhysicalMaterial() const;
-
-        [[nodiscard]] bool IsInitialized() const;
 
         [[nodiscard]] Vector3 GetTransformScale() const;
         void SetTransformScale(Vector3 transformScale);
@@ -147,7 +147,6 @@ namespace LevEngine
 
         physx::PxRigidActor* m_Actor = nullptr;
         
-        bool m_IsInitialized = false;
         Vector3 m_TransformScale = Vector3::One;
         
         bool m_IsVisualizationEnabled = false;
@@ -178,8 +177,10 @@ namespace LevEngine
         Vector<Ref<Collider>> m_ColliderCollection { CreateRef<Box>() };
         
         Vector<Entity> m_TriggerEnterBuffer;
+        Vector<Entity> m_TriggerStayBuffer;
         Vector<Entity> m_TriggerExitBuffer;
         Vector<Collision> m_CollisionEnterBuffer;
+        Vector<Collision> m_CollisionStayBuffer;
         Vector<Collision> m_CollisionExitBuffer;
     };
 }

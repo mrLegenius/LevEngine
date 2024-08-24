@@ -3,10 +3,14 @@
 
 #include "D3D11SamplerState.h"
 
+#include "Renderer/Shader/ShaderType.h"
+
 namespace LevEngine
 {
-	extern ID3D11DeviceContext* context;
-	extern Microsoft::WRL::ComPtr<ID3D11Device> device;
+	D3D11SamplerState::D3D11SamplerState(ID3D11Device2* device) : m_Device(device)
+	{
+		device->GetImmediateContext2(&m_DeviceContext);
+	}
 
 	D3D11SamplerState::~D3D11SamplerState()
 	{
@@ -23,35 +27,35 @@ namespace LevEngine
 			return filter;
 		}
 
-		if (m_MinFilter == MinFilter::Nearest && m_MagFilter == MagFilter::Nearest && m_MipFilter == MipFilter::Nearest)
+		if (m_MinFilter == Filter::Nearest && m_MagFilter == Filter::Nearest && m_MipFilter == Filter::Nearest)
 		{
 			filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
 		}
-		else if (m_MinFilter == MinFilter::Nearest && m_MagFilter == MagFilter::Nearest && m_MipFilter == MipFilter::Linear)
+		else if (m_MinFilter == Filter::Nearest && m_MagFilter == Filter::Nearest && m_MipFilter == Filter::Linear)
 		{
 			filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
 		}
-		else if (m_MinFilter == MinFilter::Nearest && m_MagFilter == MagFilter::Linear && m_MipFilter == MipFilter::Nearest)
+		else if (m_MinFilter == Filter::Nearest && m_MagFilter == Filter::Linear && m_MipFilter == Filter::Nearest)
 		{
 			filter = D3D11_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT;
 		}
-		else if (m_MinFilter == MinFilter::Nearest && m_MagFilter == MagFilter::Linear && m_MipFilter == MipFilter::Linear)
+		else if (m_MinFilter == Filter::Nearest && m_MagFilter == Filter::Linear && m_MipFilter == Filter::Linear)
 		{
 			filter = D3D11_FILTER_MIN_POINT_MAG_MIP_LINEAR;
 		}
-		else if (m_MinFilter == MinFilter::Linear && m_MagFilter == MagFilter::Nearest && m_MipFilter == MipFilter::Nearest)
+		else if (m_MinFilter == Filter::Linear && m_MagFilter == Filter::Nearest && m_MipFilter == Filter::Nearest)
 		{
 			filter = D3D11_FILTER_MIN_LINEAR_MAG_MIP_POINT;
 		}
-		else if (m_MinFilter == MinFilter::Linear && m_MagFilter == MagFilter::Nearest && m_MipFilter == MipFilter::Linear)
+		else if (m_MinFilter == Filter::Linear && m_MagFilter == Filter::Nearest && m_MipFilter == Filter::Linear)
 		{
 			filter = D3D11_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
 		}
-		else if (m_MinFilter == MinFilter::Linear && m_MagFilter == MagFilter::Linear && m_MipFilter == MipFilter::Nearest)
+		else if (m_MinFilter == Filter::Linear && m_MagFilter == Filter::Linear && m_MipFilter == Filter::Nearest)
 		{
 			filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
 		}
-		else if (m_MinFilter == MinFilter::Linear && m_MagFilter == MagFilter::Linear && m_MipFilter == MipFilter::Linear)
+		else if (m_MinFilter == Filter::Linear && m_MagFilter == Filter::Linear && m_MipFilter == Filter::Linear)
 		{
 			filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 		}
@@ -132,7 +136,7 @@ namespace LevEngine
 			if (m_SamplerState)
 				m_SamplerState->Release();
 
-			const auto res = device->CreateSamplerState(&samplerDesc, &m_SamplerState);
+			const auto res = m_Device->CreateSamplerState(&samplerDesc, &m_SamplerState);
 			LEV_CORE_ASSERT(SUCCEEDED(res), "Unable to create SamplerState")
 
 			m_IsDirty = false;
@@ -141,13 +145,13 @@ namespace LevEngine
 		ID3D11SamplerState* pSamplers[] = { m_SamplerState };
 
 		if (shaderType & ShaderType::Vertex)
-			context->VSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->VSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Pixel)
-			context->PSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->PSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Geometry)
-			context->GSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->GSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Compute)
-			context->CSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->CSSetSamplers(slot, 1, pSamplers);
 	}
 
 	void D3D11SamplerState::Unbind(const uint32_t slot, const ShaderType shaderType)
@@ -155,12 +159,12 @@ namespace LevEngine
 		ID3D11SamplerState* pSamplers[] = { nullptr };
 
 		if (shaderType & ShaderType::Vertex)
-			context->VSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->VSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Pixel)
-			context->PSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->PSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Geometry)
-			context->GSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->GSSetSamplers(slot, 1, pSamplers);
 		if (shaderType & ShaderType::Compute)
-			context->CSSetSamplers(slot, 1, pSamplers);
+			m_DeviceContext->CSSetSamplers(slot, 1, pSamplers);
 	}
 }

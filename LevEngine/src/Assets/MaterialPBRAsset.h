@@ -1,6 +1,6 @@
 #pragma once
 #include "MaterialAsset.h"
-#include "Renderer/MaterialPBR.h"
+#include "Renderer/Material/MaterialPBR.h"
 
 namespace LevEngine
 {
@@ -10,14 +10,12 @@ namespace LevEngine
     {
     public:
         Material& GetMaterial() override { return m_Material; }
-        Ref<TextureAsset>& GetAlbedo() { return m_Albedo; }
-        Ref<TextureAsset>& GetMetallic() { return m_Metallic; }
-        Ref<TextureAsset>& GetRoughness() { return m_Roughness; }
-        Ref<TextureAsset>& GetNormal() { return m_Normal; }
-        Ref<TextureAsset>& GetAmbientOcclusion() { return m_AmbientOcclusion; }
-        Ref<TextureAsset>& GetEmissive() { return m_Emissive; }
+
+        Ref<TextureAsset> GetTexture(MaterialPBR::TextureType type);
+        void SetTexture(MaterialPBR::TextureType type, const Ref<TextureAsset>& textureAsset);
 
         explicit MaterialPBRAsset(const Path& path, UUID uuid);
+        explicit MaterialPBRAsset(const Path& path, UUID uuid, const MaterialPBR& material);
 
     protected:
         void SerializeData(YAML::Emitter& out) override;
@@ -26,11 +24,6 @@ namespace LevEngine
     private:
         MaterialPBR m_Material;
 
-        Ref<TextureAsset> m_Albedo;
-        Ref<TextureAsset> m_Metallic;
-        Ref<TextureAsset> m_Roughness;
-        Ref<TextureAsset> m_Normal;
-        Ref<TextureAsset> m_AmbientOcclusion;
-        Ref<TextureAsset> m_Emissive;
+        UnorderedMap<MaterialPBR::TextureType, Ref<TextureAsset>> m_Textures;
     };
 }

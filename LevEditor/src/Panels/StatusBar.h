@@ -6,7 +6,7 @@ class StatusBar
 {
 public:
     StatusBar();
-    void Render() const;
+    void Render();
 
 private:
     float m_Height;

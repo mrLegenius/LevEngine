@@ -1,8 +1,9 @@
 ﻿#pragma once
-#include "Collision.h"
 #include "characterkinematic/PxController.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "Controller.h"
+#include "ControllerColliderHit.h"
+#include "Kernel/Time/Timestep.h"
 
 namespace LevEngine
 {
@@ -10,8 +11,12 @@ namespace LevEngine
     
     struct CharacterController
     {
+        static void OnConstruct(Entity entity);
         // Don't call this method (only for internal use)
-        static void OnDestroy(entt::registry& registry, entt::entity entity);
+        static void OnDestroy(Entity entity);
+
+        [[nodiscard]] FilterLayer GetLayer() const;
+        void SetLayer(const FilterLayer& layer) const;
         
         [[nodiscard]] float GetSlopeLimit() const;
         void SetSlopeLimit(float slopeLimit) const;
@@ -45,16 +50,25 @@ namespace LevEngine
         void SetNonWalkableMode(const Controller::NonWalkableMode& nonWalkableMode) const;
         [[nodiscard]] Controller::ClimbingMode GetClimbingMode() const;
         void SetClimbingMode(const Controller::ClimbingMode& climbingMode) const;
-
-        void Move(Vector3 displacement, float elapsedTime) const;
         
-        [[nodiscard]] const Vector<Collision>& GetCollisionEnterBuffer() const;
-        [[nodiscard]] const Vector<Collision>& GetCollisionExitBuffer() const;
+        [[nodiscard]] float GetGravityScale() const;
+        void SetGravityScale(float gravityScale) const;
 
-        friend class CharacterControllerInitSystem;
+        void Move(Vector3 displacement);
+        void MoveTo(Vector3 position);
+
+        void Teleport(Vector3 position);
+
+        [[nodiscard]] bool IsGrounded() const;
+        void Jump(float jumpHeight, float deltaTime);
+        
+        [[nodiscard]] const Vector<ControllerColliderHit>& GetCollisionHitBuffer() const;
+
+        Timestep m_LastMoveTime;
+        
         friend class PhysicsUpdate;
 
-        friend class ContactReportCallback;
+        friend class CharacterControllerEventCallback;
 
     private:
         [[nodiscard]] physx::PxController* GetController() const;
@@ -62,7 +76,6 @@ namespace LevEngine
         [[nodiscard]] physx::PxShape* GetCollider() const;
         [[nodiscard]] physx::PxMaterial* GetPhysicalMaterial() const;
         
-        [[nodiscard]] bool IsInitialized() const;
         void Initialize(Entity entity);
         
         [[nodiscard]] Vector3 GetTransformScale() const;
@@ -72,18 +85,21 @@ namespace LevEngine
         void EnableVisualization(bool flag);
         
         void AttachController(Entity entity);
-        void DetachController() const;
+        void DetachController();
+
+        void SetGroundFlag(bool flag) const;
+
+        [[nodiscard]] float GetVerticalVelocity() const;
+        void SetVerticalVelocity(float verticalVelocity) const;
 
         physx::PxController* m_Controller = nullptr;
         
-        bool m_IsInitialized = false;
         Vector3 m_TransformScale = Vector3::One;
         
         bool m_IsVisualizationEnabled = false;
         
         Ref<Controller> m_CharacterController { CreateRef<Controller>() };
 
-        Vector<Collision> m_CollisionEnterBuffer;
-        Vector<Collision> m_CollisionExitBuffer;
+        Vector<ControllerColliderHit> m_CollisionHitBuffer;
     };
 }

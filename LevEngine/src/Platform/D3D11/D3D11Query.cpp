@@ -3,13 +3,12 @@
 
 namespace LevEngine
 {
-    extern ID3D11DeviceContext* context;
-    extern Microsoft::WRL::ComPtr<ID3D11Device> device;
-
-    D3D11Query::D3D11Query(const QueryType queryType, const uint8_t numBuffers)
+    D3D11Query::D3D11Query(ID3D11Device2* device, const QueryType queryType, const uint8_t numBuffers)
         : m_QueryType(queryType)
           , m_NumBuffers(numBuffers)
     {
+        device->GetImmediateContext2(&m_DeviceContext);
+        
         D3D11_QUERY_DESC queryDesc = {};
 
         switch (m_QueryType)
@@ -71,12 +70,12 @@ namespace LevEngine
         {
             if (m_QueryType == QueryType::Timer)
             {
-                context->Begin(m_DisjointQueries[buffer].Get());
-                context->End(m_Queries[0][buffer].Get());
+                m_DeviceContext->Begin(m_DisjointQueries[buffer].Get());
+                m_DeviceContext->End(m_Queries[0][buffer].Get());
             }
             else
             {
-                context->Begin(m_Queries[0][buffer].Get());
+                m_DeviceContext->Begin(m_Queries[0][buffer].Get());
             }
         }
     }
@@ -88,12 +87,12 @@ namespace LevEngine
         {
             if (m_QueryType == QueryType::Timer)
             {
-                context->End(m_Queries[1][buffer].Get());
-                context->End(m_DisjointQueries[buffer].Get());
+                m_DeviceContext->End(m_Queries[1][buffer].Get());
+                m_DeviceContext->End(m_DisjointQueries[buffer].Get());
             }
             else
             {
-                context->End(m_Queries[0][buffer].Get());
+                m_DeviceContext->End(m_Queries[0][buffer].Get());
             }
         }
     }
@@ -107,11 +106,11 @@ namespace LevEngine
         {
             if (m_QueryType == QueryType::Timer)
             {
-                result = context->GetData(m_DisjointQueries[buffer].Get(), nullptr, 0, 0) == S_OK;
+                result = m_DeviceContext->GetData(m_DisjointQueries[buffer].Get(), nullptr, 0, 0) == S_OK;
             }
             else
             {
-                result = context->GetData(m_Queries[0][buffer].Get(), nullptr, 0, 0) == S_OK;
+                result = m_DeviceContext->GetData(m_Queries[0][buffer].Get(), nullptr, 0, 0) == S_OK;
             }
         }
 
@@ -127,19 +126,19 @@ namespace LevEngine
         {
             if (m_QueryType == QueryType::Timer)
             {
-                while (context->GetData(m_DisjointQueries[buffer].Get(), nullptr, 0, 0) == S_FALSE)
+                while (m_DeviceContext->GetData(m_DisjointQueries[buffer].Get(), nullptr, 0, 0) == S_FALSE)
                 {
                     Sleep(1L);
                 }
                 D3D11_QUERY_DATA_TIMESTAMP_DISJOINT timeStampDisjoint;
-                context->GetData(m_DisjointQueries[buffer].Get(), &timeStampDisjoint,
+                m_DeviceContext->GetData(m_DisjointQueries[buffer].Get(), &timeStampDisjoint,
                                           sizeof(D3D11_QUERY_DATA_TIMESTAMP_DISJOINT), 0);
                 
                 if (timeStampDisjoint.Disjoint == FALSE)
                 {
                     UINT64 beginTime, endTime;
-                    if (context->GetData(m_Queries[0][buffer].Get(), &beginTime, sizeof(UINT64), 0) == S_OK &&
-                        context->GetData(m_Queries[1][buffer].Get(), &endTime, sizeof(UINT64), 0) == S_OK)
+                    if (m_DeviceContext->GetData(m_Queries[0][buffer].Get(), &beginTime, sizeof(UINT64), 0) == S_OK &&
+                        m_DeviceContext->GetData(m_Queries[1][buffer].Get(), &endTime, sizeof(UINT64), 0) == S_OK)
                     {
                         result.ElapsedTime = static_cast<double>(endTime - beginTime) / static_cast<double>(timeStampDisjoint.Frequency);
                         result.IsValid = true;
@@ -149,7 +148,7 @@ namespace LevEngine
             else
             {
                 // Wait for the results to become available.
-                while (context->GetData(m_Queries[0][buffer].Get(), nullptr, 0, 0))
+                while (m_DeviceContext->GetData(m_Queries[0][buffer].Get(), nullptr, 0, 0))
                 {
                     Sleep(1L);
                 }
@@ -159,7 +158,7 @@ namespace LevEngine
                 case QueryType::CountSamples:
                     {
                         UINT64 numSamples = 0;
-                        if (context->GetData(m_Queries[0][buffer].Get(), &numSamples, sizeof(UINT64), 0) ==
+                        if (m_DeviceContext->GetData(m_Queries[0][buffer].Get(), &numSamples, sizeof(UINT64), 0) ==
                             S_OK)
                         {
                             result.NumSamples = numSamples;
@@ -170,7 +169,7 @@ namespace LevEngine
                 case QueryType::CountSamplesPredicate:
                     {
                         BOOL anySamples = FALSE;
-                        if (context->GetData(m_Queries[0][buffer].Get(), &anySamples, sizeof(UINT64), 0) ==
+                        if (m_DeviceContext->GetData(m_Queries[0][buffer].Get(), &anySamples, sizeof(UINT64), 0) ==
                             S_OK)
                         {
                             result.AnySamples = anySamples == TRUE;
@@ -182,7 +181,7 @@ namespace LevEngine
                 case QueryType::CountTransformFeedbackPrimitives:
                     {
                         D3D11_QUERY_DATA_SO_STATISTICS streamOutStats = {};
-                        if (context->GetData(m_Queries[0][buffer].Get(), &streamOutStats,
+                        if (m_DeviceContext->GetData(m_Queries[0][buffer].Get(), &streamOutStats,
                                                       sizeof(D3D11_QUERY_DATA_SO_STATISTICS), 0) == S_OK)
                         {
                             result.PrimitivesGenerated = result.TransformFeedbackPrimitives = streamOutStats.

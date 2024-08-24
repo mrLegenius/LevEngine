@@ -1,7 +1,5 @@
 #include "pch.h"
 
-#include <DetourCrowd.h>
-
 #include "ComponentDrawer.h"
 #include "AI/Components/AIAgentComponent.h"
 

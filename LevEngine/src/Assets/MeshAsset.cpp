@@ -1,22 +1,32 @@
 ﻿#include "levpch.h"
 #include "MeshAsset.h"
 
+#include "AnimationAsset.h"
 #include "EngineAssets.h"
-#include "MeshLoader.h"
+#include "Cache/MeshAssetCache.h"
 
 namespace LevEngine
 {
-    Ref<Texture> MeshAsset::GetIcon() const { return Icons::Mesh(); }
-
-    void MeshAsset::DeserializeData(const YAML::Node& node)
+    MeshAsset::MeshAsset(const Path& path, const UUID uuid, const Ref<Mesh>& mesh)
+        : Asset(path, uuid), m_Mesh(mesh)
     {
-        try
-        {
-            m_Mesh = MeshLoader::LoadMesh(m_Path);
-        }
-        catch (std::exception& e)
-        {
-            Log::CoreWarning("Failed to load mesh in {0}. Error: {1}", m_Path.string(), e.what());
-        }
+        SaveToCache();
+    }
+
+    Ref<Texture> MeshAsset::GetIcon() const
+    {
+        return Icons::Mesh();
+    }
+
+    bool MeshAsset::LoadFromCache()
+    {
+        m_Mesh = MeshAssetCache::LoadFromCache(m_UUID);
+        return m_Mesh != nullptr;;
+    }
+
+    void MeshAsset::SaveToCache()
+    {
+        if (m_Mesh)
+            MeshAssetCache::SaveToCache(m_UUID, m_Mesh);
     }
 }

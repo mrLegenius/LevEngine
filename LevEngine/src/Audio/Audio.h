@@ -1,7 +1,5 @@
 ﻿#pragma once
-#include "fmod_common.h"
-#include "fmod_studio.hpp"
-#include "fmod_errors.h"
+
 #include "Kernel/Logger.h"
 #include "Scene/Entity.h"
 #include <source_location>
@@ -102,7 +100,7 @@ namespace LevEngine
         static void UpdateInstance3DAttributes(FMOD::Studio::EventInstance* i, const Entity entity);
 
 
-        static bool IsBankRegistered(const String pathToBank);
+        static bool IsBankRegistered(const String& pathToBank);
 
         static int CheckErrors(FMOD_RESULT result, const std::source_location& location = std::source_location::current())
         {

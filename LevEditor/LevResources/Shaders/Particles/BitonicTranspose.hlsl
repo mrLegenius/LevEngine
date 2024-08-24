@@ -1,4 +1,4 @@
-#define TRANSPOSE_BLOCK_SIZE 16
+#define TRANSPOSE_BLOCK_SIZE 32
 
 cbuffer cb : register(b0)
 {

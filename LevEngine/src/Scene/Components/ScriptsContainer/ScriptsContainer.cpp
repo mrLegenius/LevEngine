@@ -8,6 +8,12 @@
 
 namespace LevEngine
 {
+    void ScriptsContainer::OnConstruct(const Entity entity)
+    {
+        auto& scriptContainer = entity.GetComponent<ScriptsContainer>();
+        App::Get().GetScriptingManager().InitScriptsContainer(scriptContainer);
+    }
+
     sol::object ScriptsContainer::Get(sol::stack_object key, sol::this_state L)
     {
         // we use stack_object for the arguments because we

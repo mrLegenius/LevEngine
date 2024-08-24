@@ -5,6 +5,7 @@
 
 #include "EntitySelection.h"
 #include "ModalPopup.h"
+#include "Assets/ModelAsset.h"
 #include "Assets/PrefabAsset.h"
 #include "GUI/EditorGUI.h"
 
@@ -47,6 +48,9 @@ namespace LevEngine::Editor
 
 			if (const auto& prefab = AssetDatabase::GetAsset<PrefabAsset>(assetPath))
 				prefab->Instantiate(activeScene);
+
+			if (const auto& model = AssetDatabase::GetAsset<ModelAsset>(assetPath))
+				model->InstantiateModel(activeScene);
 
 			ImGui::EndDragDropTarget();
 		}
@@ -95,9 +99,13 @@ namespace LevEngine::Editor
 	void HierarchyPanel::CreatePrefab(const Entity entity, const Path& path)
 	{
 		if (const auto& asset = AssetDatabase::CreateNewAsset<PrefabAsset>(path))
+		{
 			asset->SaveEntity(entity);
+			Log::CoreInfo("Prefab '{0}' is created at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+			return;
+		}
 
-		Log::CoreInfo("Prefab '{0}' is created at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+		Log::CoreWarning("Failed to create prefab '{0}' at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
 	}
 
 	void HierarchyPanel::SavePrefab(const Entity entity, const Path& path)
@@ -105,10 +113,13 @@ namespace LevEngine::Editor
 		if (const auto& asset = AssetDatabase::GetAsset<PrefabAsset>(path))
 		{
 			asset->SaveEntity(entity);
-			asset->Deserialize();
+			asset->Deserialize(true);
+			Log::CoreInfo("Prefab '{0}' is updated at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+			return;
 		}
 
-		Log::CoreInfo("Prefab '{0}' is updated at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+		Log::CoreWarning("Failed to update prefab '{0}' at {1}", entity.GetName(), relative(path, AssetDatabase::GetAssetsPath()).generic_string());
+
 	}
 
 	void HierarchyPanel::DrawEntityNode(Entity entity)
@@ -176,6 +187,12 @@ namespace LevEngine::Editor
 				if (const auto& prefab = AssetDatabase::GetAsset<PrefabAsset>(assetPath))
 				{
 					const auto child = prefab->Instantiate(activeScene);
+					child.GetComponent<Transform>().SetParent(entity);
+				}
+
+				if (const auto& prefab = AssetDatabase::GetAsset<ModelAsset>(assetPath))
+				{
+					const auto child = prefab->InstantiateModel(activeScene);
 					child.GetComponent<Transform>().SetParent(entity);
 				}
 			}

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "PhysicMaterial.h"
+#include "FilterLayer.h"
 
 namespace LevEngine
 {
@@ -12,10 +13,11 @@ namespace LevEngine
             Box
         };
 
+        FilterLayer m_Layer = FilterLayer::Layer0;
+
         Type m_Type = Type::Box;
         
         bool m_IsTriggerEnabled = false;
-        bool m_IsContactsEnabled = false;
     
         Vector3 OffsetPosition = Vector3::Zero;
         Vector3 OffsetRotation = Vector3::Zero;

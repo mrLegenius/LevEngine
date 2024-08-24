@@ -13,15 +13,12 @@ namespace LevEngine
     {
         static Ref<Texture> Play();
         static Ref<Texture> Stop();
-        static Ref<Texture> Rotate();
-        static Ref<Texture> Scale();
-        static Ref<Texture> Select();
-        static Ref<Texture> Translate();
 
         static Ref<Texture> Directory();
         static Ref<Texture> File();
         static Ref<Texture> Material();
         static Ref<Texture> Mesh();
+        static Ref<Texture> Model();
         static Ref<Texture> Skybox();
     };
 
@@ -35,10 +32,12 @@ namespace LevEngine
 
         static Ref<Shader> ShadowPass();
         static Ref<Shader> CascadeShadowPass();
+        static Ref<Shader> CascadeShadowPassWithAnimations();
 
         static Ref<Shader> ForwardPBR();
         
         static Ref<Shader> GBufferPass();
+        static Ref<Shader> GBufferPassWithAnimations();
         static Ref<Shader> DeferredVertexOnly();
         static Ref<Shader> DeferredPointLight();
         static Ref<Shader> DeferredQuadRender();

@@ -5,21 +5,19 @@ PS_IN VSMain(VS_IN input)
 {
 	PS_IN output;
 
-	float4 pos = float4(input.pos, 1.0f);
-	float4 fragPos = mul(pos, model);
+	VertexCalculationResult result = CalculateVertex(input);
+
+	float4 fragPos = mul(result.pos, model);
+	float3 binormal = cross(result.normal, result.tangent);
 
 	output.pos = mul(fragPos, viewProjection);
 	output.uv = input.uv;
 	output.fragPos = fragPos.xyz;
 	output.depth = mul(fragPos, cameraView).z;
-	
-	float3 normal = mul(float4(input.normal, 0.0f), transposedInvertedModel);
-	float3 tangent = mul(float4(input.tangent, 0.0f), transposedInvertedModel);
-	float3 binormal = mul(float4(input.binormal, 0.0f), transposedInvertedModel);
-	
-    output.TBN = float3x3(normalize(tangent),
+
+    output.TBN = float3x3(normalize(result.tangent),
                           normalize(binormal),
-                          normalize(normal));
+                          normalize(result.normal));
 	
 	return output;
 }
