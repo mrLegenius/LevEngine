@@ -37,6 +37,9 @@ namespace LevEngine
 
 	Path AssetDatabase::GetAssetCachePath(UUID uuid)
 	{
+		if (!exists(GetAssetsCachePath()))
+			create_directory(GetAssetsCachePath());
+		
 		return GetAssetsCachePath() / ToString(uuid).c_str();;
 	}
 
@@ -279,10 +282,15 @@ namespace LevEngine
 		return CreateRef<DefaultAsset>(path, uuid);
 	}
 
-	void AssetDatabase::CreateFolder(const Path& path)
+	const Ref<Asset>& AssetDatabase::CreateFolder(const Path& path)
 	{
-		if (!std::filesystem::exists(path))
+		if (!exists(path))
+		{
 			create_directory(path);
+			ImportAsset(path);
+		}
+
+		return m_AssetsByPath[path];
 	}
 
 	Ref<Asset> AssetDatabase::GetAsset(const Path& path, const bool deserialize)

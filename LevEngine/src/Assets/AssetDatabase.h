@@ -44,7 +44,7 @@ namespace LevEngine
 		template<class T, class ...Args>
 		[[nodiscard]] static Ref<T> CreateNewAsset(const Path& path, Args ...args);
 
-		static void CreateFolder(const Path& path);
+		static const Ref<Asset>& CreateFolder(const Path& path);
 
 		[[nodiscard]] static Ref<Asset> GetAsset(const Path& path, const bool deserialize = true);
 

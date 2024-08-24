@@ -277,7 +277,9 @@ namespace LevEngine::Editor
                             ImGui::EndMenu();
                         }
                         if (ImGui::MenuItem("Folder"))
-                            AssetDatabase::CreateFolder(m_CurrentDirectory / "Folder");
+                        {
+                            m_RenamingAsset = AssetDatabase::CreateFolder(m_CurrentDirectory / "Folder");
+                        }
 
                         ImGui::EndMenu();
                     }
@@ -320,8 +322,10 @@ namespace LevEngine::Editor
 
         if (ImGui::MenuItem(label.c_str()))
         {
-            if (const Ref<Asset> asset = AssetDatabase::CreateNewAsset<AssetType>(m_CurrentDirectory / defaultName.c_str(), eastl::forward<Args>(args)...))
+            if (Ref<Asset> asset = AssetDatabase::CreateNewAsset<AssetType>(m_CurrentDirectory / defaultName.c_str(), eastl::forward<Args>(args)...))
+            {
                 Selection::Select(CreateRef<AssetSelection>(asset));
+            }
         }
     }
 }
