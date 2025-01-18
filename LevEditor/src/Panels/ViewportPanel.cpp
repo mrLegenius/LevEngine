@@ -132,7 +132,7 @@ namespace LevEngine::Editor
 
                 if (const auto& scene = AssetDatabase::GetAsset<SceneAsset>(assetPath))
                 {
-                    scene->Load();
+                    SceneManager::RequestSceneLoad(scene->GetPath());
                 }
             }
             ImGui::EndDragDropTarget();

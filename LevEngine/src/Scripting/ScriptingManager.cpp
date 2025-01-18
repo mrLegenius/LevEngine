@@ -45,13 +45,17 @@ namespace LevEngine::Scripting
 
         RegisterComponent(ScriptsContainer);
         RegisterComponent(MeshRendererComponent);
-        RegisterComponent(Transform);
         RegisterComponent(CameraComponent);
         RegisterComponent(Rigidbody)
         RegisterComponent(CharacterController);
         RegisterComponent(AnimatorComponent)
         RegisterComponent(AIAgentComponent);
         RegisterComponent(AIAgentCrowdComponent)
+        
+        using namespace entt::literals;
+        entt::meta<Transform>()
+            .type(entt::type_hash<Transform>::value())
+            .func<&get_component<Transform>>("get_component"_hs);
     }
 
     ScriptingManager::ScriptingManager()

@@ -265,16 +265,6 @@ namespace LevEngine::Scripting
         lua.new_usertype<Transform>(
             "Transform",
             "type_id", &entt::type_hash<Transform>::value,
-            sol::call_constructor,
-            sol::factories(
-                []()
-                {
-                    return Transform();
-                },
-                [](const Entity entity)
-                {
-                    return Transform(entity);
-                }),
             //Position
             "getLocalPosition", &Transform::GetLocalPosition,
             "setLocalPosition", &Transform::SetLocalPosition,
@@ -301,7 +291,6 @@ namespace LevEngine::Scripting
                 LEV_ASSERT(index < children.size() && index > -1)
                 return children[index];
             },
-            "removeChild", &Transform::RemoveChild,
             "setParent", sol::overload(
                 &Transform::SetParent,
                 [](Transform& transform, const Entity entity)
@@ -502,7 +491,7 @@ namespace LevEngine::Scripting
                                sol::factories(
                                    [&]()
                                    {
-                                       return Entity{scene->CreateEntity()};
+                                       return Entity{scene->CreateEntity("Entity")};
                                    },
                                    [&](String name)
                                    {
@@ -518,7 +507,7 @@ namespace LevEngine::Scripting
                 sol::factories(
                     [&]()
                     {
-                        return Entity{scene->CreateEntity()};
+                        return Entity{scene->CreateEntity("Entity")};
                     },
                     [&](String name)
                     {

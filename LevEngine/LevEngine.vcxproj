@@ -132,7 +132,6 @@
     <ClInclude Include="src\Physics\Components\Collision.h" />
     <ClInclude Include="src\Physics\Components\Controller.h" />
     <ClInclude Include="src\Physics\Components\ControllerColliderHit.h" />
-    <ClInclude Include="src\Physics\Components\Destroyable.h" />
     <ClInclude Include="src\Physics\Components\FilterLayer.h" />
     <ClInclude Include="src\Physics\Components\RaycastHit.h" />
     <ClInclude Include="src\Physics\Components\PhysicMaterial.h" />
@@ -212,6 +211,7 @@
     <ClInclude Include="src\Renderer\Shader\ShaderMacros.h" />
     <ClInclude Include="src\Renderer\Shader\ShaderParameter.h" />
     <ClInclude Include="src\Renderer\Shader\ShaderType.h" />
+    <ClInclude Include="src\Scene\Components\Destroyable.h" />
     <ClInclude Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.h" />
     <ClInclude Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.h" />
     <ClInclude Include="src\Scene\Components\Transform\TransformSerializer.h" />

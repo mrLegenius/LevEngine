@@ -99,7 +99,10 @@ namespace LevEngine
                 if (!entity) continue;
 
                 auto& transform = entity.GetComponent<Transform>();
-                transform.SetParent(entitiesMap[relationships[uuid]], false);
+                auto parent = entitiesMap[relationships[uuid]];
+                if (!parent) continue;
+                
+                transform.SetParent(parent, false);
             }
 
             ParallelJob serializeJob([=](const int i)

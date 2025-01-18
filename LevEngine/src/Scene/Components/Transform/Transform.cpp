@@ -6,7 +6,20 @@
 namespace LevEngine
 {
 	Transform::Transform() { ForceRecalculateModel(); }
-	Transform::Transform(const Entity entity): entity(entity) { ForceRecalculateModel(); }
+
+	Transform::Transform(const Entity entity, Entity parent)
+		: parent(parent), entity(entity)
+	{
+		if (parent)
+		{
+			auto& parentTransform = parent.GetComponent<Transform>();
+			parentTransform.children.emplace_back(entity);
+			childIndex = parentTransform.children.size() - 1;
+			depth = parentTransform.GetHierarchyDepth() + 1;
+		}
+		
+		ForceRecalculateModel();
+	}
 
 	Vector3 Transform::GetLocalPosition() const { return position; }
 	void Transform::SetLocalPosition(const Vector3 value) { position = value; }
@@ -56,32 +69,72 @@ namespace LevEngine
 
 	void Transform::RemoveChild(const Entity entity)
 	{
-		const auto it = std::find(children.begin(), children.end(), entity);
-		if (it != children.end())
-			children.erase(it);
+		const auto it = std::ranges::find(children, entity);
+
+		if (it == children.end()) return;
+		
+		uint32_t childIndex = it->GetComponent<Transform>().GetChildIndex();
+		children.erase(it);
+
+		//Move other children indices 
+		for (auto child : children)
+		{
+			auto& childTransform = child.GetComponent<Transform>();
+			if (childTransform.GetChildIndex() > childIndex)
+				childTransform.childIndex--;
+		}
 	}
 
 	void Transform::SetParent(const Entity value, const bool keepWorldTransform)
 	{
+		if (!value)
+		{
+			Log::CoreWarning("Can't set invalid entity as a parent");
+			return;
+		}
+		
+		if (!parent)
+		{
+			Log::CoreWarning("Can't set parent for root object");
+			return;
+		}
+		
+		if (parent == value) return;
+		
 		if (entity == value)
 		{
 			Log::CoreWarning("{0} is trying to set itself as a parent", value.GetName());
 			return;
 		}
 
-		if (parent == value) return;
+		Queue<Entity> childrenToCheck;
 
-		if (parent)
-		{
-			auto& parentTransform = parent.GetComponent<Transform>();
-			parentTransform.RemoveChild(entity);
-		}
+		for (auto child : children)
+			childrenToCheck.push(child);
 
-		if (value)
+		while (!childrenToCheck.empty())
 		{
-			auto& newParentTransform = value.GetComponent<Transform>();
-			newParentTransform.children.emplace_back(entity);
+			auto child = childrenToCheck.front();
+			
+			if (child == value)
+			{
+				Log::CoreWarning("{0} is trying to set a child as a parent", entity.GetName());
+				return;
+			}
+
+			for (auto subChild : child.GetComponent<Transform>().GetChildren())
+				childrenToCheck.push(subChild);
+			
+			childrenToCheck.pop();
 		}
+		
+		auto& parentTransform = parent.GetComponent<Transform>();
+		parentTransform.RemoveChild(entity);
+
+		auto& newParentTransform = value.GetComponent<Transform>();
+		childIndex = newParentTransform.children.size();
+		newParentTransform.children.emplace_back(entity);
+		depth = newParentTransform.GetHierarchyDepth() + 1;
 
 		if (!keepWorldTransform)
 		{
@@ -98,6 +151,41 @@ namespace LevEngine
 		SetWorldPosition(position);
 		SetWorldRotation(rotation);
 		SetWorldScale(scale);
+	}
+	
+	void Transform::SetChildIndex(uint16_t index)
+	{
+		if (!parent)
+		{
+			Log::CoreWarning("Can't set child index for root object");
+			return;
+		}
+
+		if (childIndex == index) return;
+
+		auto& parentTransform = parent.GetComponent<Transform>();
+		auto lastChildIndex = Math::Max(parentTransform.GetChildrenCount() - 1, 0);
+		index = Math::Min(static_cast<int>(index), lastChildIndex);
+
+		//Move other children indices 
+		uint16_t min = Math::Min(index, childIndex);
+		uint16_t max = Math::Max(index, childIndex);
+		
+		const auto& children = parentTransform.GetChildren();
+		bool indexIncreased = index > childIndex;
+		auto offset = indexIncreased ? -1 : +1;
+		
+		for (int i = min; i <= max; ++i)
+		{
+			auto child = children[i];
+			auto& childTransform = child.GetComponent<Transform>();
+			childTransform.childIndex += offset;
+		}
+
+		parentTransform.children.erase(parentTransform.children.begin() + childIndex - 1);
+		parentTransform.children.emplace(parentTransform.children.begin() + index, entity);
+		
+		childIndex = index;
 	}
 
 	void Transform::SetWorldPosition(const Vector3 value)
@@ -142,9 +230,9 @@ namespace LevEngine
 		{
 			const auto& parentTransform = parent.GetComponent<Transform>();
 			const auto parentScale = parentTransform.GetWorldScale();
-			scale.x = DirectX::XMScalarNearEqual(parentScale.x, 0, 0.0001f) ? 0 : value.x / parentScale.x;
-			scale.y = DirectX::XMScalarNearEqual(parentScale.y, 0, 0.0001f) ? 0 : value.y / parentScale.y;
-			scale.z = DirectX::XMScalarNearEqual(parentScale.z, 0, 0.0001f) ? 0 : value.z / parentScale.z;
+			scale.x = Math::IsZero(parentScale.x) ? 0 : value.x / parentScale.x;
+			scale.y = Math::IsZero(parentScale.y) ? 0 : value.y / parentScale.y;
+			scale.z = Math::IsZero(parentScale.z) ? 0 : value.z / parentScale.z;
 		}
 		else
 		{
@@ -201,5 +289,17 @@ namespace LevEngine
 		model = Matrix::CreateScale(GetWorldScale()) *
 			Matrix::CreateFromQuaternion(GetWorldRotation()) *
 			Matrix::CreateTranslation(GetWorldPosition());
+	}
+
+	//TODO: Remove sorting and replace with inserting to vector instead in serializator
+	void Transform::SortChildren()
+	{
+		std::ranges::sort(children, [](const Entity& lhs, const Entity& rhs)
+		{
+			auto leftTransform = lhs.GetComponent<Transform>();
+			auto rightTransform = rhs.GetComponent<Transform>();
+
+			return leftTransform.childIndex < rightTransform.childIndex;
+		});
 	}
 }

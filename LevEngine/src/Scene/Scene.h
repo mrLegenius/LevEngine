@@ -1,16 +1,16 @@
 #pragma once
 #include "System.h"
 #include "DataTypes/Set.h"
+#include "Entity.h"
 
 namespace LevEngine
 {
 	class ScriptAsset;
 	class SceneCamera;
 	class Audio;
-	class Entity;
 	struct Transform;
 	
-	class Scene
+	class Scene : public eastl::enable_shared_from_this<Scene>
 	{
 	public:
 		Scene();
@@ -30,13 +30,14 @@ namespace LevEngine
 
 		void ForEachEntity(const Action<Entity>& callback);
 
-		Entity CreateEntity(const String& name = "Entity");
+		Entity CreateEntity(const String& name);
+		Entity CreateEntity(const String& name, Entity parent);
 		Entity CreateEntity(UUID uuid, const String& name);
+		Entity CreateEntity(UUID uuid, const String& name, Entity parent);
 
-		void DestroyEntity(entt::entity entity);
-		void DestroyEntity(Entity entity);
+		static void DestroyEntity(Entity entity);
+		void DestroyAllMarkedEntities();
 		void DestroyEntityImmediate(Entity entity);
-		static void GetAllChildren(Entity entity, Vector<Entity>& entities);
 
 		Entity DuplicateEntity(Entity entity);
 		Entity DuplicateEntity(Entity entity, Entity parent);
@@ -72,6 +73,7 @@ namespace LevEngine
 		bool IsScriptSystemActive(const Ref<ScriptAsset>& scriptAsset) const;
 		void SetScriptSystemActive(const Ref<ScriptAsset>& scriptAsset, bool isActive);
 		Set<Ref<ScriptAsset>> GetActiveScriptSystems() const;
+		Entity GetRootEntity() const { return m_RootEntity; }
 
 	private:
 		void RequestUpdates(float deltaTime);
@@ -89,11 +91,15 @@ namespace LevEngine
 
 		Entity ConvertEntity(entt::entity entity);
 
+		static void GetAllChildren(Entity entity, Vector<Entity>& entities);
 	private:
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth;
 		uint32_t m_ViewportHeight;
 
+		Entity m_RootEntity{};
+
+		
 		friend class Entity;
 
 		Vector<Scope<System>> m_UpdateSystems;

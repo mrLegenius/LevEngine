@@ -79,6 +79,11 @@ namespace LevEngine
 	{
 		LEV_CORE_ASSERT(entity.HasComponent<IDComponent>());
 
+		auto transform = entity.GetComponent<Transform>();
+
+		//Do not serialize root object
+		if (transform.GetHierarchyDepth() == 0) return;
+		
 		out << YAML::BeginMap;
 
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
@@ -87,7 +92,7 @@ namespace LevEngine
 		if (const auto parent = entity.GetComponent<Transform>().GetParent())
 			out << YAML::Key << "Parent" << YAML::Value << parent.GetUUID();
 
-		TransformSerializer::SerializeData(out, entity.GetComponent<Transform>());
+		TransformSerializer::SerializeData(out, transform);
 		
 		for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
 			serializer->Serialize(out, entity);

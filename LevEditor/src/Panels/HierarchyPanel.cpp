@@ -26,7 +26,7 @@ namespace LevEngine::Editor
 		{
 			if (entitySelection->Get())
 			{
-				activeScene->DestroyEntityImmediate(entitySelection->Get());
+				activeScene->DestroyEntity(entitySelection->Get());
 				Selection::Deselect();
 			}
 		}
@@ -58,17 +58,17 @@ namespace LevEngine::Editor
 		if (void* payload = BeginDragDropTargetWindow(EditorGUI::EntityPayload))
 		{
 			if (const auto draggedEntity = *static_cast<Entity*>(payload))
-				draggedEntity.GetComponent<Transform>().SetParent(Entity{});
+				draggedEntity.GetComponent<Transform>().SetParent(activeScene->GetRootEntity());
 
 			ImGui::EndDragDropTarget();
 		}
-		
-		activeScene->ForEachEntity(
-			[&](const Entity entity)
-			{
-				if (!entity.GetComponent<Transform>().GetParent())
-					DrawEntityNode(entity);
-			});
+
+		auto rootEntity = activeScene->GetRootEntity();
+		auto rootEntityTransform = rootEntity.GetComponent<Transform>();
+		for (auto child : rootEntityTransform.GetChildren())
+		{
+			DrawEntityNode(child);
+		}
 
 		if (ImGui::IsMouseReleased(0))
 		{
@@ -77,7 +77,7 @@ namespace LevEngine::Editor
 
 		for (const auto toDelete : m_EntitiesToDelete)
 		{
-			activeScene->DestroyEntityImmediate(toDelete);
+			activeScene->DestroyEntity(toDelete);
 			Selection::Deselect();
 		}
 		m_EntitiesToDelete.clear();

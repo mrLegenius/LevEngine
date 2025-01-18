@@ -25,10 +25,10 @@
 #include "Systems/Animation/AnimatorUpdateSystem.h"
 #include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
-#include "Physics/Components/Destroyable.h"
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
 #include "Systems/EntityDestroySystem.h"
 #include "EnttMutex.h"
+#include "Components/Destroyable.h"
 #include "Components/Animation/AnimatorComponent.h"
 #include "Components/Time/TimelineComponent.h"
 
@@ -47,6 +47,8 @@ namespace LevEngine
         LuaComponentsBinder::CreateLuaEntityBind(*scriptingManager.GetLuaState(), this);
 
         SceneManager::SceneLoaded += FUNCTION_HANDLER(NavMeshComponent::OnSceneLoaded);
+
+        m_RootEntity = CreateEntity("Root");
     }
 
     void Scene::CleanupScene()
@@ -149,7 +151,7 @@ namespace LevEngine
     {
         return m_ScriptSystems;
     }
-
+    
     void Scene::RequestUpdates(const float deltaTime)
     {
         for (const auto& system : m_UpdateSystems)
@@ -347,29 +349,51 @@ namespace LevEngine
 
     void Scene::ForEachEntity(const Action<Entity>& callback)
     {
-        for (const auto entityId : m_Registry.storage<entt::entity>())
+        m_Registry.sort<Transform>([](const Transform& t1, const Transform& t2)
         {
-            if (!m_Registry.valid(entityId)) continue;
+            if (t1.GetHierarchyDepth() == t2.GetHierarchyDepth())
+                return t1.GetChildIndex() < t2.GetChildIndex();
 
-            const auto entity = ConvertEntity(entityId);
-            callback(entity);
-        }
+            return t1.GetHierarchyDepth() < t2.GetHierarchyDepth(); 
+        });
+
+        auto view = m_Registry.view<Transform>();
+
+        view.each([this, &callback](const auto entity, Transform& _)
+        {
+            callback(ConvertEntity(entity));
+        });
     }
 
     Entity Scene::CreateEntity(const String& name)
     {
         LEV_PROFILE_FUNCTION();
+        return CreateEntity(name, m_RootEntity);
+    }
 
-        return CreateEntity(UUID(), name);
+    Entity Scene::CreateEntity(const String& name, Entity parent)
+    {
+        LEV_PROFILE_FUNCTION();
+        return CreateEntity(UUID(), name, parent);
     }
 
     Entity Scene::CreateEntity(UUID uuid, const String& name)
     {
         LEV_PROFILE_FUNCTION();
+        return CreateEntity(uuid, name, m_RootEntity);
+    }
+
+    Entity Scene::CreateEntity(UUID uuid, const String& name, Entity parent)
+    {
+        LEV_PROFILE_FUNCTION();
 
         auto entity = Entity(entt::handle{m_Registry, m_Registry.create()});
         entity.AddComponent<IDComponent>(uuid);
-        entity.AddComponent<Transform>(entity);
+        auto& transform = entity.AddComponent<Transform>(entity, parent);
+        if (parent)
+        {
+            transform.SetChildIndex(parent.GetComponent<Transform>().GetChildrenCount() - 1);
+        }
         entity.AddComponent<TagComponent>(name);
 
         return entity;
@@ -378,11 +402,6 @@ namespace LevEngine
     Entity Scene::ConvertEntity(const entt::entity entity)
     {
         return Entity(entt::handle(m_Registry, entity));
-    }
-
-    void Scene::DestroyEntity(const entt::entity entity)
-    {
-        DestroyEntity(ConvertEntity(entity));
     }
 
     void Scene::DestroyEntity(const Entity entity)
@@ -395,6 +414,18 @@ namespace LevEngine
         } 
     }
 
+    void Scene::DestroyAllMarkedEntities()
+    {
+        const auto destroyableView = m_Registry.view<Transform, Destroyable>();
+        const auto& scene = SceneManager::GetActiveScene();
+
+        for (const auto entity : destroyableView)
+        {
+            const auto entityToDestroy = Entity(entt::handle(m_Registry, entity));
+            scene->DestroyEntityImmediate(entityToDestroy);
+        }
+    }
+
     // for internal use only
     void Scene::DestroyEntityImmediate(Entity entity)
     {
@@ -403,7 +434,8 @@ namespace LevEngine
         Vector<Entity> entitiesToDestroy;
 
         auto& parentTransform = entity.GetComponent<Transform>();
-        parentTransform.SetParent(Entity{});
+        parentTransform.SetParent(m_RootEntity);
+        m_RootEntity.GetComponent<Transform>().RemoveChild(entity);
 
         GetAllChildren(entity, entitiesToDestroy);
 
@@ -414,10 +446,10 @@ namespace LevEngine
     {
         const auto& parentTransform = entity.GetComponent<Transform>();
 
+        entities.emplace(entities.begin(), entity);
+        
         for (const auto child : parentTransform.GetChildren())
             GetAllChildren(child, entities);
-
-        entities.emplace(entities.begin(), entity);
     }
 
     Entity Scene::DuplicateEntity(const Entity entity)
@@ -441,12 +473,13 @@ namespace LevEngine
 
         //Restore transform
         auto duplicatedEntity = ConvertEntity(newEntity);
-        Transform& transform = m_Registry.replace<Transform>(newEntity, duplicatedEntity);
         const Transform& oldTransform = entity.GetComponent<Transform>();
+        Transform& transform = m_Registry.replace<Transform>(newEntity, duplicatedEntity, parent);
         transform.SetWorldPosition(oldTransform.GetWorldPosition());
         transform.SetWorldRotation(oldTransform.GetWorldRotation());
         transform.SetWorldScale(oldTransform.GetWorldScale());
-        transform.SetParent(parent);
+
+        transform.SetChildIndex(oldTransform.GetChildIndex() + 1);
 
         //Copy all children
         for (const auto child : oldTransform.GetChildren())

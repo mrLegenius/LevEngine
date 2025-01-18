@@ -157,6 +157,7 @@
 #include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Audio/AudioSource.h"
 #include "Scene/Components/Audio/AudioListener.h"
+#include "Scene/Components/Destroyable.h"
 
 #include "Scene/Components/Components.h"
 #include "Scene/Components/ComponentSerializer.h"

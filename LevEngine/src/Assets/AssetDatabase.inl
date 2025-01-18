@@ -68,11 +68,7 @@ namespace LevEngine
         if (!asset) return nullptr;
 
         auto assetT = CastRef<T>(asset);
-        if (!assetT)
-        {
-            Log::CoreWarning("Asset ({0}) in {1} is not {2}", asset->GetUUID(), asset->GetPath(), typeid(T).name());
-            return nullptr;
-        }
+        if (!assetT) return nullptr;
 
         return assetT;
     }

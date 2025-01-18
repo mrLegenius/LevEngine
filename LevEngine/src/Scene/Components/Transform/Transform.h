@@ -9,9 +9,8 @@ namespace LevEngine
 	
 	struct Transform
 	{
-		Transform();
-
-		explicit Transform(Entity entity);
+		explicit Transform();
+		explicit Transform(Entity entity, Entity parent);
 
 		[[nodiscard]] const Matrix& GetModel() const { return model; }
 		
@@ -35,10 +34,14 @@ namespace LevEngine
 
 		[[nodiscard]] Entity GetParent() const { return parent; }
 		void SetParent(Entity value, bool keepWorldTransform = true);
-		
-		[[nodiscard]] const Vector<Entity>& GetChildren() const { return children; }
-		[[nodiscard]] uint32_t GetChildrenCount() const { return (uint32_t)children.size(); }
 		void RemoveChild(Entity entity);
+
+		[[nodiscard]] const Vector<Entity>& GetChildren() const { return children; }
+		[[nodiscard]] uint16_t GetChildrenCount() const { return static_cast<uint16_t>(children.size()); }
+		
+		void SetChildIndex(uint16_t index);
+		[[nodiscard]] uint16_t GetChildIndex() const { return childIndex; }
+		[[nodiscard]] uint32_t GetHierarchyDepth() const { return depth; }
 		
 		void Move(const Vector3 value) { position += value; }
 		void MoveForward(float value);
@@ -60,10 +63,15 @@ namespace LevEngine
 		void ForceRecalculateModel();
 
 	private:
-
+		void SortChildren();
+		
+		friend class TransformSerializer;
 		Vector<Entity> children;
 
 		Entity parent{};
+
+		uint16_t childIndex{};
+		uint32_t depth{};
 
 		Matrix model = Matrix::Identity;
 

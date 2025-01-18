@@ -5,7 +5,6 @@ namespace LevEngine
 	class EditorCamera final : public SceneCamera
 	{
 	public:
-		EditorCamera() = default;
 		EditorCamera(float fov, float nearClip, float farClip, Vector3 initialPosition = Vector3::Zero);
 
 		void OnUpdate(float deltaTime);
