@@ -17,12 +17,16 @@ namespace LevEngine
         explicit MaterialPBRAsset(const Path& path, UUID uuid);
         explicit MaterialPBRAsset(const Path& path, UUID uuid, const MaterialPBR& material);
 
+        bool IsReimportNeeded() const override;
+
     protected:
         void SerializeData(YAML::Emitter& out) override;
         void DeserializeData(const YAML::Node& node) override;
 
     private:
         MaterialPBR m_Material;
+
+        bool m_IsReimportNeeded = false;
 
         UnorderedMap<MaterialPBR::TextureType, Ref<TextureAsset>> m_Textures;
     };

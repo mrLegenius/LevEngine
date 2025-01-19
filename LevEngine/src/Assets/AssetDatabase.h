@@ -18,6 +18,8 @@ namespace LevEngine
 		static void ImportAsset(const Path& path);
 		static void ProcessAllAssets();
 
+		static void ReimportChangedAssets();
+
 		static bool IsAssetTexture(const Path& path);
 
 		static bool IsAssetMesh(const Path& path);

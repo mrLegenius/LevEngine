@@ -112,7 +112,7 @@ namespace LevEngine
 
 	void AssetDatabase::ProcessAllAssets()
 	{
-		if (!std::filesystem::exists(GetAssetsPath()))
+		if (!exists(GetAssetsPath()))
 			create_directory(GetAssetsPath());
 		
 		m_AssetsByPath.clear();
@@ -134,6 +134,22 @@ namespace LevEngine
 				ImportAsset(path);
 			}
 		} while (!directories.empty());
+	}
+
+	void AssetDatabase::ReimportChangedAssets()
+	{
+		Vector<Ref<Asset>> assetsToReimport; 
+		for (auto asset : m_AssetsByPath)
+		{
+			if (!asset.second->m_Deserialized || !asset.second->IsReimportNeeded()) continue;
+
+			assetsToReimport.push_back(asset.second);
+		}
+
+		for (auto asset : assetsToReimport)
+		{
+			ReimportAsset(asset->GetPath());
+		}
 	}
 
 	bool AssetDatabase::IsAssetTexture(const Path& path)

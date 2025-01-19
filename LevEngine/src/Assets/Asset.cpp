@@ -11,13 +11,17 @@ namespace LevEngine
 	                                                 , m_MetaPath(path.string().append(".meta").c_str())
 	                                                 , m_Path(path)
 	                                                 , m_UUID(uuid)
+													 
 	{
+		
 	}
 
 	void Asset::Serialize()
 	{
 		SerializeData();
 		SerializeMeta();
+
+		m_LastChangeTime = last_write_time(m_Path);
 	}
 
 	void Asset::SerializeData()
@@ -91,6 +95,8 @@ namespace LevEngine
 		m_Deserialized = DeserializeMeta();
 		m_Deserialized = DeserializeData();
 
+		m_LastChangeTime = last_write_time(m_Path);
+		
 		return m_Deserialized = true;
 	}
 

@@ -61,27 +61,30 @@ namespace LevEngine::Editor
 
         if (!Project::GetProject()) return;
 
+        AssetDatabase::ReimportChangedAssets();
+
         SceneManager::TryLoadRequestedScene();
-        
+
         if (Input::IsKeyDown(KeyCode::Escape))
             m_Game->Unfocus();
 
         const auto& activeScene = SceneManager::GetActiveScene();
-        
+
         switch (m_SceneState)
         {
-	        case SceneState::Edit:
-	        {
-	            break;
-	        }
-	        case SceneState::Play:
-	        {
-	            activeScene->OnUpdate(deltaTime);
-	            activeScene->OnPhysics(deltaTime);
-	            activeScene->OnLateUpdate(deltaTime);
+        case SceneState::Edit:
+            {
+                activeScene->DestroyAllMarkedEntities();
+                break;
+            }
+        case SceneState::Play:
+            {
+                activeScene->OnUpdate(deltaTime);
+                activeScene->OnPhysics(deltaTime);
+                activeScene->OnLateUpdate(deltaTime);
 
-	            break;
-	        }
+                break;
+            }
         }
 
         if (m_Viewport->IsActive())

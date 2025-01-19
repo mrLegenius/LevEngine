@@ -3,7 +3,6 @@
 
 #include "EngineAssets.h"
 #include "TextureAsset.h"
-#include "Renderer/Pipeline/Texture.h"
 
 #include "Scene/Serializers/SerializerUtils.h"
 
@@ -20,6 +19,17 @@ namespace LevEngine
     {
     }
 
+    bool MaterialPBRAsset::IsReimportNeeded() const
+    {
+        for (auto texture : m_Textures)
+        {
+            if (texture.second && texture.second->IsReimportNeeded())
+                return true;
+        }
+        
+        return MaterialAsset::IsReimportNeeded() || m_IsReimportNeeded;
+    }
+
     Ref<TextureAsset> MaterialPBRAsset::GetTexture(MaterialPBR::TextureType type)
     {
         auto it = m_Textures.find(type);
@@ -33,6 +43,9 @@ namespace LevEngine
     {
         m_Textures[type] = textureAsset;
         m_Material.SetTexture(type, textureAsset ? textureAsset->GetTexture() : nullptr);
+
+        //TODO: Make a better system for asset dependencies
+        m_IsReimportNeeded |= textureAsset && textureAsset->GetTexture() == nullptr;
     }
 
     void MaterialPBRAsset::SerializeData(YAML::Emitter& out)
@@ -56,6 +69,7 @@ namespace LevEngine
     void MaterialPBRAsset::DeserializeData(const YAML::Node& node)
     {
         m_Material = {};
+        m_IsReimportNeeded = false;
 
         m_Material.SetTintColor(node["Tint"].as<Color>());
         m_Material.SetMetallic(node["Metallic"].as<float>());

@@ -11,7 +11,6 @@ namespace LevEngine
         virtual Material& GetMaterial() = 0;
 
         [[nodiscard]] Ref<Texture> GetIcon() const override;
-
     protected:
         explicit MaterialAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }
     };

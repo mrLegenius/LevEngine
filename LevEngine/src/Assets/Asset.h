@@ -32,6 +32,8 @@ namespace LevEngine
         [[nodiscard]] virtual Ref<Texture> GetIcon() const;
         virtual void Clear() { }
 
+        virtual bool IsReimportNeeded() const { return last_write_time(m_Path) != m_LastChangeTime; }
+        
     protected:
         [[nodiscard]] virtual bool WriteDataToFile() const { return true; }
         [[nodiscard]] virtual bool ReadDataFromFile() const { return true; }
@@ -59,6 +61,7 @@ namespace LevEngine
         friend AssetDatabase;
                 
         std::mutex m_DeserializationMutex;
+        std::filesystem::file_time_type m_LastChangeTime;
         
         void SerializeData();
         bool DeserializeData();
