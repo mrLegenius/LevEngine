@@ -4,18 +4,15 @@
 #include "ParticleAssets.h"
 #include "ParticlesTextureArray.h"
 #include "Renderer/Pipeline/BlendState.h"
-#include "Renderer/Pipeline/ConstantBuffer.h"
 #include "Renderer/Pipeline/DepthStencilState.h"
 #include "Renderer/Pipeline/PipelineState.h"
 #include "Renderer/Pipeline/RasterizerState.h"
 #include "Renderer/RenderCommand.h"
-#include "Renderer/RenderParams.h"
 #include "Renderer/RenderSettings.h"
 #include "Renderer/Shader/Shader.h"
 #include "Renderer/Shader/ShaderType.h"
 #include "Renderer/Pipeline/StructuredBuffer.h"
 #include "Renderer/Pipeline/Texture.h"
-#include "Renderer/Camera/SceneCamera.h"
 
 namespace LevEngine
 {

@@ -67,23 +67,22 @@ namespace LevEngine
         {
             auto [transform, emitter] = group.get<Transform, EmitterComponent>(entity);
 
-            emitter.Timer += deltaTime;
-            
             if (Math::IsZero(emitter.Rate)) continue;
+            
+            emitter.Timer += deltaTime * emitter.Rate;
 
-            const auto interval = 1 / emitter.Rate;
             uint32_t particlesToEmit = 0;
-            while (emitter.Timer >= interval)
+            while (emitter.Timer >= 1.0f)
             {
                 particlesToEmit++;
-                emitter.Timer -= interval;
+                emitter.Timer -= 1.0f;
             }
-
-            if (particlesToEmit <= 0) continue;
             
             const auto texture = emitter.Texture ? emitter.Texture->GetTexture() : nullptr;
             const int textureIndex = GetTextureIndex(texture);
 
+            if (particlesToEmit <= 0) continue;
+            
             auto emitterData = GetEmitterData(emitter, transform, textureIndex);
             m_EmitterData->SetData(&emitterData);
             m_EmitterData->Bind(ShaderType::Compute);

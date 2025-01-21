@@ -121,14 +121,12 @@ void CSMain(uint3 DTid : SV_DispatchThreadID)
 {
 	if (DTid.x >= DeadParticlesCount) return;
 
-	const uint index = DeadParticles.Consume();
-
-	NumberGenerator random;
+	NumberGenerator random{};
 	random.SetSeed(RandomSeed);
 	int cycleCount = (DTid.x + 1);
 	random.Cycle(cycleCount);
 
-	Particle particle = Particles[index];
+	Particle particle;
 
 	particle.TextureIndex = Birth.TextureIndex;
 
@@ -148,5 +146,6 @@ void CSMain(uint3 DTid : SV_DispatchThreadID)
 
 	particle.GravityScale = Birth.GravityScale;
 
+	const uint index = DeadParticles.Consume();
 	Particles[index] = particle;
 }

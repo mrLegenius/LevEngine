@@ -111,6 +111,14 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
     <Content Include="LevResources\Shaders\DeferredLightningPassPBR_VS.hlsl" />
+    <Content Include="LevResources\Shaders\DeferredLightningPassPBR.hlsl" />
+    <Content Include="LevResources\Shaders\Particles\BitonicSort.hlsl" />
+    <Content Include="LevResources\Shaders\Particles\BitonicTranspose.hlsl" />
+    <Content Include="LevResources\Shaders\Particles\Emission.hlsl" />
+    <Content Include="LevResources\Shaders\Particles\ParticlesCommon.hlsl" />
+    <Content Include="LevResources\Shaders\Particles\Random.hlsl" />
+    <Content Include="LevResources\Shaders\Particles\Rendering.hlsl" />
+    <Content Include="LevResources\Shaders\Particles\Simulation.hlsl" />
     <ClCompile Include="src\ComponentDebugRenderers\AnimatorComponentDebugRenderer.cpp" />
     <ClCompile Include="src\AssetSelection.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\CharacterControllerDebugRenderer.cpp" />
