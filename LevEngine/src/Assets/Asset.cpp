@@ -55,7 +55,9 @@ namespace LevEngine
 
 	void Asset::SerializeMeta()
 	{
-		YAML::Emitter metaOut;
+		if (!GenerateMeta()) return;
+		
+ 		YAML::Emitter metaOut;
 		metaOut << YAML::BeginMap;
 
 		metaOut << YAML::Key << "UUID" << YAML::Value << m_UUID;
@@ -141,6 +143,8 @@ namespace LevEngine
 
 	bool Asset::DeserializeMeta()
 	{
+		if (!GenerateMeta()) return true;
+
 		try
 		{
 			YAML::Node meta = YAML::LoadFile(m_MetaPath.string());

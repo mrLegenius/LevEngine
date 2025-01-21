@@ -4,57 +4,33 @@
 #include "Assets/EngineAssets.h"
 #include "Renderer/Shader/Shader.h"
 #include "TextureLibrary.h"
+#include "Assets/ShaderLibrary.h"
 
 namespace LevEngine
 {
     Ref<Shader> ParticleShaders::Rendering()
     {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/Rendering.hlsl"),
-                                                   ShaderType::Vertex | ShaderType::Geometry | ShaderType::Pixel);
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("Particles/Rendering.hlsl"));
     }
 
     Ref<Shader> ParticleShaders::Simulation()
     {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/Simulation.hlsl"),
-                                                   ShaderType::Compute);
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("Particles/Simulation.hlsl"));
     }
-
+    
     Ref<Shader> ParticleShaders::Emission()
     {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/Emission.hlsl"),
-                                                   ShaderType::Compute);
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("Particles/Emission.hlsl"));
     }
 
     Ref<Shader> ParticleShaders::BitonicSort()
     {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader =
-            Shader::Create(GetShaderPath("Particles/BitonicSort.hlsl"), ShaderType::Compute);
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("Particles/BitonicSort.hlsl"));
     }
 
     Ref<Shader> ParticleShaders::BitonicTranspose()
     {
-        LEV_PROFILE_FUNCTION();
-
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Particles/BitonicTranspose.hlsl"),
-                                                   ShaderType::Compute);
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("Particles/BitonicTranspose.hlsl"));
     }
     
     Ref<Texture> ParticleTextures::Default()

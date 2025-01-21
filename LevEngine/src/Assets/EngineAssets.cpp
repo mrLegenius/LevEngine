@@ -1,12 +1,13 @@
 #include "levpch.h"
 #include "EngineAssets.h"
 
+#include "ShaderLibrary.h"
 #include "TextureLibrary.h"
 #include "Renderer/Shader/Shader.h"
 
 namespace LevEngine
 {
-    String GetShaderPath(const String& name) { return ToString(EngineResourcesRoot / "Shaders" / name.c_str()); }
+    Path GetShaderPath(const String& name) { return EngineResourcesRoot / "Shaders" / name.c_str(); }
     static String GetIconsPath(const String& name) { return ToString(EngineResourcesRoot / "Icons" / name.c_str()); }
 
     static auto GetIcon(const String& name) { return TextureLibrary::GetTexture(GetIconsPath(name)); }
@@ -23,48 +24,37 @@ namespace LevEngine
 
     Ref<Shader> ShaderAssets::DebugShape()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("DebugRender\\DebugShape.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("DebugRender\\DebugShape.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::DebugLine()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("DebugRender\\DebugLine.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("DebugRender\\DebugLine.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::ForwardPBR()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("ForwardPBR.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("ForwardPBR.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::Lit()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Lit.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("Lit.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::Unlit()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("Unlit.hlsl"));
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("Unlit.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::ShadowPass()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("ShadowPass.hlsl"));
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("ShadowPass.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::CascadeShadowPass()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("CascadeShadowPass.hlsl"),
-                                                   ShaderType::Vertex | ShaderType::Geometry);
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("CascadeShadowPass.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::CascadeShadowPassWithAnimations()
@@ -72,97 +62,74 @@ namespace LevEngine
         ShaderMacros macros;
         macros.emplace("WITH_ANIMATIONS", "1");
         
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("CascadeShadowPass.hlsl"),
-                                                   ShaderType::Vertex | ShaderType::Geometry, macros);
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("CascadeShadowPass.hlsl"), macros);
     }
 
     Ref<Shader> ShaderAssets::GBufferPass()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaquePBR.hlsl"));
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("DeferredOpaquePBR.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::GBufferPassWithAnimations()
     {
         ShaderMacros macros;
         macros.emplace("WITH_ANIMATIONS", "1");
-        
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredOpaquePBR.hlsl"),
-            ShaderType::Vertex | ShaderType::Pixel, macros);
 
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("DeferredOpaquePBR.hlsl"), macros);
     }
 
     Ref<Shader> ShaderAssets::DeferredVertexOnly()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPassPBR.hlsl"),
-                                                   ShaderType::Vertex);
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("DeferredLightningPassPBR_VS.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::DeferredPointLight()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("DeferredLightningPassPBR.hlsl"));
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("DeferredLightningPassPBR.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::DeferredQuadRender()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("ForwardQuadRender.hlsl"));
-
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("ForwardQuadRender.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::Luminance()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Luminance.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("PostProcessing/Luminance.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::LuminanceAdaptation()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/LuminanceAdaptation.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("PostProcessing/LuminanceAdaptation.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::Tonemapping()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Tonemapping.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("PostProcessing/Tonemapping.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::Vignette()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Vignette.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("PostProcessing/Vignette.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::Bloom()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Bloom.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("PostProcessing/Bloom.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::BloomBlurH()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/BloomBlurH.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("PostProcessing/BloomBlurH.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::BloomBlurV()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/BloomBlurV.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("PostProcessing/BloomBlurV.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::Scale()
     {
-        static Ref<Shader> shader = Shader::Create(GetShaderPath("PostProcessing/Scale.hlsl"));
-        return shader;
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("PostProcessing/Scale.hlsl"));
     }
 }

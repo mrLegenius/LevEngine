@@ -120,6 +120,8 @@
     <ClInclude Include="src\Assets\ModelNode.h" />
     <ClInclude Include="src\Assets\SceneAsset.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
+    <ClInclude Include="src\Assets\ShaderAsset.h" />
+    <ClInclude Include="src\Assets\ShaderLibrary.h" />
     <ClInclude Include="src\BinaryIO\BinaryReader.h" />
     <None Include="src\BinaryIO\BinaryReader.inl" />
     <ClInclude Include="src\BinaryIO\BinaryWriter.h" />
@@ -1089,6 +1091,8 @@
     <ClCompile Include="src\Assets\ModelAsset.cpp" />
     <ClCompile Include="src\Assets\SceneAsset.cpp" />
     <ClCompile Include="src\Assets\ScriptAsset.cpp" />
+    <ClCompile Include="src\Assets\ShaderAsset.cpp" />
+    <ClCompile Include="src\Assets\ShaderLibrary.cpp" />
     <ClCompile Include="src\BinaryIO\BinaryReader.cpp" />
     <ClCompile Include="src\BinaryIO\BinaryWriter.cpp" />
     <ClCompile Include="src\JobSystem\Job.cpp" />

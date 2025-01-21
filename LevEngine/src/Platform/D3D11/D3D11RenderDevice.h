@@ -10,7 +10,7 @@ namespace LevEngine
     {
     public:
         D3D11RenderDevice();
-        ~D3D11RenderDevice();
+        ~D3D11RenderDevice() override;
         
         Microsoft::WRL::ComPtr<ID3D11Device2> GetDevice() const;
         Microsoft::WRL::ComPtr<ID3D11DeviceContext2> GetDeviceContext() const;
@@ -42,7 +42,7 @@ namespace LevEngine
                                        bool generateMipMaps) const override;
         Ref<Texture> CreateTextureCube(const String paths[6], bool isLinear) const override;
         Ref<Query> CreateQuery(Query::QueryType queryType, uint8_t numBuffers) const override;
-        Ref<Shader> CreateShader(const String& filepath, ShaderType shaderTypes, const ShaderMacros& macros) const override;
+        Ref<Shader> CreateShader(const String& filepath, const ShaderMacros& macros) const override;
         Ref<RenderCommands> CreateRenderCommands() const override;
         Ref<DispatchCommands> CreateDispatchCommands() const override;
         Ref<RenderDebugEvent> CreateRenderDebugEvent() const override;

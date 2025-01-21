@@ -4,6 +4,7 @@
 #include "ModalPopup.h"
 #include "Project.h"
 #include "Selection.h"
+#include "Assets/ShaderLibrary.h"
 
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
 #include "Essentials/MenuBar.h"
@@ -62,6 +63,7 @@ namespace LevEngine::Editor
         if (!Project::GetProject()) return;
 
         AssetDatabase::ReimportChangedAssets();
+        ShaderLibrary::ReimportChangedAssets();
 
         SceneManager::TryLoadRequestedScene();
 

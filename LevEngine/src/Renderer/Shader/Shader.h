@@ -11,8 +11,7 @@ namespace LevEngine
 	public:
 
 		static Ref<Shader> Create(const String& filepath);
-		static Ref<Shader> Create(const String& filepath, ShaderType shaderTypes);
-		static Ref<Shader> Create(const String& filepath, ShaderType shaderTypes, const ShaderMacros& macros);
+		static Ref<Shader> Create(const String& filepath, const ShaderMacros& macros);
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
@@ -22,14 +21,17 @@ namespace LevEngine
 		[[nodiscard]] virtual ShaderParameter& GetShaderParameterByName(const String& name) const = 0;
 
 		[[nodiscard]] ShaderType GetType() const { return m_Type; }
-		
+		virtual void Reload() { }
+
 	protected:
-		explicit Shader(String filepath) : m_FilePath(Move(filepath)) { }
+		explicit Shader(String filepath, ShaderMacros macros)
+		: m_FilePath(Move(filepath)), m_Macros(Move(macros)){ }
 		virtual ~Shader() = default;
 
 		String m_FilePath;
 		String m_Name;
 
 		ShaderType m_Type{};
+		ShaderMacros m_Macros{};
 	};
 }

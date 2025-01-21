@@ -40,6 +40,9 @@ namespace LevEngine
 
         virtual bool LoadFromCache() { return false; }
         virtual void SaveToCache() { }
+
+        //TODO: We should generate meta for everything
+        virtual bool GenerateMeta() { return true; }
         
         virtual void SerializeData(YAML::Emitter& out) = 0;
         virtual void DeserializeData(const YAML::Node& node) = 0;

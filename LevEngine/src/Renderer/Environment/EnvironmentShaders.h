@@ -6,11 +6,11 @@ namespace LevEngine
 
     struct EnvironmentShaders
     {
-        static Ref<Shader> EquirectangularToCubemap();
-        static Ref<Shader> CubemapConvolution();
-        static Ref<Shader> EnvironmentPreFiltering();
-        static Ref<Shader> BRDFIntegration();
-        static Ref<Shader> Render();
-        static Ref<Shader> CubemapRender();
+        static const Ref<Shader>& EquirectangularToCubemap();
+        static const Ref<Shader>& CubemapConvolution();
+        static const Ref<Shader>& EnvironmentPreFiltering();
+        static const Ref<Shader>& BRDFIntegration();
+        static const Ref<Shader>& Render();
+        static const Ref<Shader>& CubemapRender();
     };
 }

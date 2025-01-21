@@ -22,8 +22,6 @@ namespace LevEngine
         m_SkyboxPipeline->GetRasterizerState().SetCullMode(CullMode::None);
         m_SkyboxPipeline->GetRasterizerState().SetDepthClipEnabled(false);
         m_SkyboxPipeline->GetDepthStencilState()->SetDepthMode(DepthMode{ false });
-        m_SkyboxPipeline->SetShader(ShaderType::Vertex, EnvironmentShaders::Render());
-        m_SkyboxPipeline->SetShader(ShaderType::Pixel, EnvironmentShaders::Render());
     }
 
     String EnvironmentRenderPass::PassName() { return "Environment Render"; }
@@ -33,7 +31,12 @@ namespace LevEngine
         m_EnvironmentMap = environmentMap;
     }
 
-    bool EnvironmentRenderPass::Begin(entt::registry& registry, RenderParams& params) { return m_EnvironmentMap != nullptr; }
+    bool EnvironmentRenderPass::Begin(entt::registry& registry, RenderParams& params)
+    {
+        m_SkyboxPipeline->SetShader(ShaderType::Vertex, EnvironmentShaders::Render());
+        m_SkyboxPipeline->SetShader(ShaderType::Pixel, EnvironmentShaders::Render());
+        return m_EnvironmentMap != nullptr;
+    }
 
     void EnvironmentRenderPass::Process(entt::registry& registry, RenderParams& params)
     {

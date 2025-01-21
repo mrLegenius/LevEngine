@@ -9,17 +9,21 @@ namespace LevEngine
 class D3D11Shader : public Shader
 {
 public:
-	
-	D3D11Shader(ID3D11Device2* device, const String& filepath, ShaderType shaderTypes, const ShaderMacros& macros);
+	D3D11Shader(ID3D11Device2* device, const String& filepath, const ShaderMacros& macros);
 	~D3D11Shader() override;
 
 	void Bind() const override;
 	void Unbind() const override;
 
+	void Reload() override;
+
 	[[nodiscard]] bool HasSemantic(const BufferBinding& binding) override;
 	[[nodiscard]] uint32_t GetSlotIdBySemantic(const BufferBinding& binding) override;
 	[[nodiscard]] ShaderParameter& GetShaderParameterByName(const String& name) const override;
 private:
+	void Clear();
+	void CreateShaders(const String& string, const ShaderMacros& map);
+	
 	void CreateInputLayout(ID3DBlob* vertexBlob);
 	void CreateShaderParams(ShaderType shaderType, ID3DBlob* blob);
 

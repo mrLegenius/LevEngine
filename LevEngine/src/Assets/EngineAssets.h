@@ -4,7 +4,7 @@ namespace LevEngine
 {
     inline static Path EngineResourcesRoot = Path("LevResources");
     
-    inline String GetShaderPath(const String& name);
+    inline Path GetShaderPath(const String& name);
     
     class Shader;
     class Texture;

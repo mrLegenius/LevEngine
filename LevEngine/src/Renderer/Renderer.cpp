@@ -58,7 +58,8 @@ namespace LevEngine
         Renderer3D::Init();
 
         m_Lights = CreateRef<LightCollection>();
-        
+
+        //<-- Create Textures --<<
         const auto width = window.GetWidth();
         const auto height = window.GetHeight();
 
@@ -119,6 +120,7 @@ namespace LevEngine
             m_MetallicRoughnessAOTexture = Texture::CreateTexture2D(width, height, 1, format);
         }
 
+        //<-- Create Render Targets --<<
         {
             LEV_PROFILE_SCOPE("DepthOnly render target creation");
 
@@ -136,6 +138,7 @@ namespace LevEngine
                                                         mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil));
         }
 
+        //<-- Create Pipelines --<<
         {
             LEV_PROFILE_SCOPE("Deferred quad pipeline creation");
 
@@ -249,6 +252,7 @@ namespace LevEngine
             m_DebugPipeline->GetRasterizerState().SetCullMode(CullMode::None);
         }
 
+        //<-- Create Queries --<<
         {
             LEV_PROFILE_SCOPE("GPU Queries creation");
 
@@ -265,6 +269,7 @@ namespace LevEngine
             m_DebugQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
         }
 
+        //<-- Create Techniques --<<
         {
             LEV_PROFILE_SCOPE("Deferred technique creation");
 
@@ -292,7 +297,8 @@ namespace LevEngine
             
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredLightingQuery));
             m_DeferredTechnique->AddPass(CreateRef<DeferredLightingPass>(
-                m_PositionalLightPipeline1, m_PositionalLightPipeline2, m_AlbedoTexture, m_MetallicRoughnessAOTexture,
+                m_PositionalLightPipeline1, m_PositionalLightPipeline2,
+                m_AlbedoTexture, m_MetallicRoughnessAOTexture,
                 m_NormalTexture, m_DepthTexture));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredLightingQuery));
             
@@ -308,10 +314,9 @@ namespace LevEngine
             m_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(m_DebugPipeline));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DebugQuery));
             
-            // m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ParticlesQuery));
-            // m_DeferredTechnique->AddPass(
-            //     CreateRef<ParticlePass>(mainRenderTarget, m_DepthTexture, m_NormalTexture));
-            // m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ParticlesQuery));
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ParticlesQuery));
+            m_DeferredTechnique->AddPass(CreateRef<ParticlePass>(mainRenderTarget, m_DepthTexture, m_NormalTexture));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ParticlesQuery));
         }
 
         {

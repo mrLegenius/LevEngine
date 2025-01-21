@@ -6,18 +6,13 @@
 
 namespace LevEngine
 {
-	Ref<Shader> Shader::Create(const String& filepath, ShaderType shaderTypes)
-	{
-		return App::RenderDevice().CreateShader(filepath, shaderTypes, ShaderMacros{});
-	}
-	
-	Ref<Shader> Shader::Create(const String& filepath, ShaderType shaderTypes, const ShaderMacros& macros)
-	{
-		return App::RenderDevice().CreateShader(filepath, shaderTypes, macros);
-	}
-
 	Ref<Shader> Shader::Create(const String& filepath)
 	{
-		return Create(filepath, ShaderType::Pixel | ShaderType::Vertex);
+		return App::RenderDevice().CreateShader(filepath, ShaderMacros{});
+	}
+	
+	Ref<Shader> Shader::Create(const String& filepath, const ShaderMacros& macros)
+	{
+		return App::RenderDevice().CreateShader(filepath, macros);
 	}
 }
