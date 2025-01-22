@@ -2,6 +2,7 @@
 #include "ParticleRenderingPass.h"
 
 #include "ParticleAssets.h"
+#include "ParticleBuffers.h"
 #include "ParticlesTextureArray.h"
 #include "Renderer/Pipeline/BlendState.h"
 #include "Renderer/Pipeline/DepthStencilState.h"
@@ -18,11 +19,9 @@ namespace LevEngine
 {
     ParticleRenderingPass::ParticleRenderingPass(
         const Ref<RenderTarget>& renderTarget,
-        const Ref<StructuredBuffer>& particlesBuffer,
-        const Ref<StructuredBuffer>& sortedBuffer,
+        const Ref<ParticleBuffers>& buffers,
         const Ref<ParticlesTextureArray>& particlesTextures)
-            : m_ParticlesBuffer(particlesBuffer)
-            , m_SortedBuffer(sortedBuffer)
+            : m_Buffers(buffers)
             , m_PipelineState(CreateRef<PipelineState>())
             , m_ParticlesTextures(particlesTextures)
         {
@@ -42,8 +41,8 @@ namespace LevEngine
         
         ParticleShaders::Rendering()->Bind();
 
-        m_ParticlesBuffer->Bind(0, ShaderType::Vertex, false);
-        m_SortedBuffer->Bind(2, ShaderType::Vertex, false);
+        m_Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Vertex, false);
+        m_Buffers->GetSorterBuffer()->Bind(2, ShaderType::Vertex, false);
 
         m_PipelineState->Bind();
         
@@ -53,8 +52,8 @@ namespace LevEngine
         RenderCommand::DrawPointList(RenderSettings::MaxParticles);
 
         //<--- Clean ---<<
-        m_ParticlesBuffer->Unbind(1, ShaderType::Vertex, false);
-        m_SortedBuffer->Unbind(2, ShaderType::Vertex, false);
+        m_Buffers->GetParticlesBuffer()->Unbind(1, ShaderType::Vertex, false);
+        m_Buffers->GetSorterBuffer()->Unbind(2, ShaderType::Vertex, false);
         m_PipelineState->Unbind();
         ParticleShaders::Rendering()->Unbind();
 

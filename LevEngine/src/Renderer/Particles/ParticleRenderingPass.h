@@ -3,11 +3,11 @@
 
 namespace LevEngine
 {
+    class ParticleBuffers;
     struct ParticlesTextureArray;
     class RenderTarget;
     class ConstantBuffer;
     class PipelineState;
-    class StructuredBuffer;
 
     struct ParticleCameraData
     {
@@ -21,8 +21,7 @@ namespace LevEngine
     public:
         ParticleRenderingPass(
             const Ref<RenderTarget>& renderTarget,
-            const Ref<StructuredBuffer>& particlesBuffer,
-            const Ref<StructuredBuffer>& sortedBuffer,
+            const Ref<ParticleBuffers>& buffers,
             const Ref<ParticlesTextureArray>& particlesTextures);
         
         ~ParticleRenderingPass() override;
@@ -34,8 +33,7 @@ namespace LevEngine
         void Process(entt::registry& registry, RenderParams& params) override;
 
     private:
-        Ref<StructuredBuffer> m_ParticlesBuffer{};
-        Ref<StructuredBuffer> m_SortedBuffer{};
+        Ref<ParticleBuffers> m_Buffers{};
 
         Ref<PipelineState> m_PipelineState{};
         const Ref<ParticlesTextureArray>& m_ParticlesTextures;

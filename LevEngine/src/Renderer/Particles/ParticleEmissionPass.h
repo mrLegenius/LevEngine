@@ -8,7 +8,7 @@ namespace LevEngine
     struct EmitterComponent;
     struct Transform;
     class ConstantBuffer;
-    class StructuredBuffer;
+    class ParticleBuffers;
 
     struct alignas(16) Handler
     {
@@ -74,8 +74,7 @@ namespace LevEngine
 
     public:
         ParticleEmissionPass(
-            const Ref<StructuredBuffer>& particlesBuffer,
-            const Ref<StructuredBuffer>& deadBuffer,
+            const Ref<ParticleBuffers>& particlesBuffer,
             const Ref<ParticlesTextureArray>& particlesTextures);
         
         ~ParticleEmissionPass() override;
@@ -87,8 +86,7 @@ namespace LevEngine
         void End(entt::registry& registry, RenderParams& params) override;
     private:
 
-        Ref<StructuredBuffer> m_ParticlesBuffer{};
-        Ref<StructuredBuffer> m_DeadBuffer;
+        Ref<ParticleBuffers> m_Buffers{};
         
         Ref<ConstantBuffer> m_ComputeData{};
         Ref<ConstantBuffer> m_EmitterData{};

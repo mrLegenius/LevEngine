@@ -8,34 +8,16 @@
 
 namespace LevEngine
 {
+    class ParticleBuffers;
     struct ParticlesTextureArray;
     class RenderTarget;
     class BitonicSort;
     class ConstantBuffer;
     class StructuredBuffer;
     class Texture;
-
+    
     class ParticlePass final : public RenderPass
     {
-        struct GPUParticleData
-        {
-            Vector3 Position;
-            Vector3 Velocity;
-
-            Color StartColor;
-            Color EndColor;
-            Color Color;
-
-            float StartSize;
-            float EndSize;
-            float Size;
-
-            float LifeTime;
-            float Age;
-            uint32_t TextureIndex;
-            float GravityScale;
-        };
-    
     public:
         ParticlePass(const Ref<RenderTarget>& renderTarget,
                     const Ref<Texture>& depthTexture,
@@ -48,9 +30,7 @@ namespace LevEngine
         void SetViewport(Viewport viewport) override;
         
     private:
-        Ref<StructuredBuffer> m_ParticlesBuffer{};
-        Ref<StructuredBuffer> m_DeadBuffer{};
-        Ref<StructuredBuffer> m_SortedBuffer{};
+        Ref<ParticleBuffers> m_Buffers{};
 
         Ref<ConstantBuffer> m_CameraData{};
         

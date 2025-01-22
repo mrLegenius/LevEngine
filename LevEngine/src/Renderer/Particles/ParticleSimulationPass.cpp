@@ -2,6 +2,7 @@
 #include "ParticleSimulationPass.h"
 
 #include "ParticleAssets.h"
+#include "ParticleBuffers.h"
 #include "ParticlesUtils.h"
 #include "Renderer/Dispatch/DispatchCommand.h"
 #include "Renderer/RenderSettings.h"
@@ -11,13 +12,8 @@
 
 namespace LevEngine
 {
-    ParticleSimulationPass::ParticleSimulationPass(
-    const Ref<StructuredBuffer>& particlesBuffer,
-        const Ref<StructuredBuffer>& deadBuffer,
-        const Ref<StructuredBuffer>& sortedBuffer)
-            : m_ParticlesBuffer(particlesBuffer)
-            , m_DeadBuffer(deadBuffer)
-            , m_SortedBuffer(sortedBuffer) { }
+    ParticleSimulationPass::ParticleSimulationPass(const Ref<ParticleBuffers>& buffers)
+        : m_Buffers(buffers){ }
 
     ParticleSimulationPass::~ParticleSimulationPass() = default;
 
@@ -25,9 +21,9 @@ namespace LevEngine
 
     bool ParticleSimulationPass::Begin(entt::registry& registry, RenderParams& params)
     {
-        m_ParticlesBuffer->Bind(0, ShaderType::Compute, true, -1);
-        m_DeadBuffer->Bind(1, ShaderType::Compute, true, -1);
-        m_SortedBuffer->Bind(2, ShaderType::Compute, true, 0);
+        m_Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true, -1);
+        m_Buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true, -1);
+        m_Buffers->GetSorterBuffer()->Bind(2, ShaderType::Compute, true, 0);
 
         return RenderPass::Begin(registry, params);
     }
@@ -48,8 +44,8 @@ namespace LevEngine
 
     void ParticleSimulationPass::End(entt::registry& registry, RenderParams& params)
     {
-        m_ParticlesBuffer->Unbind(0, ShaderType::Compute, true);
-        m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
-        m_SortedBuffer->Unbind(2, ShaderType::Compute, true);
+        m_Buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
+        m_Buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
+        m_Buffers->GetSorterBuffer()->Unbind(2, ShaderType::Compute, true);
     }
 }

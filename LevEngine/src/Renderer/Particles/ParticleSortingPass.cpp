@@ -2,13 +2,14 @@
 #include "ParticleSortingPass.h"
 
 #include "BitonicSort.h"
+#include "ParticleBuffers.h"
 #include "Renderer/RenderSettings.h"
 #include "Renderer/Pipeline/StructuredBuffer.h"
 
 namespace LevEngine
 {
-    ParticleSortingPass::ParticleSortingPass(const Ref<StructuredBuffer>& sortedBuffer)
-        : m_SortedBuffer(sortedBuffer)
+    ParticleSortingPass::ParticleSortingPass(const Ref<ParticleBuffers>& buffers)
+        : m_Buffers(buffers)
         , m_TempBuffer(StructuredBuffer::Create(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true))
         , m_BitonicSort(CreateRef<BitonicSort>(RenderSettings::MaxParticles))
     { }
@@ -21,6 +22,6 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
         
-        m_BitonicSort->Sort(m_SortedBuffer, m_TempBuffer);
+        m_BitonicSort->Sort(m_Buffers->GetSorterBuffer(), m_TempBuffer);
     }
 }

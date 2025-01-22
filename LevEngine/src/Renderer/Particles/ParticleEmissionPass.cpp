@@ -2,6 +2,7 @@
 #include "ParticleEmissionPass.h"
 
 #include "ParticleAssets.h"
+#include "ParticleBuffers.h"
 #include "ParticlesTextureArray.h"
 #include "ParticlesUtils.h"
 #include "Assets/TextureAsset.h"
@@ -19,9 +20,8 @@
 
 namespace LevEngine
 {
-    ParticleEmissionPass::ParticleEmissionPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer, const Ref<ParticlesTextureArray>& particlesTextures)
-        : m_ParticlesBuffer(particlesBuffer)
-          , m_DeadBuffer(deadBuffer)
+    ParticleEmissionPass::ParticleEmissionPass(const Ref<ParticleBuffers>& particlesBuffer, const Ref<ParticlesTextureArray>& particlesTextures) : 
+          m_Buffers(particlesBuffer)
           , m_ComputeData(ConstantBuffer::Create(sizeof Handler, 1))
           , m_EmitterData(ConstantBuffer::Create(sizeof Emitter, 2))
           , m_RandomData(ConstantBuffer::Create(sizeof RandomGPUData, 3))
@@ -47,8 +47,8 @@ namespace LevEngine
         m_ComputeData->SetData(&handler);
         m_ComputeData->Bind(ShaderType::Compute);
 
-        m_ParticlesBuffer->Bind(0, ShaderType::Compute, true);
-        m_DeadBuffer->Bind(1, ShaderType::Compute, true);
+        m_Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true);
+        m_Buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true);
         
         m_ParticlesTextures->TextureSlots[0] = ParticleTextures::Default();
         m_ParticlesTextures->TextureSlotIndex = 1;
@@ -91,7 +91,7 @@ namespace LevEngine
             m_RandomData->SetData(&randomData);
             m_RandomData->Bind(ShaderType::Compute);
 
-            m_DeadBuffer->BindCounter(4, ShaderType::Compute);
+            m_Buffers->GetDeadBuffer()->BindCounter(4, ShaderType::Compute);
             
             DispatchCommand::Dispatch(particlesToEmit, 1, 1);
         }
@@ -99,9 +99,9 @@ namespace LevEngine
 
     void ParticleEmissionPass::End(entt::registry& registry, RenderParams& params)
     {
-        m_ParticlesBuffer->Unbind(0, ShaderType::Compute, true);
-        m_DeadBuffer->Unbind(1, ShaderType::Compute, true);
-        m_DeadBuffer->UnbindCounter(4, ShaderType::Compute);
+        m_Buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
+        m_Buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
+        m_Buffers->GetDeadBuffer()->UnbindCounter(4, ShaderType::Compute);
     }
 
     Emitter ParticleEmissionPass::GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex)

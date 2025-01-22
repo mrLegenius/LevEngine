@@ -3,12 +3,13 @@
 
 namespace LevEngine
 {
+    class ParticleBuffers;
     class StructuredBuffer;
 
     class ParticleSimulationPass final : public RenderPass
     {
     public:
-        ParticleSimulationPass(const Ref<StructuredBuffer>& particlesBuffer, const Ref<StructuredBuffer>& deadBuffer, const Ref<StructuredBuffer>& sortedBuffer);
+        ParticleSimulationPass(const Ref<ParticleBuffers>& buffers);
         ~ParticleSimulationPass() override;
     protected:
         String PassName() override;
@@ -17,8 +18,6 @@ namespace LevEngine
         void End(entt::registry& registry, RenderParams& params) override;
         
     private:
-        Ref<StructuredBuffer> m_ParticlesBuffer;
-        Ref<StructuredBuffer> m_DeadBuffer;
-        Ref<StructuredBuffer> m_SortedBuffer;
+        Ref<ParticleBuffers> m_Buffers;
     };
 }

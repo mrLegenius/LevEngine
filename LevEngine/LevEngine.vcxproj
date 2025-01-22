@@ -170,7 +170,9 @@
     <ClInclude Include="src\Renderer\Material\MaterialPBR.h" />
     <ClInclude Include="src\Renderer\Material\MaterialSimple.h" />
     <ClInclude Include="src\Renderer\Particles\BitonicSort.h" />
+    <ClInclude Include="src\Renderer\Particles\GPUParticleData.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleAssets.h" />
+    <ClInclude Include="src\Renderer\Particles\ParticleBuffers.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleEmissionPass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticlePass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleRenderingPass.h" />
@@ -1130,6 +1132,7 @@
     <ClCompile Include="src\Renderer\Material\MaterialSimple.cpp" />
     <ClCompile Include="src\Renderer\Particles\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleAssets.cpp" />
+    <ClCompile Include="src\Renderer\Particles\ParticleBuffers.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleEmissionPass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticlePass.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleRenderingPass.cpp" />

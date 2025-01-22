@@ -3,19 +3,20 @@
 
 namespace LevEngine
 {
-    class BitonicSort;
     class StructuredBuffer;
+    class BitonicSort;
+    class ParticleBuffers;
 
     class ParticleSortingPass final : public RenderPass
     {
     public:
-        explicit ParticleSortingPass(const Ref<StructuredBuffer>& sortedBuffer);
+        explicit ParticleSortingPass(const Ref<ParticleBuffers>& buffers);
         ~ParticleSortingPass() override;
     protected:
         String PassName() override;
         void Process(entt::registry& registry, RenderParams& params) override;
     private:
-        Ref<StructuredBuffer> m_SortedBuffer;
+        Ref<ParticleBuffers> m_Buffers;
         
         Ref<StructuredBuffer> m_TempBuffer{};
         Ref<BitonicSort> m_BitonicSort{};
