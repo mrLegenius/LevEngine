@@ -9,7 +9,7 @@
 
 namespace LevEngine
 {
-    ParticleBuffers::ParticleBuffers(uint32_t maxParticles)
+    ParticleBuffers::ParticleBuffers(uint32_t maxParticles) : m_MaxParticles(maxParticles)
     {
         const auto particles = new GPUParticleData[maxParticles];
         const auto indices = new uint32_t[maxParticles];

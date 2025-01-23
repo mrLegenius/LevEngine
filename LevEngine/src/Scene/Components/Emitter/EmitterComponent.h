@@ -3,11 +3,16 @@
 
 namespace LevEngine
 {
+	class ParticleBuffers;
+	class Entity;
 	class TextureAsset;
+	
 	REGISTER_PARSE_TYPE(EmitterComponent);
 	
 	struct EmitterComponent
 	{
+		static void OnConstruct(Entity entity);
+		
 		EmitterComponent();
 
 		struct BirthParams
@@ -42,7 +47,12 @@ namespace LevEngine
 		Ref<TextureAsset> Texture;
 
 	private:
+		Ref<ParticleBuffers> Buffers;
 		float Timer = 0.0f;
+		
 		friend class ParticleEmissionPass;
+		friend class ParticleSimulationPass;
+		friend class ParticleSortingPass;
+		friend class ParticleRenderingPass;
 	};
 }

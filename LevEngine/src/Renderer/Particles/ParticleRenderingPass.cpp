@@ -4,6 +4,7 @@
 #include "ParticleAssets.h"
 #include "ParticleBuffers.h"
 #include "ParticlesTextureArray.h"
+#include "Assets/TextureAsset.h"
 #include "Renderer/Pipeline/BlendState.h"
 #include "Renderer/Pipeline/DepthStencilState.h"
 #include "Renderer/Pipeline/PipelineState.h"
@@ -14,16 +15,12 @@
 #include "Renderer/Shader/ShaderType.h"
 #include "Renderer/Pipeline/StructuredBuffer.h"
 #include "Renderer/Pipeline/Texture.h"
+#include "Scene/Components/Emitter/EmitterComponent.h"
 
 namespace LevEngine
 {
-    ParticleRenderingPass::ParticleRenderingPass(
-        const Ref<RenderTarget>& renderTarget,
-        const Ref<ParticleBuffers>& buffers,
-        const Ref<ParticlesTextureArray>& particlesTextures)
-            : m_Buffers(buffers)
-            , m_PipelineState(CreateRef<PipelineState>())
-            , m_ParticlesTextures(particlesTextures)
+    ParticleRenderingPass::ParticleRenderingPass(const Ref<RenderTarget>& renderTarget)
+            : m_PipelineState(CreateRef<PipelineState>())
         {
         m_PipelineState->GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
         m_PipelineState->GetDepthStencilState()->SetDepthMode(DepthMode::DisableDepthWrites);
@@ -40,25 +37,32 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION();
         
         ParticleShaders::Rendering()->Bind();
-
-        m_Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Vertex, false);
-        m_Buffers->GetSorterBuffer()->Bind(2, ShaderType::Vertex, false);
-
         m_PipelineState->Bind();
         
-        for (uint32_t i = 0; i < m_ParticlesTextures->TextureSlotIndex; i++)
-        	m_ParticlesTextures->TextureSlots[i]->Bind(i+1, ShaderType::Pixel);
+        const auto group = registry.view<EmitterComponent>();
+        for (const auto entity : group)
+        {
+            auto& emitter = group.get<EmitterComponent>(entity);
 
-        RenderCommand::DrawPointList(RenderSettings::MaxParticles);
+            if (!emitter.Buffers) continue;
+            
+            emitter.Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Vertex, false);
+            emitter.Buffers->GetSorterBuffer()->Bind(2, ShaderType::Vertex, false);
 
-        //<--- Clean ---<<
-        m_Buffers->GetParticlesBuffer()->Unbind(1, ShaderType::Vertex, false);
-        m_Buffers->GetSorterBuffer()->Unbind(2, ShaderType::Vertex, false);
-        m_PipelineState->Unbind();
+            const Ref<Texture>& texture = emitter.Texture ? emitter.Texture->GetTexture() : ParticleTextures::Default();
+            texture->Bind(1, ShaderType::Pixel);
+
+            RenderCommand::DrawPointList(emitter.Buffers->GetMaxParticlesCount());
+
+            //<--- Clean ---<<
+            //emitter.Buffers->GetParticlesBuffer()->Unbind(1, ShaderType::Vertex, false);
+            //emitter.Buffers->GetSorterBuffer()->Unbind(2, ShaderType::Vertex, false);
+            
+            //texture->Unbind(1, ShaderType::Pixel);
+        }
+
         ParticleShaders::Rendering()->Unbind();
-
-        for (uint32_t i = 0; i < m_ParticlesTextures->TextureSlotIndex; i++)
-            m_ParticlesTextures->TextureSlots[i]->Unbind(i+1, ShaderType::Pixel);
+        m_PipelineState->Unbind();
     }
 
     void ParticleRenderingPass::SetViewport(const Viewport viewport)

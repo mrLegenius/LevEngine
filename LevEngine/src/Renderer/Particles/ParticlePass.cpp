@@ -25,13 +25,12 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        m_Buffers = CreateRef<ParticleBuffers>(RenderSettings::MaxParticles);
+        auto m_Buffers = CreateRef<ParticleBuffers>(RenderSettings::MaxParticles); //TODO: Delete
 
-        m_ParticlesTextures = CreateRef<ParticlesTextureArray>();
-        m_EmissionPass = CreateScope<ParticleEmissionPass>(m_Buffers, m_ParticlesTextures);
-        m_SimulationPass = CreateScope<ParticleSimulationPass>(m_Buffers);
+        m_EmissionPass = CreateScope<ParticleEmissionPass>();
+        m_SimulationPass = CreateScope<ParticleSimulationPass>();
         m_SortingPass = CreateScope<ParticleSortingPass>(m_Buffers);
-        m_RenderingPass = CreateScope<ParticleRenderingPass>(renderTarget, m_Buffers, m_ParticlesTextures);
+        m_RenderingPass = CreateScope<ParticleRenderingPass>(renderTarget);
     }
 
     String ParticlePass::PassName() { return "Particles"; }

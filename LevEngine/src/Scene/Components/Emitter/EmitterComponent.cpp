@@ -1,11 +1,18 @@
 ﻿#include "levpch.h"
 #include "EmitterComponent.h"
 #include "Assets/TextureAsset.h"
+#include "Renderer/Particles/ParticleBuffers.h"
 
 #include "../ComponentSerializer.h"
 
 namespace LevEngine
 {
+	void EmitterComponent::OnConstruct(Entity entity)
+	{
+		auto& emitterComponent = entity.GetComponent<EmitterComponent>();
+		emitterComponent.Buffers = CreateRef<ParticleBuffers>(emitterComponent.MaxParticles);
+	}
+
 	EmitterComponent::EmitterComponent() = default;
 
 	class EmitterComponentSerializer final : public ComponentSerializer<EmitterComponent, EmitterComponentSerializer>

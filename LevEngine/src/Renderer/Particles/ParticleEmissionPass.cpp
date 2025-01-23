@@ -3,29 +3,22 @@
 
 #include "ParticleAssets.h"
 #include "ParticleBuffers.h"
-#include "ParticlesTextureArray.h"
 #include "ParticlesUtils.h"
-#include "Assets/TextureAsset.h"
-#include "DataTypes/Array.h"
 #include "Kernel/Time/Time.h"
 #include "Math/Random.h"
 #include "Renderer/Pipeline/ConstantBuffer.h"
 #include "Renderer/Dispatch/DispatchCommand.h"
-#include "Renderer/RenderSettings.h"
 #include "Renderer/Shader/Shader.h"
 #include "Renderer/Pipeline/StructuredBuffer.h"
-#include "Renderer/Pipeline/Texture.h"
 #include "Scene/Components/Emitter/EmitterComponent.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
-    ParticleEmissionPass::ParticleEmissionPass(const Ref<ParticleBuffers>& particlesBuffer, const Ref<ParticlesTextureArray>& particlesTextures) : 
-          m_Buffers(particlesBuffer)
-          , m_ComputeData(ConstantBuffer::Create(sizeof Handler, 1))
+    ParticleEmissionPass::ParticleEmissionPass() : 
+        m_ComputeData(ConstantBuffer::Create(sizeof Handler, 1))
           , m_EmitterData(ConstantBuffer::Create(sizeof Emitter, 2))
           , m_RandomData(ConstantBuffer::Create(sizeof RandomGPUData, 3))
-          , m_ParticlesTextures(particlesTextures)
     {
     }
 
@@ -35,23 +28,7 @@ namespace LevEngine
 
     bool ParticleEmissionPass::Begin(entt::registry& registry, RenderParams& params)
     {
-        const float deltaTime = Time::GetScaledDeltaTime().GetSeconds();
-        
-        int groupSizeX = 0;
-        int groupSizeY = 0;
-        ParticlesUtils::GetGroupSize(RenderSettings::MaxParticles, groupSizeX, groupSizeY);
-        
         ParticleShaders::Emission()->Bind();
-        
-        const Handler handler{groupSizeY, RenderSettings::MaxParticles, deltaTime};
-        m_ComputeData->SetData(&handler);
-        m_ComputeData->Bind(ShaderType::Compute);
-
-        m_Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true);
-        m_Buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true);
-        
-        m_ParticlesTextures->TextureSlots[0] = ParticleTextures::Default();
-        m_ParticlesTextures->TextureSlotIndex = 1;
         
         return RenderPass::Begin(registry, params);
     }
@@ -63,10 +40,13 @@ namespace LevEngine
         const float deltaTime = Time::GetScaledDeltaTime().GetSeconds();
         
         const auto group = registry.view<Transform, EmitterComponent>();
+        
         for (const auto entity : group)
         {
             auto [transform, emitter] = group.get<Transform, EmitterComponent>(entity);
 
+            if (!emitter.Buffers) continue;
+            
             if (Math::IsZero(emitter.Rate)) continue;
             
             emitter.Timer += deltaTime * emitter.Rate;
@@ -78,12 +58,20 @@ namespace LevEngine
                 emitter.Timer -= 1.0f;
             }
             
-            const auto texture = emitter.Texture ? emitter.Texture->GetTexture() : nullptr;
-            const int textureIndex = GetTextureIndex(texture);
-
             if (particlesToEmit <= 0) continue;
+
+            int groupSizeX = 0;
+            int groupSizeY = 0;
+            ParticlesUtils::GetGroupSize(emitter.Buffers->GetMaxParticlesCount(), groupSizeX, groupSizeY);
+        
+            const Handler handler{groupSizeY, emitter.Buffers->GetMaxParticlesCount(), deltaTime};
+            m_ComputeData->SetData(&handler);
+            m_ComputeData->Bind(ShaderType::Compute);
             
-            auto emitterData = GetEmitterData(emitter, transform, textureIndex);
+            emitter.Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true);
+            emitter.Buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true);
+            
+            auto emitterData = GetEmitterData(emitter, transform);
             m_EmitterData->SetData(&emitterData);
             m_EmitterData->Bind(ShaderType::Compute);
 
@@ -91,20 +79,22 @@ namespace LevEngine
             m_RandomData->SetData(&randomData);
             m_RandomData->Bind(ShaderType::Compute);
 
-            m_Buffers->GetDeadBuffer()->BindCounter(4, ShaderType::Compute);
+            emitter.Buffers->GetDeadBuffer()->BindCounter(4, ShaderType::Compute);
             
             DispatchCommand::Dispatch(particlesToEmit, 1, 1);
+
+            emitter.Buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
+            emitter.Buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
+            emitter.Buffers->GetDeadBuffer()->UnbindCounter(4, ShaderType::Compute);
         }
     }
 
     void ParticleEmissionPass::End(entt::registry& registry, RenderParams& params)
     {
-        m_Buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
-        m_Buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
-        m_Buffers->GetDeadBuffer()->UnbindCounter(4, ShaderType::Compute);
+
     }
 
-    Emitter ParticleEmissionPass::GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex)
+    Emitter ParticleEmissionPass::GetEmitterData(EmitterComponent emitter, Transform transform)
     {
         LEV_PROFILE_FUNCTION();
 
@@ -126,40 +116,9 @@ namespace LevEngine
                 size,
                 emitter.Birth.EndSize,
                 lifeTime,
-                textureIndex,
                 emitter.Birth.GravityScale,
             },
         };
         return emitterData;
-    }
-
-    int ParticleEmissionPass::GetTextureIndex(const Ref<Texture>& texture) const
-    {
-        if (!texture) return 0;
-
-        int textureIndex = -1;
-        for (uint32_t i = 0; i < m_ParticlesTextures->TextureSlotIndex; i++)
-        {
-            if (m_ParticlesTextures->TextureSlots[i]->GetPath() != texture->GetPath()) continue;
-            
-            textureIndex = i;
-            break;
-        }
-
-        if (textureIndex == -1)
-        {
-            if (m_ParticlesTextures->TextureSlotIndex >= ParticlesTextureArray::MaxTextureSlots)
-            {
-                textureIndex = 0;
-            }
-            else
-            {
-                textureIndex = static_cast<int>(m_ParticlesTextures->TextureSlotIndex);
-                m_ParticlesTextures->TextureSlots[m_ParticlesTextures->TextureSlotIndex] = texture;
-                m_ParticlesTextures->TextureSlotIndex++;
-            }
-        }
-
-        return textureIndex;
     }
 }

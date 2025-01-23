@@ -94,10 +94,9 @@ cbuffer Emitter : register(b2)
 		float EndSize;
 
 		RandomFloat LifeTime;
-		uint TextureIndex;
+		float GravityScale;
 
 		//<--- 16 byte ---<<
-		float GravityScale;
 	};
 	
 	BirthParams Birth;
@@ -127,8 +126,6 @@ void CSMain(uint3 DTid : SV_DispatchThreadID)
 	random.Cycle(cycleCount);
 
 	Particle particle;
-
-	particle.TextureIndex = Birth.TextureIndex;
 
 	particle.Position = Birth.Position.GetRandom(random);
 	particle.Velocity = Birth.Velocity.GetRandom(random);

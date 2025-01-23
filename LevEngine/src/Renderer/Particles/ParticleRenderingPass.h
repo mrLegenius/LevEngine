@@ -19,10 +19,7 @@ namespace LevEngine
     class ParticleRenderingPass final : public RenderPass
     {
     public:
-        ParticleRenderingPass(
-            const Ref<RenderTarget>& renderTarget,
-            const Ref<ParticleBuffers>& buffers,
-            const Ref<ParticlesTextureArray>& particlesTextures);
+        ParticleRenderingPass(const Ref<RenderTarget>& renderTarget);
         
         ~ParticleRenderingPass() override;
         
@@ -33,9 +30,6 @@ namespace LevEngine
         void Process(entt::registry& registry, RenderParams& params) override;
 
     private:
-        Ref<ParticleBuffers> m_Buffers{};
-
         Ref<PipelineState> m_PipelineState{};
-        const Ref<ParticlesTextureArray>& m_ParticlesTextures;
     };
 }

@@ -17,7 +17,6 @@ namespace LevEngine
 
         float LifeTime;
         float Age;
-        uint32_t TextureIndex;
         float GravityScale;
     };
 }

@@ -30,8 +30,6 @@ namespace LevEngine
         void SetViewport(Viewport viewport) override;
         
     private:
-        Ref<ParticleBuffers> m_Buffers{};
-
         Ref<ConstantBuffer> m_CameraData{};
         
         Ref<Texture> m_DepthTexture{};
@@ -41,7 +39,5 @@ namespace LevEngine
         Scope<ParticleSimulationPass> m_SimulationPass{};
         Scope<ParticleSortingPass> m_SortingPass{};
         Scope<ParticleRenderingPass> m_RenderingPass{};
-
-        Ref<ParticlesTextureArray> m_ParticlesTextures{};
     };
 }

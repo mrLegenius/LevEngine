@@ -57,7 +57,6 @@ namespace LevEngine
             alignas(16) RandomFloat LifeTime;
 
             //<--- 16 byte ---<<
-            uint32_t TextureIndex;
             float GravityScale;
         };
 
@@ -73,9 +72,7 @@ namespace LevEngine
     {
 
     public:
-        ParticleEmissionPass(
-            const Ref<ParticleBuffers>& particlesBuffer,
-            const Ref<ParticlesTextureArray>& particlesTextures);
+        ParticleEmissionPass();
         
         ~ParticleEmissionPass() override;
         
@@ -85,16 +82,11 @@ namespace LevEngine
         void Process(entt::registry& registry, RenderParams& params) override;
         void End(entt::registry& registry, RenderParams& params) override;
     private:
-
-        Ref<ParticleBuffers> m_Buffers{};
         
         Ref<ConstantBuffer> m_ComputeData{};
         Ref<ConstantBuffer> m_EmitterData{};
         Ref<ConstantBuffer> m_RandomData{};
-
-        Ref<ParticlesTextureArray> m_ParticlesTextures;
         
-        static Emitter GetEmitterData(EmitterComponent emitter, Transform transform, uint32_t textureIndex);
-        int GetTextureIndex(const Ref<Texture>& texture) const;
+        static Emitter GetEmitterData(EmitterComponent emitter, Transform transform);
     };
 }

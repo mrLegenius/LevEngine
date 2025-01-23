@@ -9,11 +9,11 @@
 #include "Renderer/Shader/Shader.h"
 #include "Renderer/Shader/ShaderType.h"
 #include "Renderer/Pipeline/StructuredBuffer.h"
+#include "Scene/Components/Emitter/EmitterComponent.h"
 
 namespace LevEngine
 {
-    ParticleSimulationPass::ParticleSimulationPass(const Ref<ParticleBuffers>& buffers)
-        : m_Buffers(buffers){ }
+    ParticleSimulationPass::ParticleSimulationPass() { }
 
     ParticleSimulationPass::~ParticleSimulationPass() = default;
 
@@ -21,10 +21,6 @@ namespace LevEngine
 
     bool ParticleSimulationPass::Begin(entt::registry& registry, RenderParams& params)
     {
-        m_Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true, -1);
-        m_Buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true, -1);
-        m_Buffers->GetSorterBuffer()->Bind(2, ShaderType::Compute, true, 0);
-
         return RenderPass::Begin(registry, params);
     }
 
@@ -33,19 +29,33 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION();
         //TODO: Bind depth and normal maps here to enable bounce again
 
-        int groupSizeX = 0;
-        int groupSizeY = 0;
-        ParticlesUtils::GetGroupSize(RenderSettings::MaxParticles, groupSizeX, groupSizeY);
+        const auto group = registry.view<EmitterComponent>();
+        for (const auto entity : group)
+        {
+            auto& emitter = group.get<EmitterComponent>(entity);
 
-        ParticleShaders::Simulation()->Bind();
-        DispatchCommand::Dispatch(groupSizeX, groupSizeY, 1);
-        ParticleShaders::Simulation()->Unbind();
+            if (!emitter.Buffers) continue;
+            
+            emitter.Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true, -1);
+            emitter.Buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true, -1);
+            emitter.Buffers->GetSorterBuffer()->Bind(2, ShaderType::Compute, true, 0);
+        
+            int groupSizeX = 0;
+            int groupSizeY = 0;
+            ParticlesUtils::GetGroupSize(emitter.Buffers->GetMaxParticlesCount(), groupSizeX, groupSizeY);
+
+            ParticleShaders::Simulation()->Bind();
+            DispatchCommand::Dispatch(groupSizeX, groupSizeY, 1);
+            ParticleShaders::Simulation()->Unbind();
+
+            emitter.Buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
+            emitter.Buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
+            emitter.Buffers->GetSorterBuffer()->Unbind(2, ShaderType::Compute, true);
+        }
     }
 
     void ParticleSimulationPass::End(entt::registry& registry, RenderParams& params)
     {
-        m_Buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
-        m_Buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
-        m_Buffers->GetSorterBuffer()->Unbind(2, ShaderType::Compute, true);
+    
     }
 }

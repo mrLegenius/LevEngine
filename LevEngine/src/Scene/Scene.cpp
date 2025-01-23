@@ -30,6 +30,7 @@
 #include "EnttMutex.h"
 #include "Components/Destroyable.h"
 #include "Components/Animation/AnimatorComponent.h"
+#include "Components/Emitter/EmitterComponent.h"
 #include "Components/Time/TimelineComponent.h"
 
 namespace LevEngine
@@ -62,6 +63,8 @@ namespace LevEngine
     //Called in Runtime before deserialization
     void Scene::Initialize()
     {
+        RegisterComponentOnConstruct<EmitterComponent>();
+        
         RegisterComponentOnConstruct<TimelineComponent>();
         RegisterComponentOnDestroy<TimelineComponent>();
         

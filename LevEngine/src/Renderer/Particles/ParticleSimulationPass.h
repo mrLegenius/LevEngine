@@ -9,7 +9,7 @@ namespace LevEngine
     class ParticleSimulationPass final : public RenderPass
     {
     public:
-        ParticleSimulationPass(const Ref<ParticleBuffers>& buffers);
+        ParticleSimulationPass();
         ~ParticleSimulationPass() override;
     protected:
         String PassName() override;
@@ -18,6 +18,5 @@ namespace LevEngine
         void End(entt::registry& registry, RenderParams& params) override;
         
     private:
-        Ref<ParticleBuffers> m_Buffers;
     };
 }
