@@ -1,0 +1,11 @@
+Tint: [0.800000012, 0.800000012, 0.800000012, 1]
+Metallic: 0.00100000005
+Roughness: 0.5
+EnableTransparency: false
+Albedo: 3704091984147807020
+MetallicTexture: 15347591925988672980
+RoughnessTexture: 8104369333140225678
+AmbientOcclusion: 6285592485527497341
+Normal: 15839249848619844438
+Tiling: [1, 1]
+Offset: [0, 0]

@@ -1,0 +1,92 @@
+Scene: HierarchyTest
+Entities:
+  - Entity: 16561250187535133085
+    Tag: 1
+    Parent: 13019513519238053759
+    Transform:
+      ChildIndex: 0
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 17678115514144534088
+    Tag: 1
+    Parent: 16561250187535133085
+    Transform:
+      ChildIndex: 0
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 12380423602387814686
+    Tag: 1
+    Parent: 16561250187535133085
+    Transform:
+      ChildIndex: 1
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 2580758805152281970
+    Tag: 1
+    Parent: 12380423602387814686
+    Transform:
+      ChildIndex: 0
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 5924771455897860381
+    Tag: 1
+    Parent: 17678115514144534088
+    Transform:
+      ChildIndex: 0
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 14833831424360833598
+    Tag: 1
+    Parent: 2580758805152281970
+    Transform:
+      ChildIndex: 0
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 1470808554393112877
+    Tag: 1
+    Parent: 5924771455897860381
+    Transform:
+      ChildIndex: 0
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 3524051598453264251
+    Tag: 1
+    Parent: 2580758805152281970
+    Transform:
+      ChildIndex: 1
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 7186475020889943951
+    Tag: 1
+    Parent: 5924771455897860381
+    Transform:
+      ChildIndex: 1
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 12483618137071524871
+    Tag: 1
+    Parent: 2580758805152281970
+    Transform:
+      ChildIndex: 2
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 12751891367181118954
+    Tag: 1
+    Parent: 5924771455897860381
+    Transform:
+      ChildIndex: 2
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+Systems:
+  []
