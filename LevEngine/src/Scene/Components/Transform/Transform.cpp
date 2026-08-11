@@ -2,9 +2,21 @@
 #include "Transform.h"
 
 #include "../ComponentSerializer.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneManager.h"
 
 namespace LevEngine
 {
+	namespace
+	{
+		//<--- The root is the only entity of a scene that is not allowed to have a parent ---<<
+		bool IsSceneRoot(const Entity entity)
+		{
+			const auto& scene = SceneManager::GetActiveScene();
+			return scene && scene->GetRootEntity() == entity;
+		}
+	}
+
 	Transform::Transform() { ForceRecalculateModel(); }
 
 	Transform::Transform(const Entity entity, Entity parent)
@@ -88,7 +100,7 @@ namespace LevEngine
 			return;
 		}
 		
-		if (!parent)
+		if (!parent && IsSceneRoot(entity))
 		{
 			Log::CoreWarning("Can't set parent for root object");
 			return;
