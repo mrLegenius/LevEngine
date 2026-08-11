@@ -8,6 +8,4 @@ namespace LevEngine
     RendererAPI RenderSettings::RendererAPI = RendererAPI::D3D11;
 
     bool RenderSettings::UseFrustumCulling = true;
-    
-    uint32_t RenderSettings::MaxParticles = 1024 * 16;
 }

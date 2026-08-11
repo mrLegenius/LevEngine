@@ -34,8 +34,6 @@ struct RenderSettings
 	static constexpr uint32_t ShadowMapSlot = 9;
 	static constexpr uint32_t MaterialSlot = 4;
 
-	static uint32_t MaxParticles;
-	
 	//Shadows
 	static constexpr int CascadeCount = 4;
 	static constexpr float CascadeDistances[CascadeCount] = { 0.1f, 0.3f, 0.5f, 1.0f };

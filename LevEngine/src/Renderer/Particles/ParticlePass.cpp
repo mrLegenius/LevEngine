@@ -10,7 +10,6 @@
 #include "Renderer/Shader/Shader.h"
 #include "Math/Random.h"
 #include "Renderer/Pipeline/Texture.h"
-#include "ParticlesTextureArray.h"
 #include "Kernel/Time/Time.h"
 #include "Renderer/RenderParams.h"
 #include "Renderer/Camera/SceneCamera.h"

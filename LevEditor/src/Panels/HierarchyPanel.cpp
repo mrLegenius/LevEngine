@@ -63,10 +63,14 @@ namespace LevEngine::Editor
 			ImGui::EndDragDropTarget();
 		}
 
-		auto rootEntity = activeScene->GetRootEntity();
-		auto rootEntityTransform = rootEntity.GetComponent<Transform>();
-		for (auto child : rootEntityTransform.GetChildren())
+		const auto rootEntity = activeScene->GetRootEntity();
+
+		//<--- Drawing a node can reparent or delete it, so iterate over a copy ---<<
+		const Vector<Entity> rootChildren = rootEntity.GetComponent<Transform>().GetChildren();
+		for (const auto child : rootChildren)
 		{
+			if (!child) continue;
+
 			DrawEntityNode(child);
 		}
 

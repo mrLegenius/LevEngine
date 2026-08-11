@@ -102,12 +102,15 @@ namespace LevEngine
 		std::lock_guard lock(m_DeserializationMutex);
 		if (m_Deserialized && !force) return true;
 		
-		m_Deserialized = DeserializeMeta();
-		m_Deserialized = DeserializeData();
+		const bool metaDeserialized = DeserializeMeta();
+		const bool dataDeserialized = DeserializeData();
 
 		UpdateLastChangeTime();
 
-		return m_Deserialized = true;
+		//<--- Marked as deserialized even on failure, otherwise a broken asset is parsed again every frame ---<<
+		m_Deserialized = true;
+
+		return metaDeserialized && dataDeserialized;
 	}
 
 	bool Asset::DeserializeData()

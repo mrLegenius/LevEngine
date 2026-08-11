@@ -3,7 +3,6 @@
 
 #include "ParticleAssets.h"
 #include "ParticleBuffers.h"
-#include "ParticlesTextureArray.h"
 #include "Assets/TextureAsset.h"
 #include "Renderer/Pipeline/BlendState.h"
 #include "Renderer/Pipeline/DepthStencilState.h"

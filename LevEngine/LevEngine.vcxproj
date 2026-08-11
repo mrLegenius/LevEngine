@@ -178,7 +178,6 @@
     <ClInclude Include="src\Renderer\Particles\ParticleRenderingPass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleSimulationPass.h" />
     <ClInclude Include="src\Renderer\Particles\ParticleSortingPass.h" />
-    <ClInclude Include="src\Renderer\Particles\ParticlesTextureArray.h" />
     <ClInclude Include="src\Renderer\Particles\ParticlesUtils.h" />
     <ClInclude Include="src\Renderer\Passes\ClearPass.h" />
     <ClInclude Include="src\Renderer\Passes\CopyTexturePass.h" />

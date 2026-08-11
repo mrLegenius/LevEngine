@@ -37,10 +37,7 @@ namespace LevEngine
 
 	Path AssetDatabase::GetAssetCachePath(UUID uuid)
 	{
-		if (!exists(GetAssetsCachePath()))
-			create_directory(GetAssetsCachePath());
-		
-		return GetAssetsCachePath() / ToString(uuid).c_str();;
+		return GetAssetsCachePath() / ToString(uuid).c_str();
 	}
 
 	Path AssetDatabase::GetRelativePath(const Path& path)
@@ -114,7 +111,10 @@ namespace LevEngine
 	{
 		if (!exists(GetAssetsPath()))
 			create_directory(GetAssetsPath());
-		
+
+		if (!exists(GetAssetsCachePath()))
+			create_directory(GetAssetsCachePath());
+
 		m_AssetsByPath.clear();
 		m_Assets.clear();
 		Queue<Path> directories;

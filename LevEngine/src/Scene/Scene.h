@@ -10,7 +10,7 @@ namespace LevEngine
 	class Audio;
 	struct Transform;
 	
-	class Scene : public eastl::enable_shared_from_this<Scene>
+	class Scene
 	{
 	public:
 		Scene();

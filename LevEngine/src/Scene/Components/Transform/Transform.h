@@ -9,8 +9,8 @@ namespace LevEngine
 	
 	struct Transform
 	{
-		explicit Transform();
-		explicit Transform(Entity entity, Entity parent);
+		Transform();
+		Transform(Entity entity, Entity parent);
 
 		[[nodiscard]] const Matrix& GetModel() const { return model; }
 		

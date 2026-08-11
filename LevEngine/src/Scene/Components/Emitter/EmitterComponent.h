@@ -4,7 +4,6 @@
 namespace LevEngine
 {
 	class ParticleBuffers;
-	class Entity;
 	class TextureAsset;
 	
 	REGISTER_PARSE_TYPE(EmitterComponent);

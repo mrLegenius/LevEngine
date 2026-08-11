@@ -8,14 +8,11 @@
 
 namespace LevEngine
 {
-    class ParticleBuffers;
-    struct ParticlesTextureArray;
     class RenderTarget;
-    class BitonicSort;
     class ConstantBuffer;
-    class StructuredBuffer;
     class Texture;
-    
+
+
     class ParticlePass final : public RenderPass
     {
     public:

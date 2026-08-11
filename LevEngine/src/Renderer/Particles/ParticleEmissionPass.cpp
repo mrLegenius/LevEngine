@@ -90,11 +90,6 @@ namespace LevEngine
         }
     }
 
-    void ParticleEmissionPass::End(entt::registry& registry, RenderParams& params)
-    {
-
-    }
-
     Emitter ParticleEmissionPass::GetEmitterData(EmitterComponent emitter, Transform transform)
     {
         LEV_PROFILE_FUNCTION();

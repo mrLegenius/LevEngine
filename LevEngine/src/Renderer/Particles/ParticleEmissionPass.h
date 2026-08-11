@@ -3,12 +3,9 @@
 
 namespace LevEngine
 {
-    struct ParticlesTextureArray;
-    class Texture;
     struct EmitterComponent;
     struct Transform;
     class ConstantBuffer;
-    class ParticleBuffers;
 
     struct alignas(16) Handler
     {
@@ -80,7 +77,6 @@ namespace LevEngine
         String PassName() override;
         bool Begin(entt::registry& registry, RenderParams& params) override;
         void Process(entt::registry& registry, RenderParams& params) override;
-        void End(entt::registry& registry, RenderParams& params) override;
     private:
         
         Ref<ConstantBuffer> m_ComputeData{};

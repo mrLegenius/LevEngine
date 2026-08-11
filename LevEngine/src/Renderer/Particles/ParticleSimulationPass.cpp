@@ -5,7 +5,6 @@
 #include "ParticleBuffers.h"
 #include "ParticlesUtils.h"
 #include "Renderer/Dispatch/DispatchCommand.h"
-#include "Renderer/RenderSettings.h"
 #include "Renderer/Shader/Shader.h"
 #include "Renderer/Shader/ShaderType.h"
 #include "Renderer/Pipeline/StructuredBuffer.h"
@@ -13,16 +12,11 @@
 
 namespace LevEngine
 {
-    ParticleSimulationPass::ParticleSimulationPass() { }
+    ParticleSimulationPass::ParticleSimulationPass() = default;
 
     ParticleSimulationPass::~ParticleSimulationPass() = default;
 
     String ParticleSimulationPass::PassName() { return "Particle Simulation"; }
-
-    bool ParticleSimulationPass::Begin(entt::registry& registry, RenderParams& params)
-    {
-        return RenderPass::Begin(registry, params);
-    }
 
     void ParticleSimulationPass::Process(entt::registry& registry, RenderParams& params)
     {
@@ -55,8 +49,4 @@ namespace LevEngine
         }
     }
 
-    void ParticleSimulationPass::End(entt::registry& registry, RenderParams& params)
-    {
-    
-    }
 }

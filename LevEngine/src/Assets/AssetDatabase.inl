@@ -68,7 +68,12 @@ namespace LevEngine
         if (!asset) return nullptr;
 
         auto assetT = CastRef<T>(asset);
-        if (!assetT) return nullptr;
+        if (!assetT)
+        {
+            //<--- Trace, callers use this to probe the type of an asset ---<<
+            Log::CoreTrace("Asset ({0}) in {1} is not {2}", asset->GetUUID(), asset->GetPath(), typeid(T).name());
+            return nullptr;
+        }
 
         return assetT;
     }
