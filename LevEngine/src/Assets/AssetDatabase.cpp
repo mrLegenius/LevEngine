@@ -138,15 +138,15 @@ namespace LevEngine
 
 	void AssetDatabase::ReimportChangedAssets()
 	{
-		Vector<Ref<Asset>> assetsToReimport; 
-		for (auto asset : m_AssetsByPath)
+		Vector<Ref<Asset>> assetsToReimport;
+		for (const auto& [path, asset] : m_AssetsByPath)
 		{
-			if (!asset.second->m_Deserialized || !asset.second->IsReimportNeeded()) continue;
+			if (!asset || !asset->m_Deserialized || !asset->IsReimportNeeded()) continue;
 
-			assetsToReimport.push_back(asset.second);
+			assetsToReimport.push_back(asset);
 		}
 
-		for (auto asset : assetsToReimport)
+		for (const auto& asset : assetsToReimport)
 		{
 			ReimportAsset(asset->GetPath());
 		}
@@ -298,7 +298,7 @@ namespace LevEngine
 		return CreateRef<DefaultAsset>(path, uuid);
 	}
 
-	const Ref<Asset>& AssetDatabase::CreateFolder(const Path& path)
+	Ref<Asset> AssetDatabase::CreateFolder(const Path& path)
 	{
 		if (!exists(path))
 		{
@@ -306,7 +306,11 @@ namespace LevEngine
 			ImportAsset(path);
 		}
 
-		return m_AssetsByPath[path];
+		//<--- Don't use operator[], it would put a null asset in the database ---<<
+		const auto assetIt = m_AssetsByPath.find(path);
+		if (assetIt == m_AssetsByPath.end()) return nullptr;
+
+		return assetIt->second;
 	}
 
 	Ref<Asset> AssetDatabase::GetAsset(const Path& path, const bool deserialize)

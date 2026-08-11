@@ -25,11 +25,9 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        auto m_Buffers = CreateRef<ParticleBuffers>(RenderSettings::MaxParticles); //TODO: Delete
-
         m_EmissionPass = CreateScope<ParticleEmissionPass>();
         m_SimulationPass = CreateScope<ParticleSimulationPass>();
-        m_SortingPass = CreateScope<ParticleSortingPass>(m_Buffers);
+        m_SortingPass = CreateScope<ParticleSortingPass>();
         m_RenderingPass = CreateScope<ParticleRenderingPass>(renderTarget);
     }
 

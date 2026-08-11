@@ -29,9 +29,6 @@ namespace LevEngine
 
         uint32_t childIndex = 0;
         if (TryParse(transformNode["ChildIndex"], childIndex))
-            component.childIndex = childIndex;
-
-        //TODO: Find a better way to keep order of children
-        component.parent.GetComponent<Transform>().SortChildren();
+            component.childIndex = static_cast<uint16_t>(childIndex);
     }
 }

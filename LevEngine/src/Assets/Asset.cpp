@@ -11,9 +11,17 @@ namespace LevEngine
 	                                                 , m_MetaPath(path.string().append(".meta").c_str())
 	                                                 , m_Path(path)
 	                                                 , m_UUID(uuid)
-													 
 	{
-		
+	}
+
+	void Asset::UpdateLastChangeTime()
+	{
+		std::error_code errorCode;
+		const auto lastChangeTime = last_write_time(m_Path, errorCode);
+
+		if (errorCode) return;
+
+		m_LastChangeTime = lastChangeTime;
 	}
 
 	void Asset::Serialize()
@@ -21,7 +29,7 @@ namespace LevEngine
 		SerializeData();
 		SerializeMeta();
 
-		m_LastChangeTime = last_write_time(m_Path);
+		UpdateLastChangeTime();
 	}
 
 	void Asset::SerializeData()
@@ -56,8 +64,8 @@ namespace LevEngine
 	void Asset::SerializeMeta()
 	{
 		if (!GenerateMeta()) return;
-		
- 		YAML::Emitter metaOut;
+
+		YAML::Emitter metaOut;
 		metaOut << YAML::BeginMap;
 
 		metaOut << YAML::Key << "UUID" << YAML::Value << m_UUID;
@@ -97,8 +105,8 @@ namespace LevEngine
 		m_Deserialized = DeserializeMeta();
 		m_Deserialized = DeserializeData();
 
-		m_LastChangeTime = last_write_time(m_Path);
-		
+		UpdateLastChangeTime();
+
 		return m_Deserialized = true;
 	}
 

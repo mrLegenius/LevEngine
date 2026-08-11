@@ -94,16 +94,26 @@ namespace LevEngine
                 entitiesMap.try_emplace(uuid, deserializedEntity);
             }
 
-            for (auto& [uuid, entity] : entitiesMap)
+            //<--- Go through the entities in the order they are stored in the file to keep the children order ---<<
+            for (const auto& [entity, entityNode] : entitiesToDeserialize)
             {
                 if (!entity) continue;
 
+                const auto relationshipIt = relationships.find(entity.GetUUID());
+                if (relationshipIt == relationships.end()) continue;
+
+                const auto parentIt = entitiesMap.find(relationshipIt->second);
+                if (parentIt == entitiesMap.end() || !parentIt->second) continue;
+
                 auto& transform = entity.GetComponent<Transform>();
-                auto parent = entitiesMap[relationships[uuid]];
-                if (!parent) continue;
-                
-                transform.SetParent(parent, false);
+
+                //<--- SetParent puts the entity at the end of the children, so the index has to be restored ---<<
+                const auto childIndex = transform.GetChildIndex();
+                transform.SetParent(parentIt->second, false);
+                transform.SetChildIndex(childIndex);
             }
+
+            m_Scene->GetRootEntity().GetComponent<Transform>().SortChildren();
 
             ParallelJob serializeJob([=](const int i)
             {

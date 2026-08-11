@@ -63,8 +63,6 @@ namespace LevEngine
     //Called in Runtime before deserialization
     void Scene::Initialize()
     {
-        RegisterComponentOnConstruct<EmitterComponent>();
-        
         RegisterComponentOnConstruct<TimelineComponent>();
         RegisterComponentOnDestroy<TimelineComponent>();
         
@@ -392,11 +390,7 @@ namespace LevEngine
 
         auto entity = Entity(entt::handle{m_Registry, m_Registry.create()});
         entity.AddComponent<IDComponent>(uuid);
-        auto& transform = entity.AddComponent<Transform>(entity, parent);
-        if (parent)
-        {
-            transform.SetChildIndex(parent.GetComponent<Transform>().GetChildrenCount() - 1);
-        }
+        entity.AddComponent<Transform>(entity, parent);
         entity.AddComponent<TagComponent>(name);
 
         return entity;
@@ -419,13 +413,20 @@ namespace LevEngine
 
     void Scene::DestroyAllMarkedEntities()
     {
-        const auto destroyableView = m_Registry.view<Transform, Destroyable>();
-        const auto& scene = SceneManager::GetActiveScene();
+        LEV_PROFILE_FUNCTION();
 
+        const auto destroyableView = m_Registry.view<Transform, Destroyable>();
+
+        //<--- Destroying an entity destroys its children as well, so the view can't be modified while iterating ---<<
+        Vector<Entity> entitiesToDestroy;
         for (const auto entity : destroyableView)
+            entitiesToDestroy.emplace_back(entt::handle(m_Registry, entity));
+
+        for (const auto entity : entitiesToDestroy)
         {
-            const auto entityToDestroy = Entity(entt::handle(m_Registry, entity));
-            scene->DestroyEntityImmediate(entityToDestroy);
+            if (!entity) continue;
+
+            DestroyEntityImmediate(entity);
         }
     }
 
@@ -434,11 +435,17 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
+        if (entity == m_RootEntity)
+        {
+            Log::CoreWarning("Can't destroy root entity");
+            return;
+        }
+
         Vector<Entity> entitiesToDestroy;
 
-        auto& parentTransform = entity.GetComponent<Transform>();
-        parentTransform.SetParent(m_RootEntity);
-        m_RootEntity.GetComponent<Transform>().RemoveChild(entity);
+        const auto& transform = entity.GetComponent<Transform>();
+        if (const auto parent = transform.GetParent())
+            parent.GetComponent<Transform>().RemoveChild(entity);
 
         GetAllChildren(entity, entitiesToDestroy);
 
@@ -476,16 +483,24 @@ namespace LevEngine
 
         //Restore transform
         auto duplicatedEntity = ConvertEntity(newEntity);
-        const Transform& oldTransform = entity.GetComponent<Transform>();
-        Transform& transform = m_Registry.replace<Transform>(newEntity, duplicatedEntity, parent);
-        transform.SetWorldPosition(oldTransform.GetWorldPosition());
-        transform.SetWorldRotation(oldTransform.GetWorldRotation());
-        transform.SetWorldScale(oldTransform.GetWorldScale());
 
-        transform.SetChildIndex(oldTransform.GetChildIndex() + 1);
+        //<--- Copy everything we need, duplicating children invalidates references to the transform pool ---<<
+        const Transform& oldTransform = entity.GetComponent<Transform>();
+        const auto oldPosition = oldTransform.GetWorldPosition();
+        const auto oldRotation = oldTransform.GetWorldRotation();
+        const auto oldScale = oldTransform.GetWorldScale();
+        const auto oldChildIndex = oldTransform.GetChildIndex();
+        const Vector<Entity> oldChildren = oldTransform.GetChildren();
+
+        Transform& transform = m_Registry.replace<Transform>(newEntity, duplicatedEntity, parent);
+        transform.SetWorldPosition(oldPosition);
+        transform.SetWorldRotation(oldRotation);
+        transform.SetWorldScale(oldScale);
+
+        transform.SetChildIndex(static_cast<uint16_t>(oldChildIndex + 1));
 
         //Copy all children
-        for (const auto child : oldTransform.GetChildren())
+        for (const auto child : oldChildren)
             DuplicateEntity(child, duplicatedEntity);
 
         return duplicatedEntity;

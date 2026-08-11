@@ -44,21 +44,22 @@ namespace LevEngine
         {
             auto& emitter = group.get<EmitterComponent>(entity);
 
-            if (!emitter.Buffers) continue;
-            
-            emitter.Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Vertex, false);
-            emitter.Buffers->GetSorterBuffer()->Bind(2, ShaderType::Vertex, false);
+            const auto& buffers = emitter.GetBuffers();
+            if (!buffers) continue;
+
+            buffers->GetParticlesBuffer()->Bind(0, ShaderType::Vertex, false);
+            buffers->GetSorterBuffer()->Bind(2, ShaderType::Vertex, false);
 
             const Ref<Texture>& texture = emitter.Texture ? emitter.Texture->GetTexture() : ParticleTextures::Default();
             texture->Bind(1, ShaderType::Pixel);
 
-            RenderCommand::DrawPointList(emitter.Buffers->GetMaxParticlesCount());
+            RenderCommand::DrawPointList(buffers->GetMaxParticlesCount());
 
-            //<--- Clean ---<<
-            //emitter.Buffers->GetParticlesBuffer()->Unbind(1, ShaderType::Vertex, false);
-            //emitter.Buffers->GetSorterBuffer()->Unbind(2, ShaderType::Vertex, false);
-            
-            //texture->Unbind(1, ShaderType::Pixel);
+            //<--- Clean, otherwise the buffers stay bound as SRVs and collide with the compute passes ---<<
+            buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Vertex, false);
+            buffers->GetSorterBuffer()->Unbind(2, ShaderType::Vertex, false);
+
+            texture->Unbind(1, ShaderType::Pixel);
         }
 
         ParticleShaders::Rendering()->Unbind();

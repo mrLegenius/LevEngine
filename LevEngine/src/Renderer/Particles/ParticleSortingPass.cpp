@@ -3,25 +3,44 @@
 
 #include "BitonicSort.h"
 #include "ParticleBuffers.h"
-#include "Renderer/RenderSettings.h"
 #include "Renderer/Pipeline/StructuredBuffer.h"
+#include "Scene/Components/Emitter/EmitterComponent.h"
 
 namespace LevEngine
 {
-    ParticleSortingPass::ParticleSortingPass(const Ref<ParticleBuffers>& buffers)
-        : m_Buffers(buffers)
-        , m_TempBuffer(StructuredBuffer::Create(nullptr, RenderSettings::MaxParticles, sizeof Vector2, CPUAccess::None, true))
-        , m_BitonicSort(CreateRef<BitonicSort>(RenderSettings::MaxParticles))
-    { }
+    ParticleSortingPass::ParticleSortingPass() = default;
 
     ParticleSortingPass::~ParticleSortingPass() = default;
 
     String ParticleSortingPass::PassName() { return "Particle Sorting"; }
 
+    const ParticleSortingPass::SortingResources& ParticleSortingPass::GetSortingResources(const uint32_t maxParticles)
+    {
+        const auto it = m_SortingResources.find(maxParticles);
+        if (it != m_SortingResources.end()) return it->second;
+
+        SortingResources resources;
+        resources.TempBuffer = StructuredBuffer::Create(nullptr, maxParticles, sizeof Vector2, CPUAccess::None, true);
+        resources.Sort = CreateRef<BitonicSort>(static_cast<int>(maxParticles));
+
+        return m_SortingResources.emplace(maxParticles, Move(resources)).first->second;
+    }
+
     void ParticleSortingPass::Process(entt::registry& registry, RenderParams& params)
     {
         LEV_PROFILE_FUNCTION();
-        
-        m_BitonicSort->Sort(m_Buffers->GetSorterBuffer(), m_TempBuffer);
+
+        const auto group = registry.view<EmitterComponent>();
+        for (const auto entity : group)
+        {
+            auto& emitter = group.get<EmitterComponent>(entity);
+
+            const auto& buffers = emitter.GetBuffers();
+            if (!buffers) continue;
+
+            const auto& resources = GetSortingResources(buffers->GetMaxParticlesCount());
+
+            resources.Sort->Sort(buffers->GetSorterBuffer(), resources.TempBuffer);
+        }
     }
 }

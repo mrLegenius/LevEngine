@@ -34,23 +34,24 @@ namespace LevEngine
         {
             auto& emitter = group.get<EmitterComponent>(entity);
 
-            if (!emitter.Buffers) continue;
-            
-            emitter.Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true, -1);
-            emitter.Buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true, -1);
-            emitter.Buffers->GetSorterBuffer()->Bind(2, ShaderType::Compute, true, 0);
-        
+            const auto& buffers = emitter.GetBuffers();
+            if (!buffers) continue;
+
+            buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true, -1);
+            buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true, -1);
+            buffers->GetSorterBuffer()->Bind(2, ShaderType::Compute, true, 0);
+
             int groupSizeX = 0;
             int groupSizeY = 0;
-            ParticlesUtils::GetGroupSize(emitter.Buffers->GetMaxParticlesCount(), groupSizeX, groupSizeY);
+            ParticlesUtils::GetGroupSize(buffers->GetMaxParticlesCount(), groupSizeX, groupSizeY);
 
             ParticleShaders::Simulation()->Bind();
             DispatchCommand::Dispatch(groupSizeX, groupSizeY, 1);
             ParticleShaders::Simulation()->Unbind();
 
-            emitter.Buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
-            emitter.Buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
-            emitter.Buffers->GetSorterBuffer()->Unbind(2, ShaderType::Compute, true);
+            buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
+            buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
+            buffers->GetSorterBuffer()->Unbind(2, ShaderType::Compute, true);
         }
     }
 

@@ -11,9 +11,10 @@ namespace LevEngine
 	
 	struct EmitterComponent
 	{
-		static void OnConstruct(Entity entity);
-		
 		EmitterComponent();
+
+		//<--- Creates the GPU buffers on demand and resizes them when MaxParticles changes ---<<
+		const Ref<ParticleBuffers>& GetBuffers();
 
 		struct BirthParams
 		{

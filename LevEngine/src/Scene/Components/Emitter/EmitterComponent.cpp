@@ -7,13 +7,21 @@
 
 namespace LevEngine
 {
-	void EmitterComponent::OnConstruct(Entity entity)
-	{
-		auto& emitterComponent = entity.GetComponent<EmitterComponent>();
-		emitterComponent.Buffers = CreateRef<ParticleBuffers>(emitterComponent.MaxParticles);
-	}
-
 	EmitterComponent::EmitterComponent() = default;
+
+	const Ref<ParticleBuffers>& EmitterComponent::GetBuffers()
+	{
+		if (MaxParticles == 0)
+		{
+			Buffers.reset();
+			return Buffers;
+		}
+
+		if (!Buffers || Buffers->GetMaxParticlesCount() != MaxParticles)
+			Buffers = CreateRef<ParticleBuffers>(MaxParticles);
+
+		return Buffers;
+	}
 
 	class EmitterComponentSerializer final : public ComponentSerializer<EmitterComponent, EmitterComponentSerializer>
 	{

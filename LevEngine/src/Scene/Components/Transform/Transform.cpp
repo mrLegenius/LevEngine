@@ -72,17 +72,12 @@ namespace LevEngine
 		const auto it = std::ranges::find(children, entity);
 
 		if (it == children.end()) return;
-		
-		uint32_t childIndex = it->GetComponent<Transform>().GetChildIndex();
+
 		children.erase(it);
 
-		//Move other children indices 
-		for (auto child : children)
-		{
-			auto& childTransform = child.GetComponent<Transform>();
-			if (childTransform.GetChildIndex() > childIndex)
-				childTransform.childIndex--;
-		}
+		//<--- Children are always stored in childIndex order ---<<
+		for (uint16_t i = 0; i < children.size(); ++i)
+			children[i].GetComponent<Transform>().childIndex = i;
 	}
 
 	void Transform::SetParent(const Entity value, const bool keepWorldTransform)
@@ -98,7 +93,7 @@ namespace LevEngine
 			Log::CoreWarning("Can't set parent for root object");
 			return;
 		}
-		
+
 		if (parent == value) return;
 		
 		if (entity == value)
@@ -128,13 +123,28 @@ namespace LevEngine
 			childrenToCheck.pop();
 		}
 		
-		auto& parentTransform = parent.GetComponent<Transform>();
-		parentTransform.RemoveChild(entity);
+		const bool wasAttached = static_cast<bool>(parent);
+
+		//<--- An entity without a parent is not attached to the hierarchy yet, there is nothing to detach from ---<<
+		if (wasAttached)
+			parent.GetComponent<Transform>().RemoveChild(entity);
 
 		auto& newParentTransform = value.GetComponent<Transform>();
-		childIndex = newParentTransform.children.size();
-		newParentTransform.children.emplace_back(entity);
+		auto& siblings = newParentTransform.children;
+
+		//<--- A detached entity keeps the index it was given, a reparented one goes to the end ---<<
+		const auto siblingsCount = static_cast<uint16_t>(siblings.size());
+		const auto newIndex = wasAttached ? siblingsCount : Math::Min(childIndex, siblingsCount);
+
+		siblings.insert(siblings.begin() + newIndex, entity);
 		depth = newParentTransform.GetHierarchyDepth() + 1;
+
+		//<--- Children are always stored in childIndex order ---<<
+		for (uint16_t i = 0; i < siblings.size(); ++i)
+			siblings[i].GetComponent<Transform>().childIndex = i;
+
+		//<--- The whole subtree moved with us ---<<
+		UpdateChildrenDepth();
 
 		if (!keepWorldTransform)
 		{
@@ -153,39 +163,34 @@ namespace LevEngine
 		SetWorldScale(scale);
 	}
 	
-	void Transform::SetChildIndex(uint16_t index)
+	void Transform::SetChildIndex(const uint16_t index)
 	{
 		if (!parent)
 		{
-			Log::CoreWarning("Can't set child index for root object");
+			//<--- Not attached to a hierarchy yet, keep the index until a parent is set ---<<
+			childIndex = index;
 			return;
 		}
 
-		if (childIndex == index) return;
-
 		auto& parentTransform = parent.GetComponent<Transform>();
-		auto lastChildIndex = Math::Max(parentTransform.GetChildrenCount() - 1, 0);
-		index = Math::Min(static_cast<int>(index), lastChildIndex);
+		auto& siblings = parentTransform.children;
 
-		//Move other children indices 
-		uint16_t min = Math::Min(index, childIndex);
-		uint16_t max = Math::Max(index, childIndex);
-		
-		const auto& children = parentTransform.GetChildren();
-		bool indexIncreased = index > childIndex;
-		auto offset = indexIncreased ? -1 : +1;
-		
-		for (int i = min; i <= max; ++i)
+		const auto it = std::ranges::find(siblings, entity);
+		if (it == siblings.end()) return;
+
+		const auto currentIndex = static_cast<uint16_t>(eastl::distance(siblings.begin(), it));
+		const auto lastChildIndex = static_cast<uint16_t>(siblings.size() - 1);
+		const auto newIndex = Math::Min(index, lastChildIndex);
+
+		if (currentIndex != newIndex)
 		{
-			auto child = children[i];
-			auto& childTransform = child.GetComponent<Transform>();
-			childTransform.childIndex += offset;
+			siblings.erase(it);
+			siblings.insert(siblings.begin() + newIndex, entity);
 		}
 
-		parentTransform.children.erase(parentTransform.children.begin() + childIndex - 1);
-		parentTransform.children.emplace(parentTransform.children.begin() + index, entity);
-		
-		childIndex = index;
+		//<--- Children are always stored in childIndex order ---<<
+		for (uint16_t i = 0; i < siblings.size(); ++i)
+			siblings[i].GetComponent<Transform>().childIndex = i;
 	}
 
 	void Transform::SetWorldPosition(const Vector3 value)
@@ -291,15 +296,28 @@ namespace LevEngine
 			Matrix::CreateTranslation(GetWorldPosition());
 	}
 
-	//TODO: Remove sorting and replace with inserting to vector instead in serializator
+	void Transform::UpdateChildrenDepth()
+	{
+		for (auto child : children)
+		{
+			auto& childTransform = child.GetComponent<Transform>();
+			childTransform.depth = depth + 1;
+			childTransform.UpdateChildrenDepth();
+		}
+	}
+
 	void Transform::SortChildren()
 	{
 		std::ranges::sort(children, [](const Entity& lhs, const Entity& rhs)
 		{
-			auto leftTransform = lhs.GetComponent<Transform>();
-			auto rightTransform = rhs.GetComponent<Transform>();
+			const auto& leftTransform = lhs.GetComponent<Transform>();
+			const auto& rightTransform = rhs.GetComponent<Transform>();
 
 			return leftTransform.childIndex < rightTransform.childIndex;
 		});
+
+		//<--- Children are always stored in childIndex order ---<<
+		for (uint16_t i = 0; i < children.size(); ++i)
+			children[i].GetComponent<Transform>().childIndex = i;
 	}
 }

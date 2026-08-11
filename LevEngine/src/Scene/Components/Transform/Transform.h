@@ -41,6 +41,7 @@ namespace LevEngine
 		
 		void SetChildIndex(uint16_t index);
 		[[nodiscard]] uint16_t GetChildIndex() const { return childIndex; }
+		void SortChildren();
 		[[nodiscard]] uint32_t GetHierarchyDepth() const { return depth; }
 		
 		void Move(const Vector3 value) { position += value; }
@@ -63,8 +64,8 @@ namespace LevEngine
 		void ForceRecalculateModel();
 
 	private:
-		void SortChildren();
-		
+		void UpdateChildrenDepth();
+
 		friend class TransformSerializer;
 		Vector<Entity> children;
 

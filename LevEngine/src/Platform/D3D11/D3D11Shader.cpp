@@ -99,6 +99,18 @@ namespace LevEngine
             m_ComputeShader->Release();
         if (m_InputLayout)
             m_InputLayout->Release();
+
+        //<--- Reset everything, so a failed reload never leaves dangling pointers behind ---<<
+        m_PixelShader = nullptr;
+        m_VertexShader = nullptr;
+        m_GeometryShader = nullptr;
+        m_ComputeShader = nullptr;
+        m_InputLayout = nullptr;
+
+        m_InputSemantics.clear();
+        m_ShaderParameters.clear();
+
+        m_Type = ShaderType::None;
     }
 
     void D3D11Shader::CreateShaders(const String& filepath, const ShaderMacros& macros)
@@ -118,6 +130,9 @@ namespace LevEngine
             existingShaders = existingShaders | ShaderType::Compute;
 
         m_Type = existingShaders;
+
+        if (existingShaders == ShaderType::None)
+            Log::CoreError("Failed to create any shader stage from {0}", filepath);
     }
 
     bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, ShaderMacros defines, ID3DInclude* includes,
@@ -191,7 +206,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        ID3DBlob* vertexBC;
+        ID3DBlob* vertexBC = nullptr;
 
         if (!CreateShader(vertexBC, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSMain", "vs_5_0"))
             return false;
@@ -204,6 +219,8 @@ namespace LevEngine
         CreateInputLayout(vertexBC);
         CreateShaderParams(ShaderType::Vertex, vertexBC);
 
+        vertexBC->Release();
+
         return true;
     }
 
@@ -211,7 +228,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        ID3DBlob* pixelBC;
+        ID3DBlob* pixelBC = nullptr;
 
         if (!CreateShader(pixelBC, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PSMain", "ps_5_0"))
             return false;
@@ -223,6 +240,8 @@ namespace LevEngine
 
         CreateShaderParams(ShaderType::Pixel, pixelBC);
 
+        pixelBC->Release();
+
         return true;
     }
 
@@ -231,7 +250,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        ID3DBlob* geometryBC;
+        ID3DBlob* geometryBC = nullptr;
 
         if (!CreateShader(geometryBC, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GSMain", "gs_5_0"))
             return false;
@@ -243,6 +262,8 @@ namespace LevEngine
 
         CreateShaderParams(ShaderType::Geometry, geometryBC);
 
+        geometryBC->Release();
+
         return true;
     }
 
@@ -251,7 +272,7 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        ID3DBlob* blob;
+        ID3DBlob* blob = nullptr;
 
         if (!CreateShader(blob, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CSMain", "cs_5_0"))
             return false;
@@ -262,6 +283,8 @@ namespace LevEngine
             nullptr, &shader);
 
         CreateShaderParams(ShaderType::Compute, blob);
+
+        blob->Release();
 
         return true;
     }

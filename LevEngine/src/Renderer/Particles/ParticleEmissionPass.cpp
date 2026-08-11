@@ -45,10 +45,11 @@ namespace LevEngine
         {
             auto [transform, emitter] = group.get<Transform, EmitterComponent>(entity);
 
-            if (!emitter.Buffers) continue;
-            
             if (Math::IsZero(emitter.Rate)) continue;
-            
+
+            const auto& buffers = emitter.GetBuffers();
+            if (!buffers) continue;
+
             emitter.Timer += deltaTime * emitter.Rate;
 
             uint32_t particlesToEmit = 0;
@@ -57,20 +58,20 @@ namespace LevEngine
                 particlesToEmit++;
                 emitter.Timer -= 1.0f;
             }
-            
+
             if (particlesToEmit <= 0) continue;
 
             int groupSizeX = 0;
             int groupSizeY = 0;
-            ParticlesUtils::GetGroupSize(emitter.Buffers->GetMaxParticlesCount(), groupSizeX, groupSizeY);
-        
-            const Handler handler{groupSizeY, emitter.Buffers->GetMaxParticlesCount(), deltaTime};
+            ParticlesUtils::GetGroupSize(buffers->GetMaxParticlesCount(), groupSizeX, groupSizeY);
+
+            const Handler handler{groupSizeY, buffers->GetMaxParticlesCount(), deltaTime};
             m_ComputeData->SetData(&handler);
             m_ComputeData->Bind(ShaderType::Compute);
-            
-            emitter.Buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true);
-            emitter.Buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true);
-            
+
+            buffers->GetParticlesBuffer()->Bind(0, ShaderType::Compute, true);
+            buffers->GetDeadBuffer()->Bind(1, ShaderType::Compute, true);
+
             auto emitterData = GetEmitterData(emitter, transform);
             m_EmitterData->SetData(&emitterData);
             m_EmitterData->Bind(ShaderType::Compute);
@@ -79,13 +80,13 @@ namespace LevEngine
             m_RandomData->SetData(&randomData);
             m_RandomData->Bind(ShaderType::Compute);
 
-            emitter.Buffers->GetDeadBuffer()->BindCounter(4, ShaderType::Compute);
-            
+            buffers->GetDeadBuffer()->BindCounter(4, ShaderType::Compute);
+
             DispatchCommand::Dispatch(particlesToEmit, 1, 1);
 
-            emitter.Buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
-            emitter.Buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
-            emitter.Buffers->GetDeadBuffer()->UnbindCounter(4, ShaderType::Compute);
+            buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
+            buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);
+            buffers->GetDeadBuffer()->UnbindCounter(4, ShaderType::Compute);
         }
     }
 

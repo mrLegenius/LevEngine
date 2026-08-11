@@ -1,35 +1,47 @@
-﻿#include "levpch.h"
+#include "levpch.h"
 #include "ShaderLibrary.h"
 
 #include "ShaderAsset.h"
 
 namespace LevEngine
 {
+    String ShaderLibrary::GetKey(const Path& path, const ShaderMacros& shaderMacros)
+    {
+        String key = ToString(path);
+
+        //<--- ShaderMacros is an ordered map, so the key is stable ---<<
+        for (const auto& [name, definition] : shaderMacros)
+        {
+            key.append("|");
+            key.append(name);
+            key.append("=");
+            key.append(definition);
+        }
+
+        return key;
+    }
+
     const Ref<Shader>& ShaderLibrary::GetOrAddShader(const Path& path, const ShaderMacros& shaderMacros)
     {
         LEV_PROFILE_FUNCTION();
 
-        auto it = m_ShaderAssets.find(path);
+        const auto key = GetKey(path, shaderMacros);
+        const auto it = s_ShaderAssets.find(key);
 
-        Ref<ShaderAsset> shaderAsset;
-        if (it == m_ShaderAssets.end())
-        {
-            shaderAsset = CreateRef<ShaderAsset>(path, UUID(), shaderMacros);
-            m_ShaderAssets[path] = shaderAsset;
-            shaderAsset->Serialize();
-            shaderAsset->Deserialize();
-        }
-        else
-        {
-            shaderAsset = it->second;
-        }
+        if (it != s_ShaderAssets.end())
+            return it->second->GetShader();
+
+        auto shaderAsset = CreateRef<ShaderAsset>(path, UUID(), shaderMacros);
+        s_ShaderAssets[key] = shaderAsset;
+        shaderAsset->Serialize();
+        shaderAsset->Deserialize();
 
         return shaderAsset->GetShader();
     }
 
     void ShaderLibrary::ReimportChangedAssets()
     {
-        for (auto& it : m_ShaderAssets)
+        for (auto& it : s_ShaderAssets)
         {
             auto& shaderAsset = it.second;
 

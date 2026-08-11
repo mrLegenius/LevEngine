@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Renderer/Shader/Shader.h"
 
 namespace LevEngine
@@ -12,7 +12,10 @@ namespace LevEngine
         static void ReimportChangedAssets();
 
     private:
-	    static inline UnorderedMap<Path, Ref<ShaderAsset>> m_ShaderAssets;
+        //<--- Shaders compiled from the same file with different macros are different shaders ---<<
+        static String GetKey(const Path& path, const ShaderMacros& shaderMacros);
+
+	    static inline UnorderedMap<String, Ref<ShaderAsset>> s_ShaderAssets;
     };
 
 }

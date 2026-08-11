@@ -32,7 +32,14 @@ namespace LevEngine
         [[nodiscard]] virtual Ref<Texture> GetIcon() const;
         virtual void Clear() { }
 
-        virtual bool IsReimportNeeded() const { return last_write_time(m_Path) != m_LastChangeTime; }
+        //<--- Never throws, a deleted file simply doesn't need a reimport ---<<
+        virtual bool IsReimportNeeded() const
+        {
+            std::error_code errorCode;
+            const auto lastChangeTime = last_write_time(m_Path, errorCode);
+
+            return !errorCode && lastChangeTime != m_LastChangeTime;
+        }
         
     protected:
         [[nodiscard]] virtual bool WriteDataToFile() const { return true; }
@@ -65,6 +72,8 @@ namespace LevEngine
                 
         std::mutex m_DeserializationMutex;
         std::filesystem::file_time_type m_LastChangeTime;
+
+        void UpdateLastChangeTime();
         
         void SerializeData();
         bool DeserializeData();
