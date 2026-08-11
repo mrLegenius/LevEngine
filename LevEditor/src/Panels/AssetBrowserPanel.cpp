@@ -38,6 +38,7 @@ namespace LevEngine::Editor
     AssetBrowserPanel::AssetBrowserPanel()
         : m_CurrentDirectory(AssetDatabase::GetAssetsPath())
     {
+        m_DefaultWindowSize = Vector2{ 1030, 390 };
     }
 
     void AssetBrowserPanel::DrawContent()

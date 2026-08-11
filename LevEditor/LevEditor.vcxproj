@@ -140,6 +140,10 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClInclude Include="src\Panels\GamePanel.h" />
     <ClInclude Include="src\Panels\HierarchyPanel.h" />
     <ClInclude Include="src\Panels\Panel.h" />
+    <ClInclude Include="src\Panels\PanelManager.h" />
+    <ClInclude Include="src\Panels\PanelManager.inl" />
+    <ClInclude Include="src\Panels\PanelTypes.h" />
+    <ClInclude Include="src\Panels\ConsoleLog.h" />
     <ClInclude Include="src\Panels\PropertiesPanel.h" />
     <ClInclude Include="src\Panels\ScriptsPanel.h" />
     <ClInclude Include="src\Panels\SettingsPanel.h" />
@@ -205,6 +209,8 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClCompile Include="src\Panels\AssetBrowserPanel.cpp" />
     <ClCompile Include="src\Panels\HierarchyPanel.cpp" />
     <ClCompile Include="src\Panels\Panel.cpp" />
+    <ClCompile Include="src\Panels\PanelManager.cpp" />
+    <ClCompile Include="src\Panels\ConsoleLog.cpp" />
     <ClCompile Include="src\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Panels\ViewportPanel.cpp" />
     <ClCompile Include="src\ProjectEditor.cpp" />

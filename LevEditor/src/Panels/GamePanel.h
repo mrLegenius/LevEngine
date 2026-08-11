@@ -12,6 +12,7 @@ namespace LevEngine::Editor
 		{
 			m_WindowPadding = Vector2{ 0, 0 };
 			m_CanScroll = false;
+			m_DefaultWindowSize = Vector2{ 1140, 665 };
 		}
 		explicit GamePanel(const Ref<Texture>& renderTexture, Func<SceneState> stateGetter) : GamePanel(std::move(stateGetter))
 		{
@@ -34,6 +35,8 @@ namespace LevEngine::Editor
 
 		[[nodiscard]] float GetWidth() const { return m_Size.x; }
 		[[nodiscard]] float GetHeight() const { return m_Size.y; }
+
+		void OnClose() override;
 
 	protected:
 		String GetName() override { return "Game"; }

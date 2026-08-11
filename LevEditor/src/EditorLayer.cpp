@@ -9,10 +9,13 @@
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
 #include "Essentials/MenuBar.h"
 #include "Panels/AssetBrowserPanel.h"
+#include "Panels/ConsoleLog.h"
 #include "Panels/ConsolePanel.h"
 #include "Panels/DockSpace.h"
 #include "Panels/GamePanel.h"
 #include "Panels/HierarchyPanel.h"
+#include "Panels/PanelManager.h"
+#include "Panels/PanelTypes.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/ScriptsPanel.h"
 #include "Panels/SettingsPanel.h"
@@ -25,18 +28,28 @@
 
 namespace LevEngine::Editor
 {
+    namespace
+    {
+        Ref<Texture> GetMainRenderTexture()
+        {
+            return App::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0);
+        }
+    }
+
     void EditorLayer::OnAttach()
     {
         LEV_PROFILE_FUNCTION();
 
-        //spdlog uses shared_ptr so we use it here as well
-        m_Console = std::make_shared<ConsolePanel>();
-        Log::Logger::AddLogHandler(m_Console);
+        ConsoleLog::Init();
 
         m_SaveData.Load();
 
         m_ProjectEditor = CreateScope<ProjectEditor>(std::bind(&EditorLayer::OnProjectLoaded, this));
         m_SceneEditor = CreateScope<SceneEditor>([this]{ return m_SceneState; });
+
+        m_DockSpace = CreateRef<DockSpace>();
+        m_PanelManager = CreateRef<PanelManager>();
+        RegisterPanels();
 
         if (Project::Load(m_SaveData.GetLastOpenedProject()))
         {
@@ -46,9 +59,43 @@ namespace LevEngine::Editor
         {
             m_ProjectEditor->ShowProjectSelectionPopup();
         }
-        
+
         Application::Get().GetWindow().EnableCursor();
     }
+
+    void EditorLayer::RegisterPanels()
+    {
+        m_PanelManager->RegisterPanelType(PanelTypes::Viewport,
+            []() -> Ref<Panel> { return CreateRef<ViewportPanel>(GetMainRenderTexture()); }, true);
+
+        m_PanelManager->RegisterPanelType(PanelTypes::Game,
+            [this]() -> Ref<Panel>
+            {
+                return CreateRef<GamePanel>(GetMainRenderTexture(), [this] { return m_SceneState; });
+            }, true);
+
+        m_PanelManager->RegisterPanelType(PanelTypes::Hierarchy,
+            []() -> Ref<Panel> { return CreateRef<HierarchyPanel>(); }, true);
+
+        m_PanelManager->RegisterPanelType(PanelTypes::Properties,
+            []() -> Ref<Panel> { return CreateRef<PropertiesPanel>(); }, true);
+
+        m_PanelManager->RegisterPanelType(PanelTypes::AssetBrowser,
+            []() -> Ref<Panel> { return CreateRef<AssetBrowserPanel>(); }, true);
+
+        m_PanelManager->RegisterPanelType(PanelTypes::Console,
+            []() -> Ref<Panel> { return CreateRef<ConsolePanel>(); }, true);
+
+        m_PanelManager->RegisterPanelType(PanelTypes::Settings,
+            []() -> Ref<Panel> { return CreateRef<SettingsPanel>(); }, false);
+
+        m_PanelManager->RegisterPanelType(PanelTypes::Statistics,
+            []() -> Ref<Panel> { return CreateRef<StatisticsPanel>(); }, false);
+
+        m_PanelManager->RegisterPanelType(PanelTypes::Scripts,
+            []() -> Ref<Panel> { return CreateRef<ScriptsPanel>(); }, true);
+    }
+
     void EditorLayer::OnEvent(Event& event)
     {
         EventDispatcher dispatcher{ event };
@@ -57,6 +104,10 @@ namespace LevEngine::Editor
     void EditorLayer::OnUpdate(const float deltaTime)
     {
         LEV_PROFILE_FUNCTION();
+
+        //Layers are updated before the first ImGui frame, so it is the first place
+        //where the ImGui context is already available
+        m_PanelManager->Initialize();
 
         m_ProjectEditor->Update();
 
@@ -68,7 +119,10 @@ namespace LevEngine::Editor
         SceneManager::TryLoadRequestedScene();
 
         if (Input::IsKeyDown(KeyCode::Escape))
-            m_Game->Unfocus();
+        {
+            for (const auto& game : m_PanelManager->GetPanelsOfType<GamePanel>())
+                game->Unfocus();
+        }
 
         const auto& activeScene = SceneManager::GetActiveScene();
 
@@ -89,55 +143,66 @@ namespace LevEngine::Editor
             }
         }
 
-        if (m_Viewport->IsActive())
-            m_Viewport->UpdateCamera(deltaTime);
+        for (const auto& viewport : m_PanelManager->GetPanelsOfType<ViewportPanel>())
+        {
+            if (viewport->IsActive())
+                viewport->UpdateCamera(deltaTime);
+        }
     }
     void EditorLayer::OnRender()
     {
         if (!Project::GetProject()) return;
-        
+
         const auto& activeScene = SceneManager::GetActiveScene();
-        
-        if (m_Viewport->IsActive())
+
+        //Every viewport has its own camera, so the scene is rendered once per viewport
+        for (const auto& viewport : m_PanelManager->GetPanelsOfType<ViewportPanel>())
         {
+            if (!viewport->IsActive()) continue;
+
             DebugRender::DrawGrid(Vector3::Zero, Vector3::Right, Vector3::Forward, 100, 100, 1.0f, Color::Gray);
 
             DoComponentRenderDebug();
-            
-            auto& camera = m_Viewport->GetCamera();
+
+            auto& camera = viewport->GetCamera();
             activeScene->OnRender(&camera, &camera.GetTransform());
-            m_Viewport->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+            viewport->UpdateTexture(GetMainRenderTexture());
         }
 
-        if (m_Game->IsActive())
+        //Game panels all show the main camera, so one render is enough for all of them
+        const auto gamePanels = m_PanelManager->GetPanelsOfType<GamePanel>();
+        const bool hasActiveGamePanel = eastl::any_of(gamePanels.begin(), gamePanels.end(),
+            [](const Ref<GamePanel>& panel) { return panel->IsActive(); });
+
+        if (hasActiveGamePanel)
         {
             activeScene->OnRender();
-            m_Game->UpdateTexture(Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0));
+
+            const auto mainTexture = GetMainRenderTexture();
+            for (const auto& game : gamePanels)
+            {
+                if (game->IsActive())
+                    game->UpdateTexture(mainTexture);
+            }
         }
     }
     void EditorLayer::OnGUIRender()
     {
         LEV_PROFILE_FUNCTION();
-        
+
         //ImGui::ShowDemoWindow(nullptr);
-        
+
         ModalPopup::Render();
 
         if (!Project::GetProject()) return;
-        
-        m_DockSpace->Render();
+
+        m_PanelManager->EnsureRestored();
+
+        m_DockSpace->Render(*m_PanelManager);
         m_MainMenuBar->RenderAsMain();
         m_MainToolbar->Render();
         m_MainStatusBar->Render();
-        m_Game->Render();
-        m_Viewport->Render();
-        m_Hierarchy->Render();
-        m_Properties->Render();
-        m_AssetsBrowser->Render();
-        m_Console->Render();
-        m_Settings->Render();
-        m_Statistics->Render();
-        m_ScriptsPanel->Render();
+        m_PanelManager->Render();
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
@@ -147,11 +212,8 @@ namespace LevEngine::Editor
 
         if (m_SceneEditor->OnKeyPressed(event))
             return true;
-        
-         if (m_Hierarchy->OnKeyPressed(event))
-             return true;
 
-        if (m_Viewport->OnKeyPressed(event))
+        if (m_PanelManager->OnKeyPressed(event))
             return true;
 
         const bool control = Input::IsKeyDown(KeyCode::LeftControl) ||
@@ -171,10 +233,10 @@ namespace LevEngine::Editor
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     void EditorLayer::OnScenePlay()
     {
         if (!m_SceneEditor->SaveScene()) return;
@@ -183,12 +245,13 @@ namespace LevEngine::Editor
 
         App::Get().GetPhysics().ResetPhysicsScene();
         App::Get().GetPhysics().ClearAccumulator();
-        
+
         SceneManager::LoadScene(SceneManager::GetActiveScenePath());
 
         m_SceneState = SceneState::Play;
-        m_Game->Focus();
-        
+
+        m_PanelManager->OpenOrFocusPanel(PanelTypes::Game);
+
         Selection::Deselect();
     }
     void EditorLayer::OnSceneStop()
@@ -196,12 +259,15 @@ namespace LevEngine::Editor
         App::Get().IsPlaying = false;
 
         m_SceneState = SceneState::Edit;
-        m_Game->Unfocus();
+
+        for (const auto& game : m_PanelManager->GetPanelsOfType<GamePanel>())
+            game->Unfocus();
+
         Selection::Deselect();
 
         m_SceneEditor->OpenScene(SceneManager::GetActiveScenePath());
     }
-    
+
     void EditorLayer::DoComponentRenderDebug()
     {
         SceneManager::GetActiveScene()->ForEachEntityUnordered(
@@ -220,28 +286,22 @@ namespace LevEngine::Editor
 
         AssetDatabase::ProcessAllAssets();
         ResourceManager::Init(Project::GetRoot());
-        
+
         const auto startScene = Project::GetStartScene();
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))
             SceneManager::LoadEmptyScene();
 
-        auto mainTexture = Application::Get().GetWindow().GetContext()->GetRenderTarget()->GetTexture(AttachmentPoint::Color0);
-        m_DockSpace = CreateRef<DockSpace>();
-        m_Viewport = CreateRef<ViewportPanel>(mainTexture);
-        m_Game = CreateRef<GamePanel>(mainTexture, [this]{ return m_SceneState; });
-        m_Hierarchy = CreateRef<HierarchyPanel>();
-        m_Properties = CreateRef<PropertiesPanel>();
-        m_AssetsBrowser = CreateRef<AssetBrowserPanel>();
-        m_Settings = CreateRef<SettingsPanel>();
         m_MainStatusBar = CreateRef<StatusBar>();
         m_MainMenuBar = CreateRef<MenuBar>();
         m_MainToolbar = CreateRef<Toolbar>(m_MainMenuBar, [this]{ return m_SceneState; }, std::bind(&EditorLayer::OnPlayButtonClicked, this));
-        m_Statistics = CreateRef<StatisticsPanel>();
-        m_ScriptsPanel = CreateRef<ScriptsPanel>();
 
         m_SceneEditor->AddMainMenuItems(m_MainMenuBar);
         m_ProjectEditor->AddMainMenuItems(m_MainMenuBar);
-        
+        m_PanelManager->AddMainMenuItems(m_MainMenuBar);
+
+        m_MainMenuBar->AddMenuItem("Window/Reset Layout", String(),
+            [this] { m_PanelManager->OpenDefaultPanels(); });
+
         m_MainMenuBar->AddMenuItem("File/Exit", String(), [this] { Application::Get().Close();});
     }
     void EditorLayer::OnPlayButtonClicked()

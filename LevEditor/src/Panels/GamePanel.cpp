@@ -108,5 +108,11 @@ namespace LevEngine::Editor
 	{
 		App::Get().GetWindow().EnableCursor();
 	}
+
+	void GamePanel::OnClose()
+	{
+		//The cursor is hidden while the game panel is focused in play mode
+		App::Get().GetWindow().EnableCursor();
+	}
 }
 

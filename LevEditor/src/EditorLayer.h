@@ -9,17 +9,9 @@ namespace LevEngine::Editor
     class StatusBar;
     class Toolbar;
     class MenuBar;
-    class ConsolePanel;
-    class SettingsPanel;
-    class GamePanel;
-    class AssetBrowserPanel;
-    class PropertiesPanel;
-    class HierarchyPanel;
-    class ViewportPanel;
     class DockSpace;
-    class ScriptsPanel;
-    class StatisticsPanel;
-    
+    class PanelManager;
+
     class EditorLayer final : public Layer
     {
     public:
@@ -34,6 +26,7 @@ namespace LevEngine::Editor
 
     private:
         static void DoComponentRenderDebug();
+        void RegisterPanels();
         void OnProjectLoaded();
         void OnPlayButtonClicked();
 
@@ -41,21 +34,13 @@ namespace LevEngine::Editor
         Scope<SceneEditor> m_SceneEditor;
 
         Ref<DockSpace> m_DockSpace;
-        Ref<ViewportPanel> m_Viewport;
-        Ref<HierarchyPanel> m_Hierarchy;
-        Ref<PropertiesPanel> m_Properties;
-        Ref<AssetBrowserPanel> m_AssetsBrowser;
-        Ref<GamePanel> m_Game;
-        Ref<SettingsPanel> m_Settings;
-        std::shared_ptr<ConsolePanel> m_Console;
+        Ref<PanelManager> m_PanelManager;
         Ref<MenuBar> m_MainMenuBar;
         Ref<Toolbar> m_MainToolbar;
         Ref<StatusBar> m_MainStatusBar;
-        Ref<StatisticsPanel> m_Statistics;
-        Ref<ScriptsPanel> m_ScriptsPanel;
 
         EditorSaveData m_SaveData{"SaveData.editor"};
-        
+
         SceneState m_SceneState = SceneState::Edit;
     };
 }

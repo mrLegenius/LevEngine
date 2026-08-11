@@ -10,14 +10,19 @@ namespace LevEngine::Editor
 	void Panel::Render()
 	{
 		LEV_PROFILE_FUNCTION();
-		
+
+		if (m_WindowName.empty())
+			m_WindowName = GetName();
+
 		GUI::ScopedVariable padding {ImGuiStyleVar_WindowPadding, m_WindowPadding};
 
 		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
 		if (!m_CanScroll)
 			flags |= ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
-		
-		m_Active = ImGui::Begin(GetName().c_str(), nullptr, flags);
+
+		ImGui::SetNextWindowSize(ImVec2{ m_DefaultWindowSize.x, m_DefaultWindowSize.y }, ImGuiCond_FirstUseEver);
+
+		m_Active = ImGui::Begin(m_WindowName.c_str(), &m_IsOpen, flags);
 		if (m_Active)
 		{
 			m_Window = ImGui::GetCurrentWindow();
@@ -34,24 +39,39 @@ namespace LevEngine::Editor
 			DrawContent();
 		}
 		ImGui::End();
+
+		//Focus is deferred because it can be requested outside of the GUI rendering
+		if (m_FocusRequested)
+		{
+			m_FocusRequested = false;
+			ImGui::SetWindowFocus(m_WindowName.c_str());
+		}
+
+		if (m_UnfocusRequested)
+		{
+			m_UnfocusRequested = false;
+			if (m_Focused)
+				ImGui::SetWindowFocus(nullptr);
+		}
+	}
+
+	void Panel::SetInstance(const String& typeName, const int index)
+	{
+		m_TypeName = typeName;
+		m_InstanceIndex = index;
+		m_WindowName = Format("{}##{}{}", GetName().c_str(), typeName.c_str(), index);
 	}
 
 	void Panel::Focus()
 	{
-		if (m_Focused) return;
-
-		ImGui::FocusWindow(m_Window);
-		m_Focused = true;
-		OnFocus();
+		m_UnfocusRequested = false;
+		m_FocusRequested = true;
 	}
 
 	void Panel::Unfocus()
 	{
-		if (!m_Focused) return;
-
-		ImGui::FocusWindow(nullptr);
-		m_Focused = false;
-		OnLostFocus();
+		m_FocusRequested = false;
+		m_UnfocusRequested = true;
 	}
 
 	void* Panel::BeginDragDropTargetWindow(const char* payloadType)

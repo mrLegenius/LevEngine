@@ -6,8 +6,8 @@ namespace LevEngine::Editor
 	class HierarchyPanel final : public Panel
 	{
 	public:
-		HierarchyPanel() = default;
-		
+		HierarchyPanel() { m_DefaultWindowSize = Vector2{ 230, 660 }; }
+
 		bool OnKeyPressed(KeyPressedEvent& e) override;
 
 	protected:

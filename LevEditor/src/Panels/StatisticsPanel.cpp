@@ -1,9 +1,12 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "StatisticsPanel.h"
 
 namespace LevEngine::Editor
 {
-    StatisticsPanel::StatisticsPanel() = default;
+    StatisticsPanel::StatisticsPanel()
+    {
+        m_DefaultWindowSize = Vector2{ 555, 660 };
+    }
 
     String StatisticsPanel::GetName() { return "Statistics"; }
 

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ViewportPanel.h"
 
 #include <imgui.h>
@@ -19,6 +19,7 @@ namespace LevEngine::Editor
     {
         m_WindowPadding = Vector2{0, 0};
         m_CanScroll = false;
+        m_DefaultWindowSize = Vector2{1140, 665};
     }
 
     ViewportPanel::ViewportPanel(const Ref<Texture>& renderTexture): ViewportPanel()
@@ -151,6 +152,8 @@ namespace LevEngine::Editor
         const Entity selectedEntity = entitySelection->Get();
         if (selectedEntity && Gizmo::Tool != Gizmo::ToolType::None)
         {
+            //Gizmos of different viewports should not share their interaction state
+            ImGuizmo::SetID(GetInstanceIndex());
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
 
@@ -224,7 +227,10 @@ namespace LevEngine::Editor
 
         GUI::ScopedVariable windowPadding(ImGuiStyleVar_WindowPadding, padding);
 
-        if (ImGui::Begin("##ViewportToolbar", nullptr, toolbarFlags))
+        //Every viewport instance needs its own toolbar window
+        const String toolbarName = Format("##ViewportToolbar{}", GetWindowName().c_str());
+
+        if (ImGui::Begin(toolbarName.c_str(), nullptr, toolbarFlags))
         {
             // Bring the toolbar window always on top.
             if (ImGui::IsWindowAppearing())
