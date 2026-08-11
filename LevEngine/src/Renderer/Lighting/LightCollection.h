@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/RenderSettings.h"
 
 namespace LevEngine
@@ -9,7 +11,7 @@ namespace LevEngine
     struct DirectionalLightComponent;
     class ConstantBuffer;
     
-    struct DirLightData
+    struct LEV_API DirLightData
     {
         alignas(16) Vector3 Direction{};
         alignas(16) Vector3 Color{};
@@ -21,7 +23,7 @@ namespace LevEngine
         Spot = 1,
     };
 
-    struct LightData
+    struct LEV_API LightData
     {
         Vector4 PositionViewSpace{};
         Vector4 DirectionViewSpace{};
@@ -38,14 +40,14 @@ namespace LevEngine
         LightType Type;
     };
 
-    struct LightingData
+    struct LEV_API LightingData
     {
         DirLightData DirLight;
         LightData Lights[RenderSettings::MaxLights];
         uint32_t LightsCount = 0;
     };
     
-    class LightCollection
+    class LEV_API LightCollection
     {
     public:
         LightCollection();

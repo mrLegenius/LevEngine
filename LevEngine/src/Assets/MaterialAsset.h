@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 
 namespace LevEngine
 {
     class Material;
 
-    class MaterialAsset : public Asset
+    class LEV_API MaterialAsset : public Asset
     {
     public:
         virtual Material& GetMaterial() = 0;

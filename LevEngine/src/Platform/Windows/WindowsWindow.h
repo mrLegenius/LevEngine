@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Kernel/Window.h"
 
 namespace LevEngine
 {
-	class WindowsWindow final : public Window
+	class LEV_API WindowsWindow final : public Window
 	{
 	public:
 		explicit WindowsWindow(const Ref<RenderDevice>& renderDevice, const WindowAttributes& attributes)

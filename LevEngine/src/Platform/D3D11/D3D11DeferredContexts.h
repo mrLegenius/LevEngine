@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "D3D11RenderContext.h"
 
 namespace LevEngine
 {
-    class D3D11DeferredContexts
+    class LEV_API D3D11DeferredContexts
     {
     public:
         static void SetRenderDevice(const Ref<RenderDevice>& renderDevice);

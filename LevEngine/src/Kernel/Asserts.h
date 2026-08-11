@@ -26,6 +26,7 @@ constexpr void Assert(Condition condition, FormatString& format, Args&&...args)
 #else
 #define LEV_ASSERT(x, ...)
 #define LEV_CORE_ASSERT(x, ...)
-#define LEV_NOT_IMPLEMENTED
 #define LEV_THROW(...) { Log::CoreError("Exception: {0}", __VA_ARGS__); throw std::exception(); }
+// Same as in debug: an empty definition lets non-void stubs fall off the end (C4716).
+#define LEV_NOT_IMPLEMENTED LEV_THROW("Not implemented")
 #endif

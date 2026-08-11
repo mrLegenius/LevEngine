@@ -1,10 +1,12 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "BoneInfo.h"
 #include "Bone.h"
 
 namespace LevEngine
 {
-    struct NodeData
+    struct LEV_API NodeData
     {
         Matrix boneBindPoseTransform;
         Matrix boneCurrentTransform;
@@ -14,7 +16,7 @@ namespace LevEngine
         NodeData* parent;
     };
 
-    class Animation
+    class LEV_API Animation
     {
         friend class AnimationLoader;
     public:

@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "Event.h"
 
 namespace LevEngine
 {
-    class WindowResizedEvent : public Event
+    class LEV_API WindowResizedEvent : public Event
     {
     public:
         WindowResizedEvent(const unsigned int width, const unsigned int height)
@@ -30,7 +32,7 @@ namespace LevEngine
         unsigned int m_Height;
     };
 
-    class WindowClosedEvent : public Event
+    class LEV_API WindowClosedEvent : public Event
     {
     public:
         WindowClosedEvent() = default;
@@ -39,7 +41,7 @@ namespace LevEngine
         EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
 
-    class WindowFocusEvent : public Event
+    class LEV_API WindowFocusEvent : public Event
     {
     public:
         WindowFocusEvent() = default;
@@ -48,7 +50,7 @@ namespace LevEngine
         EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
 
-    class WindowLostFocusEvent : public Event
+    class LEV_API WindowLostFocusEvent : public Event
     {
     public:
         WindowLostFocusEvent() = default;
@@ -57,7 +59,7 @@ namespace LevEngine
         EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
 
-    class AppTickedEvent : public Event
+    class LEV_API AppTickedEvent : public Event
     {
     public:
         AppTickedEvent() = default;
@@ -66,7 +68,7 @@ namespace LevEngine
         EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
 
-    class AppUpdatedEvent : public Event
+    class LEV_API AppUpdatedEvent : public Event
     {
     public:
         AppUpdatedEvent() = default;
@@ -75,7 +77,7 @@ namespace LevEngine
         EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
 
-    class AppRenderedEvent : public Event
+    class LEV_API AppRenderedEvent : public Event
     {
     public:
         AppRenderedEvent() = default;

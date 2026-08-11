@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "spdlog/spdlog.h"
 
 //Able to log custom classes
@@ -7,7 +9,7 @@
 
 namespace LevEngine::Log
 {
-	class Logger
+	class LEV_API Logger
 	{
 	public:
 		static void Init();

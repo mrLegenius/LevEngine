@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 
 namespace LevEngine
@@ -6,7 +8,7 @@ namespace LevEngine
 	class Texture;
 	class TextureAsset;
 
-	class SkyboxAsset final : public Asset
+	class LEV_API SkyboxAsset final : public Asset
 	{
 	public:
 		Ref<TextureAsset> HDRTexture;

@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
 {
-    class ParticleSimulationPass final : public RenderPass
+    class LEV_API ParticleSimulationPass final : public RenderPass
     {
     public:
         ParticleSimulationPass();

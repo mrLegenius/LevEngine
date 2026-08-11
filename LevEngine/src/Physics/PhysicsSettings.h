@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Physics/Components/FilterLayer.h"
 
 namespace LevEngine
 {
-    class PhysicsSettings
+    class LEV_API PhysicsSettings
     {
     public:
         [[nodiscard]] static bool IsCollisionEnabled(FilterLayer firstLayer, FilterLayer secondLayer);

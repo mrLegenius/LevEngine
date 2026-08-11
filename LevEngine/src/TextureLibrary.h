@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
 	class Texture;
 
-	class TextureLibrary
+	class LEV_API TextureLibrary
 	{
 	public:
 		static Ref<Texture> GetWhiteTexture();

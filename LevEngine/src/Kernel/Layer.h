@@ -1,11 +1,13 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 
 namespace LevEngine
 {
 	class Event;
 	
-	class Layer
+	class LEV_API Layer
 {
 public:
 	explicit Layer(String name = "Layer");

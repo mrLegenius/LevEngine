@@ -1,11 +1,13 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "RenderPass.h"
 
 namespace LevEngine
 {
     class Texture;
 
-    class CopyTexturePass final : public RenderPass
+    class LEV_API CopyTexturePass final : public RenderPass
     {
     public:
         CopyTexturePass(const Ref<Texture>& destinationTexture,

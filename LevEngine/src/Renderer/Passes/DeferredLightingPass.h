@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 #include "RenderPass.h"
 
 namespace LevEngine
@@ -8,7 +10,7 @@ namespace LevEngine
 	class Texture;
 	class PipelineState;
 
-	class DeferredLightingPass final : public RenderPass
+	class LEV_API DeferredLightingPass final : public RenderPass
 	{
 	public:
 		DeferredLightingPass(

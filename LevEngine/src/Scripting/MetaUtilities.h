@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include <sol/sol.hpp>
 
 namespace LevEngine::Scripting
 {
 
-	[[nodiscard]] entt::id_type GetIdType(const sol::table& component);
+	[[nodiscard]] LEV_API entt::id_type GetIdType(const sol::table& component);
 
 	template<class ...Args>
 	inline auto InvokeMetaFunction(entt::meta_type metaType, entt::id_type functionId, Args &&...args);

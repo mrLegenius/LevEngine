@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 
@@ -7,7 +9,7 @@ namespace LevEngine
     class ConstantBuffer;
     class PipelineState;
 
-    class DebugRenderPass final : public RenderPass
+    class LEV_API DebugRenderPass final : public RenderPass
     {
     public:
         DebugRenderPass(const Ref<PipelineState>& pipelineState);

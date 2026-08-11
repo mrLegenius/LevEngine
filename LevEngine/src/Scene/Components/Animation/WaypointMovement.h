@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
@@ -7,7 +9,7 @@ namespace LevEngine
 
     REGISTER_PARSE_TYPE(WaypointMovementComponent);
     
-    struct WaypointMovementComponent
+    struct LEV_API WaypointMovementComponent
     {
         WaypointMovementComponent();
         

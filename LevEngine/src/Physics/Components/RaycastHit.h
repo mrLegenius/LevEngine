@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Entity.h"
 
 namespace LevEngine
 {
-    struct RaycastHit
+    struct LEV_API RaycastHit
     {
         bool IsSuccessful = false;
         Entity Entity;

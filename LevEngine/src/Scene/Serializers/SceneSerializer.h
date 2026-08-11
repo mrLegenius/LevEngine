@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace YAML
 {
 	class Emitter;
@@ -9,7 +11,7 @@ namespace LevEngine
 {
 	class Scene;
 
-	class SceneSerializer
+	class LEV_API SceneSerializer
 	{
 	public:
 		SceneSerializer(const Ref<Scene>& scene);

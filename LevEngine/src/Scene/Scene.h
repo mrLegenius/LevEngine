@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "System.h"
 #include "DataTypes/Set.h"
 #include "Entity.h"
@@ -10,7 +12,7 @@ namespace LevEngine
 	class Audio;
 	struct Transform;
 	
-	class Scene
+	class LEV_API Scene
 	{
 	public:
 		Scene();

@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     struct ModelNode;
     
-    class ModelAssetCache
+    class LEV_API ModelAssetCache
     {
     public:
         static ModelNode* LoadFromCache(UUID assetUUID);

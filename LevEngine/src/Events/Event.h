@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 
 namespace LevEngine
 {
@@ -28,7 +30,7 @@ enum EventCategory
 
 #define EVENT_CLASS_CATEGORY(category) int GetCategoryFlags() const override { return category; }
 
-class Event
+class LEV_API Event
 {
 public:
 	virtual EventType GetEventType() const = 0;
@@ -42,7 +44,7 @@ public:
 	bool handled = false;
 };
 
-class EventDispatcher
+class LEV_API EventDispatcher
 {
 	template<typename T>
 	using EventFn = Func<bool, T&>;

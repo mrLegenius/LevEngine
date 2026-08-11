@@ -1,10 +1,12 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "TimelineParameters.h"
 #include "Math/Math.h"
 
 namespace LevEngine
 {
-    class Timeline
+    class LEV_API Timeline
     {
     public:
         Timeline();

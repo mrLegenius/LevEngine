@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     inline static Path EngineResourcesRoot = Path("LevResources");
@@ -9,7 +11,7 @@ namespace LevEngine
     class Shader;
     class Texture;
 
-    struct Icons
+    struct LEV_API Icons
     {
         static Ref<Texture> Play();
         static Ref<Texture> Stop();
@@ -22,7 +24,7 @@ namespace LevEngine
         static Ref<Texture> Skybox();
     };
 
-    struct ShaderAssets
+    struct LEV_API ShaderAssets
     {
         static Ref<Shader> DebugShape();
         static Ref<Shader> DebugLine();

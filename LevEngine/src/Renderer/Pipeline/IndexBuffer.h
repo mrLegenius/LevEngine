@@ -1,7 +1,9 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 namespace LevEngine
 {
-	class IndexBuffer
+	class LEV_API IndexBuffer
 	{
 	public:
 		explicit IndexBuffer(const uint32_t count) : m_Count(count) { }

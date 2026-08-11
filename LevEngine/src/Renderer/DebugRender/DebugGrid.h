@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "DebugShape.h"
 #include "Renderer/3D/Primitives.h"
 
@@ -6,7 +8,7 @@ namespace LevEngine
 {
     class Mesh;
 
-    class DebugGrid final : public DebugShape
+    class LEV_API DebugGrid final : public DebugShape
     {
     public:
         explicit DebugGrid(const Matrix& model,

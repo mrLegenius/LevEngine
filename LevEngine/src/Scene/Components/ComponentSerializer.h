@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 #include "Kernel/ClassCollection.h"
 #include "Scene/Entity.h"
 
@@ -8,7 +10,7 @@
 
 namespace LevEngine
 {
-	class IComponentSerializer
+	class LEV_API IComponentSerializer
 	{
 	public:
 		virtual ~IComponentSerializer() = default;

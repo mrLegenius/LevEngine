@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    class DispatchCommands
+    class LEV_API DispatchCommands
     {
     public:
         virtual ~DispatchCommands() = default;

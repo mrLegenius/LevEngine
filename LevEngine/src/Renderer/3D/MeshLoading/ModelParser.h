@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <assimp/material.h>
 
 #include "AI/Components/AIAgentCrowdComponent.h"
@@ -19,7 +21,7 @@ namespace LevEngine
     struct ModelNode;
     class Mesh;
 
-    struct ModelImportResult
+    struct LEV_API ModelImportResult
     {
         Vector<Ref<MeshAsset>> Meshes;
         ModelNode* Hierarchy;
@@ -28,12 +30,12 @@ namespace LevEngine
         Vector<Ref<Animation>> Animations{};
     };
 
-    struct ModelImportParameters
+    struct LEV_API ModelImportParameters
     {
         float scale = 1;
     };
     
-    class ModelParser
+    class LEV_API ModelParser
     {
     public:
         static ModelImportResult Load(const Path& path, ModelImportParameters params);

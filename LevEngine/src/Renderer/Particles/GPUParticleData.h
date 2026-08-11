@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    struct GPUParticleData
+    struct LEV_API GPUParticleData
     {
         Vector3 Position;
         Vector3 Velocity;

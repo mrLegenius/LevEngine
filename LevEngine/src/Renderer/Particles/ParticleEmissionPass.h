@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -14,7 +16,7 @@ namespace LevEngine
         float DeltaTime;
     };
     
-    struct RandomFloat
+    struct LEV_API RandomFloat
     {
         float From;
         float To;
@@ -23,14 +25,14 @@ namespace LevEngine
         float pad;
     };
 
-    struct RandomVector3
+    struct LEV_API RandomVector3
     {
         alignas(16) Vector4 From;
         Vector3 To;
         int Randomize = false;
     };
 
-    struct RandomColor
+    struct LEV_API RandomColor
     {
         alignas(16) Color From;
         alignas(16) Color To;
@@ -39,7 +41,7 @@ namespace LevEngine
         float pad[3];
     };
 
-    struct Emitter
+    struct LEV_API Emitter
     {
         struct BirthParams
         {
@@ -60,12 +62,12 @@ namespace LevEngine
         BirthParams Birth;
     };
 
-    struct RandomGPUData
+    struct LEV_API RandomGPUData
     {
         alignas(16) int RandomSeed;
     };
     
-    class ParticleEmissionPass final : public RenderPass
+    class LEV_API ParticleEmissionPass final : public RenderPass
     {
 
     public:

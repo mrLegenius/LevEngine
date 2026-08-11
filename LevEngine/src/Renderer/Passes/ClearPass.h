@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "RenderPass.h"
 #include "Renderer/Pipeline/ClearFlags.h"
 
@@ -8,7 +10,7 @@ namespace LevEngine
     class Texture;
     class RenderTarget;
 
-    class ClearPass : public RenderPass
+    class LEV_API ClearPass : public RenderPass
     {
     public:
         explicit ClearPass(const Ref<RenderTarget>& renderTarget,

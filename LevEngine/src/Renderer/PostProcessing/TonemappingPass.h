@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -8,7 +10,7 @@ namespace LevEngine
     class RenderTarget;
     class Texture;
 
-    class TonemappingPass final : public RenderPass
+    class LEV_API TonemappingPass final : public RenderPass
     {
     public:
         explicit TonemappingPass(const Ref<RenderTarget>& mainRenderTarget, const Ref<Texture>& colorTexture);

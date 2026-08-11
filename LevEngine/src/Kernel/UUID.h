@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <functional>
 
 namespace LevEngine
 {
-	class UUID
+	class LEV_API UUID
 	{
 	public:
 		UUID();

@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -8,7 +10,7 @@ namespace LevEngine
 	class Texture;
 	class PipelineState;
 
-	class EnvironmentRenderPass final : public RenderPass
+	class LEV_API EnvironmentRenderPass final : public RenderPass
 	{
 	public:
 		explicit EnvironmentRenderPass(const Ref<RenderTarget>& renderTarget);

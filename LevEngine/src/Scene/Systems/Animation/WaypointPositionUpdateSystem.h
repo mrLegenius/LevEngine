@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/System.h"
 
 namespace LevEngine
 {
-    class WaypointPositionUpdateSystem : public System
+    class LEV_API WaypointPositionUpdateSystem : public System
     {
     public:
         void Update(float deltaTime, entt::registry& registry) override;

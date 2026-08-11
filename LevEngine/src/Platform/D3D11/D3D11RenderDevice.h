@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 #include <wrl/client.h>
 
@@ -6,7 +8,7 @@
 
 namespace LevEngine
 {
-    class D3D11RenderDevice : public RenderDevice
+    class LEV_API D3D11RenderDevice : public RenderDevice
     {
     public:
         D3D11RenderDevice();

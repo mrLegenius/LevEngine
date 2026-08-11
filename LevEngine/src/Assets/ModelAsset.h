@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 #include "AI/Components/AIAgentCrowdComponent.h"
 #include "AI/Components/AIAgentCrowdComponent.h"
@@ -11,7 +13,7 @@ namespace LevEngine
     struct ModelNode;
     class Mesh;
     
-    class ModelAsset final : public Asset, public eastl::enable_shared_from_this<ModelAsset>
+    class LEV_API ModelAsset final : public Asset, public eastl::enable_shared_from_this<ModelAsset>
     {
     public:
         ModelAsset(const Path& path, const UUID& uuid) : Asset(path, uuid) { }

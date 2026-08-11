@@ -1,10 +1,12 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <sstream>
 #include "Event.h"
 #include "../Input/KeyCodes.h"
 namespace LevEngine
 {
-class KeyEvent : public Event
+class LEV_API KeyEvent : public Event
 {
 public:
 	[[nodiscard]] KeyCode GetKeyCode() const { return m_Keycode; }
@@ -16,7 +18,7 @@ protected:
 	KeyCode m_Keycode;
 };
 
-class KeyPressedEvent : public KeyEvent
+class LEV_API KeyPressedEvent : public KeyEvent
 {
 public:
 	KeyPressedEvent(const KeyCode keycode, const int repeatCount)
@@ -37,7 +39,7 @@ private:
 	int m_RepeatCount;
 };
 
-class KeyTypedEvent : public KeyEvent
+class LEV_API KeyTypedEvent : public KeyEvent
 {
 public:
 	KeyTypedEvent(const KeyCode keycode)
@@ -53,7 +55,7 @@ public:
 	EVENT_CLASS_TYPE(KeyTyped)
 };
 
-class KeyReleasedEvent : public KeyEvent
+class LEV_API KeyReleasedEvent : public KeyEvent
 {
 public:
 	explicit KeyReleasedEvent(const KeyCode keycode)

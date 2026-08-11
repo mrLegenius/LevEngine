@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
@@ -19,7 +21,7 @@ namespace LevEngine
     
     REGISTER_PARSE_TYPE(NavMeshComponent);
 	
-    struct NavMeshComponent
+    struct LEV_API NavMeshComponent
     {
         NavMeshComponent();
         NavMeshComponent(const NavMeshComponent&) = default;

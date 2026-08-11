@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class SceneCamera;
 
-    struct RenderParams
+    struct LEV_API RenderParams
     {
         SceneCamera* Camera;
         Vector3 CameraPosition;

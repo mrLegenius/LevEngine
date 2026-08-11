@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
@@ -9,7 +11,7 @@
 
 namespace LevEngine
 {
-	class Math
+	class LEV_API Math
 	{
 	public:
 

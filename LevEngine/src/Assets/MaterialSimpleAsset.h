@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "MaterialAsset.h"
 #include "Renderer/Material/MaterialSimple.h"
 
@@ -6,7 +8,7 @@ namespace LevEngine
 {
 	class TextureAsset;
 
-	class MaterialSimpleAsset final : public MaterialAsset
+	class LEV_API MaterialSimpleAsset final : public MaterialAsset
 {
 public:
 	Material& GetMaterial() override { return m_Material; }

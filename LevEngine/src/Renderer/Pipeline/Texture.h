@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "ClearFlags.h"
 #include "CPUAccess.h"
 
@@ -7,7 +9,7 @@ namespace LevEngine
 	enum class ShaderType;
 	class SamplerState;
 
-	class Texture
+	class LEV_API Texture
 	{
 	public:
 		enum class Dimension

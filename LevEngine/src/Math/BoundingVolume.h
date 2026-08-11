@@ -1,16 +1,18 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Frustum.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
-struct BoundingVolume
+struct LEV_API BoundingVolume
 {
     virtual ~BoundingVolume() = default;
     virtual bool IsOnFrustum(const Frustum& frustum, const Transform& transform) const = 0;
 };
 
-struct SphereBoundingVolume final : BoundingVolume
+struct LEV_API SphereBoundingVolume final : BoundingVolume
 {
     Vector3 center{ 0.f, 0.f, 0.f };
     float radius{ 0.f };
@@ -52,7 +54,7 @@ struct SphereBoundingVolume final : BoundingVolume
     };
 };
 
-struct AABBBoundingVolume final :  BoundingVolume
+struct LEV_API AABBBoundingVolume final :  BoundingVolume
 {
 	Vector3 center{ 0.f, 0.f, 0.f };
 	Vector3 extents{ 0.f, 0.f, 0.f };

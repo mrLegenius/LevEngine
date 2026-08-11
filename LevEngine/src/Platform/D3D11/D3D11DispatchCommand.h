@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Dispatch/DispatchCommands.h"
@@ -6,7 +8,7 @@
 
 namespace LevEngine
 {
-    class D3D11DispatchCommand final : public DispatchCommands
+    class LEV_API D3D11DispatchCommand final : public DispatchCommands
     {
     public:
         D3D11DispatchCommand(ID3D11Device2* device);

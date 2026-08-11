@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <sol/sol.hpp>
 
 namespace sol {
@@ -29,7 +31,7 @@ namespace LevEngine
 
 namespace LevEngine::Scripting
 {
-	class LuaComponentsBinder
+	class LEV_API LuaComponentsBinder
 	{
 	public:
 		static void CreateInputLuaBind(sol::state& lua);

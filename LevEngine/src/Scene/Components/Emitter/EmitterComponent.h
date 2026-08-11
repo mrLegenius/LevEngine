@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
@@ -8,7 +10,7 @@ namespace LevEngine
 	
 	REGISTER_PARSE_TYPE(EmitterComponent);
 	
-	struct EmitterComponent
+	struct LEV_API EmitterComponent
 	{
 		EmitterComponent();
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include <Renderer/3D/MeshLoading/AnimationLoader.h>
 
 #include "../Events/Event.h"
@@ -9,7 +11,7 @@ namespace LevEngine
 {
 	class RenderContext;
 
-	struct WindowAttributes
+	struct LEV_API WindowAttributes
 {
 	String title;
 	uint32_t width;
@@ -23,7 +25,7 @@ namespace LevEngine
 		height(height) { }
 };
 
-class Window
+class LEV_API Window
 {
 public:
 	using EventCallbackFn = Action<Event&>;

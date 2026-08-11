@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "BufferBinding.h"
 #include "ShaderMacros.h"
 #include "ShaderParameter.h"
@@ -6,7 +8,7 @@
 
 namespace LevEngine
 {
-	class Shader
+	class LEV_API Shader
 	{
 	public:
 

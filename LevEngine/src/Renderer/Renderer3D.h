@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Math/Math.h"
 #include "3D/AnimationConstants.h"
 #include "DataTypes/Array.h"
@@ -12,14 +14,14 @@ namespace LevEngine
     class Mesh;
     class Material;
 
-    struct MeshModelBufferData
+    struct LEV_API MeshModelBufferData
     {
         Matrix Model;
         Matrix TransposedInvertedModel;
     	Array<Matrix, AnimationConstants::MaxBoneCount> FinalBoneMatrices;
     };
 
-    class Renderer3D
+    class LEV_API Renderer3D
     {
     public:
         static void Init();

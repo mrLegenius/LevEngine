@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
 {
     class Query;
 
-    class EndQueryPass final : public RenderPass
+    class LEV_API EndQueryPass final : public RenderPass
     {
     public:
         explicit EndQueryPass(const Ref<Query>& query);

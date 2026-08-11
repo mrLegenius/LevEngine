@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Pipeline/BlendState.h"
 
 namespace LevEngine
 {
-class D3D11BlendState final : public BlendState
+class LEV_API D3D11BlendState final : public BlendState
 {
 public:
     D3D11BlendState(ID3D11Device2* device);

@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <Math/Matrix.h>
 
 namespace LevEngine
 {
-	struct BoneInfo
+	struct LEV_API BoneInfo
 	{
 		/* index in finalBoneMatrices */
 		int id;

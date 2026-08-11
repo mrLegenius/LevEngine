@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "Asset.h"
 #include "Scene/Entity.h"
 
@@ -7,7 +9,7 @@ namespace LevEngine
 {
     class Scene;
 
-    class PrefabAsset final : public Asset
+    class LEV_API PrefabAsset final : public Asset
 {
 public:
     PrefabAsset(const Path& path, const UUID& uuid) : Asset(path, uuid) { }

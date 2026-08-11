@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 
 namespace LevEngine
 {
-    class ScriptAsset final : public Asset
+    class LEV_API ScriptAsset final : public Asset
     {
     public:
         enum class Type

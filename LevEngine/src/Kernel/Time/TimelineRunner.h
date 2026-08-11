@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class Timeline;
 
-    class TimelineRunner
+    class LEV_API TimelineRunner
     {
     public:
         static void OnUpdate(float deltaTime);

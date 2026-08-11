@@ -1,10 +1,12 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Physics/PhysicsSettingsSerializer.h"
 #include "Serializers/RenderSettingsSerializer.h"
 
 namespace LevEngine
 {
-    class Project
+    class LEV_API Project
     {
     public:
         explicit Project(Path path) : m_Root(path.parent_path()), m_Path(Move(path)) { }

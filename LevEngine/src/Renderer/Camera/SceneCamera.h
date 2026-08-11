@@ -1,11 +1,13 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Math/Math.h"
 #include "Math/Frustum.h"
 
 namespace LevEngine
 {
 struct Transform;
-class SceneCamera
+class LEV_API SceneCamera
 {
 public:
 	enum class ProjectionType { Perspective = 0, Orthographic = 1 };

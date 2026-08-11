@@ -1,10 +1,12 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "PhysicMaterial.h"
 #include "FilterLayer.h"
 
 namespace LevEngine
 {
-    struct Collider
+    struct LEV_API Collider
     {
         enum class Type
         {
@@ -25,18 +27,18 @@ namespace LevEngine
         Ref<PhysicMaterial> m_PhysicMaterial { CreateRef<PhysicMaterial>() };
     };
 
-    struct Sphere : Collider
+    struct LEV_API Sphere : Collider
     {
         float Radius = 0.5f;
     };
 
-    struct Capsule : Collider
+    struct LEV_API Capsule : Collider
     {
         float Radius = 0.5f;
         float HalfHeight = 0.5f;
     };
 
-    struct Box : Collider
+    struct LEV_API Box : Collider
     {
         Vector3 HalfExtents = Vector3(0.5f, 0.5f, 0.5f);
     };

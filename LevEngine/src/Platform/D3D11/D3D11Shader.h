@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Shader/Shader.h"
@@ -6,7 +8,7 @@
 
 namespace LevEngine
 {
-class D3D11Shader : public Shader
+class LEV_API D3D11Shader : public Shader
 {
 public:
 	D3D11Shader(ID3D11Device2* device, const String& filepath, const ShaderMacros& macros);

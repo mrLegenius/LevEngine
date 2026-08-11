@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Pipeline/Texture.h"
 #include "Query/Query.h"
 #include "Shader/ShaderMacros.h"
@@ -24,7 +26,7 @@ namespace LevEngine
     class Texture;
     class Query;
     
-    class RenderDevice
+    class LEV_API RenderDevice
     {
     public:
         virtual ~RenderDevice() = default;

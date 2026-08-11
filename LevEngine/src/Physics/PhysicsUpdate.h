@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    class PhysicsUpdate
+    class LEV_API PhysicsUpdate
     {
     public:
         void ClearBuffers(entt::registry& registry);

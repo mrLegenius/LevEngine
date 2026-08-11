@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    class Query
+    class LEV_API Query
     {
     public:
         enum class QueryType

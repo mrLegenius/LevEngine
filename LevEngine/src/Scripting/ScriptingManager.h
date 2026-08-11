@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include <sol/sol.hpp>
 
 namespace LevEngine
@@ -10,7 +12,7 @@ namespace LevEngine
 
 	namespace Scripting
 	{	
-		class ScriptingManager
+		class LEV_API ScriptingManager
 		{
 		public:
 			ScriptingManager();

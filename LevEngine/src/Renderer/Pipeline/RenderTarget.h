@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "ClearFlags.h"
 
 namespace LevEngine
@@ -23,7 +25,7 @@ namespace LevEngine
         NumAttachmentPoints
     };
 
-    class RenderTarget
+    class LEV_API RenderTarget
     {
     public:
         RenderTarget();

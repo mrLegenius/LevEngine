@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    struct Statistic
+    struct LEV_API Statistic
     {
         Statistic();
         

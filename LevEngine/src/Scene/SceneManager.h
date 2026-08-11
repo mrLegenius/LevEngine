@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class Scene;
 
-    class SceneManager
+    class LEV_API SceneManager
     {
     public:
 

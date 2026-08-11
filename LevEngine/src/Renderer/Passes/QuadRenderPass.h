@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "RenderPass.h"
 #include "Renderer/Pipeline/PipelineState.h"
 
@@ -6,7 +8,7 @@ namespace LevEngine
 {
     class Texture;
 
-    class QuadRenderPass : public RenderPass
+    class LEV_API QuadRenderPass : public RenderPass
     {
     public:
         explicit QuadRenderPass(const Ref<PipelineState>& pipeline, const Ref<Texture>& colorTexture)

@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <chrono>
 
 #include "Timestep.h"
@@ -8,7 +10,7 @@ namespace LevEngine
 	class Timeline;
 	class Application;
 
-	class Time
+	class LEV_API Time
 	{
 	public:
 		friend Application;

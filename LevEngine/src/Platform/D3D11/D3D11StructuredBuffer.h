@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Pipeline/StructuredBuffer.h"
@@ -7,7 +9,7 @@ namespace LevEngine
 {
     enum class ShaderType;
 
-    class D3D11StructuredBuffer : public StructuredBuffer
+    class LEV_API D3D11StructuredBuffer : public StructuredBuffer
     {
     public:
         D3D11StructuredBuffer(ID3D11Device2* device, const void* data, size_t count, uint32_t stride, CPUAccess cpuAccess = CPUAccess::None,

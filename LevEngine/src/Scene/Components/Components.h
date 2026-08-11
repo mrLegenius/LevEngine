@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-	struct IDComponent
+	struct LEV_API IDComponent
 	{
 		UUID ID;
 
@@ -10,7 +12,7 @@ namespace LevEngine
 		IDComponent(const IDComponent&) = default;
 	};
 
-	struct TagComponent
+	struct LEV_API TagComponent
 	{
 		String tag;
 

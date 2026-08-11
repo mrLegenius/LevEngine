@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "AnimationConstants.h"
 #include "Math/BoundingVolume.h"
 #include "Renderer/Shader/BufferBinding.h"
@@ -11,7 +13,7 @@ namespace LevEngine
     class IndexBuffer;
     struct Color;
     
-    class Mesh
+    class LEV_API Mesh
     {
         struct MeshVertex
         {

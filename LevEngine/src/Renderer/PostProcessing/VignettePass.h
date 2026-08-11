@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -6,7 +8,7 @@ namespace LevEngine
     class PipelineState;
     class RenderTarget;
 
-    class VignettePass final : public RenderPass
+    class LEV_API VignettePass final : public RenderPass
     {
     public:
         explicit VignettePass(const Ref<RenderTarget>& mainRenderTarget);

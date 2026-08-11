@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Entity.h"
 #include "Math/Math.h"
 #include "Scene/Components/TypeParseTraits.h"
@@ -7,7 +9,7 @@ namespace LevEngine
 {
 	REGISTER_PARSE_TYPE(Transform);
 	
-	struct Transform
+	struct LEV_API Transform
 	{
 		Transform();
 		Transform(Entity entity, Entity parent);

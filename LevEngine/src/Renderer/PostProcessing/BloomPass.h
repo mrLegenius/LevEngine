@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -8,7 +10,7 @@ namespace LevEngine
     class RenderTarget;
     class Texture;
 
-    class BloomPass final : public RenderPass
+    class LEV_API BloomPass final : public RenderPass
     {
     public:
         explicit BloomPass(const Ref<Texture>& colorTexture);

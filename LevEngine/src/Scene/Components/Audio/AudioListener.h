@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
 
@@ -8,7 +10,7 @@ namespace LevEngine
 
     REGISTER_PARSE_TYPE(AudioListenerComponent);
 
-    struct AudioListenerComponent
+    struct LEV_API AudioListenerComponent
     {
         AudioListenerComponent() = default;
 

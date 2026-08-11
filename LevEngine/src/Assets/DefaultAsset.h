@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 
 namespace LevEngine
 {
-	class DefaultAsset final : public Asset
+	class LEV_API DefaultAsset final : public Asset
 	{
 	public:
 		explicit DefaultAsset(const Path& path, const UUID uuid) : Asset(path, uuid) { }

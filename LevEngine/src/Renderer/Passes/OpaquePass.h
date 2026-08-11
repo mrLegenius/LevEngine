@@ -1,11 +1,13 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "RenderPass.h"
 
 namespace LevEngine
 {
     class PipelineState;
 
-    class OpaquePass final : public RenderPass
+    class LEV_API OpaquePass final : public RenderPass
     {
     public:
         explicit OpaquePass(const Ref<PipelineState>& pipelineState);

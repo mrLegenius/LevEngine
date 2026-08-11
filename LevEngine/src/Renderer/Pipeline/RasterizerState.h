@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Pipeline/Viewport.h"
 #include "Renderer/Pipeline/Rect.h"
 
@@ -24,7 +26,7 @@ namespace LevEngine
         CounterClockwise
     };
 
-    class RasterizerState
+    class LEV_API RasterizerState
     {
     public:
         RasterizerState();

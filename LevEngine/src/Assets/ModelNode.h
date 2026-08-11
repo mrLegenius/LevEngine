@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    struct ModelNode
+    struct LEV_API ModelNode
     {
         UUID MeshUUID = 0;
         UUID MaterialUUID = 0;

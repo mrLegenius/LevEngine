@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 #include "Kernel/Logger.h"
 #include "Scene/Entity.h"
 #include <source_location>
@@ -11,7 +13,7 @@ namespace LevEngine
     struct AudioListenerComponent;
     struct Transform;
 
-    class Audio final
+    class LEV_API Audio final
     {
     public:
         static const int MaxAudioChannelCount = 1024;

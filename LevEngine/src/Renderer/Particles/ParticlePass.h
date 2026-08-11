@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 #include "ParticleEmissionPass.h"
@@ -13,7 +15,7 @@ namespace LevEngine
     class Texture;
 
 
-    class ParticlePass final : public RenderPass
+    class LEV_API ParticlePass final : public RenderPass
     {
     public:
         ParticlePass(const Ref<RenderTarget>& renderTarget,

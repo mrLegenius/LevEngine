@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "PhysicsUpdate.h"
 #include "Components/FilterLayer.h"
 #include "Components/RaycastHit.h"
@@ -8,7 +10,7 @@
 
 namespace LevEngine
 {
-    class Physics
+    class LEV_API Physics
     {
     public:
         

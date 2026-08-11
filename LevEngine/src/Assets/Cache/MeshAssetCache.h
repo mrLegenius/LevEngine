@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class Mesh;
 
-    class MeshAssetCache
+    class LEV_API MeshAssetCache
     {
     public:
         static Ref<Mesh> LoadFromCache(UUID assetUUID);

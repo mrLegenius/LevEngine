@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class Mesh;
-    class Primitives
+    class LEV_API Primitives
     {
     public:
         static Ref<Mesh> CreatePlane(uint32_t resolution);

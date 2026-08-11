@@ -1,10 +1,12 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "PhysicMaterial.h"
 #include "FilterLayer.h"
 
 namespace LevEngine
 {
-    struct Controller
+    struct LEV_API Controller
     {
         enum class ClimbingMode
         {

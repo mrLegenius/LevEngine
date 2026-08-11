@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Passes/RenderPass.h"
 
 namespace LevEngine
 {
-    class RenderTechnique
+    class LEV_API RenderTechnique
     {
     public:
         RenderTechnique() = default;

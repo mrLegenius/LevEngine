@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 
 namespace LevEngine
 {
-    class SceneAsset final : public Asset
+    class LEV_API SceneAsset final : public Asset
     {
     public:
         SceneAsset(const Path& path, const UUID& uuid)

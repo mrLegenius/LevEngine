@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class ConstantBuffer;
     class Shader;
 
-    class Material
+    class LEV_API Material
     {
     public:
         virtual ~Material() = default;

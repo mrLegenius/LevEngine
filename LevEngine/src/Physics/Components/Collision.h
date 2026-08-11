@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Entity.h"
 
 namespace LevEngine
 {
-    struct Collision
+    struct LEV_API Collision
     {
         // The entity with which the collision occurred.
         Entity Entity;

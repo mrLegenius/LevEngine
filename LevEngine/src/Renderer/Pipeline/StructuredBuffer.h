@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "CPUAccess.h"
 #include "UAVType.h"
 
@@ -6,7 +8,7 @@ namespace LevEngine
 {
     enum class ShaderType;
 
-    class StructuredBuffer
+    class LEV_API StructuredBuffer
     {
     public:
         virtual ~StructuredBuffer() = default;

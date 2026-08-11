@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 #include <dxgi1_3.h>
 #include <wrl/client.h>
@@ -9,7 +11,7 @@
 
 namespace LevEngine
 {
-class D3D11RenderContext final : public RenderContext
+class LEV_API D3D11RenderContext final : public RenderContext
 {
 public:
 	D3D11RenderContext() = default;

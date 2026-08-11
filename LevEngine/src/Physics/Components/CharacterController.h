@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "characterkinematic/PxController.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "Controller.h"
@@ -9,7 +11,7 @@ namespace LevEngine
 {
     REGISTER_PARSE_TYPE(CharacterController);
     
-    struct CharacterController
+    struct LEV_API CharacterController
     {
         static void OnConstruct(Entity entity);
         // Don't call this method (only for internal use)

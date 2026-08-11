@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Vector3.h"
 
 namespace LevEngine
 {
-struct Plane
+struct LEV_API Plane
 {
     // unit vector
     Vector3 normal = { 0.f, 1.f, 0.f };

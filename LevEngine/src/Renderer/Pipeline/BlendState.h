@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Math/Math.h"
 
 namespace LevEngine
@@ -63,7 +65,7 @@ namespace LevEngine
         All = Red | Green | Blue | Alpha,
     };
 
-    struct BlendMode
+    struct LEV_API BlendMode
     {
         /**
          * Set to true to enable blending.
@@ -139,7 +141,7 @@ namespace LevEngine
         static BlendMode Additive;
     };
 
-    class BlendState
+    class LEV_API BlendState
     {
     public:
         BlendState();

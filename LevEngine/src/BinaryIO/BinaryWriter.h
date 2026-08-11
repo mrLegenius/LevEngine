@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    class BinaryWriter
+    class LEV_API BinaryWriter
     {
     public:
         BinaryWriter(const Path& path);

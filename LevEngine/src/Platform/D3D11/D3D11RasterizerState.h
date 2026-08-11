@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Pipeline/RasterizerState.h"
@@ -6,7 +8,7 @@
 namespace LevEngine
 {
 
-class D3D11RasterizerState final : public RasterizerState
+class LEV_API D3D11RasterizerState final : public RasterizerState
 {
 public:
     D3D11RasterizerState(ID3D11Device2* device);

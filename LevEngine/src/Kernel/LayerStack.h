@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
 	class Layer;
 
-	class LayerStack
+	class LEV_API LayerStack
 {
 public:
 	LayerStack();

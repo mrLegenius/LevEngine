@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Math/Matrix.h"
 #include "Renderer/3D/AnimationConstants.h"
 #include "Scene/Components/TypeParseTraits.h"
@@ -13,7 +15,7 @@ namespace LevEngine
 
     REGISTER_PARSE_TYPE(AnimatorComponent);
     
-    struct AnimatorComponent
+    struct LEV_API AnimatorComponent
     {
         static void OnConstruct(Entity entity);
         

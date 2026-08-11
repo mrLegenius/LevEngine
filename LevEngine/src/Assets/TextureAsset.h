@@ -1,11 +1,13 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 
 namespace LevEngine
 {
 	class SamplerState;
 	class Texture;
-	class TextureAsset final : public Asset
+	class LEV_API TextureAsset final : public Asset
 	{
 	public:
 		Ref<SamplerState> SamplerState;

@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "RenderDevice.h"
 #include "3D/MeshLoading/AnimationLoader.h"
 
@@ -6,7 +8,7 @@ namespace LevEngine
 {
 	class RenderTarget;
 
-	class RenderContext
+	class LEV_API RenderContext
 	{
 	public:
 		RenderContext() = default;

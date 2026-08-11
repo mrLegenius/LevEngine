@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    class BinaryReader
+    class LEV_API BinaryReader
     {
     public:
         BinaryReader(const Path& path);

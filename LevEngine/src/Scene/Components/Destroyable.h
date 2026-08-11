@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    struct Destroyable
+    struct LEV_API Destroyable
     {
         bool IsDestroyable = true;
     };

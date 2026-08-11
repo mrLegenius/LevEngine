@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "EASTL/stack.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/TypeParseTraits.h"
@@ -16,7 +18,7 @@ namespace LevEngine
     
     REGISTER_PARSE_TYPE(AIAgentCrowdComponent);
 	
-    struct AIAgentCrowdComponent
+    struct LEV_API AIAgentCrowdComponent
     {
         AIAgentCrowdComponent();
         AIAgentCrowdComponent(const AIAgentCrowdComponent&) = default;

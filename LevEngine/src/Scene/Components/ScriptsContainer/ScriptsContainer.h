@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include <sol/sol.hpp>
 #include "DataTypes/Set.h"
 #include "Scene/Components/TypeParseTraits.h"
@@ -11,7 +13,7 @@ namespace LevEngine
     
     REGISTER_PARSE_TYPE(ScriptsContainer);
     
-    struct ScriptsContainer
+    struct LEV_API ScriptsContainer
     {
         static void OnConstruct(Entity entity);
 

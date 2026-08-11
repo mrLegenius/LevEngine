@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "DebugShape.h"
 
 namespace LevEngine
 {
-class DebugCircle final : public DebugShape
+class LEV_API DebugCircle final : public DebugShape
 {
 public:
     explicit DebugCircle(const Matrix& model, const Color color)

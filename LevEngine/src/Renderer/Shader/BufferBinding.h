@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
 	// Defines either a semantic (HLSL) or an input index (GLSL/HLSL)
 	// to bind an input buffer.
-    struct BufferBinding
+    struct LEV_API BufferBinding
     {
         BufferBinding() : Index(0) { }
 

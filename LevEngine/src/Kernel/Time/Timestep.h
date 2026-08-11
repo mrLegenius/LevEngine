@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-	class Timestep
+	class LEV_API Timestep
 	{
 	public:
 		explicit Timestep(const double time = 0.0) : m_Time(time) { }

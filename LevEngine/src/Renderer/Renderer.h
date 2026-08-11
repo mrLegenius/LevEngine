@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "RenderParams.h"
 #include "Kernel/Statistic.h"
 
@@ -14,7 +16,7 @@ namespace LevEngine
     class Texture;
     struct Transform;
 
-    class Renderer final
+    class LEV_API Renderer final
     {
     public:
         explicit Renderer(const Window& window);

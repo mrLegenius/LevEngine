@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <Math/Matrix.h>
 
 #include "AnimationConstants.h"
@@ -11,7 +13,7 @@ namespace LevEngine
     class Animation;
     struct NodeData;
 
-    class Animator
+    class LEV_API Animator
     {
     public:
         Animator();

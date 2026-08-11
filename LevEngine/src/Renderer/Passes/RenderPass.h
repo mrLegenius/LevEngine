@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Pipeline/Viewport.h"
 
 namespace LevEngine
@@ -7,7 +9,7 @@ namespace LevEngine
     struct RenderParams;
     class RenderDebugEvent;
 
-    class RenderPass
+    class LEV_API RenderPass
     {
     public:
         virtual ~RenderPass() = default;

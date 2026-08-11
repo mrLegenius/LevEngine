@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 namespace LevEngine
 {
     enum class DepthWrite
@@ -31,7 +33,7 @@ namespace LevEngine
         DecrementWrap,  // Decrement the value in the stencil buffer by 1 and wrap the result if it is out of range.
     };
 
-    struct DepthMode
+    struct LEV_API DepthMode
     {
         /**
          * Set to true to enable depth testing.
@@ -72,7 +74,7 @@ namespace LevEngine
         static DepthMode DisableDepthTesting;
     };
 
-    struct FaceOperation
+    struct LEV_API FaceOperation
     {
         /**
          * The operation to perform on the value in the stencil buffer if the
@@ -117,7 +119,7 @@ namespace LevEngine
         {}
     };
 
-    struct StencilMode
+    struct LEV_API StencilMode
     {
         /**
          * Set to true to enable stencil testing.
@@ -171,7 +173,7 @@ namespace LevEngine
         {}
     };
 
-class DepthStencilState
+class LEV_API DepthStencilState
 {
 public:
     virtual ~DepthStencilState() = default;

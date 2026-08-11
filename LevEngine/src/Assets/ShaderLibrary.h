@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Shader/Shader.h"
 
 namespace LevEngine
 {
     class ShaderAsset;
 
-    class ShaderLibrary
+    class LEV_API ShaderLibrary
     {
     public:
         static const Ref<Shader>& GetOrAddShader(const Path& path, const ShaderMacros& shaderMacros = ShaderMacros{});

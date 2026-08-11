@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Plane.h"
 
 namespace LevEngine
 {
-struct Frustum
+struct LEV_API Frustum
 {
     Plane topFace;
     Plane bottomFace;

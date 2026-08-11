@@ -1,8 +1,10 @@
 #pragma once
+
+#include "Kernel/Core.h"
 namespace LevEngine
 {
 using namespace entt::literals;
-class System
+class LEV_API System
 {
 public:
 	friend class Scene;

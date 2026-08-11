@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "assimp/scene.h"
 
 #include "Assets/ModelAsset.h"
@@ -11,7 +13,7 @@
 
 namespace LevEngine
 {
-	class AnimationLoader
+	class LEV_API AnimationLoader
 	{
 	public:
 		static Vector<Ref<Animation>> LoadAllAnimations(const aiScene* scene, UnorderedMap<String, BoneInfo>& boneInfoMap, int& boneCount)

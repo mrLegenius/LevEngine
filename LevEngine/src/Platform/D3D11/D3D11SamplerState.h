@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Pipeline/SamplerState.h"
@@ -7,7 +9,7 @@ namespace LevEngine
 {
     enum class ShaderType;
 
-    class D3D11SamplerState final : public SamplerState
+    class LEV_API D3D11SamplerState final : public SamplerState
     {
     public:
         D3D11SamplerState(ID3D11Device2* device);

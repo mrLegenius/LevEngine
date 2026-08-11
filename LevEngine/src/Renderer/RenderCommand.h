@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "RenderCommands.h"
 
 namespace LevEngine
 {
     class Application;
     
-    class RenderCommand
+    class LEV_API RenderCommand
     {
     public:
         static void DrawIndexed(const Ref<IndexBuffer>& indexBuffer)

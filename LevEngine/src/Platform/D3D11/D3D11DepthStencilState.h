@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Pipeline/DepthStencilState.h"
 
 namespace LevEngine
 {
-class D3D11DepthStencilState final : public DepthStencilState
+class LEV_API D3D11DepthStencilState final : public DepthStencilState
 {
 public:
     D3D11DepthStencilState(ID3D11Device2* device);

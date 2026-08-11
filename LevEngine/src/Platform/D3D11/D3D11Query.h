@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 #include <wrl/client.h>
 
@@ -6,7 +8,7 @@
 
 namespace LevEngine
 {
-    class D3D11Query final : public Query
+    class LEV_API D3D11Query final : public Query
     {
     public:
         D3D11Query(ID3D11Device2* device, QueryType queryType, uint8_t numBuffers);

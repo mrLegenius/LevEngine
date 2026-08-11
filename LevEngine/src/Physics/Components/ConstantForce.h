@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Math/Vector3.h"
 #include "Scene/Components/TypeParseTraits.h"
 
@@ -6,7 +8,7 @@ namespace LevEngine
 {
     REGISTER_PARSE_TYPE(ConstantForce);
     
-    struct ConstantForce
+    struct LEV_API ConstantForce
     {
         [[nodiscard]] Vector3 GetForce() const;
         void SetForce(Vector3 value);

@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 #include "Renderer/Shader/Shader.h"
 #include "Renderer/Shader/ShaderMacros.h"
@@ -7,7 +9,7 @@ namespace LevEngine
 {
     class Shader;
 
-    class ShaderAsset : public Asset
+    class LEV_API ShaderAsset : public Asset
     {
     public:
         ShaderAsset(const Path& path, const UUID& uuid, const ShaderMacros& shaderMacros);

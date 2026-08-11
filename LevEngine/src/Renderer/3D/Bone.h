@@ -1,27 +1,29 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <assimp/anim.h>
 
 namespace LevEngine
 {
-    struct KeyPosition
+    struct LEV_API KeyPosition
     {
         Vector3 position;
         double timeStamp;
     };
 
-    struct KeyRotation
+    struct LEV_API KeyRotation
     {
         Quaternion orientation;
         double timeStamp;
     };
 
-    struct KeyScale
+    struct LEV_API KeyScale
     {
         Vector3 scale;
         double timeStamp;
     };
 
-    class Bone
+    class LEV_API Bone
     {
     public:
         /*reads keyframes from aiNodeAnim*/

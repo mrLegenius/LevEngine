@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -6,14 +8,14 @@ namespace LevEngine
     class RenderTarget;
     class PipelineState;
 
-    struct ParticleCameraData
+    struct LEV_API ParticleCameraData
     {
         Matrix View;
         Matrix Projection;
         alignas(16) Vector3 Position;
     };
     
-    class ParticleRenderingPass final : public RenderPass
+    class LEV_API ParticleRenderingPass final : public RenderPass
     {
     public:
         explicit ParticleRenderingPass(const Ref<RenderTarget>& renderTarget);

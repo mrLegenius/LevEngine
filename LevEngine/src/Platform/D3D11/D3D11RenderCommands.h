@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/RenderCommands.h"
@@ -6,7 +8,7 @@
 
 namespace LevEngine
 {
-class D3D11RenderCommands final : public RenderCommands
+class LEV_API D3D11RenderCommands final : public RenderCommands
 {
 public:
 	D3D11RenderCommands(ID3D11Device2* device);

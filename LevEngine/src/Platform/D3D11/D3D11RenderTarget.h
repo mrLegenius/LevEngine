@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Pipeline/RenderTarget.h"
 
 namespace LevEngine
 {
-class D3D11RenderTarget final : public RenderTarget
+class LEV_API D3D11RenderTarget final : public RenderTarget
 {
 public:
     D3D11RenderTarget(ID3D11Device2* device);

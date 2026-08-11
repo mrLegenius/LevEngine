@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "Scene/System.h"
 #include <eastl/vector.h>
 #include <sol/sol.hpp>
 
 namespace LevEngine::Scripting
 {
-	class ScriptingInitSystem : public System
+	class LEV_API ScriptingInitSystem : public System
 	{
 	public:
 		// Inherited via System
@@ -14,7 +16,7 @@ namespace LevEngine::Scripting
 
 	};
 
-	class ScriptingUpdateSystem: public System
+	class LEV_API ScriptingUpdateSystem: public System
 	{
 	public:
 		// Inherited via System
@@ -22,7 +24,7 @@ namespace LevEngine::Scripting
 		
 	};
 
-	class ScriptingLateUpdateSystem : public System
+	class LEV_API ScriptingLateUpdateSystem : public System
 	{
 	public:
 		// Inherited via System
@@ -30,7 +32,7 @@ namespace LevEngine::Scripting
 
 	};
 
-	class ScriptingGUIRenderSystem : public System
+	class LEV_API ScriptingGUIRenderSystem : public System
 	{
 	public:
 		// Inherited via System

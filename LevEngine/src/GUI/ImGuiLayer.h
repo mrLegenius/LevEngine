@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Kernel/Layer.h"
 
 namespace LevEngine
 {
-	class ImGuiLayer : public Layer
+	class LEV_API ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();

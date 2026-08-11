@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -7,7 +9,7 @@ namespace LevEngine
     class BitonicSort;
     class ParticleBuffers;
 
-    class ParticleSortingPass final : public RenderPass
+    class LEV_API ParticleSortingPass final : public RenderPass
     {
     public:
         ParticleSortingPass();

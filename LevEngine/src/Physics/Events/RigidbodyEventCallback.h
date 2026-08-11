@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "PxSimulationEventCallback.h"
 
 namespace LevEngine
 {
-    class RigidbodyEventCallback : public physx::PxSimulationEventCallback
+    class LEV_API RigidbodyEventCallback : public physx::PxSimulationEventCallback
     {
     public:
         friend class Physics;

@@ -1,10 +1,12 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Assets/Asset.h"
 #include "Assets/AssetDatabase.h"
 
 namespace LevEngine
 {
-class ResourceManager
+class LEV_API ResourceManager
 {
 public:
     inline static const String ResourcesDatabaseFilename = "ResourcesDatabase.asset";

@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/RenderDebugEvent.h"
 
 namespace LevEngine
 {
-    class D3D11RenderDebugEvent final : public RenderDebugEvent
+    class LEV_API D3D11RenderDebugEvent final : public RenderDebugEvent
     {
     public:
         D3D11RenderDebugEvent(ID3D11Device2* device);

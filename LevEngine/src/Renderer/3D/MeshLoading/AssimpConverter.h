@@ -1,10 +1,12 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Math/Matrix.h"
 #include "Math/Color.h"
 
 namespace LevEngine
 {
-	class AssimpConverter
+	class LEV_API AssimpConverter
 	{
 	public:
 		static Matrix ToMatrix(const aiMatrix4x4& aiMatrix, bool transpose)

@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    class Entity
+    class LEV_API Entity
     {
     public:
         Entity() = default;

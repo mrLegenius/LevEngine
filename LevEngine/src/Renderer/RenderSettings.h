@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
 enum class RendererAPI
@@ -16,7 +18,7 @@ enum class RenderTechniqueType
 	ForwardPlus = 3,
 };
 
-struct RenderSettings
+struct LEV_API RenderSettings
 {
 	//General
 	static RenderTechniqueType RenderTechnique;
@@ -66,7 +68,7 @@ struct RenderSettings
 	inline static Color VignetteColor;
 };
 
-struct RenderDebugSettings
+struct LEV_API RenderDebugSettings
 {
 	static constexpr bool DrawBoundingVolumes = false;
 };

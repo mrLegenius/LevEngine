@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <dxgiformat.h>
 #include <d3d11_2.h>
 
@@ -8,7 +10,7 @@
 
 namespace LevEngine
 {
-class D3D11Texture : public Texture
+class LEV_API D3D11Texture : public Texture
 {
 public:
 	D3D11Texture(ID3D11Device2* device);

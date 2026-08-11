@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "Material.h"
 
 namespace LevEngine
 {
     class Texture;
 
-    class MaterialPBR final : public Material
+    class LEV_API MaterialPBR final : public Material
     {
     public:
         enum class TextureType

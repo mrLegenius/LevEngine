@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
     REGISTER_PARSE_TYPE(NavMeshBoundingBox);
 	
-    struct NavMeshBoundingBox
+    struct LEV_API NavMeshBoundingBox
     {
         NavMeshBoundingBox();
 

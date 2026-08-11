@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 namespace LevEngine
 {
     class StructuredBuffer;
 
-    class ParticleBuffers
+    class LEV_API ParticleBuffers
     {
     public:
         explicit ParticleBuffers(uint32_t maxParticles);

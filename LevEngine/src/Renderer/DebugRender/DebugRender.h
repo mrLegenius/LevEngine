@@ -1,16 +1,18 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class DebugShape;
 
-    struct TemporaryShape
+    struct LEV_API TemporaryShape
     {
         Action<> DrawCallback;
         float TimeLeft;
     };
 
-    class DebugRender
+    class LEV_API DebugRender
     {
     public:
         static void DrawCube(Vector3 position, Vector3 size, Color color);

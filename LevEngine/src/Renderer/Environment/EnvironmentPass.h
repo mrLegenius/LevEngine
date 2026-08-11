@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 #include "EnvironmentPrecomputePass.h"
@@ -8,7 +10,7 @@ namespace LevEngine
 {
     class RenderTarget;
 
-    class EnvironmentPass final : public RenderPass
+    class LEV_API EnvironmentPass final : public RenderPass
     {
     public:
         explicit EnvironmentPass(const Ref<RenderTarget>& renderTarget);

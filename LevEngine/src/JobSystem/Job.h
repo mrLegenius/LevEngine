@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     template<typename F>
     concept jobFunctor = eastl::is_convertible_v<eastl::decay_t<F>, Action<>>;
 	
-    class Job
+    class LEV_API Job
     {
     public:
         template<typename F>

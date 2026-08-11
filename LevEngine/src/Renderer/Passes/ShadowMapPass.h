@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "RenderPass.h"
 #include "Renderer/RenderSettings.h"
 
@@ -7,7 +9,7 @@ namespace LevEngine
     class ConstantBuffer;
     class CascadeShadowMap;
 
-    class ShadowMapPass : public RenderPass
+    class LEV_API ShadowMapPass : public RenderPass
     {
         struct ShadowData
         {

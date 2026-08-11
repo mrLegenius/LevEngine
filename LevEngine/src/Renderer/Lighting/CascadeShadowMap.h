@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class RenderTarget;
     class Texture;
     class RasterizerState;
 
-    class CascadeShadowMap
+    class LEV_API CascadeShadowMap
     {
     public:
         CascadeShadowMap(uint32_t width, uint32_t height);

@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -9,7 +11,7 @@ namespace LevEngine
     class ConstantBuffer;
     class Texture;
 
-    class EnvironmentPrecomputePass final : public RenderPass
+    class LEV_API EnvironmentPrecomputePass final : public RenderPass
     {
     public:
         [[nodiscard]] const Ref<Texture>& GetEnvironmentCubemap() const { return m_EnvironmentCubemap; }

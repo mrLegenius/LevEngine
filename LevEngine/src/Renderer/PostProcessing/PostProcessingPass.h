@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -14,7 +16,7 @@ namespace LevEngine
     class BloomPass;
     class VignettePass;
     
-    class PostProcessingPass final : public RenderPass
+    class LEV_API PostProcessingPass final : public RenderPass
     {
     public:
         PostProcessingPass(const Ref<RenderTarget>& mainRenderTarget, const Ref<Texture>& colorTexture);

@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class Shader;
 
-    struct EnvironmentShaders
+    struct LEV_API EnvironmentShaders
     {
         static const Ref<Shader>& EquirectangularToCubemap();
         static const Ref<Shader>& CubemapConvolution();

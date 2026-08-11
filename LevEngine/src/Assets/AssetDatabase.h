@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 
 namespace LevEngine
 {
-	class AssetDatabase
+	class LEV_API AssetDatabase
 	{
 	public:
 		inline static const Path AssetsRoot = "resources";

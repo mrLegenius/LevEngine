@@ -1,9 +1,11 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
 {
-    struct PhysicsUtils
+    struct LEV_API PhysicsUtils
     {
         static physx::PxVec3 FromVector3ToPxVec3(const Vector3& vector)
         {

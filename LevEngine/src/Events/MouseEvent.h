@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <sstream>
 
 #include "Event.h"
 #include "../Input/MouseButtonCodes.h"
 namespace LevEngine
 {
-class MouseMovedEvent : public Event
+class LEV_API MouseMovedEvent : public Event
 {
 public:
 	MouseMovedEvent(const float x, const float y)
@@ -29,7 +31,7 @@ private:
 	float m_MouseY;
 };
 
-class MouseScrolledEvent : public Event
+class LEV_API MouseScrolledEvent : public Event
 {
 public:
 	MouseScrolledEvent(const float xOffset, const float yOffset)
@@ -52,7 +54,7 @@ private:
 	float m_YOffset;
 };
 
-class MouseButtonEvent : public Event
+class LEV_API MouseButtonEvent : public Event
 {
 public:
 	[[nodiscard]] MouseButton GetMouseButton() const { return m_Button; }
@@ -64,7 +66,7 @@ protected:
 	MouseButton m_Button;
 };
 
-class MouseButtonPressedEvent : public MouseButtonEvent
+class LEV_API MouseButtonPressedEvent : public MouseButtonEvent
 {
 public:
 	explicit MouseButtonPressedEvent(const MouseButton button)
@@ -80,7 +82,7 @@ public:
 	EVENT_CLASS_TYPE(MouseButtonPressed)
 };
 
-class MouseButtonReleasedEvent : public MouseButtonEvent
+class LEV_API MouseButtonReleasedEvent : public MouseButtonEvent
 {
 public:
 	explicit MouseButtonReleasedEvent(const MouseButton button)

@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class StructuredBuffer;
     class ConstantBuffer;
     class Shader;
 
-    class BitonicSort
+    class LEV_API BitonicSort
     {
         struct ConstantsGPUData
         {

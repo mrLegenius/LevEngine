@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
@@ -7,7 +9,7 @@ namespace LevEngine
 	class MeshAsset;
 	REGISTER_PARSE_TYPE(MeshRendererComponent);
 	
-	struct MeshRendererComponent
+	struct LEV_API MeshRendererComponent
 	{
 		bool enabled = true;
 		Ref<MeshAsset> mesh;

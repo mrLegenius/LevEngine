@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    struct TimelineParameters
+    struct LEV_API TimelineParameters
     {
         bool isLooping{};
         double duration{};

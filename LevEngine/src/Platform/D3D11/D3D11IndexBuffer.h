@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Pipeline/IndexBuffer.h"
 
 namespace LevEngine
 {
-class D3D11IndexBuffer final : public IndexBuffer
+class LEV_API D3D11IndexBuffer final : public IndexBuffer
 {
 public:
 	D3D11IndexBuffer(ID3D11Device2* device, const uint32_t* indices, uint32_t count);

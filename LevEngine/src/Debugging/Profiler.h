@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include <chrono>
 #include <fstream>
 #include <iomanip>
@@ -12,7 +14,7 @@ namespace LevEngine
 {
 	using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
 
-	struct ProfileResult
+	struct LEV_API ProfileResult
 	{
 		std::string Name;
 
@@ -21,12 +23,12 @@ namespace LevEngine
 		std::thread::id ThreadID;
 	};
 
-	struct ProfilerSession
+	struct LEV_API ProfilerSession
 	{
 		std::string Name;
 	};
 
-	class Profiler
+	class LEV_API Profiler
 	{
 	public:
 		Profiler(const Profiler&) = delete;
@@ -137,7 +139,7 @@ namespace LevEngine
 		std::ofstream m_OutputStream;
 	};
 
-	class ProfilerTimer
+	class LEV_API ProfilerTimer
 	{
 	public:
 		ProfilerTimer(const char* name)

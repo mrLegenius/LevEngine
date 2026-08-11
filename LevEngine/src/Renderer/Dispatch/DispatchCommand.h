@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "DispatchCommands.h"
 
 namespace LevEngine
@@ -10,7 +12,7 @@ namespace LevEngine
 {
     class DispatchCommands;
 
-    class DispatchCommand
+    class LEV_API DispatchCommand
     {
     public:
         static void Dispatch(uint32_t groupX, uint32_t groupY, uint32_t groupZ);

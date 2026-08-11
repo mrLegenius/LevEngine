@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "ShaderType.h"
 
 namespace LevEngine
@@ -8,7 +10,7 @@ namespace LevEngine
 	class Texture;
 	class ConstantBuffer;
 
-	class ShaderParameter
+	class LEV_API ShaderParameter
 	{
 	public:
 		ShaderParameter() = default;

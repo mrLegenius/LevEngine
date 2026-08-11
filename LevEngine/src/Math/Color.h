@@ -1,10 +1,12 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Vector3.h"
 #include "Vector4.h"
 
 namespace LevEngine
 {
-struct Color
+struct LEV_API Color
 {
 	float r = 0, g = 0, b = 0, a = 0;
 

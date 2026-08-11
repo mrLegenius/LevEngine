@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    class DebugShape
+    class LEV_API DebugShape
     {
     public:
         virtual ~DebugShape() = default;

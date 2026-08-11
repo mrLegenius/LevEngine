@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    class RenderSettingsSerializer
+    class LEV_API RenderSettingsSerializer
     {
     public:
         void Serialize(YAML::Emitter& out);

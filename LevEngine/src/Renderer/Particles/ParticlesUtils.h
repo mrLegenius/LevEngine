@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-    class ParticlesUtils
+    class LEV_API ParticlesUtils
     {
     public:
         static void GetGroupSize(uint32_t totalCount, int& groupSizeX, int& groupSizeY);

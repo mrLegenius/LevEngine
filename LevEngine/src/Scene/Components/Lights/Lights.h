@@ -1,10 +1,12 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
 {
 	REGISTER_PARSE_TYPE(DirectionalLightComponent);
-	struct DirectionalLightComponent
+	struct LEV_API DirectionalLightComponent
 	{
 		Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -13,7 +15,7 @@ namespace LevEngine
 	};
 
 	REGISTER_PARSE_TYPE(PointLightComponent);
-	struct PointLightComponent
+	struct LEV_API PointLightComponent
 	{
 		Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -26,7 +28,7 @@ namespace LevEngine
 	};
 
 	REGISTER_PARSE_TYPE(SpotLightComponent);
-	struct SpotLightComponent
+	struct LEV_API SpotLightComponent
 	{
 		Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
 

@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <random>
 
 #include "Math.h"
@@ -6,7 +8,7 @@
 
 namespace LevEngine
 {
-struct Random
+struct LEV_API Random
 {
 	static void Init()
 	{

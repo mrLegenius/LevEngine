@@ -26,6 +26,16 @@
 //#define IMGUI_API __declspec( dllexport )
 //#define IMGUI_API __declspec( dllimport )
 
+// [LevEngine] Dear ImGui (and ImGuizmo, which reuses IMGUI_API) is compiled into
+// LevEngine.dll and used by its clients, so its API has to cross the DLL boundary.
+// LEV_BUILD_DLL is defined by LevEngine.vcxproj only. Sharing IMGUI_API this way also
+// shares GImGui, so clients do not need SetCurrentContext()/SetAllocatorFunctions().
+#ifdef LEV_BUILD_DLL
+#define IMGUI_API __declspec( dllexport )
+#else
+#define IMGUI_API __declspec( dllimport )
+#endif
+
 //---- Don't define obsolete functions/enums/behaviors. Consider enabling from time to time after updating to clean your code of obsolete function/names.
 //#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 //#define IMGUI_DISABLE_OBSOLETE_KEYIO                      // 1.87+ disable legacy io.KeyMap[]+io.KeysDown[] in favor io.AddKeyEvent(). This is automatically done by IMGUI_DISABLE_OBSOLETE_FUNCTIONS.

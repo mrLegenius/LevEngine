@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-	class VertexBuffer
+	class LEV_API VertexBuffer
 	{
 	public:
 		explicit VertexBuffer(const uint32_t size, const uint32_t stride) : m_Size(size), m_Stride(stride) { }

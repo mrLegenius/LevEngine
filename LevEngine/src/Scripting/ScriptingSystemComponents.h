@@ -1,25 +1,27 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <eastl/vector.h>
 #include <sol/sol.hpp>
 
 namespace LevEngine::Scripting
 {
-	struct ScriptingInitComponent
+	struct LEV_API ScriptingInitComponent
 	{
 		sol::protected_function init{ sol::lua_nil };
 	};
 
-	struct ScriptingUpdateComponent
+	struct LEV_API ScriptingUpdateComponent
 	{
 		sol::protected_function update{ sol::lua_nil };
 	};
 
-	struct ScriptingLateUpdateComponent
+	struct LEV_API ScriptingLateUpdateComponent
 	{
 		sol::protected_function lateUpdate{ sol::lua_nil };
 	};
 
-	struct ScriptingGUIRenderComponent
+	struct LEV_API ScriptingGUIRenderComponent
 	{
 		sol::protected_function GUIRender{ sol::lua_nil };
 	};

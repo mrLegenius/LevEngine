@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     struct Color;
 
-    class GUI
+    class LEV_API GUI
     {
     public:
         static Vector2 GetWindowPosition();

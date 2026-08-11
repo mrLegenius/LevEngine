@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     enum class ShaderType;
 
-    class SamplerState
+    class LEV_API SamplerState
 	{
 	public:
         enum class Filter

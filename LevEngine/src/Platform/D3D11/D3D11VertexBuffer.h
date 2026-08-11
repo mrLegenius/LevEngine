@@ -1,11 +1,13 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include <d3d11_2.h>
 
 #include "Renderer/Pipeline/VertexBuffer.h"
 
 namespace LevEngine
 {
-class D3D11VertexBuffer final : public VertexBuffer
+class LEV_API D3D11VertexBuffer final : public VertexBuffer
 {
 public:
 	D3D11VertexBuffer(ID3D11Device2* device, uint32_t count, uint32_t stride);

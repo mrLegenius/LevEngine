@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     enum class ShaderType;
 
-    class ConstantBuffer
+    class LEV_API ConstantBuffer
     {
     public:
         explicit ConstantBuffer(const uint32_t size) : ConstantBuffer(size, 0)

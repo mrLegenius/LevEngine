@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
-	class FileDialogs
+	class LEV_API FileDialogs
 	{
 	public:
 		//These return empty string if cancelled

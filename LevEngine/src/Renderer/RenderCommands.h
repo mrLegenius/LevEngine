@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
 	class IndexBuffer;
 
-	class RenderCommands
+	class LEV_API RenderCommands
 	{
 	public:
 		virtual ~RenderCommands() = default;

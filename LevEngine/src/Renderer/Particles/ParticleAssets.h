@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class Texture;
     class Shader;
     
-    struct ParticleShaders
+    struct LEV_API ParticleShaders
     {
         static Ref<Shader> Rendering();
         static Ref<Shader> Simulation();
@@ -14,7 +16,7 @@ namespace LevEngine
         static Ref<Shader> BitonicTranspose();
     };
 
-    struct ParticleTextures
+    struct LEV_API ParticleTextures
     {
         static Ref<Texture> Default();
     };

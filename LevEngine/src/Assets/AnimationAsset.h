@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 
 namespace LevEngine
@@ -6,7 +8,7 @@ namespace LevEngine
 	class ModelAsset;
 	class Animation;
 
-	class AnimationAsset final : public Asset
+	class LEV_API AnimationAsset final : public Asset
 	{
 	public:
 		explicit AnimationAsset(const Path& path, UUID uuid);

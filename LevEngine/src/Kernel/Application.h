@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 #include "LayerStack.h"
 #include "Statistic.h"
 
@@ -27,7 +29,7 @@ namespace LevEngine
         class ScriptingManager;
     }
 
-    struct ApplicationCommandLineArgs
+    struct LEV_API ApplicationCommandLineArgs
     {
         int Count = 0;
         char** Args = nullptr;
@@ -39,7 +41,7 @@ namespace LevEngine
         }
     };
 
-    struct ApplicationSpecification
+    struct LEV_API ApplicationSpecification
     {
         String Name = "LevApp";
         uint32_t WindowWidth = 1600;
@@ -47,7 +49,7 @@ namespace LevEngine
         ApplicationCommandLineArgs CommandLineArgs;
     };
 
-    class Application
+    class LEV_API Application
     {
     public:
 

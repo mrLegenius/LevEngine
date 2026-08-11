@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Renderer/Passes/RenderPass.h"
 
 namespace LevEngine
@@ -7,7 +9,7 @@ namespace LevEngine
     class PipelineState;
     class Texture;
     
-    class LuminanceAdaptationPass final : public RenderPass
+    class LEV_API LuminanceAdaptationPass final : public RenderPass
     {
     public:
         LuminanceAdaptationPass();

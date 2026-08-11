@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     enum class ShaderType;
@@ -9,7 +11,7 @@ namespace LevEngine
     class BlendState;
     class Shader;
 
-    class PipelineState
+    class LEV_API PipelineState
     {
     public:
         using ShaderMap = UnorderedMap<ShaderType, Ref<Shader>>;

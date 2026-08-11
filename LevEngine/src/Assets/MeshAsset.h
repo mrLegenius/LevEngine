@@ -1,11 +1,13 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Asset.h"
 
 namespace LevEngine
 {
 	class Mesh;
 
-	class MeshAsset final : public Asset, public eastl::enable_shared_from_this<MeshAsset>
+	class LEV_API MeshAsset final : public Asset, public eastl::enable_shared_from_this<MeshAsset>
 	{
 	public:
 		MeshAsset() = delete;

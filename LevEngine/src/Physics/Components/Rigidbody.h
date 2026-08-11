@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Components/TypeParseTraits.h"
 #include "Collider.h"
 #include "PhysicMaterial.h"
@@ -8,7 +10,7 @@ namespace LevEngine
 {
     REGISTER_PARSE_TYPE(Rigidbody);
 
-    struct Rigidbody
+    struct LEV_API Rigidbody
     {
         enum class Type
         {

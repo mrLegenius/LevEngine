@@ -1,11 +1,13 @@
 ﻿#pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class Texture;
     class AssetDatabase;
     
-    class Asset
+    class LEV_API Asset
     {
     public:
         explicit Asset(const Path& path, UUID uuid);

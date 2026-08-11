@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Kernel/Core.h"
+
 namespace LevEngine
 {
     class Application;
     
-    class RenderDebugEvent
+    class LEV_API RenderDebugEvent
     {
     public:
         static void Start(const String& label);

@@ -1,10 +1,12 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "KeyCodes.h"
 #include "MouseButtonCodes.h"
 
 namespace LevEngine
 {
-class Input
+class LEV_API Input
 {
 public:
 	friend class Application;

@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Kernel/Core.h"
 #include "Scene/Entity.h"
 
 namespace LevEngine
@@ -6,7 +8,7 @@ namespace LevEngine
 	class Audio;
 	class AudioBankAsset;
 
-	class AudioPlayer
+	class LEV_API AudioPlayer
 	{
 	public:
 		AudioPlayer();
