@@ -33,9 +33,13 @@ namespace LevEngine
 
     bool EnvironmentRenderPass::Begin(entt::registry& registry, RenderParams& params)
     {
+        if (m_EnvironmentMap == nullptr) return false;
+
+        //<--- Reassigned every frame to pick up a hot reloaded shader ---<<
         m_SkyboxPipeline->SetShader(ShaderType::Vertex, EnvironmentShaders::Render());
         m_SkyboxPipeline->SetShader(ShaderType::Pixel, EnvironmentShaders::Render());
-        return m_EnvironmentMap != nullptr;
+
+        return true;
     }
 
     void EnvironmentRenderPass::Process(entt::registry& registry, RenderParams& params)

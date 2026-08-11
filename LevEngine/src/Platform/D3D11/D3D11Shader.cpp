@@ -180,8 +180,8 @@ namespace LevEngine
             {
                 String errorMessage(static_cast<char*>(errorCode->GetBufferPointer()), errorCode->GetBufferSize());
 
-                //Ignore missing entry error
-                if (errorMessage.find("entrypoint not found") == String::npos)
+                //<--- X3501 is 'entrypoint not found'. A file is not required to have every stage ---<<
+                if (errorMessage.find("X3501") == String::npos)
                 {
                     const char* compileErrors = static_cast<char*>(errorCode->GetBufferPointer());
                     Log::CoreError(compileErrors);

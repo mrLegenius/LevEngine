@@ -204,7 +204,7 @@ namespace LevEngine::Editor
     
     void EditorLayer::DoComponentRenderDebug()
     {
-        SceneManager::GetActiveScene()->ForEachEntity(
+        SceneManager::GetActiveScene()->ForEachEntityUnordered(
             [](const Entity entity)
             {
                 for (const auto debugRenderers : ClassCollection<IComponentDebugRenderer>::Instance())

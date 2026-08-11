@@ -79,7 +79,7 @@ namespace LevEngine
 	{
 		LEV_CORE_ASSERT(entity.HasComponent<IDComponent>());
 
-		auto transform = entity.GetComponent<Transform>();
+		const auto& transform = entity.GetComponent<Transform>();
 
 		//Do not serialize root object
 		if (transform.GetHierarchyDepth() == 0) return;

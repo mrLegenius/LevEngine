@@ -348,22 +348,56 @@ namespace LevEngine
         }
     }
 
+    void Scene::GetAllEntities(Vector<Entity>& entities)
+    {
+        const auto view = m_Registry.view<Transform>();
+        entities.reserve(view.size());
+
+        for (const auto entity : view)
+            entities.emplace_back(entt::handle(m_Registry, entity));
+    }
+
     void Scene::ForEachEntity(const Action<Entity>& callback)
     {
-        m_Registry.sort<Transform>([](const Transform& t1, const Transform& t2)
-        {
-            if (t1.GetHierarchyDepth() == t2.GetHierarchyDepth())
-                return t1.GetChildIndex() < t2.GetChildIndex();
+        LEV_PROFILE_FUNCTION();
 
-            return t1.GetHierarchyDepth() < t2.GetHierarchyDepth(); 
+        //<--- Sort a snapshot. Sorting the registry permutes the storage every other view iterates ---<<
+        Vector<Entity> entities;
+        GetAllEntities(entities);
+
+        std::ranges::sort(entities, [](const Entity& lhs, const Entity& rhs)
+        {
+            const auto& left = lhs.GetComponent<Transform>();
+            const auto& right = rhs.GetComponent<Transform>();
+
+            if (left.GetHierarchyDepth() == right.GetHierarchyDepth())
+                return left.GetChildIndex() < right.GetChildIndex();
+
+            return left.GetHierarchyDepth() < right.GetHierarchyDepth();
         });
 
-        auto view = m_Registry.view<Transform>();
-
-        view.each([this, &callback](const auto entity, Transform& _)
+        for (const auto entity : entities)
         {
-            callback(ConvertEntity(entity));
-        });
+            //<--- The callback is free to destroy entities ---<<
+            if (!entity) continue;
+
+            callback(entity);
+        }
+    }
+
+    void Scene::ForEachEntityUnordered(const Action<Entity>& callback)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        Vector<Entity> entities;
+        GetAllEntities(entities);
+
+        for (const auto entity : entities)
+        {
+            if (!entity) continue;
+
+            callback(entity);
+        }
     }
 
     Entity Scene::CreateEntity(const String& name)

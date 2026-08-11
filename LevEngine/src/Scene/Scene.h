@@ -28,7 +28,10 @@ namespace LevEngine
 
 		void OnViewportResized(uint32_t width, uint32_t height);
 
+		//<--- Parents come before their children, siblings are ordered by child index ---<<
 		void ForEachEntity(const Action<Entity>& callback);
+		//<--- Cheaper, use it when the order of the entities does not matter ---<<
+		void ForEachEntityUnordered(const Action<Entity>& callback);
 
 		Entity CreateEntity(const String& name);
 		Entity CreateEntity(const String& name, Entity parent);
@@ -92,6 +95,7 @@ namespace LevEngine
 		Entity ConvertEntity(entt::entity entity);
 
 		static void GetAllChildren(Entity entity, Vector<Entity>& entities);
+		void GetAllEntities(Vector<Entity>& entities);
 	private:
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth;
