@@ -1,0 +1,33 @@
+Prefab: Particles
+RootEntity: 11590203232340498643
+Entities:
+  - Entity: 11590203232340498643
+    Tag: Particles
+    Parent: 13631027794021233931
+    Transform:
+      ChildIndex: 0
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Emitter:
+      Birth:
+        RandomVelocity: true
+        Velocity: [1, 2, 1]
+        VelocityB: [-1, -2, -1]
+        RandomStartPosition: true
+        Position: [1, 1, 1]
+        PositionB: [-1, -1, -1]
+        RandomStartColor: true
+        StartColor: [1, 1, 1, 1]
+        StartColorB: [0, 0.0470588207, 1, 1]
+        EndColor: [0, 1, 0.0470588244, 0]
+        RandomStartSize: true
+        StartSize: 0.100000001
+        StartSizeB: 0.300000012
+        EndSize: 0.200000003
+        RandomStartLifeTime: true
+        LifeTime: 1
+        LifeTimeB: 2.9000001
+        GravityScale: 0
+      MaxParticles: 10000
+      Rate: 86.5
