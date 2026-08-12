@@ -1,7 +1,10 @@
 #include "levpch.h"
 #include "Logger.h"
 
+#include <ctime>
+
 #include "spdlog/async.h"
+#include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/dist_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -14,21 +17,83 @@ namespace LevEngine::Log
 	namespace
 	{
 		constexpr char k_Pattern[] = "%^[%T] %n: %v%$";
+		//The file has no colors to interpret and is read long after the run, so it
+		//carries the date and the level as well
+		constexpr char k_FilePattern[] = "[%Y-%m-%d %T.%e] [%n] [%l] %v";
 		//Messages waiting to be written. A flood beyond that drops the oldest ones
 		//instead of making the logging thread wait for the sinks
 		constexpr size_t k_QueueSize = 16384;
 		constexpr size_t k_WriterThreadCount = 1;
+		//Every run writes its own file in the working directory
+		constexpr char k_LogDirectory[] = "Logs";
+		constexpr size_t k_SessionsToKeep = 10;
+		//Errors reach the disk right away, everything else within this interval, so a
+		//crash takes at most that much of the log with it
+		constexpr auto k_FlushInterval = std::chrono::seconds(1);
 
 		//Both loggers share the sinks, so a handler is attached once and the logging
 		//thread never sees the sink list change under it
 		std::shared_ptr<spdlog::sinks::dist_sink_mt> s_Sinks;
+
+		Path GetSessionLogPath()
+		{
+			const auto time = std::time(nullptr);
+			std::tm local{};
+			localtime_s(&local, &time);
+
+			char name[64];
+			std::strftime(name, sizeof name, "Session_%Y-%m-%d_%H-%M-%S.log", &local);
+
+			return Path{ k_LogDirectory } / name;
+		}
+
+		void RemoveOldSessionLogs()
+		{
+			std::error_code error;
+
+			Vector<Path> logs;
+			for (const auto& entry : std::filesystem::directory_iterator{ k_LogDirectory, error })
+			{
+				if (entry.is_regular_file(error) && entry.path().extension() == ".log")
+					logs.emplace_back(entry.path());
+			}
+
+			if (logs.size() <= k_SessionsToKeep) return;
+
+			//The names start with the session time, so sorting them puts the oldest first
+			std::sort(logs.begin(), logs.end());
+
+			for (size_t i = 0; i < logs.size() - k_SessionsToKeep; ++i)
+				std::filesystem::remove(logs[i], error);
+		}
+
+		//A log file is a convenience, so a folder that cannot be written to is not fatal
+		std::shared_ptr<spdlog::sinks::sink> TryCreateFileSink(String& error)
+		{
+			try
+			{
+				RemoveOldSessionLogs();
+
+				auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(GetSessionLogPath().string());
+				sink->set_pattern(k_FilePattern);
+
+				return sink;
+			}
+			catch (const std::exception& exception)
+			{
+				error = exception.what();
+
+				return nullptr;
+			}
+		}
 
 		std::shared_ptr<spdlog::logger> CreateLogger(const char* name)
 		{
 			auto logger = std::make_shared<spdlog::async_logger>(name, s_Sinks, spdlog::thread_pool(),
 				spdlog::async_overflow_policy::overrun_oldest);
 
-			logger->set_pattern(k_Pattern);
+			//The pattern belongs to the sink, not to the logger: setting it here would
+			//give the file and the panel the pattern meant for the console
 			//TODO: make level changeable
 			logger->set_level(spdlog::level::trace);
 			//Errors are the ones worth having on disk when the process goes down
@@ -47,10 +112,22 @@ namespace LevEngine::Log
 		spdlog::init_thread_pool(k_QueueSize, k_WriterThreadCount);
 
 		s_Sinks = std::make_shared<spdlog::sinks::dist_sink_mt>();
-		s_Sinks->add_sink(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+
+		auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+		consoleSink->set_pattern(k_Pattern);
+		s_Sinks->add_sink(consoleSink);
+
+		String fileSinkError;
+		if (const auto fileSink = TryCreateFileSink(fileSinkError))
+			s_Sinks->add_sink(fileSink);
 
 		m_CoreLogger = CreateLogger("LevEngine");
 		m_Logger = CreateLogger("APP");
+
+		spdlog::flush_every(k_FlushInterval);
+
+		if (!fileSinkError.empty())
+			CoreWarning("Failed to open the log file. {}", fileSinkError.c_str());
 	}
 
 	void Logger::Shutdown()
