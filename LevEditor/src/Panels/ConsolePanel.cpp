@@ -2,6 +2,7 @@
 #include "ConsolePanel.h"
 
 #include "ConsoleLog.h"
+#include "GUI/Icons/IconsFontAwesome6.h"
 
 #include <EASTL/algorithm.h>
 
@@ -16,6 +17,22 @@ namespace LevEngine::Editor
 
 		//Errors and criticals share a toggle, they are the same thing to look for
 		constexpr uint32_t k_ErrorLevels = LevelBit(spdlog::level::err) | LevelBit(spdlog::level::critical);
+
+		struct LevelToggle
+		{
+			const char* icon;
+			//Also the id of the button, the icon and the count are not stable enough
+			const char* name;
+			uint32_t levels;
+		};
+
+		constexpr LevelToggle k_LevelToggles[] = {
+			{ ICON_FA_SHOE_PRINTS, "Trace", LevelBit(spdlog::level::trace) },
+			{ ICON_FA_BUG, "Debug", LevelBit(spdlog::level::debug) },
+			{ ICON_FA_CIRCLE_INFO, "Info", LevelBit(spdlog::level::info) },
+			{ ICON_FA_TRIANGLE_EXCLAMATION, "Warning", LevelBit(spdlog::level::warn) },
+			{ ICON_FA_CIRCLE_EXCLAMATION, "Error", k_ErrorLevels },
+		};
 
 		//The lowest level in the mask, its color represents the whole group
 		spdlog::level::level_enum GetFirstLevel(const uint32_t levels)
@@ -45,6 +62,34 @@ namespace LevEngine::Editor
 		{
 			return ImGui::CalcTextSize(label, nullptr, true).x + ImGui::GetStyle().FramePadding.x * 2;
 		}
+
+		//Draws one toggle, flipping the levels it stands for in 'levelMask' when clicked
+		void DrawLevelToggle(const char* label, const LevelToggle& toggle, const int count, uint32_t& levelMask)
+		{
+			const bool isShown = (levelMask & toggle.levels) != 0;
+
+			const auto color = ConsoleLog::GetColor(GetFirstLevel(toggle.levels));
+			const auto textColor = isShown
+				? ImVec4{ color.r, color.g, color.b, 1 }
+				: ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+			//Hidden levels read as a flat dimmed icon, shown ones as a normal button
+			const auto buttonColor = isShown ? ImGui::GetStyleColorVec4(ImGuiCol_Button) : ImVec4{ 0, 0, 0, 0 };
+
+			ImGui::PushStyleColor(ImGuiCol_Text, textColor);
+			ImGui::PushStyleColor(ImGuiCol_Button, buttonColor);
+
+			if (ImGui::SmallButton(label))
+				levelMask ^= toggle.levels;
+
+			ImGui::PopStyleColor(2);
+
+			//The icons say little on their own, so the name is in the tooltip
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("%s: %d messages\nClick to %s them",
+					toggle.name, count, isShown ? "hide" : "show");
+			}
+		}
 	}
 
 	void ConsolePanel::DrawContent()
@@ -60,12 +105,6 @@ namespace LevEngine::Editor
 		ImGui::SameLine();
 		ImGui::Checkbox("AutoScroll", &m_IsAutoScroll);
 
-		DrawLevelToggle("Trace", LevelBit(spdlog::level::trace));
-		DrawLevelToggle("Debug", LevelBit(spdlog::level::debug));
-		DrawLevelToggle("Info", LevelBit(spdlog::level::info));
-		DrawLevelToggle("Warning", LevelBit(spdlog::level::warn));
-		DrawLevelToggle("Error", k_ErrorLevels);
-
 		//Messages the logger had to throw away to keep up with the logging
 		if (const auto dropped = Log::Logger::GetDroppedMessageCount(); dropped > 0)
 		{
@@ -75,6 +114,8 @@ namespace LevEngine::Editor
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Messages were logged faster than they could be written");
 		}
+
+		DrawLevelToggles();
 
 		ImGui::Separator();
 
@@ -144,7 +185,45 @@ namespace LevEngine::Editor
         ImGui::EndChild();
 	}
 
-	void ConsolePanel::DrawLevelToggle(const char* label, const uint32_t levels)
+	void ConsolePanel::DrawLevelToggles()
+	{
+		const auto& style = ImGui::GetStyle();
+
+		//The labels are needed twice, once to measure the row and once to draw it
+		String labels[eastl::size(k_LevelToggles)];
+		float rowWidth = 0;
+
+		for (size_t i = 0; i < eastl::size(k_LevelToggles); ++i)
+		{
+			const auto& toggle = k_LevelToggles[i];
+			labels[i] = Format("{} {}##Level{}", toggle.icon, GetLevelCount(toggle.levels), toggle.name);
+			rowWidth += GetButtonWidth(labels[i].c_str()) + style.ItemSpacing.x;
+		}
+		rowWidth -= style.ItemSpacing.x;
+
+		//The toggles sit at the right end of the menu, on the row above when they fit
+		const float rowStart = ImGui::GetWindowContentRegionMax().x - rowWidth;
+		const float previousItemEnd = ImGui::GetItemRectMax().x - ImGui::GetWindowPos().x;
+
+		if (rowStart > previousItemEnd + style.ItemSpacing.x)
+		{
+			ImGui::SameLine(rowStart);
+		}
+		else
+		{
+			ImGui::SetCursorPosX(ImMax(rowStart, ImGui::GetWindowContentRegionMin().x));
+		}
+
+		for (size_t i = 0; i < eastl::size(k_LevelToggles); ++i)
+		{
+			if (i > 0) ImGui::SameLine();
+
+			const auto& toggle = k_LevelToggles[i];
+			DrawLevelToggle(labels[i].c_str(), toggle, GetLevelCount(toggle.levels), m_LevelMask);
+		}
+	}
+
+	int ConsolePanel::GetLevelCount(const uint32_t levels) const
 	{
 		int count = 0;
 		for (int level = 0; level < spdlog::level::n_levels; ++level)
@@ -153,28 +232,7 @@ namespace LevEngine::Editor
 				count += m_LevelCounts[level];
 		}
 
-		const bool isShown = (m_LevelMask & levels) != 0;
-
-		const auto color = ConsoleLog::GetColor(GetFirstLevel(levels));
-		const auto textColor = isShown
-			? ImVec4{ color.r, color.g, color.b, 1 }
-			: ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
-		const auto buttonColor = ImGui::GetStyleColorVec4(isShown ? ImGuiCol_ButtonActive : ImGuiCol_Button);
-
-		ImGui::PushStyleColor(ImGuiCol_Text, textColor);
-		ImGui::PushStyleColor(ImGuiCol_Button, buttonColor);
-
-		//The label carries the count, so the id is kept separate to stay stable
-		const auto text = Format("{} {}##Level{}", label, count, label);
-		PlaceNextItem(GetButtonWidth(text.c_str()));
-
-		if (ImGui::SmallButton(text.c_str()))
-			m_LevelMask ^= levels;
-
-		ImGui::PopStyleColor(2);
-
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip(isShown ? "Click to hide these messages" : "Click to show these messages");
+		return count;
 	}
 
 	bool ConsolePanel::UpdateLayout(const float wrapWidth, const ConsoleLog::ReadResult& read)

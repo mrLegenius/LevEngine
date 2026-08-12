@@ -14,9 +14,10 @@ namespace LevEngine::Editor
 		void DrawContent() override;
 
 	private:
-		// Draws a button toggling the messages of the given levels, 'levels' being
-		// a mask of spdlog level bits
-		void DrawLevelToggle(const char* label, uint32_t levels);
+		// Draws the row of level toggles at the right end of the top menu
+		void DrawLevelToggles();
+		// Messages held for the given levels, 'levels' being a mask of spdlog level bits
+		[[nodiscard]] int GetLevelCount(uint32_t levels) const;
 		// Recalculates the cached message heights and the filtered message list.
 		// Returns true when the visible list changed
 		bool UpdateLayout(float wrapWidth, const ConsoleLog::ReadResult& read);
