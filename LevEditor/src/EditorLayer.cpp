@@ -43,6 +43,7 @@ namespace LevEngine::Editor
 
         ConsoleLog::Init();
 
+        SplashScreen::SetStatus("Loading editor settings");
         m_SaveData.Load();
 
         m_ProjectEditor = CreateScope<ProjectEditor>(std::bind(&EditorLayer::OnProjectLoaded, this));
@@ -52,9 +53,13 @@ namespace LevEngine::Editor
         //before any project is loaded
         m_MainTitleBar = CreateRef<TitleBar>();
 
+        SplashScreen::SetStatus("Creating editor panels");
         m_DockSpace = CreateRef<DockSpace>();
         m_PanelManager = CreateRef<PanelManager>();
         RegisterPanels();
+
+        SplashScreen::SetStatus(Format("Loading project {0}",
+            ToString(m_SaveData.GetLastOpenedProject().stem())));
 
         if (Project::Load(m_SaveData.GetLastOpenedProject()))
         {
@@ -325,13 +330,18 @@ namespace LevEngine::Editor
         m_SaveData.SetLastOpenedProject(Project::GetPath());
         m_SaveData.Save();
 
+        SplashScreen::SetStatus("Importing assets");
         AssetDatabase::ProcessAllAssets();
+
+        SplashScreen::SetStatus("Initializing resource manager");
         ResourceManager::Init(Project::GetRoot());
 
         const auto startScene = Project::GetStartScene();
+        SplashScreen::SetStatus(Format("Loading scene {0}", ToString(startScene.stem())));
         if (startScene.empty() || !m_SceneEditor->OpenScene(startScene))
             SceneManager::LoadEmptyScene();
 
+        SplashScreen::SetStatus("Building editor interface");
         m_MainStatusBar = CreateRef<StatusBar>();
         m_MainMenuBar = CreateRef<MenuBar>();
         m_MainToolbar = CreateRef<Toolbar>(m_MainMenuBar, [this]{ return m_SceneState; }, std::bind(&EditorLayer::OnPlayButtonClicked, this));

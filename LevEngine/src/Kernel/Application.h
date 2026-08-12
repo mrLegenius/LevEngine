@@ -49,6 +49,11 @@ namespace LevEngine
         ApplicationCommandLineArgs CommandLineArgs;
         //The application draws its own title bar instead of using the system one
         bool CustomTitleBar = false;
+        //A splash screen is shown while the engine and the layers are initializing, and the main
+        //window stays hidden until then
+        bool ShowSplashScreen = true;
+        //When empty, the engine logo is used
+        Path SplashScreenLogo;
     };
 
     class LEV_API Application

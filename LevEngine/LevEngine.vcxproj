@@ -981,6 +981,7 @@
     <ClInclude Include="src\Kernel\Time\TimelineFactory.h" />
     <ClInclude Include="src\Kernel\Time\TimelineParameters.h" />
     <ClInclude Include="src\Kernel\Time\TimelineRunner.h" />
+    <ClInclude Include="src\Kernel\SplashScreen.h" />
     <ClInclude Include="src\Kernel\Time\Timestep.h" />
     <ClInclude Include="src\Kernel\Utils.h" />
     <ClInclude Include="src\Kernel\UUID.h" />
@@ -1426,6 +1427,7 @@
     <ClCompile Include="src\Platform\D3D11\D3D11Texture.cpp" />
     <ClCompile Include="src\Platform\D3D11\D3D11VertexBuffer.cpp" />
     <ClCompile Include="src\Platform\Windows\PlatformUtils.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsSplashScreen.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Project.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />

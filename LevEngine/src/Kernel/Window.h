@@ -51,6 +51,9 @@ public:
 	void SetVSync(const bool enabled) { m_Data.vSync = enabled; }
 	[[nodiscard]] bool IsVSync() const { return m_Data.vSync; }
 
+	//The window is created hidden, so it is only shown when the application is done loading
+	virtual void Show() = 0;
+
 	virtual void Minimize() = 0;
 	virtual void Maximize() = 0;
 	virtual void Restore() = 0;

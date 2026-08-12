@@ -15,6 +15,7 @@
 #include "ScriptAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
+#include "Kernel/SplashScreen.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
@@ -117,6 +118,12 @@ namespace LevEngine
 
 		m_AssetsByPath.clear();
 		m_Assets.clear();
+
+		//Importing every asset is the longest part of loading a project, so it reports its progress
+		//while a splash screen is shown. Repainting for every single asset would be a waste
+		constexpr uint32_t k_AssetsPerStatusReport = 16;
+		uint32_t importedCount = 0;
+
 		Queue<Path> directories;
 		directories.push(GetAssetsPath());
 		do
@@ -132,6 +139,9 @@ namespace LevEngine
 					directories.push(path);
 
 				ImportAsset(path);
+
+				if (++importedCount % k_AssetsPerStatusReport == 0)
+					SplashScreen::SetStatus(Format("Importing assets ({0})", importedCount));
 			}
 		} while (!directories.empty());
 	}

@@ -1,8 +1,10 @@
 #include "levpch.h"
 #include "Application.h"
 
+#include "SplashScreen.h"
 #include "Utils.h"
 #include "Window.h"
+#include "Assets/EngineAssets.h"
 #include "../Renderer/Renderer.h"
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
@@ -39,10 +41,21 @@ namespace LevEngine
         LEV_CORE_ASSERT(!s_Instance, "Only one application is allowed");
         s_Instance = this;
 
+        if (specification.ShowSplashScreen)
+        {
+            const auto logo = specification.SplashScreenLogo.empty()
+                ? EngineResourcesRoot / "Icons" / "Logo.png"
+                : specification.SplashScreenLogo;
+
+            SplashScreen::Show(specification.Name, logo);
+        }
+
+        SplashScreen::SetStatus("Creating render device");
         m_RenderDevice = CreateRenderDevice();
 
         LEV_CORE_ASSERT(m_RenderDevice, "Failed to create render device");
-        
+
+        SplashScreen::SetStatus("Creating window");
         m_Window = Window::Create(m_RenderDevice, WindowAttributes(specification.Name, specification.WindowWidth,
                                                    specification.WindowHeight, specification.CustomTitleBar));
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
@@ -52,17 +65,23 @@ namespace LevEngine
         RenderCommand::Init();
         DispatchCommand::Init();
         RenderDebugEvent::Init();
-        
+
+        SplashScreen::SetStatus("Initializing renderer");
         m_Renderer = CreateScope<LevEngine::Renderer>(*m_Window);
-        
+
         m_ImGuiLayer = new ImGuiLayer;
         PushOverlay(m_ImGuiLayer);
 
+        SplashScreen::SetStatus("Initializing physics");
         m_Physics = Physics::Create();
         m_ScriptingManager = CreateScope<Scripting::ScriptingManager>();
 
         Random::Init();
+
+        SplashScreen::SetStatus("Initializing scripting");
         m_ScriptingManager->Init();
+
+        SplashScreen::SetStatus("Initializing audio");
         Audio::Init(Audio::MaxAudioChannelCount, FMOD_STUDIO_INIT_LIVEUPDATE,
                     FMOD_INIT_VOL0_BECOMES_VIRTUAL | FMOD_INIT_3D_RIGHTHANDED);
 
@@ -83,6 +102,12 @@ namespace LevEngine
         {
             D3D11DeferredContexts::Init(m_JobSystem->get_thread_count().value);
             AttachAllLayers();
+
+            //The window is kept hidden while loading, so the splash screen is the only thing
+            //the user sees until the first frame can be rendered
+            SplashScreen::Hide();
+            m_Window->Show();
+
             GameLoop();
         }, vgjs::thread_index_t{0}});
 
@@ -182,6 +207,7 @@ namespace LevEngine
     {
         for (const auto stack : m_LayerStack)
         {
+            SplashScreen::SetStatus(Format("Initializing {0}", stack->GetName()));
             stack->OnAttach();
         }
     }

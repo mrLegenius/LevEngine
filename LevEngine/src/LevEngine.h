@@ -57,6 +57,7 @@
 #include "Kernel/Asserts.h"
 #include "Kernel/Application.h"
 #include "Kernel/Window.h"
+#include "Kernel/SplashScreen.h"
 #include "Kernel/Layer.h"
 
 #include "Kernel/PlatformUtils.h"

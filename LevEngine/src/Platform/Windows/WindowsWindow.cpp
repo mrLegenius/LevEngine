@@ -348,9 +348,7 @@ namespace LevEngine
 				SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
 		}
 
-		ShowWindow(m_Window, SW_SHOW);
-		SetForegroundWindow(m_Window);
-		SetFocus(m_Window);
+		//The window stays hidden until the application is done loading, see Show()
 
 		RAWINPUTDEVICE Rid[2];
 
@@ -406,6 +404,15 @@ namespace LevEngine
 	void WindowsWindow::SetCursorPosition(const uint32_t x, const uint32_t y)
 	{
 		SetCursorPos(x, y);
+	}
+
+	void WindowsWindow::Show()
+	{
+		LEV_PROFILE_FUNCTION();
+
+		ShowWindow(m_Window, SW_SHOW);
+		SetForegroundWindow(m_Window);
+		SetFocus(m_Window);
 	}
 
 	void WindowsWindow::Minimize()
