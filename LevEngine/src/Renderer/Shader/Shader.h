@@ -3,6 +3,7 @@
 #include "Kernel/Core.h"
 #include "BufferBinding.h"
 #include "ShaderMacros.h"
+#include "ShaderMaterialLayout.h"
 #include "ShaderParameter.h"
 #include "ShaderType.h"
 
@@ -22,7 +23,20 @@ namespace LevEngine
 		[[nodiscard]] virtual uint32_t GetSlotIdBySemantic(const BufferBinding& binding) = 0;
 		[[nodiscard]] virtual ShaderParameter& GetShaderParameterByName(const String& name) const = 0;
 
+		//<--- What a material can set on this shader. Empty for shaders no material binds ---<<
+		[[nodiscard]] virtual const ShaderMaterialLayout& GetMaterialLayout() const = 0;
+
 		[[nodiscard]] ShaderType GetType() const { return m_Type; }
+
+		[[nodiscard]] bool HasStage(const ShaderType type) const { return m_Type & type; }
+
+		//<--- A shader is only good for drawing geometry once both of its stages compiled ---<<
+		[[nodiscard]] bool CanDrawGeometry() const
+		{
+			return HasStage(ShaderType::Vertex) && HasStage(ShaderType::Pixel);
+		}
+
+		[[nodiscard]] const String& GetFilePath() const { return m_FilePath; }
 		virtual void Reload() { }
 
 	protected:

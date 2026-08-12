@@ -10,8 +10,16 @@ namespace LevEngine
         : m_ConstantBuffer(ConstantBuffer::Create(gpuDataSize))
     { }
 
+    void Material::ResizeGPUData(const uint32_t gpuDataSize)
+    {
+        m_ConstantBuffer = gpuDataSize > 0 ? ConstantBuffer::Create(gpuDataSize) : nullptr;
+        m_IsDirty = true;
+    }
+
     void Material::Bind(const Ref<Shader>& shader)
     {
+        if (!m_ConstantBuffer) return;
+
         if (m_IsDirty)
         {
             m_ConstantBuffer->SetData(GetGPUData());
@@ -28,6 +36,8 @@ namespace LevEngine
 
     void Material::Unbind(const Ref<Shader>& shader)
     {
+        if (!m_ConstantBuffer) return;
+
         const auto parameter = shader->GetShaderParameterByName("MaterialConstantBuffer");
         if (parameter.IsValid())
             parameter.Unbind();

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -117,6 +117,7 @@
     <ClInclude Include="src\Assets\SceneAsset.h" />
     <ClInclude Include="src\Assets\ScriptAsset.h" />
     <ClInclude Include="src\Assets\ShaderAsset.h" />
+    <ClInclude Include="src\Renderer\Shader\ShaderMaterialLayout.h" />
     <ClInclude Include="src\Assets\ShaderLibrary.h" />
     <ClInclude Include="src\BinaryIO\BinaryReader.h" />
     <None Include="src\BinaryIO\BinaryReader.inl" />
@@ -164,6 +165,7 @@
     <ClInclude Include="src\Renderer\Lighting\LightCollection.h" />
     <ClInclude Include="src\Renderer\Material\Material.h" />
     <ClInclude Include="src\Renderer\Material\MaterialPBR.h" />
+    <ClInclude Include="src\Renderer\Material\MaterialCustom.h" />
     <ClInclude Include="src\Renderer\Material\MaterialSimple.h" />
     <ClInclude Include="src\Renderer\Particles\BitonicSort.h" />
     <ClInclude Include="src\Renderer\Particles\GPUParticleData.h" />
@@ -941,6 +943,7 @@
     <ClInclude Include="src\Assets\MaterialAsset.h" />
     <ClInclude Include="src\Assets\MaterialSimpleAsset.h" />
     <ClInclude Include="src\Assets\MaterialPBRAsset.h" />
+    <ClInclude Include="src\Assets\MaterialCustomAsset.h" />
     <ClInclude Include="src\Assets\MeshAsset.h" />
     <ClInclude Include="src\Assets\PrefabAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
@@ -1129,6 +1132,7 @@
     <ClCompile Include="src\Renderer\Lighting\LightCollection.cpp" />
     <ClCompile Include="src\Renderer\Material\Material.cpp" />
     <ClCompile Include="src\Renderer\Material\MaterialPBR.cpp" />
+    <ClCompile Include="src\Renderer\Material\MaterialCustom.cpp" />
     <ClCompile Include="src\Renderer\Material\MaterialSimple.cpp" />
     <ClCompile Include="src\Renderer\Particles\BitonicSort.cpp" />
     <ClCompile Include="src\Renderer\Particles\ParticleAssets.cpp" />
@@ -1388,6 +1392,7 @@
     <ClCompile Include="src\Assets\AudioBankAsset.cpp" />
     <ClCompile Include="src\Assets\MaterialSimpleAsset.cpp" />
     <ClCompile Include="src\Assets\MaterialPBRAsset.cpp" />
+    <ClCompile Include="src\Assets\MaterialCustomAsset.cpp" />
     <ClCompile Include="src\Assets\MeshAsset.cpp" />
     <ClCompile Include="src\Assets\PrefabAsset.cpp" />
     <ClCompile Include="src\Assets\SkyboxAsset.cpp" />

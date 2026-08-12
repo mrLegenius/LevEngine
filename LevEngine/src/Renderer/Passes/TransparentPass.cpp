@@ -34,7 +34,14 @@ namespace LevEngine
         LEV_PROFILE_FUNCTION();
         
         const auto view = registry.group<>(entt::get<Transform, MeshRendererComponent>);
-        const auto shader = m_PipelineState->GetShader(ShaderType::Vertex);
+        const auto passShader = m_PipelineState->GetShader(ShaderType::Vertex);
+
+        //<--- Transparents always blend into a single target, never into the G-buffer ---<<
+        constexpr MaterialShaderVariant variant{false, false, false};
+
+        //<--- Begin() bound the pipeline, which bound the pass shader ---<<
+        Ref<Shader> boundShader = passShader;
+
         for (const auto entity : view)
         {
             Transform transform = view.get<Transform>(entity);
@@ -55,10 +62,16 @@ namespace LevEngine
                 if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
             
+            const auto shader = SelectShader(material, variant, passShader);
+            BindShader(shader, boundShader);
+
             material.Bind(shader);
             Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
             material.Unbind(shader);
         }
+
+        //<--- End() unbinds the pipeline, so leave its shader as the bound one ---<<
+        BindShader(passShader, boundShader);
     }
 
     void TransparentPass::End(entt::registry& registry, RenderParams& params)

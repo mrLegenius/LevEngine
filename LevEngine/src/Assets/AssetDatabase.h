@@ -30,6 +30,10 @@ namespace LevEngine
 
 		static bool IsAssetPBRMaterial(const Path& path);
 
+		static bool IsAssetCustomMaterial(const Path& path);
+
+		static bool IsAssetShader(const Path& path);
+
 		static bool IsAssetSkybox(const Path& path);
 
 		static bool IsAssetPrefab(const Path& path);

@@ -6,6 +6,9 @@
 #include "Renderer/Shader/Shader.h"
 #include "Renderer/Shader/ShaderMacros.h"
 
+//<--- Lives in d3d11shader.h, which only the implementation needs ---<<
+struct ID3D11ShaderReflection;
+
 namespace LevEngine
 {
 class LEV_API D3D11Shader : public Shader
@@ -22,12 +25,15 @@ public:
 	[[nodiscard]] bool HasSemantic(const BufferBinding& binding) override;
 	[[nodiscard]] uint32_t GetSlotIdBySemantic(const BufferBinding& binding) override;
 	[[nodiscard]] ShaderParameter& GetShaderParameterByName(const String& name) const override;
+	[[nodiscard]] const ShaderMaterialLayout& GetMaterialLayout() const override { return m_MaterialLayout; }
 private:
 	void Clear();
 	void CreateShaders(const String& string, const ShaderMacros& map);
-	
+
 	void CreateInputLayout(ID3DBlob* vertexBlob);
 	void CreateShaderParams(ShaderType shaderType, ID3DBlob* blob);
+
+	void ReflectMaterialLayout(ID3D11ShaderReflection* reflector);
 
 	bool CreateVertexShader(ID3D11VertexShader*& shader, const String& filepath, const ShaderMacros& macros);
 	bool CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath, const ShaderMacros& macros);
@@ -43,6 +49,8 @@ private:
 
 	Map<BufferBinding, uint32_t> m_InputSemantics;
 	Map<String, Ref<ShaderParameter>> m_ShaderParameters;
+
+	ShaderMaterialLayout m_MaterialLayout;
 
 	ID3D11Device2* m_Device;
 	ID3D11DeviceContext2* m_DeviceContext;

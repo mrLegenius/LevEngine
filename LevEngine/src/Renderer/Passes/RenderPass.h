@@ -8,6 +8,9 @@ namespace LevEngine
     class RenderTechnique;
     struct RenderParams;
     class RenderDebugEvent;
+    class Material;
+    class Shader;
+    struct MaterialShaderVariant;
 
     class LEV_API RenderPass
     {
@@ -30,6 +33,13 @@ namespace LevEngine
         virtual void Process(entt::registry& registry, RenderParams& params) = 0;
 
         virtual void End(entt::registry& registry, RenderParams& params) { }
+
+        // A material can bring its own shader (see MaterialCustom). These two keep the geometry
+        // passes on a single code path: ask the material which shader the draw needs, falling
+        // back to the pass' own, and swap the bound one only when it actually changes.
+        [[nodiscard]] static Ref<Shader> SelectShader(const Material& material, const MaterialShaderVariant& variant,
+                                                      const Ref<Shader>& passShader);
+        static void BindShader(const Ref<Shader>& shader, Ref<Shader>& boundShader);
 
     private:
         bool m_Enabled = true;

@@ -6,7 +6,9 @@
 #include "AssetSelection.h"
 #include "Project.h"
 #include "Selection.h"
+#include "Assets/MaterialCustomAsset.h"
 #include "Assets/MaterialPBRAsset.h"
+#include "Assets/ShaderAsset.h"
 #include "Assets/ScriptAsset.h"
 #include "GUI/EditorGUI.h"
 #include "GUI/ScopedGUIHelpers.h"
@@ -299,6 +301,8 @@ namespace LevEngine::Editor
                     if (ImGui::BeginMenu("Create"))
                     {
                         DrawCreateMenu<MaterialPBRAsset>("Material", "Material.pbr");
+                        DrawCreateMenu<MaterialCustomAsset>("Shader Material", "Material.material");
+                        DrawCreateMenu<ShaderAsset>("Shader", "Shader.hlsl", ShaderAsset::CreateFrom::Template);
                         DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
                         if (ImGui::BeginMenu("Script"))
                         {

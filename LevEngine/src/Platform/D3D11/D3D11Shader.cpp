@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include <wrl/client.h>
 
+#include "Assets/EngineAssets.h"
 #include "Renderer/RenderSettings.h"
 #include "Renderer/Shader/ShaderMacros.h"
 
@@ -20,6 +21,9 @@ namespace LevEngine
     // its own while being pulled in from a subdirectory -- ShaderCommon.hlsl including
     // Registers.hlsli, reached from DebugRender/. This handler resolves relative to the file
     // doing the including, which is what fxc does and what the shaders are written against.
+    //
+    // Anything it cannot find there is looked up in the engine shader directory, so a shader
+    // living in a project can include ShaderCommon.hlsl and friends by their bare name.
     class ShaderIncludeHandler final : public ID3DInclude
     {
     public:
@@ -31,9 +35,15 @@ namespace LevEngine
         {
             const auto parent = m_IncludeDirectories.find(parentData);
             const Path& baseDirectory = parent != m_IncludeDirectories.end() ? parent->second : m_ShaderDirectory;
-            const Path resolved = baseDirectory / fileName;
+            Path resolved = baseDirectory / fileName;
 
             std::ifstream file(resolved, std::ios::binary | std::ios::ate);
+            if (!file)
+            {
+                resolved = EngineResourcesRoot / "Shaders" / fileName;
+                file = std::ifstream(resolved, std::ios::binary | std::ios::ate);
+            }
+
             if (!file) return E_FAIL;
 
             const auto size = static_cast<size_t>(file.tellg());
@@ -158,6 +168,7 @@ namespace LevEngine
 
         m_InputSemantics.clear();
         m_ShaderParameters.clear();
+        m_MaterialLayout.Clear();
 
         m_Type = ShaderType::None;
     }
@@ -446,6 +457,110 @@ namespace LevEngine
             Ref<ShaderParameter> shaderParameter = CreateRef<ShaderParameter>(
                 resourceName, bindDesc.BindPoint, shaderType);
             m_ShaderParameters.emplace(resourceName, shaderParameter);
+
+            //<--- Textures in the material range are the ones a material is expected to fill ---<<
+            if (bindDesc.Type == D3D_SIT_TEXTURE && bindDesc.BindPoint < k_MaterialTextureSlotCount)
+            {
+                const auto isKnown = eastl::any_of(m_MaterialLayout.Textures.begin(),
+                                                   m_MaterialLayout.Textures.end(),
+                                                   [&resourceName](const ShaderTextureProperty& texture)
+                                                   {
+                                                       return texture.Name == resourceName;
+                                                   });
+
+                if (!isKnown)
+                    m_MaterialLayout.Textures.push_back({resourceName, bindDesc.BindPoint});
+            }
+        }
+
+        ReflectMaterialLayout(reflector.Get());
+    }
+
+    static ShaderPropertyType GetPropertyType(const D3D11_SHADER_TYPE_DESC& desc)
+    {
+        //<--- Matrices, arrays and anything else a material cannot edit are left out ---<<
+        if (desc.Class != D3D_SVC_SCALAR && desc.Class != D3D_SVC_VECTOR) return ShaderPropertyType::Unknown;
+        if (desc.Elements > 0) return ShaderPropertyType::Unknown;
+
+        switch (desc.Type)
+        {
+        case D3D_SVT_FLOAT:
+            switch (desc.Columns)
+            {
+            case 1: return ShaderPropertyType::Float;
+            case 2: return ShaderPropertyType::Float2;
+            case 3: return ShaderPropertyType::Float3;
+            case 4: return ShaderPropertyType::Float4;
+            default: return ShaderPropertyType::Unknown;
+            }
+        case D3D_SVT_INT:
+        case D3D_SVT_UINT:
+            return desc.Columns == 1 ? ShaderPropertyType::Int : ShaderPropertyType::Unknown;
+        case D3D_SVT_BOOL:
+            return desc.Columns == 1 ? ShaderPropertyType::Bool : ShaderPropertyType::Unknown;
+        default:
+            return ShaderPropertyType::Unknown;
+        }
+    }
+
+    // Flattens one constant buffer field into the layout. A struct contributes its members under
+    // their own names -- shaders wrap their properties in one, and 'tint' reads better in the
+    // inspector and in the material file than 'material.tint'.
+    static void ReflectProperty(ID3D11ShaderReflectionType* type, const String& name, const uint32_t offset,
+                                ShaderMaterialLayout& layout)
+    {
+        D3D11_SHADER_TYPE_DESC typeDescription;
+        if (FAILED(type->GetDesc(&typeDescription))) return;
+
+        if (typeDescription.Class == D3D_SVC_STRUCT)
+        {
+            for (UINT i = 0; i < typeDescription.Members; ++i)
+            {
+                auto* member = type->GetMemberTypeByIndex(i);
+                const char* memberName = type->GetMemberTypeName(i);
+                if (!member || !memberName) continue;
+
+                D3D11_SHADER_TYPE_DESC memberDescription;
+                if (FAILED(member->GetDesc(&memberDescription))) continue;
+
+                ReflectProperty(member, memberName, offset + memberDescription.Offset, layout);
+            }
+
+            return;
+        }
+
+        const auto propertyType = GetPropertyType(typeDescription);
+        if (propertyType == ShaderPropertyType::Unknown) return;
+
+        layout.Properties.push_back({name, propertyType, offset});
+    }
+
+    void D3D11Shader::ReflectMaterialLayout(ID3D11ShaderReflection* reflector)
+    {
+        //<--- Both stages declare the same buffer, so the first one that has it wins ---<<
+        if (m_MaterialLayout.BufferSize != 0) return;
+
+        auto* buffer = reflector->GetConstantBufferByName(k_MaterialConstantBufferName);
+        if (!buffer) return;
+
+        //<--- GetConstantBufferByName never returns null, GetDesc is what fails for a missing buffer ---<<
+        D3D11_SHADER_BUFFER_DESC bufferDescription;
+        if (FAILED(buffer->GetDesc(&bufferDescription))) return;
+
+        m_MaterialLayout.BufferSize = bufferDescription.Size;
+
+        for (UINT i = 0; i < bufferDescription.Variables; ++i)
+        {
+            auto* variable = buffer->GetVariableByIndex(i);
+            if (!variable) continue;
+
+            D3D11_SHADER_VARIABLE_DESC variableDescription;
+            if (FAILED(variable->GetDesc(&variableDescription))) continue;
+
+            auto* type = variable->GetType();
+            if (!type) continue;
+
+            ReflectProperty(type, variableDescription.Name, variableDescription.StartOffset, m_MaterialLayout);
         }
     }
 

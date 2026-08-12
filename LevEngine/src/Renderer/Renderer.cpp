@@ -290,7 +290,8 @@ namespace LevEngine
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_EnvironmentQuery));
 
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredGeometryQuery));
-            m_DeferredTechnique->AddPass(CreateRef<OpaquePass>(m_GBufferPipeline, ShaderAssets::GBufferPassInstanced()));
+            m_DeferredTechnique->AddPass(CreateRef<OpaquePass>(m_GBufferPipeline, ShaderAssets::GBufferPassInstanced(),
+                                                               true));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredGeometryQuery));
             
             m_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(
@@ -338,7 +339,8 @@ namespace LevEngine
             // it into the main target. Same shape as the deferred technique, so ForwardPBR.hlsl
             // does not need its own tone map.
             m_ForwardTechnique->AddPass(CreateRef<EnvironmentPass>(m_HDRRenderTarget));
-            m_ForwardTechnique->AddPass(CreateRef<OpaquePass>(m_OpaquePipeline, ShaderAssets::ForwardPBRInstanced()));
+            m_ForwardTechnique->AddPass(CreateRef<OpaquePass>(m_OpaquePipeline, ShaderAssets::ForwardPBRInstanced(),
+                                                              false));
             m_ForwardTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
             m_ForwardTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
 

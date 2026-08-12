@@ -10,7 +10,7 @@ namespace LevEngine
     class LEV_API ShaderLibrary
     {
     public:
-        static const Ref<Shader>& GetOrAddShader(const Path& path, const ShaderMacros& shaderMacros = ShaderMacros{});
+        static Ref<Shader> GetOrAddShader(const Path& path, const ShaderMacros& shaderMacros = ShaderMacros{});
         static void ReimportChangedAssets();
 
     private:

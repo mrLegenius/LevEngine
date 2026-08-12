@@ -21,7 +21,7 @@ namespace LevEngine
         return key;
     }
 
-    const Ref<Shader>& ShaderLibrary::GetOrAddShader(const Path& path, const ShaderMacros& shaderMacros)
+    Ref<Shader> ShaderLibrary::GetOrAddShader(const Path& path, const ShaderMacros& shaderMacros)
     {
         LEV_PROFILE_FUNCTION();
 

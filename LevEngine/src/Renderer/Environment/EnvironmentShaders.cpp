@@ -7,32 +7,32 @@
 
 namespace LevEngine
 {
-    const Ref<Shader>& EnvironmentShaders::EquirectangularToCubemap()
+    Ref<Shader> EnvironmentShaders::EquirectangularToCubemap()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Environment/EquirectangularToCubemap.hlsl"));
     }
 
-    const Ref<Shader>& EnvironmentShaders::CubemapConvolution()
+    Ref<Shader> EnvironmentShaders::CubemapConvolution()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Environment/CubemapConvolution.hlsl"));
     }
 
-    const Ref<Shader>& EnvironmentShaders::EnvironmentPreFiltering()
+    Ref<Shader> EnvironmentShaders::EnvironmentPreFiltering()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Environment/PreFiltering.hlsl"));
     }
 
-    const Ref<Shader>& EnvironmentShaders::BRDFIntegration()
+    Ref<Shader> EnvironmentShaders::BRDFIntegration()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Environment/BRDFIntegration.hlsl"));
     }
 
-    const Ref<Shader>& EnvironmentShaders::Render()
+    Ref<Shader> EnvironmentShaders::Render()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Environment/Render.hlsl"));
     }
 
-    const Ref<Shader>& EnvironmentShaders::CubemapRender()
+    Ref<Shader> EnvironmentShaders::CubemapRender()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Environment/CubemapRender.hlsl"));
     }

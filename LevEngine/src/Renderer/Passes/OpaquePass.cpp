@@ -19,8 +19,9 @@
 
 namespace LevEngine
 {
-    OpaquePass::OpaquePass(const Ref<PipelineState>& pipelineState, const Ref<Shader>& instancedShader)
-        : m_PipelineState(pipelineState), m_InstancedShader(instancedShader) { }
+    OpaquePass::OpaquePass(const Ref<PipelineState>& pipelineState, const Ref<Shader>& instancedShader,
+                           const bool deferred)
+        : m_PipelineState(pipelineState), m_InstancedShader(instancedShader), m_Deferred(deferred) { }
 
     String OpaquePass::PassName() { return "Opaque"; }
 
@@ -46,11 +47,16 @@ namespace LevEngine
     }
 
     void OpaquePass::ProcessStaticMeshes(entt::registry& registry, const RenderParams& params,
-                                         const Ref<Shader>& shader) const
+                                         const Ref<Shader>& passShader) const
     {
         LEV_PROFILE_FUNCTION();
 
+        const MaterialShaderVariant variant{m_Deferred, false, false};
+
         Material* previousMaterial{nullptr};
+
+        //<--- Begin() bound the pipeline, which bound the pass shader ---<<
+        Ref<Shader> boundShader = passShader;
 
         const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
         for (const auto entity : staticMeshGroup)
@@ -69,8 +75,17 @@ namespace LevEngine
 
             if (!initialMesh) continue;
 
-            if (previousMaterial != &material)
+            const auto shader = SelectShader(material, variant, passShader);
+
+            //<--- The material is bound into the shader, so a shader swap rebinds it too ---<<
+            if (previousMaterial != &material || shader != boundShader)
+            {
+                if (previousMaterial && shader != boundShader)
+                    previousMaterial->Unbind(boundShader);
+
+                BindShader(shader, boundShader);
                 material.Bind(shader);
+            }
 
             meshesToRender.push(initialMesh);
 
@@ -96,7 +111,10 @@ namespace LevEngine
         }
 
         if (previousMaterial)
-            previousMaterial->Unbind(shader);
+            previousMaterial->Unbind(boundShader);
+
+        //<--- End() unbinds the pipeline, so leave its shader as the bound one ---<<
+        BindShader(passShader, boundShader);
     }
 
     void OpaquePass::ProcessStaticMeshesInstanced(entt::registry& registry, const RenderParams& params)
@@ -125,7 +143,10 @@ namespace LevEngine
             }
         }
 
-        m_InstancedShader->Bind();
+        const MaterialShaderVariant variant{m_Deferred, true, false};
+
+        Ref<Shader> boundShader;
+        BindShader(m_InstancedShader, boundShader);
 
         Material* previousMaterial{nullptr};
 
@@ -133,26 +154,37 @@ namespace LevEngine
         {
             if (batch.Instances.empty()) continue;
 
-            if (previousMaterial != batch.SurfaceMaterial)
-                batch.SurfaceMaterial->Bind(m_InstancedShader);
+            const auto shader = SelectShader(*batch.SurfaceMaterial, variant, m_InstancedShader);
 
-            Renderer3D::DrawMeshInstanced(batch.Instances, batch.Geometry, m_InstancedShader);
+            if (previousMaterial != batch.SurfaceMaterial || shader != boundShader)
+            {
+                if (previousMaterial && shader != boundShader)
+                    previousMaterial->Unbind(boundShader);
+
+                BindShader(shader, boundShader);
+                batch.SurfaceMaterial->Bind(shader);
+            }
+
+            Renderer3D::DrawMeshInstanced(batch.Instances, batch.Geometry, shader);
 
             previousMaterial = batch.SurfaceMaterial;
         }
 
         if (previousMaterial)
-            previousMaterial->Unbind(m_InstancedShader);
+            previousMaterial->Unbind(boundShader);
 
-        m_InstancedShader->Unbind();
+        BindShader(nullptr, boundShader);
     }
 
-    void OpaquePass::ProcessAnimatedMeshes(entt::registry& registry, const RenderParams& params)
+    void OpaquePass::ProcessAnimatedMeshes(entt::registry& registry, const RenderParams& params) const
     {
         LEV_PROFILE_FUNCTION();
 
         const auto& animationShader = ShaderAssets::GBufferPassWithAnimations();
-        animationShader->Bind();
+        const MaterialShaderVariant variant{m_Deferred, false, true};
+
+        Ref<Shader> boundShader;
+        BindShader(animationShader, boundShader);
 
         Material* previousMaterial{nullptr};
 
@@ -177,20 +209,26 @@ namespace LevEngine
                 if (!mesh->IsOnFrustum(params.Camera->GetFrustum(), transform)) continue;
             }
 
-            if (previousMaterial != &material)
+            const auto shader = SelectShader(material, variant, animationShader);
+
+            if (previousMaterial != &material || shader != boundShader)
 			{
-                material.Bind(animationShader);
+                if (previousMaterial && shader != boundShader)
+                    previousMaterial->Unbind(boundShader);
+
+                BindShader(shader, boundShader);
+                material.Bind(shader);
 			}
 
-            Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, animationShader);
+            Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, shader);
 
             previousMaterial = &material;
         }
 
         if (previousMaterial)
-            previousMaterial->Unbind(animationShader);
+            previousMaterial->Unbind(boundShader);
 
-        animationShader->Unbind();
+        BindShader(nullptr, boundShader);
     }
 
     void OpaquePass::End(entt::registry& registry, RenderParams& params)

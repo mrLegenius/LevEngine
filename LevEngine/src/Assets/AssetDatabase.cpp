@@ -5,6 +5,7 @@
 #include "AnimationAsset.h"
 #include "AudioBankAsset.h"
 #include "DefaultAsset.h"
+#include "MaterialCustomAsset.h"
 #include "MaterialPBRAsset.h"
 #include "MaterialSimpleAsset.h"
 #include "MeshAsset.h"
@@ -13,6 +14,7 @@
 #include "Project.h"
 #include "SceneAsset.h"
 #include "ScriptAsset.h"
+#include "ShaderAsset.h"
 #include "SkyboxAsset.h"
 #include "TextureAsset.h"
 #include "Kernel/SplashScreen.h"
@@ -197,6 +199,21 @@ namespace LevEngine
 		return extension == ".pbr";
 	}
 
+	bool AssetDatabase::IsAssetCustomMaterial(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return extension == ".material";
+	}
+
+	bool AssetDatabase::IsAssetShader(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		//<--- .hlsli is an include, not something that compiles on its own ---<<
+		return extension == ".hlsl";
+	}
+
 	bool AssetDatabase::IsAssetSkybox(const Path& path)
 	{
 		const auto extension = path.extension().string();
@@ -280,7 +297,14 @@ namespace LevEngine
 
 		if (IsAssetPBRMaterial(path))
 			return CreateRef<MaterialPBRAsset>(path, uuid);
-			
+
+		if (IsAssetCustomMaterial(path))
+			return CreateRef<MaterialCustomAsset>(path, uuid);
+
+		if (IsAssetShader(path))
+			return CreateRef<ShaderAsset>(path, uuid);
+
+
 		if (IsAssetSkybox(path))
 			return CreateRef<SkyboxAsset>(path, uuid);
 
