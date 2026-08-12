@@ -8,7 +8,8 @@ namespace LevEngine::Editor
     ConsoleLog::ConsoleLog()
     {
         set_pattern("[%H:%M:%S] %n: %v");
-        set_level(spdlog::level::info);
+        //The panels filter by level themselves, so everything is kept
+        set_level(spdlog::level::trace);
 
         m_Items.reserve(MaxItems);
     }
@@ -120,7 +121,7 @@ namespace LevEngine::Editor
             m_FirstIndex += TrimCount;
         }
 
-        m_Items.push_back({ GetColor(msg.level), String(formatted.data(), length) });
+        m_Items.push_back({ msg.level, String(formatted.data(), length) });
     }
 
     void ConsoleLog::flush_()

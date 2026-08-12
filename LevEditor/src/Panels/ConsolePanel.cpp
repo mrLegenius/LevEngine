@@ -7,6 +7,46 @@
 
 namespace LevEngine::Editor
 {
+	namespace
+	{
+		constexpr uint32_t LevelBit(const spdlog::level::level_enum level)
+		{
+			return 1u << static_cast<int>(level);
+		}
+
+		//Errors and criticals share a toggle, they are the same thing to look for
+		constexpr uint32_t k_ErrorLevels = LevelBit(spdlog::level::err) | LevelBit(spdlog::level::critical);
+
+		//The lowest level in the mask, its color represents the whole group
+		spdlog::level::level_enum GetFirstLevel(const uint32_t levels)
+		{
+			for (int level = 0; level < spdlog::level::n_levels; ++level)
+			{
+				if (levels & (1u << level))
+					return static_cast<spdlog::level::level_enum>(level);
+			}
+
+			return spdlog::level::info;
+		}
+
+		//Keeps the next item on the current row while it fits there. The top menu is
+		//wider than the panel can get, so it has to be able to wrap
+		void PlaceNextItem(const float width)
+		{
+			const auto& style = ImGui::GetStyle();
+			const float nextItemEnd = ImGui::GetItemRectMax().x + style.ItemSpacing.x + width;
+			const float rowEnd = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+
+			if (nextItemEnd <= rowEnd)
+				ImGui::SameLine();
+		}
+
+		float GetButtonWidth(const char* label)
+		{
+			return ImGui::CalcTextSize(label, nullptr, true).x + ImGui::GetStyle().FramePadding.x * 2;
+		}
+	}
+
 	void ConsolePanel::DrawContent()
 	{
 		LEV_PROFILE_FUNCTION();
@@ -20,11 +60,18 @@ namespace LevEngine::Editor
 		ImGui::SameLine();
 		ImGui::Checkbox("AutoScroll", &m_IsAutoScroll);
 
+		DrawLevelToggle("Trace", LevelBit(spdlog::level::trace));
+		DrawLevelToggle("Debug", LevelBit(spdlog::level::debug));
+		DrawLevelToggle("Info", LevelBit(spdlog::level::info));
+		DrawLevelToggle("Warning", LevelBit(spdlog::level::warn));
+		DrawLevelToggle("Error", k_ErrorLevels);
+
 		//Messages the logger had to throw away to keep up with the logging
 		if (const auto dropped = Log::Logger::GetDroppedMessageCount(); dropped > 0)
 		{
-			ImGui::SameLine();
-			ImGui::TextColored(ImVec4{ 1, 1, 0, 1 }, "%llu dropped", static_cast<uint64_t>(dropped));
+			const auto text = Format("{} dropped", dropped);
+			PlaceNextItem(ImGui::CalcTextSize(text.c_str()).x);
+			ImGui::TextColored(ImVec4{ 1, 1, 0, 1 }, "%s", text.c_str());
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Messages were logged faster than they could be written");
 		}
@@ -76,7 +123,7 @@ namespace LevEngine::Editor
 					borderColor, style.ChildRounding);
 
 				ImGui::SetCursorScreenPos(ImVec2{ topLeft.x + style.FramePadding.x, topLeft.y + style.FramePadding.y });
-				const auto color = item.color;
+				const auto color = ConsoleLog::GetColor(item.level);
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ color.r, color.g, color.b, 1 });
 				ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + wrapWidth);
 				ImGui::TextUnformatted(item.message.c_str(), item.message.c_str() + item.message.size());
@@ -95,6 +142,39 @@ namespace LevEngine::Editor
 			ImGui::SetScrollHereY(1.0f);
 
         ImGui::EndChild();
+	}
+
+	void ConsolePanel::DrawLevelToggle(const char* label, const uint32_t levels)
+	{
+		int count = 0;
+		for (int level = 0; level < spdlog::level::n_levels; ++level)
+		{
+			if (levels & (1u << level))
+				count += m_LevelCounts[level];
+		}
+
+		const bool isShown = (m_LevelMask & levels) != 0;
+
+		const auto color = ConsoleLog::GetColor(GetFirstLevel(levels));
+		const auto textColor = isShown
+			? ImVec4{ color.r, color.g, color.b, 1 }
+			: ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+		const auto buttonColor = ImGui::GetStyleColorVec4(isShown ? ImGuiCol_ButtonActive : ImGuiCol_Button);
+
+		ImGui::PushStyleColor(ImGuiCol_Text, textColor);
+		ImGui::PushStyleColor(ImGuiCol_Button, buttonColor);
+
+		//The label carries the count, so the id is kept separate to stay stable
+		const auto text = Format("{} {}##Level{}", label, count, label);
+		PlaceNextItem(GetButtonWidth(text.c_str()));
+
+		if (ImGui::SmallButton(text.c_str()))
+			m_LevelMask ^= levels;
+
+		ImGui::PopStyleColor(2);
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip(isShown ? "Click to hide these messages" : "Click to show these messages");
 	}
 
 	bool ConsolePanel::UpdateLayout(const float wrapWidth, const ConsoleLog::ReadResult& read)
@@ -136,6 +216,25 @@ namespace LevEngine::Editor
 			rebuildVisible = true;
 		}
 
+		if (m_LastLevelMask != m_LevelMask)
+		{
+			m_LastLevelMask = m_LevelMask;
+			rebuildVisible = true;
+		}
+
+		if (read.wasReset || read.droppedCount > 0)
+		{
+			//The dropped messages are gone, so their levels are no longer known
+			eastl::fill(eastl::begin(m_LevelCounts), eastl::end(m_LevelCounts), 0);
+			for (const auto& item : m_Items)
+				++m_LevelCounts[item.level];
+		}
+		else
+		{
+			for (size_t i = m_Items.size() - read.appendedCount; i < m_Items.size(); ++i)
+				++m_LevelCounts[m_Items[i].level];
+		}
+
 		// Measuring the text is the expensive part, so it is done once per message
 		for (size_t i = m_Heights.size(); i < m_Items.size(); ++i)
 		{
@@ -162,7 +261,11 @@ namespace LevEngine::Editor
 
 		for (size_t i = firstToFilter; i < m_Items.size(); ++i)
 		{
-			const auto& message = m_Items[i].message;
+			const auto& item = m_Items[i];
+			if (!(m_LevelMask & (1u << item.level)))
+				continue;
+
+			const auto& message = item.message;
 			if (!m_Filter.PassFilter(message.c_str(), message.c_str() + message.size()))
 				continue;
 

@@ -9,7 +9,7 @@ namespace LevEngine::Editor
     public:
         struct Item
         {
-            Color color;
+            spdlog::level::level_enum level;
             String message;
         };
 
@@ -41,6 +41,8 @@ namespace LevEngine::Editor
         //Creates the sink and attaches it to the logger
         static void Init();
 
+        [[nodiscard]] static Color GetColor(spdlog::level::level_enum level);
+
         // Mirrors the log into 'items' by dropping and appending only what changed,
         // so panels can cache per message data instead of rebuilding it every frame
         static ReadResult ReadItems(Vector<Item>& items, Cursor& cursor);
@@ -52,8 +54,6 @@ namespace LevEngine::Editor
 
     private:
         ConsoleLog();
-
-        static Color GetColor(spdlog::level::level_enum level);
 
         static std::shared_ptr<ConsoleLog> s_Instance;
 
