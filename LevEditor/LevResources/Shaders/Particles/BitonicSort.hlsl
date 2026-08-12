@@ -2,7 +2,7 @@
 
 #define BITONIC_BLOCK_SIZE 1024
 
-cbuffer cb : register(b0)
+cbuffer cb : register(CB_PARTICLE_SORT)
 {
 	uint _Level;
 	uint _LevelMask;
@@ -10,13 +10,12 @@ cbuffer cb : register(b0)
 	uint _Height;
 };
 
-RWStructuredBuffer<float2> Data  : register(u0);
+RWStructuredBuffer<SortedElement> Data  : register(U_PARTICLES);
 
-groupshared float2 sharedData[BITONIC_BLOCK_SIZE];
+groupshared SortedElement sharedData[BITONIC_BLOCK_SIZE];
 
-bool Compare(float2 left, float2 right) {
-	//return (left.x == right.x) ? (left.y <= right.y) : (left.x <= right.x);
-	return left.y <= right.y;
+bool Compare(SortedElement left, SortedElement right) {
+	return left.Depth <= right.Depth;
 }
 
 [numthreads(BITONIC_BLOCK_SIZE, 1, 1)]
@@ -27,7 +26,7 @@ void CSMain(uint3 Gid  : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 
 	// Sort the shared data
 	for (uint j = _Level >> 1; j > 0; j >>= 1) {
-		float2 result;
+		SortedElement result;
 		if (Compare(sharedData[GI & ~j], sharedData[GI | j]) == (bool)(_LevelMask & DTid.x))
 			result = sharedData[GI ^ j];
 		else
@@ -40,5 +39,3 @@ void CSMain(uint3 Gid  : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTi
 	// Store shared data
 	Data[DTid.x] = sharedData[GI];
 }
-
-

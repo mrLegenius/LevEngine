@@ -37,19 +37,9 @@ namespace LevEngine
         return ShaderLibrary::GetOrAddShader(GetShaderPath("ForwardPBR.hlsl"));
     }
 
-    Ref<Shader> ShaderAssets::Lit()
-    {
-        return ShaderLibrary::GetOrAddShader(GetShaderPath("Lit.hlsl"));
-    }
-
     Ref<Shader> ShaderAssets::Unlit()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Unlit.hlsl"));
-    }
-
-    Ref<Shader> ShaderAssets::ShadowPass()
-    {
-        return ShaderLibrary::GetOrAddShader(GetShaderPath("ShadowPass.hlsl"));
     }
 
     Ref<Shader> ShaderAssets::CascadeShadowPass()

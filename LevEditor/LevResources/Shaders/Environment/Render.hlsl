@@ -1,6 +1,8 @@
+#include "../Registers.hlsli"
+
 //<--- Vertex Shader ---<<
 
-cbuffer CameraConstantBuffer : register(b6)
+cbuffer CameraConstantBuffer : register(CB_SKYBOX)
 {
 	row_major matrix viewProjection;
 };

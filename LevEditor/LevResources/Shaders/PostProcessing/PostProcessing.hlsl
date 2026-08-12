@@ -1,3 +1,8 @@
+#ifndef LEV_POST_PROCESSING_HLSL
+#define LEV_POST_PROCESSING_HLSL
+
+#include "../Registers.hlsli"
+
 struct Constants
 {
     float BloomThreshold;
@@ -19,7 +24,7 @@ struct Constants
     float VignetteIntensity;
 };
 
-cbuffer ScreenToViewParams : register(b8)
+cbuffer PostProcessingParams : register(CB_POST_PROCESSING)
 {
     Constants constants;
 }
@@ -62,16 +67,24 @@ float4 Blur(float2 uv, float2 texScale, float sigma)
     float width;
     float height;
     colorTexture.GetDimensions(width, height);
+
     float4 color = 0;
-    
-    for (int i = -6; i < 6; i++)
+    float totalWeight = 0;
+
+    //the range has to be symmetric, otherwise every blur pass drags the image half a texel
+    for (int i = -6; i <= 6; i++)
     {
         float weight = CalcGaussianWeight(i, sigma);
         float2 texCoord = uv;
         texCoord += (i / float2(width, height)) * texScale;
-        float4 sample = colorTexture.Sample(pointSampler, texCoord);
+        float4 sample = colorTexture.Sample(linearSampler, texCoord);
         color += sample * weight;
+        totalWeight += weight;
     }
 
-    return color;
+    //a gaussian truncated at +-6 texels does not sum to 1, and falls further short as sigma
+    //grows -- without this the bloom dims as BloomBlurSigma rises
+    return color / totalWeight;
 }
+
+#endif

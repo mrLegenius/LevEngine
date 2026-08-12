@@ -44,13 +44,9 @@ float4 PSMain(PS_IN input) : SV_Target
 	
 	float3 lit = CalcLighting(input.fragPos, normal, input.depth, albedo, metallic, roughness, ao);
 
-	float3 finalColor = lit + emissive;
-
-	//Gamma correction
-	finalColor = finalColor / (finalColor + 1.0);
-	finalColor = pow(finalColor, 0.45);
-
-	return float4(finalColor, alpha);
+	//Linear HDR out. Tone mapping and gamma belong to PostProcessingPass, which runs over
+	//this target for both techniques -- doing either here would apply the curve twice.
+	return float4(lit + emissive, alpha);
 }
 
 float3 CalcLighting(float3 fragPos, float3 normal, float depth, float3 albedo, float metallic, float roughness, float ao)
@@ -67,8 +63,7 @@ float3 CalcLighting(float3 fragPos, float3 normal, float depth, float3 albedo, f
 	for (int i = 0; i < lightsCount; i++)
 	{	
 		Light light = lights[i];
-		
-		float3 lit = 0.0f;
+
 		if (light.type == POINT_LIGHT)
 			totalResult += CalcPointLight(light, normal, fragPos, viewDir, albedo, metallic, roughness);
 		else if (light.type == SPOT_LIGHT)

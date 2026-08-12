@@ -2,7 +2,7 @@
 
 //<--- Vertex Shader ---<<
 
-cbuffer cubeMapConstantBuffer : register(b6)
+cbuffer cubeMapConstantBuffer : register(CB_SKYBOX)
 {
     row_major matrix cubeMapViewProjections[6];
 };

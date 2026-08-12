@@ -1,8 +1,8 @@
 #include "ShaderCommon.hlsl"
 
-PS_IN VSMain(VS_IN input)
+POSITION_ONLY_PS_IN VSMain(VS_IN input)
 {
-    PS_IN output;
+    POSITION_ONLY_PS_IN output;
 
     float4 fragPos = mul(float4(input.pos, 1.0f), model);
 

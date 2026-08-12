@@ -2,6 +2,7 @@
 #include "ParticleSortingPass.h"
 
 #include "BitonicSort.h"
+#include "GPUParticleData.h"
 #include "ParticleBuffers.h"
 #include "Renderer/Pipeline/StructuredBuffer.h"
 #include "Scene/Components/Emitter/EmitterComponent.h"
@@ -20,7 +21,7 @@ namespace LevEngine
         if (it != m_SortingResources.end()) return it->second;
 
         SortingResources resources;
-        resources.TempBuffer = StructuredBuffer::Create(nullptr, maxParticles, sizeof Vector2, CPUAccess::None, true);
+        resources.TempBuffer = StructuredBuffer::Create(nullptr, maxParticles, sizeof SortedParticleData, CPUAccess::None, true);
         resources.Sort = CreateRef<BitonicSort>(static_cast<int>(maxParticles));
 
         return m_SortingResources.emplace(maxParticles, Move(resources)).first->second;

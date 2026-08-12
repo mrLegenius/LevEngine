@@ -1,6 +1,8 @@
+#include "ParticlesCommon.hlsl"
+
 #define TRANSPOSE_BLOCK_SIZE 32
 
-cbuffer cb : register(b0)
+cbuffer cb : register(CB_PARTICLE_SORT)
 {
 	uint _Level;
 	uint _LevelMask;
@@ -8,13 +10,13 @@ cbuffer cb : register(b0)
 	uint _Height;
 };
 
-StructuredBuffer<float2> Input : register(t0);
-RWStructuredBuffer<float2> Data  : register(u0);
+StructuredBuffer<SortedElement> Input : register(T_PARTICLE_BUFFER);
+RWStructuredBuffer<SortedElement> Data  : register(U_PARTICLES);
 
-groupshared float2 transpose_shared_data[TRANSPOSE_BLOCK_SIZE * TRANSPOSE_BLOCK_SIZE];
+groupshared SortedElement transpose_shared_data[TRANSPOSE_BLOCK_SIZE * TRANSPOSE_BLOCK_SIZE];
 
 [numthreads(TRANSPOSE_BLOCK_SIZE, TRANSPOSE_BLOCK_SIZE, 1)]
-void CSMain(uint3 Gid  : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID, uint GI : SV_GroupIndex) 
+void CSMain(uint3 Gid  : SV_GroupID, uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID, uint GI : SV_GroupIndex)
 {
 	transpose_shared_data[GI] = Input[DTid.y * _Width + DTid.x];
 	GroupMemoryBarrierWithGroupSync();

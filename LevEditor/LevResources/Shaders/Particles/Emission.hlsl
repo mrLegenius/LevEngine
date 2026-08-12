@@ -1,6 +1,8 @@
 #include "ParticlesCommon.hlsl"
 #include "Random.hlsl"
 
+#define THREAD_GROUP_SIZE 64
+
 float Lerp(float a, float b, float t)
 {
     return a + t * (b - a);
@@ -77,7 +79,7 @@ struct RandomFloat4
         }
     };
 
-cbuffer Emitter : register(b2)
+cbuffer Emitter : register(CB_PARTICLE_EMITTER)
 {
 	struct BirthParams
 	{
@@ -98,32 +100,33 @@ cbuffer Emitter : register(b2)
 
 		//<--- 16 byte ---<<
 	};
-	
+
 	BirthParams Birth;
 };
 
-cbuffer RandomData : register(b3)
+cbuffer RandomData : register(CB_PARTICLE_RANDOM)
 {
 	uint RandomSeed;
+	uint ParticlesToEmit;
 };
 
-cbuffer DeadParticlesCountBuffer : register(b4)
+cbuffer DeadParticlesCountBuffer : register(CB_PARTICLE_DEAD)
 {
 	uint DeadParticlesCount;
 };
 
-RWStructuredBuffer<Particle> Particles : register(u0);
-ConsumeStructuredBuffer<uint> DeadParticles : register(u1);
+RWStructuredBuffer<Particle> Particles : register(U_PARTICLES);
+ConsumeStructuredBuffer<uint> DeadParticles : register(U_DEAD_PARTICLES);
 
-[numthreads(1, 1, 1)]
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
 void CSMain(uint3 DTid : SV_DispatchThreadID)
 {
-	if (DTid.x >= DeadParticlesCount) return;
+	// Bounded by both: the tail thread group overshoots ParticlesToEmit, and there may be
+	// fewer free slots than we want to emit into.
+	if (DTid.x >= min(ParticlesToEmit, DeadParticlesCount)) return;
 
 	NumberGenerator random{};
-	random.SetSeed(RandomSeed);
-	int cycleCount = (DTid.x + 1);
-	random.Cycle(cycleCount);
+	random.SetSeed(RandomSeed + DTid.x + 1u);
 
 	Particle particle;
 

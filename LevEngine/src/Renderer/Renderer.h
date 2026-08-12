@@ -57,7 +57,7 @@ namespace LevEngine
         Ref<Texture> m_MetallicRoughnessAOTexture;
         Ref<Texture> m_NormalTexture;
 
-        Ref<RenderTarget> m_DeferredLightsRenderTarget;
+        Ref<RenderTarget> m_HDRRenderTarget;
         Ref<RenderTarget> m_GBufferRenderTarget;
         Ref<RenderTarget> m_DepthOnlyRenderTarget;
 

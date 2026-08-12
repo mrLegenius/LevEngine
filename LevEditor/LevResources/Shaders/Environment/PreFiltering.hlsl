@@ -8,7 +8,7 @@ float2 Hammersley(uint i, uint N);
 float3 ImportanceSampleGGX(float2 Xi, float3 N, float roughness);
 float DistributionGGX(float3 N, float3 H, float roughness);
 
-cbuffer roughnessConstantBuffer : register(b7)
+cbuffer roughnessConstantBuffer : register(CB_DEBUG)
 {
     float roughness;
 };
@@ -33,7 +33,9 @@ float4 PSMain(PS_IN input) : SV_Target
         if(NdotL > 0.0)
         {
             float NdotH = max(dot(N, H), 0.0);
-            float HdotV = max(dot(N, V), 0.0);
+            //the GGX pdf is over the half vector, so this has to be H.V -- N.V is a constant
+            //1.0 here (V == N == R) and silently collapses the mip selection below
+            float HdotV = max(dot(H, V), 0.0);
             float D = DistributionGGX(N, H, roughness);
             float pdf = (D * NdotH / (4.0 * HdotV)) + 0.0001;
 
@@ -43,8 +45,10 @@ float4 PSMain(PS_IN input) : SV_Target
 
             float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
 
-            float3 sample = environmentMap.SampleLevel(Sampler, L, mipLevel).rgb;
-            sample = sample / (sample + float3(1.0f, 1.0f, 1.0f));
+            //clamp rather than tone map: running Reinhard here would flatten the environment
+            //to LDR before integration and then get tone mapped a second time at the end of
+            //the frame. The clamp still keeps a single bright texel from becoming a firefly.
+            float3 sample = min(environmentMap.SampleLevel(Sampler, L, mipLevel).rgb, k_MaxRadiance);
 
             prefilteredColor += sample * NdotL;
             totalWeight += NdotL;

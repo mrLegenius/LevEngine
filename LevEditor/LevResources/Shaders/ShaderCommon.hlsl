@@ -1,3 +1,8 @@
+#ifndef LEV_SHADER_COMMON_HLSL
+#define LEV_SHADER_COMMON_HLSL
+
+#include "Registers.hlsli"
+
 #define CASCADE_COUNT 4
 
 #ifdef WITH_ANIMATIONS
@@ -27,14 +32,23 @@ struct PS_IN
 	float depth : TEXCOORD1;
 };
 
-cbuffer CameraConstantBuffer : register(b0)
+// Vertex output for the passes that only need a position -- the deferred lighting volumes.
+// Kept separate from PS_IN so those shaders do not ship four uninitialized interpolators.
+struct POSITION_ONLY_PS_IN
+{
+	float4 pos : SV_POSITION;
+	float3 fragPos : POSITION0;
+	float depth : TEXCOORD1;
+};
+
+cbuffer CameraConstantBuffer : register(CB_CAMERA)
 {
 	row_major matrix cameraView;
 	row_major matrix viewProjection;
 	float3 cameraPosition;
 };
 
-cbuffer ModelConstantBuffer : register(b1)
+cbuffer ModelConstantBuffer : register(CB_MODEL)
 {
 	row_major matrix model;
 	row_major matrix transposedInvertedModel;
@@ -44,29 +58,21 @@ cbuffer ModelConstantBuffer : register(b1)
 #endif
 };
 
-//lighting cbuffer b2
-
-cbuffer lightSpaceConstantBuffer : register(b3)
+cbuffer lightSpaceConstantBuffer : register(CB_LIGHT_SPACE)
 {
 	row_major matrix lightViewProjection[CASCADE_COUNT];
 	float4 distances;
 	float shadowMapDimensions;
 };
 
-//material cbuffer b4
-
-cbuffer ScreenToViewParams : register(b5)
+cbuffer ScreenToViewParams : register(CB_SCREEN_TO_VIEW)
 {
 	float4x4 CameraInverseProjection;
 	float2 ScreenDimensions;
 }
 
-//skybox cbuffer at b6
-//debug cbuffer at b7
-//post processing cbuffer at b8
-
-Texture2DArray shadowMapTexture : register(t9);
-SamplerComparisonState shadowMapSampler : register(s9);
+Texture2DArray shadowMapTexture : register(T_SHADOW_MAP);
+SamplerComparisonState shadowMapSampler : register(S_SHADOW_MAP);
 
 
 float4 ClipToView(float4 clip)
@@ -102,32 +108,31 @@ float GetCascadeIndex(float depth)
 	return CASCADE_COUNT - 1;
 }
 
+// Returns the fraction of the PCF neighborhood that is lit, in 0:1.
+// NdotL is deliberately NOT folded in here -- every caller runs a BRDF that already applies it.
 float CalcShadow(float4 lpos, float3 normal, float3 lightDir, float cascade)
 {
 	//re-homogenize position after interpolation
 	lpos.xyz /= lpos.w;
 
-	//if position is not visible to the light - dont illuminate it
-	//results in hard light frustum
+	//outside the light frustum there is no shadow information, so leave the fragment lit
+	//rather than blacking out everything past the last cascade
 	if (lpos.x < -1.0f || lpos.x > 1.0f ||
 		lpos.y < -1.0f || lpos.y > 1.0f ||
-		lpos.z < 0.0f || lpos.z > 1.0f) return 0.0f;
+		lpos.z < 0.0f || lpos.z > 1.0f) return 1.0f;
 
 	//transform clip space coords to texture space coords (-1:1 to 0:1)
 	lpos.x = lpos.x * 0.5f + 0.5f;
 	lpos.y = lpos.y * -0.5f + 0.5f;
 
-	float ndotl = dot(normal, lightDir);
+	const float ndotl = saturate(dot(normal, lightDir));
 
-	//float shadowMapBias = max(0.005 * (1.0 - ndotl), 0.0005);
-	float shadowMapBias = clamp(0.0005 / acos(saturate(ndotl)), 0, 0.005);
-	//float shadowMapBias = max(0.005 * tan(acos(ndotl)), 0.0005);
+	//slope-scaled bias: a texel covers more depth the closer the surface gets to edge-on,
+	//so the offset has to grow with the angle, not shrink
+	const float shadowMapBias = clamp(0.0005f * tan(acos(ndotl)), 0.0005f, 0.005f);
 	lpos.z -= shadowMapBias;
 
-	float texelSize = 1.0f / shadowMapDimensions;
-
-	//No filtering
-	//float shadowFactor = shadowMapTexture.SampleCmpLevelZero(shadowMapSampler, float3(lpos.xy, cascade), lpos.z);
+	const float texelSize = 1.0f / shadowMapDimensions;
 
 	//PCF filtering on a 4 x 4 texel neighborhood
 	float sum = 0;
@@ -138,14 +143,8 @@ float CalcShadow(float4 lpos, float3 normal, float3 lightDir, float cascade)
 			sum += shadowMapTexture.SampleCmpLevelZero(shadowMapSampler, float3(lpos.x + x * texelSize, lpos.y + y * texelSize, cascade), lpos.z);
 		}
 	}
-	float shadowFactor = sum / 16.0;
 
-
-	//if clip space z value greater than shadow map value then pixel is in shadow
-	if (shadowFactor < lpos.z) return 0.0f;
-
-	//otherwise calculate ilumination at fragment
-	return ndotl * shadowFactor;
+	return sum / 16.0f;
 }
 
 float2 ApplyTextureProperties(float2 uv, float2 tiling, float2 offset)
@@ -155,7 +154,7 @@ float2 ApplyTextureProperties(float2 uv, float2 tiling, float2 offset)
 
 float3 CombineColorAndTexture(float3 color, Texture2D tex, SamplerState sampl, float2 uv)
 {
-	float3 texColor = tex.Sample(sampl, uv);
+	float3 texColor = tex.Sample(sampl, uv).rgb;
     float3 result = color * texColor;
 
     return result;
@@ -202,18 +201,20 @@ VertexCalculationResult CalculateVertex(VS_IN input)
 #ifdef WITH_ANIMATIONS
 
 	row_major matrix boneTransform = CalculateBoneTransform(input.boneIds, input.boneWeights);
-	
+
 	result.pos = mul(float4(input.pos, 1.0f), boneTransform);
-	result.normal = mul(mul(float4(input.normal, 0.0f), boneTransform), transposedInvertedModel);
-	result.tangent = mul(mul(float4(input.tangent, 0.0f), boneTransform), transposedInvertedModel);
+	result.normal = mul(mul(float4(input.normal, 0.0f), boneTransform), transposedInvertedModel).xyz;
+	result.tangent = mul(mul(float4(input.tangent, 0.0f), boneTransform), transposedInvertedModel).xyz;
 
 #else
 
 	result.pos = float4(input.pos, 1.0f);
-	result.normal = mul(float4(input.normal, 0.0f), transposedInvertedModel);
-	result.tangent = mul(float4(input.tangent, 0.0f), transposedInvertedModel);
+	result.normal = mul(float4(input.normal, 0.0f), transposedInvertedModel).xyz;
+	result.tangent = mul(float4(input.tangent, 0.0f), transposedInvertedModel).xyz;
 
 #endif
 
 	return result;
 }
+
+#endif

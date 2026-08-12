@@ -29,10 +29,8 @@ namespace LevEngine
         static Ref<Shader> DebugShape();
         static Ref<Shader> DebugLine();
         
-        static Ref<Shader> Lit();
         static Ref<Shader> Unlit();
 
-        static Ref<Shader> ShadowPass();
         static Ref<Shader> CascadeShadowPass();
         static Ref<Shader> CascadeShadowPassWithAnimations();
 

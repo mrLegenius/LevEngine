@@ -1,7 +1,7 @@
 #include "ParticlesCommon.hlsl"
 
-StructuredBuffer<Particle> Particles : register(t0);
-StructuredBuffer<float2> SortedParticles : register(t2);
+StructuredBuffer<Particle> Particles : register(T_PARTICLE_BUFFER);
+StructuredBuffer<SortedElement> SortedParticles : register(T_PARTICLE_SORTED);
 
 struct VertexInput
 {
@@ -14,7 +14,7 @@ struct PixelInput
     float2 UV : TEXCOORD0;
     float4 Color : COLOR;
     float Size : COLOR1;
-	float Distance : COLOR2;
+	float Depth : COLOR2;
 };
 
 struct PixelOutput
@@ -26,11 +26,8 @@ PixelInput VSMain(VertexInput input)
 {
     PixelInput output;
 
-	float2 particleInfo = SortedParticles[input.VertexID];
-    uint particleIndex = particleInfo.x;
-	float distance = particleInfo.y;
-
-    Particle particle = Particles[particleIndex];
+	SortedElement element = SortedParticles[input.VertexID];
+    Particle particle = Particles[element.Index];
 
     float4 worldPosition = float4(particle.Position, 1);
     float4 viewPosition = mul(worldPosition, View);
@@ -38,7 +35,7 @@ PixelInput VSMain(VertexInput input)
     output.UV = 0;
     output.Color = particle.Color;
     output.Size = particle.Size;
-    output.Distance = distance;
+    output.Depth = element.Depth;
 
     return output;
 }
@@ -59,7 +56,9 @@ void GSMain(point PixelInput input[1], inout TriangleStream<PixelInput> stream)
 
     const float size = pointOut.Size;
 
-	if (pointOut.Distance > size) return;
+	//dead slots carry the sentinel key the simulation parked on them; live particles always
+	//have a negative depth
+	if (pointOut.Depth >= k_DeadParticleDepth) return;
 
     stream.Append(_offsetNprojected(pointOut, float2(-1, -1) * size, float2(0, 0)));
     stream.Append(_offsetNprojected(pointOut, float2(-1, 1) * size, float2(0, 1)));
@@ -69,16 +68,15 @@ void GSMain(point PixelInput input[1], inout TriangleStream<PixelInput> stream)
     stream.RestartStrip();
 }
 
-Texture2D ParticleTexture : register(t1);
+Texture2D ParticleTexture : register(T_PARTICLE_TEXTURE);
 
-SamplerState ParticleSampler : register(s1);
+SamplerState ParticleSampler : register(S_PARTICLE_TEXTURE);
 
 PixelOutput PSMain(PixelInput input)
 {
     PixelOutput output;
     float4 particle = ParticleTexture.Sample(ParticleSampler, input.UV);
-    
-    //particle.a = particle.r;
+
     output.Color = particle * input.Color;
 
     return output;

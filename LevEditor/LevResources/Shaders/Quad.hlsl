@@ -1,3 +1,6 @@
+#ifndef LEV_QUAD_HLSL
+#define LEV_QUAD_HLSL
+
 struct PS_IN
 {
     float4 pos : SV_POSITION;
@@ -13,3 +16,5 @@ PS_IN VSMain(uint vI : SV_VERTEXID)
     output.pos = float4((texcoord.x - 0.5f) * 2, -(texcoord.y - 0.5f) * 2, 0, 1);
     return output;
 }
+
+#endif

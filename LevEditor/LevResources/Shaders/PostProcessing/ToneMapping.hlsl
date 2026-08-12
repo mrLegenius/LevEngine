@@ -23,10 +23,10 @@ float3 Uncharted2ToneMapping(float3 color, float exposure)
 
 float3 ReinhardToneMapping(float3 color, float exposure)
 {
-    //float exposure = 1.5;
-    return color * exposure / (1. + color / exposure);
-
-    //return color / (1 + color);
+    //exposure scales the input, then the curve compresses it. Dividing by exposure in the
+    //denominator instead would make a brighter exposure compress *less* and blow out.
+    color *= exposure;
+    return color / (1.0 + color);
 }
 
 float3 WhitePreservingLumaBasedReinhardToneMapping(float3 color)
@@ -56,13 +56,9 @@ float4 PSMain(PS_IN input) : SV_Target
     //float3 finalColor = Uncharted2ToneMapping(color, exposure);
     float3 finalColor = ReinhardToneMapping(color, exposure);
 
-    //Gamma correction
-    finalColor = pow(finalColor, 0.45);
-
-    // Sample the bloom
-    // float3 bloom = bloomMap.Sample(linearSampler, uv).rgb;
-    // bloom *= constants.BloomMagnitude;
-    // finalColor += bloom;
+    //Gamma correction. This is the only place it happens -- the geometry shaders hand over
+    //linear HDR.
+    finalColor = pow(max(finalColor, 0.0f), 0.45);
 
     return float4(finalColor, 1.0f);
 }

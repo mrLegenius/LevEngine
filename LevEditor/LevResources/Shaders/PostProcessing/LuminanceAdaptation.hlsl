@@ -9,8 +9,14 @@ float PSMain(PS_IN input) : SV_Target
 	float TimeDelta = constants.TimeDelta;
 	float Tau = constants.Tau;
 
+	//LuminancePass writes log(luminance) and generates the full mip chain, so the smallest
+	//mip is the geometric mean over the frame. Its index follows RenderSettings::LuminanceMapSize
+	//and must not be hardcoded.
+	uint width, height, mipLevels;
+	currentLuminance.GetDimensions(0, width, height, mipLevels);
+
 	float lastLum = lastLuminance.Load(uint3(0, 0, 0));
-	float currentLum = currentLuminance.Load(uint3(0, 0, 10));
+	float currentLum = currentLuminance.Load(uint3(0, 0, mipLevels - 1));
 	currentLum = exp(currentLum);
 
 	// Adapt the luminance using Pattanaik's technique

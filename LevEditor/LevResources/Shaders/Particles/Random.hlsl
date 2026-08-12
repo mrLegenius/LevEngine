@@ -1,9 +1,24 @@
+#ifndef LEV_PARTICLES_RANDOM_HLSL
+#define LEV_PARTICLES_RANDOM_HLSL
+
 #define RANDOM_IA 16807
 #define RANDOM_IM 2147483647
 #define RANDOM_AM (1.0f/float(RANDOM_IM))
-#define RANDOM_IQ 127773u
+#define RANDOM_IQ 127773
 #define RANDOM_IR 2836
 #define RANDOM_MASK 123459876
+
+// Constant-time thread-unique seed. Cycling the generator N times to get there is O(N) per
+// thread, which turns a dispatch of N threads into O(N^2).
+uint WangHash(uint seed)
+{
+    seed = (seed ^ 61u) ^ (seed >> 16u);
+    seed *= 9u;
+    seed = seed ^ (seed >> 4u);
+    seed *= 0x27d4eb2du;
+    seed = seed ^ (seed >> 15u);
+    return seed;
+}
 
 struct NumberGenerator {
     int seed; // Used to generate values.
@@ -23,6 +38,8 @@ struct NumberGenerator {
     // Generates the next number in the sequence.
     void Cycle() {
         seed ^= RANDOM_MASK;
+        // RANDOM_IQ has to stay a signed literal: an unsigned one promotes this division to
+        // uint and Park-Miller breaks for every negative seed.
         int k = seed / RANDOM_IQ;
         seed = RANDOM_IA * (seed - k * RANDOM_IQ) - RANDOM_IR * k;
 
@@ -30,13 +47,6 @@ struct NumberGenerator {
             seed += RANDOM_IM;
 
         seed ^= RANDOM_MASK;
-    }
-
-    // Cycles the generator based on the input count. Useful for generating a thread unique seed.
-    // PERFORMANCE - O(N)
-    void Cycle(const uint _count) {
-        for (uint i = 0; i < _count; ++i)
-            Cycle();
     }
 
     // Returns a random float within the input range.
@@ -47,7 +57,9 @@ struct NumberGenerator {
 
     // Sets the seed
     void SetSeed(const uint value) {
-        seed = int(value);
+        seed = int(WangHash(value));
         Cycle();
     }
 };
+
+#endif

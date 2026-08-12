@@ -15,8 +15,57 @@ struct ShaderDefine
 
 namespace LevEngine
 {
+    // D3D_COMPILE_STANDARD_FILE_INCLUDE resolves every include, however deeply nested, against
+    // the directory of the top-level shader. That breaks any header that includes a sibling of
+    // its own while being pulled in from a subdirectory -- ShaderCommon.hlsl including
+    // Registers.hlsli, reached from DebugRender/. This handler resolves relative to the file
+    // doing the including, which is what fxc does and what the shaders are written against.
+    class ShaderIncludeHandler final : public ID3DInclude
+    {
+    public:
+        explicit ShaderIncludeHandler(const String& shaderFilepath)
+            : m_ShaderDirectory(Path(shaderFilepath.c_str()).parent_path()) { }
+
+        HRESULT __stdcall Open(D3D_INCLUDE_TYPE, const char* fileName, const void* parentData,
+                               const void** outData, UINT* outBytes) override
+        {
+            const auto parent = m_IncludeDirectories.find(parentData);
+            const Path& baseDirectory = parent != m_IncludeDirectories.end() ? parent->second : m_ShaderDirectory;
+            const Path resolved = baseDirectory / fileName;
+
+            std::ifstream file(resolved, std::ios::binary | std::ios::ate);
+            if (!file) return E_FAIL;
+
+            const auto size = static_cast<size_t>(file.tellg());
+            file.seekg(0);
+
+            const auto buffer = new char[size];
+            file.read(buffer, static_cast<std::streamsize>(size));
+
+            //remember where this header lives so its own includes resolve against it
+            m_IncludeDirectories[buffer] = resolved.parent_path();
+
+            *outData = buffer;
+            *outBytes = static_cast<UINT>(size);
+
+            return S_OK;
+        }
+
+        HRESULT __stdcall Close(const void* data) override
+        {
+            m_IncludeDirectories.erase(data);
+            delete[] static_cast<const char*>(data);
+
+            return S_OK;
+        }
+
+    private:
+        Path m_ShaderDirectory;
+        UnorderedMap<const void*, Path> m_IncludeDirectories;
+    };
+
     bool CreateShader(ID3DBlob*& shaderBC, const wchar_t* shaderFilepath, Vector<ShaderDefine> defines,
-                      ID3DInclude* includes, const char* entrypoint, const char* target);
+                      const char* entrypoint, const char* target);
     bool CreatePixelShader(ID3D11PixelShader*& shader, const String& filepath);
     bool CreateGeometryShader(ID3D11GeometryShader*& shader, const String& filepath);
     bool CreateComputeShader(ID3D11ComputeShader*& shader, const String& filepath);
@@ -135,7 +184,7 @@ namespace LevEngine
             Log::CoreError("Failed to create any shader stage from {0}", filepath);
     }
 
-    bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, ShaderMacros defines, ID3DInclude* includes,
+    bool CreateShader(ID3DBlob*& shaderBC, const String& shaderFilepath, ShaderMacros defines,
                       const char* entrypoint, const char* target)
     {
         LEV_PROFILE_FUNCTION();
@@ -162,10 +211,12 @@ namespace LevEngine
             flags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
         }
 
+        ShaderIncludeHandler includeHandler{shaderFilepath};
+
         ID3DBlob* errorCode = nullptr;
         const auto res = D3DCompileFromFile(wide_filepath,
                                             shaderDefines.data() /*macros*/,
-                                            includes /*include*/,
+                                            &includeHandler /*include*/,
                                             entrypoint,
                                             target,
                                             flags,
@@ -208,7 +259,7 @@ namespace LevEngine
 
         ID3DBlob* vertexBC = nullptr;
 
-        if (!CreateShader(vertexBC, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VSMain", "vs_5_0"))
+        if (!CreateShader(vertexBC, filepath, macros, "VSMain", "vs_5_0"))
             return false;
 
         m_Device->CreateVertexShader(
@@ -230,7 +281,7 @@ namespace LevEngine
 
         ID3DBlob* pixelBC = nullptr;
 
-        if (!CreateShader(pixelBC, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PSMain", "ps_5_0"))
+        if (!CreateShader(pixelBC, filepath, macros, "PSMain", "ps_5_0"))
             return false;
 
         m_Device->CreatePixelShader(
@@ -252,7 +303,7 @@ namespace LevEngine
 
         ID3DBlob* geometryBC = nullptr;
 
-        if (!CreateShader(geometryBC, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "GSMain", "gs_5_0"))
+        if (!CreateShader(geometryBC, filepath, macros, "GSMain", "gs_5_0"))
             return false;
 
         m_Device->CreateGeometryShader(
@@ -274,7 +325,7 @@ namespace LevEngine
 
         ID3DBlob* blob = nullptr;
 
-        if (!CreateShader(blob, filepath, macros, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CSMain", "cs_5_0"))
+        if (!CreateShader(blob, filepath, macros, "CSMain", "cs_5_0"))
             return false;
 
         m_Device->CreateComputeShader(

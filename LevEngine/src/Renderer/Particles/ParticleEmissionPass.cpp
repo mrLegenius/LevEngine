@@ -76,13 +76,16 @@ namespace LevEngine
             m_EmitterData->SetData(&emitterData);
             m_EmitterData->Bind(ShaderType::Compute);
 
-            RandomGPUData randomData{Random::Int(0, std::numeric_limits<int>::max())};
+            RandomGPUData randomData{Random::Int(0, std::numeric_limits<int>::max()), particlesToEmit};
             m_RandomData->SetData(&randomData);
             m_RandomData->Bind(ShaderType::Compute);
 
             buffers->GetDeadBuffer()->BindCounter(4, ShaderType::Compute);
 
-            DispatchCommand::Dispatch(particlesToEmit, 1, 1);
+            //Emission.hlsl runs 64 threads per group and bounds-checks against DeadParticlesCount
+            constexpr uint32_t emissionThreadGroupSize = 64;
+            const uint32_t groupCount = (particlesToEmit + emissionThreadGroupSize - 1) / emissionThreadGroupSize;
+            DispatchCommand::Dispatch(groupCount, 1, 1);
 
             buffers->GetParticlesBuffer()->Unbind(0, ShaderType::Compute, true);
             buffers->GetDeadBuffer()->Unbind(1, ShaderType::Compute, true);

@@ -10,7 +10,7 @@ struct DEBUG_PS_IN
     float4 pos : SV_POSITION;
 };
 
-cbuffer DebugColor : register(b7)
+cbuffer DebugColor : register(CB_DEBUG)
 {
     float4 color;
 };

@@ -65,6 +65,10 @@ namespace LevEngine
     struct LEV_API RandomGPUData
     {
         alignas(16) int RandomSeed;
+        // Emission.hlsl runs a fixed thread group size, so the tail group launches more
+        // threads than there are particles to emit. Without this bound they would consume
+        // dead slots and emit extras.
+        uint32_t ParticlesToEmit;
     };
     
     class LEV_API ParticleEmissionPass final : public RenderPass

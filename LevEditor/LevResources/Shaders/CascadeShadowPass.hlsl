@@ -1,10 +1,12 @@
+#include "Registers.hlsli"
+
 #define CASCADE_COUNT 4
 
 #ifdef WITH_ANIMATIONS
 #define MAX_BONES 100
 #endif
 
-cbuffer ModelConstantBuffer : register(b1)
+cbuffer ModelConstantBuffer : register(CB_MODEL)
 {
     row_major matrix model;
 #ifdef WITH_ANIMATIONS
@@ -13,7 +15,7 @@ cbuffer ModelConstantBuffer : register(b1)
 #endif
 };
 
-cbuffer lightSpaceConstantBuffer : register(b3)
+cbuffer lightSpaceConstantBuffer : register(CB_LIGHT_SPACE)
 {
     row_major matrix lightViewProjection[CASCADE_COUNT];
     float4 distances;

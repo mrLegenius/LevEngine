@@ -130,11 +130,13 @@ namespace LevEngine
         }
 
         {
-            LEV_PROFILE_SCOPE("Deferred lights render target creation");
+            LEV_PROFILE_SCOPE("HDR render target creation");
 
-            m_DeferredLightsRenderTarget = RenderTarget::Create();
-            m_DeferredLightsRenderTarget->AttachTexture(AttachmentPoint::Color0, m_ColorTexture);
-            m_DeferredLightsRenderTarget->AttachTexture(AttachmentPoint::DepthStencil,
+            // Linear HDR scene colour. Both techniques accumulate lighting here and hand it to
+            // PostProcessingPass, which is the only place tone mapping and gamma happen.
+            m_HDRRenderTarget = RenderTarget::Create();
+            m_HDRRenderTarget->AttachTexture(AttachmentPoint::Color0, m_ColorTexture);
+            m_HDRRenderTarget->AttachTexture(AttachmentPoint::DepthStencil,
                                                         mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil));
         }
 
@@ -176,7 +178,7 @@ namespace LevEngine
             LEV_PROFILE_SCOPE("Deferred lighting pipeline 1 creation");
 
             m_PositionalLightPipeline1 = CreateRef<PipelineState>();
-            m_PositionalLightPipeline1->SetRenderTarget(m_DeferredLightsRenderTarget);
+            m_PositionalLightPipeline1->SetRenderTarget(m_HDRRenderTarget);
             m_PositionalLightPipeline1->GetRasterizerState().SetCullMode(CullMode::Back);
             m_PositionalLightPipeline1->GetRasterizerState().SetDepthClipEnabled(true);
 
@@ -199,7 +201,7 @@ namespace LevEngine
             LEV_PROFILE_SCOPE("Deferred lighting pipeline 2 creation");
 
             m_PositionalLightPipeline2 = CreateRef<PipelineState>();
-            m_PositionalLightPipeline2->SetRenderTarget(m_DeferredLightsRenderTarget);
+            m_PositionalLightPipeline2->SetRenderTarget(m_HDRRenderTarget);
             m_PositionalLightPipeline2->GetRasterizerState().SetCullMode(CullMode::Front);
             m_PositionalLightPipeline2->GetRasterizerState().SetDepthClipEnabled(false);
 
@@ -228,7 +230,7 @@ namespace LevEngine
             m_OpaquePipeline->GetRasterizerState().SetCullMode(CullMode::Back);
             m_OpaquePipeline->SetShader(ShaderType::Vertex, ShaderAssets::ForwardPBR());
             m_OpaquePipeline->SetShader(ShaderType::Pixel, ShaderAssets::ForwardPBR());
-            m_OpaquePipeline->SetRenderTarget(mainRenderTarget);
+            m_OpaquePipeline->SetRenderTarget(m_HDRRenderTarget);
         }
 
         {
@@ -240,7 +242,9 @@ namespace LevEngine
             m_TransparentPipeline->GetBlendState()->SetBlendMode(BlendMode::AlphaBlending);
             m_TransparentPipeline->GetDepthStencilState()->SetDepthMode(DepthMode::DisableDepthWrites);
             m_TransparentPipeline->GetRasterizerState().SetCullMode(CullMode::None);
-            m_TransparentPipeline->SetRenderTarget(mainRenderTarget);
+            // Blends in linear space, before post. Blending onto an already tone mapped target
+            // would give transparent surfaces a different response curve than opaque ones.
+            m_TransparentPipeline->SetRenderTarget(m_HDRRenderTarget);
         }
 
         {
@@ -301,14 +305,16 @@ namespace LevEngine
                 m_AlbedoTexture, m_MetallicRoughnessAOTexture,
                 m_NormalTexture, m_DepthTexture));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredLightingQuery));
-            
-            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_PostProcessingQuery));
-            m_DeferredTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
-            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_PostProcessingQuery));
 
+            // Transparents blend into the HDR target before post, so they go through the same
+            // tone map and exposure as everything else.
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredTransparentQuery));
             m_DeferredTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredTransparentQuery));
+
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_PostProcessingQuery));
+            m_DeferredTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_PostProcessingQuery));
 
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DebugQuery));
             m_DeferredTechnique->AddPass(CreateRef<DebugRenderPass>(m_DebugPipeline));
@@ -324,13 +330,21 @@ namespace LevEngine
 
             m_ForwardTechnique = CreateRef<RenderTechnique>();
             m_ForwardTechnique->AddPass(CreateRef<ShadowMapPass>());
+
             m_ForwardTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget, "Clear Main Render Target"));
-            m_ForwardTechnique->AddPass(CreateRef<EnvironmentPass>(mainRenderTarget));
+            m_ForwardTechnique->AddPass(CreateRef<ClearPass>(m_HDRRenderTarget, "Clear HDR Render Target"));
+
+            // Scene goes into the HDR target in linear space, then PostProcessingPass tone maps
+            // it into the main target. Same shape as the deferred technique, so ForwardPBR.hlsl
+            // does not need its own tone map.
+            m_ForwardTechnique->AddPass(CreateRef<EnvironmentPass>(m_HDRRenderTarget));
             m_ForwardTechnique->AddPass(CreateRef<OpaquePass>(m_OpaquePipeline));
+            m_ForwardTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
+            m_ForwardTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
+
             m_ForwardTechnique->AddPass(CreateRef<DebugRenderPass>(m_DebugPipeline));
 
             //TODO: Fix particle bounce
-            m_ForwardTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
             m_ForwardTechnique->AddPass(CreateRef<ParticlePass>(mainRenderTarget,
                                                                 mainRenderTarget->GetTexture(
                                                                     AttachmentPoint::DepthStencil), m_NormalTexture));

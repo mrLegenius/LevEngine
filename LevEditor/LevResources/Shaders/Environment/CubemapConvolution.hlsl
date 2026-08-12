@@ -23,8 +23,9 @@ float4 PSMain(PS_IN input) : SV_Target
             // tangent space to world
             float3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal; 
 
-			float3 sample = environmentMap.Sample(Sampler, sampleVec).rgb;
-			sample = sample / (sample + float3(1.0f, 1.0f, 1.0f));
+			//clamped, not tone mapped -- see PreFiltering.hlsl. Reinhard here would cost the
+			//irradiance probe its entire HDR range.
+			float3 sample = min(environmentMap.Sample(Sampler, sampleVec).rgb, k_MaxRadiance);
             irradiance += sample * cos(theta) * sin(theta);
             nrSamples++;
         }

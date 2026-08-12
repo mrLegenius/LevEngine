@@ -1,3 +1,8 @@
+#ifndef LEV_LIGHTING_HLSL
+#define LEV_LIGHTING_HLSL
+
+#include "Registers.hlsli"
+
 #define MAX_LIGHTS 100
 
 #define POINT_LIGHT 0
@@ -26,7 +31,7 @@ struct Light
     int type;
 };
 
-cbuffer LightningConstantBuffer : register(b2)
+cbuffer LightningConstantBuffer : register(CB_LIGHTING)
 {
     DirLight dirLight;
     Light lights[MAX_LIGHTS];
@@ -68,5 +73,5 @@ float CalcAttenuation(float range, float smoothness, float distance)
 	return 1.0f - smoothstep(range * smoothness, range, distance);
 }
 
-
+#endif
 
