@@ -12,16 +12,23 @@ namespace LevEngine::Log
 	class LEV_API Logger
 	{
 	public:
+		//Messages are formatted and written on a dedicated thread, so logging never
+		//stalls the thread that logs. Call Shutdown before the process exits to
+		//write out whatever is still queued
 		static void Init();
+		static void Shutdown();
 
 		static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return m_CoreLogger; }
 		static std::shared_ptr<spdlog::logger>& GetLogger() { return m_Logger; }
 
-		static void AddLogHandler(const std::shared_ptr<spdlog::sinks::sink>& handler)
-		{
-			m_CoreLogger->sinks().push_back(handler);
-			m_Logger->sinks().push_back(handler);
-		}
+		//Messages below the level are discarded without being formatted
+		static void SetLevel(spdlog::level::level_enum level);
+
+		//Messages dropped because they were logged faster than they could be written
+		[[nodiscard]] static size_t GetDroppedMessageCount();
+
+		//Handlers can be attached at any point, including from another module
+		static void AddLogHandler(const std::shared_ptr<spdlog::sinks::sink>& handler);
 
 	private:
 		static std::shared_ptr<spdlog::logger> m_CoreLogger;

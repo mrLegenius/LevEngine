@@ -20,6 +20,15 @@ namespace LevEngine::Editor
 		ImGui::SameLine();
 		ImGui::Checkbox("AutoScroll", &m_IsAutoScroll);
 
+		//Messages the logger had to throw away to keep up with the logging
+		if (const auto dropped = Log::Logger::GetDroppedMessageCount(); dropped > 0)
+		{
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4{ 1, 1, 0, 1 }, "%llu dropped", static_cast<uint64_t>(dropped));
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Messages were logged faster than they could be written");
+		}
+
 		ImGui::Separator();
 
 		//<--- Output ---<<

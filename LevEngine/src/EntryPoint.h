@@ -18,4 +18,6 @@ int main(const int argc, char* argv[])
 	LEV_PROFILE_BEGIN_SESSION("Shutdown", "LevEngineProfile-Shutdown.json");
 	delete app;
 	LEV_PROFILE_END_SESSION();
+
+	LevEngine::Log::Logger::Shutdown();
 }
