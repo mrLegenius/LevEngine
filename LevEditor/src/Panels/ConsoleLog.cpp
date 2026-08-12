@@ -89,18 +89,30 @@ namespace LevEngine::Editor
 
     Color ConsoleLog::GetColor(const spdlog::level::level_enum level)
     {
+        //Muted tones, the console is stared at for minutes at a time and the pure
+        //aqua, yellow and red used to fight the dark editor theme
+        static const Color trace{ 0x7E8B96FFu };
+        static const Color debug{ 0x8FBCBBFFu };
+        static const Color info{ 0xD8DEE9FFu };
+        static const Color warning{ 0xEBCB8BFFu };
+        static const Color error{ 0xE88388FFu };
+        //A shade deeper than an error, so it stands out among them
+        static const Color critical{ 0xE8666FFFu };
+
         switch (level)
         {
         case spdlog::level::trace:
+            return trace;
         case spdlog::level::debug:
-            return Color::Aqua;
+            return debug;
         case spdlog::level::warn:
-            return Color::Yellow;
+            return warning;
         case spdlog::level::err:
+            return error;
         case spdlog::level::critical:
-            return Color::Red;
+            return critical;
         default:
-            return Color::White;
+            return info;
         }
     }
 

@@ -109,8 +109,9 @@ namespace LevEngine::Editor
 		if (const auto dropped = Log::Logger::GetDroppedMessageCount(); dropped > 0)
 		{
 			const auto text = Format("{} dropped", dropped);
+			const auto color = ConsoleLog::GetColor(spdlog::level::warn);
 			PlaceNextItem(ImGui::CalcTextSize(text.c_str()).x);
-			ImGui::TextColored(ImVec4{ 1, 1, 0, 1 }, "%s", text.c_str());
+			ImGui::TextColored(ImVec4{ color.r, color.g, color.b, 1 }, "%s", text.c_str());
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Messages were logged faster than they could be written");
 		}
@@ -148,7 +149,6 @@ namespace LevEngine::Editor
 			const float viewBottom = viewTop + viewHeight;
 
 			const auto drawList = ImGui::GetWindowDrawList();
-			const auto borderColor = ImGui::GetColorU32(ImGuiCol_Border);
 
 			// Only the messages inside the view are submitted to ImGui
 			const int first = FindFirstVisible(viewTop);
@@ -159,12 +159,21 @@ namespace LevEngine::Editor
 				const auto& item = m_Items[m_Visible[i]];
 				const float height = m_Heights[m_Visible[i]];
 
+				const auto color = ConsoleLog::GetColor(item.level);
 				const ImVec2 topLeft = ImGui::GetCursorScreenPos();
-				drawList->AddRect(topLeft, ImVec2{ topLeft.x + regionWidth, topLeft.y + height },
-					borderColor, style.ChildRounding);
+				const ImVec2 bottomRight{ topLeft.x + regionWidth, topLeft.y + height };
+
+				// Warnings and worse get a plate, so they can be spotted while scrolling
+				if (item.level >= spdlog::level::warn)
+				{
+					drawList->AddRectFilled(topLeft, bottomRight,
+						ImGui::GetColorU32(ImVec4{ color.r, color.g, color.b, 0.08f }), style.ChildRounding);
+				}
+
+				drawList->AddRect(topLeft, bottomRight,
+					ImGui::GetColorU32(ImVec4{ color.r, color.g, color.b, 0.25f }), style.ChildRounding);
 
 				ImGui::SetCursorScreenPos(ImVec2{ topLeft.x + style.FramePadding.x, topLeft.y + style.FramePadding.y });
-				const auto color = ConsoleLog::GetColor(item.level);
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ color.r, color.g, color.b, 1 });
 				ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + wrapWidth);
 				ImGui::TextUnformatted(item.message.c_str(), item.message.c_str() + item.message.size());
