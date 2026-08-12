@@ -47,6 +47,8 @@ namespace LevEngine
         uint32_t WindowWidth = 1600;
         uint32_t WindowHeight = 900;
         ApplicationCommandLineArgs CommandLineArgs;
+        //The application draws its own title bar instead of using the system one
+        bool CustomTitleBar = false;
     };
 
     class LEV_API Application

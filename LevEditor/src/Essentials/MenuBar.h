@@ -8,6 +8,9 @@ namespace LevEngine::Editor
         void AddMenuItem(const String& path, const String& shortcut, const Action<>& callback);
         void Render();
         void RenderAsMain();
+        //Draws the menu inside an explicit screen space rect, which is what lets it live
+        //inside a custom title bar. Returns the screen space x right after the last menu
+        float RenderInRect(const ImRect& rect);
         [[nodiscard]] float GetHeight() const { return m_Height; }
         
     private:

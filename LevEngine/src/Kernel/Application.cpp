@@ -44,7 +44,7 @@ namespace LevEngine
         LEV_CORE_ASSERT(m_RenderDevice, "Failed to create render device");
         
         m_Window = Window::Create(m_RenderDevice, WindowAttributes(specification.Name, specification.WindowWidth,
-                                                   specification.WindowHeight));
+                                                   specification.WindowHeight, specification.CustomTitleBar));
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
         //TODO: Find out better way to initialize it

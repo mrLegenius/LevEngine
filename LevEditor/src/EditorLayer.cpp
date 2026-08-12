@@ -8,6 +8,7 @@
 
 #include "ComponentDebugRenderers/ComponentDebugRenderer.h"
 #include "Essentials/MenuBar.h"
+#include "Essentials/TitleBar.h"
 #include "Panels/AssetBrowserPanel.h"
 #include "Panels/ConsoleLog.h"
 #include "Panels/ConsolePanel.h"
@@ -46,6 +47,10 @@ namespace LevEngine::Editor
 
         m_ProjectEditor = CreateScope<ProjectEditor>(std::bind(&EditorLayer::OnProjectLoaded, this));
         m_SceneEditor = CreateScope<SceneEditor>([this]{ return m_SceneState; });
+
+        //The title bar is the only way to move or close the window, so it exists
+        //before any project is loaded
+        m_MainTitleBar = CreateRef<TitleBar>();
 
         m_DockSpace = CreateRef<DockSpace>();
         m_PanelManager = CreateRef<PanelManager>();
@@ -204,6 +209,10 @@ namespace LevEngine::Editor
 
         //ImGui::ShowDemoWindow(nullptr);
 
+        const bool hasCustomTitleBar = App::Get().GetWindow().HasCustomTitleBar();
+        if (hasCustomTitleBar)
+            m_MainTitleBar->Render(m_MainMenuBar, GetWindowTitle());
+
         ModalPopup::Render();
 
         if (!Project::GetProject()) return;
@@ -211,7 +220,11 @@ namespace LevEngine::Editor
         m_PanelManager->EnsureRestored();
 
         m_DockSpace->Render(*m_PanelManager);
-        m_MainMenuBar->RenderAsMain();
+
+        //With a custom title bar the menus are drawn inside it
+        if (!hasCustomTitleBar)
+            m_MainMenuBar->RenderAsMain();
+
         m_MainToolbar->Render();
         m_MainStatusBar->Render();
         m_PanelManager->Render();
@@ -291,6 +304,22 @@ namespace LevEngine::Editor
                 }
             });
     }
+    String EditorLayer::GetWindowTitle()
+    {
+        const auto& specification = App::Get().GetSpecification();
+
+        if (!Project::GetProject())
+            return specification.Name;
+
+        const auto projectName = ToString(Project::GetPath().stem());
+        const auto scenePath = SceneManager::GetActiveScenePath();
+
+        if (scenePath.empty())
+            return Format("{0} - {1}", specification.Name, projectName);
+
+        return Format("{0} - {1} - {2}", specification.Name, projectName, ToString(scenePath.stem()));
+    }
+
     void EditorLayer::OnProjectLoaded()
     {
         m_SaveData.SetLastOpenedProject(Project::GetPath());

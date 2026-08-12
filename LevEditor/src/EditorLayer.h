@@ -8,6 +8,7 @@ namespace LevEngine::Editor
 {
     class StatusBar;
     class Toolbar;
+    class TitleBar;
     class MenuBar;
     class DockSpace;
     class PanelManager;
@@ -26,6 +27,7 @@ namespace LevEngine::Editor
 
     private:
         static void DoComponentRenderDebug();
+        [[nodiscard]] static String GetWindowTitle();
         void RegisterPanels();
         void FocusViewportsOn(Entity entity) const;
         void OnProjectLoaded();
@@ -37,6 +39,7 @@ namespace LevEngine::Editor
         Ref<DockSpace> m_DockSpace;
         Ref<PanelManager> m_PanelManager;
         Ref<MenuBar> m_MainMenuBar;
+        Ref<TitleBar> m_MainTitleBar;
         Ref<Toolbar> m_MainToolbar;
         Ref<StatusBar> m_MainStatusBar;
 

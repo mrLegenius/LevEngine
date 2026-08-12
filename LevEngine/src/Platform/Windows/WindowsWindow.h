@@ -18,6 +18,10 @@ namespace LevEngine
 		void HandleInput() override;
 		void SetWindowTitle(String& title) override;
 		void SetCursorPosition(uint32_t x, uint32_t y) override;
+		void Minimize() override;
+		void Maximize() override;
+		void Restore() override;
+		[[nodiscard]] bool IsMaximized() const override;
 	protected:
 		void ConfineCursor() const override;
 		void FreeCursor() const override;

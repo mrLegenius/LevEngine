@@ -12,6 +12,8 @@ namespace LevEngine
 
     static auto GetIcon(const String& name) { return TextureLibrary::GetTexture(GetIconsPath(name)); }
 
+    Ref<Texture> Icons::Logo() { return GetIcon("Logo.png"); }
+
     Ref<Texture> Icons::Play() { return GetIcon("PlayButton.png"); }
     Ref<Texture> Icons::Stop() { return GetIcon("StopButton.png"); }
 

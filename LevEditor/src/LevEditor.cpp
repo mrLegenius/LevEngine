@@ -7,7 +7,7 @@ class LevEditor : public LevEngine::Application
 {
 public:
 	explicit LevEditor(const LevEngine::ApplicationCommandLineArgs args)
-		: Application({ "LevEditor", 1280, 720, args})
+		: Application({ "LevEditor", 1280, 720, args, true })
 	{
 		PushLayer(new LevEngine::Editor::EditorLayer);
 	}

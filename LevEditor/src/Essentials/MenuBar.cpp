@@ -3,6 +3,54 @@
 
 namespace LevEngine::Editor
 {
+    namespace
+    {
+        //ImGui only draws menu bars at the fixed position it reserves inside a window, so these
+        //are ImGui::BeginMenuBar/EndMenuBar with an explicit rect instead of window->MenuBarRect()
+        bool BeginMenuBarInRect(const ImRect& rect)
+        {
+            ImGuiWindow* window = ImGui::GetCurrentWindow();
+            if (window->SkipItems) return false;
+
+            LEV_ASSERT(!window->DC.MenuBarAppending);
+
+            ImGui::BeginGroup();
+            ImGui::PushID("##menubar");
+
+            ImRect clipRect = rect;
+            clipRect.ClipWith(window->OuterRectClipped);
+            ImGui::PushClipRect(clipRect.Min, clipRect.Max, false);
+
+            window->DC.CursorPos = window->DC.CursorMaxPos = rect.Min;
+            window->DC.LayoutType = ImGuiLayoutType_Horizontal;
+            window->DC.IsSameLine = false;
+            window->DC.NavLayerCurrent = ImGuiNavLayer_Menu;
+            window->DC.MenuBarAppending = true;
+            ImGui::AlignTextToFramePadding();
+
+            return true;
+        }
+
+        void EndMenuBarInRect()
+        {
+            ImGuiWindow* window = ImGui::GetCurrentWindow();
+            if (window->SkipItems) return;
+
+            ImGui::PopClipRect();
+            ImGui::PopID();
+
+            //BeginMenuBar backs the layer 0 position up with a group, and the group itself
+            //should not turn into an item
+            ImGui::GetCurrentContext()->GroupStack.back().EmitItem = false;
+            ImGui::EndGroup();
+
+            window->DC.LayoutType = ImGuiLayoutType_Vertical;
+            window->DC.IsSameLine = false;
+            window->DC.NavLayerCurrent = ImGuiNavLayer_Main;
+            window->DC.MenuBarAppending = false;
+        }
+    }
+
     void MenuBar::AddMenuItem(const String& path, const String& shortcut, const Action<>& callback)
     {
         m_MenuTree.InsertItem(path, shortcut, callback);
@@ -28,6 +76,21 @@ namespace LevEngine::Editor
             m_MenuTree.Draw();
             ImGui::EndMainMenuBar();
         }
+    }
+
+    float MenuBar::RenderInRect(const ImRect& rect)
+    {
+        m_Height = ImGui::GetFrameHeight();
+
+        if (!BeginMenuBarInRect(rect))
+            return rect.Min.x;
+
+        m_MenuTree.Draw();
+        const float menuEnd = ImGui::GetCurrentWindow()->DC.CursorPos.x;
+
+        EndMenuBarInRect();
+
+        return menuEnd;
     }
 
     void MenuBar::MenuNode::Draw() const

@@ -13,6 +13,8 @@ namespace LevEngine
 
     struct LEV_API Icons
     {
+        static Ref<Texture> Logo();
+
         static Ref<Texture> Play();
         static Ref<Texture> Stop();
 

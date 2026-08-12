@@ -1,6 +1,8 @@
 ﻿#include "levpch.h"
 #include "WindowsWindow.h"
 
+#include <windowsx.h>
+
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
@@ -30,6 +32,23 @@ namespace LevEngine
 		}
 	}
 
+	static bool IsWindowMaximized(const HWND hwnd)
+	{
+		WINDOWPLACEMENT placement{};
+		placement.length = sizeof(WINDOWPLACEMENT);
+
+		if (!GetWindowPlacement(hwnd, &placement))
+			return false;
+
+		return placement.showCmd == SW_SHOWMAXIMIZED;
+	}
+
+	static int GetResizeBorderThickness(const HWND hwnd)
+	{
+		const UINT dpi = GetDpiForWindow(hwnd);
+		return GetSystemMetricsForDpi(SM_CYFRAME, dpi) + GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
+	}
+
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) noexcept
 	{
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam))
@@ -39,6 +58,70 @@ namespace LevEngine
 
 		switch (umessage)
 		{
+		case WM_NCCREATE:
+		{
+			//The window data has to be reachable from the very first frame messages
+			//(WM_NCCALCSIZE arrives while we are still inside CreateWindowEx)
+			const auto createStruct = reinterpret_cast<CREATESTRUCT*>(lparam);
+			SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(createStruct->lpCreateParams));
+			break;
+		}
+		case WM_NCCALCSIZE:
+		{
+			if (data == nullptr || !data->customTitleBar || !wparam)
+				break;
+
+			const UINT dpi = GetDpiForWindow(hwnd);
+			const int frameX = GetSystemMetricsForDpi(SM_CXFRAME, dpi);
+			const int frameY = GetSystemMetricsForDpi(SM_CYFRAME, dpi);
+			const int padding = GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
+
+			//Keeping the side and bottom frames leaves us with free resize hit testing there,
+			//while not inseting the top is what removes the system caption
+			const auto params = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
+			RECT& clientRect = params->rgrc[0];
+			clientRect.left += frameX + padding;
+			clientRect.right -= frameX + padding;
+			clientRect.bottom -= frameY + padding;
+
+			//A maximized window is grown by the invisible frame, so the top has to be pushed back in
+			if (IsWindowMaximized(hwnd))
+				clientRect.top += padding;
+
+			return 0;
+		}
+		case WM_NCHITTEST:
+		{
+			if (data == nullptr || !data->customTitleBar)
+				break;
+
+			const LRESULT frameHit = DefWindowProc(hwnd, umessage, wparam, lparam);
+			switch (frameHit)
+			{
+			case HTNOWHERE:
+			case HTLEFT:
+			case HTRIGHT:
+			case HTTOPLEFT:
+			case HTTOP:
+			case HTTOPRIGHT:
+			case HTBOTTOMLEFT:
+			case HTBOTTOM:
+			case HTBOTTOMRIGHT:
+				return frameHit;
+			default:
+				break;
+			}
+
+			//The top resize border lives inside the client area now, so reporting it is on us
+			POINT cursor{ GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam) };
+			ScreenToClient(hwnd, &cursor);
+
+			if (!IsWindowMaximized(hwnd) && cursor.y >= 0 && cursor.y < GetResizeBorderThickness(hwnd))
+				return HTTOP;
+
+			//Dragging, snapping, double click to maximize and the system menu come for free with HTCAPTION
+			return data->titleBarHovered ? HTCAPTION : HTCLIENT;
+		}
 		case WM_CLOSE:
 		{
 			WindowClosedEvent event;
@@ -208,6 +291,10 @@ namespace LevEngine
 		m_Data.title = attributes.title;
 		m_Data.width = attributes.width;
 		m_Data.height = attributes.height;
+		m_Data.customTitleBar = attributes.customTitleBar;
+		//Window messages are dispatched while we are still creating the window,
+		//so the callback has to be valid before that
+		m_Data.eventCallback = [](Event&) {};
 
 		Log::CoreInfo("Creating window {0} ({1}x{2})", attributes.title, attributes.width, attributes.height);
 
@@ -234,8 +321,14 @@ namespace LevEngine
 		RegisterClassEx(&wc);
 
 		RECT windowRect = { 0, 0, static_cast<LONG>(attributes.width), static_cast<LONG>(attributes.height) };
-		AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
+		//With a custom title bar the client area covers the whole window, so the requested
+		//size is already the window size
+		if (!attributes.customTitleBar)
+			AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
+
+		//The system styles are kept even for a custom title bar: they are what gives us
+		//shadows, snapping, minimize animations and resize hit testing
 		constexpr auto dwStyle = WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_THICKFRAME | WS_MAXIMIZEBOX;
 
 		const auto posX = (GetSystemMetrics(SM_CXSCREEN) - attributes.width) / 2;
@@ -246,13 +339,18 @@ namespace LevEngine
 			posX, posY,
 			windowRect.right - windowRect.left,
 			windowRect.bottom - windowRect.top,
-			nullptr, nullptr, hInstance, nullptr);
+			nullptr, nullptr, hInstance, &m_Data);
+
+		if (attributes.customTitleBar)
+		{
+			//Force the frame to be recalculated with our WM_NCCALCSIZE
+			SetWindowPos(m_Window, nullptr, 0, 0, 0, 0,
+				SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
+		}
 
 		ShowWindow(m_Window, SW_SHOW);
 		SetForegroundWindow(m_Window);
 		SetFocus(m_Window);
-		SetWindowLongPtr(m_Window, GWLP_USERDATA,
-			reinterpret_cast<LONG_PTR>(&m_Data));
 
 		RAWINPUTDEVICE Rid[2];
 
@@ -270,8 +368,10 @@ namespace LevEngine
 		if (res == FALSE)
 			Log::CoreError("Error while registering raw input devices. Error code {0}", GetLastError());
 
+		//The client area is smaller than the requested window size, and with a custom
+		//title bar it is not even derived from it, so the actual size is what matters here
 		m_Context = RenderContext::Create();
-		m_Context->Init(renderDevice, attributes.width, attributes.height, IsVSync(), m_Window);
+		m_Context->Init(renderDevice, m_Data.width, m_Data.height, IsVSync(), m_Window);
 
 		SetVSync(true);
 	}
@@ -306,6 +406,26 @@ namespace LevEngine
 	void WindowsWindow::SetCursorPosition(const uint32_t x, const uint32_t y)
 	{
 		SetCursorPos(x, y);
+	}
+
+	void WindowsWindow::Minimize()
+	{
+		ShowWindow(m_Window, SW_MINIMIZE);
+	}
+
+	void WindowsWindow::Maximize()
+	{
+		ShowWindow(m_Window, SW_MAXIMIZE);
+	}
+
+	void WindowsWindow::Restore()
+	{
+		ShowWindow(m_Window, SW_RESTORE);
+	}
+
+	bool WindowsWindow::IsMaximized() const
+	{
+		return IsWindowMaximized(m_Window);
 	}
 
 	void WindowsWindow::ConfineCursor() const
