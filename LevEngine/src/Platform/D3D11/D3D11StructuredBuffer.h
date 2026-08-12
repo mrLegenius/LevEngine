@@ -22,6 +22,8 @@ namespace LevEngine
 
         void Clear() const override;
 
+        void SetData(const void* data, size_t elementSize, size_t offset, size_t numElements) override;
+
         void Copy(const Ref<D3D11StructuredBuffer>& other);
         
         void BindCounter(uint32_t slot, ShaderType shaderType) override;
@@ -33,7 +35,6 @@ namespace LevEngine
 
 
     private:
-        void SetData(void* data, size_t elementSize, size_t offset, size_t numElements);
         // Commit the data from system memory to device memory
         void Commit();
         

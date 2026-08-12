@@ -7,7 +7,7 @@ PS_IN VSMain(VS_IN input)
 
 	VertexCalculationResult result = CalculateVertex(input);
 
-	float4 fragPos = mul(result.pos, model);
+	float4 fragPos = mul(result.pos, GET_MODEL(input));
 	float3 binormal = cross(result.normal, result.tangent);
 
 	output.pos = mul(fragPos, viewProjection);

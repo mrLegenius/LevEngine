@@ -20,6 +20,13 @@ namespace LevEngine
         m_DeviceContext->DrawIndexed(indexBuffer->GetCount(), 0, 0);
     }
 
+    void D3D11RenderCommands::DrawIndexedInstanced(const Ref<IndexBuffer>& indexBuffer, const uint32_t instanceCount)
+    {
+        m_DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        indexBuffer->Bind();
+        m_DeviceContext->DrawIndexedInstanced(indexBuffer->GetCount(), instanceCount, 0, 0, 0);
+    }
+
     void D3D11RenderCommands::DrawFullScreenQuad()
     {
         m_DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

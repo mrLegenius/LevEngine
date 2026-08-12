@@ -40,6 +40,8 @@
 // The G-buffer set deliberately reuses t1..t4. Same rule as CB_LIGHT_INDEX above: a shader
 // gets the material set or the G-buffer set, never both.
 
+#define T_INSTANCE_DATA		t6	// Renderer3D::DrawMeshInstanced
+
 #define T_SHADOW_MAP		t9	// ShadowMapPass
 #define T_IRRADIANCE		t10	// EnvironmentPass
 #define T_PREFILTER			t11

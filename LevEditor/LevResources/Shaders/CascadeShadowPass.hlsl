@@ -21,6 +21,20 @@ cbuffer lightSpaceConstantBuffer : register(CB_LIGHT_SPACE)
     float4 distances;
 };
 
+#ifdef WITH_INSTANCING
+
+// Mirrors the layout in ShaderCommon.hlsl. The shadow pass only ever needs the model matrix,
+// but the buffer is shared with the geometry passes so the struct has to match.
+struct InstanceData
+{
+    row_major matrix Model;
+    row_major matrix TransposedInvertedModel;
+};
+
+StructuredBuffer<InstanceData> instances : register(T_INSTANCE_DATA);
+
+#endif
+
 struct VS_IN
 {
     float3 pos : POSITION;
@@ -29,6 +43,9 @@ struct VS_IN
 #ifdef WITH_ANIMATIONS
 	int4 boneIds : BONEIDS;
     float4 boneWeights : BONEWEIGHTS;
+#endif
+#ifdef WITH_INSTANCING
+    uint instanceId : SV_InstanceID;
 #endif
 };
 
@@ -60,9 +77,11 @@ GS_IN VSMain(VS_IN input)
 {
     GS_IN output;
 
-#ifdef WITH_ANIMATIONS
+#ifdef WITH_INSTANCING
+    output.pos = mul(float4(input.pos, 1.0f), instances[input.instanceId].Model);
+#elif defined(WITH_ANIMATIONS)
     row_major matrix boneTransform = CalculateBoneTransform(input.boneIds, input.boneWeights);
-	
+
 	float4 pos = mul(float4(input.pos, 1.0f), boneTransform);
 	output.pos = mul(pos, model);
 #else

@@ -35,11 +35,14 @@ namespace LevEngine
 
         static Ref<Shader> CascadeShadowPass();
         static Ref<Shader> CascadeShadowPassWithAnimations();
+        static Ref<Shader> CascadeShadowPassInstanced();
 
         static Ref<Shader> ForwardPBR();
-        
+        static Ref<Shader> ForwardPBRInstanced();
+
         static Ref<Shader> GBufferPass();
         static Ref<Shader> GBufferPassWithAnimations();
+        static Ref<Shader> GBufferPassInstanced();
         static Ref<Shader> DeferredVertexOnly();
         static Ref<Shader> DeferredPointLight();
         static Ref<Shader> DeferredQuadRender();

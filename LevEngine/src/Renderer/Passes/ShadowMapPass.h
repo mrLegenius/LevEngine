@@ -3,11 +3,13 @@
 #include "Kernel/Core.h"
 #include "RenderPass.h"
 #include "Renderer/RenderSettings.h"
+#include "Renderer/3D/MeshBatcher.h"
 
 namespace LevEngine
 {
     class ConstantBuffer;
     class CascadeShadowMap;
+    class Shader;
 
     class LEV_API ShadowMapPass : public RenderPass
     {
@@ -27,9 +29,15 @@ namespace LevEngine
         void End(entt::registry& registry, RenderParams& params) override;
 
     private:
+        void ProcessStaticMeshes(entt::registry& registry);
+        void ProcessStaticMeshesInstanced(entt::registry& registry);
+        void ProcessAnimatedMeshes(entt::registry& registry);
+        void BindShadowData(const Ref<Shader>& shader) const;
+
         ShadowData m_ShadowData{};
         Ref<CascadeShadowMap> m_CascadeShadowMap = nullptr;
         Ref<ConstantBuffer> m_ShadowMapConstantBuffer;
+        MeshBatcher m_Batcher;
 
         [[nodiscard]] static Vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj);
         [[nodiscard]] static Matrix GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners);

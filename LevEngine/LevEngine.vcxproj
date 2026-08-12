@@ -1016,6 +1016,7 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Project.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />
+    <ClInclude Include="src\Renderer\3D\MeshBatcher.h" />
     <ClInclude Include="src\Renderer\3D\Primitives.h" />
     <ClInclude Include="src\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="src\Renderer\DebugRender\DebugCube.h" />
@@ -1431,6 +1432,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Project.cpp" />
     <ClCompile Include="src\Renderer\3D\Mesh.cpp" />
+    <ClCompile Include="src\Renderer\3D\MeshBatcher.cpp" />
     <ClCompile Include="src\Renderer\3D\Primitives.cpp" />
     <ClCompile Include="src\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="src\Renderer\DebugRender\DebugRender.cpp" />

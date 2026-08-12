@@ -8,4 +8,6 @@ namespace LevEngine
     RendererAPI RenderSettings::RendererAPI = RendererAPI::D3D11;
 
     bool RenderSettings::UseFrustumCulling = true;
+
+    bool RenderSettings::UseInstancing = true;
 }

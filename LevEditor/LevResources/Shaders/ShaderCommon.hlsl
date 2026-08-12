@@ -21,6 +21,10 @@ struct VS_IN
     float4 boneWeights : BONEWEIGHTS;
 #endif
 
+#ifdef WITH_INSTANCING
+	uint instanceId : SV_InstanceID;
+#endif
+
 };
 
 struct PS_IN
@@ -57,6 +61,29 @@ cbuffer ModelConstantBuffer : register(CB_MODEL)
 	row_major matrix finalBonesMatrices[MAX_BONES];
 #endif
 };
+
+#ifdef WITH_INSTANCING
+
+// One entry per instance, uploaded once per instanced draw by Renderer3D::DrawMeshInstanced.
+// The whole point of instancing is that nothing is bound between instances, so the model matrix
+// comes from here instead of ModelConstantBuffer, which stays unreferenced in this variant.
+struct InstanceData
+{
+	row_major matrix Model;
+	row_major matrix TransposedInvertedModel;
+};
+
+StructuredBuffer<InstanceData> instances : register(T_INSTANCE_DATA);
+
+#define GET_MODEL(input) instances[input.instanceId].Model
+#define GET_TRANSPOSED_INVERTED_MODEL(input) instances[input.instanceId].TransposedInvertedModel
+
+#else
+
+#define GET_MODEL(input) model
+#define GET_TRANSPOSED_INVERTED_MODEL(input) transposedInvertedModel
+
+#endif
 
 cbuffer lightSpaceConstantBuffer : register(CB_LIGHT_SPACE)
 {
@@ -203,14 +230,14 @@ VertexCalculationResult CalculateVertex(VS_IN input)
 	row_major matrix boneTransform = CalculateBoneTransform(input.boneIds, input.boneWeights);
 
 	result.pos = mul(float4(input.pos, 1.0f), boneTransform);
-	result.normal = mul(mul(float4(input.normal, 0.0f), boneTransform), transposedInvertedModel).xyz;
-	result.tangent = mul(mul(float4(input.tangent, 0.0f), boneTransform), transposedInvertedModel).xyz;
+	result.normal = mul(mul(float4(input.normal, 0.0f), boneTransform), GET_TRANSPOSED_INVERTED_MODEL(input)).xyz;
+	result.tangent = mul(mul(float4(input.tangent, 0.0f), boneTransform), GET_TRANSPOSED_INVERTED_MODEL(input)).xyz;
 
 #else
 
 	result.pos = float4(input.pos, 1.0f);
-	result.normal = mul(float4(input.normal, 0.0f), transposedInvertedModel).xyz;
-	result.tangent = mul(float4(input.tangent, 0.0f), transposedInvertedModel).xyz;
+	result.normal = mul(float4(input.normal, 0.0f), GET_TRANSPOSED_INVERTED_MODEL(input)).xyz;
+	result.tangent = mul(float4(input.tangent, 0.0f), GET_TRANSPOSED_INVERTED_MODEL(input)).xyz;
 
 #endif
 

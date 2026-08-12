@@ -15,6 +15,7 @@ public:
 	~D3D11RenderCommands() override = default;
 
 	void DrawIndexed(const Ref<IndexBuffer>& indexBuffer) override;
+	void DrawIndexedInstanced(const Ref<IndexBuffer>& indexBuffer, uint32_t instanceCount) override;
 	void DrawFullScreenQuad() override;
 	void DrawLineList(const Ref<IndexBuffer>& indexBuffer) override;
 	void DrawLineStrip(uint32_t vertexCount) override;

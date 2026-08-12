@@ -18,6 +18,9 @@ namespace LevEngine
         virtual bool Bind(uint32_t slot, ShaderType shaderType, bool readWrite, uint32_t counterValue = -1) = 0;
         virtual void Unbind(uint32_t slot, ShaderType shaderType, bool readWrite) const = 0;
 
+        // Replaces the contents of a CPUAccess::Write buffer. The upload happens on the next Bind.
+        virtual void SetData(const void* data, size_t elementSize, size_t offset, size_t numElements) = 0;
+
         virtual void Clear() const = 0;
         virtual void BindCounter(uint32_t slot, ShaderType shaderType) = 0;
         virtual void UnbindCounter(uint32_t slot, ShaderType shaderType) = 0;

@@ -15,6 +15,11 @@ namespace LevEngine
             s_RendererAPI->DrawIndexed(indexBuffer);
         }
 
+        static void DrawIndexedInstanced(const Ref<IndexBuffer>& indexBuffer, const uint32_t instanceCount)
+        {
+            s_RendererAPI->DrawIndexedInstanced(indexBuffer, instanceCount);
+        }
+
         static void DrawLineList(const Ref<IndexBuffer>& indexBuffer)
         {
             s_RendererAPI->DrawLineList(indexBuffer);

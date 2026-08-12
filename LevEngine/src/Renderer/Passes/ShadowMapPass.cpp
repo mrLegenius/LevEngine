@@ -125,12 +125,31 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 {
 	LEV_PROFILE_FUNCTION();
 
-	ShaderAssets::CascadeShadowPass()->Bind();
-	
+	if (RenderSettings::UseInstancing)
+		ProcessStaticMeshesInstanced(registry);
+	else
+		ProcessStaticMeshes(registry);
+
+	ProcessAnimatedMeshes(registry);
+}
+
+void ShadowMapPass::BindShadowData(const Ref<Shader>& shader) const
+{
+	shader->Bind();
+
+	//<--- The cascade matrices live in the geometry stage, which is what fans one draw out into
+	//     the four cascade slices ---<<
 	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
 	m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);
-	
-	// Process static meshes
+}
+
+void ShadowMapPass::ProcessStaticMeshes(entt::registry& registry)
+{
+	LEV_PROFILE_FUNCTION();
+
+	const auto& shader = ShaderAssets::CascadeShadowPass();
+	BindShadowData(shader);
+
 	const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
     for (const auto entity : staticMeshGroup)
     {
@@ -145,15 +164,15 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
     	const auto initialMesh = meshComponent.mesh->GetMesh();
 
     	if (!initialMesh) continue;
-            
+
     	meshesToRender.push(initialMesh);
 
     	while (meshesToRender.size() > 0)
     	{
     		auto mesh = meshesToRender.front();
     		meshesToRender.pop();
-  	
-    		Renderer3D::DrawMesh(transform.GetModel(), mesh, ShaderAssets::CascadeShadowPass());
+
+    		Renderer3D::DrawMesh(transform.GetModel(), mesh, shader);
 
     		for (auto subMesh : mesh->GetSubMeshes())
     		{
@@ -162,13 +181,51 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
     		}
     	}
     }
+}
 
-	ShaderAssets::CascadeShadowPassWithAnimations()->Bind();
-	
-	m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);
-	m_ShadowMapConstantBuffer->Bind(ShaderType::Geometry);
-	
-	// Process animated meshes
+void ShadowMapPass::ProcessStaticMeshesInstanced(entt::registry& registry)
+{
+	LEV_PROFILE_FUNCTION();
+
+	const auto& shader = ShaderAssets::CascadeShadowPassInstanced();
+	BindShadowData(shader);
+
+	m_Batcher.Clear();
+
+	{
+		LEV_PROFILE_SCOPE("Batch shadow casters");
+
+		const auto staticMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent>, entt::exclude<AnimatorComponent>);
+		for (const auto entity : staticMeshGroup)
+		{
+			auto [transform, meshComponent] = staticMeshGroup.get<Transform, MeshRendererComponent>(entity);
+
+			if (!meshComponent.enabled) continue;
+			if (!meshComponent.mesh) continue;
+			if (!meshComponent.material) continue;
+			if (!meshComponent.castShadow) continue;
+
+			//<--- Depth only: the material never reaches the shader, so everything batches on the
+			//     mesh alone. Culling is the light's job, not the camera frustum's ---<<
+			m_Batcher.Add(meshComponent.mesh->GetMesh(), nullptr, transform, nullptr);
+		}
+	}
+
+	for (const auto& batch : m_Batcher.GetBatches())
+	{
+		if (batch.Instances.empty()) continue;
+
+		Renderer3D::DrawMeshInstanced(batch.Instances, batch.Geometry, shader);
+	}
+}
+
+void ShadowMapPass::ProcessAnimatedMeshes(entt::registry& registry)
+{
+	LEV_PROFILE_FUNCTION();
+
+	const auto& shader = ShaderAssets::CascadeShadowPassWithAnimations();
+	BindShadowData(shader);
+
 	const auto animatedMeshGroup = registry.group<>(entt::get<Transform, MeshRendererComponent, AnimatorComponent>);
 	for (const auto entity : animatedMeshGroup)
 	{
@@ -179,21 +236,21 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 		if (!meshRenderer.mesh) continue;
 		if (!meshRenderer.material) continue;
 		if (!meshRenderer.castShadow) continue;
-		
+
 		const auto mesh = meshRenderer.mesh->GetMesh();
-		
+
 		if (!mesh) continue;
 
-		Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh,
-		                     ShaderAssets::CascadeShadowPassWithAnimations());
+		Renderer3D::DrawMesh(transform.GetModel(), animator.GetFinalBoneMatrices(), mesh, shader);
 	}
 }
 
 void ShadowMapPass::End(entt::registry& registry, RenderParams& params)
 {
 	LEV_PROFILE_FUNCTION();
-	
+
     ShaderAssets::CascadeShadowPass()->Unbind();
+	ShaderAssets::CascadeShadowPassInstanced()->Unbind();
 	ShaderAssets::CascadeShadowPassWithAnimations()->Unbind();
     m_CascadeShadowMap->ResetRenderTarget();
     m_ShadowMapConstantBuffer->SetData(&m_ShadowData, sizeof ShadowData);

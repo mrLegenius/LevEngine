@@ -39,6 +39,14 @@ namespace LevEngine
         return ShaderLibrary::GetOrAddShader(GetShaderPath("ForwardPBR.hlsl"));
     }
 
+    Ref<Shader> ShaderAssets::ForwardPBRInstanced()
+    {
+        ShaderMacros macros;
+        macros.emplace("WITH_INSTANCING", "1");
+
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("ForwardPBR.hlsl"), macros);
+    }
+
     Ref<Shader> ShaderAssets::Unlit()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Unlit.hlsl"));
@@ -57,6 +65,14 @@ namespace LevEngine
         return ShaderLibrary::GetOrAddShader(GetShaderPath("CascadeShadowPass.hlsl"), macros);
     }
 
+    Ref<Shader> ShaderAssets::CascadeShadowPassInstanced()
+    {
+        ShaderMacros macros;
+        macros.emplace("WITH_INSTANCING", "1");
+
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("CascadeShadowPass.hlsl"), macros);
+    }
+
     Ref<Shader> ShaderAssets::GBufferPass()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("DeferredOpaquePBR.hlsl"));
@@ -66,6 +82,14 @@ namespace LevEngine
     {
         ShaderMacros macros;
         macros.emplace("WITH_ANIMATIONS", "1");
+
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("DeferredOpaquePBR.hlsl"), macros);
+    }
+
+    Ref<Shader> ShaderAssets::GBufferPassInstanced()
+    {
+        ShaderMacros macros;
+        macros.emplace("WITH_INSTANCING", "1");
 
         return ShaderLibrary::GetOrAddShader(GetShaderPath("DeferredOpaquePBR.hlsl"), macros);
     }

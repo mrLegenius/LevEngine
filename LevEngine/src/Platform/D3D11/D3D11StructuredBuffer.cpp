@@ -302,12 +302,12 @@ namespace LevEngine
         }
     }
 
-    void D3D11StructuredBuffer::SetData(void* data, size_t elementSize, size_t offset, size_t numElements)
+    void D3D11StructuredBuffer::SetData(const void* data, size_t elementSize, size_t offset, size_t numElements)
     {
         LEV_PROFILE_FUNCTION();
-        
-        unsigned char* first = (unsigned char*)data + (offset * elementSize);
-        unsigned char* last = first + (numElements * elementSize);
+
+        const unsigned char* first = (const unsigned char*)data + (offset * elementSize);
+        const unsigned char* last = first + (numElements * elementSize);
         m_Data.assign(first, last);
 
         m_IsDirty = true;

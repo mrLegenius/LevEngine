@@ -25,7 +25,11 @@ struct LEV_API RenderSettings
 	static RendererAPI RendererAPI;
 
 	static bool UseFrustumCulling;
-	
+
+	// Static opaque and shadow geometry is grouped by mesh + material and issued as one
+	// instanced draw per group. Turn off to fall back to a draw call per mesh.
+	static bool UseInstancing;
+
 	static constexpr bool EnableShaderDebug =
 #ifdef LEV_DEBUG
 	true;
@@ -35,6 +39,7 @@ struct LEV_API RenderSettings
 	
 	static constexpr uint32_t ShadowMapSlot = 9;
 	static constexpr uint32_t MaterialSlot = 4;
+	static constexpr uint32_t InstanceDataSlot = 6;
 
 	//Shadows
 	static constexpr int CascadeCount = 4;

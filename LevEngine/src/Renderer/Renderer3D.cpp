@@ -2,7 +2,9 @@
 #include "Renderer3D.h"
 
 #include "Pipeline/ConstantBuffer.h"
+#include "Pipeline/StructuredBuffer.h"
 #include "RenderCommand.h"
+#include "RenderSettings.h"
 #include "Shader/Shader.h"
 #include "3D/Mesh.h"
 #include "3D/Primitives.h"
@@ -19,6 +21,13 @@ namespace LevEngine
     Ref<ConstantBuffer> Renderer3D::m_ModelConstantBuffer;
     Ref<ConstantBuffer> Renderer3D::m_CameraConstantBuffer;
     Ref<ConstantBuffer> Renderer3D::m_ScreenToViewParamsConstantBuffer;
+
+    Ref<StructuredBuffer> Renderer3D::m_InstanceBuffer;
+    uint32_t Renderer3D::m_InstanceBufferCapacity;
+
+    // The instance buffer starts here and doubles as needed, so a scene whose batch sizes settle
+    // stops reallocating after the first few frames.
+    static constexpr uint32_t k_InitialInstanceCapacity = 256;
 
     Matrix Renderer3D::m_ViewProjection;
 
@@ -92,6 +101,48 @@ namespace LevEngine
             LEV_PROFILE_SCOPE("Draw indexed mesh");
             
             RenderCommand::DrawIndexed(mesh->IndexBuffer);
+        }
+    }
+
+    void Renderer3D::EnsureInstanceBufferCapacity(const uint32_t count)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        if (m_InstanceBuffer && m_InstanceBufferCapacity >= count) return;
+
+        uint32_t capacity = Math::Max(m_InstanceBufferCapacity, k_InitialInstanceCapacity);
+        while (capacity < count)
+            capacity *= 2;
+
+        m_InstanceBuffer = StructuredBuffer::Create(nullptr, capacity, sizeof MeshInstanceData, CPUAccess::Write);
+        m_InstanceBufferCapacity = capacity;
+    }
+
+    void Renderer3D::DrawMeshInstanced(const Vector<MeshInstanceData>& instances, const Ref<Mesh>& mesh,
+        const Ref<Shader>& shader)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        if (!mesh->IndexBuffer) return;
+        if (instances.empty()) return;
+
+        const auto instanceCount = static_cast<uint32_t>(instances.size());
+
+        EnsureInstanceBufferCapacity(instanceCount);
+
+        {
+            LEV_PROFILE_SCOPE("Bind Instance Data");
+
+            m_InstanceBuffer->SetData(instances.data(), sizeof MeshInstanceData, 0, instanceCount);
+            m_InstanceBuffer->Bind(RenderSettings::InstanceDataSlot, ShaderType::Vertex, false);
+        }
+
+        mesh->Bind(shader);
+
+        {
+            LEV_PROFILE_SCOPE("Draw indexed instanced mesh");
+
+            RenderCommand::DrawIndexedInstanced(mesh->IndexBuffer, instanceCount);
         }
     }
 
