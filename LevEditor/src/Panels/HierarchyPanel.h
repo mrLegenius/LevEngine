@@ -23,7 +23,6 @@ namespace LevEngine::Editor
 
 	private:
 		void DrawEntityNode(Entity entity);
-		void SelectEntity(Entity entity);
 
 		Action<Entity> m_EntityFocused;
 		Vector<Entity> m_EntitiesToDelete;

@@ -13,6 +13,9 @@ namespace LevEngine::Editor
 		void Set(const Entity entity) { m_Entity = entity; }
 		void DrawProperties() override;
 
+		//<--- Reuses the current entity selection, so everything holding a reference to it keeps working ---<<
+		static void SelectEntity(Entity entity);
+
 	private:
 		Entity m_Entity;
 	};

@@ -15,6 +15,9 @@ namespace LevEngine
 		void Focus(Vector3 center, float radius);
 		void FocusOnBounds(Vector3 min, Vector3 max);
 
+		//Builds a world space ray going through a point of the viewport, the point is in pixels from its left top
+		[[nodiscard]] Ray GetViewportRay(Vector2 point, Vector2 viewportSize) const;
+
 		[[nodiscard]] const Transform& GetTransform() const { return m_Transform; }
 		void UpdateView() { m_Transform.RecalculateModel(); }
 

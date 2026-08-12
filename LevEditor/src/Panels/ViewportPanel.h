@@ -26,11 +26,15 @@ namespace LevEngine::Editor
 	protected:
 		String GetName() override { return "Viewport"; }
 		void DrawContent() override;
-		void DrawGizmo() const;
+		//Returns true when a gizmo was drawn, so its interaction state is the one of this frame
+		bool DrawGizmo() const;
 
 	private:
 
 		void DrawToolbar();
+		void HandlePicking(bool gizmoDrawn) const;
+		//Left top corner of the whole texture in screen coordinates, the visible part of it is only the center
+		[[nodiscard]] Vector2 GetTextureOrigin() const;
 
 		Vector2 m_Size{ 0.0f };
 		Vector2 m_Bounds[2];

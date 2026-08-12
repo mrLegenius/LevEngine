@@ -7,6 +7,14 @@
 
 namespace LevEngine::Editor
 {
+	void EntitySelection::SelectEntity(const Entity entity)
+	{
+		if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
+			entitySelection->Set(entity);
+		else
+			Selection::Select(CreateRef<EntitySelection>(entity));
+	}
+
 	void EntitySelection::DrawProperties()
 	{
 		if (m_Entity.HasComponent<TagComponent>())

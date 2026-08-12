@@ -993,6 +993,7 @@
     <ClInclude Include="src\Math\Matrix.h" />
     <ClInclude Include="src\Math\Plane.h" />
     <ClInclude Include="src\Math\Quaternion.h" />
+    <ClInclude Include="src\Math\Ray.h" />
     <ClInclude Include="src\Math\Random.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />

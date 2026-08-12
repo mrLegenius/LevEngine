@@ -106,7 +106,9 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClInclude Include="src\AssetSelection.h" />
     <ClInclude Include="src\ComponentDebugRenderers\ComponentDebugRenderer.h" />
     <ClInclude Include="src\EditorCamera.h" />
+    <ClInclude Include="src\EditorMath.h" />
     <ClInclude Include="src\EditorSaveData.h" />
+    <ClInclude Include="src\EntityPicker.h" />
     <ClInclude Include="src\EntitySelection.h" />
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Essentials\MenuBar.h" />
@@ -206,6 +208,7 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     </ClCompile>
     <ClCompile Include="src\EditorCamera.cpp" />
     <ClCompile Include="src\EditorLayer.cpp" />
+    <ClCompile Include="src\EntityPicker.cpp" />
     <ClCompile Include="src\EntitySelection.cpp" />
     <ClCompile Include="src\LevEditor.cpp" />
     <ClCompile Include="src\Panels\AssetBrowserPanel.cpp" />

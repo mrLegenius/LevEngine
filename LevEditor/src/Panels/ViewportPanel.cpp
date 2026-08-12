@@ -4,6 +4,7 @@
 #include <imgui.h>
 
 #include "imguizmo/ImGuizmo.h"
+#include "EntityPicker.h"
 #include "EntitySelection.h"
 #include "Assets/SceneAsset.h"
 #include "GUI/EditorGUI.h"
@@ -139,15 +140,17 @@ namespace LevEngine::Editor
             ImGui::EndDragDropTarget();
         }
 
-        DrawGizmo();
+        const bool gizmoDrawn = DrawGizmo();
+
+        HandlePicking(gizmoDrawn);
     }
 
-    void ViewportPanel::DrawGizmo() const
+    bool ViewportPanel::DrawGizmo() const
     {
         //Gizmos
         const auto& entitySelection = CastRef<EntitySelection>(Selection::Current());
 
-        if (!entitySelection) return;
+        if (!entitySelection) return false;
 
         const Entity selectedEntity = entitySelection->Get();
         if (selectedEntity && Gizmo::Tool != Gizmo::ToolType::None)
@@ -159,10 +162,9 @@ namespace LevEngine::Editor
 
             const auto width = m_Texture->GetWidth();
             const auto height = m_Texture->GetHeight();
-            const auto xOffset = width * leftBottom.x;
-            const auto yOffset = height * leftBottom.y;
+            const Vector2 textureOrigin = GetTextureOrigin();
 
-            ImGuizmo::SetRect(m_Bounds[0].x - xOffset, m_Bounds[0].y - yOffset, width, height);
+            ImGuizmo::SetRect(textureOrigin.x, textureOrigin.y, width, height);
 
             const Matrix cameraView = m_Camera.GetTransform().GetModel().Invert();
             const Matrix& cameraProjection = m_Camera.GetProjection();
@@ -192,7 +194,52 @@ namespace LevEngine::Editor
                 tc.SetWorldRotation(rotation);
                 tc.RecalculateModel();
             }
+
+            return true;
         }
+
+        return false;
+    }
+
+    Vector2 ViewportPanel::GetTextureOrigin() const
+    {
+        //The image shows the centered part of the texture, while the camera projection covers the whole of it
+        return Vector2{
+            m_Bounds[0].x - m_Texture->GetWidth() * leftBottom.x,
+            m_Bounds[0].y - m_Texture->GetHeight() * leftBottom.y
+        };
+    }
+
+    void ViewportPanel::HandlePicking(const bool gizmoDrawn) const
+    {
+        if (!m_Hovered) return;
+
+        //The gizmo takes the clicks over it, otherwise dragging it would select whatever is behind
+        if (gizmoDrawn && (ImGuizmo::IsOver() || ImGuizmo::IsUsing())) return;
+
+        //The right mouse button drives the camera, no selection is done while it is held
+        if (Input::IsMouseButtonDown(MouseButton::Right)) return;
+
+        if (!ImGui::IsMouseClicked(ImGuiMouseButton_Left)) return;
+
+        const auto& activeScene = SceneManager::GetActiveScene();
+        if (!activeScene) return;
+
+        const Vector2 textureOrigin = GetTextureOrigin();
+        const ImVec2 mousePosition = ImGui::GetMousePos();
+        const Vector2 point{ mousePosition.x - textureOrigin.x, mousePosition.y - textureOrigin.y };
+
+        const Vector2 textureSize{
+            static_cast<float>(m_Texture->GetWidth()),
+            static_cast<float>(m_Texture->GetHeight())
+        };
+
+        const Ray ray = m_Camera.GetViewportRay(point, textureSize);
+
+        if (const Entity picked = EntityPicker::Pick(activeScene, ray))
+            EntitySelection::SelectEntity(picked);
+        else
+            Selection::Deselect();
     }
 
     void ViewportPanel::DrawToolbar()

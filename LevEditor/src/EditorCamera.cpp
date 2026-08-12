@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "EditorCamera.h"
 
+#include "EditorMath.h"
 #include "Assets/MeshAsset.h"
 #include "Renderer/3D/Mesh.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
@@ -15,14 +16,6 @@ namespace LevEngine
 		//<--- Leaves some empty space around the focused object ---<<
 		constexpr float k_FocusPadding = 1.3f;
 
-		Matrix GetWorldMatrix(const Transform& transform)
-		{
-			//<--- The cached model matrix is only recalculated by the systems, which do not run in the edit mode ---<<
-			return Matrix::CreateScale(transform.GetWorldScale()) *
-				Matrix::CreateFromQuaternion(transform.GetWorldRotation()) *
-				Matrix::CreateTranslation(transform.GetWorldPosition());
-		}
-
 		//<--- Meshes keep their bounds in the local space, so every corner has to go through the world matrix ---<<
 		bool TryExpandByEntityBounds(const Entity entity, Vector3& min, Vector3& max)
 		{
@@ -34,7 +27,7 @@ namespace LevEngine
 
 				if (meshRenderer.mesh && meshRenderer.mesh->GetMesh())
 				{
-					const Matrix model = GetWorldMatrix(entity.GetComponent<Transform>());
+					const Matrix model = Editor::GetWorldMatrix(entity.GetComponent<Transform>());
 
 					for (const auto& corner : meshRenderer.mesh->GetMesh()->GetAABBBoundingVolume().GetVertices())
 					{
@@ -137,6 +130,30 @@ namespace LevEngine
 		const Vector3 extents = Vector3::One * Math::Max(radius, k_MinFocusRadius);
 
 		FocusOnBounds(center - extents, center + extents);
+	}
+
+	Ray EditorCamera::GetViewportRay(const Vector2 point, const Vector2 viewportSize) const
+	{
+		if (viewportSize.x <= 0.0f || viewportSize.y <= 0.0f) return Ray{};
+
+		//<--- The clip space has its y axis pointing up and the depth going from 0 at the near plane to 1 at the far one ---<<
+		const Vector2 clipPoint
+		{
+			point.x / viewportSize.x * 2.0f - 1.0f,
+			1.0f - point.y / viewportSize.y * 2.0f
+		};
+
+		const Matrix view = m_Transform.GetModel().Invert();
+		const Matrix inverseViewProjection = (view * GetProjection()).Invert();
+
+		//<--- Going through the inverse of the whole transformation keeps the projection type out of the picture ---<<
+		const Vector3 nearPoint = Vector3::Transform(Vector3{ clipPoint.x, clipPoint.y, 0.0f }, inverseViewProjection);
+		const Vector3 farPoint = Vector3::Transform(Vector3{ clipPoint.x, clipPoint.y, 1.0f }, inverseViewProjection);
+
+		Vector3 direction = farPoint - nearPoint;
+		direction.Normalize();
+
+		return Ray{ nearPoint, direction };
 	}
 
 	void EditorCamera::FocusOnBounds(const Vector3 min, const Vector3 max)

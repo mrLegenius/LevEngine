@@ -81,6 +81,7 @@
 #include "Math/Vector4.h"
 #include "Math/Quaternion.h"
 #include "Math/Matrix.h"
+#include "Math/Ray.h"
 #include "Math/Color.h"
 
 #pragma endregion
