@@ -75,7 +75,10 @@ namespace LevEngine::Editor
             }, true);
 
         m_PanelManager->RegisterPanelType(PanelTypes::Hierarchy,
-            []() -> Ref<Panel> { return CreateRef<HierarchyPanel>(); }, true);
+            [this]() -> Ref<Panel>
+            {
+                return CreateRef<HierarchyPanel>([this](const Entity entity) { FocusViewportsOn(entity); });
+            }, true);
 
         m_PanelManager->RegisterPanelType(PanelTypes::Properties,
             []() -> Ref<Panel> { return CreateRef<PropertiesPanel>(); }, true);
@@ -94,6 +97,15 @@ namespace LevEngine::Editor
 
         m_PanelManager->RegisterPanelType(PanelTypes::Scripts,
             []() -> Ref<Panel> { return CreateRef<ScriptsPanel>(); }, true);
+    }
+
+    void EditorLayer::FocusViewportsOn(const Entity entity) const
+    {
+        for (const auto& viewport : m_PanelManager->GetPanelsOfType<ViewportPanel>())
+        {
+            if (viewport->IsActive())
+                viewport->FocusCameraOn(entity);
+        }
     }
 
     void EditorLayer::OnEvent(Event& event)

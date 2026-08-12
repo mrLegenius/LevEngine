@@ -10,6 +10,11 @@ namespace LevEngine
 		void OnUpdate(float deltaTime);
 		void Zoom(float value);
 
+		//Moves the camera so the entity with all of its children fits into the view, the orientation is kept
+		void Focus(Entity entity);
+		void Focus(Vector3 center, float radius);
+		void FocusOnBounds(Vector3 min, Vector3 max);
+
 		[[nodiscard]] const Transform& GetTransform() const { return m_Transform; }
 		void UpdateView() { m_Transform.RecalculateModel(); }
 

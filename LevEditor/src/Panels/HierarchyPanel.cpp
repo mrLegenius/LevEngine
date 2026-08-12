@@ -126,6 +126,14 @@ namespace LevEngine::Editor
 
 	}
 
+	void HierarchyPanel::SelectEntity(const Entity entity)
+	{
+		if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
+			entitySelection->Set(entity);
+		else
+			Selection::Select(CreateRef<EntitySelection>(entity));
+	}
+
 	void HierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		LEV_PROFILE_FUNCTION();
@@ -151,15 +159,18 @@ namespace LevEngine::Editor
 			m_PressedEntity = entity;
 		}
 		
-		if (ImGui::IsMouseReleased(0))
+		//<--- A double click both selects the entity and brings the scene cameras to it ---<<
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+		{
+			SelectEntity(entity);
+
+			if (m_EntityFocused)
+				m_EntityFocused(entity);
+		}
+		else if (ImGui::IsMouseReleased(0))
 		{
 			if (ImGui::IsItemHovered() && entity == m_PressedEntity)
-			{
-				if (entitySelection)
-					entitySelection->Set(entity);
-				else
-					Selection::Select(CreateRef<EntitySelection>(entity));
-			}
+				SelectEntity(entity);
 		}
 
 		if (ImGui::BeginDragDropSource())

@@ -14,6 +14,7 @@ namespace LevEngine::Editor
 
 		[[nodiscard]] EditorCamera& GetCamera() { return m_Camera; }
 		void UpdateCamera(const float deltaTime);
+		void FocusCameraOn(Entity entity) { m_Camera.Focus(entity); }
 
 		bool OnKeyPressed(KeyPressedEvent& event) override;
 

@@ -27,6 +27,7 @@ namespace LevEngine::Editor
     private:
         static void DoComponentRenderDebug();
         void RegisterPanels();
+        void FocusViewportsOn(Entity entity) const;
         void OnProjectLoaded();
         void OnPlayButtonClicked();
 
