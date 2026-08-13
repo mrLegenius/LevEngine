@@ -39,7 +39,8 @@ namespace LevEngine
         D3D11_BUFFER_DESC bufferDesc = {};
         bufferDesc.ByteWidth = static_cast<UINT>(numBytes);
 
-        if (m_CPUAccess & CPUAccess::ReadWrite)
+        //<--- operator& is an overlap test, so Write alone has to be kept out of the staging branch ---<<
+        if ((m_CPUAccess & CPUAccess::Read) && (m_CPUAccess & CPUAccess::Write))
         {
             bufferDesc.Usage = D3D11_USAGE_STAGING;
             bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
@@ -325,6 +326,9 @@ namespace LevEngine
             auto res = m_DeviceContext->Map(m_Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
             LEV_CORE_ASSERT(SUCCEEDED(res), "Failed to map subresource")
+
+            //<--- mappedResource is untouched when Map fails, so there is nothing to copy into ---<<
+            if (FAILED(res)) return;
 
             size_t sizeInBytes = m_Data.size();
             memcpy_s(mappedResource.pData, sizeInBytes, m_Data.data(), sizeInBytes);

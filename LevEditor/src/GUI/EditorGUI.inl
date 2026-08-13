@@ -111,6 +111,12 @@ namespace LevEngine::Editor
 		if (DrawAssetSelectorPopup(selectorPopupId, candidates, assetPtr, selected))
 		{
 			auto newAsset = CastRef<T>(selected);
+
+			//<--- The database hands out assets as they are, and the popup lists them without
+			//<--- reading them. Whatever the field is assigned has to carry its data ---<<
+			if (newAsset && !newAsset->IsDeserialized())
+				newAsset->Deserialize();
+
 			if (assetPtr != newAsset)
 			{
 				assetPtr = newAsset;
