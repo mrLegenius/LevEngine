@@ -2,6 +2,7 @@
 #include "ShadowMapPass.h"
 
 #include "Renderer/Lighting/CascadeShadowMap.h"
+#include "Renderer/Lighting/LightCollection.h"
 #include "Renderer/Pipeline/ConstantBuffer.h"
 #include "Renderer/Renderer3D.h"
 #include "Renderer/RenderParams.h"
@@ -89,12 +90,26 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 
 	if (group.empty()) return false;
 	
+	// The first directional light is the one the cascades are fit to. Shaders match this by only
+	// shadowing light 0 -- see CalcDirLights in PBRCommon.hlsl.
+	//
+	// Lights that carry no colour are skipped here and in LightCollection alike, so the two agree on
+	// which light is light 0: that is what hands the shadow map to the moon once the sun has set,
+	// instead of spending it on a sun that is contributing nothing.
     Vector3 lightDirection;
+	bool hasLight = false;
 	for (const auto entity : group)
 	{
-		auto& transform = group.get<Transform>(entity);
+		auto [transform, light] = group.get<Transform, DirectionalLightComponent>(entity);
+
+		if (!LightCollection::IsLightVisible(light)) continue;
+
         lightDirection = transform.GetForwardDirection();
+		hasLight = true;
+		break;
 	}
+
+	if (!hasLight) return false;
 
 	const auto cameraCascadeProjections = params.Camera->GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
 

@@ -49,7 +49,7 @@ PS_OUT PSMain(PS_IN input)
 	float3 viewDir = normalize(cameraPosition - input.fragPos);
 
 	float3 ambient = CalcAmbient(normal, viewDir, albedo, metallic, roughness, ao);
-	float3 lit = CalcDirLight(dirLight, normal, viewDir, fragPosLightSpace, cascade, albedo, metallic, roughness);
+	float3 lit = CalcDirLights(normal, viewDir, fragPosLightSpace, cascade, albedo, metallic, roughness);
 
 	float3 finalColor = ambient + lit + emissive;
 

@@ -2,10 +2,10 @@ Scene: ParticlesTest
 Entities:
   - Entity: 9871572639824708074
     Tag: Particles
-    Parent: 102243701733768014
+    Parent: 6371404574176718739
     Transform:
       ChildIndex: 0
-      Position: [0, 0, 0]
+      Position: [0, 2.10374355, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
     Emitter:
@@ -32,11 +32,11 @@ Entities:
       Rate: 86.5
   - Entity: 11716462602945935033
     Tag: Camera
-    Parent: 102243701733768014
+    Parent: 6371404574176718739
     Transform:
       ChildIndex: 1
       Position: [16.5100002, 21.3880005, -26.8449993]
-      Rotation: [-1.57079625, 0, 1.43025466e-06]
+      Rotation: [-1.57079613, 0, 1.43025454e-06]
       Scale: [1, 1, 1]
     Camera:
       Camera:
@@ -51,40 +51,72 @@ Entities:
       FixedAspectRatio: false
   - Entity: 3972464875524937577
     Tag: Environment
-    Parent: 102243701733768014
+    Parent: 6371404574176718739
     Transform:
       ChildIndex: 2
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
       Scale: [1, 1, 1]
+    Atmosphere:
+      Preset: 0
+      PlanetRadius: 6360
+      AtmosphereHeight: 60
+      UnitsToKilometers: 0.00100000005
+      SeaLevelHeight: 0
+      RayleighScattering: [0.00580199994, 0.0135580003, 0.0331000015]
+      RayleighScaleHeight: 8
+      MieScattering: 0.00399600016
+      MieAbsorption: 0.000440000003
+      MieScaleHeight: 1.20000005
+      MieAnisotropy: 0.800000012
+      AbsorptionCoefficients: [0.000650000002, 0.001881, 8.49999997e-05]
+      AbsorptionLayerCenter: 25
+      AbsorptionLayerWidth: 15
+      GroundColor: [0.100000001, 0.100000001, 0.100000001, 1]
+      SkyIntensity: 1
+      RenderSunDisks: true
+      RenderStars: true
+      StarBrightness: 5
+      StarDensity: 10
+      StarTwinkle: 5
+      StarYearLength: 365.25
+      StarRotationSpeed: 0.0500000007
+      MilkyWayBrightness: 0.100000001
+      SkyLightUpdateInterval: 0.100000001
+      SkyLightUpdateAngle: 1
     Skybox Renderer:
-      Skybox: 17530323575141006770
-  - Entity: 4039245118330447564
-    Tag: Light
-    Parent: 102243701733768014
+      {}
+  - Entity: 12334205163044447806
+    Tag: cube
+    Parent: 6371404574176718739
     Transform:
       ChildIndex: 3
       Position: [0, 0, 0]
-      Rotation: [-0.457276285, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 4039245118330447564
+    Tag: Sun
+    Parent: 3972464875524937577
+    Transform:
+      ChildIndex: 0
+      Position: [0, 0, 0]
+      Rotation: [-1.27548659, 1.57079625, -1.27548659]
       Scale: [0.999999404, 1, 1]
-    Directional Light:
+    Sun:
       Color: [1, 1, 1, 1]
-  - Entity: 12563066279329819713
-    Tag: New Entity
-    Parent: 102243701733768014
-    Transform:
-      ChildIndex: 4
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 12334205163044447806
-    Tag: cube
-    Parent: 102243701733768014
-    Transform:
-      ChildIndex: 5
-      Position: [0, 0, 0]
-      Rotation: [-0, 0, 0]
-      Scale: [1, 1, 1]
+      Intensity: 13
+      AngularDiameter: 2
+      DrivesDirectionalLight: true
+      LightIntensity: 1
+    Celestial Orbit:
+      DayLength: 120
+      TimeOfDay: 0.202999994
+      DaysElapsed: 0
+      AutoAdvance: true
+      Inclination: 0
+      NorthOffset: 0
+    Directional Light:
+      Color: [0.938805044, 0.863302112, 0.754665017, 1]
   - Entity: 11278521717450189051
     Tag: Cube
     Parent: 12334205163044447806
@@ -92,11 +124,36 @@ Entities:
       ChildIndex: 0
       Position: [0, 0, 0]
       Rotation: [-0, 0, 0]
-      Scale: [4.0999999, 3, 4.30000019]
+      Scale: [10, 1, 10]
     MeshRenderer:
-      Mesh: 14081939851531668968
-      Material: 3507943067600691790
+      Mesh: 18073216812909311668
+      Material: 16317171369529539954
       Cast Shadow: true
       Enabled: true
+  - Entity: 12563066279329819713
+    Tag: Moon
+    Parent: 3972464875524937577
+    Transform:
+      ChildIndex: 1
+      Position: [0, 0, 0]
+      Rotation: [0, -3.1415925, 0]
+      Scale: [1, 1, 1]
+    Moon:
+      Color: [0.899999976, 0.930000007, 1, 1]
+      Reflectance: 0.00999999978
+      AngularDiameter: 3
+      DiskBrightness: 20
+      PhaseInfluence: 1
+      DrivesDirectionalLight: true
+      LightIntensity: 1
+    Celestial Orbit:
+      DayLength: 120
+      TimeOfDay: 0.723999977
+      DaysElapsed: 0
+      AutoAdvance: true
+      Inclination: 20
+      NorthOffset: 0
+    Directional Light:
+      Color: [0.00311322138, 0.000289365475, 1.69429654e-06, 1]
 Systems:
   []

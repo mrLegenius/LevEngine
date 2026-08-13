@@ -58,7 +58,7 @@ float3 CalcLighting(float3 fragPos, float3 normal, float depth, float3 albedo, f
 
 	float3 ambient = CalcAmbient(normal, viewDir, albedo, metallic, roughness, ao);
 
-	float3 totalResult = CalcDirLight(dirLight, normal, viewDir, fragPosLightSpace, cascade, albedo, metallic, roughness);
+	float3 totalResult = CalcDirLights(normal, viewDir, fragPosLightSpace, cascade, albedo, metallic, roughness);
 
 	for (int i = 0; i < lightsCount; i++)
 	{	

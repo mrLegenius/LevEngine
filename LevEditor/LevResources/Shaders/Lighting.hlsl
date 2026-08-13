@@ -5,6 +5,10 @@
 
 #define MAX_LIGHTS 100
 
+// Matches RenderSettings::MaxDirectionalLights. A planet can have more than one sun; only the
+// first of them casts shadows, since there is a single cascade shadow map.
+#define MAX_DIR_LIGHTS 4
+
 #define POINT_LIGHT 0
 #define SPOT_LIGHT 1
 
@@ -33,8 +37,9 @@ struct Light
 
 cbuffer LightningConstantBuffer : register(CB_LIGHTING)
 {
-    DirLight dirLight;
+    DirLight dirLights[MAX_DIR_LIGHTS];
     Light lights[MAX_LIGHTS];
+    int dirLightsCount;
     int lightsCount;
 };
 

@@ -23,6 +23,9 @@
 #include "Physics/Components/Rigidbody.h"
 #include "Scripting/LuaComponentsBinder.h"
 #include "Systems/Animation/AnimatorUpdateSystem.h"
+#include "Systems/Atmosphere/CelestialOrbitSystem.h"
+#include "Systems/Atmosphere/MoonLightingSystem.h"
+#include "Systems/Atmosphere/SunLightingSystem.h"
 #include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
@@ -92,6 +95,12 @@ namespace LevEngine
         RegisterLateUpdateSystem<EntityDestroySystem>();
         
         RegisterUpdateSystem<AnimatorUpdateSystem>();
+
+        // Order matters: the suns are moved first, then their light is coloured by the atmosphere
+        // they end up shining through, and the moons last, since they reflect the suns.
+        RegisterUpdateSystem<CelestialOrbitSystem>();
+        RegisterUpdateSystem<SunLightingSystem>();
+        RegisterUpdateSystem<MoonLightingSystem>();
     }
 
     //Called in Runtime after deserialization

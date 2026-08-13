@@ -14,5 +14,8 @@ namespace LevEngine
         static Ref<Shader> BRDFIntegration();
         static Ref<Shader> Render();
         static Ref<Shader> CubemapRender();
+
+        static Ref<Shader> AtmosphereSky();
+        static Ref<Shader> AtmosphereCubemap();
     };
 }

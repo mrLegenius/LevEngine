@@ -47,6 +47,8 @@ namespace LevEngine
         static Ref<Shader> DeferredPointLight();
         static Ref<Shader> DeferredQuadRender();
         
+        static Ref<Shader> Fog();
+
         static Ref<Shader> Luminance();
         static Ref<Shader> LuminanceAdaptation();
         static Ref<Shader> Tonemapping();

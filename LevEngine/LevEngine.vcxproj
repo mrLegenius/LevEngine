@@ -157,6 +157,7 @@
     <ClInclude Include="src\Renderer\3D\MeshLoading\ModelParser.h" />
     <ClInclude Include="src\Renderer\Dispatch\DispatchCommand.h" />
     <ClInclude Include="src\Renderer\Dispatch\DispatchCommands.h" />
+    <ClInclude Include="src\Renderer\Environment\AtmosphereConstants.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentPrecomputePass.h" />
     <ClInclude Include="src\Renderer\Environment\EnvironmentRenderPass.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="src\Renderer\Passes\ClearPass.h" />
     <ClInclude Include="src\Renderer\Passes\CopyTexturePass.h" />
     <ClInclude Include="src\Renderer\Passes\DeferredLightingPass.h" />
+    <ClInclude Include="src\Renderer\Passes\FogPass.h" />
     <ClInclude Include="src\Renderer\Passes\OpaquePass.h" />
     <ClInclude Include="src\Renderer\Passes\QuadRenderPass.h" />
     <ClInclude Include="src\Renderer\Passes\RenderPass.h" />
@@ -220,6 +222,9 @@
     <ClInclude Include="src\Scene\Serializers\SerializerUtils.inl" />
     <ClInclude Include="src\Physics\Components\ConstantForce.h" />
     <ClInclude Include="src\Scene\Systems\Animation\AnimatorUpdateSystem.h" />
+    <ClInclude Include="src\Scene\Systems\Atmosphere\CelestialOrbitSystem.h" />
+    <ClInclude Include="src\Scene\Systems\Atmosphere\MoonLightingSystem.h" />
+    <ClInclude Include="src\Scene\Systems\Atmosphere\SunLightingSystem.h" />
     <ClInclude Include="src\Scene\Systems\EntityDestroySystem.h" />
     <ClInclude Include="src\Scripting\LuaComponentsBinder.h" />
     <ClInclude Include="src\Physics\Components\Collider.h" />
@@ -1049,6 +1054,7 @@
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\Scene\Components\Animation\WaypointMovement.h" />
     <ClInclude Include="src\Scene\Components\Audio\AudioListener.h" />
+    <ClInclude Include="src\Scene\Components\Atmosphere\Atmosphere.h" />
     <ClInclude Include="src\Scene\Components\Audio\AudioSource.h" />
     <ClInclude Include="src\Scene\Components\Camera\Camera.h" />
     <ClInclude Include="src\Scene\Components\Components.h" />
@@ -1124,6 +1130,7 @@
     <ClCompile Include="src\Renderer\DebugRender\DebugWireSphere.cpp" />
     <ClCompile Include="src\Renderer\Dispatch\DispatchCommand.cpp" />
     <ClCompile Include="src\Renderer\Dispatch\DispatchCommands.cpp" />
+    <ClCompile Include="src\Renderer\Environment\AtmosphereConstants.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentPass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentPrecomputePass.cpp" />
     <ClCompile Include="src\Renderer\Environment\EnvironmentRenderPass.cpp" />
@@ -1146,6 +1153,7 @@
     <ClCompile Include="src\Renderer\Passes\ClearPass.cpp" />
     <ClCompile Include="src\Renderer\Passes\CopyTexturePass.cpp" />
     <ClCompile Include="src\Renderer\Passes\DeferredLightingPass.cpp" />
+    <ClCompile Include="src\Renderer\Passes\FogPass.cpp" />
     <ClCompile Include="src\Renderer\Passes\OpaquePass.cpp" />
     <ClCompile Include="src\Renderer\Passes\QuadRenderPass.cpp" />
     <ClCompile Include="src\Renderer\Passes\RenderPass.cpp" />
@@ -1171,6 +1179,9 @@
     <ClCompile Include="src\Renderer\Shader\ShaderParameter.cpp" />
     <ClCompile Include="src\Scene\Components\Transform\TransformSerializer.cpp" />
     <ClCompile Include="src\Scene\Components\NavMesh\NavMeshBoundingBox.cpp" />
+    <ClCompile Include="src\Scene\Systems\Atmosphere\CelestialOrbitSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\Atmosphere\MoonLightingSystem.cpp" />
+    <ClCompile Include="src\Scene\Systems\Atmosphere\SunLightingSystem.cpp" />
     <ClCompile Include="src\Scene\Systems\EntityDestroySystem.cpp" />
     <ClCompile Include="src\Scene\Components\ScriptsContainer\ScriptsContainer.cpp" />
     <ClCompile Include="src\Scripting\LuaComponentsBinder.cpp" />
@@ -1465,6 +1476,7 @@
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Scene\Components\Animation\WaypointMovement.cpp" />
     <ClCompile Include="src\Scene\Components\Audio\AudioListener.cpp" />
+    <ClCompile Include="src\Scene\Components\Atmosphere\Atmosphere.cpp" />
     <ClCompile Include="src\Scene\Components\Audio\AudioSource.cpp" />
     <ClCompile Include="src\Scene\Components\Camera\Camera.cpp" />
     <ClCompile Include="src\Scene\Components\Emitter\EmitterComponent.cpp" />

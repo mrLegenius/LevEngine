@@ -15,6 +15,7 @@
 #include "Passes/ClearPass.h"
 #include "Passes/CopyTexturePass.h"
 #include "Passes/DeferredLightingPass.h"
+#include "Passes/FogPass.h"
 #include "Passes/ShadowMapPass.h"
 #include "Passes/OpaquePass.h"
 #include "Passes/TransparentPass.h"
@@ -313,6 +314,10 @@ namespace LevEngine
             m_DeferredTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredTransparentQuery));
 
+            // Fog covers the whole scene, so it goes after everything that writes colour and
+            // before post. m_DepthTexture is the G-buffer depth, still holding the scene depth.
+            m_DeferredTechnique->AddPass(CreateRef<FogPass>(m_HDRRenderTarget, m_DepthTexture));
+
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_PostProcessingQuery));
             m_DeferredTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_PostProcessingQuery));
@@ -342,6 +347,15 @@ namespace LevEngine
             m_ForwardTechnique->AddPass(CreateRef<OpaquePass>(m_OpaquePipeline, ShaderAssets::ForwardPBRInstanced(),
                                                               false));
             m_ForwardTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
+
+            // The forward path renders straight into the main depth buffer, which is still bound
+            // to the HDR target while the fog draws. Fog reads a copy instead, since a texture
+            // cannot be a depth attachment and a shader resource at the same time.
+            m_ForwardTechnique->AddPass(CreateRef<CopyTexturePass>(
+                m_DepthTexture, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil),
+                "Copy Depth Buffer to Texture"));
+            m_ForwardTechnique->AddPass(CreateRef<FogPass>(m_HDRRenderTarget, m_DepthTexture));
+
             m_ForwardTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));
 
             m_ForwardTechnique->AddPass(CreateRef<DebugRenderPass>(m_DebugPipeline));

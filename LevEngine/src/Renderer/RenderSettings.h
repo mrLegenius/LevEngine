@@ -48,6 +48,10 @@ struct LEV_API RenderSettings
 
 	//Lighting
 	static constexpr int MaxLights = 100;
+
+	// Several suns is a normal thing to want once the sky is procedural. Only the first one
+	// casts shadows -- there is a single cascade shadow map.
+	static constexpr int MaxDirectionalLights = 4;
 	
 	//Post-processing
 	static constexpr uint32_t LuminanceMapSize = 1024;
@@ -65,6 +69,20 @@ struct LEV_API RenderSettings
 	inline static float MaxExposure = 3.00f;
 	inline static float ManualExposure = 1.00f;
 	
+	//Atmospheric fog
+	// Blended over the lit scene before tone mapping. Density falls off exponentially with
+	// world height, so HeightFalloff = 0 gives plain uniform distance fog.
+	inline static bool IsFogEnabled = false;
+	inline static Color FogColor = Color(0.5f, 0.6f, 0.7f, 1.0f);
+	inline static float FogDensity = 0.02f;
+	inline static float FogHeightFalloff = 0.1f;
+	inline static float FogHeight = 0.0f;
+	inline static float FogStartDistance = 0.0f;
+	inline static float FogMaxOpacity = 1.0f;
+	inline static bool IsFogAffectingSkybox = true;
+	inline static float FogSunScatteringIntensity = 0.0f;
+	inline static float FogSunScatteringExponent = 8.0f;
+
 	inline static bool IsVignetteEnabled = true;
 	inline static float VignetteRadius = 0.5f;
 	inline static float VignetteSoftness = 0.5f;

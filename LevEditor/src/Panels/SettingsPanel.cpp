@@ -67,6 +67,30 @@ namespace LevEngine::Editor
 
                 ImGui::Separator();
 
+                EditorGUI::DrawCheckBox("Enable Fog", RenderSettings::IsFogEnabled);
+
+                if (RenderSettings::IsFogEnabled)
+                {
+                    EditorGUI::DrawColor3Control("Fog Color", RenderSettings::FogColor);
+                    EditorGUI::DrawFloatControl("Fog Density", RenderSettings::FogDensity,
+                                                0.001f, 0.0f, 1.0f);
+                    EditorGUI::DrawFloatControl("Fog Height Falloff", RenderSettings::FogHeightFalloff,
+                                                0.005f, 0.0f, 2.0f);
+                    EditorGUI::DrawFloatControl("Fog Height", RenderSettings::FogHeight,
+                                                0.1f, -1000.0f, 1000.0f);
+                    EditorGUI::DrawFloatControl("Fog Start Distance", RenderSettings::FogStartDistance,
+                                                0.1f, 0.0f, 1000.0f);
+                    EditorGUI::DrawFloatControl("Fog Max Opacity", RenderSettings::FogMaxOpacity,
+                                                0.01f, 0.0f, 1.0f);
+                    EditorGUI::DrawCheckBox("Fog Affects Skybox", RenderSettings::IsFogAffectingSkybox);
+                    EditorGUI::DrawFloatControl("Sun Scattering", RenderSettings::FogSunScatteringIntensity,
+                                                0.01f, 0.0f, 1.0f);
+                    EditorGUI::DrawFloatControl("Sun Scattering Falloff", RenderSettings::FogSunScatteringExponent,
+                                                0.5f, 1.0f, 64.0f);
+                }
+
+                ImGui::Separator();
+
                 EditorGUI::DrawCheckBox("Enable Vignette", RenderSettings::IsVignetteEnabled);
                 
                 if (RenderSettings::IsVignetteEnabled)

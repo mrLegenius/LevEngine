@@ -3,6 +3,7 @@
 
 #include "EnvironmentShaders.h"
 #include "Assets/TextureAsset.h"
+#include "Kernel/Time/Time.h"
 #include "Renderer/Pipeline/ConstantBuffer.h"
 #include "Renderer/Pipeline/PipelineState.h"
 #include "Renderer/Pipeline/RasterizerState.h"
@@ -16,9 +17,37 @@
 
 namespace LevEngine
 {
+    // The sky is raymarched into this cubemap and then sampled on screen. It only has to carry a
+    // smooth gradient -- the sun disks, the one sharp feature, are drawn analytically by the sky
+    // shader on top.
+    static constexpr uint32_t k_AtmosphereCubemapResolution = 128;
+    static constexpr uint32_t k_IrradianceResolution = 32;
+    static constexpr uint32_t k_PrefilterResolution = 128;
+
+    // Refresh rate of that cubemap: fine enough that a moving sun never shows a step, and cheap
+    // enough to run at it.
+    static constexpr float k_SkyUpdateInterval = 0.03f;
+    static const float k_SkyUpdateCosAngle = std::cos(0.25f * Math::DegToRad);
+
+    EnvironmentPrecomputePass::EnvironmentPrecomputePass(const Ref<AtmosphereConstants>& atmosphere)
+        : m_Atmosphere(atmosphere)
+    {
+    }
+
     String EnvironmentPrecomputePass::PassName() { return "Environment Precompute"; }
 
     void EnvironmentPrecomputePass::Process(entt::registry& registry, RenderParams& params)
+    {
+        if (m_Atmosphere && m_Atmosphere->IsActive())
+        {
+            ProcessAtmosphere();
+            return;
+        }
+
+        ProcessSkybox(registry);
+    }
+
+    void EnvironmentPrecomputePass::ProcessSkybox(entt::registry& registry)
     {
         const auto group = registry.group<>(entt::get<Transform, SkyboxRendererComponent>);
         if (group.empty()) return;
@@ -40,6 +69,79 @@ namespace LevEngine
         m_EnvironmentIrradianceCubemap = CreateIrradianceCubemap(m_EnvironmentCubemap);
         m_EnvironmentPrefilterCubemap = CreatePrefilterCubemap(m_EnvironmentCubemap);
         m_BRDFLutTexture = CreateBRDFLutTexture();
+
+        // The procedural sky reuses its textures, so anything it built is stale once a skybox
+        // texture takes over.
+        m_HasSky = false;
+        m_HasSkyLight = false;
+    }
+
+    bool EnvironmentPrecomputePass::NeedsSkyUpdate() const
+    {
+        if (!m_HasSky) return true;
+
+        if (m_TimeSinceSkyUpdate < k_SkyUpdateInterval) return false;
+
+        return m_Atmosphere->HasChangedSince(m_SkySnapshot, k_SkyUpdateCosAngle);
+    }
+
+    bool EnvironmentPrecomputePass::NeedsSkyLightUpdate() const
+    {
+        if (!m_HasSkyLight) return true;
+
+        if (m_TimeSinceSkyLightUpdate < m_Atmosphere->GetSkyLightUpdateInterval()) return false;
+
+        return m_Atmosphere->HasChangedSince(m_SkyLightSnapshot, m_Atmosphere->GetSkyLightUpdateCosAngle());
+    }
+
+    void EnvironmentPrecomputePass::ProcessAtmosphere()
+    {
+        LEV_PROFILE_FUNCTION();
+
+        const float deltaTime = Time::GetUnscaledDeltaTime().GetSeconds();
+        m_TimeSinceSkyUpdate += deltaTime;
+        m_TimeSinceSkyLightUpdate += deltaTime;
+
+        if (NeedsSkyUpdate())
+        {
+            if (!m_AtmosphereCubemap)
+                m_AtmosphereCubemap = CreateRenderTexture(k_AtmosphereCubemapResolution, true);
+
+            RenderCubemap(m_AtmosphereCubemap, k_AtmosphereCubemapResolution,
+                          EnvironmentShaders::AtmosphereCubemap(), nullptr);
+            m_AtmosphereCubemap->GenerateMipMaps();
+
+            m_EnvironmentCubemap = m_AtmosphereCubemap;
+
+            // Forget any skybox texture that was imported before, so switching back to one
+            // rebuilds its cubemap instead of leaving the sky the atmosphere produced.
+            m_EnvironmentMap = nullptr;
+
+            m_SkySnapshot = m_Atmosphere->GetData();
+            m_TimeSinceSkyUpdate = 0.0f;
+            m_HasSky = true;
+        }
+
+        if (NeedsSkyLightUpdate())
+        {
+            if (!m_EnvironmentIrradianceCubemap || !m_HasSkyLight)
+                m_EnvironmentIrradianceCubemap = CreateRenderTexture(k_IrradianceResolution, false);
+
+            if (!m_EnvironmentPrefilterCubemap || !m_HasSkyLight)
+                m_EnvironmentPrefilterCubemap = CreateRenderTexture(k_PrefilterResolution, true);
+
+            RenderCubemap(m_EnvironmentIrradianceCubemap, k_IrradianceResolution,
+                          EnvironmentShaders::CubemapConvolution(), m_AtmosphereCubemap);
+
+            RenderPrefilterCubemap(m_EnvironmentPrefilterCubemap, m_AtmosphereCubemap, k_PrefilterResolution);
+
+            if (!m_BRDFLutTexture)
+                m_BRDFLutTexture = CreateBRDFLutTexture();
+
+            m_SkyLightSnapshot = m_Atmosphere->GetData();
+            m_TimeSinceSkyLightUpdate = 0.0f;
+            m_HasSkyLight = true;
+        }
     }
 
     void EnvironmentPrecomputePass::End(entt::registry& registry, RenderParams& params)
@@ -61,15 +163,26 @@ namespace LevEngine
 
     Ref<Texture> EnvironmentPrecomputePass::CreateIrradianceCubemap(const Ref<Texture>& environmentCubemap)
     {
-        return CreateCubemap(environmentCubemap, 32, EnvironmentShaders::CubemapConvolution(), false);
+        return CreateCubemap(environmentCubemap, k_IrradianceResolution,
+                             EnvironmentShaders::CubemapConvolution(), false);
     }
     
     Ref<Texture> EnvironmentPrecomputePass::CreatePrefilterCubemap(const Ref<Texture>& sourceTexture)
     {
-        constexpr uint32_t resolution = 128;
+        auto renderTexture = CreateRenderTexture(k_PrefilterResolution, true);
+        RenderPrefilterCubemap(renderTexture, sourceTexture, k_PrefilterResolution);
+
+        return renderTexture;
+    }
+
+    void EnvironmentPrecomputePass::RenderPrefilterCubemap(const Ref<Texture>& destination,
+                                                           const Ref<Texture>& sourceTexture,
+                                                           const uint32_t resolution)
+    {
+        LEV_PROFILE_FUNCTION();
+
         const Ref<Shader> shader = EnvironmentShaders::EnvironmentPreFiltering();
-        auto renderTexture = CreateRenderTexture(resolution, true);
-        
+
         const auto renderTarget = RenderTarget::Create();
         const auto pipe = CreateCubemapPipeline(shader, renderTarget);
         
@@ -83,7 +196,7 @@ namespace LevEngine
         {
             const auto mipResolution = static_cast<uint32_t>(static_cast<float>(resolution) * std::powf(0.5f, mip));
 
-            renderTarget->AttachTexture(AttachmentPoint::Color0, renderTexture->GetMipMapLevel(mip));
+            renderTarget->AttachTexture(AttachmentPoint::Color0, destination->GetMipMapLevel(mip));
 
             float roughness = static_cast<float>(mip) / static_cast<float>(maxMipLevels - 1);
             
@@ -93,8 +206,6 @@ namespace LevEngine
             sourceTexture->Bind(0, ShaderType::Pixel);
             RenderCube(pipe, mipResolution);
         }
-
-        return renderTexture;
     }
 
     Ref<Texture> EnvironmentPrecomputePass::CreateBRDFLutTexture()
@@ -130,20 +241,30 @@ namespace LevEngine
                                                 const Ref<Shader>& shader, const bool generateMipMaps)
     {
         auto renderTexture = CreateRenderTexture(resolution, generateMipMaps);
+        RenderCubemap(renderTexture, resolution, shader, sourceTexture);
+
+        return renderTexture;
+    }
+
+    void EnvironmentPrecomputePass::RenderCubemap(const Ref<Texture>& destination, const uint32_t resolution,
+                                                  const Ref<Shader>& shader, const Ref<Texture>& sourceTexture)
+    {
+        LEV_PROFILE_FUNCTION();
 
         const auto renderTarget = RenderTarget::Create();
-        renderTarget->AttachTexture(AttachmentPoint::Color0, renderTexture);
+        renderTarget->AttachTexture(AttachmentPoint::Color0, destination);
 
         const auto pipe = CreateCubemapPipeline(shader, renderTarget);
 
         const auto constantBuffer = ConstantBuffer::Create(sizeof(Matrix) * 6, 6);
         SetCaptureViewToShader( pipe->GetShader(ShaderType::Geometry), constantBuffer);
-        
-        sourceTexture->Bind(0, ShaderType::Pixel);
+
+        // The procedural sky has no source texture: it computes its colour from the constants the
+        // atmosphere pass already bound.
+        if (sourceTexture)
+            sourceTexture->Bind(0, ShaderType::Pixel);
 
         RenderCube(pipe, resolution);
-
-        return renderTexture;
     }
 
     void EnvironmentPrecomputePass::RenderCube(const Ref<PipelineState>& pipeline, const uint32_t resolution)

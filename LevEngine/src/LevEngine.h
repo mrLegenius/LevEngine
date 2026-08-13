@@ -152,6 +152,7 @@
 #include "Scene/Components/Transform/Transform.h"
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Emitter/EmitterComponent.h"
+#include "Scene/Components/Atmosphere/Atmosphere.h"
 #include "Scene/Components/Lights/Lights.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
 #include "Scene/Components/SkyboxRenderer/SkyboxRenderer.h"

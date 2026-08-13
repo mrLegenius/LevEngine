@@ -26,6 +26,8 @@
 #include "Panels/ViewportPanel.h"
 #include "Physics/Physics.h"
 #include "Renderer/RenderContext.h"
+#include "Scene/Systems/Atmosphere/MoonLightingSystem.h"
+#include "Scene/Systems/Atmosphere/SunLightingSystem.h"
 
 namespace LevEngine::Editor
 {
@@ -174,6 +176,12 @@ namespace LevEngine::Editor
         case SceneState::Edit:
             {
                 activeScene->DestroyAllMarkedEntities();
+
+                // The sky is rendered while editing but systems are not run, so without this the sun
+                // and moon lights would keep the colour they were authored with under a sky that has
+                // already gone to night.
+                SunLightingSystem::Apply(activeScene->GetRegistry());
+                MoonLightingSystem::Apply(activeScene->GetRegistry());
                 break;
             }
         case SceneState::Play:

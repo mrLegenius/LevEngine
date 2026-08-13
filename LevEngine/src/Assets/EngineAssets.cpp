@@ -109,6 +109,11 @@ namespace LevEngine
         return ShaderLibrary::GetOrAddShader(GetShaderPath("ForwardQuadRender.hlsl"));
     }
 
+    Ref<Shader> ShaderAssets::Fog()
+    {
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("Fog.hlsl"));
+    }
+
     Ref<Shader> ShaderAssets::Luminance()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("PostProcessing/Luminance.hlsl"));

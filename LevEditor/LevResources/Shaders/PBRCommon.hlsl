@@ -125,14 +125,35 @@ float3 CalcDirLight(
     DirLight light,
     float3 normal, float3 viewDir,
     float4 fragPosLightSpace, float cascade,
-    float3 albedo, float metallic, float roughness)
+    float3 albedo, float metallic, float roughness,
+    bool castsShadow)
 {
     const float3 lightDir = normalize(-light.direction);
 
     float3 Lo = CalcPBR(lightDir, normal, viewDir, light.color, albedo, metallic, roughness);
-    float shadow = CalcShadow(fragPosLightSpace, normal, lightDir, cascade);
+
+    // The cascade shadow map is rendered for the first directional light only, so the others are
+    // shaded unshadowed rather than reusing a shadow map that was not built for them.
+    float shadow = castsShadow ? CalcShadow(fragPosLightSpace, normal, lightDir, cascade) : 1.0f;
 
     return Lo * shadow;
+}
+
+// Sum of every directional light in the scene.
+float3 CalcDirLights(
+    float3 normal, float3 viewDir,
+    float4 fragPosLightSpace, float cascade,
+    float3 albedo, float metallic, float roughness)
+{
+    float3 result = 0.0f;
+
+    for (int i = 0; i < dirLightsCount; i++)
+    {
+        result += CalcDirLight(dirLights[i], normal, viewDir, fragPosLightSpace, cascade,
+                               albedo, metallic, roughness, i == 0);
+    }
+
+    return result;
 }
 
 float3 CalcPointLight(

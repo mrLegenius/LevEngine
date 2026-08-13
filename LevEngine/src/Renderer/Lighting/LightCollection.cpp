@@ -27,13 +27,23 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
+        m_LightningData.DirLightsCount = 0;
+
         const auto view = registry.group<>(entt::get<Transform, DirectionalLightComponent>);
         for (const auto entity : view)
         {
             auto [transform, light] = view.get<Transform, DirectionalLightComponent>(entity);
 
-            SetDirLight(transform.GetForwardDirection(), light);
+            if (!IsLightVisible(light)) continue;
+
+            AddDirLight(transform.GetForwardDirection(), light);
         }
+    }
+
+    bool LightCollection::IsLightVisible(const DirectionalLightComponent& light)
+    {
+        const Vector3 color = static_cast<Vector3>(light.color);
+        return Math::MaxElement(color) > 0.0f;
     }
 
     void LightCollection::PointLightsSystem(entt::registry& registry, const RenderParams& params)
@@ -71,12 +81,17 @@ namespace LevEngine
         }
     }
 
-    void LightCollection::SetDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)
+    void LightCollection::AddDirLight(const Vector3& dirLightDirection, const DirectionalLightComponent& dirLight)
     {
         LEV_PROFILE_FUNCTION();
 
-        m_LightningData.DirLight.Direction = dirLightDirection;
-        m_LightningData.DirLight.Color = static_cast<Vector3>(dirLight.color);
+        if (m_LightningData.DirLightsCount >= RenderSettings::MaxDirectionalLights) return;
+
+        DirLightData& data = m_LightningData.DirLights[m_LightningData.DirLightsCount];
+        data.Direction = dirLightDirection;
+        data.Color = static_cast<Vector3>(dirLight.color);
+
+        m_LightningData.DirLightsCount++;
     }
 
     void LightCollection::AddPointLight(const Vector4& positionViewSpace, const Vector3& position,

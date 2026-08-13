@@ -69,7 +69,7 @@ namespace LevEngine::Editor
 
 			if (opened)
 			{
-				DrawContent(component);
+				DrawContent(entity, component);
 
 				ImGui::TreePop();
 			}
@@ -91,6 +91,10 @@ namespace LevEngine::Editor
 		[[nodiscard]] virtual bool IsRemovable() const { return true; }
 
 		virtual void DrawContent(TComponent& component) = 0;
+
+		// Override this instead when the inspector has to touch the rest of the entity, for
+		// example to move a transform an edited value drives.
+		virtual void DrawContent(Entity entity, TComponent& component) { DrawContent(component); }
 
 	private:
 		[[nodiscard]] String GetNameFromMenu() const

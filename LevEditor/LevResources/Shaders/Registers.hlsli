@@ -16,6 +16,8 @@
 #define CB_SKYBOX			b6	// EnvironmentPrecomputePass, EnvironmentRenderPass
 #define CB_DEBUG			b7	// DebugRenderPass, EnvironmentPrecomputePass (prefilter roughness)
 #define CB_POST_PROCESSING	b8	// PostProcessingPass
+#define CB_FOG				b9	// FogPass
+#define CB_ATMOSPHERE		b10	// AtmosphereConstants (sky + IBL cubemap)
 
 // CB_LIGHT_INDEX aliases CB_MATERIAL: the deferred lighting pass has no material bound and
 // the geometry passes have no light index. Never pull both into one shader -- FXC only lets
@@ -39,6 +41,9 @@
 
 // The G-buffer set deliberately reuses t1..t4. Same rule as CB_LIGHT_INDEX above: a shader
 // gets the material set or the G-buffer set, never both.
+
+#define T_FOG_DEPTH			t4	// FogPass -- same slot as the G-buffer depth, and equally exclusive:
+								// the fog pass runs on its own with only the depth copy bound.
 
 #define T_INSTANCE_DATA		t6	// Renderer3D::DrawMeshInstanced
 
