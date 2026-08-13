@@ -4,20 +4,22 @@
 #include "ScopedGUIHelpers.h"
 #include "Selection.h"
 #include "Assets/Asset.h"
+#include "GUI/Icons/IconsFontAwesome6.h"
 
 namespace LevEngine::Editor
 {
 	template<class T>
-	bool EditorGUI::DrawAsset(const String& label, Ref<T>& assetPtr)
+	bool EditorGUI::DrawAsset(const String& label, Ref<T>& assetPtr, const float reservedWidth)
 	{
 		static_assert(eastl::is_base_of_v<Asset, T>, "T must derive from Asset");
 
 		const auto& asset = assetPtr;
 		auto changed = false;
-		
-		String idString = asset ? asset->GetName() : label;
+
+		//<--- Label first: it is stable while the assigned asset changes ---<<
+		const String idString = !label.empty() ? label : (asset ? asset->GetName() : String("Asset"));
 		GUI::ScopedID id{idString};
-		
+
 		if (!label.empty())
 		{
 			ImGui::AlignTextToFramePadding();
@@ -25,8 +27,27 @@ namespace LevEngine::Editor
 			ImGui::SameLine();
 		}
 
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text(asset ? asset->GetName().c_str() : "None");
+		static constexpr const char* selectorPopupId = "##AssetSelector";
+
+		const ImGuiStyle& style = ImGui::GetStyle();
+		const float spacing = style.ItemSpacing.x;
+
+		//<--- Icon buttons are sized from the glyph: a square of GetFrameHeight() is narrower
+		//<--- than the glyph plus FramePadding.x on both sides, which makes ImGui clip it instead of centering
+		const float selectButtonWidth = ImGui::CalcTextSize(ICON_FA_MAGNIFYING_GLASS).x + style.FramePadding.x * 2;
+		const float clearButtonWidth = ImGui::CalcTextSize(ICON_FA_XMARK).x + style.FramePadding.x * 2;
+
+		float fieldWidth = ImGui::GetContentRegionAvail().x
+			- selectButtonWidth - clearButtonWidth - spacing * 2 - reservedWidth;
+		if (fieldWidth < 60.0f)
+			fieldWidth = 60.0f;
+
+		const String buttonLabel = asset ? asset->GetName() : String("None");
+		if (ImGui::Button(buttonLabel.c_str(), ImVec2(fieldWidth, 0)) && asset)
+			PingAsset(asset);
+
+		if (asset && ImGui::IsItemHovered())
+			ImGui::SetTooltip("%s\nClick to show in Asset Browser", asset->GetPath().string().c_str());
 
 		if (asset && ImGui::BeginPopupContextItem("Asset"))
 		{
@@ -39,22 +60,63 @@ namespace LevEngine::Editor
 			ImGui::EndPopup();
 		}
 
-		if (!ImGui::BeginDragDropTarget()) return changed;
-
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
+		if (ImGui::BeginDragDropTarget())
 		{
-			const Path assetPath = static_cast<const wchar_t*>(payload->Data);
-
-			if (const auto& newAsset = AssetDatabase::GetAsset<T>(assetPath))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(AssetPayload))
 			{
-				if (assetPtr != newAsset)
+				const Path assetPath = static_cast<const wchar_t*>(payload->Data);
+
+				if (const auto& newAsset = AssetDatabase::GetAsset<T>(assetPath))
 				{
-					assetPtr = newAsset;
-					changed = true;
+					if (assetPtr != newAsset)
+					{
+						assetPtr = newAsset;
+						changed = true;
+					}
 				}
 			}
+			ImGui::EndDragDropTarget();
 		}
-		ImGui::EndDragDropTarget();
+
+		ImGui::SameLine();
+		if (ImGui::Button(ICON_FA_MAGNIFYING_GLASS))
+			OpenAssetSelectorPopup(selectorPopupId);
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Select asset");
+
+		ImGui::SameLine();
+		{
+			ImGui::BeginDisabled(asset == nullptr);
+			if (ImGui::Button(ICON_FA_XMARK))
+			{
+				assetPtr = nullptr;
+				changed = true;
+			}
+			ImGui::EndDisabled();
+		}
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Clear");
+
+		Vector<Ref<Asset>> candidates;
+		//<--- Only gather while the popup lives, GetAllAssetsOfClass walks the whole database ---<<
+		if (ImGui::IsPopupOpen(selectorPopupId))
+		{
+			for (const auto& candidate : AssetDatabase::GetAllAssetsOfClass<T>())
+				candidates.emplace_back(candidate);
+		}
+
+		Ref<Asset> selected;
+		if (DrawAssetSelectorPopup(selectorPopupId, candidates, assetPtr, selected))
+		{
+			auto newAsset = CastRef<T>(selected);
+			if (assetPtr != newAsset)
+			{
+				assetPtr = newAsset;
+				changed = true;
+			}
+		}
 
 		return changed;
 	}

@@ -41,10 +41,30 @@ namespace LevEngine::Editor
         m_DefaultWindowSize = Vector2{ 1030, 390 };
     }
 
+    void AssetBrowserPanel::RevealAsset(const Ref<Asset>& asset)
+    {
+        if (!asset) return;
+
+        s_AssetToReveal = asset;
+    }
+
     void AssetBrowserPanel::DrawContent()
     {
         LEV_PROFILE_FUNCTION();
-        
+
+        if (s_AssetToReveal)
+        {
+            const Ref<Asset> asset = s_AssetToReveal;
+            s_AssetToReveal = nullptr;
+
+            const Path& path = asset->GetPath();
+            m_CurrentDirectory = is_directory(path) ? path : path.parent_path();
+            m_HighlightedAsset = asset;
+            m_ScrollToHighlighted = true;
+
+            Focus();
+        }
+
         {
             GUI::ScopedVariable rounding{ImGuiStyleVar_FrameRounding, 0.0f};
             GUI::ScopedVariable borderSize{ImGuiStyleVar_FrameBorderSize, 0.0f};
@@ -199,9 +219,19 @@ namespace LevEngine::Editor
                                             ? asset->GetIcon()
                                             : Icons::File();
 
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+            const bool isHighlighted = asset && asset == m_HighlightedAsset;
+
+            ImGui::PushStyleColor(ImGuiCol_Button, isHighlighted
+                ? ImGui::GetStyleColorVec4(ImGuiCol_HeaderActive)
+                : ImVec4(0, 0, 0, 0));
             ImGui::ImageButton(icon->GetId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
             ImGui::PopStyleColor();
+
+            if (isHighlighted && m_ScrollToHighlighted)
+            {
+                m_ScrollToHighlighted = false;
+                ImGui::SetScrollHereY(0.5f);
+            }
 
             const auto forceSelection =
                 Input::IsKeyDown(KeyCode::LeftControl)

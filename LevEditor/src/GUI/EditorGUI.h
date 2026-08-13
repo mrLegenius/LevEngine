@@ -48,8 +48,20 @@ namespace LevEngine::Editor
 			float labelWidth = 80.0f
 		);
 
+		//<--- reservedWidth keeps room on the right of the field for whatever the caller
+		//<--- puts on the same line afterwards, a thumbnail for example
 		template<class T>
-		static bool DrawAsset(const String& label, Ref<T>& assetPtr);
+		static bool DrawAsset(const String& label, Ref<T>& assetPtr, float reservedWidth = 0.0f);
+
+		//<--- Resets the search filter and opens the selector popup with the given id ---<<
+		static void OpenAssetSelectorPopup(const char* popupId);
+
+		//<--- Navigates the asset browser to the asset and highlights it ---<<
+		static void PingAsset(const Ref<Asset>& asset);
+
+		//<--- Returns true when the user picked an entry. outSelected is nullptr for "None" ---<<
+		static bool DrawAssetSelectorPopup(const char* popupId, const Vector<Ref<Asset>>& assets,
+			const Ref<Asset>& currentAsset, Ref<Asset>& outSelected);
 
 		template<class T>
 		static bool DrawSelectableComponentList(const String& label, Vector<Entity>& entities, int& itemSelectedIdx);

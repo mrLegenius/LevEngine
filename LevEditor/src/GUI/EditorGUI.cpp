@@ -5,12 +5,34 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include <EASTL/sort.h>
+
 #include "TextureLibrary.h"
 #include "Assets/AssetDatabase.h"
 #include "Assets/TextureAsset.h"
+#include "Panels/AssetBrowserPanel.h"
 
 namespace LevEngine::Editor
 {
+	namespace
+	{
+		constexpr size_t k_AssetSearchBufferSize = 128;
+		char s_AssetSearchBuffer[k_AssetSearchBufferSize] = {};
+
+		bool MatchesAssetSearch(const String& name, const char* search)
+		{
+			if (search == nullptr || *search == '\0') return true;
+
+			String lowerName = name;
+			lowerName.make_lower();
+
+			String lowerSearch = search;
+			lowerSearch.make_lower();
+
+			return lowerName.find(lowerSearch) != String::npos;
+		}
+	}
+
 #define IntToFloat(x) ((x) / 255.0f)
 	constexpr auto redDark = ImVec4{ IntToFloat(75), IntToFloat(10), IntToFloat(10), 1.0f };
 	constexpr auto redRegular = ImVec4{ IntToFloat(140), IntToFloat(20), IntToFloat(20), 1.0f };
@@ -301,6 +323,77 @@ namespace LevEngine::Editor
 			setter(value);
 	}
 
+	void EditorGUI::OpenAssetSelectorPopup(const char* popupId)
+	{
+		s_AssetSearchBuffer[0] = '\0';
+		ImGui::OpenPopup(popupId);
+	}
+
+	void EditorGUI::PingAsset(const Ref<Asset>& asset)
+	{
+		AssetBrowserPanel::RevealAsset(asset);
+	}
+
+	bool EditorGUI::DrawAssetSelectorPopup(const char* popupId, const Vector<Ref<Asset>>& assets,
+		const Ref<Asset>& currentAsset, Ref<Asset>& outSelected)
+	{
+		ImGui::SetNextWindowSize(ImVec2(320, 400), ImGuiCond_Appearing);
+
+		if (!ImGui::BeginPopup(popupId)) return false;
+
+		auto changed = false;
+
+		if (ImGui::IsWindowAppearing())
+			ImGui::SetKeyboardFocusHere();
+
+		ImGui::SetNextItemWidth(-FLT_MIN);
+		ImGui::InputTextWithHint("##AssetSearch", "Search...",
+			s_AssetSearchBuffer, k_AssetSearchBufferSize);
+
+		ImGui::Separator();
+
+		ImGui::BeginChild("##AssetSelectorList", ImVec2(0, 0), 0);
+		{
+			if (ImGui::Selectable("None", currentAsset == nullptr))
+			{
+				outSelected = nullptr;
+				changed = true;
+				ImGui::CloseCurrentPopup();
+			}
+
+			auto sortedAssets = assets;
+			eastl::sort(sortedAssets.begin(), sortedAssets.end(),
+				[](const Ref<Asset>& lhs, const Ref<Asset>& rhs)
+				{
+					if (!lhs || !rhs) return rhs != nullptr;
+					return lhs->GetName() < rhs->GetName();
+				});
+
+			for (const auto& asset : sortedAssets)
+			{
+				if (!asset) continue;
+				if (!MatchesAssetSearch(asset->GetName(), s_AssetSearchBuffer)) continue;
+
+				GUI::ScopedID assetId{static_cast<const void*>(asset.get())};
+
+				if (ImGui::Selectable(asset->GetName().c_str(), asset == currentAsset))
+				{
+					outSelected = asset;
+					changed = true;
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::IsItemHovered())
+					ImGui::SetTooltip("%s", asset->GetPath().string().c_str());
+			}
+		}
+		ImGui::EndChild();
+
+		ImGui::EndPopup();
+
+		return changed;
+	}
+
 	void EditorGUI::DrawTexture2D(Ref<Texture>& texture, const Vector2 size)
 	{
 		DrawTexture2D([&texture] { return texture; }, [&texture](const Ref<Texture>& newTexture) { texture = newTexture; }, size);
@@ -308,11 +401,17 @@ namespace LevEngine::Editor
 
 	bool EditorGUI::DrawTextureAsset(const String& label, Ref<TextureAsset>& assetPtr)
 	{
-		const bool changed = DrawAsset(label, assetPtr);
+		constexpr float thumbnailSize = 32.0f;
+
+		//<--- Reserve the thumbnail width so the field does not resize when a texture is assigned ---<<
+		const float reservedWidth = thumbnailSize + ImGui::GetStyle().ItemSpacing.x;
+
+		const bool changed = DrawAsset(label, assetPtr, reservedWidth);
 		if (assetPtr && assetPtr->GetTexture())
 		{
 			ImGui::SameLine();
-			ImGui::Image(assetPtr->GetTexture()->GetId(), ImVec2(32, 32), ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			ImGui::Image(assetPtr->GetTexture()->GetId(),
+				ImVec2(thumbnailSize, thumbnailSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		}
 
 		return changed;
