@@ -227,6 +227,12 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClCompile Include="src\Selection.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="LevEditor.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="LevEditor.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\DirectXTK\DirectXTK_Desktop_2022.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
     </ProjectReference>

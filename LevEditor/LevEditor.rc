@@ -1,0 +1,5 @@
+#include <Windows.h>
+
+//Resource id 1: the lowest icon id is the one Explorer and the taskbar use for the
+//executable, and WindowsAppIcon loads it for the window itself
+1 ICON "LevEditor.ico"

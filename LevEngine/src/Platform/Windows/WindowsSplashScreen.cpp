@@ -3,6 +3,7 @@
 
 #include <dwmapi.h>
 
+#include "Platform/Windows/WindowsAppIcon.h"
 #include "stb/include/stb_image.h"
 
 //AlphaBlend and the rounded corners attribute are the only reasons these are needed,
@@ -249,6 +250,8 @@ namespace LevEngine
 		windowClass.cbSize = sizeof(WNDCLASSEX);
 		windowClass.lpfnWndProc = SplashScreenWndProc;
 		windowClass.hInstance = instance;
+		windowClass.hIcon = WindowsAppIcon::LoadBig();
+		windowClass.hIconSm = WindowsAppIcon::LoadSmall();
 		windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		windowClass.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
 		windowClass.lpszClassName = k_WindowClassName;

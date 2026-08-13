@@ -1013,6 +1013,7 @@
     <ClInclude Include="src\Platform\D3D11\D3D11StructuredBuffer.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11Texture.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11VertexBuffer.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsAppIcon.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Project.h" />
     <ClInclude Include="src\Renderer\3D\Mesh.h" />

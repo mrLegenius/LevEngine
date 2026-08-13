@@ -3,6 +3,7 @@
 
 #include <windowsx.h>
 
+#include "WindowsAppIcon.h"
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
@@ -309,8 +310,8 @@ namespace LevEngine
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
 		wc.hInstance = hInstance;
-		wc.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
-		wc.hIconSm = wc.hIcon;
+		wc.hIcon = WindowsAppIcon::LoadBig();
+		wc.hIconSm = WindowsAppIcon::LoadSmall();
 		wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
 		wc.lpszMenuName = nullptr;
