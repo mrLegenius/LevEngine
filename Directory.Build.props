@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <!-- Pin the compiler host architecture. MSBuild stores it in the project's
+         .lastbuildstate and rebuilds everything from scratch whenever it changes,
+         which happened every time the solution was built from a 32 bit host
+         (IDE) and a 64 bit one (command line) in turn. -->
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+</Project>
