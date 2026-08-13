@@ -39,6 +39,11 @@ namespace LevEngine
         return shaderAsset->GetShader();
     }
 
+    void ShaderLibrary::Shutdown()
+    {
+        s_ShaderAssets.clear();
+    }
+
     void ShaderLibrary::ReimportChangedAssets()
     {
         for (auto& it : s_ShaderAssets)

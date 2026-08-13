@@ -51,6 +51,30 @@ namespace LevEngine
             std::this_thread::sleep_for(microseconds(10));
     }
 
+    void D3D11DeferredContexts::Shutdown()
+    {
+        for (auto& list : m_CommandLists)
+        {
+            if (!list) continue;
+
+            list->Release();
+            list = nullptr;
+        }
+        m_CommandLists.clear();
+
+        for (const auto context : m_DeferredContexts)
+            context->Release();
+        m_DeferredContexts.clear();
+
+        if (m_DeviceContext)
+        {
+            m_DeviceContext->Release();
+            m_DeviceContext = nullptr;
+        }
+
+        m_Device = nullptr;
+    }
+
     void D3D11DeferredContexts::UpdateCommandLists()
     {
         if (State != State::NeedUpdate) return;

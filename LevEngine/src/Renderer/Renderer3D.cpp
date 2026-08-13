@@ -25,6 +25,10 @@ namespace LevEngine
     Ref<StructuredBuffer> Renderer3D::m_InstanceBuffer;
     uint32_t Renderer3D::m_InstanceBufferCapacity;
 
+    Ref<Mesh> Renderer3D::m_CubeMesh;
+    Ref<Mesh> Renderer3D::m_SphereMesh;
+    Ref<Mesh> Renderer3D::m_ConeMesh;
+
     // The instance buffer starts here and doubles as needed, so a scene whose batch sizes settle
     // stops reallocating after the first few frames.
     static constexpr uint32_t k_InitialInstanceCapacity = 256;
@@ -53,6 +57,24 @@ namespace LevEngine
         m_ScreenToViewParamsConstantBuffer = ConstantBuffer::Create(sizeof ScreenToViewParams, 5);
 
         MissingMaterial = CreateRef<MaterialPBR>();
+    }
+
+    void Renderer3D::Shutdown()
+    {
+        LEV_PROFILE_FUNCTION();
+
+        m_CubeMesh.reset();
+        m_SphereMesh.reset();
+        m_ConeMesh.reset();
+
+        MissingMaterial.reset();
+
+        m_InstanceBuffer.reset();
+        m_InstanceBufferCapacity = 0;
+
+        m_ScreenToViewParamsConstantBuffer.reset();
+        m_ModelConstantBuffer.reset();
+        m_CameraConstantBuffer.reset();
     }
 
     void Renderer3D::SetCameraBuffer(const SceneCamera* camera, const Matrix& viewMatrix, const Vector3& position)
@@ -204,16 +226,19 @@ namespace LevEngine
     {
         LEV_CORE_ASSERT(vertexShader->GetType() & ShaderType::Vertex, "Cube can't be drawn without vertex shader");
 
-        static Ref<Mesh> cube = Primitives::CreateCube();
-        cube->Bind(vertexShader);
-        RenderCommand::DrawIndexed(cube->IndexBuffer);
+        if (!m_CubeMesh) m_CubeMesh = Primitives::CreateCube();
+
+        m_CubeMesh->Bind(vertexShader);
+        RenderCommand::DrawIndexed(m_CubeMesh->IndexBuffer);
     }
 
     void Renderer3D::RenderSphere(const Matrix& model, const Ref<Shader>& shader)
     {
         LEV_PROFILE_FUNCTION();
 
-        static Ref<Mesh> mesh = Primitives::CreateSphere(20);
+        if (!m_SphereMesh) m_SphereMesh = Primitives::CreateSphere(20);
+
+        const auto& mesh = m_SphereMesh;
 
         const MeshModelBufferData data = {model};
         m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
@@ -228,7 +253,9 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        static Ref<Mesh> mesh = Primitives::CreateCone(1, 1, 20);
+        if (!m_ConeMesh) m_ConeMesh = Primitives::CreateCone(1, 1, 20);
+
+        const auto& mesh = m_ConeMesh;
 
         const MeshModelBufferData data = {model};
         m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));
@@ -243,7 +270,9 @@ namespace LevEngine
     {
         LEV_PROFILE_FUNCTION();
 
-        static Ref<Mesh> mesh = Primitives::CreateCube();
+        if (!m_CubeMesh) m_CubeMesh = Primitives::CreateCube();
+
+        const auto& mesh = m_CubeMesh;
 
         const MeshModelBufferData data = {model};
         m_ModelConstantBuffer->SetData(&data, sizeof(MeshModelBufferData));

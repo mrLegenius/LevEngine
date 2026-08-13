@@ -20,6 +20,8 @@ namespace LevEngine
     private:
         friend Application;
         static void Init() { s_Instance = Create(); }
+        //Has to be called while the render device is still alive, see TextureLibrary::Shutdown
+        static void Shutdown() { s_Instance.reset(); }
         static Ref<RenderDebugEvent> Create();
         static inline Ref<RenderDebugEvent> s_Instance{};
     };

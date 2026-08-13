@@ -17,6 +17,10 @@ public:
 	void PopLayer(const Layer* layer);
 	void PopOverlay(const Layer* overlay);
 
+	//Detaches and deletes every layer. Called explicitly on shutdown, so the layers release
+	//their GPU resources while the render device is still alive
+	void Clear();
+
 	Vector<Layer*>::iterator begin() { return m_Layers.begin(); }
 	Vector<Layer*>::iterator end() { return m_Layers.end(); }
 

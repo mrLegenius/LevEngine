@@ -10,6 +10,9 @@ namespace LevEngine
     public:
         static void SetRenderDevice(const Ref<RenderDevice>& renderDevice);
         static void Init(const int jobThreadsCount);
+        //Releases the deferred contexts and the command lists. Has to be called while the render
+        //device is still alive, see TextureLibrary::Shutdown
+        static void Shutdown();
         static ID3D11DeviceContext* GetContext();
         static void UpdateCommandLists();
         static void ExecuteCommands();

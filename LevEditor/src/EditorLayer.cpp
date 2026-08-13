@@ -73,6 +73,27 @@ namespace LevEngine::Editor
         Application::Get().GetWindow().EnableCursor();
     }
 
+    void EditorLayer::OnDetach()
+    {
+        LEV_PROFILE_FUNCTION();
+
+        //<--- The editor keeps selections and deferred requests in statics, which would outlive the
+        //render device and release their GPU resources during CRT teardown, where the graphics driver
+        //deadlocks. See Application::~Application ---<<
+        Selection::Deselect();
+        AssetBrowserPanel::Shutdown();
+
+        m_MainStatusBar.reset();
+        m_MainToolbar.reset();
+        m_MainTitleBar.reset();
+        m_MainMenuBar.reset();
+        m_PanelManager.reset();
+        m_DockSpace.reset();
+
+        m_SceneEditor.reset();
+        m_ProjectEditor.reset();
+    }
+
     void EditorLayer::RegisterPanels()
     {
         m_PanelManager->RegisterPanelType(PanelTypes::Viewport,

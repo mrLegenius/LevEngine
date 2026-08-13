@@ -36,6 +36,10 @@ namespace LevEngine
     public:
         static void Init();
 
+        //Releases the buffers, the primitive meshes and the fallback material. Has to be called
+        //while the render device is still alive, see TextureLibrary::Shutdown
+        static void Shutdown();
+
         static void SetCameraBuffer(const SceneCamera* camera, const Matrix& viewMatrix, const Vector3& position);
         static void DrawMesh(const Matrix& model, const Ref<Mesh>& mesh, const Ref<Shader>& shader);
         static void DrawMesh(const Matrix& model, const MeshRendererComponent& meshRenderer, const Ref<Shader>& shader);
@@ -67,6 +71,12 @@ namespace LevEngine
         static Ref<ConstantBuffer> m_ModelConstantBuffer;
         static Ref<ConstantBuffer> m_CameraConstantBuffer;
         static Ref<ConstantBuffer> m_ScreenToViewParamsConstantBuffer;
+
+        //<--- Lazily created on the first draw and kept as members instead of function local
+        //statics, so Shutdown can release them ---<<
+        static Ref<Mesh> m_CubeMesh;
+        static Ref<Mesh> m_SphereMesh;
+        static Ref<Mesh> m_ConeMesh;
 
         static Matrix m_ViewProjection;
     };

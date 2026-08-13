@@ -4,8 +4,12 @@
 #include "SplashScreen.h"
 #include "Utils.h"
 #include "Window.h"
+#include "Assets/AssetDatabase.h"
 #include "Assets/EngineAssets.h"
+#include "Assets/ShaderLibrary.h"
+#include "TextureLibrary.h"
 #include "../Renderer/Renderer.h"
+#include "../Renderer/Renderer3D.h"
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
@@ -93,6 +97,30 @@ namespace LevEngine
         Audio::Shutdown();
         m_ScriptingManager->Shutdown();
         SceneManager::Shutdown();
+
+        //<--- Everything holding GPU resources has to be released here, in this order, while the
+        //render device is still alive. Whatever survives until the process exits is destroyed by the
+        //CRT during DLL_PROCESS_DETACH, and releasing D3D11 objects at that point deadlocks inside
+        //the graphics driver, so the process never exits ---<<
+        m_LayerStack.Clear();
+        m_ImGuiLayer = nullptr;
+
+        AssetDatabase::Shutdown();
+        ShaderLibrary::Shutdown();
+        TextureLibrary::Shutdown();
+        Renderer3D::Shutdown();
+
+        m_Renderer.reset();
+
+        D3D11DeferredContexts::Shutdown();
+        RenderDebugEvent::Shutdown();
+        DispatchCommand::Shutdown();
+        RenderCommand::Shutdown();
+
+        m_Physics.reset();
+        m_Window.reset();
+        m_RenderDevice.reset();
+
         delete m_JobSystem;
     }
 

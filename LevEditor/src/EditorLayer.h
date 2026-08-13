@@ -17,6 +17,7 @@ namespace LevEngine::Editor
     {
     public:
         void OnAttach() override;
+        void OnDetach() override;
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnScenePlay();

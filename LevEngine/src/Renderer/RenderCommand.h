@@ -44,7 +44,10 @@ namespace LevEngine
         friend Application;
 
         static void Init() { s_RendererAPI = RenderCommands::Create(); }
-        
+        //Has to be called while the render device is still alive, see TextureLibrary::Shutdown
+        static void Shutdown() { s_RendererAPI.reset(); }
+
+
         static inline Ref<RenderCommands> s_RendererAPI{};
     };
 }

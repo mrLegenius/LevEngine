@@ -12,6 +12,9 @@ namespace LevEngine::Editor
         //<--- Deferred, so it can be requested from anywhere during the frame
         static void RevealAsset(const Ref<Asset>& asset);
 
+        //Drops the deferred request, so no asset is kept alive past the editor shutdown
+        static void Shutdown() { s_AssetToReveal = nullptr; }
+
     protected:
         String GetName() override { return "Asset Browser"; }
         void DrawContent() override;

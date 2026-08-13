@@ -13,6 +13,10 @@ namespace LevEngine
         static Ref<Shader> GetOrAddShader(const Path& path, const ShaderMacros& shaderMacros = ShaderMacros{});
         static void ReimportChangedAssets();
 
+        //Releases every cached shader. Has to be called while the render device is still alive,
+        //see TextureLibrary::Shutdown
+        static void Shutdown();
+
     private:
         //<--- Shaders compiled from the same file with different macros are different shaders ---<<
         static String GetKey(const Path& path, const ShaderMacros& shaderMacros);

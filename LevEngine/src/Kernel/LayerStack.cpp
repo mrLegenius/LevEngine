@@ -9,11 +9,19 @@ LayerStack::LayerStack() = default;
 
 LayerStack::~LayerStack()
 {
+	Clear();
+}
+
+void LayerStack::Clear()
+{
 	for (const auto layer : m_Layers)
 	{
 		layer->OnDetach();
 		delete layer;
 	}
+
+	m_Layers.clear();
+	m_LayerInsertIndex = 0;
 }
 
 void LayerStack::PushLayer(Layer* layer)

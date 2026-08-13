@@ -511,6 +511,12 @@ namespace LevEngine
 		return m_AssetsByPath.count(path);
 	}
 
+	void AssetDatabase::Shutdown()
+	{
+		m_AssetsByPath.clear();
+		m_Assets.clear();
+	}
+
 	void AssetDatabase::ReimportAllAssetsInDirectory(const Path& directory)
 	{
 		if (!is_directory(directory)) return;

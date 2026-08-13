@@ -75,6 +75,10 @@ namespace LevEngine
 		static void DeleteAsset(const Path& path);
 		static bool AssetExists(const Path& path);
 
+		//Releases every loaded asset. Assets own GPU resources (textures, meshes, shaders), so this
+		//has to be called while the render device is still alive, see TextureLibrary::Shutdown
+		static void Shutdown();
+
 	private:
 		inline static UnorderedMap<UUID, Ref<Asset>> m_Assets;
 		inline static UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
