@@ -1,4 +1,6 @@
 ﻿#include "pch.h"
+
+#include "Assets/PlanetBiomeSetAsset.h"
 #include "AssetBrowserPanel.h"
 
 #include <imgui.h>
@@ -304,6 +306,7 @@ namespace LevEngine::Editor
                         DrawCreateMenu<MaterialCustomAsset>("Shader Material", "Material.material");
                         DrawCreateMenu<ShaderAsset>("Shader", "Shader.hlsl", ShaderAsset::CreateFrom::Template);
                         DrawCreateMenu<SkyboxAsset>("Skybox", "Skybox.skybox");
+                        DrawCreateMenu<PlanetBiomeSetAsset>("Planet Biome Set", "Biomes.biomeset");
                         if (ImGui::BeginMenu("Script"))
                         {
                             DrawCreateMenu<ScriptAsset>("Script System", "System.lua", ScriptAsset::Type::System);

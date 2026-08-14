@@ -34,6 +34,9 @@
 
 #include "DebugRender/DebugRenderPass.h"
 #include "Environment/EnvironmentPass.h"
+#include "Planet/PlanetOceanPass.h"
+#include "Planet/PlanetPass.h"
+#include "Planet/PlanetUpdatePass.h"
 #include "Kernel/Window.h"
 #include "PostProcessing/PostProcessingPass.h"
 #include "Scene/Components/Camera/Camera.h"
@@ -272,6 +275,8 @@ namespace LevEngine
             m_PostProcessingQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
             m_ParticlesQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
             m_DebugQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_PlanetSurfaceQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
+            m_PlanetOceanQuery = Query::Create(Query::QueryType::Timer, gpuTimersBuffers);
         }
 
         //<-- Create Techniques --<<
@@ -279,6 +284,11 @@ namespace LevEngine
             LEV_PROFILE_SCOPE("Deferred technique creation");
 
             m_DeferredTechnique = CreateRef<RenderTechnique>();
+
+            // First, because the shadow pass and the surface pass both draw the chunks it selects,
+            // and they have to be the same chunks.
+            m_DeferredTechnique->AddPass(CreateRef<PlanetUpdatePass>());
+
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_ShadowMapQuery));
             m_DeferredTechnique->AddPass(CreateRef<ShadowMapPass>());
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_ShadowMapQuery));
@@ -293,6 +303,9 @@ namespace LevEngine
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredGeometryQuery));
             m_DeferredTechnique->AddPass(CreateRef<OpaquePass>(m_GBufferPipeline, ShaderAssets::GBufferPassInstanced(),
                                                                true));
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_PlanetSurfaceQuery));
+            m_DeferredTechnique->AddPass(CreateRef<PlanetPass>(m_GBufferPipeline, true));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_PlanetSurfaceQuery));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredGeometryQuery));
             
             m_DeferredTechnique->AddPass(CreateRef<CopyTexturePass>(
@@ -312,6 +325,9 @@ namespace LevEngine
             // tone map and exposure as everything else.
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredTransparentQuery));
             m_DeferredTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
+            m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_PlanetOceanQuery));
+            m_DeferredTechnique->AddPass(CreateRef<PlanetOceanPass>(m_TransparentPipeline));
+            m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_PlanetOceanQuery));
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_DeferredTransparentQuery));
 
             // Fog covers the whole scene, so it goes after everything that writes colour and
@@ -335,6 +351,7 @@ namespace LevEngine
             LEV_PROFILE_SCOPE("Forward technique creation");
 
             m_ForwardTechnique = CreateRef<RenderTechnique>();
+            m_ForwardTechnique->AddPass(CreateRef<PlanetUpdatePass>());
             m_ForwardTechnique->AddPass(CreateRef<ShadowMapPass>());
 
             m_ForwardTechnique->AddPass(CreateRef<ClearPass>(mainRenderTarget, "Clear Main Render Target"));
@@ -346,7 +363,9 @@ namespace LevEngine
             m_ForwardTechnique->AddPass(CreateRef<EnvironmentPass>(m_HDRRenderTarget));
             m_ForwardTechnique->AddPass(CreateRef<OpaquePass>(m_OpaquePipeline, ShaderAssets::ForwardPBRInstanced(),
                                                               false));
+            m_ForwardTechnique->AddPass(CreateRef<PlanetPass>(m_OpaquePipeline, false));
             m_ForwardTechnique->AddPass(CreateRef<TransparentPass>(m_TransparentPipeline));
+            m_ForwardTechnique->AddPass(CreateRef<PlanetOceanPass>(m_TransparentPipeline));
 
             // The forward path renders straight into the main depth buffer, which is still bound
             // to the HDR target while the fog draws. Fog reads a copy instead, since a texture
@@ -435,6 +454,16 @@ namespace LevEngine
     Statistic Renderer::GetParticlesStatistic() const
     {
         return m_ParticlesStat;
+    }
+
+    Statistic Renderer::GetPlanetSurfaceStatistic() const
+    {
+        return m_PlanetSurfaceStat;
+    }
+
+    Statistic Renderer::GetPlanetOceanStatistic() const
+    {
+        return m_PlanetOceanStat;
     }
 
     Statistic Renderer::GetDebugStatistic() const
@@ -549,6 +578,9 @@ namespace LevEngine
         SampleQuery(m_PostProcessingQuery, m_PostProcessingStat);
         SampleQuery(m_ParticlesQuery, m_ParticlesStat);
         SampleQuery(m_DebugQuery, m_DebugStat);
+        SampleQuery(m_PlanetSurfaceQuery, m_PlanetSurfaceStat);
+        SampleQuery(m_PlanetOceanQuery, m_PlanetOceanStat);
+
     }
 
     void Renderer::ResetStatistics()
@@ -564,6 +596,8 @@ namespace LevEngine
         m_PostProcessingStat.Reset();
         m_ParticlesStat.Reset();
         m_DebugStat.Reset();
+        m_PlanetSurfaceStat.Reset();
+        m_PlanetOceanStat.Reset();
     }
 
     void Renderer::SampleQuery(const Ref<Query>& query, Statistic& stat)

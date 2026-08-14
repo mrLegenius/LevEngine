@@ -120,6 +120,84 @@ namespace LevEngine
         return material;
     }
 
+    physx::PxRigidStatic* Physics::CreateStaticTriangleMesh(
+        const Vector<Vector3>& vertices,
+        const Vector<uint32_t>& indices,
+        const Vector3 position,
+        const Quaternion rotation,
+        const FilterLayer layer)
+    {
+        LEV_PROFILE_FUNCTION();
+
+        if (vertices.empty() || indices.size() < 3) return nullptr;
+
+        physx::PxTriangleMeshDesc description;
+
+        description.points.count = static_cast<physx::PxU32>(vertices.size());
+        description.points.stride = sizeof(Vector3);
+        description.points.data = vertices.data();
+
+        description.triangles.count = static_cast<physx::PxU32>(indices.size() / 3);
+        description.triangles.stride = 3 * sizeof(uint32_t);
+        description.triangles.data = indices.data();
+
+        physx::PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+        // The mesh comes straight out of a generator: its triangles are a regular grid with no
+        // duplicate vertices and no degenerate faces, so the cleaning pass has nothing to find and is
+        // pure cost. Skipping it roughly halves the time to cook a chunk, which matters because a
+        // chunk is cooked while somebody is walking towards it.
+        cookingParams.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
+
+        // The BVH34 midphase is the one to want here: slower to build than BVH33 but faster to query,
+        // and terrain is queried by everything standing on it every step.
+        cookingParams.midphaseDesc.setToDefault(physx::PxMeshMidPhase::eBVH34);
+
+        physx::PxTriangleMeshCookingResult::Enum condition;
+        physx::PxTriangleMesh* mesh = PxCreateTriangleMesh(cookingParams, description,
+                                                           m_Physics->getPhysicsInsertionCallback(),
+                                                           &condition);
+
+        if (!mesh)
+        {
+            Log::CoreError("Failed to cook a triangle mesh from {0} vertices", vertices.size());
+            return nullptr;
+        }
+
+        const physx::PxTransform pose(PhysicsUtils::FromVector3ToPxVec3(position),
+                                      PhysicsUtils::FromQuaternionToPxQuat(rotation));
+
+        physx::PxRigidStatic* actor = m_Physics->createRigidStatic(pose);
+
+        const auto material = CreatePhysicMaterial();
+        physx::PxShape* shape = m_Physics->createShape(physx::PxTriangleMeshGeometry(mesh), *material, true);
+        material->release();
+
+        //<--- The actor holds the shape, and the shape holds the mesh ---<<
+        mesh->release();
+
+        physx::PxFilterData filterData;
+        filterData.word0 = static_cast<physx::PxU32>(layer);
+        filterData.word1 = static_cast<physx::PxU32>(PhysicsSettings::GetLayerCollisions(layer));
+        shape->setSimulationFilterData(filterData);
+        shape->setQueryFilterData(filterData);
+
+        actor->attachShape(*shape);
+        shape->release();
+
+        m_Scene->addActor(*actor);
+
+        return actor;
+    }
+
+    void Physics::RemoveStaticTriangleMesh(physx::PxRigidStatic* actor)
+    {
+        if (!actor) return;
+
+        m_Scene->removeActor(*actor);
+        PX_RELEASE(actor)
+    }
+
     physx::PxShape* Physics::CreateSphere(const float radius) const
     {
         const auto material = CreatePhysicMaterial();

@@ -16,6 +16,7 @@
 #include "ScriptAsset.h"
 #include "ShaderAsset.h"
 #include "SkyboxAsset.h"
+#include "PlanetBiomeSetAsset.h"
 #include "TextureAsset.h"
 #include "Kernel/SplashScreen.h"
 #include "Scene/Serializers/SerializerUtils.h"
@@ -221,6 +222,13 @@ namespace LevEngine
 		return extension == ".skybox";
 	}
 
+	bool AssetDatabase::IsAssetPlanetBiomeSet(const Path& path)
+	{
+		const auto extension = path.extension().string();
+
+		return extension == ".biomeset";
+	}
+
 	bool AssetDatabase::IsAssetPrefab(const Path& path)
 	{
 		const auto extension = path.extension().string();
@@ -307,6 +315,9 @@ namespace LevEngine
 
 		if (IsAssetSkybox(path))
 			return CreateRef<SkyboxAsset>(path, uuid);
+
+		if (IsAssetPlanetBiomeSet(path))
+			return CreateRef<PlanetBiomeSetAsset>(path, uuid);
 
 		if (IsAssetMesh(path))
 			return CreateRef<MeshAsset>(path, uuid);

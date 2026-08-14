@@ -49,6 +49,12 @@ namespace LevEngine
 		return App::RenderDevice().CreateTextureCube(width, height, format, cpuAccess, uav, generateMipMaps);
 	}
 	
+	Ref<Texture> Texture::CreateTexture2DArray(const Vector<String>& paths, const bool isLinear,
+	                                           const bool generateMipMaps)
+	{
+		return App::RenderDevice().CreateTexture2DArray(paths, isLinear, generateMipMaps);
+	}
+
 	Ref<Texture> Texture::CreateTextureCube(const String paths[6])
 	{
 		return CreateTextureCube(paths, false);

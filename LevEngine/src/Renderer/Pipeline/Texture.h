@@ -117,6 +117,18 @@ namespace LevEngine
 		                                      CPUAccess cpuAccess = CPUAccess::None,
 		                                      bool uav = false, bool generateMipMaps = true);
 
+		// One Texture2DArray with a slice per path, which is how a shader gets more textures than it
+		// has registers: a material with sixteen ground textures cannot bind sixteen slots, but it can
+		// bind one array and index it.
+		//
+		// The array's size and format come from the first image that loads; the rest are resampled to
+		// match, because a hardware texture array has one size for every slice and there is nowhere
+		// to put a slice of a different one. Paths that fail to load leave their slice flat grey
+		// rather than shifting the ones after them, so a missing file does not silently repaint the
+		// planet.
+		static Ref<Texture> CreateTexture2DArray(const Vector<String>& paths, bool isLinear,
+		                                         bool generateMipMaps = true);
+
 		static Ref<Texture> CreateTextureCube(const String paths[6]);
 		static Ref<Texture> CreateTextureCube(const String paths[6], const bool isLinear);
 		static Ref<Texture> Create(const String& path, bool isLinear, bool generateMipMaps);

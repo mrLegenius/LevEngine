@@ -48,6 +48,36 @@ namespace LevEngine
 			return Min(Max(value, from), to);
 		}
 
+		static float Abs(const float value) { return std::abs(value); }
+		static int32_t Abs(const int32_t value) { return std::abs(value); }
+
+		static float Floor(const float value) { return std::floor(value); }
+		static float Ceil(const float value) { return std::ceil(value); }
+		static float Sqrt(const float value) { return std::sqrt(value); }
+		static float Pow(const float value, const float power) { return std::pow(value, power); }
+
+		static float Saturate(const float value) { return Clamp(value, 0.0f, 1.0f); }
+
+		// Where value sits between from and to, as 0 at from and 1 at to. Degenerate ranges give 0
+		// rather than a division by zero, which is what a range of no width should read as: a
+		// threshold the value is either side of, contributing nothing either way.
+		static float InverseLerp(const float from, const float to, const float value)
+		{
+			const float range = to - from;
+			if (Abs(range) < FloatEpsilon) return 0.0f;
+
+			return (value - from) / range;
+		}
+
+		// The same 0..1 ramp with zero slope at both ends. Anything that blends by a threshold wants
+		// this rather than a linear ramp: a linear one leaves a visible crease where the blend
+		// starts and stops, because the derivative jumps.
+		static float Smoothstep(const float from, const float to, const float value)
+		{
+			const float t = Saturate(InverseLerp(from, to, value));
+			return t * t * (3.0f - 2.0f * t);
+		}
+
 		static bool IsZero(const float value)
 		{
 			return IsEqual(value, 0.0f);

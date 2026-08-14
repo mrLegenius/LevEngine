@@ -165,6 +165,12 @@ namespace LevEngine
         return D3D11Texture::CreateTexture2D(m_Device.Get(), width, height, slices, format, cpuAccess, uav, generateMipMaps);
     }
 
+    Ref<Texture> D3D11RenderDevice::CreateTexture2DArray(const Vector<String>& paths, const bool isLinear,
+        const bool generateMipMaps) const
+    {
+        return D3D11Texture::CreateTexture2DArray(m_Device.Get(), paths, isLinear, generateMipMaps);
+    }
+
     Ref<Texture> D3D11RenderDevice::CreateTextureCube(const uint16_t width, const uint16_t height,
         const Texture::TextureFormat& format, const CPUAccess cpuAccess, const bool uav,
         const bool generateMipMaps) const

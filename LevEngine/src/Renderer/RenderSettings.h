@@ -46,6 +46,12 @@ struct LEV_API RenderSettings
 	static constexpr float CascadeDistances[CascadeCount] = { 0.1f, 0.3f, 0.5f, 1.0f };
 	static constexpr float ShadowMapResolution = 2048;
 
+	// How far from the camera the cascades reach, in world units. Separate from the camera's far
+	// plane on purpose: a cascade covers its share of this distance with a fixed number of texels, so
+	// tying it to the far plane means a camera that can see a planet from orbit has no usable shadows
+	// anywhere. Anything past this is simply unshadowed, which is what the last cascade already does.
+	inline static float ShadowDistance = 1000.0f;
+
 	//Lighting
 	static constexpr int MaxLights = 100;
 

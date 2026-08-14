@@ -29,6 +29,9 @@ public:
 	                                    const CPUAccess cpuAccess,
 	                                    const bool uav, const bool generateMipMaps);
 
+	static Ref<Texture> CreateTexture2DArray(ID3D11Device2* device, const Vector<String>& paths,
+	                                         bool isLinear, bool generateMipMaps);
+
 	static Ref<Texture> CreateTextureCube(ID3D11Device2* device, uint16_t width,
 	                                      const uint16_t height,
 	                                      const TextureFormat& format,

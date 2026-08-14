@@ -39,6 +39,8 @@ namespace LevEngine
         Ref<Texture> CreateTexture2D(uint16_t width, uint16_t height, uint16_t slices,
                                      const Texture::TextureFormat& format, CPUAccess cpuAccess, bool uav,
                                      bool generateMipMaps) const override;
+        Ref<Texture> CreateTexture2DArray(const Vector<String>& paths, bool isLinear,
+                                          bool generateMipMaps) const override;
         Ref<Texture> CreateTextureCube(uint16_t width, uint16_t height,
                                        const Texture::TextureFormat& format, CPUAccess cpuAccess, bool uav,
                                        bool generateMipMaps) const override;

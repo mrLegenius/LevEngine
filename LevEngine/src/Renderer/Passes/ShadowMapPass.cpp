@@ -13,7 +13,9 @@
 #include "Scene/Components/Animation/AnimatorComponent.h"
 #include "Scene/Components/Camera/Camera.h"
 #include "Scene/Components/Lights/Lights.h"
+#include "Planet/PlanetChunk.h"
 #include "Scene/Components/MeshRenderer/MeshRenderer.h"
+#include "Scene/Components/Planet/Planet.h"
 #include "Scene/Components/Transform/Transform.h"
 
 namespace LevEngine
@@ -111,7 +113,9 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 
 	if (!hasLight) return false;
 
-	const auto cameraCascadeProjections = params.Camera->GetSplitPerspectiveProjections(RenderSettings::CascadeDistances, RenderSettings::CascadeCount);
+	const auto cameraCascadeProjections = params.Camera->GetSplitPerspectiveProjections(RenderSettings::CascadeDistances,
+	                                                                          RenderSettings::CascadeCount,
+	                                                                          RenderSettings::ShadowDistance);
 
 	for (int cascadeIndex = 0; cascadeIndex < RenderSettings::CascadeCount; ++cascadeIndex)
 	{
@@ -127,7 +131,8 @@ bool ShadowMapPass::Begin(entt::registry& registry, RenderParams& params)
 		const auto lightViewMatrix = Matrix::CreateLookAt(static_cast<Vector3>(center), static_cast<Vector3>(center) + lightDirection, Vector3::Up);
 
 		m_ShadowData.ViewProjection[cascadeIndex] = lightViewMatrix * GetCascadeProjection(lightViewMatrix, frustumCorners);
-		m_ShadowData.Distances[cascadeIndex] = params.Camera->GetPerspectiveProjectionSliceDistance(RenderSettings::CascadeDistances[cascadeIndex]);
+		m_ShadowData.Distances[cascadeIndex] = params.Camera->GetPerspectiveProjectionSliceDistance(
+			RenderSettings::CascadeDistances[cascadeIndex], RenderSettings::ShadowDistance);
 
 		m_ShadowData.ShadowMapDimensions = RenderSettings::ShadowMapResolution;
 	}
@@ -146,6 +151,52 @@ void ShadowMapPass::Process(entt::registry& registry, RenderParams& params)
 		ProcessStaticMeshes(registry);
 
 	ProcessAnimatedMeshes(registry);
+	ProcessPlanets(registry, params);
+}
+
+void ShadowMapPass::ProcessPlanets(entt::registry& registry, const RenderParams& params)
+{
+	LEV_PROFILE_FUNCTION();
+
+	const auto planets = registry.group<>(entt::get<Transform, PlanetComponent>);
+	if (planets.begin() == planets.end()) return;
+
+	// Size of a shadow map texel on the ground, in world units, at the far end of the cascade set.
+	//
+	// The cascades are fitted to slices of the camera frustum, so the widest of them spans roughly the
+	// frustum's width at ShadowDistance, and it spends ShadowMapResolution texels on it. Anything the
+	// planet draws finer than that texel cannot be recorded, so there is no reason to submit it -- and
+	// submitting it costs four times over, once per cascade slice the geometry shader fans out to.
+	const float tangentHalfFov = std::tan(params.Camera->GetFieldOfView() * Math::DegToRad * 0.5f);
+	const float shadowExtent = 2.0f * RenderSettings::ShadowDistance * Math::Max(tangentHalfFov, 0.05f);
+	const float texelSize = shadowExtent / RenderSettings::ShadowMapResolution;
+
+	// The ordinary cascade shader, not a planet one: the chunk meshes carry POSITION like any other
+	// mesh, and their climate stream is simply a semantic this shader does not declare, which Mesh::Bind
+	// leaves unbound. Nothing about a depth-only pass cares which biome it is looking at.
+	const auto& shader = ShaderAssets::CascadeShadowPass();
+	BindShadowData(shader);
+
+	for (const auto entity : planets)
+	{
+		auto [transform, planet] = planets.get<Transform, PlanetComponent>(entity);
+
+		if (!planet.Surface) continue;
+
+		planet.Surface->CollectShadowCasters(texelSize, m_PlanetShadowCasters);
+
+		const Matrix planetToWorld = transform.GetModel();
+
+		for (const PlanetChunk* chunk : m_PlanetShadowCasters)
+		{
+			const Ref<Mesh>& mesh = chunk->GetMesh();
+			if (!mesh || !mesh->IndexBuffer) continue;
+
+			const Matrix chunkToWorld = Matrix::CreateTranslation(chunk->GetOrigin()) * planetToWorld;
+
+			Renderer3D::DrawMesh(chunkToWorld, mesh, shader);
+		}
+	}
 }
 
 void ShadowMapPass::BindShadowData(const Ref<Shader>& shader) const

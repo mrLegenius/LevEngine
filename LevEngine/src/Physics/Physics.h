@@ -62,6 +62,24 @@ namespace LevEngine
             FilterLayer layerMask = FilterLayer::Layer0
         ) const;
         
+        // Cooks a triangle mesh and puts it in the scene as a static actor.
+        //
+        // Public, unlike the shape factories below, because the thing that needs it is not a
+        // component: a planet's ground is generated and thrown away as the camera moves, so its
+        // colliders come and go without an entity anywhere to hang them on. Positions are relative to
+        // position, which is what keeps the cooked mesh's coordinates small -- see PlanetCollision.
+        //
+        // Returns null if the mesh is empty or the cooking fails. The caller owns the result and must
+        // hand it back to RemoveStaticTriangleMesh.
+        [[nodiscard]] physx::PxRigidStatic* CreateStaticTriangleMesh(
+            const Vector<Vector3>& vertices,
+            const Vector<uint32_t>& indices,
+            Vector3 position,
+            Quaternion rotation,
+            FilterLayer layer = FilterLayer::Layer0);
+
+        void RemoveStaticTriangleMesh(physx::PxRigidStatic* actor);
+
         void Process(entt::registry& registry, float deltaTime);
         
         friend struct Rigidbody;

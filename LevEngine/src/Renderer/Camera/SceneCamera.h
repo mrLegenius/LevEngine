@@ -22,7 +22,12 @@ public:
 	[[nodiscard]] ProjectionType GetProjectionType() const { return m_ProjectionType; }
 
 	[[nodiscard]] Matrix GetPerspectiveProjection() const { return m_PerspectiveProjection; }
-	float GetPerspectiveProjectionSliceDistance(float cascadeDistance) const;
+	// maxDistance bounds where the cascades reach, and it is deliberately not the camera's far
+	// plane: a cascade's resolution is its range divided by the shadow map, so a camera that can see
+	// a planet from orbit would spread four cascades over tens of thousands of units and leave
+	// nothing usable near the viewer. Zero falls back to the far plane, which is right for a camera
+	// that sees no further than its own shadows.
+	float GetPerspectiveProjectionSliceDistance(float cascadeDistance, float maxDistance = 0.0f) const;
 
 	void RecalculateFrustum(const Transform& cameraTransform);
 	[[nodiscard]] const Frustum& GetFrustum() const { return m_Frustum; }
@@ -75,7 +80,8 @@ public:
 	void SetPerspectiveFar(const float farClip) { m_PerspectiveFar = farClip; RecalculateProjection(); }
 	[[nodiscard]] float GetPerspectiveFar() const { return m_PerspectiveFar; }
 
-	[[nodiscard]] Vector<Matrix> GetSplitPerspectiveProjections(const float* distances, int count) const;
+	[[nodiscard]] Vector<Matrix> GetSplitPerspectiveProjections(const float* distances, int count,
+	                                                            float maxDistance = 0.0f) const;
 
 protected:
 	float m_FieldOfView = DirectX::XMConvertToRadians(45.0f);

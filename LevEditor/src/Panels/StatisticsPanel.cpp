@@ -22,6 +22,8 @@ namespace LevEngine::Editor
         DrawAverageStat("Environment", App::Renderer().GetEnvironmentStatistic());
         DrawAverageStat("Deferred Geometry", App::Renderer().GetDeferredGeometryStatistic());
         DrawAverageStat("Deferred Lighting", App::Renderer().GetDeferredLightingStatistic());
+        DrawAverageStat("Planet Surface", App::Renderer().GetPlanetSurfaceStatistic());
+        DrawAverageStat("Planet Ocean", App::Renderer().GetPlanetOceanStatistic());
         DrawAverageStat("Deferred Transparent", App::Renderer().GetDeferredTransparentStatistic());
         DrawAverageStat("Post Processing", App::Renderer().GetPostProcessingStatistic());
         DrawAverageStat("Particles", App::Renderer().GetParticlesStatistic());

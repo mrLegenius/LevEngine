@@ -18,6 +18,10 @@
 #define CB_POST_PROCESSING	b8	// PostProcessingPass
 #define CB_FOG				b9	// FogPass
 #define CB_ATMOSPHERE		b10	// AtmosphereConstants (sky + IBL cubemap)
+#define CB_PLANET			b11	// PlanetConstants -- the shape, the ocean, the biome table and the
+								// planet's transforms. Bound once per planet: nothing about a chunk
+								// reaches the shader except through its model matrix, so there is no
+								// buffer update between draws.
 
 // CB_LIGHT_INDEX aliases CB_MATERIAL: the deferred lighting pass has no material bound and
 // the geometry passes have no light index. Never pull both into one shader -- FXC only lets
@@ -45,6 +49,13 @@
 #define T_FOG_DEPTH			t4	// FogPass -- same slot as the G-buffer depth, and equally exclusive:
 								// the fog pass runs on its own with only the depth copy bound.
 
+#define T_PLANET_ALBEDO		t0	// PlanetPass -- Texture2DArray, one slice per ground texture
+#define T_PLANET_NORMAL		t1
+#define T_PLANET_ROUGHNESS	t2
+
+// The planet set reuses t0..t2 for the same reason the G-buffer set reuses t1..t4: the planet passes
+// bind no material, and no pass binds both. A planet is drawn by PlanetPass, never by OpaquePass.
+
 #define T_INSTANCE_DATA		t6	// Renderer3D::DrawMeshInstanced
 
 #define T_SHADOW_MAP		t9	// ShadowMapPass
@@ -60,6 +71,8 @@
 #define S_PBR_NORMAL		s3
 #define S_PBR_AO			s4
 #define S_PBR_EMISSIVE		s5
+
+#define S_PLANET_GROUND		s0	// PlanetPass -- one sampler for all three ground arrays
 
 #define S_SHADOW_MAP		s9
 #define S_IRRADIANCE		s10

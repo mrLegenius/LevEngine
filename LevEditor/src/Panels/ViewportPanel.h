@@ -41,7 +41,12 @@ namespace LevEngine::Editor
 
 		Ref<Texture> m_Texture;
 
-		EditorCamera m_Camera{60.0f, 0.1f, 1000.0f, Vector3{0, 10, -10}};
+		// A thousand units of far plane cannot hold anything planet sized -- a planet is thousands of
+		// units across before it is large enough to stand on -- so the editor camera sees further than
+		// a scene camera does by default. Depth precision is unaffected: the projection is reversed
+		// nowhere and the near plane is what decides that, and shadows are bounded by
+		// RenderSettings::ShadowDistance rather than by how far the camera can see.
+		EditorCamera m_Camera{60.0f, 0.1f, 20000.0f, Vector3{0, 10, -10}};
 	};
 }
 

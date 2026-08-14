@@ -26,6 +26,7 @@
 #include "Systems/Atmosphere/CelestialOrbitSystem.h"
 #include "Systems/Atmosphere/MoonLightingSystem.h"
 #include "Systems/Atmosphere/SunLightingSystem.h"
+#include "Systems/Planet/PlanetCollisionSystem.h"
 #include "Systems/Animation/WaypointDisplacementByTimeSystem.h"
 #include "Systems/Animation/WaypointPositionUpdateSystem.h"
 #include "Scene/Components/ScriptsContainer/ScriptsContainer.h"
@@ -98,6 +99,11 @@ namespace LevEngine
 
         // Order matters: the suns are moved first, then their light is coloured by the atmosphere
         // they end up shining through, and the moons last, since they reflect the suns.
+        // The planet's own level of detail is driven from a render pass instead, because it has to
+        // follow the camera the frame is being rendered from -- see PlanetUpdatePass. This system only
+        // deals with collision, which follows the bodies rather than the view.
+        RegisterUpdateSystem<PlanetCollisionSystem>();
+
         RegisterUpdateSystem<CelestialOrbitSystem>();
         RegisterUpdateSystem<SunLightingSystem>();
         RegisterUpdateSystem<MoonLightingSystem>();

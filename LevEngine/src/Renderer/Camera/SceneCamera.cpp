@@ -28,15 +28,19 @@ void SceneCamera::SetPerspective(const float fov, const float nearClip, const fl
 	RecalculateProjection();
 }
 
-Vector<Matrix> SceneCamera::GetSplitPerspectiveProjections(const float* distances, const int count) const
+Vector<Matrix> SceneCamera::GetSplitPerspectiveProjections(const float* distances, const int count,
+                                                           const float maxDistance) const
 {
 	Vector<Matrix> projections;
+
+	//<--- Not called "far": windows.h still defines that as a macro ---<<
+	const float farDistance = maxDistance > 0.0f ? Math::Min(maxDistance, m_PerspectiveFar) : m_PerspectiveFar;
 
 	float min = m_PerspectiveNear;
 
 	for (int i = 0; i < count; ++i)
 	{
-		const float max = Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distances[i]);
+		const float max = Math::Lerp(m_PerspectiveNear, farDistance, distances[i]);
 		auto projection = Matrix::CreatePerspectiveFieldOfView(m_FieldOfView, m_AspectRatio, min, max);
 
 		projections.emplace_back(projection);
@@ -46,9 +50,12 @@ Vector<Matrix> SceneCamera::GetSplitPerspectiveProjections(const float* distance
 	return projections;
 }
 
-float SceneCamera::GetPerspectiveProjectionSliceDistance(const float distance) const
+float SceneCamera::GetPerspectiveProjectionSliceDistance(const float distance, const float maxDistance) const
 {
-	return m_PerspectiveNear + Math::Lerp(m_PerspectiveNear, m_PerspectiveFar, distance);
+	//<--- Not called "far": windows.h still defines that as a macro ---<<
+	const float farDistance = maxDistance > 0.0f ? Math::Min(maxDistance, m_PerspectiveFar) : m_PerspectiveFar;
+
+	return m_PerspectiveNear + Math::Lerp(m_PerspectiveNear, farDistance, distance);
 }
 
 void SceneCamera::SetViewportSize(const uint32_t width, const uint32_t height)

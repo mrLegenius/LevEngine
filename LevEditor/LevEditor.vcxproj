@@ -187,6 +187,8 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClCompile Include="src\GUI\Drawers\Components\CharacterControllerDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\ConstantForceDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\EmitterComponentDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Components\PlanetDrawer.cpp" />
+    <ClCompile Include="src\GUI\Drawers\Assets\PlanetBiomeSetAssetDrawer.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\AtmosphereDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\LightDrawers.cpp" />
     <ClCompile Include="src\GUI\Drawers\Components\MeshRendererDrawer.cpp" />

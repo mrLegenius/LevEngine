@@ -1,0 +1,150 @@
+Scene: PlanetTestScene
+Entities:
+  - Entity: 4000000000000000001
+    Tag: Planet
+    Parent: 9132276104230336438
+    Transform:
+      ChildIndex: 0
+      Position: [0, 10, -500]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Planet:
+      Preset: 5
+      Seed: 514603
+      Radius: 100
+      SeaLevelThreshold: 0.129999995
+      ShoreWidth: 0.100000001
+      OceanDepth: 2
+      LandHeight: 1
+      ContinentWarp: 0.400000006
+      ContinentWarpFrequency: 1.5
+      MountainHeight: 3
+      MountainBeltWidth: 0.349999994
+      MountainInlandBias: 0.600000024
+      DetailHeight: 5
+      DetailReliefBias: 0.699999988
+      Continents:
+        Frequency: 2
+        Octaves: 5
+        Lacunarity: 2.02999997
+        Gain: 0.5
+        Seed: 0
+      Mountains:
+        Frequency: 5
+        Octaves: 7
+        Lacunarity: 2.02999997
+        Gain: 0.5
+        Seed: 0
+      MountainBelts:
+        Frequency: 1.70000005
+        Octaves: 3
+        Lacunarity: 2.02999997
+        Gain: 0.5
+        Seed: 0
+      ShapeDetail:
+        Frequency: 24
+        Octaves: 4
+        Lacunarity: 2.02999997
+        Gain: 0.5
+        Seed: 0
+      ClimateSeed: 7
+      EquatorTemperature: 30
+      PoleTemperature: -25
+      LatitudeFalloff: 1.39999998
+      LapseRate: 6.5
+      KilometersPerUnit: 0.0199999996
+      TemperatureVariationRange: 5
+      HumidityAtCoast: 0.850000024
+      HumidityInland: 0.200000003
+      CirculationStrength: 0.550000012
+      HumidityVariationRange: 0.219999999
+      RainShadowStrength: 0.600000024
+      RainShadowArc: 4
+      RainShadowRelief: 700
+      AltitudeDrying: 0.300000012
+      TemperatureVariation:
+        Frequency: 3
+        Octaves: 3
+        Lacunarity: 2.02999997
+        Gain: 0.5
+        Seed: 0
+      HumidityVariation:
+        Frequency: 4
+        Octaves: 3
+        Lacunarity: 2.02999997
+        Gain: 0.5
+        Seed: 0
+      ChunkResolution: 32
+      MaxDepth: 7
+      LodBias: 2
+      SkirtDepthScale: 0.119999997
+      MaxConcurrentBuilds: 8
+      RenderOcean: true
+      OceanShallowColor: [0.219999999, 0.550000012, 0.600000024, 1]
+      OceanDeepColor: [0.0199999996, 0.0900000036, 0.189999998, 1]
+      OceanDepthFalloff: 120
+      OceanRoughness: 0.0599999987
+      OceanOpacity: 0.850000024
+      OceanFresnelStrength: 0.899999976
+      WaveStrength: 0.349999994
+      WaveScale: 0.600000024
+      WaveSpeed: 0.150000006
+      DetailStrength: 0.600000024
+      DetailFrequency: 2.5
+      TriplanarSharpness: 6
+      DetailFadeStart: 120
+      DetailFadeEnd: 400
+      GenerateCollision: false
+      CollisionRadius: 400
+    Atmosphere:
+      Preset: 0
+      PlanetRadius: 6360
+      AtmosphereHeight: 60
+      UnitsToKilometers: 0.00100000005
+      SeaLevelHeight: 0
+      RayleighScattering: [0.00580199994, 0.0135580003, 0.0331000015]
+      RayleighScaleHeight: 8
+      MieScattering: 0.00399600016
+      MieAbsorption: 0.000440000003
+      MieScaleHeight: 1.20000005
+      MieAnisotropy: 0.800000012
+      AbsorptionCoefficients: [0.000650000002, 0.001881, 8.49999997e-05]
+      AbsorptionLayerCenter: 25
+      AbsorptionLayerWidth: 15
+      GroundColor: [0.100000001, 0.100000001, 0.100000001, 1]
+      SkyIntensity: 1
+      RenderSunDisks: true
+      RenderStars: false
+      StarBrightness: 1
+      StarDensity: 1
+      StarTwinkle: 0.5
+      StarYearLength: 365.25
+      StarRotationSpeed: 1
+      MilkyWayBrightness: 0.5
+      SkyLightUpdateInterval: 0.100000001
+      SkyLightUpdateAngle: 1
+  - Entity: 4000000000000000002
+    Tag: Sun
+    Parent: 9132276104230336438
+    Transform:
+      ChildIndex: 1
+      Position: [0, 0, 0]
+      Rotation: [-1.05000007, 0.500000179, -2.99478096e-08]
+      Scale: [1, 1, 1]
+    Sun:
+      Color: [1, 1, 1, 1]
+      Intensity: 20
+      AngularDiameter: 0.545000017
+      DrivesDirectionalLight: true
+      LightIntensity: 1
+    Celestial Orbit:
+      DayLength: 240
+      TimeOfDay: 0.25
+      DaysElapsed: 0
+      AutoAdvance: false
+      Inclination: 20
+      NorthOffset: 0
+    Directional Light:
+      Color: [0.932744324, 0.850391865, 0.733176529, 1]
+Systems:
+  []

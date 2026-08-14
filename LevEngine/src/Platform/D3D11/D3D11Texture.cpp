@@ -260,6 +260,247 @@ Ref<Texture> D3D11Texture::CreateTexture2D(
     return texture;
 }
 
+namespace
+{
+    // Bilinear resample of an RGBA8 image into a slice of a different size. A texture array has one
+    // size for all of its slices, and the alternative to resampling is refusing to load anything
+    // that does not match -- which in practice means a biome set breaks the first time somebody
+    // saves a texture at a different resolution.
+    void ResampleRGBA(const stbi_uc* source, const int sourceWidth, const int sourceHeight,
+                      uint8_t* destination, const int destinationWidth, const int destinationHeight)
+    {
+        for (int y = 0; y < destinationHeight; ++y)
+        {
+            //<--- Sample at pixel centres, or the result is shifted half a pixel ---<<
+            const float sourceY = (static_cast<float>(y) + 0.5f)
+                * static_cast<float>(sourceHeight) / static_cast<float>(destinationHeight) - 0.5f;
+
+            const int y0 = Math::Clamp(static_cast<int>(std::floor(sourceY)), 0, sourceHeight - 1);
+            const int y1 = Math::Clamp(y0 + 1, 0, sourceHeight - 1);
+            const float weightY = Math::Saturate(sourceY - static_cast<float>(y0));
+
+            for (int x = 0; x < destinationWidth; ++x)
+            {
+                const float sourceX = (static_cast<float>(x) + 0.5f)
+                    * static_cast<float>(sourceWidth) / static_cast<float>(destinationWidth) - 0.5f;
+
+                const int x0 = Math::Clamp(static_cast<int>(std::floor(sourceX)), 0, sourceWidth - 1);
+                const int x1 = Math::Clamp(x0 + 1, 0, sourceWidth - 1);
+                const float weightX = Math::Saturate(sourceX - static_cast<float>(x0));
+
+                for (int channel = 0; channel < 4; ++channel)
+                {
+                    const float c00 = source[(y0 * sourceWidth + x0) * 4 + channel];
+                    const float c10 = source[(y0 * sourceWidth + x1) * 4 + channel];
+                    const float c01 = source[(y1 * sourceWidth + x0) * 4 + channel];
+                    const float c11 = source[(y1 * sourceWidth + x1) * 4 + channel];
+
+                    const float top = Math::Lerp(c00, c10, weightX);
+                    const float bottom = Math::Lerp(c01, c11, weightX);
+
+                    destination[(y * destinationWidth + x) * 4 + channel] =
+                        static_cast<uint8_t>(Math::Clamp(Math::Lerp(top, bottom, weightY), 0.0f, 255.0f));
+                }
+            }
+        }
+    }
+}
+
+Ref<Texture> D3D11Texture::CreateTexture2DArray(ID3D11Device2* device, const Vector<String>& paths,
+    const bool isLinear, const bool generateMipMaps)
+{
+    LEV_PROFILE_FUNCTION();
+
+    if (paths.empty())
+    {
+        Log::CoreWarning("Cannot create a texture array with no slices");
+        return nullptr;
+    }
+
+    stbi_set_flip_vertically_on_load(1);
+
+    // The first image that loads sets the size for the rest. Which one that is matters only for the
+    // resolution the others are resampled to, so the first slice is as good a choice as any and is
+    // the one an author can predict.
+    int width = 0;
+    int height = 0;
+
+    for (const String& path : paths)
+    {
+        int channels = 0;
+        if (stbi_info(path.c_str(), &width, &height, &channels) && width > 0 && height > 0)
+            break;
+
+        width = 0;
+        height = 0;
+    }
+
+    if (width <= 0 || height <= 0)
+    {
+        Log::CoreError("Cannot create a texture array: none of its {} images could be read",
+                       static_cast<int>(paths.size()));
+        return nullptr;
+    }
+
+    const auto sliceCount = static_cast<uint16_t>(paths.size());
+    const size_t sliceBytes = static_cast<size_t>(width) * static_cast<size_t>(height) * 4;
+
+    //<--- Flat mid grey, so a slice whose file is missing is neutral instead of black ---<<
+    Vector<uint8_t> pixels(sliceBytes * sliceCount, 128);
+
+    for (uint16_t slice = 0; slice < sliceCount; ++slice)
+    {
+        const String& path = paths[slice];
+        if (path.empty()) continue;
+
+        int sourceWidth = 0;
+        int sourceHeight = 0;
+        int channels = 0;
+
+        stbi_uc* data = stbi_load(path.c_str(), &sourceWidth, &sourceHeight, &channels, 4);
+
+        if (!data)
+        {
+            Log::CoreWarning("Failed to read '{0}' for slice {1} of a texture array", path, slice);
+            continue;
+        }
+
+        uint8_t* destination = pixels.data() + sliceBytes * slice;
+
+        if (sourceWidth == width && sourceHeight == height)
+        {
+            memcpy(destination, data, sliceBytes);
+        }
+        else
+        {
+            Log::CoreWarning("'{0}' is {1}x{2} but the texture array is {3}x{4}; it was resampled",
+                             path, sourceWidth, sourceHeight, width, height);
+
+            ResampleRGBA(data, sourceWidth, sourceHeight, destination, width, height);
+        }
+
+        stbi_image_free(data);
+    }
+
+    Ref<D3D11Texture> texture = CreateRef<D3D11Texture>(device);
+
+    texture->m_Width = static_cast<uint16_t>(width);
+    texture->m_Height = static_cast<uint16_t>(height);
+    texture->m_NumSlices = sliceCount;
+    texture->m_TextureDimension = Dimension::Texture2DArray;
+    texture->m_CPUAccess = CPUAccess::None;
+    texture->m_IsLoaded = true;
+
+    // Ground textures are colour and want the sRGB decode; normal and roughness maps are data and
+    // must not have it, which is what isLinear picks between.
+    texture->m_TextureResourceFormat = isLinear ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+    texture->m_ShaderResourceViewFormat = texture->m_RenderTargetViewFormat = texture->m_TextureResourceFormat;
+
+    texture->m_TextureFormat = TextureFormat(Components::RGBA,
+                                             isLinear ? Type::UnsignedNormalized : Type::SRGB);
+
+    auto result = device->CheckFormatSupport(texture->m_TextureResourceFormat,
+                                             &texture->m_TextureResourceFormatSupport);
+    LEV_CORE_ASSERT(SUCCEEDED(result), "Failed to query format support")
+
+    texture->m_ShaderResourceViewFormatSupport = texture->m_RenderTargetViewFormatSupport =
+        texture->m_TextureResourceFormatSupport;
+
+    texture->m_BPP = GetBytesPerPixel(texture->m_TextureResourceFormat);
+    texture->m_Pitch = GetPitch(static_cast<uint16_t>(width), texture->m_BPP);
+    texture->m_SampleDesc = {1, 0};
+
+    texture->m_GenerateMipMaps = generateMipMaps
+        && (texture->m_ShaderResourceViewFormatSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN) != 0;
+
+    // The mip count is computed rather than left to the driver, because the slices are uploaded one
+    // subresource at a time and a subresource index is (mip + slice * mipCount) -- which cannot be
+    // formed without knowing the count.
+    uint32_t mipLevels = 1;
+    if (texture->m_GenerateMipMaps)
+    {
+        uint32_t extent = static_cast<uint32_t>(Math::Max(width, height));
+        while (extent > 1)
+        {
+            extent >>= 1;
+            ++mipLevels;
+        }
+    }
+
+    D3D11_TEXTURE2D_DESC textureDesc = {};
+
+    textureDesc.Width = width;
+    textureDesc.Height = height;
+    textureDesc.MipLevels = mipLevels;
+    textureDesc.ArraySize = sliceCount;
+    textureDesc.Format = texture->m_TextureResourceFormat;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.CPUAccessFlags = 0;
+
+    if (texture->m_GenerateMipMaps)
+    {
+        //<--- GenerateMips writes through a render target view, so the flag has to be there ---<<
+        textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+        textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+    }
+
+    Vector<D3D11_SUBRESOURCE_DATA> subresources;
+
+    if (!texture->m_GenerateMipMaps)
+    {
+        subresources.resize(sliceCount);
+
+        for (uint16_t slice = 0; slice < sliceCount; ++slice)
+        {
+            subresources[slice].pSysMem = pixels.data() + sliceBytes * slice;
+            subresources[slice].SysMemPitch = texture->m_Pitch;
+            subresources[slice].SysMemSlicePitch = 0;
+        }
+    }
+
+    result = device->CreateTexture2D(&textureDesc,
+                                     subresources.empty() ? nullptr : subresources.data(),
+                                     &texture->m_Texture2D);
+
+    LEV_CORE_ASSERT(SUCCEEDED(result), "Failed to create a texture array")
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc{};
+
+    resourceViewDesc.Format = texture->m_ShaderResourceViewFormat;
+    resourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+    resourceViewDesc.Texture2DArray.MostDetailedMip = 0;
+    resourceViewDesc.Texture2DArray.MipLevels = mipLevels;
+    resourceViewDesc.Texture2DArray.FirstArraySlice = 0;
+    resourceViewDesc.Texture2DArray.ArraySize = sliceCount;
+
+    result = device->CreateShaderResourceView(texture->m_Texture2D, &resourceViewDesc,
+                                              &texture->m_ShaderResourceView);
+
+    LEV_CORE_ASSERT(SUCCEEDED(result), "Failed to create a shader resource view for a texture array")
+
+    if (texture->m_GenerateMipMaps)
+    {
+        const auto context = D3D11DeferredContexts::GetContext();
+
+        for (uint16_t slice = 0; slice < sliceCount; ++slice)
+        {
+            const UINT subresource = D3D11CalcSubresource(0, slice, mipLevels);
+
+            context->UpdateSubresource(texture->m_Texture2D, subresource, nullptr,
+                                       pixels.data() + sliceBytes * slice, texture->m_Pitch, 0);
+        }
+
+        context->GenerateMips(texture->m_ShaderResourceView);
+    }
+
+    texture->m_IsDirty = false;
+
+    return texture;
+}
+
 Ref<Texture> D3D11Texture::CreateTextureCube(ID3D11Device2* device, uint16_t width, const uint16_t height, const TextureFormat& format,
     const CPUAccess cpuAccess, const bool uav, const bool generateMipMaps)
 {

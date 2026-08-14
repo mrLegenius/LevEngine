@@ -8,6 +8,7 @@
 namespace LevEngine
 {
     class ConstantBuffer;
+    class PlanetChunk;
     class CascadeShadowMap;
     class Shader;
 
@@ -30,6 +31,11 @@ namespace LevEngine
 
     private:
         void ProcessStaticMeshes(entt::registry& registry);
+
+        // Planet chunks are not entities and carry no MeshRendererComponent, so they are walked
+        // separately. They always cast: a planet is the largest shadow caster in any scene it is in,
+        // and a mountain that does not shade its own valley reads as flat.
+        void ProcessPlanets(entt::registry& registry, const RenderParams& params);
         void ProcessStaticMeshesInstanced(entt::registry& registry);
         void ProcessAnimatedMeshes(entt::registry& registry);
         void BindShadowData(const Ref<Shader>& shader) const;
@@ -38,6 +44,9 @@ namespace LevEngine
         Ref<CascadeShadowMap> m_CascadeShadowMap = nullptr;
         Ref<ConstantBuffer> m_ShadowMapConstantBuffer;
         MeshBatcher m_Batcher;
+
+        //<--- Kept across frames so collecting the casters does not allocate every frame ---<<
+        Vector<PlanetChunk*> m_PlanetShadowCasters;
 
         [[nodiscard]] static Vector<Vector4> GetFrustumWorldCorners(const Matrix& view, const Matrix& proj);
         [[nodiscard]] static Matrix GetCascadeProjection(const Matrix& lightView, Vector<Vector4> frustumCorners);

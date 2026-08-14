@@ -36,6 +36,8 @@ namespace LevEngine
 
 		static bool IsAssetSkybox(const Path& path);
 
+		static bool IsAssetPlanetBiomeSet(const Path& path);
+
 		static bool IsAssetPrefab(const Path& path);
 
 		static bool IsAssetScene(const Path& path);

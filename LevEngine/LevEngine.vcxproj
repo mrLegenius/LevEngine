@@ -62,7 +62,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform);$(SolutionDir)lib\$(ConfigurationName)\PhysX\;$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;lua54.lib;DetourCrowd.lib;Detour.lib;DetourTileCache.lib;Recast.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudioL_vc.lib;fmodL_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXCooking_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;lua54.lib;DetourCrowd.lib;Detour.lib;DetourTileCache.lib;Recast.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -86,7 +86,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;$(SolutionDir)FMODStudio\studio\lib\$(Platform);$(SolutionDir)FMODStudio\core\lib\$(Platform);$(SolutionDir)lib\$(ConfigurationName)\PhysX\;$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;lua54.lib;Detour.lib;DetourCrowd.lib;DetourTileCache.lib;Recast.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;fmodstudio_vc.lib;fmod_vc.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXCooking_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;lua54.lib;Detour.lib;DetourCrowd.lib;DetourTileCache.lib;Recast.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -1008,6 +1008,24 @@
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\DataTypes\String.h" />
+    <ClInclude Include="src\Math\Noise\Noise.h" />
+    <ClInclude Include="src\Planet\PlanetShape.h" />
+    <ClInclude Include="src\Planet\PlanetClimate.h" />
+    <ClInclude Include="src\Planet\PlanetBiome.h" />
+    <ClInclude Include="src\Planet\PlanetGeometry.h" />
+    <ClInclude Include="src\Planet\PlanetSampler.h" />
+    <ClInclude Include="src\Planet\PlanetChunkBuilder.h" />
+    <ClInclude Include="src\Planet\PlanetChunk.h" />
+    <ClInclude Include="src\Planet\PlanetSurface.h" />
+    <ClInclude Include="src\Assets\PlanetBiomeSetAsset.h" />
+    <ClInclude Include="src\Scene\Components\Planet\Planet.h" />
+    <ClInclude Include="src\Renderer\Planet\PlanetConstants.h" />
+    <ClInclude Include="src\Renderer\Planet\PlanetShaders.h" />
+    <ClInclude Include="src\Renderer\Planet\PlanetUpdatePass.h" />
+    <ClInclude Include="src\Renderer\Planet\PlanetPass.h" />
+    <ClInclude Include="src\Renderer\Planet\PlanetOceanPass.h" />
+    <ClInclude Include="src\Planet\PlanetCollision.h" />
+    <ClInclude Include="src\Scene\Systems\Planet\PlanetCollisionSystem.h" />
     <ClInclude Include="src\levpch.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11BlendState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h" />
@@ -1429,6 +1447,23 @@
     <ClCompile Include="src\Math\BoundingVolume.cpp" />
     <ClCompile Include="src\Math\Color.cpp" />
     <ClCompile Include="src\Math\Random.cpp" />
+    <ClCompile Include="src\Math\Noise\Noise.cpp" />
+    <ClCompile Include="src\Planet\PlanetShape.cpp" />
+    <ClCompile Include="src\Planet\PlanetClimate.cpp" />
+    <ClCompile Include="src\Planet\PlanetBiome.cpp" />
+    <ClCompile Include="src\Planet\PlanetGeometry.cpp" />
+    <ClCompile Include="src\Planet\PlanetChunkBuilder.cpp" />
+    <ClCompile Include="src\Planet\PlanetChunk.cpp" />
+    <ClCompile Include="src\Planet\PlanetSurface.cpp" />
+    <ClCompile Include="src\Assets\PlanetBiomeSetAsset.cpp" />
+    <ClCompile Include="src\Scene\Components\Planet\Planet.cpp" />
+    <ClCompile Include="src\Renderer\Planet\PlanetConstants.cpp" />
+    <ClCompile Include="src\Renderer\Planet\PlanetShaders.cpp" />
+    <ClCompile Include="src\Renderer\Planet\PlanetUpdatePass.cpp" />
+    <ClCompile Include="src\Renderer\Planet\PlanetPass.cpp" />
+    <ClCompile Include="src\Renderer\Planet\PlanetOceanPass.cpp" />
+    <ClCompile Include="src\Planet\PlanetCollision.cpp" />
+    <ClCompile Include="src\Scene\Systems\Planet\PlanetCollisionSystem.cpp" />
     <ClCompile Include="src\levpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

@@ -40,6 +40,12 @@ namespace LevEngine
         [[nodiscard]] Statistic GetParticlesStatistic() const;
         [[nodiscard]] Statistic GetDebugStatistic() const;
 
+        //<--- Timed apart from the geometry and transparent passes they sit inside, because a planet
+        //is a different kind of cost from a scene full of meshes and folding them together hides
+        //which one a frame went into ---<<
+        [[nodiscard]] Statistic GetPlanetSurfaceStatistic() const;
+        [[nodiscard]] Statistic GetPlanetOceanStatistic() const;
+
     private:
         static void RecalculateAllTransforms(entt::registry& registry);
         static RenderParams CreateRenderParams(SceneCamera* mainCamera, const Transform* cameraTransform);
@@ -98,5 +104,11 @@ namespace LevEngine
 
         Ref<Query> m_DebugQuery;
         Statistic m_DebugStat;
+
+        Ref<Query> m_PlanetSurfaceQuery;
+        Statistic m_PlanetSurfaceStat;
+
+        Ref<Query> m_PlanetOceanQuery;
+        Statistic m_PlanetOceanStat;
     };
 }

@@ -67,6 +67,9 @@ namespace LevEngine
                                              bool uav,
                                              bool generateMipMaps) const = 0;
 
+        virtual Ref<Texture> CreateTexture2DArray(const Vector<String>& paths, bool isLinear,
+                                                  bool generateMipMaps) const = 0;
+
         virtual Ref<Texture> CreateTextureCube(uint16_t width, uint16_t height,
                                                const Texture::TextureFormat& format,
                                                CPUAccess cpuAccess,
