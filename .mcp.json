@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "lev-editor": {
+      "command": "node",
+      "args": ["tools/mcp/lev-editor-server.mjs"],
+      "env": {
+        "LEV_AGENT_PORT": "17890"
+      }
+    }
+  }
+}

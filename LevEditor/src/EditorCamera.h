@@ -21,6 +21,33 @@ namespace LevEngine
 		[[nodiscard]] const Transform& GetTransform() const { return m_Transform; }
 		void UpdateView() { m_Transform.RecalculateModel(); }
 
+		// Placing the camera from code rather than from the mouse. The viewport only ever moves it
+		// while the right button is held, which nothing but a hand can do, so a scripted move -- a
+		// screenshot from a fixed spot, a flight along a path -- has to go through here.
+		void SetPosition(const Vector3 position)
+		{
+			m_Transform.SetWorldPosition(position);
+			UpdateView();
+		}
+
+		//<--- Degrees, in the same yaw/pitch/roll order the inspector shows ---<<
+		void SetRotationEuler(const Vector3 eulerDegrees)
+		{
+			m_Transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(eulerDegrees * Math::DegToRad));
+			UpdateView();
+		}
+
+		[[nodiscard]] Vector3 GetRotationEuler() const
+		{
+			return m_Transform.GetWorldRotation().ToEuler() * Math::RadToDeg;
+		}
+
+		//<--- Keeps the horizon level, which is what a camera flown by hand does ---<<
+		void LookAt(Vector3 target);
+
+		[[nodiscard]] float GetMoveSpeed() const { return m_MoveSpeed; }
+		void SetMoveSpeed(const float value) { m_MoveSpeed = Math::Clamp(value, 0.5f, 100.0f); }
+
 		void ResetInitialMousePosition()
 		{
 			m_InitialMousePosition = Vector2{ 0.0f, 0.0f };

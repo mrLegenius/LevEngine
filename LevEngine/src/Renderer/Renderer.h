@@ -4,6 +4,8 @@
 
 #include "RenderParams.h"
 #include "Kernel/Statistic.h"
+#include "DataTypes/String.h"
+#include "DataTypes/UnorderedMap.h"
 
 namespace LevEngine
 {
@@ -39,6 +41,11 @@ namespace LevEngine
         [[nodiscard]] Statistic GetPostProcessingStatistic() const;
         [[nodiscard]] Statistic GetParticlesStatistic() const;
         [[nodiscard]] Statistic GetDebugStatistic() const;
+        
+        // What the last frame cost, per pass, unaveraged. The statistics above are reset once a
+        // second and averaged over what happened in between, which is what a panel wants to read and
+        // exactly what a measurement of one moment must not use.
+        [[nodiscard]] const UnorderedMap<String, double>& GetLastFrameTimings() const { return m_LastFrameTimings; }
 
     private:
         static void RecalculateAllTransforms(entt::registry& registry);
@@ -46,7 +53,7 @@ namespace LevEngine
         void LocateCamera(entt::registry& registry, SceneCamera*& mainCamera, Transform*& cameraTransform);
         
         void ResetStatistics();
-        static void SampleQuery(const Ref<Query>& query, Statistic& stat);
+        void SampleQuery(const Ref<Query>& query, Statistic& stat, const char* name);
         
         Ref<LightCollection> m_Lights;
         Ref<RenderTarget> m_MainRenderTarget;
@@ -98,5 +105,7 @@ namespace LevEngine
 
         Ref<Query> m_DebugQuery;
         Statistic m_DebugStat;
+        
+        UnorderedMap<String, double> m_LastFrameTimings;
     };
 }

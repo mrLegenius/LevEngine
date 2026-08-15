@@ -49,6 +49,18 @@ test project. Project-relative asset paths: `resources/` (source assets + `.meta
 There is **no test suite and no linter** in this repo. `LEV_DEBUG` is defined only in Debug and gates
 asserts (`LEV_ENABLE_ASSERTS`); profiling is compile-time off (`LEV_PROFILE 0` in `Debugging/Profiler.h`).
 
+### Driving the running editor
+
+A running editor answers JSON commands on `http://127.0.0.1:17890` (`LevEditor/src/Agent`), and
+`tools/mcp/lev-editor-server.mjs` exposes them as MCP tools registered in `.mcp.json`. **Reach for
+these before adding temporary instrumentation or hand-editing scene YAML** — they cover the camera,
+frame and per-pass statistics, draw call counters, component values at runtime, viewport screenshots,
+play mode, entity creation, scene loading and shader reload. `POST /help` lists them and
+`AGENT_TOOLING.md` explains them.
+
+`editor_quit` closes the editor; it holds the built binaries open, so it has to close before a
+rebuild.
+
 ### Adding files
 
 Both .vcxproj files list every `ClCompile`/`ClInclude` explicitly — a new `.cpp`/`.h` **must** be added to

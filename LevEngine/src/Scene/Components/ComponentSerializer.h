@@ -16,6 +16,14 @@ namespace LevEngine
 		virtual ~IComponentSerializer() = default;
 		virtual void Serialize(YAML::Emitter& out, Entity entity) = 0;
 		virtual void Deserialize(const YAML::Node& node, Entity entity) = 0;
+
+		// The serializer already knows a component's name and how to build a default one, which is
+		// everything needed to add, remove or find a component without naming its type at compile
+		// time. Used by the editor's agent bridge, see LevEditor/src/Agent.
+		virtual const char* GetComponentKey() = 0;
+		virtual bool HasComponent(Entity entity) = 0;
+		virtual bool AddComponent(Entity entity) = 0;
+		virtual bool RemoveComponent(Entity entity) = 0;
 	};
 
 	template<class TComponent, class TSerializer>
@@ -53,6 +61,28 @@ namespace LevEngine
 				auto& component = entity.GetComponent<TComponent>();
 				DeserializeData(componentProps, component);
 			}			
+		}
+
+		const char* GetComponentKey() override { return GetKey(); }
+
+		bool HasComponent(Entity entity) override { return entity.HasComponent<TComponent>(); }
+
+		bool AddComponent(Entity entity) override
+		{
+			if (entity.HasComponent<TComponent>()) return false;
+
+			//<--- Defaults come from the component's own constructor rather than from a guess
+			//at what its YAML looks like ---<<
+			entity.AddComponent<TComponent>(TComponent());
+			return true;
+		}
+
+		bool RemoveComponent(Entity entity) override
+		{
+			if (!entity.HasComponent<TComponent>()) return false;
+
+			entity.RemoveComponent<TComponent>();
+			return true;
 		}
 
 	protected:

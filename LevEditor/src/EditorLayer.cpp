@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "EditorLayer.h"
 
+#include "Agent/AgentBridge.h"
 #include "ModalPopup.h"
 #include "Project.h"
 #include "Selection.h"
@@ -39,6 +40,9 @@ namespace LevEngine::Editor
         }
     }
 
+    EditorLayer::EditorLayer() = default;
+    EditorLayer::~EditorLayer() = default;
+
     void EditorLayer::OnAttach()
     {
         LEV_PROFILE_FUNCTION();
@@ -73,6 +77,9 @@ namespace LevEngine::Editor
         }
 
         Application::Get().GetWindow().EnableCursor();
+
+        m_Agent = CreateScope<AgentBridge>(*this);
+        m_Agent->Start();
     }
 
     void EditorLayer::OnDetach()
@@ -82,6 +89,13 @@ namespace LevEngine::Editor
         //<--- The editor keeps selections and deferred requests in statics, which would outlive the
         //render device and release their GPU resources during CRT teardown, where the graphics driver
         //deadlocks. See Application::~Application ---<<
+        //<--- Before the panels, because a command in flight holds on to them ---<<
+        if (m_Agent)
+        {
+            m_Agent->Stop();
+            m_Agent.reset();
+        }
+
         Selection::Deselect();
         AssetBrowserPanel::Shutdown();
 
@@ -186,9 +200,21 @@ namespace LevEngine::Editor
             }
         case SceneState::Play:
             {
-                activeScene->OnUpdate(deltaTime);
-                activeScene->OnPhysics(deltaTime);
-                activeScene->OnLateUpdate(deltaTime);
+                //<--- Paused runs no systems, unless a fixed number of frames was asked for ---<<
+                bool isStepping = false;
+
+                if (m_IsPaused && m_StepsRemaining > 0)
+                {
+                    m_StepsRemaining--;
+                    isStepping = true;
+                }
+
+                if (!m_IsPaused || isStepping)
+                {
+                    activeScene->OnUpdate(deltaTime);
+                    activeScene->OnPhysics(deltaTime);
+                    activeScene->OnLateUpdate(deltaTime);
+                }
 
                 break;
             }
@@ -199,6 +225,10 @@ namespace LevEngine::Editor
             if (viewport->IsActive())
                 viewport->UpdateCamera(deltaTime);
         }
+
+        //<--- After the scene and the camera, so a command reads the state this frame will render ---<<
+        if (m_Agent)
+            m_Agent->Tick(deltaTime);
     }
     void EditorLayer::OnRender()
     {
@@ -217,7 +247,14 @@ namespace LevEngine::Editor
 
             auto& camera = viewport->GetCamera();
             activeScene->OnRender(&camera, &camera.GetTransform());
-            viewport->UpdateTexture(GetMainRenderTexture());
+
+            const auto mainTexture = GetMainRenderTexture();
+
+            //<--- The viewport image before ImGui draws anything over it ---<<
+            if (m_Agent)
+                m_Agent->OnViewportRendered(mainTexture);
+
+            viewport->UpdateTexture(mainTexture);
         }
 
         //Game panels all show the main camera, so one render is enough for all of them
@@ -230,6 +267,9 @@ namespace LevEngine::Editor
             activeScene->OnRender();
 
             const auto mainTexture = GetMainRenderTexture();
+
+            if (m_Agent)
+                m_Agent->OnGameRendered(mainTexture);
             for (const auto& game : gamePanels)
             {
                 if (game->IsActive())

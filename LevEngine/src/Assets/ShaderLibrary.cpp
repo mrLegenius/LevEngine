@@ -44,6 +44,70 @@ namespace LevEngine
         s_ShaderAssets.clear();
     }
 
+    namespace
+    {
+        String NormalizePath(const Path& path)
+        {
+            String text = ToString(path);
+
+            for (auto& character : text)
+            {
+                character = static_cast<char>(std::tolower(static_cast<unsigned char>(character)));
+
+                if (character == '\\')
+                    character = '/';
+            }
+
+            return text;
+        }
+
+        bool PathMatches(const Path& assetPath, const String& wanted)
+        {
+            if (wanted.empty()) return true;
+
+            const auto normalized = NormalizePath(assetPath);
+
+            //<--- Suffix, so a relative path finds the shader an absolute one would ---<<
+            return normalized.size() >= wanted.size()
+                && normalized.compare(normalized.size() - wanted.size(), wanted.size(), wanted) == 0;
+        }
+    }
+
+    Vector<Path> ShaderLibrary::ForceReimport(const Path& path)
+    {
+        const auto wanted = NormalizePath(path);
+
+        Vector<Path> reimported;
+
+        for (auto& [key, shaderAsset] : s_ShaderAssets)
+        {
+            if (!PathMatches(shaderAsset->GetPath(), wanted)) continue;
+
+            shaderAsset->Clear();
+            shaderAsset->Deserialize(true);
+
+            reimported.push_back(shaderAsset->GetPath());
+        }
+
+        return reimported;
+    }
+
+    Vector<Path> ShaderLibrary::GetLoadedPaths()
+    {
+        Vector<Path> paths;
+
+        for (const auto& [key, shaderAsset] : s_ShaderAssets)
+        {
+            const auto& assetPath = shaderAsset->GetPath();
+
+            //<--- One entry per file, not per permutation ---<<
+            if (eastl::find(paths.begin(), paths.end(), assetPath) == paths.end())
+                paths.push_back(assetPath);
+        }
+
+        return paths;
+    }
+
     void ShaderLibrary::ReimportChangedAssets()
     {
         for (auto& it : s_ShaderAssets)
