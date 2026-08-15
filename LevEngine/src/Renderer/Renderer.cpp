@@ -27,6 +27,7 @@
 
 #include "Renderer3D.h"
 #include "RenderContext.h"
+#include "RenderStatistics.h"
 
 #include "RenderTechnique.h"
 
@@ -543,6 +544,8 @@ namespace LevEngine
             statResetTimer -= 1.0f;
         }
 
+        RenderStatistics::BeginFrame(Time::GetFrameNumber());
+
         mainCamera->RecalculateFrustum(*cameraTransform);
 
         const auto renderParams = CreateRenderParams(mainCamera, cameraTransform);
@@ -569,17 +572,17 @@ namespace LevEngine
         
         m_FrameQuery->End(Time::GetFrameNumber());
         
-        SampleQuery(m_FrameQuery, m_FrameStat);
-        SampleQuery(m_ShadowMapQuery, m_ShadowMapStat);
-        SampleQuery(m_DeferredGeometryQuery, m_DeferredGeometryStat);
-        SampleQuery(m_DeferredLightingQuery, m_DeferredLightingStat);
-        SampleQuery(m_DeferredTransparentQuery, m_DeferredTransparentStat);
-        SampleQuery(m_EnvironmentQuery, m_EnvironmentStat);
-        SampleQuery(m_PostProcessingQuery, m_PostProcessingStat);
-        SampleQuery(m_ParticlesQuery, m_ParticlesStat);
-        SampleQuery(m_DebugQuery, m_DebugStat);
-        SampleQuery(m_PlanetSurfaceQuery, m_PlanetSurfaceStat);
-        SampleQuery(m_PlanetOceanQuery, m_PlanetOceanStat);
+        SampleQuery(m_FrameQuery, m_FrameStat, "Frame");
+        SampleQuery(m_ShadowMapQuery, m_ShadowMapStat, "Shadow Map");
+        SampleQuery(m_DeferredGeometryQuery, m_DeferredGeometryStat, "Deferred Geometry");
+        SampleQuery(m_DeferredLightingQuery, m_DeferredLightingStat, "Deferred Lighting");
+        SampleQuery(m_DeferredTransparentQuery, m_DeferredTransparentStat, "Deferred Transparent");
+        SampleQuery(m_EnvironmentQuery, m_EnvironmentStat, "Environment");
+        SampleQuery(m_PostProcessingQuery, m_PostProcessingStat, "Post Processing");
+        SampleQuery(m_ParticlesQuery, m_ParticlesStat, "Particles");
+        SampleQuery(m_DebugQuery, m_DebugStat, "Debug");
+        SampleQuery(m_PlanetSurfaceQuery, m_PlanetSurfaceStat, "Planet Surface");
+        SampleQuery(m_PlanetOceanQuery, m_PlanetOceanStat, "Planet Ocean");
 
     }
 
@@ -600,7 +603,7 @@ namespace LevEngine
         m_PlanetOceanStat.Reset();
     }
 
-    void Renderer::SampleQuery(const Ref<Query>& query, Statistic& stat)
+    void Renderer::SampleQuery(const Ref<Query>& query, Statistic& stat, const char* name)
     {
         // Retrieve GPU timer results.
         // Don't retrieve the immediate query result, but from the previous frame.
@@ -609,7 +612,14 @@ namespace LevEngine
         const auto queryResult = query->GetQueryResult(Time::GetFrameNumber() - (query->GetBufferCount() - 1));
         if (queryResult.IsValid)    
         {
-            stat.Sample(queryResult.ElapsedTime * 1000.0);
+            const auto milliseconds = queryResult.ElapsedTime * 1000.0;
+
+            stat.Sample(milliseconds);
+
+            //<--- The panel wants a steady number and shows the average over a second. Anything
+            //measuring one moment -- a scripted camera move, a single frame after a change -- wants
+            //the frame itself, which the average has already smoothed away ---<<
+            m_LastFrameTimings[name] = milliseconds;
         }
     }
 

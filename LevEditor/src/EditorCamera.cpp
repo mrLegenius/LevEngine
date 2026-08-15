@@ -125,6 +125,27 @@ namespace LevEngine
 		FocusOnBounds(min, max);
 	}
 
+	void EditorCamera::LookAt(const Vector3 target)
+	{
+		const Vector3 toTarget = target - m_Transform.GetWorldPosition();
+
+		if (toTarget.LengthSquared() <= std::numeric_limits<float>::epsilon()) return;
+
+		Vector3 direction = toTarget;
+		direction.Normalize();
+
+		// Yaw around the world up and pitch away from the horizon, so the roll stays zero.
+		//
+		// Forward is -Z here: Transform::GetForwardDirection rotates Vector3::Forward, which
+		// SimpleMath defines as (0, 0, -1). Aiming at +Z instead points the camera at the mirror
+		// image of the target, which looks almost right and is wrong everywhere.
+		const float yaw = std::atan2(-direction.x, -direction.z);
+		const float pitch = std::asin(Math::Clamp(direction.y, -1.0f, 1.0f));
+
+		m_Transform.SetWorldRotation(Quaternion::CreateFromYawPitchRoll(Vector3{ pitch, yaw, 0.0f }));
+		UpdateView();
+	}
+
 	void EditorCamera::Focus(const Vector3 center, const float radius)
 	{
 		const Vector3 extents = Vector3::One * Math::Max(radius, k_MinFocusRadius);

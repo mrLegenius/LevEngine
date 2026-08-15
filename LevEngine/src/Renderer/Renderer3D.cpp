@@ -224,7 +224,11 @@ namespace LevEngine
 
     void Renderer3D::DrawCube(const Ref<Shader>& vertexShader)
     {
-        LEV_CORE_ASSERT(vertexShader->GetType() & ShaderType::Vertex, "Cube can't be drawn without vertex shader");
+        // A shader that fails to hot reload has no stages at all, and asserting here took the editor
+        // down with it -- which is exactly when the compiler errors are worth reading. Skip the draw
+        // instead: the log and shader_reload both have the reason, and fixing the file brings the
+        // shader back on the next reload.
+        if (!vertexShader || !(vertexShader->GetType() & ShaderType::Vertex)) return;
 
         if (!m_CubeMesh) m_CubeMesh = Primitives::CreateCube();
 

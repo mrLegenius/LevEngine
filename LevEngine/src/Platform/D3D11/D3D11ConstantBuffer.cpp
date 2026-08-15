@@ -2,6 +2,7 @@
 
 #include "D3D11ConstantBuffer.h"
 
+#include "Renderer/RenderStatistics.h"
 #include "Renderer/Shader/ShaderType.h"
 
 namespace LevEngine
@@ -32,6 +33,8 @@ namespace LevEngine
     void D3D11ConstantBuffer::SetData(const void* data, const uint32_t size) const
     {
         LEV_CORE_ASSERT(m_Buffer != nullptr, "Trying to SetData with null buffer");
+
+        RenderStatistics::CountConstantBufferUpdate();
 
         const auto actualSize = size ? size : m_Size;
         D3D11_MAPPED_SUBRESOURCE resource;

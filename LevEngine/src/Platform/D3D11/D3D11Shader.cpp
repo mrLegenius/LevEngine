@@ -1,4 +1,5 @@
 #include "levpch.h"
+#include "Renderer/Shader/ShaderDiagnostics.h"
 #include "D3D11Shader.h"
 
 #include <d3dcompiler.h>
@@ -247,6 +248,7 @@ namespace LevEngine
                 {
                     const char* compileErrors = static_cast<char*>(errorCode->GetBufferPointer());
                     Log::CoreError(compileErrors);
+                    ShaderDiagnostics::Record(shaderFilepath, target, errorMessage);
                 }
 
                 errorCode->Release();
@@ -255,6 +257,7 @@ namespace LevEngine
             else
             {
                 Log::CoreError("{0} is missing shader file", shaderFilepath);
+                ShaderDiagnostics::Record(shaderFilepath, target, "Shader file not found");
             }
 
             return false;

@@ -1069,6 +1069,8 @@
     <ClInclude Include="src\Renderer\RenderParams.h" />
     <ClInclude Include="src\Renderer\RenderSettings.h" />
     <ClInclude Include="src\Renderer\RenderTechnique.h" />
+    <ClInclude Include="src\Renderer\RenderStatistics.h" />
+    <ClInclude Include="src\Renderer\Shader\ShaderDiagnostics.h" />
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\Scene\Components\Animation\WaypointMovement.h" />
     <ClInclude Include="src\Scene\Components\Audio\AudioListener.h" />
@@ -1502,6 +1504,8 @@
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\Renderer\RenderTechnique.cpp" />
+    <ClCompile Include="src\Renderer\RenderStatistics.cpp" />
+    <ClCompile Include="src\Renderer\Shader\ShaderDiagnostics.cpp" />
     <ClCompile Include="src\Assets\AnimationAsset.cpp" />
     <ClCompile Include="src\Renderer\3D\Animator.cpp" />
     <ClCompile Include="src\Renderer\3D\Animation.cpp" />
