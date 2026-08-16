@@ -58,6 +58,10 @@ namespace LevEngine
 
 		[[nodiscard]] static Ref<Asset> GetAsset(const UUID uuid);
 
+		//<--- Answers whether a UUID resolves without loading it and without reporting a miss,
+		//so a reference can be checked rather than followed. See MissingReferences ---<<
+		[[nodiscard]] static bool HasAsset(const UUID uuid);
+
 		template<class T>
 		[[nodiscard]] static Ref<T> GetAsset(const UUID uuid);
 

@@ -2,6 +2,7 @@
 #include "SceneSerializer.h"
 
 #include "../Entity.h"
+#include "Assets/MissingReferences.h"
 #include "Assets/ScriptAsset.h"
 #include "JobSystem/ParallelJob.h"
 #include "Kernel/ClassCollection.h"
@@ -63,7 +64,7 @@ namespace LevEngine
         fout << out.c_str();
     }
 
-    void SceneSerializer::DeserializeEntities(const YAML::Node& data) const
+    void SceneSerializer::DeserializeEntities(const YAML::Node& data, const String& source) const
     {
         LEV_PROFILE_FUNCTION();
 
@@ -118,6 +119,13 @@ namespace LevEngine
             ParallelJob serializeJob([=](const int i)
             {
                 auto [deserializedEntity, entityNode] = entitiesToDeserialize[i];
+
+                //<--- Every entity is deserialized on whichever thread the job lands on, and the
+                //context a missing reference is reported against is per thread ---<<
+                const MissingReferences::SourceScope scope(source);
+                const MissingReferences::LocationScope entityScope(
+                    Format("Entity '{0}'", deserializedEntity.GetName()));
+
                 for (const auto serializer : ClassCollection<IComponentSerializer>::Instance())
                     serializer->Deserialize(entityNode, deserializedEntity);
             });
@@ -131,8 +139,11 @@ namespace LevEngine
         }
     }
 
-    void SceneSerializer::DeserializeScriptSystems(const YAML::Node& data) const
+    void SceneSerializer::DeserializeScriptSystems(const YAML::Node& data, const String& source) const
     {
+        const MissingReferences::SourceScope sourceScope(source);
+        const MissingReferences::LocationScope locationScope("Systems");
+
         if (auto systems = data["Systems"])
         {
             for (const auto& system : systems)
@@ -162,9 +173,15 @@ namespace LevEngine
         auto sceneName = data["Scene"].as<String>();
         Log::CoreTrace("Deserializing scene '{0}'", sceneName);
 
-        DeserializeEntities(data);
+        std::error_code errorCode;
+        const auto relativePath = relative(Path(filepath.c_str()), AssetDatabase::GetAssetsPath(), errorCode);
+        const String source = errorCode || relativePath.empty()
+            ? filepath
+            : String(relativePath.generic_string().c_str());
 
-        DeserializeScriptSystems(data);
+        DeserializeEntities(data, source);
+
+        DeserializeScriptSystems(data, source);
 
         return true;
     }

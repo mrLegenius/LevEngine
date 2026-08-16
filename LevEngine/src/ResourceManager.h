@@ -36,6 +36,12 @@ public:
     static void Build(const Path& projectPath);
     static void ChangeAddress(const Ref<Asset>& asset, const String& newAddress);
 
+    //<--- Forgets an address. Build has to be called for the file to lose it as well ---<<
+    static bool RemoveAddress(const String& address);
+
+    //<--- Addresses whose asset is not in the database anymore ---<<
+    [[nodiscard]] static Vector<Pair<String, UUID>> GetDanglingAddresses();
+
 private:
     inline static Map<String, UUID> m_AddressToUUIDMap;
 

@@ -950,6 +950,7 @@
     <ClInclude Include="src\Assets\MaterialPBRAsset.h" />
     <ClInclude Include="src\Assets\MaterialCustomAsset.h" />
     <ClInclude Include="src\Assets\MeshAsset.h" />
+    <ClInclude Include="src\Assets\MissingReferences.h" />
     <ClInclude Include="src\Assets\PrefabAsset.h" />
     <ClInclude Include="src\Assets\SkyboxAsset.h" />
     <ClInclude Include="src\Assets\TextureAsset.h" />
@@ -1407,6 +1408,7 @@
     <ClCompile Include="src\Assets\MaterialPBRAsset.cpp" />
     <ClCompile Include="src\Assets\MaterialCustomAsset.cpp" />
     <ClCompile Include="src\Assets\MeshAsset.cpp" />
+    <ClCompile Include="src\Assets\MissingReferences.cpp" />
     <ClCompile Include="src\Assets\PrefabAsset.cpp" />
     <ClCompile Include="src\Assets\SkyboxAsset.cpp" />
     <ClCompile Include="src\Assets\TextureAsset.cpp" />

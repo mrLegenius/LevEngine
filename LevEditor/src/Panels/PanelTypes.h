@@ -13,4 +13,5 @@ namespace LevEngine::Editor::PanelTypes
     inline const String Settings = "Settings";
     inline const String Statistics = "Statistics";
     inline const String Scripts = "Scripts";
+    inline const String MissingReferences = "Missing References";
 }

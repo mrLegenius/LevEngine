@@ -28,8 +28,9 @@ namespace LevEngine
 		void SerializeEntities(YAML::Emitter& out) const;
 		void SerializeScriptSystems(YAML::Emitter& out) const;
 		
-		void DeserializeEntities(const YAML::Node& data) const;
-		void DeserializeScriptSystems(const YAML::Node& data) const;
+		//<--- source is the scene file a missing reference is reported against ---<<
+		void DeserializeEntities(const YAML::Node& data, const String& source) const;
+		void DeserializeScriptSystems(const YAML::Node& data, const String& source) const;
 		
 	private:
 		Ref<Scene> m_Scene;

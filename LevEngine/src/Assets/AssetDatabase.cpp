@@ -9,6 +9,7 @@
 #include "MaterialPBRAsset.h"
 #include "MaterialSimpleAsset.h"
 #include "MeshAsset.h"
+#include "MissingReferences.h"
 #include "ModelAsset.h"
 #include "PrefabAsset.h"
 #include "Project.h"
@@ -365,7 +366,8 @@ namespace LevEngine
 		const auto assetIt = m_Assets.find(uuid);
 		if (assetIt == m_Assets.end())
 		{
-			Log::CoreWarning("Asset with {0} is not found", static_cast<std::uint64_t>(uuid));
+			//<--- Says what is missing and who asked for it, instead of a bare number ---<<
+			MissingReferences::Report(uuid);
 			return nullptr;
 		}
 
@@ -374,6 +376,11 @@ namespace LevEngine
 			asset->Deserialize();
 
 		return asset;
+	}
+
+	bool AssetDatabase::HasAsset(const UUID uuid)
+	{
+		return m_Assets.find(uuid) != m_Assets.end();
 	}
 
 	void AssetDatabase::RenameAsset(const Ref<Asset>& asset, const String& name)

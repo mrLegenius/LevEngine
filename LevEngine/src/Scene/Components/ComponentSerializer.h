@@ -2,6 +2,7 @@
 
 #include "Kernel/Core.h"
 
+#include "Assets/MissingReferences.h"
 #include "Kernel/ClassCollection.h"
 #include "Scene/Entity.h"
 
@@ -49,6 +50,9 @@ namespace LevEngine
 			const auto key = GetKey();
 			const auto& componentProps = node[key];
 			if (!componentProps) return;
+
+			//<--- Names the component an asset reference was read from, see MissingReferences ---<<
+			const MissingReferences::LocationScope scope(key);
 
 			if (!entity.HasComponent<TComponent>())
 			{

@@ -16,6 +16,7 @@
 #include "Panels/DockSpace.h"
 #include "Panels/GamePanel.h"
 #include "Panels/HierarchyPanel.h"
+#include "Panels/MissingReferencesPanel.h"
 #include "Panels/PanelManager.h"
 #include "Panels/PanelTypes.h"
 #include "Panels/PropertiesPanel.h"
@@ -144,6 +145,9 @@ namespace LevEngine::Editor
 
         m_PanelManager->RegisterPanelType(PanelTypes::Scripts,
             []() -> Ref<Panel> { return CreateRef<ScriptsPanel>(); }, true);
+
+        m_PanelManager->RegisterPanelType(PanelTypes::MissingReferences,
+            []() -> Ref<Panel> { return CreateRef<MissingReferencesPanel>(); }, false);
     }
 
     void EditorLayer::FocusViewportsOn(const Entity entity) const

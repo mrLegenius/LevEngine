@@ -286,6 +286,21 @@ const TOOLS = [
       },
     },
   },
+  {
+    name: 'missing_references',
+    description:
+      'Asset references that point at nothing, each with the file holding it and the place inside ' +
+      'that file (entity and component, or the address in ResourcesDatabase). Without scan it ' +
+      'answers with what loading the project and the open scenes ran into; with scan it reads every ' +
+      'YAML asset of the project, including the ones nobody opened.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        scan: { type: 'boolean', description: 'Rescan the whole project first. Default false.' },
+        contains: { type: 'string', description: 'Only references whose source or location matches.' },
+      },
+    },
+  },
 ];
 
 async function callEditor(tool, args) {

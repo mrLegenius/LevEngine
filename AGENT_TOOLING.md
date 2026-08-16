@@ -55,6 +55,7 @@ editor refused.
 | `editor_stats` | frame time and per pass GPU time of the **last frame**, the one second averages the panel shows, and per planet chunk counters |
 | `editor_render_stats` | draw calls, triangles, buffers created and constant buffer updates, per pass |
 | `log_tail` | the last log lines, filtered by level or substring |
+| `missing_references` | asset references that point at nothing, with the file and the place holding them |
 
 `editor_stats` gives both `gpu` (last frame) and `gpuAverage` (the one second average the Statistics
 panel shows). Use the average for a steady reading and the last frame for measuring one moment. Per
@@ -66,6 +67,17 @@ empty — call it again after a frame. `vertexBuffersCreated` is the field worth
 happens on the main thread inside a pass, so it lands in that pass' GPU timestamp and makes a cheap
 pass look expensive. A timer cannot separate those, this counter can. `{"disable": true}` turns
 counting back off.
+
+`missing_references` lists asset UUIDs nothing answers to. Called plain it reports what loading the
+project and the scenes opened this session ran into; `{"scan": true}` reads every YAML asset on disk
+instead, so a reference in a scene nobody opened is found as well. Each entry names the `source`
+file, the `location` inside it (`Entity 'Enemy' / MeshRenderer / Mesh`, or `Address 'Dance1'` for
+`ResourcesDatabase.asset`) and the missing `uuid`. The same list is in the editor's
+**Missing References** panel, which can also drop dead addresses from the resources database.
+
+```bash
+curl -X POST http://127.0.0.1:17890/missing_references -d '{"scan": true}'
+```
 
 ### Camera
 

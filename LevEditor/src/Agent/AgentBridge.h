@@ -148,6 +148,7 @@ namespace LevEngine::Editor
         String CommandShaderValidateLayout(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
 
         String CommandLogTail(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
+        String CommandMissingReferences(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
         String CommandQuit(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
 
         static const Vector<Command>& GetCommands();

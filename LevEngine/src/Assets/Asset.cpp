@@ -1,6 +1,8 @@
 ﻿#include "levpch.h"
 #include "Asset.h"
+#include "AssetDatabase.h"
 #include "EngineAssets.h"
+#include "MissingReferences.h"
 #include "Scene/Serializers/SerializerUtils.h"
 
 namespace LevEngine
@@ -101,7 +103,14 @@ namespace LevEngine
 	{
 		std::lock_guard lock(m_DeserializationMutex);
 		if (m_Deserialized && !force) return true;
-		
+
+		//<--- Anything this asset points at and cannot find is blamed on this asset ---<<
+		std::error_code errorCode;
+		const auto relativePath = relative(m_Path, AssetDatabase::GetAssetsPath(), errorCode);
+		const MissingReferences::SourceScope source(errorCode
+			? String(m_Path.string().c_str())
+			: String(relativePath.generic_string().c_str()));
+
 		const bool metaDeserialized = DeserializeMeta();
 		const bool dataDeserialized = DeserializeData();
 

@@ -12,6 +12,7 @@
 #include "EntitySelection.h"
 #include "Selection.h"
 
+#include "Assets/MissingReferences.h"
 #include "Assets/ShaderLibrary.h"
 #include "Panels/PanelManager.h"
 #include "Panels/GamePanel.h"
@@ -210,6 +211,7 @@ namespace LevEngine::Editor
             { "shader_validate_layout", "Reflects a constant buffer's fields, offsets and sizes", &AgentBridge::CommandShaderValidateLayout },
 
             { "log_tail", "The last lines of the editor log", &AgentBridge::CommandLogTail },
+            { "missing_references", "Asset references that point at nothing, with the file and the place holding them", &AgentBridge::CommandMissingReferences },
             { "editor_quit", "Closes the editor, so the solution can be rebuilt", &AgentBridge::CommandQuit },
         };
 
@@ -1144,6 +1146,47 @@ namespace LevEngine::Editor
         }
 
         writer.EndArray();
+        writer.EndObject();
+
+        return writer.Str();
+    }
+
+    String AgentBridge::CommandMissingReferences(const YAML::Node& arguments, const Ref<AgentServer::Call>&)
+    {
+        //<--- Without a scan this answers with what loading the project and the open scenes ran
+        //into, which is the cheap answer. A scan reads every asset on disk ---<<
+        if (JsonRead::GetBool(arguments, "scan", false))
+            MissingReferences::ScanProject();
+
+        const auto contains = JsonRead::GetString(arguments, "contains", String{});
+        const auto references = MissingReferences::GetAll();
+
+        JsonWriter writer;
+        writer.BeginObject();
+        writer.KeyValue("ok", true);
+        writer.KeyValue("total", static_cast<int>(references.size()));
+        writer.Key("references").BeginArray();
+
+        int matched = 0;
+
+        for (const auto& reference : references)
+        {
+            if (!contains.empty()
+                && reference.Source.find(contains) == String::npos
+                && reference.Location.find(contains) == String::npos)
+                continue;
+
+            matched++;
+
+            writer.BeginObject();
+            writer.KeyValue("uuid", static_cast<uint64_t>(reference.Reference));
+            writer.KeyValue("source", reference.Source);
+            writer.KeyValue("location", reference.Location);
+            writer.EndObject();
+        }
+
+        writer.EndArray();
+        writer.KeyValue("matched", matched);
         writer.EndObject();
 
         return writer.Str();
