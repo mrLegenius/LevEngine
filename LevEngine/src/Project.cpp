@@ -60,6 +60,8 @@ namespace LevEngine
     {
         LEV_CORE_ASSERT(s_Project, "No loaded project");
 
+        if (s_Project->m_StartScene.empty()) return {};
+
         return s_Project->m_Root / s_Project->m_StartScene;
     }
 
@@ -86,7 +88,7 @@ namespace LevEngine
     {
         LEV_CORE_ASSERT(s_Project, "No loaded project");
 
-        s_Project->m_StartScene = relative(path, s_Project->m_Root);
+        s_Project->m_StartScene = path.empty() ? Path() : relative(path, s_Project->m_Root);
     }
 
     Path Project::GetPath()

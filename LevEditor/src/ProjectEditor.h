@@ -12,7 +12,6 @@ namespace LevEngine::Editor
         void ShowProjectSelectionPopup();
         bool OpenProject();
         bool NewProject();
-        static void SetCurrentSceneAsStartScene();
         void Update();
 
         void AddMainMenuItems(const Ref<MenuBar>& menuBar);
