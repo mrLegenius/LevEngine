@@ -18,8 +18,14 @@ namespace LevEngine
 	public:
 		PlanetUpdatePass() = default;
 
+		//<--- The level of detail is measured in pixels, and only this knows how many there are ---<<
+		void SetViewport(Viewport viewport) override { m_Viewport = viewport; }
+
 	protected:
 		String PassName() override;
 		void Process(entt::registry& registry, RenderParams& params) override;
+
+	private:
+		Viewport m_Viewport{};
 	};
 }

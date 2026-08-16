@@ -2,11 +2,30 @@
 
 #include "Kernel/Core.h"
 #include "DataTypes/Array.h"
+#include "Math/Frustum.h"
 #include "PlanetChunk.h"
 #include "PlanetSampler.h"
 
 namespace LevEngine
 {
+	// What the walk needs in order to decide a chunk cannot be seen this frame.
+	//
+	// There are two kinds of hidden here and they are deliberately not treated the same. Behind the
+	// planet does not depend on where the camera is pointing, only on where it is, and the far side
+	// cannot cast a shadow onto the near side either -- the planet is in the way -- so that one is
+	// allowed to stop the tree growing and eventually reclaim what is already there. Outside the
+	// frustum is one flick of the mouse away from being false, so it only takes chunks off the draw
+	// list and leaves the tree exactly as it was.
+	struct LEV_API PlanetCullingView
+	{
+		//<--- World space, from SceneCamera::GetFrustum. Null disables frustum culling ---<<
+		const Frustum* ViewFrustum = nullptr;
+
+		//<--- Chunk bounds are in planet space and the frustum is not, so the two have to meet ---<<
+		Matrix PlanetToWorld;
+		float WorldScale = 1.0f;
+	};
+
 	// How finely the surface is cut up, and how eagerly.
 	struct LEV_API PlanetLodSettings
 	{
@@ -22,10 +41,38 @@ namespace LevEngine
 		// walking scale.
 		uint32_t MaxDepth = 8;
 
-		// A chunk splits when the camera is nearer than its own width times this. Two is about one
-		// chunk per screen-width at a sixty degree field of view: below it the horizon visibly
-		// tessellates as you turn, above it the triangle count climbs as the square.
-		float LodBias = 2.0f;
+		// How large a chunk's triangles may get on screen, in pixels, before it splits.
+		//
+		// This used to be a plain distance multiplier, which held triangles at a constant angle rather
+		// than a constant size: it knew nothing about the field of view or the viewport, so what it
+		// meant changed with both. Its default worked out to nearly a degree per triangle, which is ten
+		// pixels and twenty just before a split -- visibly faceted, which is what it looked like.
+		// Pixels are the unit the eye judges this in, so it is the unit to state it in.
+		//
+		// 3 is about as coarse as a silhouette gets without showing. Below 2 the triangle count climbs
+		// as the square for detail nobody can see.
+		float TargetTrianglePixels = 3.0f;
+
+		// How far below the split threshold a chunk has to fall before its children are given back.
+		//
+		// Without this a chunk sitting exactly at the threshold splits and merges on alternating
+		// frames, and each cycle throws away four meshes and builds them again -- which is why a moving
+		// camera cost far more than a still one. Splitting at three pixels and merging at half that
+		// leaves a band where whatever already exists is kept, and the thrash has nowhere to happen.
+		float MergeHysteresis = 0.5f;
+
+		// Chunks whose vertices may be handed to the GPU in one frame.
+		//
+		// Building a mesh happens on a worker, but creating its buffers is a driver allocation and has
+		// to be on the thread that owns the device. Half a dozen buffers per chunk at tens of
+		// microseconds each is a millisecond a frame if a burst of them lands together, and a burst is
+		// exactly what a camera starting to move produces. Finished builds simply wait a frame.
+		//
+		// Generous on purpose. This was 2, which turned out to be far too tight: builds finished faster
+		// than they could be uploaded, so there was always a backlog, and a chunk waiting on a mesh is
+		// a chunk whose subtree cannot be reclaimed. The tree grew without bound while the camera moved.
+		// A backlog is much more expensive than the hitch this is guarding against.
+		uint32_t MaxMeshUploadsPerFrame = 8;
 
 		// Depth of the wall around each chunk, as a fraction of the chunk's width. It has to be at
 		// least the largest height difference two neighbouring levels of detail can disagree by,
@@ -74,8 +121,12 @@ namespace LevEngine
 		void Configure(const PlanetShapeSettings& shape, const PlanetClimateSettings& climate,
 		               const PlanetLodSettings& lod);
 
-		//<--- Observer position in the planet's own space, which the system converts for us ---<<
-		void Update(Vector3 observerPosition);
+		// Observer position in the planet's own space, which the system converts for us, and how many
+		// pixels one radian of the view covers -- the viewport's height over its vertical field of
+		// view. That is what turns a triangle's angular size into a pixel count, and the render pass is
+		// the only thing that knows it. The culling view is what the render pass knows about where the
+		// camera is looking; a default constructed one draws the whole sphere, as this used to.
+		void Update(Vector3 observerPosition, float pixelsPerRadian, const PlanetCullingView& culling = {});
 
 		//<--- Rebuilt every Update. Chunks are owned by the tree and outlive the list ---<<
 		[[nodiscard]] const Vector<PlanetChunk*>& GetVisibleChunks() const { return m_VisibleChunks; }
@@ -115,12 +166,32 @@ namespace LevEngine
 
 	private:
 		//<--- Returns true when this subtree has drawn itself, one way or another ---<<
-		bool UpdateChunk(PlanetChunk& chunk, Vector3 observerPosition);
+		bool UpdateChunk(PlanetChunk& chunk, Vector3 observerPosition, float pixelsPerRadian);
 
 		void CollectShadowCastersFrom(const PlanetChunk& chunk, float maxTriangleSize,
 		                              Vector<PlanetChunk*>& outChunks) const;
 
-		[[nodiscard]] bool ShouldSplit(const PlanetChunk& chunk, Vector3 observerPosition) const;
+		[[nodiscard]] bool ShouldSplit(const PlanetChunk& chunk, Vector3 observerPosition,
+		                               float pixelsPerRadian) const;
+
+		//<--- Deliberately not the negation of the above: see MergeHysteresis ---<<
+		[[nodiscard]] bool ShouldMerge(const PlanetChunk& chunk, Vector3 observerPosition,
+		                               float pixelsPerRadian) const;
+
+		//<--- Size of a chunk's triangles on screen, in pixels, which both tests are built on ---<<
+		[[nodiscard]] float GetTrianglePixels(const PlanetChunk& chunk, Vector3 observerPosition,
+		                                      float pixelsPerRadian) const;
+
+		// How far the nearest part of a chunk stands in front of the horizon plane, in world units.
+		// Negative is behind the planet. Returned as a distance rather than a bool because the walk
+		// wants two different amounts of it: any at all to draw, and a chunk's width to reclaim.
+		[[nodiscard]] float GetHorizonClearance(const PlanetChunk& chunk, Vector3 observerPosition) const;
+
+		//<--- Bounding sphere against the six planes. Always false without a frustum ---<<
+		[[nodiscard]] bool IsOutsideFrustum(const PlanetChunk& chunk) const;
+
+		//<--- Turns a finished build into a mesh, if this frame still has the budget for one ---<<
+		bool TryUploadMesh(PlanetChunk& chunk);
 		[[nodiscard]] bool CanStartBuild() const;
 
 		void CreateRoots();
@@ -128,6 +199,9 @@ namespace LevEngine
 		PlanetShapeSettings m_Shape;
 		PlanetClimateSettings m_Climate;
 		PlanetLodSettings m_Lod;
+
+		//<--- Set at the top of every Update, so the recursive walk does not have to carry it ---<<
+		PlanetCullingView m_Culling;
 
 		Ref<PlanetSampler> m_Sampler;
 
@@ -140,6 +214,7 @@ namespace LevEngine
 		Ref<std::atomic<uint32_t>> m_BuildCounter;
 
 		uint32_t m_ChunkCount = 0;
+		uint32_t m_UploadsThisFrame = 0;
 		uint32_t m_DeepestVisibleDepth = 0;
 
 		bool m_IsConfigured = false;
