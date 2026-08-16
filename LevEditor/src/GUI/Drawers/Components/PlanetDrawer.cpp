@@ -213,13 +213,28 @@ namespace LevEngine::Editor
 				edited = true;
 			}
 
-			ImGui::DragFloat("LOD Bias", &component.Lod.LodBias, 0.05f, 0.2f, 20.0f);
-			ImGui::SetItemTooltip("A chunk splits when the camera is nearer than its own width times "
-			                      "this. Higher is more detail and more triangles.");
+			ImGui::DragFloat("Triangle Pixels", &component.Lod.TargetTrianglePixels, 0.1f, 0.5f, 32.0f);
+			ImGui::SetItemTooltip("How large a chunk's triangles may get on screen before it splits. "
+			                      "Lower is finer, and the triangle count climbs as the square of it. "
+			                      "3 is about where a silhouette stops looking faceted.");
 
 			ImGui::DragFloat("Skirt Depth", &component.Lod.SkirtDepthScale, 0.005f, 0.0f, 1.0f);
 			ImGui::SetItemTooltip("Depth of the wall around each chunk that hides the crack between two "
 			                      "levels of detail, as a fraction of the chunk's width.");
+
+			ImGui::DragFloat("Merge Hysteresis", &component.Lod.MergeHysteresis, 0.01f, 0.05f, 1.0f);
+			ImGui::SetItemTooltip("How far below the split threshold a chunk falls before its children "
+			                      "are given back. 1 means it merges the moment it stops wanting to "
+			                      "split, which makes a chunk on the boundary rebuild its children "
+			                      "every frame while the camera drifts.");
+
+			int uploads = static_cast<int>(component.Lod.MaxMeshUploadsPerFrame);
+			if (ImGui::DragInt("Mesh Uploads / Frame", &uploads, 1, 1, 32))
+				component.Lod.MaxMeshUploadsPerFrame = static_cast<uint32_t>(Math::Clamp(uploads, 1, 32));
+
+			ImGui::SetItemTooltip("Chunks whose buffers may be created in one frame. Creating them is a "
+			                      "driver allocation on this thread, so a burst of finished builds -- "
+			                      "which is what starting to move produces -- shows up as a hitch.");
 
 			int builds = static_cast<int>(component.Lod.MaxConcurrentBuilds);
 			if (ImGui::DragInt("Concurrent Builds", &builds, 1, 1, 64))

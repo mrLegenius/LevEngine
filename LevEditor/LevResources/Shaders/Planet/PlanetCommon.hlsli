@@ -130,49 +130,171 @@ struct PlanetBiomeBlendResult
 	int Count;
 };
 
-// Mirror of PlanetBiomeTable::Classify: the strongest four matches, normalized.
+// Every biome's membership, as sixteen weights. The expensive half of the biome rule: sixteen biomes
+// times four smoothstep windows, each reading its bounds from the constant buffer.
+//
+// This belongs in the vertex shader and it is worth being explicit about why. It is a function of the
+// climate and nothing else, and the climate arrives interpolated from the vertices -- so evaluating it
+// per pixel is evaluating a slowly varying function at the highest rate the hardware offers. Measured
+// at 2.1ms of a 4.7ms surface pass. The LOD system already holds triangles near a few pixels across
+// (see PlanetLodSettings::TargetTrianglePixels), which puts roughly an order of magnitude fewer vertex
+// invocations than pixels behind the same ground, and makes the interpolation error sub-triangle.
+//
+// The loop is over the fixed maximum rather than PlanetBiomeCount so that it unrolls: the count comes
+// from a constant buffer, and a dynamic bound leaves every PlanetBiomes[index] a dynamically indexed
+// constant buffer read. Unrolled, all sixteen are constant offsets. Biomes past the count weigh zero
+// and fall out of the blend on their own.
+// Written out rather than looped into a local array, for the reason the file keeps running into: a
+// local array that anything indexes becomes an indexable temporary, and those are allocated for the
+// whole shader whether or not the path that touches them runs. The macro takes a literal, so every
+// PlanetBiomes read below is a constant offset into the constant buffer.
+#define PLANET_WEIGHT_AT(biomeIndex) ((biomeIndex) < count \
+	? PlanetBiomeWeight(PlanetBiomes[biomeIndex], temperature, humidity, height, slope) \
+	: 0.0f)
+
+void PlanetComputeWeights(float temperature, float humidity, float height, float slope,
+                          out float4 weights0, out float4 weights1,
+                          out float4 weights2, out float4 weights3)
+{
+	int count = min(PlanetBiomeCount, PLANET_MAX_BIOMES);
+
+	weights0 = float4(PLANET_WEIGHT_AT(0), PLANET_WEIGHT_AT(1), PLANET_WEIGHT_AT(2), PLANET_WEIGHT_AT(3));
+	weights1 = float4(PLANET_WEIGHT_AT(4), PLANET_WEIGHT_AT(5), PLANET_WEIGHT_AT(6), PLANET_WEIGHT_AT(7));
+	weights2 = float4(PLANET_WEIGHT_AT(8), PLANET_WEIGHT_AT(9), PLANET_WEIGHT_AT(10), PLANET_WEIGHT_AT(11));
+	weights3 = float4(PLANET_WEIGHT_AT(12), PLANET_WEIGHT_AT(13), PLANET_WEIGHT_AT(14), PLANET_WEIGHT_AT(15));
+}
+
+// Everything about a biome that is not a texture -- its tint, its roughness, its metalness -- blended
+// by weight. This exists because of one property: it is *linear* in the weights, and the weights are a
+// smooth function of a climate that arrives interpolated. A linear function of something that varies
+// smoothly across a triangle can be evaluated at the three corners and interpolated, and comes out the
+// same. So this belongs in the vertex shader, and a planet with no ground textures never touches a
+// biome in the pixel shader at all.
+//
+// Measured, because the obvious suspect was the wrong one. Computing the weights per pixel is not what
+// cost -- it was the blend that follows, which reads PlanetBiomes[blend.Indices[slot]] four times over,
+// a dynamic index into a 1536 byte constant buffer array. Two milliseconds of a four and a half
+// millisecond pass. Summed over all sixteen with literal indices there is no dynamic index anywhere,
+// no sort, and no top four to pick.
+//
+// Using all sixteen rather than the strongest four is a deliberate, tiny divergence from
+// PlanetBiomeTable::Classify. It can only differ where five or more biomes overlap at one point, and
+// then only by including the ones the CPU drops -- which is the smoother answer, not the wronger one.
+// The CPU rule stays authoritative for queries that need a single answer, which is what it is for.
+void PlanetBlendFlat(float temperature, float humidity, float height, float slope,
+                     out float3 albedo, out float roughness, out float metallic)
+{
+	int count = min(PlanetBiomeCount, PLANET_MAX_BIOMES);
+
+	float3 tint = 0.0f;
+	float roughnessSum = 0.0f;
+	float metallicSum = 0.0f;
+	float total = 0.0f;
+
+	#define PLANET_ACCUMULATE(biomeIndex) \
+		{ \
+			float weight = (biomeIndex) < count \
+				? PlanetBiomeWeight(PlanetBiomes[biomeIndex], temperature, humidity, height, slope) \
+				: 0.0f; \
+			tint += PlanetBiomes[biomeIndex].Tint.rgb * weight; \
+			roughnessSum += PlanetBiomes[biomeIndex].Surface.x * weight; \
+			metallicSum += PlanetBiomes[biomeIndex].Surface.y * weight; \
+			total += weight; \
+		}
+
+	PLANET_ACCUMULATE(0)  PLANET_ACCUMULATE(1)  PLANET_ACCUMULATE(2)  PLANET_ACCUMULATE(3)
+	PLANET_ACCUMULATE(4)  PLANET_ACCUMULATE(5)  PLANET_ACCUMULATE(6)  PLANET_ACCUMULATE(7)
+	PLANET_ACCUMULATE(8)  PLANET_ACCUMULATE(9)  PLANET_ACCUMULATE(10) PLANET_ACCUMULATE(11)
+	PLANET_ACCUMULATE(12) PLANET_ACCUMULATE(13) PLANET_ACCUMULATE(14) PLANET_ACCUMULATE(15)
+
+	#undef PLANET_ACCUMULATE
+
+	//<--- Nothing matched: show the first biome rather than a hole in the ground ---<<
+	if (total <= 0.0f)
+	{
+		albedo = PlanetBiomes[0].Tint.rgb;
+		roughness = PlanetBiomes[0].Surface.x;
+		metallic = PlanetBiomes[0].Surface.y;
+
+		return;
+	}
+
+	float normalize = 1.0f / total;
+
+	albedo = tint * normalize;
+	roughness = roughnessSum * normalize;
+	metallic = metallicSum * normalize;
+}
+
+#undef PLANET_WEIGHT_AT
+
+// Mirror of PlanetBiomeTable::Classify: the strongest four matches, normalized. Takes the weights
+// already computed rather than the climate, so the same selection runs per pixel over interpolated
+// numbers -- which is where it has to be, because the blend it feeds samples textures, and a texture
+// lookup is not linear in position the way a tint is.
 //
 // The insertion is written out as four scalars rather than as a loop over an array, which is not a
-// style choice: the biome count comes from a constant buffer, so the outer loop has to stay dynamic,
-// and a dynamically indexed write into a local array inside it leaves fxc trying to unroll a loop
-// whose length it does not know. Four named slots have no array to index and compile to the compares
-// they are.
-PlanetBiomeBlendResult PlanetClassify(float temperature, float humidity, float height, float slope)
+// style choice: a dynamically indexed write into a local array leaves fxc trying to keep it in
+// indexable temporaries, and those cost occupancy for the whole shader. Four named slots have no
+// array to index and compile to the compares they are.
+// One candidate against the running top four. Guarded on the fourth slot first, which rejects most
+// biomes in one compare -- and since the slots start at zero, that guard also throws out the weights
+// that are zero, including the hair below zero that interpolation can produce between two vertices
+// which both had none.
+//
+// Strictly greater throughout, so equal weights keep the earlier biome, as on the CPU side.
+#define PLANET_INSERT_BIOME(candidateWeight, candidateIndex) \
+	{ \
+		float weight = candidateWeight; \
+		if (weight > weight3) \
+		{ \
+			if (weight > weight0) \
+			{ \
+				weight3 = weight2; index3 = index2; \
+				weight2 = weight1; index2 = index1; \
+				weight1 = weight0; index1 = index0; \
+				weight0 = weight;  index0 = candidateIndex; \
+			} \
+			else if (weight > weight1) \
+			{ \
+				weight3 = weight2; index3 = index2; \
+				weight2 = weight1; index2 = index1; \
+				weight1 = weight;  index1 = candidateIndex; \
+			} \
+			else if (weight > weight2) \
+			{ \
+				weight3 = weight2; index3 = index2; \
+				weight2 = weight;  index2 = candidateIndex; \
+			} \
+			else \
+			{ \
+				weight3 = weight;  index3 = candidateIndex; \
+			} \
+		} \
+	}
+
+PlanetBiomeBlendResult PlanetClassifyWeights(float4 weights0In, float4 weights1In,
+                                             float4 weights2In, float4 weights3In)
 {
 	float weight0 = 0.0f, weight1 = 0.0f, weight2 = 0.0f, weight3 = 0.0f;
 	int index0 = 0, index1 = 0, index2 = 0, index3 = 0;
 
-	int count = min(PlanetBiomeCount, PLANET_MAX_BIOMES);
-
-	for (int index = 0; index < count; ++index)
-	{
-		float weight = PlanetBiomeWeight(PlanetBiomes[index], temperature, humidity, height, slope);
-		if (weight <= 0.0f) continue;
-
-		//<--- Strictly greater, so equal weights keep the earlier biome, as on the CPU side ---<<
-		if (weight > weight0)
-		{
-			weight3 = weight2; index3 = index2;
-			weight2 = weight1; index2 = index1;
-			weight1 = weight0; index1 = index0;
-			weight0 = weight;  index0 = index;
-		}
-		else if (weight > weight1)
-		{
-			weight3 = weight2; index3 = index2;
-			weight2 = weight1; index2 = index1;
-			weight1 = weight;  index1 = index;
-		}
-		else if (weight > weight2)
-		{
-			weight3 = weight2; index3 = index2;
-			weight2 = weight;  index2 = index;
-		}
-		else if (weight > weight3)
-		{
-			weight3 = weight;  index3 = index;
-		}
-	}
+	PLANET_INSERT_BIOME(weights0In.x, 0)
+	PLANET_INSERT_BIOME(weights0In.y, 1)
+	PLANET_INSERT_BIOME(weights0In.z, 2)
+	PLANET_INSERT_BIOME(weights0In.w, 3)
+	PLANET_INSERT_BIOME(weights1In.x, 4)
+	PLANET_INSERT_BIOME(weights1In.y, 5)
+	PLANET_INSERT_BIOME(weights1In.z, 6)
+	PLANET_INSERT_BIOME(weights1In.w, 7)
+	PLANET_INSERT_BIOME(weights2In.x, 8)
+	PLANET_INSERT_BIOME(weights2In.y, 9)
+	PLANET_INSERT_BIOME(weights2In.z, 10)
+	PLANET_INSERT_BIOME(weights2In.w, 11)
+	PLANET_INSERT_BIOME(weights3In.x, 12)
+	PLANET_INSERT_BIOME(weights3In.y, 13)
+	PLANET_INSERT_BIOME(weights3In.z, 14)
+	PLANET_INSERT_BIOME(weights3In.w, 15)
 
 	PlanetBiomeBlendResult result = (PlanetBiomeBlendResult)0;
 
@@ -199,6 +321,8 @@ PlanetBiomeBlendResult PlanetClassify(float temperature, float humidity, float h
 
 	return result;
 }
+
+#undef PLANET_INSERT_BIOME
 
 // Weights of the three planar projections. Triplanar rather than a UV mapping because there is no
 // mapping of a sphere onto a plane that does not either seam or stretch, and the ground is where both

@@ -104,6 +104,14 @@ namespace LevEngine
 		// A set that covers an Earthlike planet from sea floor to snow line. Used as the default so
 		// that a planet added to a scene has ground with something on it before anybody has opened
 		// the biome editor.
-		[[nodiscard]] static Vector<PlanetBiome> CreateEarthlikeSet();
+		//
+		// The height windows are written against one vertical scale and scaled to the one asked for
+		// here -- PlanetShapeSettings::GetMaxElevation and GetMinElevation. That is not a detail: the
+		// windows are absolute distances from sea level, so on a planet with nine units of relief
+		// rather than four hundred, every point on land falls inside the beach's window at once and
+		// the whole globe comes out a single flat shade of sand. Defaulted to the reference scale, so
+		// an authored set still starts from the numbers as written.
+		[[nodiscard]] static Vector<PlanetBiome> CreateEarthlikeSet(float maxElevation = 484.0f,
+		                                                            float minElevation = -234.0f);
 	};
 }

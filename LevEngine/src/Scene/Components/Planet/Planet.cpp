@@ -6,16 +6,6 @@
 
 namespace LevEngine
 {
-	namespace
-	{
-		//<--- What a planet with no biome set is drawn with. See PlanetComponent::GetBiomes ---<<
-		const Vector<PlanetBiome>& GetDefaultBiomes()
-		{
-			static const Vector<PlanetBiome> biomes = PlanetBiomeTable::CreateEarthlikeSet();
-			return biomes;
-		}
-	}
-
 	PlanetComponent::PlanetComponent()
 		: Surface(CreateRef<PlanetSurface>())
 	{
@@ -41,7 +31,25 @@ namespace LevEngine
 		if (BiomeSet && !BiomeSet->GetBiomes().empty())
 			return BiomeSet->GetBiomes();
 
-		return GetDefaultBiomes();
+		// Built against this planet's own vertical scale rather than shared between every planet in
+		// the scene. It used to be one static set for all of them, written for the default shape's
+		// four hundred units of relief -- so a planet with nine had every point on land inside the
+		// beach's window, which outranks the climate biomes, and came out one flat shade of sand with
+		// nothing for the light to catch. Rebuilt only when that scale changes, which is when someone
+		// drags a slider.
+		const float maxElevation = Shape.GetMaxElevation();
+		const float minElevation = Shape.GetMinElevation();
+
+		if (DefaultBiomes.empty()
+			|| DefaultBiomesMaxElevation != maxElevation
+			|| DefaultBiomesMinElevation != minElevation)
+		{
+			DefaultBiomes = PlanetBiomeTable::CreateEarthlikeSet(maxElevation, minElevation);
+			DefaultBiomesMaxElevation = maxElevation;
+			DefaultBiomesMinElevation = minElevation;
+		}
+
+		return DefaultBiomes;
 	}
 
 	void PlanetPresets::Apply(PlanetComponent& component, const PlanetPreset preset)
@@ -223,7 +231,9 @@ namespace LevEngine
 			//<--- Level of detail ---<<
 			out << YAML::Key << "ChunkResolution" << YAML::Value << component.Lod.ChunkResolution;
 			out << YAML::Key << "MaxDepth" << YAML::Value << component.Lod.MaxDepth;
-			out << YAML::Key << "LodBias" << YAML::Value << component.Lod.LodBias;
+			out << YAML::Key << "TargetTrianglePixels" << YAML::Value << component.Lod.TargetTrianglePixels;
+			out << YAML::Key << "MergeHysteresis" << YAML::Value << component.Lod.MergeHysteresis;
+			out << YAML::Key << "MaxMeshUploadsPerFrame" << YAML::Value << component.Lod.MaxMeshUploadsPerFrame;
 			out << YAML::Key << "SkirtDepthScale" << YAML::Value << component.Lod.SkirtDepthScale;
 			out << YAML::Key << "MaxConcurrentBuilds" << YAML::Value << component.Lod.MaxConcurrentBuilds;
 
@@ -298,7 +308,9 @@ namespace LevEngine
 
 			TryParse(node["ChunkResolution"], component.Lod.ChunkResolution);
 			TryParse(node["MaxDepth"], component.Lod.MaxDepth);
-			TryParse(node["LodBias"], component.Lod.LodBias);
+			TryParse(node["TargetTrianglePixels"], component.Lod.TargetTrianglePixels);
+			TryParse(node["MergeHysteresis"], component.Lod.MergeHysteresis);
+			TryParse(node["MaxMeshUploadsPerFrame"], component.Lod.MaxMeshUploadsPerFrame);
 			TryParse(node["SkirtDepthScale"], component.Lod.SkirtDepthScale);
 			TryParse(node["MaxConcurrentBuilds"], component.Lod.MaxConcurrentBuilds);
 

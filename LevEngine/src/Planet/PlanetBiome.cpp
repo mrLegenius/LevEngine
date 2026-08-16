@@ -100,8 +100,27 @@ namespace LevEngine
 		return blend.Count > 0 ? blend.Indices[0] : 0;
 	}
 
-	Vector<PlanetBiome> PlanetBiomeTable::CreateEarthlikeSet()
+	Vector<PlanetBiome> PlanetBiomeTable::CreateEarthlikeSet(const float maxElevation,
+	                                                        const float minElevation)
 	{
+		// What the windows below are written against: the defaults in PlanetShapeSettings, which are
+		// 90 of land plus 380 of mountain plus 14 of detail up, and 220 of ocean plus 14 of detail down.
+		constexpr float k_ReferenceMaxElevation = 484.0f;
+		constexpr float k_ReferenceMinElevation = -234.0f;
+
+		// Up and down scale separately. The sea floor is a fraction of the ocean's depth and the alpine
+		// line is a fraction of the mountains' height, and a planet is perfectly free to have deep
+		// water and low hills -- one scale for both would put the snow line underwater.
+		const float upScale = maxElevation > 0.0f ? maxElevation / k_ReferenceMaxElevation : 1.0f;
+		const float downScale = minElevation < 0.0f ? minElevation / k_ReferenceMinElevation : 1.0f;
+
+		// Sign decides which end it belongs to. The unbounded sentinels scale along with everything
+		// else and stay unbounded, since they are four orders of magnitude past any real relief.
+		const auto scaleHeight = [upScale, downScale](const float height)
+		{
+			return height >= 0.0f ? height * upScale : height * downScale;
+		};
+
 		// The Whittaker diagram, plus the two things it leaves out: height, which decides sea floor
 		// from shore from alpine, and slope, which decides whether anything grows at all.
 		//
@@ -116,7 +135,7 @@ namespace LevEngine
 		Vector<PlanetBiome> biomes;
 		biomes.reserve(k_MaxPlanetBiomes);
 
-		auto add = [&biomes](const char* name, const float minTemperature, const float maxTemperature,
+		auto add = [&biomes, &scaleHeight](const char* name, const float minTemperature, const float maxTemperature,
 		                     const float minHumidity, const float maxHumidity,
 		                     const float minHeight, const float maxHeight,
 		                     const float maxSlope, const Color tint, const float roughness,
@@ -128,8 +147,8 @@ namespace LevEngine
 			biome.MaxTemperature = maxTemperature;
 			biome.MinHumidity = minHumidity;
 			biome.MaxHumidity = maxHumidity;
-			biome.MinHeight = minHeight;
-			biome.MaxHeight = maxHeight;
+			biome.MinHeight = scaleHeight(minHeight);
+			biome.MaxHeight = scaleHeight(maxHeight);
 			biome.MaxSlope = maxSlope;
 			biome.Tint = tint;
 			biome.Roughness = roughness;
@@ -180,6 +199,13 @@ namespace LevEngine
 
 		add("Alpine Rock", -80, 6, 0.0f, 1.0f, 200, 100000, 1.0f, Color(0.45f, 0.43f, 0.4f, 1), 0.88f, 16, 15, 1.2f);
 		biomes.back().HeightBlend = 60.0f;
+
+		// The fades are widths in the same units as the windows, and they default to 60 -- which on a
+		// planet with nine units of relief is a fade wider than the whole of it, so every window
+		// overlaps every other and what the scaled windows just separated is smeared back together.
+		// Scaled by whichever end of the range the biome sits at.
+		for (PlanetBiome& biome : biomes)
+			biome.HeightBlend *= biome.MaxHeight >= 0.0f ? upScale : downScale;
 
 		return biomes;
 	}

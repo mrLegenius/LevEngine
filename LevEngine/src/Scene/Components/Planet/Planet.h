@@ -48,7 +48,17 @@ namespace LevEngine
 	{
 		//<--- How far the per-pixel normal is bent. 0 turns the shader-side detail off ---<<
 		float Strength = 0.6f;
-		float Frequency = 2.5f;
+
+		// Cycles across one planet radius, which is the same unit the shape's own noise is written in
+		// -- Noise::Fractal takes a normalized direction, so ShapeDetail::Frequency has always meant
+		// features of Radius/Frequency world units.
+		//
+		// This one did not. It multiplied a position in planet space, so it meant 1/Frequency world
+		// units and knew nothing about how large the planet was: a value tuned on a four thousand unit
+		// planet gave features ten thousand times too fine on a hundred unit one, and the ground came
+		// out looking like it was covered in worms. The two noises now scale together, so a planet can
+		// be resized without retuning either.
+		float Frequency = 12.0f;
 
 		// Sharpness of the triplanar blend. Ground textures are projected along all three axes and
 		// blended by the normal, because a sphere has no seamless UV mapping.
@@ -110,6 +120,14 @@ namespace LevEngine
 		// PlanetCollisionSystem the first time it is needed, so a planet nobody walks on never pays
 		// for one. Runtime state, like Surface.
 		Ref<PlanetCollision> Collision;
+
+		// The set a planet with no BiomeSet is drawn with, scaled to this planet's own relief. Runtime
+		// state like Surface, derived entirely from Shape, so it is not serialized -- and mutable
+		// because GetBiomes is const and every caller of it is a renderer that has no business
+		// rebuilding anything.
+		mutable Vector<PlanetBiome> DefaultBiomes;
+		mutable float DefaultBiomesMaxElevation = 0.0f;
+		mutable float DefaultBiomesMinElevation = 0.0f;
 
 		PlanetComponent();
 		PlanetComponent(const PlanetComponent&) = default;
