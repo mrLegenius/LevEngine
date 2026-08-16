@@ -48,18 +48,6 @@ namespace LevEngine::Editor
         return false;
     }
 
-    void ProjectEditor::SetCurrentSceneAsStartScene()
-    {
-        if (!SceneManager::GetActiveScene())
-        {
-            Log::CoreWarning("There is no active scene");
-            return;
-        }
-
-        Project::SetStartScene(SceneManager::GetActiveScenePath());
-        Project::Save();
-    }
-
     void ProjectEditor::Update()
     {
         if (OpenProjectRequested)
@@ -88,10 +76,6 @@ namespace LevEngine::Editor
         menuBar->AddMenuItem("Project/Create New...", String(), [this]
         {
             CreateNewProjectRequested = true;
-        });
-        menuBar->AddMenuItem("Project/Set current scene as start scene", String(), [this]
-        {
-            SetCurrentSceneAsStartScene();
         });
         menuBar->AddMenuItem("Project/Build", String(), [this]
         {

@@ -2,6 +2,7 @@
 #include "SceneEditor.h"
 
 #include "EntitySelection.h"
+#include "Project.h"
 #include "SceneState.h"
 #include "Essentials/MenuBar.h"
 
@@ -43,10 +44,21 @@ namespace LevEngine::Editor
         if (SceneManager::LoadScene(path))
         {
             Selection::Deselect();
+            RememberLastOpenedScene(path);
             return true;
         }
 
         return false;
+    }
+
+    void SceneEditor::RememberLastOpenedScene(const Path& path)
+    {
+        if (!Project::GetProject()) return;
+
+        if (Project::GetStartScene() == path) return;
+
+        Project::SetStartScene(path);
+        Project::Save();
     }
 
     bool SceneEditor::SaveScene() const
@@ -78,6 +90,7 @@ namespace LevEngine::Editor
         if (!filepath.empty())
         {
             SceneManager::SaveScene(filepath);
+            RememberLastOpenedScene(filepath.c_str());
             return true;
         }
 

@@ -21,6 +21,8 @@ namespace LevEngine::Editor
 
         void AddMainMenuItems(const Ref<MenuBar>& menuBar) const;
     private:
+        static void RememberLastOpenedScene(const Path& path);
+
         Func<SceneState> m_SceneStateGetter;
     };
 }
