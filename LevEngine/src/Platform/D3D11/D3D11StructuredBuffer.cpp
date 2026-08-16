@@ -130,12 +130,23 @@ namespace LevEngine
 
     D3D11StructuredBuffer::~D3D11StructuredBuffer()
     {
-        m_Buffer->Release();
+        //<--- m_Buffer is guarded like the rest: CreateBuffer can fail, and in Release the assert
+        //that was watching for it is compiled out ---<<
+        if (m_Buffer)
+            m_Buffer->Release();
+
+        // Both of these were leaked. GetImmediateContext2 adds a reference like any COM getter, and
+        // the count buffer is created for an Append or Counter UAV and then never let go of.
+        if (m_CountBuffer)
+            m_CountBuffer->Release();
 
         if (m_ShaderResourceView)
             m_ShaderResourceView->Release();
         if (m_UnorderedAccessView)
             m_UnorderedAccessView->Release();
+
+        if (m_DeviceContext)
+            m_DeviceContext->Release();
     }
 
     bool D3D11StructuredBuffer::Bind(const uint32_t slot, const ShaderType shaderType, const bool readWrite,
