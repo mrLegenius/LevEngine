@@ -38,11 +38,18 @@ namespace LevEngine
         // Commit the data from system memory to device memory
         void Commit();
         
-        ID3D11Buffer* m_Buffer;
-        ID3D11Buffer* m_CountBuffer;
-        ID3D11ShaderResourceView* m_ShaderResourceView;
-        ID3D11UnorderedAccessView* m_UnorderedAccessView;
+        // Null by default, and that is not decoration. Which of these the constructor fills depends on
+        // the bind flags: a dynamic buffer gets a shader resource view and no unordered access view, a
+        // staging one gets neither, and only an Append or Counter UAV gets a count buffer. The
+        // destructor guards each with a null test, so leaving them uninitialized meant testing stack
+        // garbage -- which passes, and then releases a wild pointer. That was the segfault on every
+        // exit: Renderer3D's instance buffer is dynamic, so its unordered access view was never
+        // assigned and never null.
+        ID3D11Buffer* m_Buffer = nullptr;
+        ID3D11Buffer* m_CountBuffer = nullptr;
+        ID3D11ShaderResourceView* m_ShaderResourceView = nullptr;
+        ID3D11UnorderedAccessView* m_UnorderedAccessView = nullptr;
 
-        ID3D11DeviceContext2* m_DeviceContext;
+        ID3D11DeviceContext2* m_DeviceContext = nullptr;
     };
 }
