@@ -35,6 +35,7 @@
 
 #include "DebugRender/DebugRenderPass.h"
 #include "Environment/EnvironmentPass.h"
+#include "Environment/PlanetAtmospherePass.h"
 #include "Planet/PlanetOceanPass.h"
 #include "Planet/PlanetPass.h"
 #include "Planet/PlanetUpdatePass.h"
@@ -298,7 +299,8 @@ namespace LevEngine
             m_DeferredTechnique->AddPass(CreateRef<ClearPass>(m_GBufferRenderTarget, "Clear G-Buffer"));
             
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_EnvironmentQuery));
-            m_DeferredTechnique->AddPass(CreateRef<EnvironmentPass>(m_GBufferRenderTarget));
+            const auto deferredEnvironment = CreateRef<EnvironmentPass>(m_GBufferRenderTarget);
+            m_DeferredTechnique->AddPass(deferredEnvironment);
             m_DeferredTechnique->AddPass(CreateRef<EndQueryPass>(m_EnvironmentQuery));
 
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_DeferredGeometryQuery));
@@ -333,6 +335,11 @@ namespace LevEngine
 
             // Fog covers the whole scene, so it goes after everything that writes colour and
             // before post. m_DepthTexture is the G-buffer depth, still holding the scene depth.
+            // Before the fog and after everything that writes colour: the air is part of the scene's
+            // radiance, so it has to go through the same exposure as the rest of it.
+            m_DeferredTechnique->AddPass(CreateRef<PlanetAtmospherePass>(
+                m_HDRRenderTarget, m_DepthTexture, deferredEnvironment->GetAtmosphere()));
+
             m_DeferredTechnique->AddPass(CreateRef<FogPass>(m_HDRRenderTarget, m_DepthTexture));
 
             m_DeferredTechnique->AddPass(CreateRef<BeginQueryPass>(m_PostProcessingQuery));
@@ -361,7 +368,8 @@ namespace LevEngine
             // Scene goes into the HDR target in linear space, then PostProcessingPass tone maps
             // it into the main target. Same shape as the deferred technique, so ForwardPBR.hlsl
             // does not need its own tone map.
-            m_ForwardTechnique->AddPass(CreateRef<EnvironmentPass>(m_HDRRenderTarget));
+            const auto forwardEnvironment = CreateRef<EnvironmentPass>(m_HDRRenderTarget);
+            m_ForwardTechnique->AddPass(forwardEnvironment);
             m_ForwardTechnique->AddPass(CreateRef<OpaquePass>(m_OpaquePipeline, ShaderAssets::ForwardPBRInstanced(),
                                                               false));
             m_ForwardTechnique->AddPass(CreateRef<PlanetPass>(m_OpaquePipeline, false));
@@ -374,6 +382,9 @@ namespace LevEngine
             m_ForwardTechnique->AddPass(CreateRef<CopyTexturePass>(
                 m_DepthTexture, mainRenderTarget->GetTexture(AttachmentPoint::DepthStencil),
                 "Copy Depth Buffer to Texture"));
+            m_ForwardTechnique->AddPass(CreateRef<PlanetAtmospherePass>(
+                m_HDRRenderTarget, m_DepthTexture, forwardEnvironment->GetAtmosphere()));
+
             m_ForwardTechnique->AddPass(CreateRef<FogPass>(m_HDRRenderTarget, m_DepthTexture));
 
             m_ForwardTechnique->AddPass(CreateRef<PostProcessingPass>(mainRenderTarget, m_ColorTexture));

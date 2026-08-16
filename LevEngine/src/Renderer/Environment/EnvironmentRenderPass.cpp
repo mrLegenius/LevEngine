@@ -76,6 +76,14 @@ namespace LevEngine
         // Both paths sample a cubemap: the imported skybox in one, the raymarched sky in the other.
         pipeline->GetShader(ShaderType::Pixel)->GetShaderParameterByName("Cubemap").Set(m_EnvironmentMap);
 
+        // Only the procedural sky composites a skybox behind itself; the skybox path is already
+        // drawing the thing itself.
+        if (IsAtmosphereActive())
+        {
+            pipeline->GetShader(ShaderType::Pixel)
+                    ->GetShaderParameterByName("SkyboxCubemap").Set(m_SkyboxCubemap);
+        }
+
         pipeline->Bind();
         Renderer3D::DrawCube(pipeline->GetShader(ShaderType::Vertex));
         pipeline->Unbind();

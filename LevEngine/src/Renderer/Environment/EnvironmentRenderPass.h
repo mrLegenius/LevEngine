@@ -18,6 +18,9 @@ namespace LevEngine
 
 		void SetEnvironmentMap(const Ref<Texture>& environmentMap);
 
+		//<--- What shows through the air. See PSMain in AtmosphereSky.hlsl ---<<
+		void SetSkyboxCubemap(const Ref<Texture>& skyboxCubemap) { m_SkyboxCubemap = skyboxCubemap; }
+
 		String PassName() override;
 		bool Begin(entt::registry& registry, RenderParams& params) override;
 		void Process(entt::registry& registry, RenderParams& params) override;
@@ -30,6 +33,7 @@ namespace LevEngine
         Ref<PipelineState> m_AtmospherePipeline;
         Ref<AtmosphereConstants> m_Atmosphere;
         Ref<Texture> m_EnvironmentMap;
+        Ref<Texture> m_SkyboxCubemap;
         Ref<ConstantBuffer> m_CameraConstantBuffer;
     };
 }

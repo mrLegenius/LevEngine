@@ -20,6 +20,9 @@ namespace LevEngine
         void Process(entt::registry& registry, RenderParams& params) override;
         void SetViewport(Viewport viewport) override;
 
+        //<--- Shared with PlanetAtmospherePass: one atmosphere, collected once a frame ---<<
+        [[nodiscard]] const Ref<AtmosphereConstants>& GetAtmosphere() const { return m_Atmosphere; }
+
     private:
         Ref<AtmosphereConstants> m_Atmosphere;
         Scope<EnvironmentPrecomputePass> m_PrecomputePass;

@@ -17,5 +17,8 @@ namespace LevEngine
 
         static Ref<Shader> AtmosphereSky();
         static Ref<Shader> AtmosphereCubemap();
+
+        //<--- The air in front of the scene, as opposed to the sky behind it ---<<
+        static Ref<Shader> PlanetAtmosphere();
     };
 }

@@ -52,6 +52,14 @@ struct LEV_API RenderSettings
 	// anywhere. Anything past this is simply unshadowed, which is what the last cascade already does.
 	inline static float ShadowDistance = 1000.0f;
 
+	// Steps the atmosphere is marched in, per pixel, for every pixel on screen -- the air in front of
+	// the scene and the sky behind it alike. The light steps are a second march towards the sun taken
+	// at every view step, so the cost is their product, and it is now paid over the whole screen rather
+	// than only where there is geometry. First thing to lower if PlanetAtmospherePass is the frame's
+	// cost.
+	inline static int AtmosphereViewSteps = 8;
+	inline static int AtmosphereLightSteps = 4;
+
 	//Lighting
 	static constexpr int MaxLights = 100;
 

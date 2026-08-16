@@ -52,7 +52,16 @@ cbuffer AtmosphereConstantBuffer : register(CB_ATMOSPHERE)
     float SkyIntensity;
 
     float3 GroundColor;
-    float ViewHeight;
+
+    // World units to the kilometres every coefficient here is defined in. See GPUAtmosphereData.
+    float AtmosphereScale;
+
+    //<--- The camera and the planet's centre, in the atmosphere's own planet-centred space ---<<
+    float3 AtmosphereCameraPosition;
+    float CameraPadding;
+
+    float3 PlanetCenterWorld;
+    float CenterPadding;
 
     uint BodyCount;
     float RenderSunDisks;
@@ -206,11 +215,21 @@ float CalcPhaseShading(float3 viewDirection, AtmosphereBody body)
     return lerp(1.0f, saturate(dot(normal, body.DirectionToStar)), body.PhaseInfluence);
 }
 
-// The disks alone, attenuated by the air between them and the camera. Kept separate from the sky
-// because the sky is sampled from a cubemap while the disks stay analytic and sharp.
-float3 CalcBodyDisks(float3 viewDirection, int lightSteps)
+// The disks alone. Kept separate from the sky because the sky is marched per pixel while the disks
+// stay analytic and sharp.
+//
+// applyTransmittance decides whether the air between the disk and the camera is taken off here or by
+// whoever is going to composite this. The screen pass wants it off, because PlanetAtmospherePass
+// multiplies everything it finds in the target by the same transmittance a moment later, and taking
+// it twice turns the sun into a dim red coin at midday.
+float3 CalcBodyDisks(float3 viewDirection, int lightSteps, bool applyTransmittance)
 {
-    float3 rayStart = float3(0.0f, PlanetRadius + max(ViewHeight, 0.001f), 0.0f);
+    // Clamped just outside the ground: a ray starting below the surface has no sky above it and the
+    // density falloff would run away.
+    float3 rayStart = AtmosphereCameraPosition;
+    float startHeight = length(rayStart);
+    rayStart *= startHeight > 1e-6f ? max(startHeight, PlanetRadius + 0.001f) / startHeight : 0.0f;
+    if (startHeight <= 1e-6f) rayStart = float3(0.0f, PlanetRadius + 0.001f, 0.0f);
 
     // Looking at the ground means no sun, whatever the direction says.
     float2 groundHit = RaySphereIntersect(rayStart, viewDirection, PlanetRadius);
@@ -234,8 +253,11 @@ float3 CalcBodyDisks(float3 viewDirection, int lightSteps)
         if (dot(body.DirectionToStar, body.DirectionToStar) > 0.0f)
             shading = CalcPhaseShading(viewDirection, body) * (0.85f + 0.15f * sqrt(edge));
 
-        color += CalcTransmittance(rayStart, viewDirection, lightSteps)
-            * body.Color * body.Intensity * body.DiskBrightness * shading;
+        float3 transmittance = applyTransmittance
+            ? CalcTransmittance(rayStart, viewDirection, lightSteps)
+            : 1.0f;
+
+        color += transmittance * body.Color * body.Intensity * body.DiskBrightness * shading;
     }
 
     return color * SkyIntensity;
@@ -244,12 +266,28 @@ float3 CalcBodyDisks(float3 viewDirection, int lightSteps)
 // Radiance arriving from a direction, including the ground when looking down. Sun disks are opt in:
 // the light probe leaves them out, because the same suns already light the scene directly and
 // would otherwise be counted twice.
-float3 RenderSky(float3 viewDirection, int viewSteps, int lightSteps, bool includeSunDisks)
+// skyTransmittance comes back as the fraction of whatever lies beyond the atmosphere that still
+// reaches the eye: 1 for a ray that never enters the air at all, 0 for one that ends on the ground.
+// It is what the skybox is multiplied by, so a camera in space sees stars and one on the ground sees
+// them only where the air is thin enough to let them through.
+float3 RenderSky(float3 viewDirection, int viewSteps, int lightSteps, bool includeSunDisks,
+                 out float skyTransmittance)
 {
-    float3 rayStart = float3(0.0f, PlanetRadius + max(ViewHeight, 0.001f), 0.0f);
+    // Clamped just outside the ground: a ray starting below the surface has no sky above it and the
+    // density falloff would run away.
+    float3 rayStart = AtmosphereCameraPosition;
+    float startHeight = length(rayStart);
+    rayStart *= startHeight > 1e-6f ? max(startHeight, PlanetRadius + 0.001f) / startHeight : 0.0f;
+    if (startHeight <= 1e-6f) rayStart = float3(0.0f, PlanetRadius + 0.001f, 0.0f);
 
     float2 atmosphereHit = RaySphereIntersect(rayStart, viewDirection, AtmosphereRadius);
-    if (atmosphereHit.y < 0.0f) return 0.0f;
+
+    //<--- The ray never enters the air, so there is nothing between the eye and space ---<<
+    if (atmosphereHit.y < 0.0f)
+    {
+        skyTransmittance = 1.0f;
+        return 0.0f;
+    }
 
     float rayStartDistance = max(atmosphereHit.x, 0.0f);
     float rayLength = atmosphereHit.y - rayStartDistance;
@@ -284,10 +322,15 @@ float3 RenderSky(float3 viewDirection, int viewSteps, int lightSteps, bool inclu
         color += viewTransmittance * GroundColor * groundLight / k_AtmospherePi;
     }
 
+    // Ground is opaque, so nothing behind the atmosphere shows through it. Otherwise it is the air's
+    // own transmittance, as one number: the skybox is multiplied by it, and the colour that a thick
+    // sky takes on is carried by the in-scattering, which is per channel.
+    skyTransmittance = hitsGround ? 0.0f : dot(viewTransmittance, float3(0.2126f, 0.7152f, 0.0722f));
+
     color *= SkyIntensity;
 
     if (!hitsGround && includeSunDisks && RenderSunDisks > 0.5f)
-        color += CalcBodyDisks(viewDirection, lightSteps);
+        color += CalcBodyDisks(viewDirection, lightSteps, true);
 
     return color;
 }

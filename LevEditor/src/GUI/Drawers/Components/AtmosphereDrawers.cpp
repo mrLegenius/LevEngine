@@ -31,6 +31,13 @@ namespace LevEngine::Editor
             ImGui::SeparatorText("Geometry");
             edited |= ImGui::DragFloat("Planet Radius", &component.PlanetRadius, 10.0f, 1.0f, 100000.0f);
             edited |= ImGui::DragFloat("Atmosphere Height", &component.AtmosphereHeight, 1.0f, 0.1f, 1000.0f);
+
+            ImGui::DragFloat("Thickness Exaggeration", &component.ThicknessExaggeration, 0.1f, 0.01f, 64.0f);
+            ImGui::SetItemTooltip("Stretches the shell without changing the sky's colour: the "
+                                  "coefficients are divided by the same amount, so density times "
+                                  "distance is unchanged. Earth's air is under a hundredth of its "
+                                  "radius and reads as a two pixel line from orbit; this is what makes "
+                                  "it a shell you can see.");
             ImGui::DragFloat("Units To Kilometers", &component.UnitsToKilometers, 0.0001f, 0.0f, 1.0f, "%.5f");
             ImGui::DragFloat("Sea Level Height", &component.SeaLevelHeight, 0.1f);
 

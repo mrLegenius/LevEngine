@@ -37,6 +37,11 @@ namespace LevEngine
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Environment/CubemapRender.hlsl"));
     }
 
+    Ref<Shader> EnvironmentShaders::PlanetAtmosphere()
+    {
+        return ShaderLibrary::GetOrAddShader(GetShaderPath("Environment/PlanetAtmosphere.hlsl"));
+    }
+
     Ref<Shader> EnvironmentShaders::AtmosphereSky()
     {
         return ShaderLibrary::GetOrAddShader(GetShaderPath("Environment/AtmosphereSky.hlsl"));

@@ -19,6 +19,10 @@ namespace LevEngine
         explicit EnvironmentPrecomputePass(const Ref<AtmosphereConstants>& atmosphere);
 
         [[nodiscard]] const Ref<Texture>& GetEnvironmentCubemap() const { return m_EnvironmentCubemap; }
+
+        // The skybox on its own, kept even while an atmosphere is active so the sky pass can composite
+        // the two: air in front, stars behind. Null when the scene has no skybox.
+        [[nodiscard]] const Ref<Texture>& GetSkyboxCubemap() const { return m_SkyboxCubemap; }
     protected:
         String PassName() override;
         void Process(entt::registry& registry, RenderParams& params) override;
@@ -28,6 +32,7 @@ namespace LevEngine
         Ref<AtmosphereConstants> m_Atmosphere;
 
         Ref<Texture> m_EnvironmentMap;
+        Ref<Texture> m_SkyboxCubemap;
         Ref<Texture> m_EnvironmentCubemap;
         Ref<Texture> m_EnvironmentIrradianceCubemap;
         Ref<Texture> m_EnvironmentPrefilterCubemap;
@@ -39,11 +44,21 @@ namespace LevEngine
         // and can lag behind by a degree or so without anyone noticing.
         Ref<Texture> m_AtmosphereCubemap;
         GPUAtmosphereData m_SkySnapshot{};
-        GPUAtmosphereData m_SkyLightSnapshot{};
         bool m_HasSky = false;
         bool m_HasSkyLight = false;
         float m_TimeSinceSkyUpdate = 0.0f;
         float m_TimeSinceSkyLightUpdate = 0.0f;
+
+        // Which sky the light maps were built from. The irradiance and prefilter chain reads exactly
+        // one thing -- the cubemap above -- so an unchanged cubemap can only produce the identical
+        // result, and running it again is pure cost.
+        //
+        // It used to decide for itself, by testing the atmosphere against its own snapshot with its
+        // own thresholds. That let it fire on a camera that had merely changed altitude while the
+        // cubemap it would read had not been touched: a full convolution and prefilter, tens of
+        // milliseconds, to recompute the same numbers.
+        uint32_t m_SkyRevision = 0;
+        uint32_t m_SkyLightRevision = 0;
 
         void ProcessSkybox(entt::registry& registry);
         void ProcessAtmosphere();

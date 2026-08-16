@@ -12,7 +12,12 @@ float4 PSMain(PS_IN input) : SV_Target
     float3 right = normalize(cross(up, normal));
     up = normalize(cross(normal, right));
 
-    float sampleDelta = 0.025f;
+    // Two nested loops, so this is squared: 0.025 is 15800 samples for one texel, and six faces of
+    // them is most of a 26ms hitch every time the probe is rebuilt. That number comes from baking a
+    // probe once at load, which is not what this does any more -- an atmosphere rebuilds it as the
+    // camera flies. Irradiance is a cosine convolution over a whole hemisphere, about the smoothest
+    // function in the renderer, and the sky it integrates has no sun disk in it to alias against.
+    float sampleDelta = 0.07f;
     float nrSamples = 0.0f;
     for (float phi = 0.0f; phi < 2.0f * PI; phi += sampleDelta)
     {

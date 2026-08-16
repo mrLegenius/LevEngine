@@ -24,6 +24,8 @@ namespace LevEngine
         if (const auto environmentMap = m_PrecomputePass->GetEnvironmentCubemap())
             m_RenderPass->SetEnvironmentMap(environmentMap);
 
+        m_RenderPass->SetSkyboxCubemap(m_PrecomputePass->GetSkyboxCubemap());
+
         m_RenderPass->Execute(registry, params);
     }
 

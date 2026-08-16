@@ -199,7 +199,12 @@ float3 CalcStarField(float3 viewDirection, float pixelAngle, float3 skyRadiance)
     float washout = CalcSkyWashout(skyRadiance);
     if (washout < 0.001f) return 0.0f;
 
-    float3 rayStart = float3(0.0f, PlanetRadius + max(ViewHeight, 0.001f), 0.0f);
+    // Clamped just outside the ground: a ray starting below the surface has no sky above it and the
+    // density falloff would run away.
+    float3 rayStart = AtmosphereCameraPosition;
+    float startHeight = length(rayStart);
+    rayStart *= startHeight > 1e-6f ? max(startHeight, PlanetRadius + 0.001f) / startHeight : 0.0f;
+    if (startHeight <= 1e-6f) rayStart = float3(0.0f, PlanetRadius + 0.001f, 0.0f);
 
     // Below the horizon there is a planet in the way.
     float2 groundHit = RaySphereIntersect(rayStart, viewDirection, PlanetRadius);

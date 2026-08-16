@@ -54,7 +54,22 @@ namespace LevEngine
         float SkyIntensity = 1.0f;
 
         Vector3 GroundColor{};
-        float ViewHeight = 0.0f;
+
+        // World units to the atmosphere's own units, which are the kilometres every coefficient above
+        // is defined in. A planet a hundred units across gets an Earthlike sky because the scattering
+        // is run in a space where it is Earth sized -- honest kilometres on a game sized planet come
+        // to two kilometres of air and nothing visible.
+        float AtmosphereScale = 1.0f;
+
+        // The camera, and the planet's centre, both in the atmosphere's own space: centred on the
+        // planet and scaled by the above. This is what replaced a height above a flat sea level -- an
+        // atmosphere seen from outside needs to know where the planet is, not just how high you are.
+        Vector3 AtmosphereCameraPosition{};
+        float CameraPadding = 0.0f;
+
+        //<--- The same centre in world space, so a pixel's depth can be brought into this space ---<<
+        Vector3 PlanetCenterWorld{};
+        float CenterPadding = 0.0f;
 
         uint32_t BodyCount = 0;
         float RenderSunDisks = 1.0f;
@@ -104,6 +119,10 @@ namespace LevEngine
 
     private:
         void CollectStarRotation(entt::registry& registry, const AtmosphereComponent& atmosphere);
+
+        //<--- Where the planet is, in world space and in the atmosphere's own space ---<<
+        void CollectGeometry(entt::registry& registry, const RenderParams& params,
+                             entt::entity entity, const AtmosphereComponent& atmosphere);
 
         GPUAtmosphereData m_Data{};
         bool m_Active = false;

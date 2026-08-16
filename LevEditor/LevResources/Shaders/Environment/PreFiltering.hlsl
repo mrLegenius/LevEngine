@@ -19,7 +19,11 @@ float4 PSMain(PS_IN input) : SV_Target
     float3 R = N;
     float3 V = R;
 
-    const uint SAMPLE_COUNT = 1024u;
+    // 1024 is the number for baking a probe once and never again. This runs whenever the sky is
+    // rebuilt, which with an atmosphere is while the camera is flying, and at 128 pixels a face over
+    // six faces and every mip it was the other half of the hitch. 128 importance samples is the
+    // ordinary real time figure and holds up on an environment this smooth.
+    const uint SAMPLE_COUNT = 128u;
     float totalWeight = 0.0;
     float3 prefilteredColor = 0.0f;  
 

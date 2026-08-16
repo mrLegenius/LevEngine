@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Kernel/Core.h"
+#include "Math/Math.h"
 #include "Scene/Components/TypeParseTraits.h"
 
 namespace LevEngine
@@ -49,6 +50,19 @@ namespace LevEngine
 		float AbsorptionLayerCenter = 25.0f;
 		float AbsorptionLayerWidth = 15.0f;
 
+		// How much thicker than life the air is drawn.
+		//
+		// Earth's atmosphere is under a hundredth of its radius, so seen from space it is a line a
+		// couple of pixels wide -- correct, and nothing like the glowing shell a planet is supposed to
+		// have in a game. This stretches the shell and every scale height in it, and divides the
+		// coefficients by the same amount, so density times length is unchanged: the sky keeps the
+		// colour it had and only its extent grows. It is the same trade as KilometersPerUnit on a
+		// planet's climate, for the same reason -- a world small enough to fly around needs its air
+		// exaggerated to read as air.
+		//
+		// 1 is honest. 8 is roughly a shell a fifteenth of the radius, which reads from orbit.
+		float ThicknessExaggeration = 8.0f;
+
 		Color GroundColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 		float SkyIntensity = 1.0f;
 		bool RenderSunDisks = true;
@@ -92,7 +106,13 @@ namespace LevEngine
 		AtmosphereComponent();
 		AtmosphereComponent(const AtmosphereComponent&) = default;
 
-		[[nodiscard]] float GetAtmosphereRadius() const { return PlanetRadius + AtmosphereHeight; }
+		//<--- Thickness of the shell as drawn, which is the authored height times the exaggeration ---<<
+		[[nodiscard]] float GetDrawnAtmosphereHeight() const
+		{
+			return AtmosphereHeight * Math::Max(ThicknessExaggeration, 0.01f);
+		}
+
+		[[nodiscard]] float GetAtmosphereRadius() const { return PlanetRadius + GetDrawnAtmosphereHeight(); }
 	};
 
 	// A star. Sits on an entity together with a Transform -- the transform's forward direction is

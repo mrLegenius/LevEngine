@@ -1026,6 +1026,7 @@
     <ClInclude Include="src\Renderer\Planet\PlanetOceanPass.h" />
     <ClInclude Include="src\Planet\PlanetCollision.h" />
     <ClInclude Include="src\Scene\Systems\Planet\PlanetCollisionSystem.h" />
+    <ClInclude Include="src\Renderer\Environment\PlanetAtmospherePass.h" />
     <ClInclude Include="src\levpch.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11BlendState.h" />
     <ClInclude Include="src\Platform\D3D11\D3D11ConstantBuffer.h" />
@@ -1466,6 +1467,7 @@
     <ClCompile Include="src\Renderer\Planet\PlanetOceanPass.cpp" />
     <ClCompile Include="src\Planet\PlanetCollision.cpp" />
     <ClCompile Include="src\Scene\Systems\Planet\PlanetCollisionSystem.cpp" />
+    <ClCompile Include="src\Renderer\Environment\PlanetAtmospherePass.cpp" />
     <ClCompile Include="src\levpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

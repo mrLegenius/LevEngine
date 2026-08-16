@@ -201,6 +201,7 @@ namespace LevEngine
 
 			out << YAML::Key << "PlanetRadius" << YAML::Value << component.PlanetRadius;
 			out << YAML::Key << "AtmosphereHeight" << YAML::Value << component.AtmosphereHeight;
+			out << YAML::Key << "ThicknessExaggeration" << YAML::Value << component.ThicknessExaggeration;
 			out << YAML::Key << "UnitsToKilometers" << YAML::Value << component.UnitsToKilometers;
 			out << YAML::Key << "SeaLevelHeight" << YAML::Value << component.SeaLevelHeight;
 
@@ -240,6 +241,7 @@ namespace LevEngine
 
 			TryParse(node["PlanetRadius"], component.PlanetRadius);
 			TryParse(node["AtmosphereHeight"], component.AtmosphereHeight);
+			TryParse(node["ThicknessExaggeration"], component.ThicknessExaggeration);
 			TryParse(node["UnitsToKilometers"], component.UnitsToKilometers);
 			TryParse(node["SeaLevelHeight"], component.SeaLevelHeight);
 

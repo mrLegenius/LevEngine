@@ -22,6 +22,7 @@
 								// planet's transforms. Bound once per planet: nothing about a chunk
 								// reaches the shader except through its model matrix, so there is no
 								// buffer update between draws.
+#define CB_PLANET_ATMOSPHERE b12	// PlanetAtmospherePass
 
 // CB_LIGHT_INDEX aliases CB_MATERIAL: the deferred lighting pass has no material bound and
 // the geometry passes have no light index. Never pull both into one shader -- FXC only lets

@@ -17,16 +17,26 @@
 
 namespace LevEngine
 {
-    // The sky is raymarched into this cubemap and then sampled on screen. It only has to carry a
-    // smooth gradient -- the sun disks, the one sharp feature, are drawn analytically by the sky
-    // shader on top.
+    // The sky is raymarched into this cubemap, which feeds the irradiance and prefilter chain and is
+    // sampled by the sky pass for one number: how bright the sky is, which is what decides whether a
+    // star can be made out against it.
+    //
+    // Nothing looks at it directly any more, and that is what sets these two numbers. It was 128, then
+    // 512 to stop the limb of a planet showing bilinear facets, then 256 as a compromise -- all of
+    // which were chasing a resolution problem that no longer exists, because the limb is marched per
+    // pixel by PlanetAtmospherePass. What is left is a light probe, and a light probe is allowed to be
+    // small and out of date: 128 a face is more than the irradiance chain can carry, and a quarter of
+    // a second of lag in the diffuse ambient is not a thing anyone can see.
+    //
+    // The interval matters more than it looks. At 0.03 this rebuilt up to thirty three times a second
+    // whenever the camera's altitude moved, and each rebuild is six faces of raymarching on the CPU's
+    // critical path -- one 37.8ms frame in every second of flying, against 7.5ms for a frame that
+    // skipped it. Making the rebuild rare is only safe because nothing visible depends on it.
     static constexpr uint32_t k_AtmosphereCubemapResolution = 128;
     static constexpr uint32_t k_IrradianceResolution = 32;
     static constexpr uint32_t k_PrefilterResolution = 128;
 
-    // Refresh rate of that cubemap: fine enough that a moving sun never shows a step, and cheap
-    // enough to run at it.
-    static constexpr float k_SkyUpdateInterval = 0.03f;
+    static constexpr float k_SkyUpdateInterval = 0.25f;
     static const float k_SkyUpdateCosAngle = std::cos(0.25f * Math::DegToRad);
 
     EnvironmentPrecomputePass::EnvironmentPrecomputePass(const Ref<AtmosphereConstants>& atmosphere)
@@ -38,13 +48,12 @@ namespace LevEngine
 
     void EnvironmentPrecomputePass::Process(entt::registry& registry, RenderParams& params)
     {
-        if (m_Atmosphere && m_Atmosphere->IsActive())
-        {
-            ProcessAtmosphere();
-            return;
-        }
-
+        // Always: the sky pass composites the skybox behind the air, so its cubemap has to exist even
+        // when an atmosphere is what actually gets drawn.
         ProcessSkybox(registry);
+
+        if (m_Atmosphere && m_Atmosphere->IsActive())
+            ProcessAtmosphere();
     }
 
     void EnvironmentPrecomputePass::ProcessSkybox(entt::registry& registry)
@@ -64,8 +73,16 @@ namespace LevEngine
         if (environmentMap == m_EnvironmentMap) return;
 
         m_EnvironmentMap = environmentMap;
-        m_EnvironmentCubemap = CreateEnvironmentCubemap(environmentMap);
-        m_EnvironmentCubemap->GenerateMipMaps();
+
+        m_SkyboxCubemap = CreateEnvironmentCubemap(environmentMap);
+        m_SkyboxCubemap->GenerateMipMaps();
+
+        // With an atmosphere in the scene the sky and the light that comes off it are the
+        // atmosphere's, and the skybox is only what shows through the air. Without one the skybox is
+        // the sky, and lights the scene as it always did.
+        if (m_Atmosphere && m_Atmosphere->IsActive()) return;
+
+        m_EnvironmentCubemap = m_SkyboxCubemap;
         m_EnvironmentIrradianceCubemap = CreateIrradianceCubemap(m_EnvironmentCubemap);
         m_EnvironmentPrefilterCubemap = CreatePrefilterCubemap(m_EnvironmentCubemap);
         m_BRDFLutTexture = CreateBRDFLutTexture();
@@ -89,9 +106,11 @@ namespace LevEngine
     {
         if (!m_HasSkyLight) return true;
 
-        if (m_TimeSinceSkyLightUpdate < m_Atmosphere->GetSkyLightUpdateInterval()) return false;
+        //<--- Same sky as last time, so the maps built from it are already right ---<<
+        if (m_SkyLightRevision == m_SkyRevision) return false;
 
-        return m_Atmosphere->HasChangedSince(m_SkyLightSnapshot, m_Atmosphere->GetSkyLightUpdateCosAngle());
+        //<--- A new sky, but the light off it is allowed to lag: it is ambient, not a picture ---<<
+        return m_TimeSinceSkyLightUpdate >= m_Atmosphere->GetSkyLightUpdateInterval();
     }
 
     void EnvironmentPrecomputePass::ProcessAtmosphere()
@@ -113,13 +132,11 @@ namespace LevEngine
 
             m_EnvironmentCubemap = m_AtmosphereCubemap;
 
-            // Forget any skybox texture that was imported before, so switching back to one
-            // rebuilds its cubemap instead of leaving the sky the atmosphere produced.
-            m_EnvironmentMap = nullptr;
-
             m_SkySnapshot = m_Atmosphere->GetData();
             m_TimeSinceSkyUpdate = 0.0f;
             m_HasSky = true;
+
+            ++m_SkyRevision;
         }
 
         if (NeedsSkyLightUpdate())
@@ -138,9 +155,10 @@ namespace LevEngine
             if (!m_BRDFLutTexture)
                 m_BRDFLutTexture = CreateBRDFLutTexture();
 
-            m_SkyLightSnapshot = m_Atmosphere->GetData();
             m_TimeSinceSkyLightUpdate = 0.0f;
             m_HasSkyLight = true;
+
+            m_SkyLightRevision = m_SkyRevision;
         }
     }
 
