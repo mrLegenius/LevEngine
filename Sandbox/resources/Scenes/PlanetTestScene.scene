@@ -2,7 +2,7 @@ Scene: PlanetTestScene
 Entities:
   - Entity: 4000000000000000001
     Tag: Planet
-    Parent: 9132276104230336438
+    Parent: 2220541067061712120
     Transform:
       ChildIndex: 0
       Position: [0, 10, -500]
@@ -15,13 +15,13 @@ Entities:
       SeaLevelThreshold: 0.129999995
       ShoreWidth: 0.100000001
       OceanDepth: 2
-      LandHeight: 1
+      LandHeight: 2
       ContinentWarp: 0.400000006
       ContinentWarpFrequency: 1.5
-      MountainHeight: 3
+      MountainHeight: 7
       MountainBeltWidth: 0.349999994
       MountainInlandBias: 0.600000024
-      DetailHeight: 5
+      DetailHeight: 1
       DetailReliefBias: 0.699999988
       Continents:
         Frequency: 2
@@ -76,7 +76,9 @@ Entities:
         Seed: 0
       ChunkResolution: 32
       MaxDepth: 7
-      LodBias: 2
+      TargetTrianglePixels: 6
+      MergeHysteresis: 0.5
+      MaxMeshUploadsPerFrame: 8
       SkirtDepthScale: 0.119999997
       MaxConcurrentBuilds: 8
       RenderOcean: true
@@ -90,7 +92,7 @@ Entities:
       WaveScale: 0.600000024
       WaveSpeed: 0.150000006
       DetailStrength: 0.600000024
-      DetailFrequency: 2.5
+      DetailFrequency: 12
       TriplanarSharpness: 6
       DetailFadeStart: 120
       DetailFadeEnd: 400
@@ -100,6 +102,7 @@ Entities:
       Preset: 0
       PlanetRadius: 6360
       AtmosphereHeight: 60
+      ThicknessExaggeration: 8
       UnitsToKilometers: 0.00100000005
       SeaLevelHeight: 0
       RayleighScattering: [0.00580199994, 0.0135580003, 0.0331000015]
@@ -125,11 +128,11 @@ Entities:
       SkyLightUpdateAngle: 1
   - Entity: 4000000000000000002
     Tag: Sun
-    Parent: 9132276104230336438
+    Parent: 2220541067061712120
     Transform:
       ChildIndex: 1
       Position: [0, 0, 0]
-      Rotation: [-1.05000007, 0.500000179, -2.99478096e-08]
+      Rotation: [-1.05000007, 0.500000238, -2.09634663e-07]
       Scale: [1, 1, 1]
     Sun:
       Color: [1, 1, 1, 1]
@@ -145,6 +148,16 @@ Entities:
       Inclination: 20
       NorthOffset: 0
     Directional Light:
-      Color: [0.932744324, 0.850391865, 0.733176529, 1]
+      Color: [0.949166179, 0.880245388, 0.786075592, 1]
+  - Entity: 3534262841064341631
+    Tag: New Entity
+    Parent: 2220541067061712120
+    Transform:
+      ChildIndex: 2
+      Position: [0, 0, 0]
+      Rotation: [-0, 0, 0]
+      Scale: [1, 1, 1]
+    Skybox Renderer:
+      Skybox: 17530323575141006770
 Systems:
   []
