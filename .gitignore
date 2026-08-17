@@ -38,6 +38,9 @@ LevEditor/SaveData.editor
 LevEditor/imgui.ini
 Sandbox/AssetsCache/
 
+# Scratch checkouts of this repo, never part of it
+.claude/worktrees/
+
 #Profiler output
 LevEngineProfile-*.json
 
