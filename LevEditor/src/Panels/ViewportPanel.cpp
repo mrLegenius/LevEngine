@@ -145,12 +145,16 @@ namespace LevEngine::Editor
         HandlePicking(gizmoDrawn);
     }
 
-    bool ViewportPanel::DrawGizmo() const
+    bool ViewportPanel::DrawGizmo()
     {
         //Gizmos
         const auto& entitySelection = CastRef<EntitySelection>(Selection::Current());
 
-        if (!entitySelection) return false;
+        if (!entitySelection)
+        {
+            m_GizmoTracker.Reset();
+            return false;
+        }
 
         const Entity selectedEntity = entitySelection->Get();
         if (selectedEntity && Gizmo::Tool != Gizmo::ToolType::None)
@@ -195,9 +199,14 @@ namespace LevEngine::Editor
                 tc.RecalculateModel();
             }
 
+            //<--- The whole drag is one step, so nothing is recorded until the gizmo is let go ---<<
+            m_GizmoTracker.Update(selectedEntity, ImGuizmo::IsUsing(),
+                ImGuizmo::IsOver() || ImGuizmo::IsUsing());
+
             return true;
         }
 
+        m_GizmoTracker.Reset();
         return false;
     }
 

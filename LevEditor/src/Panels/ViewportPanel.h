@@ -2,6 +2,7 @@
 #include "Panel.h"
 #include "EditorCamera.h"
 #include "Gizmo.h"
+#include "Undo/EntityEditTracker.h"
 
 namespace LevEngine::Editor
 {
@@ -27,7 +28,7 @@ namespace LevEngine::Editor
 		String GetName() override { return "Viewport"; }
 		void DrawContent() override;
 		//Returns true when a gizmo was drawn, so its interaction state is the one of this frame
-		bool DrawGizmo() const;
+		bool DrawGizmo();
 
 	private:
 
@@ -42,6 +43,9 @@ namespace LevEngine::Editor
 		Ref<Texture> m_Texture;
 
 		EditorCamera m_Camera{60.0f, 0.1f, 1000.0f, Vector3{0, 10, -10}};
+
+		//<--- One drag of the gizmo is one undo step, however many frames it took ---<<
+		EntityEditTracker m_GizmoTracker{ "Transform" };
 	};
 }
 

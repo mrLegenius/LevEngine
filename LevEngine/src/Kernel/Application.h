@@ -60,7 +60,9 @@ namespace LevEngine
     {
     public:
 
-        bool IsPlaying; //TODO: Its not meant to be public. Need to think something else
+        //<--- Read before anything sets it, by SceneManager among others, so it starts at a value
+        //rather than at whatever the stack held ---<<
+        bool IsPlaying = false; //TODO: Its not meant to be public. Need to think something else
 
         explicit Application(const ApplicationSpecification& specification);
         ~Application();

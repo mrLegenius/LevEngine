@@ -8,6 +8,9 @@
 #include "Assets/ModelAsset.h"
 #include "Assets/PrefabAsset.h"
 #include "GUI/EditorGUI.h"
+#include "Undo/EntitySnapshot.h"
+#include "Undo/UndoCommands.h"
+#include "Undo/UndoSystem.h"
 
 namespace LevEngine::Editor
 {
@@ -24,9 +27,12 @@ namespace LevEngine::Editor
 		{
 		if (const auto& entitySelection = Selection::CurrentAs<EntitySelection>())
 		{
-			if (entitySelection->Get())
+			if (const Entity entity = entitySelection->Get())
 			{
-				activeScene->DestroyEntity(entitySelection->Get());
+				UndoSystem::Push(CreateRef<EntityDestroyedCommand>(entity,
+					Format("Delete {0}", entity.GetName())));
+
+				Scene::DestroyEntity(entity);
 				Selection::Deselect();
 			}
 		}
@@ -47,18 +53,21 @@ namespace LevEngine::Editor
 			const Path assetPath = static_cast<const wchar_t*>(payload);
 
 			if (const auto& prefab = AssetDatabase::GetAsset<PrefabAsset>(assetPath))
-				prefab->Instantiate(activeScene);
+				RecordEntityCreated(prefab->Instantiate(activeScene), "Instantiate Prefab");
 
 			if (const auto& model = AssetDatabase::GetAsset<ModelAsset>(assetPath))
-				model->InstantiateModel(activeScene);
+				RecordEntityCreated(model->InstantiateModel(activeScene), "Instantiate Model");
 
 			ImGui::EndDragDropTarget();
 		}
-		
+
 		if (void* payload = BeginDragDropTargetWindow(EditorGUI::EntityPayload))
 		{
 			if (const auto draggedEntity = *static_cast<Entity*>(payload))
+			{
+				ScopedEntityEdit edit{ draggedEntity, Format("Move {0}", draggedEntity.GetName()) };
 				draggedEntity.GetComponent<Transform>().SetParent(activeScene->GetRootEntity());
+			}
 
 			ImGui::EndDragDropTarget();
 		}
@@ -81,7 +90,9 @@ namespace LevEngine::Editor
 
 		for (const auto toDelete : m_EntitiesToDelete)
 		{
-			activeScene->DestroyEntity(toDelete);
+			RecordEntityDestroyed(toDelete, Format("Delete {0}", toDelete.GetName()));
+
+			Scene::DestroyEntity(toDelete);
 			Selection::Deselect();
 		}
 		m_EntitiesToDelete.clear();
@@ -94,7 +105,7 @@ namespace LevEngine::Editor
 		if (ImGui::BeginPopupContextWindow(nullptr, flags))
 		{
 			if (ImGui::MenuItem("Create New Entity"))
-				activeScene->CreateEntity("New Entity");
+				RecordEntityCreated(activeScene->CreateEntity("New Entity"), "Create Entity");
 
 			ImGui::EndPopup();
 		}
@@ -179,6 +190,7 @@ namespace LevEngine::Editor
 
 				if (entity != draggedEntity)
 				{
+					ScopedEntityEdit edit{ draggedEntity, Format("Move {0}", draggedEntity.GetName()) };
 					draggedEntity.GetComponent<Transform>().SetParent(entity);
 				}
 			}
@@ -195,12 +207,14 @@ namespace LevEngine::Editor
 				{
 					const auto child = prefab->Instantiate(activeScene);
 					child.GetComponent<Transform>().SetParent(entity);
+					RecordEntityCreated(child, "Instantiate Prefab");
 				}
 
 				if (const auto& prefab = AssetDatabase::GetAsset<ModelAsset>(assetPath))
 				{
 					const auto child = prefab->InstantiateModel(activeScene);
 					child.GetComponent<Transform>().SetParent(entity);
+					RecordEntityCreated(child, "Instantiate Model");
 				}
 			}
 			ImGui::EndDragDropTarget();
@@ -212,19 +226,31 @@ namespace LevEngine::Editor
 			{
 				const auto child = activeScene->CreateEntity("New Entity");
 				child.GetComponent<Transform>().SetParent(entity, false);
+				RecordEntityCreated(child, "Create Child");
 			}
 
 			if (ImGui::MenuItem("Create Parent"))
 			{
+				//<--- Two changes, one action: undoing puts the entity back where it was and only
+				//then takes the parent away, which would otherwise take the entity with it ---<<
+				const auto composite = CreateRef<CompositeCommand>(String{ "Create Parent" });
+
 				const auto parent = activeScene->CreateEntity("New Entity");
+				composite->Add(CreateRef<EntityCreatedCommand>(parent, String{ "Create Parent" }));
+
+				const String before = EntitySnapshot::Capture(entity);
 				entity.GetComponent<Transform>().SetParent(parent);
+				composite->Add(CreateRef<EntityStateCommand>(entity.GetUUID(), before,
+					EntitySnapshot::Capture(entity), String{ "Create Parent" }));
+
+				UndoSystem::Push(composite);
 			}
-			
+
 			if (ImGui::MenuItem("Delete", "delete"))
 				m_EntitiesToDelete.emplace(m_EntitiesToDelete.begin(), entity);
-			
+
 			if (ImGui::MenuItem("Duplicate", "ctrl+D"))
-				activeScene->DuplicateEntity(entity);
+				RecordEntityCreated(activeScene->DuplicateEntity(entity), "Duplicate Entity");
 			
 			if (ImGui::MenuItem("Save As Prefab", "ctrl+D"))
 			{

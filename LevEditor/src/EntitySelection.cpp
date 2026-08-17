@@ -4,6 +4,7 @@
 #include <imgui.h>
 
 #include "GUI/Drawers/Components/ComponentDrawer.h"
+#include "Undo/UndoCommands.h"
 
 namespace LevEngine::Editor
 {
@@ -19,10 +20,13 @@ namespace LevEngine::Editor
 	{
 		if (m_Entity.HasComponent<TagComponent>())
 		{
-			auto& tag = m_Entity.GetComponent<TagComponent>().tag;
-			EditorGUI::DrawTextInputField("##Tag", tag, [&tag](const String& newValue)
+			const Entity entity = m_Entity;
+			const auto& tag = entity.GetComponent<TagComponent>().tag;
+
+			EditorGUI::DrawTextInputField("##Tag", tag, [entity](const String& newValue)
 			{
-				tag = newValue;
+				ScopedEntityEdit edit{ entity, Format("Rename {0}", entity.GetName()) };
+				entity.GetComponent<TagComponent>().tag = newValue;
 			});
 		}
 

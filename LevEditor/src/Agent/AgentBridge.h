@@ -139,6 +139,9 @@ namespace LevEngine::Editor
         String CommandComponentAdd(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
         String CommandComponentRemove(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
 
+        String CommandUndo(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
+        String CommandRedo(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
+
         String CommandSceneOpen(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
         String CommandSceneSave(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);
         String CommandSceneReload(const YAML::Node& arguments, const Ref<AgentServer::Call>& call);

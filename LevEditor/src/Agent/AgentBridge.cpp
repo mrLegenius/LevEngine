@@ -202,6 +202,9 @@ namespace LevEngine::Editor
             { "component_add", "Adds a default constructed component", &AgentBridge::CommandComponentAdd },
             { "component_remove", "Removes a component", &AgentBridge::CommandComponentRemove },
 
+            { "editor_undo", "Takes back the last change to the scene", &AgentBridge::CommandUndo },
+            { "editor_redo", "Does the last undone change again", &AgentBridge::CommandRedo },
+
             { "scene_open", "Opens a scene file", &AgentBridge::CommandSceneOpen },
             { "scene_save", "Saves the active scene", &AgentBridge::CommandSceneSave },
             { "scene_reload", "Reloads the active scene from disk", &AgentBridge::CommandSceneReload },

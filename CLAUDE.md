@@ -159,6 +159,31 @@ So: adding a component = component struct + `REGISTER_PARSE_TYPE` + serializer i
 editor + (optionally) Lua binding + registration in `Scene::Initialize` if it needs hooks/systems + add
 files to both .vcxproj.
 
+### Undo/redo (`LevEditor/src/Undo`)
+
+`UndoSystem` holds two stacks of `UndoCommand`s (Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z, `Edit` menu, depth 128).
+Steps are **serialized snapshots**, not typed property deltas: `EntitySnapshot::Capture` runs the entity
+through `SerializeEntity` and `Restore` feeds the YAML back through `IComponentSerializer`, so restoring a
+value takes the same path a scene load does, component rebuilds included. A component missing from the
+snapshot is removed on restore, which is what makes Add Component undoable. `CaptureHierarchy`/
+`RestoreHierarchy` do the same for a branch, recreating entities with the UUIDs they had.
+
+Two ways to record:
+
+- `ScopedEntityEdit edit{entity, "Rename Foo"}` around a discrete mutation (add/remove component,
+  reparent, rename, agent command). It captures in the constructor and pushes in the destructor if
+  anything changed. `RecordEntityCreated`/`RecordEntityDestroyed` cover whole branches.
+- `EntityEditTracker` for widgets that write straight into a component (inspector fields, gizmo drags).
+  It is fed `isInteracting` (a widget is held) and `isEngaged` (the pointer is on that panel), keeps a
+  snapshot refreshed while idle and pushes one step when the widget is let go. Refreshing while idle is
+  what keeps editor-driven changes — the sun light following the sky, say — out of the history.
+
+History is dropped whenever the active scene changes (`UndoSystem::SyncWithActiveScene`, called from
+`EditorLayer::OnUpdate` — the `SceneLoaded` event cannot be subscribed to from the editor, the
+eventhandling library's join symbols are not exported from the DLL), which also covers entering and
+leaving play mode, and nothing is recorded while playing. Not covered: asset edits (materials, settings)
+and anything that writes files.
+
 ### Renderer
 
 `Renderer` (`Renderer/Renderer.cpp`) builds textures, render targets, `PipelineState`s and two

@@ -5,6 +5,7 @@
 #include "Project.h"
 #include "SceneState.h"
 #include "Essentials/MenuBar.h"
+#include "Undo/UndoCommands.h"
 
 namespace LevEngine::Editor
 {
@@ -146,7 +147,8 @@ namespace LevEngine::Editor
     {
         if (const auto entitySelection = Selection::CurrentAs<EntitySelection>())
         {
-            SceneManager::GetActiveScene()->DuplicateEntity(entitySelection->Get());
+            if (const Entity entity = entitySelection->Get())
+                RecordEntityCreated(SceneManager::GetActiveScene()->DuplicateEntity(entity), "Duplicate Entity");
         }
     }
 

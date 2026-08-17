@@ -7,6 +7,8 @@
 #include "Scene/Components/ComponentSerializer.h"
 #include "Scene/Components/Transform/Transform.h"
 #include "Scene/Components/Transform/TransformSerializer.h"
+#include "Undo/UndoCommands.h"
+#include "Undo/UndoSystem.h"
 
 namespace LevEngine::Editor
 {
@@ -361,6 +363,9 @@ namespace LevEngine::Editor
             }
         }
 
+        //<--- What the agent does to the scene is as undoable as what the buttons do ---<<
+        RecordEntityCreated(entity, Format("Create {0}", entity.GetName()));
+
         JsonWriter writer;
         writer.BeginObject();
         writer.KeyValue("ok", true);
@@ -394,10 +399,60 @@ namespace LevEngine::Editor
 
         const auto id = static_cast<uint64_t>(entity.GetUUID());
 
+        RecordEntityDestroyed(entity, Format("Delete {0}", entity.GetName()));
+
         //<--- Marks it, the scene destroys it at a point where nothing is iterating over it ---<<
         Scene::DestroyEntity(entity);
 
         return Ok(Format("\"id\":{0}", id));
+    }
+
+    String AgentBridge::CommandUndo(const YAML::Node& arguments, const Ref<AgentServer::Call>&)
+    {
+        const int requested = JsonRead::GetInt(arguments, "steps", 1);
+        const int steps = requested < 1 ? 1 : requested;
+
+        JsonWriter writer;
+        writer.BeginObject();
+        writer.KeyValue("ok", true);
+        writer.Key("undone").BeginArray();
+
+        for (int i = 0; i < steps && UndoSystem::CanUndo(); i++)
+        {
+            writer.Value(UndoSystem::GetUndoName());
+            UndoSystem::Undo();
+        }
+
+        writer.EndArray();
+        writer.KeyValue("canUndo", UndoSystem::CanUndo());
+        writer.KeyValue("canRedo", UndoSystem::CanRedo());
+        writer.EndObject();
+
+        return writer.Str();
+    }
+
+    String AgentBridge::CommandRedo(const YAML::Node& arguments, const Ref<AgentServer::Call>&)
+    {
+        const int requested = JsonRead::GetInt(arguments, "steps", 1);
+        const int steps = requested < 1 ? 1 : requested;
+
+        JsonWriter writer;
+        writer.BeginObject();
+        writer.KeyValue("ok", true);
+        writer.Key("redone").BeginArray();
+
+        for (int i = 0; i < steps && UndoSystem::CanRedo(); i++)
+        {
+            writer.Value(UndoSystem::GetRedoName());
+            UndoSystem::Redo();
+        }
+
+        writer.EndArray();
+        writer.KeyValue("canUndo", UndoSystem::CanUndo());
+        writer.KeyValue("canRedo", UndoSystem::CanRedo());
+        writer.EndObject();
+
+        return writer.Str();
     }
 
     String AgentBridge::CommandComponentList(const YAML::Node&, const Ref<AgentServer::Call>&)
@@ -479,6 +534,8 @@ namespace LevEngine::Editor
         if (!values || !values.IsMap() || values.size() == 0)
             return Error("nothing to set, pass the fields in 'values'");
 
+        ScopedEntityEdit edit{ entity, Format("Set {0} of {1}", key, entity.GetName()) };
+
         if (key == k_TransformKey)
         {
             auto& transform = entity.GetComponent<Transform>();
@@ -497,6 +554,9 @@ namespace LevEngine::Editor
 
             if (Vector3 scale; JsonRead::TryGetVector3(values, "scale", scale))
                 transform.SetLocalScale(scale);
+
+            //<--- Recorded before the answer is written, so the answer describes what was recorded ---<<
+            edit.Commit();
 
             return CommandComponentGet(arguments, call);
         }
@@ -525,6 +585,8 @@ namespace LevEngine::Editor
             return Error(Format("{0} rejected the values: {1}", key, exception.what()));
         }
 
+        edit.Commit();
+
         return CommandComponentGet(arguments, call);
     }
 
@@ -544,7 +606,13 @@ namespace LevEngine::Editor
         const auto serializer = FindSerializer(key);
         if (!serializer) return Error(Format("no component called '{0}', call component_list", key));
 
-        const bool added = serializer->AddComponent(entity);
+        bool added;
+        {
+            //<--- Committed before the values are set, so adding and setting are two steps that
+            //undo in the order they were made ---<<
+            ScopedEntityEdit edit{ entity, Format("Add {0} to {1}", key, entity.GetName()) };
+            added = serializer->AddComponent(entity);
+        }
 
         //<--- Adding and setting in one call, because a default is rarely what is wanted ---<<
         if (const YAML::Node values = CollectValues(arguments); values && values.IsMap() && values.size() > 0)
@@ -569,7 +637,11 @@ namespace LevEngine::Editor
         const auto serializer = FindSerializer(key);
         if (!serializer) return Error(Format("no component called '{0}', call component_list", key));
 
-        const bool removed = serializer->RemoveComponent(entity);
+        bool removed;
+        {
+            ScopedEntityEdit edit{ entity, Format("Remove {0} from {1}", key, entity.GetName()) };
+            removed = serializer->RemoveComponent(entity);
+        }
 
         return Ok(Format("\"component\":\"{0}\",\"removed\":{1}", key, removed ? "true" : "false"));
     }

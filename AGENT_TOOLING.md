@@ -164,6 +164,19 @@ curl -X POST http://127.0.0.1:17890/component_set -d '{
 `Transform` is handled separately (`position`, `rotation`, `scale`, `worldPosition`,
 `worldRotation`), because every entity has one and the scene file writes it inline.
 
+### Undo
+
+`editor_undo` and `editor_redo` walk the editor's history, the same one Ctrl+Z walks — a command of
+yours and a slider the user dragged are steps of the same kind. Both take `steps` (default 1) and
+answer with the names of what they walked over and whether there is more either way.
+
+```bash
+curl -X POST http://127.0.0.1:17890/editor_undo -d '{"steps": 3}'
+```
+
+The history is dropped whenever a scene is loaded, which includes entering and leaving play mode, and
+nothing is recorded while playing.
+
 ### Scenes and shaders
 
 `scene_open`, `scene_save`, `scene_reload`.

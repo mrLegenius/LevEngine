@@ -5,6 +5,7 @@
 #include "GUI/EditorGUI.h"
 #include "Kernel/ClassCollection.h"
 #include "Scene/Entity.h"
+#include "Undo/UndoCommands.h"
 
 namespace LevEngine::Editor
 {
@@ -75,7 +76,11 @@ namespace LevEngine::Editor
 			}
 
 			if (removeComponent)
+			{
+				//<--- A removed component is only recoverable from what it held a moment ago ---<<
+				ScopedEntityEdit edit{ entity, Format("Remove {0}", label) };
 				entity.RemoveComponent<TComponent>();
+			}
 		}
 
 		void DrawAddComponent(const Entity entity) override
@@ -129,7 +134,10 @@ namespace LevEngine::Editor
 			
 			if (ImGui::MenuItem(path.c_str()))
 			{
+				ScopedEntityEdit edit{ entity, Format("Add {0}", path) };
 				auto _ = entity.AddComponent<TComponent>();
+				edit.Commit();
+
 				ImGui::CloseCurrentPopup();
 			}
 		}

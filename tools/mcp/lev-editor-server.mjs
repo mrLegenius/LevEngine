@@ -234,6 +234,24 @@ const TOOLS = [
     },
   },
   {
+    name: 'editor_undo',
+    description:
+      'Takes back the last change to the scene, whoever made it -- an inspector edit, a gizmo drag, ' +
+      'an entity created or destroyed, or a component_set of your own. Answers with what was undone.',
+    inputSchema: {
+      type: 'object',
+      properties: { steps: { type: 'number', description: 'How many steps to take back. Default 1.' } },
+    },
+  },
+  {
+    name: 'editor_redo',
+    description: 'Does the last undone change again.',
+    inputSchema: {
+      type: 'object',
+      properties: { steps: { type: 'number', description: 'How many steps to redo. Default 1.' } },
+    },
+  },
+  {
     name: 'scene_open',
     description: 'Opens a scene file. Relative paths are relative to the project root.',
     inputSchema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },

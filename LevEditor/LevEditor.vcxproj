@@ -122,6 +122,11 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClInclude Include="src\Essentials\TitleBar.h" />
     <ClInclude Include="src\Gizmo.h" />
     <ClInclude Include="src\GUI\Drawers\Assets\AssetDrawer.h" />
+    <ClInclude Include="src\Undo\EntityEditTracker.h" />
+    <ClInclude Include="src\Undo\EntitySnapshot.h" />
+    <ClInclude Include="src\Undo\UndoCommand.h" />
+    <ClInclude Include="src\Undo\UndoCommands.h" />
+    <ClInclude Include="src\Undo\UndoSystem.h" />
     <Content Include="LevResources\Shaders\DeferredLightningPassPBR_VS.hlsl" />
     <Content Include="LevResources\Shaders\DeferredLightningPassPBR.hlsl" />
     <Content Include="LevResources\Shaders\Particles\BitonicSort.hlsl" />
@@ -241,6 +246,10 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClCompile Include="src\ProjectEditor.cpp" />
     <ClCompile Include="src\SceneEditor.cpp" />
     <ClCompile Include="src\Selection.cpp" />
+    <ClCompile Include="src\Undo\EntityEditTracker.cpp" />
+    <ClCompile Include="src\Undo\EntitySnapshot.cpp" />
+    <ClCompile Include="src\Undo\UndoCommands.cpp" />
+    <ClCompile Include="src\Undo\UndoSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LevEditor.rc" />

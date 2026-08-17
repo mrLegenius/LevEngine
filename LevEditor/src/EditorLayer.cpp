@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "EditorLayer.h"
 
+#include <imgui.h>
+
 #include "Agent/AgentBridge.h"
 #include "AssetThumbnailCache.h"
 #include "ModalPopup.h"
@@ -29,6 +31,7 @@
 #include "Panels/ViewportPanel.h"
 #include "Physics/Physics.h"
 #include "Renderer/RenderContext.h"
+#include "Undo/UndoSystem.h"
 #include "Scene/Systems/Atmosphere/MoonLightingSystem.h"
 #include "Scene/Systems/Atmosphere/SunLightingSystem.h"
 
@@ -99,6 +102,7 @@ namespace LevEngine::Editor
         }
 
         Selection::Deselect();
+        UndoSystem::Shutdown();
         AssetBrowserPanel::Shutdown();
         AssetThumbnailCache::Shutdown();
 
@@ -182,6 +186,10 @@ namespace LevEngine::Editor
         ShaderLibrary::ReimportChangedAssets();
 
         SceneManager::TryLoadRequestedScene();
+
+        //<--- A loaded scene has none of the entities the history is written in terms of ---<<
+        UndoSystem::SyncWithActiveScene();
+        UndoSystem::SetRecordingEnabled(m_SceneState == SceneState::Edit);
 
         if (Input::IsKeyDown(KeyCode::Escape))
         {
@@ -323,9 +331,32 @@ namespace LevEngine::Editor
 
         const bool control = Input::IsKeyDown(KeyCode::LeftControl) ||
             Input::IsKeyDown(KeyCode::RightControl);
+        const bool shift = Input::IsKeyDown(KeyCode::LeftShift) ||
+            Input::IsKeyDown(KeyCode::RightShift);
+
+        //<--- A text field has its own undo, and it is the one the user means while typing ---<<
+        const bool isTyping = ImGui::GetCurrentContext() && ImGui::GetIO().WantTextInput;
 
         switch (event.GetKeyCode())
         {
+            case KeyCode::Z:
+            {
+                if (!control || isTyping) break;
+
+                if (shift)
+                    UndoSystem::Redo();
+                else
+                    UndoSystem::Undo();
+
+                return true;
+            }
+            case KeyCode::Y:
+            {
+                if (!control || isTyping) break;
+
+                UndoSystem::Redo();
+                return true;
+            }
             case KeyCode::P:
             {
                 if (!control) break;
@@ -424,6 +455,9 @@ namespace LevEngine::Editor
         m_SceneEditor->AddMainMenuItems(m_MainMenuBar);
         m_ProjectEditor->AddMainMenuItems(m_MainMenuBar);
         m_PanelManager->AddMainMenuItems(m_MainMenuBar);
+
+        m_MainMenuBar->AddMenuItem("Edit/Undo", "Ctrl+Z", [] { UndoSystem::Undo(); });
+        m_MainMenuBar->AddMenuItem("Edit/Redo", "Ctrl+Y", [] { UndoSystem::Redo(); });
 
         m_MainMenuBar->AddMenuItem("Window/Reset Layout", String(),
             [this] { m_PanelManager->OpenDefaultPanels(); });
