@@ -4,6 +4,7 @@
 #include <imgui.h>
 
 #include "AssetSelection.h"
+#include "AssetThumbnailCache.h"
 #include "Project.h"
 #include "Selection.h"
 #include "Assets/MaterialCustomAsset.h"
@@ -35,6 +36,33 @@ namespace LevEngine::Editor
         }
 
         return false;
+    }
+
+    //<--- Memoized, because the tree used to run a whole directory_iterator for every visible node on
+    //<--- every frame only to decide whether the node draws an expand arrow ---<<
+    bool HasSubDirectoriesCached(const Path& directory)
+    {
+        static constexpr float k_CacheLifetime = 1.0f;
+
+        static UnorderedMap<String, bool> cache;
+        static float nextClear = 0;
+
+        const float now = Time::GetTimeSinceStartup().GetSeconds();
+        if (now >= nextClear)
+        {
+            cache.clear();
+            nextClear = now + k_CacheLifetime;
+        }
+
+        const String key = ToString(directory);
+
+        const auto it = cache.find(key);
+        if (it != cache.end()) return it->second;
+
+        const bool result = HasSubDirectories(directory);
+        cache.emplace(key, result);
+
+        return result;
     }
 
     AssetBrowserPanel::AssetBrowserPanel()
@@ -91,6 +119,7 @@ namespace LevEngine::Editor
 
             AssetDatabase::DeleteAsset(m_AssetToDelete);
             m_AssetToDelete = nullptr;
+            InvalidateEntries();
         }
     }
 
@@ -109,7 +138,7 @@ namespace LevEngine::Editor
                         | ImGuiTreeNodeFlags_OpenOnArrow
                         | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-        if (!HasSubDirectories(path))
+        if (!HasSubDirectoriesCached(path))
             flags |= ImGuiTreeNodeFlags_Leaf;
 
         const String stemString = ToString(path.stem());
@@ -125,7 +154,8 @@ namespace LevEngine::Editor
             {
                 const Path assetPath = static_cast<const wchar_t*>(payload->Data);
 
-                AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath), path);
+                AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath, false), path);
+                InvalidateEntries();
             }
             ImGui::EndDragDropTarget();
         }
@@ -136,7 +166,7 @@ namespace LevEngine::Editor
             if (ImGui::BeginPopupContextItem())
             {
                 if (ImGui::MenuItem("Delete"))
-                   m_AssetToDelete = AssetDatabase::GetAsset(path);
+                   m_AssetToDelete = AssetDatabase::GetAsset(path, false);
 
                 if (ImGui::MenuItem("Reimport"))
                     AssetDatabase::ReimportAsset(path);
@@ -165,8 +195,67 @@ namespace LevEngine::Editor
             ImGui::TreePop();
     }
 
+    void AssetBrowserPanel::RefreshEntries()
+    {
+        LEV_PROFILE_FUNCTION();
+
+        const float now = Time::GetTimeSinceStartup().GetSeconds();
+
+        if (m_CachedDirectory == m_CurrentDirectory && !m_EntriesDirty && now < m_NextEntriesRefresh)
+            return;
+
+        m_CachedDirectory = m_CurrentDirectory;
+        m_EntriesDirty = false;
+        m_NextEntriesRefresh = now + k_EntriesRefreshInterval;
+
+        m_Entries.clear();
+
+        std::error_code errorCode;
+        for (const auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory, errorCode))
+        {
+            const Path& path = directoryEntry.path();
+
+            if (path.extension() == ".meta") continue;
+
+            BrowserEntry entry;
+            entry.FilePath = path;
+            entry.FileName = ToString(path.filename());
+            entry.Stem = ToString(path.stem());
+            entry.IsDirectory = directoryEntry.is_directory();
+
+            m_Entries.push_back(eastl::move(entry));
+        }
+    }
+
+    Ref<Texture> AssetBrowserPanel::ResolveIcon(const Ref<Asset>& asset, const BrowserEntry& entry, const bool isVisible)
+    {
+        if (!asset) return Icons::File();
+
+        //<--- Every type but a texture has a static icon and never has to touch its file ---<<
+        if (!AssetDatabase::IsAssetTexture(entry.FilePath))
+            return asset->GetIcon();
+
+        //<--- A small preview of its own, never the asset's texture: previewing by deserializing meant
+        //<--- one cell could pull in half a gigabyte that nothing ever released ---<<
+        Ref<Texture> thumbnail;
+        if (AssetThumbnailCache::TryGet(entry.FilePath, thumbnail))
+            return thumbnail ? thumbnail : Icons::File();
+
+        if (!isVisible || m_ThumbnailsLoadedThisFrame >= k_ThumbnailsPerFrame)
+            return Icons::File();
+
+        ++m_ThumbnailsLoadedThisFrame;
+
+        thumbnail = AssetThumbnailCache::Load(entry.FilePath);
+
+        return thumbnail ? thumbnail : Icons::File();
+    }
+
     void AssetBrowserPanel::DrawAssets()
     {
+        m_ThumbnailsLoadedThisFrame = 0;
+        RefreshEntries();
+
         if (m_CurrentDirectory != AssetDatabase::GetAssetsPath())
         {
             if (ImGui::Button("<"))
@@ -202,24 +291,24 @@ namespace LevEngine::Editor
 
         ImGui::Columns(columnCount, nullptr, false);
 
-        for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
+        for (const BrowserEntry& entry : m_Entries)
         {
-            const Path& path = directoryEntry.path();
-            String filenameString = path.filename().string().c_str();
-            String stemString = path.stem().string().c_str();
-            String fileExtension = path.extension().string().c_str();
+            const Path& path = entry.FilePath;
+            const String& filenameString = entry.FileName;
+            const String& stemString = entry.Stem;
 
-            if (fileExtension == ".meta") continue;
-
-            Ref<Asset> asset = nullptr;
-            asset = AssetDatabase::GetAsset(path);
+            //<--- Deserialized lazily: every type but a texture answers GetIcon with a static engine
+            //<--- icon, and parsing a folder of models or materials here used to hang the editor ---<<
+            Ref<Asset> asset = AssetDatabase::GetAsset(path, false);
 
             GUI::ScopedID id(filenameString);
-            const Ref<Texture> icon = directoryEntry.is_directory()
+
+            //<--- Tested before the cell is submitted, so a thumbnail below the fold costs nothing ---<<
+            const bool isVisible = ImGui::IsRectVisible(ImVec2{ thumbnailSize, thumbnailSize });
+
+            const Ref<Texture> icon = entry.IsDirectory
                                           ? Icons::Directory()
-                                          : asset
-                                            ? asset->GetIcon()
-                                            : Icons::File();
+                                          : ResolveIcon(asset, entry, isVisible);
 
             const bool isHighlighted = asset && asset == m_HighlightedAsset;
 
@@ -241,10 +330,12 @@ namespace LevEngine::Editor
 
             if (ImGui::IsItemHovered() && (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) || forceSelection))
             {
-                if (directoryEntry.is_directory() && !forceSelection)
+                if (entry.IsDirectory && !forceSelection)
                     m_CurrentDirectory /= path.filename();
                 else
                 {
+                    //<--- Deserializing on purpose: the inspector reads the asset's contents and its
+                    //<--- Save button calls Serialize(), which would write defaults over the file ---<<
                     if (const auto& selectedAsset = AssetDatabase::GetAsset(path))
                         Selection::Select(CreateRef<AssetSelection>(selectedAsset));
                     else
@@ -252,7 +343,7 @@ namespace LevEngine::Editor
                 }
             }
 
-            if (directoryEntry.is_directory())
+            if (entry.IsDirectory)
             {
                 if (ImGui::BeginDragDropTarget())
                 {
@@ -260,7 +351,8 @@ namespace LevEngine::Editor
 	                {
 	                    const Path assetPath = static_cast<const wchar_t*>(payload->Data);
 
-                        AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath), path);
+                        AssetDatabase::MoveAsset(AssetDatabase::GetAsset(assetPath, false), path);
+                        InvalidateEntries();
 	                }
 	                ImGui::EndDragDropTarget();
                 }
@@ -279,7 +371,10 @@ namespace LevEngine::Editor
                 if (ImGui::BeginPopupContextItem())
                 {
                     if (ImGui::MenuItem("Delete"))
+                    {
                         AssetDatabase::DeleteAsset(asset);
+                        InvalidateEntries();
+                    }
 
                     if (ImGui::MenuItem("Reimport"))
                         AssetDatabase::ReimportAsset(path);
@@ -287,7 +382,7 @@ namespace LevEngine::Editor
                     if (ImGui::MenuItem("Rename"))
                         m_RenamingAsset = asset;
 
-                    if (is_directory(path) && ImGui::MenuItem("Open in Explorer"))
+                    if (entry.IsDirectory && ImGui::MenuItem("Open in Explorer"))
                         FileDialogs::OpenFileByExtension(path);
 
                     ImGui::EndPopup();
@@ -314,6 +409,7 @@ namespace LevEngine::Editor
                         if (ImGui::MenuItem("Folder"))
                         {
                             m_RenamingAsset = AssetDatabase::CreateFolder(m_CurrentDirectory / "Folder");
+                            InvalidateEntries();
                         }
 
                         ImGui::EndMenu();
@@ -332,6 +428,7 @@ namespace LevEngine::Editor
                     if (newValue.empty()) return;
 
                     AssetDatabase::RenameAsset(asset, newValue);
+                    InvalidateEntries();
                 });
             }
             else
@@ -351,7 +448,7 @@ namespace LevEngine::Editor
     }
 
     template <typename AssetType, class ...Args>
-    void AssetBrowserPanel::DrawCreateMenu(const String& label, const String& defaultName, Args... args) const
+    void AssetBrowserPanel::DrawCreateMenu(const String& label, const String& defaultName, Args... args)
     {
         static_assert(eastl::is_base_of_v<Asset, AssetType>, "AssetType must derive from Asset");
 
@@ -361,6 +458,8 @@ namespace LevEngine::Editor
             {
                 Selection::Select(CreateRef<AssetSelection>(asset));
             }
+
+            InvalidateEntries();
         }
     }
 }

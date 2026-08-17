@@ -87,6 +87,9 @@ namespace LevEngine
 		inline static UnorderedMap<UUID, Ref<Asset>> m_Assets;
 		inline static UnorderedMap<Path, Ref<Asset>> m_AssetsByPath;
 
+		//<--- Where ReimportChangedAssets resumes its scan, see the comment there ---<<
+		inline static size_t s_ReimportPollCursor = 0;
+
 		static void ReimportAllAssetsInDirectory(const Path& directory);
 		static void DeleteAllAssetsInDirectory(const Path& directory);
 

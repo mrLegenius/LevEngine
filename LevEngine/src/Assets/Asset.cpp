@@ -28,6 +28,14 @@ namespace LevEngine
 
 	void Asset::Serialize()
 	{
+		//<--- An asset that was never read holds default constructed data, and writing that out would
+		//<--- silently wipe the file, dropping every reference a material or a scene keeps ---<<
+		if (!m_Deserialized && WriteDataToFile())
+		{
+			Log::CoreWarning("Refused to serialize '{0}': it has not been deserialized yet", m_Name);
+			return;
+		}
+
 		SerializeData();
 		SerializeMeta();
 

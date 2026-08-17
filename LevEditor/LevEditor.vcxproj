@@ -110,6 +110,7 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClInclude Include="src\Agent\AgentScreenshot.h" />
     <ClInclude Include="src\Agent\AgentServer.h" />
     <ClInclude Include="src\AssetSelection.h" />
+    <ClInclude Include="src\AssetThumbnailCache.h" />
     <ClInclude Include="src\ComponentDebugRenderers\ComponentDebugRenderer.h" />
     <ClInclude Include="src\EditorCamera.h" />
     <ClInclude Include="src\EditorMath.h" />
@@ -137,6 +138,7 @@ xcopy "$(SolutionDir)lib\$(ConfigurationName)\RecastDetour\*.dll" "$(TargetDir)"
     <ClCompile Include="src\Agent\AgentScreenshot.cpp" />
     <ClCompile Include="src\Agent\AgentServer.cpp" />
     <ClCompile Include="src\AssetSelection.cpp" />
+    <ClCompile Include="src\AssetThumbnailCache.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\CharacterControllerDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\LightComponentsDebugRenderer.cpp" />
     <ClCompile Include="src\ComponentDebugRenderers\NavMeshBoundingBoxDebugRenderer.cpp" />

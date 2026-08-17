@@ -2,6 +2,7 @@
 #include "EditorLayer.h"
 
 #include "Agent/AgentBridge.h"
+#include "AssetThumbnailCache.h"
 #include "ModalPopup.h"
 #include "Project.h"
 #include "Selection.h"
@@ -99,6 +100,7 @@ namespace LevEngine::Editor
 
         Selection::Deselect();
         AssetBrowserPanel::Shutdown();
+        AssetThumbnailCache::Shutdown();
 
         m_MainStatusBar.reset();
         m_MainToolbar.reset();

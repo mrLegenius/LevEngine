@@ -53,7 +53,13 @@ namespace LevEngine
 	{
 		if (path.extension() == ".meta") return;
 
-		auto asset = m_AssetsByPath[path];
+		//<--- Looked up instead of indexed: operator[] would insert a null Ref for a path that is not
+		//<--- in the database, and the browser offers Reimport on any entry it draws ---<<
+		const auto assetIt = m_AssetsByPath.find(path);
+		if (assetIt == m_AssetsByPath.end() || !assetIt->second) return;
+
+		//<--- Copied, not referenced: deserializing a model creates .anim assets and rehashes the map ---<<
+		const Ref<Asset> asset = assetIt->second;
 		asset->Clear();
 		auto uuid = asset->GetUUID();
 		auto cachePath = GetAssetCachePath(uuid);
@@ -151,14 +157,37 @@ namespace LevEngine
 
 	void AssetDatabase::ReimportChangedAssets()
 	{
+		LEV_PROFILE_FUNCTION();
+
+		//<--- IsReimportNeeded is a last_write_time syscall per asset and nothing ever un-deserializes,
+		//<--- so the whole database can not be polled every frame. A fixed window is polled instead and
+		//<--- the cursor wraps around, which still notices an external edit within a fraction of a second ---<<
+		constexpr size_t k_AssetsPolledPerFrame = 64;
+
+		if (m_AssetsByPath.empty()) return;
+
+		if (s_ReimportPollCursor >= m_AssetsByPath.size())
+			s_ReimportPollCursor = 0;
+
 		Vector<Ref<Asset>> assetsToReimport;
+
+		size_t index = 0;
+		size_t polled = 0;
 		for (const auto& [path, asset] : m_AssetsByPath)
 		{
+			if (index++ < s_ReimportPollCursor) continue;
+			if (polled >= k_AssetsPolledPerFrame) break;
+			++polled;
+
 			if (!asset || !asset->m_Deserialized || !asset->IsReimportNeeded()) continue;
 
 			assetsToReimport.push_back(asset);
 		}
 
+		s_ReimportPollCursor += polled;
+
+		//<--- Reimporting a model creates and deletes .anim assets, so the database must not be
+		//<--- iterated while it happens ---<<
 		for (const auto& asset : assetsToReimport)
 		{
 			ReimportAsset(asset->GetPath());
@@ -406,10 +435,12 @@ namespace LevEngine
 			std::filesystem::rename(oldPath, newPath);
 		}
 
-		const auto oldMetaPath = oldPath.string().append(".meta").c_str();
-		if (exists(oldPath))
+		//<--- Tested against the meta file, not against oldPath: the asset itself was renamed away
+		//<--- just above, so guarding on it left every meta file behind under its old name ---<<
+		const auto oldMetaPath = Path(oldPath.string().append(".meta"));
+		if (exists(oldMetaPath))
 		{
-			std::filesystem::rename(oldMetaPath, newPath.string().append(".meta").c_str());
+			std::filesystem::rename(oldMetaPath, Path(newPath.string().append(".meta")));
 		}
 
 		asset->Rename(newPath);
@@ -476,7 +507,7 @@ namespace LevEngine
 
 			const auto cachePath = GetAssetCachePath(uuid);
 			if (exists(cachePath))
-				std::filesystem::remove(metaPath);
+				std::filesystem::remove(cachePath);
 		}
 		catch (std::exception& e)
 		{

@@ -20,6 +20,10 @@ namespace LevEngine
         const auto uuid = UUID();
 
         auto asset = CreateRef<T>(path, uuid, eastl::forward<Args>(args)...);
+
+        //<--- A freshly authored asset has no file to read yet, so its in memory state is the
+        //<--- authoritative one. Without this the Serialize below refuses to write it ---<<
+        asset->m_Deserialized = true;
         asset->Serialize();
 
         m_Assets.emplace(uuid, asset);
