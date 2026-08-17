@@ -30,8 +30,7 @@ namespace LevEngine
 				|| AssetDatabase::IsAssetMaterial(path)
 				|| AssetDatabase::IsAssetPBRMaterial(path)
 				|| AssetDatabase::IsAssetCustomMaterial(path)
-				|| AssetDatabase::IsAssetSkybox(path)
-				|| AssetDatabase::IsAssetPlanetBiomeSet(path);
+				|| AssetDatabase::IsAssetSkybox(path);
 		}
 
 		String JoinLocation(const String& location, const String& part)

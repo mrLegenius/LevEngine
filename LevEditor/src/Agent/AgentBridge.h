@@ -94,7 +94,6 @@ namespace LevEngine::Editor
 
         //<--- Shared by editor_stats and by every sample of a camera path ---<<
         void WriteStats(JsonWriter& writer) const;
-        void WritePlanetStats(JsonWriter& writer) const;
 
         [[nodiscard]] ViewportPanel* GetActiveViewport() const;
         [[nodiscard]] EditorCamera* GetActiveCamera() const;

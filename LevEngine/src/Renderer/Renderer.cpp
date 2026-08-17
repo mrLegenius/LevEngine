@@ -35,9 +35,6 @@
 
 #include "DebugRender/DebugRenderPass.h"
 #include "Environment/EnvironmentPass.h"
-#include "Planet/PlanetOceanPass.h"
-#include "Planet/PlanetPass.h"
-#include "Planet/PlanetUpdatePass.h"
 #include "Kernel/Window.h"
 #include "PostProcessing/PostProcessingPass.h"
 #include "Scene/Components/Camera/Camera.h"

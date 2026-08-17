@@ -20,7 +20,6 @@
 #include "Panels/ViewportPanel.h"
 #include "Renderer/RenderStatistics.h"
 #include "Renderer/Shader/ShaderDiagnostics.h"
-#include "Scene/Components/Planet/Planet.h"
 #include "Scene/Components/Transform/Transform.h"
 
 #include <d3dcompiler.h>
@@ -365,49 +364,13 @@ namespace LevEngine::Editor
         writer.KeyValue("Environment", App::Renderer().GetEnvironmentStatistic().GetAverage());
         writer.KeyValue("Deferred Geometry", App::Renderer().GetDeferredGeometryStatistic().GetAverage());
         writer.KeyValue("Deferred Lighting", App::Renderer().GetDeferredLightingStatistic().GetAverage());
-        writer.KeyValue("Planet Surface", App::Renderer().GetPlanetSurfaceStatistic().GetAverage());
-        writer.KeyValue("Planet Ocean", App::Renderer().GetPlanetOceanStatistic().GetAverage());
         writer.KeyValue("Deferred Transparent", App::Renderer().GetDeferredTransparentStatistic().GetAverage());
         writer.KeyValue("Post Processing", App::Renderer().GetPostProcessingStatistic().GetAverage());
         writer.KeyValue("Particles", App::Renderer().GetParticlesStatistic().GetAverage());
         writer.KeyValue("Debug", App::Renderer().GetDebugStatistic().GetAverage());
         writer.EndObject();
-
-        WritePlanetStats(writer);
     }
-
-    void AgentBridge::WritePlanetStats(JsonWriter& writer) const
-    {
-        writer.Key("planets").BeginArray();
-
-        const auto& scene = SceneManager::GetActiveScene();
-
-        if (scene)
-        {
-            auto view = scene->GetRegistry().view<PlanetComponent>();
-
-            for (const auto entity : view)
-            {
-                const auto& planet = view.get<PlanetComponent>(entity);
-                if (!planet.Surface) continue;
-
-                const Entity handle{ entt::handle{ scene->GetRegistry(), entity } };
-
-                writer.BeginObject();
-                writer.KeyValue("id", static_cast<uint64_t>(handle.GetUUID()));
-                writer.KeyValue("tag", handle.GetName());
-                writer.KeyValue("treeNodes", planet.Surface->GetChunkCount());
-                writer.KeyValue("chunksDrawn", planet.Surface->GetVisibleChunkCount());
-                writer.KeyValue("deepestDepth", planet.Surface->GetDeepestVisibleDepth());
-                writer.KeyValue("buildsInFlight", planet.Surface->GetBuildingCount());
-                writer.KeyValue("radius", planet.Surface->GetRadius());
-                writer.EndObject();
-            }
-        }
-
-        writer.EndArray();
-    }
-
+    
     String AgentBridge::CommandStats(const YAML::Node&, const Ref<AgentServer::Call>&)
     {
         JsonWriter writer;
